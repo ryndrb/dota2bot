@@ -120,7 +120,7 @@ local function GetUltLoc(npcBot, enemy, nManaCost, nCastRange, s)
 		return nil;
 	end
 	
-	if enemy:GetMovementDirectionStability()<0.4 or ((not npcBot:IsFacingLocation(enemy, Fountain(GetOpposingTeam()), 60)) ) then
+	if enemy:GetMovementDirectionStability()<0.4 or ((not npcBot:IsFacingLocation(enemy, 60)) ) then
 		dest=VectorTowards(y, Fountain(GetOpposingTeam()),180);
 	end
 
