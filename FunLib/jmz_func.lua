@@ -3483,6 +3483,153 @@ function J.RandomForwardVector(length)
     return offset
 end
 
+function J.GetUnitWithMinDistanceToLoc(hUnit, hUnits, cUnits, fMinDist, vLoc)
+	local minUnit = cUnits;
+	local minVal = fMinDist;
+	
+	for i=1, #hUnits do
+		if hUnits[i] ~= nil and hUnits[i] ~= hUnit and J.CanCastOnNonMagicImmune(hUnits[i]) 
+		then
+			local dist = GetUnitToLocationDistance(hUnits[i], vLoc);
+			if dist < minVal then
+				minVal = dist;
+				minUnit = hUnits[i];	
+			end
+		end	
+	end
+	
+	return minVal, minUnit;
+end
+
+function J.GetUnitWithMaxDistanceToLoc(hUnit, hUnits, cUnits, fMinDist, vLoc)
+	local maxUnit = cUnits
+	local maxVal = fMinDist
+	
+	for i=1, #hUnits do
+		if hUnits[i] ~= nil and hUnits[i] ~= hUnit and J.CanCastOnNonMagicImmune(hUnits[i])
+		then
+			local dist = GetUnitToLocationDistance(hUnits[i], vLoc)
+			if dist > maxVal then
+				maxVal = dist
+				maxUnit = hUnits[i]
+			end
+		end	
+	end
+	
+	return maxVal, maxUnit
+end
+
+function J.GetFurthestUnitToLocationFrommAll(hUnit, nRange, vLoc)
+	local aHeroes = hUnit:GetNearbyHeroes(nRange, false, BOT_MODE_NONE)
+	local eHeroes = hUnit:GetNearbyHeroes(nRange, true, BOT_MODE_NONE)
+	local aCreeps = hUnit:GetNearbyLaneCreeps(nRange, false)
+	local eCreeps = hUnit:GetNearbyLaneCreeps(nRange, true)
+
+	local botDist = GetUnitToLocationDistance(hUnit, vLoc)
+	local furthestUnit = hUnit
+	botDist, furthestUnit = J.GetUnitWithMaxDistanceToLoc(hUnit, aHeroes, furthestUnit, botDist, vLoc)
+	botDist, furthestUnit = J.GetUnitWithMaxDistanceToLoc(hUnit, eHeroes, furthestUnit, botDist, vLoc)
+	botDist, furthestUnit = J.GetUnitWithMaxDistanceToLoc(hUnit, aCreeps, furthestUnit, botDist, vLoc)
+	botDist, furthestUnit = J.GetUnitWithMaxDistanceToLoc(hUnit, eCreeps, furthestUnit, botDist, vLoc)
+
+	if furthestUnit ~= hUnit then
+		return furthestUnit
+	end
+
+	return nil
+
+end
+
+function J.GetClosestUnitToLocationFrommAll(hUnit, nRange, vLoc)
+	local aHeroes = hUnit:GetNearbyHeroes(nRange, false, BOT_MODE_NONE);
+	local eHeroes = hUnit:GetNearbyHeroes(nRange, true, BOT_MODE_NONE);
+	local aCreeps = hUnit:GetNearbyLaneCreeps(nRange, false);
+	local eCreeps = hUnit:GetNearbyLaneCreeps(nRange, true);
+		
+	local botDist = GetUnitToLocationDistance(hUnit, vLoc);
+	local closestUnit = hUnit;
+	botDist, closestUnit = J.GetUnitWithMinDistanceToLoc(hUnit, aHeroes, closestUnit, botDist, vLoc);
+	botDist, closestUnit = J.GetUnitWithMinDistanceToLoc(hUnit, eHeroes, closestUnit, botDist, vLoc);
+	botDist, closestUnit = J.GetUnitWithMinDistanceToLoc(hUnit, aCreeps, closestUnit, botDist, vLoc);
+	botDist, closestUnit = J.GetUnitWithMinDistanceToLoc(hUnit, eCreeps, closestUnit, botDist, vLoc);
+	
+	if closestUnit ~= hUnit then
+		return closestUnit;
+	end
+	
+	return nil;
+	
+end
+
+function J.GetClosestUnitToLocationFrommAll2(hUnit, nRange, vLoc)
+	local aHeroes = hUnit:GetNearbyHeroes(nRange, false, BOT_MODE_NONE);
+	local eHeroes = hUnit:GetNearbyHeroes(nRange, true, BOT_MODE_NONE);
+	local aCreeps = hUnit:GetNearbyLaneCreeps(nRange, false);
+	local eCreeps = hUnit:GetNearbyLaneCreeps(nRange, true);
+		
+	local botDist = 10000;
+	local closestUnit = nil;
+	botDist, closestUnit = J.GetUnitWithMinDistanceToLoc(hUnit, aHeroes, closestUnit, botDist, vLoc);
+	botDist, closestUnit = J.GetUnitWithMinDistanceToLoc(hUnit, eHeroes, closestUnit, botDist, vLoc);
+	botDist, closestUnit = J.GetUnitWithMinDistanceToLoc(hUnit, aCreeps, closestUnit, botDist, vLoc);
+	botDist, closestUnit = J.GetUnitWithMinDistanceToLoc(hUnit, eCreeps, closestUnit, botDist, vLoc);
+	
+	if closestUnit ~= nil then
+		return closestUnit;
+	end
+	
+	return nil;
+	
+end
+
+function J.ConsolePrintActiveMode(bot)
+	local mode = bot:GetActiveMode()
+
+	if mode == BOT_MODE_NONE then
+		print(string.gsub( bot:GetUnitName(), "npc_dota_", "" ).."'s current mode is: NONE")
+	elseif mode == BOT_MODE_LANING then
+		print(string.gsub( bot:GetUnitName(), "npc_dota_", "" ).."'s current mode is: LANING")
+	elseif mode == BOT_MODE_ATTACK then
+		print(string.gsub( bot:GetUnitName(), "npc_dota_", "" ).."'s current mode is: ATTACK")
+	elseif mode == BOT_MODE_ROAM then
+		print(string.gsub( bot:GetUnitName(), "npc_dota_", "" ).."'s current mode is: ROAM")
+	elseif mode == BOT_MODE_RETREAT then
+		print(string.gsub( bot:GetUnitName(), "npc_dota_", "" ).."'s current mode is: RETREAT")
+	elseif mode == BOT_MODE_SECRET_SHOP then
+		print(string.gsub( bot:GetUnitName(), "npc_dota_", "" ).."'s current mode is: SECRET SHOP")
+	elseif mode == BOT_MODE_SIDE_SHOP then
+		print(string.gsub( bot:GetUnitName(), "npc_dota_", "" ).."'s current mode is: SIDE SHOP")
+	elseif mode == BOT_MODE_PUSH_TOWER_TOP then
+		print(string.gsub( bot:GetUnitName(), "npc_dota_", "" ).."'s current mode is: PUSH TOWER TOP")
+	elseif mode == BOT_MODE_PUSH_TOWER_MID then
+		print(string.gsub( bot:GetUnitName(), "npc_dota_", "" ).."'s current mode is: PUSH TOWER MID")
+	elseif mode == BOT_MODE_PUSH_TOWER_BOT then
+		print(string.gsub( bot:GetUnitName(), "npc_dota_", "" ).."'s current mode is: PUSH TOWER BOT")
+	elseif mode == BOT_MODE_DEFEND_TOWER_TOP then
+		print(string.gsub( bot:GetUnitName(), "npc_dota_", "" ).."'s current mode is: DEFEND TOWER TOP")
+	elseif mode == BOT_MODE_DEFEND_TOWER_MID then
+		print(string.gsub( bot:GetUnitName(), "npc_dota_", "" ).."'s current mode is: DEFEND TOWER MID")
+	elseif mode == BOT_MODE_DEFEND_TOWER_BOT then
+		print(string.gsub( bot:GetUnitName(), "npc_dota_", "" ).."'s current mode is: DEFEND TOWER BOT")
+	elseif mode == BOT_MODE_ASSEMBLE then
+		print(string.gsub( bot:GetUnitName(), "npc_dota_", "" ).."'s current mode is: ASSEMBLE")
+	elseif mode == BOT_MODE_TEAM_ROAM then
+		print(string.gsub( bot:GetUnitName(), "npc_dota_", "" ).."'s current mode is: TEAM ROAM")
+	elseif mode == BOT_MODE_FARM then
+		print(string.gsub( bot:GetUnitName(), "npc_dota_", "" ).."'s current mode is: FARM")
+	elseif mode == BOT_MODE_DEFEND_ALLY then
+		print(string.gsub( bot:GetUnitName(), "npc_dota_", "" ).."'s current mode is: DEFEND ALLY")
+	elseif mode == BOT_MODE_EVASIVE_MANEUVERS then
+		print(string.gsub( bot:GetUnitName(), "npc_dota_", "" ).."'s current mode is: EVASIVE MANEUVERS")
+	elseif mode == BOT_MODE_ROSHAN then
+		print(string.gsub( bot:GetUnitName(), "npc_dota_", "" ).."'s current mode is: ROSHAN")
+	elseif mode == BOT_MODE_ITEM then
+		print(string.gsub( bot:GetUnitName(), "npc_dota_", "" ).."'s current mode is: ITEM")
+	elseif mode == BOT_MODE_WARD then
+		print(string.gsub( bot:GetUnitName(), "npc_dota_", "" ).."'s current mode is: WARD")
+	end
+end
+
 return J
 
 --[[

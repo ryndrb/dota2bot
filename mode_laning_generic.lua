@@ -22,6 +22,10 @@ function GetDesire()
 
 	local e = bot:GetNearbyHeroes(1000, true, BOT_MODE_NONE)
 
+	if DotaTime() < 0 then
+		return BOT_ACTION_DESIRE_NONE
+	end
+
 	if (networth < 4500
 	or botLV <= 8)
 	and isBotCore
@@ -29,11 +33,13 @@ function GetDesire()
 		return BOT_MODE_DESIRE_HIGH
 	end
 
-	if DotaTime() > 0 and DotaTime() <= 10 * 60 then
+	if DotaTime() < 12 * 60 
+	or (J.IsModeTurbo() and DotaTime() < 8 * 60)
+	then
 		return BOT_ACTION_DESIRE_MODERATE
 	end
 
-	return BOT_MODE_DESIRE_NONE
+	return 0.1
 
 	-- if currentTime <= 10
 	-- then

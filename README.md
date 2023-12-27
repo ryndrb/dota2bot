@@ -1,7 +1,13 @@
 # Dota 2 Bot Script
 
 This is a Dota 2 Bot Script based mostly on Beginner:AI by (dota2jmz@163.com). Some changes are based upon other existing bot scripts; personal use mostly; adding heroes. Trying to get use to the API and code base.
-It's not necessarily better than the origin script (due to Push/Defend logic/timings, can get cook early game), though this wins quite a lot against it when spectating (if no Sniper/Viper).
+It's not necessarily better than the origin script (due to Push/Defend logic/timings, can get cook early game), though this wins quite a lot against it when spectating (if no Sniper/Viper/Warlock).
+
+Might want to scale Push desire with core networths so that bots farm more and increase their CS, though it's only good if also going against this bot script. If matched against others, like Beginner:AI
+(or any aggresive logic), they might get out-pushed (since those will bring all 5 everytime), which will make this script defend all the time and cores not able farm (non-Turbo). Also, evasion and damage reduction
+items are just too good in bots games (since itemization isn't dynamic), so it's still lineup dependent.
+
+Worth noting that most of my testings are done thru Turbo Mode (Bots v Bots) and Hard difficulty (not Unfair).
 
 - ***Key Scripts***
     - BOT Experiment (by Furiospuppy)
@@ -22,6 +28,7 @@ It's not necessarily better than the origin script (due to Push/Defend logic/tim
         - [1] Ursa
         - [2] Void Spirit
         - [2] Earth Spirit
+        - [1,2] Tiny
     - ***Changed***
         - [2] Necrophos
         - [2] Lina

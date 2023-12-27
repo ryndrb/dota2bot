@@ -4,26 +4,24 @@ local Defend = {}
 
 function Defend.GetDefendDesire(bot, lane)
 
-	local max = 0.95
+	local max = 0.91
     -- if GetPushLaneDesire(LANE_TOP) > 0.75 or GetPushLaneDesire(LANE_MID) > 0.75 or GetPushLaneDesire(LANE_BOT) > 0.75 then
     --     max = 0.75
     -- end
 
 	-- Laning Defend
-	if (J.IsModeTurbo() and DotaTime() < 60 * 8)
-	or DotaTime() < 60 * 12
+	if J.IsLaning(bot)
 	then
 		local tFront = 1 - GetLaneFrontAmount(GetTeam(), lane, true)
 		local eFront = 1 - GetLaneFrontAmount(GetOpposingTeam(), lane, true)
 
 		if bot:GetHealth() / bot:GetMaxHealth() < 0.3
-		and (tFront == 1 or eFront == 0)
 		then
 			return 0.25
 		end
 
 		if Defend.ShouldGoDefend(bot, lane) then
-			return Clamp(tFront * eFront, 0.25, max)
+			return Clamp(eFront, 0.1, max)
 		end
 
 		return 0.1
@@ -37,11 +35,8 @@ function Defend.GetDefendDesire(bot, lane)
 
 	local tFront = GetLaneFrontAmount(GetTeam(), lane, true)
 	local eFront = 1 - GetLaneFrontAmount(GetOpposingTeam(), lane, true)
-	local eCount = Defend.GetEnemyCountInLane(lane, true)
-	local cCount = Defend.GetEnemyCountInLane(lane, false)
 
 	if bot:GetHealth() / bot:GetMaxHealth() < 0.3
-	or (tFront == 0 or eFront == 0) and (eCount == 0 or cCount == 0)
 	then
 		return 0.25
 	end
@@ -49,14 +44,13 @@ function Defend.GetDefendDesire(bot, lane)
     if Defend.WhichLaneToDefend(lane) == lane
     then
         if Defend.ShouldGoDefend(bot, lane)
-		and eFront > 0 or cCount > 0
         then
-			local amount = RemapValClamped(tFront, 0, 1, max, 0) * eFront * mul[lane]
-			return Clamp(amount, 0, max)
+			local amount = --[[RemapValClamped(tFront, 0, 1, max, 0) *]] eFront * mul[lane]
+			return Clamp(amount, 0.1, max)
         end
-	else
-		return 0.1
-    end
+	end
+
+	return 0.1
 end
 
 function Defend.WhichLaneToDefend(lane)
@@ -143,8 +137,7 @@ function Defend.ShouldGoDefend(bot, lane)
 	local building, mul = Defend.GetFurthestBuildingOnLane(lane)
 	local pos = J.GetPosition(bot)
 
-	if (J.IsModeTurbo() and DotaTime() < 60 * 8)
-	or DotaTime() < 60 * 12
+	if J.IsLaning(bot)
 	then
 		if GetTeam() == TEAM_RADIANT then
 			if lane == LANE_TOP
@@ -192,9 +185,6 @@ function Defend.ShouldGoDefend(bot, lane)
         then
 			return true
 		end
-	elseif Enemies > 3
-    then
-		return true
 	end
 
     return true
@@ -342,7 +332,7 @@ end
 
 function Defend.GetEnemyAmountMul(lane)
 	local Enemies = Defend.GetEnemyCountInLane(lane, true)
-	local building, urgent = Defend.GetFurthestBuildingOnLane(lane)
+	local _, urgent = Defend.GetFurthestBuildingOnLane(lane)
 
 	local mulTop = 1
 	local mulMid = 1

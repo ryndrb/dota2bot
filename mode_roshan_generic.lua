@@ -31,12 +31,8 @@ function GetDesire()
     and bot:GetNetWorth() >= 12000
     and #allyNearby >= 2
     and DotaTime() - GetRoshanKillTime() >= (J.IsModeTurbo() and (6 * 60) or (11 * 60))
-    and bot:GetActiveMode() ~= BOT_MODE_DEFEND_TOWER_BOT
-    and bot:GetActiveMode() ~= BOT_MODE_DEFEND_TOWER_MID
-    and bot:GetActiveMode() ~= BOT_MODE_DEFEND_TOWER_TOP
-    and bot:GetActiveMode() ~= BOT_MODE_PUSH_TOWER_BOT
-    and bot:GetActiveMode() ~= BOT_MODE_DEFEND_TOWER_MID
-    and bot:GetActiveMode() ~= BOT_MODE_DEFEND_TOWER_TOP
+    and (bot:GetActiveMode() ~= BOT_MODE_DEFEND_TOWER_BOT or bot:GetActiveMode() ~= BOT_MODE_DEFEND_TOWER_MID or bot:GetActiveMode() ~= BOT_MODE_DEFEND_TOWER_TOP)
+    and (bot:GetActiveMode() ~= BOT_MODE_PUSH_TOWER_BOT or bot:GetActiveMode() ~= BOT_MODE_PUSH_TOWER_MID or bot:GetActiveMode() ~= BOT_MODE_PUSH_TOWER_TOP)
     then
         if GetRoshanKillTime() == killTime and killTime > 0.0
         then
