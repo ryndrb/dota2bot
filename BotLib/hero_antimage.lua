@@ -72,9 +72,7 @@ X['sBuyList'] = tOutFitList[sOutfitType]
 
 X['sSellList'] = {
 
-	"item_quelling_blade",
 	"item_circlet",
-
 	"item_manta",
 
 }
