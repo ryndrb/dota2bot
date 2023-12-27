@@ -13,7 +13,8 @@ function Push.GetPushDesire(bot, lane)
     local creeps    = bot:GetNearbyCreeps(600 + bot:GetAttackRange(), false)
 
     -- Laning Push
-    if J.IsLaning(bot)
+    if DotaTime() < 12 * 60
+	or (J.IsModeTurbo() and DotaTime() < 8 * 60)
     then
         local teamFront = GetLaneFrontAmount(GetTeam(), lane, false)
 
@@ -226,7 +227,8 @@ end
 function Push.ShouldPushWhenLaning(bot, lane)
 	local pos = J.GetPosition(bot)
 
-	if J.IsLaning(bot)
+	if DotaTime() < 12 * 60
+	or (J.IsModeTurbo() and DotaTime() < 8 * 60)
 	then
 		if GetTeam() == TEAM_RADIANT then
 			if lane == LANE_TOP

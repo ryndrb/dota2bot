@@ -10,7 +10,8 @@ function Defend.GetDefendDesire(bot, lane)
     -- end
 
 	-- Laning Defend
-	if J.IsLaning(bot)
+	if DotaTime() < 12 * 60
+	or (J.IsModeTurbo() and DotaTime() < 8 * 60)
 	then
 		local tFront = 1 - GetLaneFrontAmount(GetTeam(), lane, true)
 		local eFront = 1 - GetLaneFrontAmount(GetOpposingTeam(), lane, true)
@@ -137,7 +138,8 @@ function Defend.ShouldGoDefend(bot, lane)
 	local building, mul = Defend.GetFurthestBuildingOnLane(lane)
 	local pos = J.GetPosition(bot)
 
-	if J.IsLaning(bot)
+	if DotaTime() < 12 * 60
+	or (J.IsModeTurbo() and DotaTime() < 8 * 60)
 	then
 		if GetTeam() == TEAM_RADIANT then
 			if lane == LANE_TOP
