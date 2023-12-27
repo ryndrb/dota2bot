@@ -239,7 +239,7 @@ local sHasDevelopmentHeroList = {
 	"npc_dota_hero_ursa",
 	"npc_dota_hero_void_spirit",
 	"npc_dota_hero_earth_spirit",
-
+	"npc_dota_hero_tiny",
 
 
 }
@@ -421,6 +421,7 @@ local sCarryList = {
 	"npc_dota_hero_alchemist",
 	"npc_dota_hero_terrorblade",
 	"npc_dota_hero_ursa",
+	"npc_dota_hero_tiny",
 
 }
 
@@ -448,30 +449,31 @@ local sTankList = {
 
 local sMidList = {
 
-	-- "npc_dota_hero_templar_assassin",
-	-- -- 	"npc_dota_hero_phantom_lancer",
-	-- "npc_dota_hero_arc_warden",
-	-- -- "npc_dota_hero_bristleback",
-	-- -- "npc_dota_hero_chaos_knight",
-	-- -- "npc_dota_hero_medusa", 
-	-- "npc_dota_hero_mirana",
-	-- "npc_dota_hero_razor",
-	-- "npc_dota_hero_sniper",
-	-- "npc_dota_hero_viper",
-	-- "npc_dota_hero_nevermore",
+	"npc_dota_hero_templar_assassin",
+	-- 	"npc_dota_hero_phantom_lancer",
+	"npc_dota_hero_arc_warden",
+	-- "npc_dota_hero_bristleback",
+	-- "npc_dota_hero_chaos_knight",
+	-- "npc_dota_hero_medusa", 
+	"npc_dota_hero_mirana",
+	"npc_dota_hero_razor",
+	"npc_dota_hero_sniper",
+	"npc_dota_hero_viper",
+	"npc_dota_hero_nevermore",
 
-	-- "npc_dota_hero_lina",
-	-- "npc_dota_hero_dragon_knight",
-	-- "npc_dota_hero_kunkka",
-	-- "npc_dota_hero_queenofpain",
-	-- "npc_dota_hero_necrolyte",
-	-- "npc_dota_hero_huskar",
+	"npc_dota_hero_lina",
+	"npc_dota_hero_dragon_knight",
+	"npc_dota_hero_kunkka",
+	"npc_dota_hero_queenofpain",
+	"npc_dota_hero_necrolyte",
+	"npc_dota_hero_huskar",
 
-	-- "npc_dota_hero_shredder",
-	-- "npc_dota_hero_storm_spirit",
-	-- "npc_dota_hero_ember_spirit",
-	-- "npc_dota_hero_void_spirit",
+	"npc_dota_hero_shredder",
+	"npc_dota_hero_storm_spirit",
+	"npc_dota_hero_ember_spirit",
+	"npc_dota_hero_void_spirit",
 	"npc_dota_hero_earth_spirit",
+	"npc_dota_hero_tiny",
 	
 }
 

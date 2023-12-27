@@ -230,11 +230,7 @@ function Think()
 		end
 	end
 	
-	-- if (beSpecialCarry or beSpecialSupport)
-	if (beSpecialCarry
-	or ((beSpecialSupport and bot:GetActiveMode() == BOT_MODE_DEFEND_TOWER_BOT)
-	or (beSpecialSupport and bot:GetActiveMode() == BOT_MODE_DEFEND_TOWER_MID)
-	or (beSpecialSupport and bot:GetActiveMode() == BOT_MODE_DEFEND_TOWER_TOP)))
+	if (beSpecialCarry or beSpecialSupport)
 		and targetUnit ~= nil and not targetUnit:IsNull() and targetUnit:IsAlive()
 	then
 		bot:Action_AttackUnit( targetUnit, true );
@@ -1540,6 +1536,7 @@ function X.IsSpecialCarry(bot)
 		["npc_dota_hero_ursa"] = true,
 		["npc_dota_hero_void_spirit"] = true,
 		["npc_dota_hero_earth_spirit"] = true,
+		["npc_dota_hero_tiny"] = true,
 	}
 	
 	return tSpecialCarryList[botName] == true

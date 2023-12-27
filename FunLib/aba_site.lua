@@ -534,6 +534,7 @@ local tFarmerList = {
 	["npc_dota_hero_ursa"] = true,
 	["npc_dota_hero_void_spirit"] = true,
 	["npc_dota_hero_earth_spirit"] = true,
+	["npc_dota_hero_tiny"] = true,
 }
 function Site.IsSpecialFarmer( bot )
 
@@ -590,6 +591,7 @@ local tFarmHeroList = {
 	["npc_dota_hero_ursa"] = true,
 	["npc_dota_hero_void_spirit"] = true,
 	["npc_dota_hero_earth_spirit"] = true,
+	["npc_dota_hero_tiny"] = true,
 }
 function Site.IsShouldFarmHero( bot )
 
@@ -1946,6 +1948,18 @@ end
 
 Site.ConsiderIsTimeToFarm["npc_dota_hero_earth_spirit"] = function()
 	return Site.ConsiderIsTimeToFarm["npc_dota_hero_storm_spirit"]
+end
+
+Site.ConsiderIsTimeToFarm["npc_dota_hero_tiny"] = function()
+	local bot = GetBot()
+	local networth = bot:GetNetWorth()
+	local lastHits = bot:GetLastHits()
+
+	if lastHits < 1000 then
+		return true
+	end
+
+	return false
 end
 
 ------------------------------------------------------------------

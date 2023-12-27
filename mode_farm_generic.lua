@@ -167,7 +167,7 @@ function GetDesire()
 			end		
 		end	
 
-		X.SetPushBonus( bot )
+		--X.SetPushBonus( bot )
 		
 		bPushNoticeDone = true
 	end
@@ -474,7 +474,8 @@ function GetDesire()
 					
 					if botName == 'npc_dota_hero_medusa' and farmDistance < 133 then return 0.33 end 
 					
-					return math.floor((RemapValClamped(farmDistance, 6000, 0, BOT_MODE_DESIRE_MODERATE, BOT_MODE_DESIRE_VERYHIGH))*10)/10;
+					-- return math.floor((RemapValClamped(farmDistance, 6000, 0, BOT_MODE_DESIRE_MODERATE, BOT_MODE_DESIRE_VERYHIGH))*10)/10;
+					return BOT_MODE_DESIRE_HIGH
 				end
 			end
 		end
@@ -1174,7 +1175,7 @@ function X.CouldBlink(bot,nLocation)
 					return true;
 				end
 			
-				bot:ActionQueue_UseAbilityOnLocation(blink, nLocation);
+				bot:Action_UseAbilityOnLocation(blink, nLocation);
 				return true;
 		elseif IsLocationPassable(maxBlinkLoc)
 			then
@@ -1193,7 +1194,7 @@ function X.CouldBlink(bot,nLocation)
 					return true;
 				end
 				
-				bot:ActionQueue_UseAbilityOnLocation(blink, maxBlinkLoc);
+				bot:Action_UseAbilityOnLocation(blink, maxBlinkLoc);
 				return true;
 		end
 	end
@@ -1405,6 +1406,7 @@ function X.IsVeryHighFarmer(bot)
 		or botName == "npc_dota_hero_ursa"
 		or botName == "npc_dota_hero_void_spirit"
 		or botName == "npc_dota_hero_earth_spirit"
+		or botName == "npc_dota_hero_tiny"
 
 end
 
