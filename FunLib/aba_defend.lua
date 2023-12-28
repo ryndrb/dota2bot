@@ -10,8 +10,8 @@ function Defend.GetDefendDesire(bot, lane)
     -- end
 
 	-- Laning Defend
-	if DotaTime() < 12 * 60
-	or (J.IsModeTurbo() and DotaTime() < 8 * 60)
+	if (J.IsModeTurbo() and DotaTime() < 8 * 60)
+	or DotaTime() < 12 * 60
 	then
 		local tFront = 1 - GetLaneFrontAmount(GetTeam(), lane, true)
 		local eFront = 1 - GetLaneFrontAmount(GetOpposingTeam(), lane, true)
@@ -138,8 +138,8 @@ function Defend.ShouldGoDefend(bot, lane)
 	local building, mul = Defend.GetFurthestBuildingOnLane(lane)
 	local pos = J.GetPosition(bot)
 
-	if DotaTime() < 12 * 60
-	or (J.IsModeTurbo() and DotaTime() < 8 * 60)
+	if (J.IsModeTurbo() and DotaTime() < 8 * 60)
+	or DotaTime() < 12 * 60
 	then
 		if GetTeam() == TEAM_RADIANT then
 			if lane == LANE_TOP
@@ -164,6 +164,8 @@ function Defend.ShouldGoDefend(bot, lane)
 				return true
 			end
 		end
+
+		return false
 	end
 
 	if Enemies == 1 then
@@ -204,37 +206,37 @@ function Defend.GetFurthestBuildingOnLane(lane)
 
 		FurthestBuilding = GetTower(bot:GetTeam(), TOWER_TOP_2)
 		if Defend.IsValidBuildingTarget(FurthestBuilding) then
-			return FurthestBuilding, 1.5
+			return FurthestBuilding, 1
 		end
 		
 		FurthestBuilding = GetTower(bot:GetTeam(), TOWER_TOP_3)
 		if Defend.IsValidBuildingTarget(FurthestBuilding) then
-			return FurthestBuilding, 2
+			return FurthestBuilding, 1
 		end
 		
 		FurthestBuilding = GetBarracks(bot:GetTeam(), BARRACKS_TOP_MELEE)
 		if Defend.IsValidBuildingTarget(FurthestBuilding) then
-			return FurthestBuilding, 3
+			return FurthestBuilding, 1
 		end
 		
 		FurthestBuilding = GetBarracks(bot:GetTeam(), BARRACKS_TOP_RANGED)
 		if Defend.IsValidBuildingTarget(FurthestBuilding) then
-			return FurthestBuilding, 3
+			return FurthestBuilding, 1
 		end
 		
 		FurthestBuilding = GetTower(bot:GetTeam(), TOWER_BASE_1)
 		if Defend.IsValidBuildingTarget(FurthestBuilding) then
-			return GetAncient(bot:GetTeam()), 4
+			return GetAncient(bot:GetTeam()), 1
 		end
 		
 		FurthestBuilding = GetTower(bot:GetTeam(), TOWER_BASE_2)
 		if Defend.IsValidBuildingTarget(FurthestBuilding) then
-			return GetAncient(bot:GetTeam()), 4
+			return GetAncient(bot:GetTeam()), 1
 		end
 		
 		FurthestBuilding = GetAncient(bot:GetTeam())
 		if Defend.IsValidBuildingTarget(FurthestBuilding) then
-			return GetAncient(bot:GetTeam()), 5
+			return GetAncient(bot:GetTeam()), 1
 		end
 	end
 	
@@ -246,37 +248,37 @@ function Defend.GetFurthestBuildingOnLane(lane)
 		
 		FurthestBuilding = GetTower(bot:GetTeam(), TOWER_MID_2)
 		if Defend.IsValidBuildingTarget(FurthestBuilding) then
-			return FurthestBuilding, 1.5
+			return FurthestBuilding, 1
 		end
 		
 		FurthestBuilding = GetTower(bot:GetTeam(), TOWER_MID_3)
 		if Defend.IsValidBuildingTarget(FurthestBuilding) then
-			return FurthestBuilding, 2
+			return FurthestBuilding, 1
 		end
 		
 		FurthestBuilding = GetBarracks(bot:GetTeam(), BARRACKS_MID_MELEE)
 		if Defend.IsValidBuildingTarget(FurthestBuilding) then
-			return FurthestBuilding, 3
+			return FurthestBuilding, 1
 		end
 		
 		FurthestBuilding = GetBarracks(bot:GetTeam(), BARRACKS_MID_RANGED)
 		if Defend.IsValidBuildingTarget(FurthestBuilding) then
-			return FurthestBuilding, 3
+			return FurthestBuilding, 1
 		end
 		
 		FurthestBuilding = GetTower(bot:GetTeam(), TOWER_BASE_1)
 		if Defend.IsValidBuildingTarget(FurthestBuilding) then
-			return GetAncient(bot:GetTeam()), 4
+			return GetAncient(bot:GetTeam()), 1
 		end
 		
 		FurthestBuilding = GetTower(bot:GetTeam(), TOWER_BASE_2)
 		if Defend.IsValidBuildingTarget(FurthestBuilding) then
-			return GetAncient(bot:GetTeam()), 4
+			return GetAncient(bot:GetTeam()), 1
 		end
 		
 		FurthestBuilding = GetAncient(bot:GetTeam())
 		if Defend.IsValidBuildingTarget(FurthestBuilding) then
-			return GetAncient(bot:GetTeam()), 5
+			return GetAncient(bot:GetTeam()), 1
 		end
 	end
 	
@@ -288,37 +290,37 @@ function Defend.GetFurthestBuildingOnLane(lane)
 		
 		FurthestBuilding = GetTower(bot:GetTeam(), TOWER_BOT_2)
 		if Defend.IsValidBuildingTarget(FurthestBuilding) then
-			return FurthestBuilding, 1.5
+			return FurthestBuilding, 1
 		end
 		
 		FurthestBuilding = GetTower(bot:GetTeam(), TOWER_BOT_3)
 		if Defend.IsValidBuildingTarget(FurthestBuilding) then
-			return FurthestBuilding, 2
+			return FurthestBuilding, 1
 		end
 		
 		FurthestBuilding = GetBarracks(bot:GetTeam(), BARRACKS_BOT_MELEE)
 		if Defend.IsValidBuildingTarget(FurthestBuilding) then
-			return FurthestBuilding, 3
+			return FurthestBuilding, 1
 		end
 		
 		FurthestBuilding = GetBarracks(bot:GetTeam(), BARRACKS_BOT_RANGED)
 		if Defend.IsValidBuildingTarget(FurthestBuilding) then
-			return FurthestBuilding, 3
+			return FurthestBuilding, 1
 		end
 		
 		FurthestBuilding = GetTower(bot:GetTeam(), TOWER_BASE_1)
 		if Defend.IsValidBuildingTarget(FurthestBuilding) then
-			return GetAncient(bot:GetTeam()), 4
+			return GetAncient(bot:GetTeam()), 1
 		end
 		
 		FurthestBuilding = GetTower(bot:GetTeam(), TOWER_BASE_2)
 		if Defend.IsValidBuildingTarget(FurthestBuilding) then
-			return GetAncient(bot:GetTeam()), 4
+			return GetAncient(bot:GetTeam()), 1
 		end
 		
 		FurthestBuilding = GetAncient(bot:GetTeam())
 		if Defend.IsValidBuildingTarget(FurthestBuilding) then
-			return GetAncient(bot:GetTeam()), 5
+			return GetAncient(bot:GetTeam()), 1
 		end
 	end
 	
@@ -341,7 +343,6 @@ function Defend.GetEnemyAmountMul(lane)
 	local mulBot = 1
 
 	if lane == LANE_TOP then
-		mulTop = mulTop * urgent
 		if Enemies == 1 then
 			mulTop = 1.1
 		elseif Enemies == 2 then
@@ -351,8 +352,8 @@ function Defend.GetEnemyAmountMul(lane)
 		elseif Enemies > 3 then
 			mulTop = 1.5
 		end
+		mulTop = mulTop * urgent
 	elseif lane == LANE_MID then
-		mulMid = mulMid * urgent
 		if Enemies == 1 then
 			mulMid = 1.1
 		elseif Enemies == 2 then
@@ -362,8 +363,8 @@ function Defend.GetEnemyAmountMul(lane)
 		elseif Enemies > 3 then
 			mulMid = 1.5
 		end
+		mulMid = mulMid * urgent
 	elseif lane == LANE_BOT then
-		mulBot = mulBot * urgent
 		if Enemies == 1 then
 			mulBot = 1.1
 		elseif Enemies == 2 then
@@ -373,6 +374,7 @@ function Defend.GetEnemyAmountMul(lane)
 		elseif Enemies > 3 then
 			mulBot = 1.5
 		end
+		mulBot = mulBot * urgent
 	end
 
 	return {mulTop, mulMid, mulBot}

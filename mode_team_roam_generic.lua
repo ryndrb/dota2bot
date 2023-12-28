@@ -1676,6 +1676,11 @@ function X.ShouldNotRetreat(bot)
 	then 
 		return true; 
 	end
+
+	if J.WeAreStronger(bot, 1000)
+	then
+		return true
+	end
 	
 	local nAttackAlly = bot:GetNearbyHeroes(1000,false,BOT_MODE_ATTACK);
 	if  ( bot:HasModifier("modifier_item_mask_of_madness_berserk")

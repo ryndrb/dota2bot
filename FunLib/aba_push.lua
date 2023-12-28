@@ -13,8 +13,8 @@ function Push.GetPushDesire(bot, lane)
     local creeps    = bot:GetNearbyCreeps(600 + bot:GetAttackRange(), false)
 
     -- Laning Push
-    if DotaTime() < 12 * 60
-	or (J.IsModeTurbo() and DotaTime() < 8 * 60)
+    if (J.IsModeTurbo() and DotaTime() < 8 * 60)
+	or DotaTime() < 12 * 60
     then
         local teamFront = GetLaneFrontAmount(GetTeam(), lane, false)
 
@@ -57,15 +57,6 @@ function Push.GetPushDesire(bot, lane)
         local eAliveCount = J.GetNumOfAliveHeroes(true)
         local tot = ((aAliveCount - eAliveCount) / (aAliveCount + eAliveCount)) / 2
         amount = amount + tot
-
-        local ancient = GetAncient(GetOpposingTeam())
-        local eHeroes = bot:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
-        if eHeroes ~= nil and #eHeroes < 2
-        and GetUnitToUnitDistance(bot, ancient) < 1600 
-        and tot < 0
-        then
-            return Clamp(amount, 0.25, max)
-        end
 
         return Clamp(amount, 0.25, max)
 
@@ -227,8 +218,8 @@ end
 function Push.ShouldPushWhenLaning(bot, lane)
 	local pos = J.GetPosition(bot)
 
-	if DotaTime() < 12 * 60
-	or (J.IsModeTurbo() and DotaTime() < 8 * 60)
+	if (J.IsModeTurbo() and DotaTime() < 8 * 60)
+	or DotaTime() < 12 * 60
 	then
 		if GetTeam() == TEAM_RADIANT then
 			if lane == LANE_TOP
@@ -253,6 +244,8 @@ function Push.ShouldPushWhenLaning(bot, lane)
 				return true
 			end
 		end
+
+        return false
 	end
 end
 
@@ -294,7 +287,7 @@ function Push.PushThink(bot, lane)
 
     local offset = -math.max(teammateDistance / teammateAlive - enemyDistance / enemyAlive, 0)
 
-    if J.WeAreStronger(bot, 1200) and #bot:GetNearbyHeroes(1200, false, BOT_MODE_NONE) >= enemyAlive then
+    if J.WeAreStronger(bot, 1200) and #bot:GetNearbyHeroes(1600, false, BOT_MODE_NONE) >= enemyAlive then
         offset = 0
     end
 
@@ -321,13 +314,13 @@ function Push.PushThink(bot, lane)
         end
     end
 
-    local enemies = bot:GetNearbyHeroes(1200, true, BOT_MODE_NONE)
+    local enemies = bot:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
     if enemies ~= nil and #enemies > 0 and J.WeAreStronger(bot, 1200)
     then
         return bot:ActionPush_AttackUnit(enemies[1], false)
     end
 
-    local creeps = bot:GetNearbyLaneCreeps(600, true)
+    local creeps = bot:GetNearbyLaneCreeps(1600, true)
     if creeps ~= nil and #creeps > 0 then
         return bot:ActionPush_AttackUnit(creeps[1], false)
     end

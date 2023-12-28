@@ -3428,6 +3428,13 @@ function J.IsCore(bot)
 	return false
 end
 
+function J.GetCoresTotalNetworth()
+	local totalNetworth = GetTeamMember(1):GetNetWorth()
+				  	    + GetTeamMember(2):GetNetWorth()
+				  		+ GetTeamMember(3):GetNetWorth()
+	return totalNetworth
+end
+
 function J.GetPosition(bot)
 	local heroID = GetTeamPlayers(GetTeam())
 	local pos

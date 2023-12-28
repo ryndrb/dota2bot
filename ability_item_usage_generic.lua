@@ -2453,8 +2453,7 @@ X.ConsiderItemDesire["item_hurricane_pike"] = function( hItem )
 		end
 	end
 
-	if bot:GetUnitName() == "npc_dota_hero_drow_ranger"
-		or bot:GetUnitName() == "npc_dota_hero_sniper"
+	if J.HasItem(bot, "item_hurricane_pike")
 	then
 		for _, npcEnemy in pairs( hNearbyEnemyHeroList )
 		do
@@ -2941,8 +2940,9 @@ X.ConsiderItemDesire["item_mask_of_madness"] = function( hItem )
 			or ( #nEnemyHeroInView == 0 and not bot:WasRecentlyDamagedByAnyHero( 2.0 ) )
 		then
 			if ( #nEnemyHeroInView == 0 )
-				 or ( bot:GetUnitName() ~= "npc_dota_hero_sniper"
-					 and bot:GetUnitName() ~= "npc_dota_hero_medusa" )
+			or ( bot:GetUnitName() ~= "npc_dota_hero_sniper"
+				or bot:GetUnitName() ~= "npc_dota_hero_medusa"
+				or bot:GetUnitName() ~= "npc_dota_hero_faceless_void" and J.GetUltimateAbility(bot):GetCooldown() > 0)
 			then
 				bot:SetTarget( nAttackTarget )
 				hEffectTarget = nAttackTarget

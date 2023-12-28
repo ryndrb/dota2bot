@@ -470,9 +470,9 @@ function GetDesire()
 						end
 					end
 					
-					local farmDistance = GetUnitToLocationDistance(bot,preferedCamp.cattr.location);
+					-- local farmDistance = GetUnitToLocationDistance(bot,preferedCamp.cattr.location);
 					
-					if botName == 'npc_dota_hero_medusa' and farmDistance < 133 then return 0.33 end 
+					-- if botName == 'npc_dota_hero_medusa' and farmDistance < 133 then return 0.33 end 
 					
 					-- return math.floor((RemapValClamped(farmDistance, 6000, 0, BOT_MODE_DESIRE_MODERATE, BOT_MODE_DESIRE_VERYHIGH))*10)/10;
 					return BOT_MODE_DESIRE_HIGH
@@ -1077,17 +1077,14 @@ function X.ShouldRun(bot)
 			end
 		end	
 		
-		local nEnemy = bot:GetNearbyHeroes(800,true,BOT_MODE_NONE);
-		for _,enemy in pairs(nEnemy)
-		do
-			if J.IsValid(enemy)
-				and enemy:GetUnitName() == "npc_dota_hero_necrolyte"
-				and enemy:GetMana() >= 200
-				and J.GetHP(bot) < 0.45
-				and enemy:IsFacingLocation(bot:GetLocation(),20)
-			then
-				return 3;
-			end
+		if J.IsValid(enemy)
+		and not J.WeAreStronger(bot, 800)
+		then
+			-- and enemy:GetUnitName() == "npc_dota_hero_necrolyte"
+			-- and enemy:GetMana() >= 200
+			-- and J.GetHP(bot) < 0.45
+			-- and enemy:IsFacingLocation(bot:GetLocation(),20)
+			return 3;
 		end
 		
 	end	
