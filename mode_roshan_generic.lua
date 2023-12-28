@@ -8,8 +8,14 @@ local killTime = 0.0
 local shouldKillRoshan = false
 local DoingRoshanMessage = DotaTime()
 
+local roshan = nil
 local roshanRadiantLoc  = Vector(7625, -7511, 1092)
 local roshanDireLoc     = Vector(-7549, 7562, 1107)
+
+-- local rTwinGate = nil
+-- local dTwinGate = nil
+-- local rTwinGateLoc = Vector(5888, -7168, 256)
+-- local dTwinGateLoc = Vector(6144, 7552, 256)
 
 function GetDesire()
     local aliveAlly = J.GetNumOfAliveHeroes(false)
@@ -18,15 +24,19 @@ function GetDesire()
 
     if shouldKillRoshan
     and (J.GetCoresTotalNetworth() / 3) >= AverageCoreNetworth
-    and aliveAlly >= 4
     then
-        if (bot:GetActiveMode() == BOT_MODE_DEFEND_TOWER_BOT or bot:GetActiveMode() == BOT_MODE_DEFEND_TOWER_MID or bot:GetActiveMode() == BOT_MODE_DEFEND_TOWER_TOP)
-        and bot:GetActiveModeDesire() > 0.75
-        then
-            return BOT_ACTION_DESIRE_MODERATE
-        end
+        local desire = BOT_ACTION_DESIRE_HIGH
+        local nearbyAlly, nearbyAllyCore = IsNearRoshan()
 
-        return BOT_ACTION_DESIRE_HIGH
+        if aliveAlly >= 4 then
+           return desire
+        else
+            if (nearbyAlly > 2 and nearbyAllyCore > 1)
+            or (roshan ~= nil and (roshan:GetHealth() / roshan:GetMaxHealth()) < 0.3)
+            then
+                return 0.95
+            end
+        end
     end
 
     return BOT_ACTION_DESIRE_NONE
@@ -34,18 +44,35 @@ end
 
 function Think()
     local timeOfDay, time = CheckTimeOfDay()
+    -- local isInPlace, twinGate = IsInTwinGates(timeOfDay, time)
 
     if timeOfDay == "day" and time > 240
     then
+        -- if ConsiderTwinGates(timeOfDay, time) then
+        --     bot:ActionPush_MoveToLocation(rTwinGateLoc)
+        -- end
+
+        -- if isInPlace then
+        --     bot:ActionPush_AttackUnit(twinGate, false)
+        -- end
+
         bot:ActionPush_MoveToLocation(roshanDireLoc)
-    else
+    elseif timeOfDay == "day" then
         bot:ActionPush_MoveToLocation(roshanRadiantLoc)
     end
 
     if timeOfDay == "night" and time > 540
     then
+        -- if ConsiderTwinGates(timeOfDay, time) then
+        --     bot:ActionPush_MoveToLocation(dTwinGateLoc)
+        -- end
+
+        -- if isInPlace then
+        --     bot:ActionPush_AttackUnit(twinGate, false)
+        -- end
+
         bot:ActionPush_MoveToLocation(roshanRadiantLoc)
-    else
+    elseif timeOfDay == "night" then
         bot:ActionPush_MoveToLocation(roshanDireLoc)
     end
 
@@ -90,11 +117,11 @@ function IsRoshanAlive()
     end
 
     if DotaTime() - GetRoshanKillTime() >= (J.IsModeTurbo() and (6 * 60) or (11 * 60))
-    and not (GetRoshanKillTime() == killTime and killTime > 0.0)
     then
         return true
     end
 
+    roshan = nil
     return false
 end
 
@@ -111,8 +138,93 @@ end
 function IsEnoughAllies()
     local allies = bot:GetNearbyHeroes(1600, false, BOT_MODE_ROSHAN)
     if allies ~= nil then
-        return #allies > 3
+        return #allies > 2
     end
 
     return false
 end
+
+function IsNearRoshan()
+    local nearbyAlly = 0
+    local nearbyAllyCore = 0
+    local unitList = GetUnitList(UNIT_LIST_ALL)
+
+    for _, u in pairs(unitList) do
+        if rTwinGate == nil then
+            if u:GetUnitName() == "npc_dota_roshan" then
+                roshan = u
+            end
+        end
+    end
+
+    if roshan ~= nil
+    and GetUnitToLocationDistance(bot, roshan:GetLocation()) < 2000
+    then
+        nearbyAlly = nearbyAlly + 1
+        if J.IsCore(bot) then
+            nearbyAllyCore = nearbyAllyCore + 1
+        end
+    end
+
+    return nearbyAlly, nearbyAllyCore
+end
+
+-- No functionality yet from API
+-- function ConsiderTwinGates(timeOfDay, time)
+--     if timeOfDay == "day" and time > 240
+--     then
+--         if GetUnitToLocationDistance(bot, dTwinGateLoc) < 6000
+--         and bot:GetMana() >= 75
+--         then
+--             return true
+--         end
+--     end
+
+--     if timeOfDay == "night" and time > 540
+--     then
+--         if GetUnitToLocationDistance(bot, rTwinGateLoc) < 6000 then
+--             return true
+--         end
+--     end
+
+--     return false
+-- end
+
+-- function IsInTwinGates(timeOfDay, time)
+--     local twinGate = nil
+--     local unitList = GetUnitList(UNIT_LIST_ALL)
+--     for _, u in pairs(unitList) do
+--         if rTwinGate == nil then
+--             if u:GetUnitName() == "npc_dota_unit_twin_gate" then
+--                 rTwinGate = u
+--             else
+--                 dTwinGate = u
+--             end
+--         end
+--     end
+
+--     if rTwinGate ~= nil and dTwinGate ~= nil
+--     and GetUnitToUnitDistance(bot, rTwinGate) < GetUnitToUnitDistance(bot, dTwinGate)
+--     then
+--         twinGate = rTwinGate
+--     else
+--         twinGate = dTwinGate
+--     end
+
+--     if timeOfDay == "day" and time > 240
+--     then
+--         if GetUnitToLocationDistance(bot, dTwinGateLoc) < 100
+--         then
+--             return true, twinGate
+--         end
+--     end
+
+--     if timeOfDay == "night" and time > 540
+--     then
+--         if GetUnitToLocationDistance(bot, rTwinGateLoc) < 100 then
+--             return true, twinGate
+--         end
+--     end
+
+--     return false, twinGate
+-- end
