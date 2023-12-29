@@ -36,7 +36,6 @@ local tOutFitList = {}
 tOutFitList['outfit_carry'] = tOutFitList['outfit_mid']
 
 tOutFitList['outfit_mid'] = {
-
 	"item_tango",
 	"item_faerie_fire",
 	"item_gauntlets",
@@ -45,19 +44,18 @@ tOutFitList['outfit_mid'] = {
 
 	"item_boots",
 	"item_armlet",
-	"item_sange",
 	"item_black_king_bar",--
-	"item_heavens_halberd",--
+	"item_sange",
 	"item_ultimate_scepter",
+	"item_heavens_halberd",--
 	"item_travel_boots",
-	"item_aghanims_shard",
 	"item_satanic",--
+	"item_aghanims_shard",
 	"item_assault",--
 	"item_travel_boots_2",--
 	"item_ultimate_scepter_2",
-	"item_nullifier",--
+	"item_sheepstick",--
 	"item_moon_shard",
-
 }
 
 tOutFitList['outfit_priest'] = tOutFitList['outfit_carry']
@@ -69,10 +67,8 @@ tOutFitList['outfit_tank'] = tOutFitList['outfit_carry']
 X['sBuyList'] = tOutFitList[sOutfitType]
 
 X['sSellList'] = {
-
 	"item_gauntlets",
 	"item_armlet",
-
 }
 
 if J.Role.IsPvNMode() or J.Role.IsAllShadow() then X['sBuyList'], X['sSellList'] = { 'PvN_huskar' }, {} end

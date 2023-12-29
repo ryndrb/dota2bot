@@ -10,41 +10,23 @@ local sAbilityList = J.Skill.GetAbilityList( bot )
 local sOutfitType = J.Item.GetOutfitType( bot )
 
 local tTalentTreeList = {
-    ['t25'] = {0, 10},
-    ['t20'] = {0, 10},
-    ['t15'] = {0, 10},
-    ['t10'] = {0, 10},
+						['t25'] = {0, 10},
+						['t20'] = {0, 10},
+						['t15'] = {0, 10},
+						['t10'] = {10, 0},
 }
 
 local tAllAbilityBuildList = {
-    {1,2,2,1,2,6,2,1,1,3,6,3,3,3,6},
+						{1,3,2,2,2,6,2,1,1,1,6,3,3,3,6},--pos3
 }
 
 local nAbilityBuildList = J.Skill.GetRandomBuild( tAllAbilityBuildList )
 
 local nTalentBuildList = J.Skill.GetTalentBuild( tTalentTreeList )
 
+local sLotusPipe = RandomInt( 1, 2 ) == 1 and "item_lotus_orb" or "item_pipe"
+
 local tOutFitList = {}
-
-tOutFitList['outfit_tank'] = {
-    "item_tango",
-    "item_double_branches",
-    "item_quelling_blade",
-    "item_ring_of_protection",
-
-    "item_arcane_boots",
-    "item_bracer",
-    "item_magic_wand",
-    "item_lotus_orb",--
-    "item_kaya_and_sange",--
-    "item_eternal_shroud",--
-    "item_sheepstick",--
-    "item_overwhelming_blink",--
-    "item_aghanims_shard",
-    "item_travel_boots_2",--
-    "item_ultimate_scepter_2",
-    "item_moon_shard"
-}
 
 tOutFitList['outfit_carry'] = tOutFitList['outfit_tank'] 
 
@@ -54,14 +36,35 @@ tOutFitList['outfit_priest'] = tOutFitList['outfit_tank']
 
 tOutFitList['outfit_mage'] = tOutFitList['outfit_tank']
 
+tOutFitList['outfit_tank'] = {
+    "item_tango",
+    "item_double_branches",
+	"item_circlet",
+	"item_circlet",
+
+    "item_magic_wand",
+	"item_helm_of_iron_will",
+	"item_ring_of_basilius",
+    "item_arcane_boots",
+	"item_veil_of_discord",
+	"item_blink",
+    "item_eternal_shroud",--
+    "item_kaya_and_sange",--
+	"item_shivas_guard",--
+    sLotusPipe,--
+	"item_travel_boots",
+    "item_arcane_blink",--
+	"item_travel_boots_2",--
+    "item_aghanims_shard",
+    "item_ultimate_scepter_2",
+    "item_moon_shard"
+}
+
 X['sBuyList'] = tOutFitList[sOutfitType]
 
 X['sSellList'] = {
-    "item_bracer",
+	"item_circlet",
     "item_magic_wand",
-
-	"item_ring_of_protection",
-    "item_quelling_blade"
 }
 
 if J.Role.IsPvNMode() or J.Role.IsAllShadow() then X['sBuyList'], X['sSellList'] = { 'PvN_mid' }, {} end

@@ -528,7 +528,7 @@ Item['item_force_staff']	= GetItemComponents( 'item_force_staff' )[1]
 
 Item['item_glimmer_cape']	= GetItemComponents( 'item_glimmer_cape' )[1]
 
-Item['item_guardian_greaves']	= GetItemComponents( 'item_guardian_greaves' )[1]
+Item['item_guardian_greaves']	= {"item_arcane_boots", "item_mekansm", "item_buckler", "item_recipe_guardian_greaves"}
 
 Item['item_greater_crit']	= GetItemComponents( 'item_greater_crit' )[1]
 
@@ -544,7 +544,7 @@ Item['item_helm_of_the_dominator']	= GetItemComponents( 'item_helm_of_the_domina
 
 Item['item_hood_of_defiance']	= GetItemComponents( 'item_hood_of_defiance' )[1]
 
-Item['item_hurricane_pike']		= GetItemComponents( 'item_hurricane_pike' )[1]
+Item['item_hurricane_pike']		= { 'item_dragon_lance', 'item_force_staff', 'item_recipe_hurricane_pike' }
 
 Item['item_holy_locket']	= GetItemComponents( 'item_holy_locket' )[1]
 
@@ -705,6 +705,7 @@ Item["item_disperser"] 							= { "item_diffusal_blade", "item_eagle", "item_rec
 ---------- 7.35 NEW ITEMS ---------------
 Item["item_angels_demise"] 						= { "item_phylactery", "item_lesser_crit", "item_recipe_angels_demise" }
 Item["item_parasma"] 							= { "item_witch_blade", "item_mystic_staff" }
+Item["item_khanda"] 							= { "item_phylactery", "item_lesser_crit", "item_recipe_khanda" }
 
 --新自定义物品
 Item['item_new_1']	= GetItemComponents( 'item_new_1' )[1]

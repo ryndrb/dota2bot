@@ -24,7 +24,7 @@ local tTalentTreeList = {
 }
 
 local tAllAbilityBuildList = {
-						{2,3,1,1,1,6,1,3,3,3,2,6,2,2,6},
+						{3,2,1,1,1,6,1,3,3,3,2,6,2,2,6},--pos1,2
 }
 
 local nAbilityBuildList = J.Skill.GetRandomBuild(tAllAbilityBuildList)
@@ -36,8 +36,8 @@ local tOutFitList = {}
 tOutFitList['outfit_carry'] = {
 
 	"item_slippers",
-	"item_double_circlet",
-	"item_branches",
+	"item_circlet",
+	"item_double_branches",
 	"item_tango",
 
 	"item_wraith_band",
@@ -46,35 +46,16 @@ tOutFitList['outfit_carry'] = {
 	"item_power_treads",
 	"item_magic_wand",
 
-	"item_maelstrom",
-	"item_black_king_bar",--
 	"item_gungir",--
-	"item_aghanims_shard",
+	"item_black_king_bar",--
+	"item_hurricane_pike",--
+	"item_butterfly",--
 	"item_greater_crit",--
-	"item_monkey_king_bar",--
-	"item_satanic",--
 	"item_travel_boots_2",--
 
 	"item_moon_shard",
-	"item_ultimate_scepter_2"
-
--- 	"item_ranged_carry_outfit",
--- 	"item_dragon_lance",
--- 	"item_rod_of_atos",
--- 	"item_maelstrom",
--- 	"item_black_king_bar",
--- 	"item_gungir",
--- --	"item_ultimate_scepter",
--- 	"item_aghanims_shard",
--- 	"item_travel_boots",
--- 	"item_bloodthorn",
--- 	"item_hurricane_pike",	
--- 	"item_ultimate_scepter",
--- 	"item_moon_shard",
--- 	"item_travel_boots_2",
--- 	"item_ultimate_scepter_2",
--- 	"item_butterfly",
-	
+	"item_ultimate_scepter_2",
+	"item_aghanims_shard",
 }
 
 tOutFitList['outfit_mid'] = tOutFitList['outfit_carry']
@@ -88,16 +69,9 @@ tOutFitList['outfit_tank'] = tOutFitList['outfit_carry']
 X['sBuyList'] = tOutFitList[sOutfitType]
 
 X['sSellList'] = {
-
 	"item_wraith_band",
 	"item_bracer",
-	
-	"item_power_treads",
 	"item_magic_wand",
-
-	-- "item_travel_boots",
-	-- "item_magic_wand",
-	
 }
 
 

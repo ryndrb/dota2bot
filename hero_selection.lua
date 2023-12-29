@@ -401,7 +401,7 @@ local sCarryList = {
 	"npc_dota_hero_sniper",
 	"npc_dota_hero_sven",
 	"npc_dota_hero_templar_assassin",
-	"npc_dota_hero_viper",
+	--"npc_dota_hero_viper",
 	-- "npc_dota_hero_ogre_magi",
 	-- "npc_dota_hero_sand_king",
 	-- "npc_dota_hero_riki",
@@ -413,9 +413,11 @@ local sCarryList = {
 	-- "npc_dota_hero_axe",
 	"npc_dota_hero_slark",
 	"npc_dota_hero_juggernaut",
-	"npc_dota_hero_mirana",
+	--"npc_dota_hero_mirana",
 	"npc_dota_hero_naga_siren",
 	"npc_dota_hero_nevermore",
+
+	"npc_dota_hero_lina",
 
 	"npc_dota_hero_faceless_void",
 	"npc_dota_hero_alchemist",
@@ -441,6 +443,9 @@ local sTankList = {
 	-- "npc_dota_hero_omniknight",
 
 	"npc_dota_hero_axe",
+	"npc_dota_hero_razor",
+	"npc_dota_hero_viper",
+	"npc_dota_hero_necrolyte",
 
 	"npc_dota_hero_shredder",
 	"npc_dota_hero_mars",
@@ -468,7 +473,6 @@ local sMidList = {
 	"npc_dota_hero_necrolyte",
 	"npc_dota_hero_huskar",
 
-	"npc_dota_hero_shredder",
 	"npc_dota_hero_storm_spirit",
 	"npc_dota_hero_ember_spirit",
 	"npc_dota_hero_void_spirit",

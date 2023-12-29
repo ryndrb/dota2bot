@@ -23,15 +23,8 @@ local tTalentTreeList = {
 						['t10'] = {10, 0},
 }
 
-if RandomInt( 1, 9 ) < 4
-then
-	tTalentTreeList['t25'][1] = 0
-else
-	tTalentTreeList['t25'][2] = 0
-end
-
 local tAllAbilityBuildList = {
-						{2,3,2,1,1,6,1,1,2,2,6,3,3,3,6},
+						{2,3,2,3,2,1,1,1,1,2,3,3,6,6,6},--pos1,2
 }
 
 local nAbilityBuildList = J.Skill.GetRandomBuild( tAllAbilityBuildList )
@@ -42,31 +35,27 @@ local tOutFitList = {}
 
 tOutFitList['outfit_carry'] = {
 	"item_tango",
-	"item_branches",
-	"item_branches",
-	"item_branches",
+	"item_double_branches",
 	"item_slippers",
 	"item_circlet",
 
 	"item_wraith_band",
-	"item_magic_wand",
+	"item_wraith_band",
 	"item_power_treads",
+	"item_magic_wand",
 
 	"item_mask_of_madness",
-	"item_maelstrom",
 	"item_dragon_lance",
+	"item_lesser_crit",
 	"item_hurricane_pike",--
-	"item_silver_edge",--
-
-	-- "item_black_king_bar",--
-	"item_mjollnir",--
 	"item_aghanims_shard",
-	"item_monkey_king_bar",--
 	"item_greater_crit",--
+	"item_skadi",--
+	"item_khanda",--
 	"item_travel_boots",
-
-	"item_moon_shard",
+	"item_satanic",--
 	"item_travel_boots_2",--
+	"item_moon_shard",
 	"item_ultimate_scepter_2",
 }
 
@@ -78,40 +67,9 @@ tOutFitList['outfit_mage'] = tOutFitList['outfit_carry']
 
 tOutFitList['outfit_tank'] = tOutFitList['outfit_carry']
 
-X['sBuyList'] = tOutFitList[sOutfitType]
-
--- if RandomInt( 1, 99 ) >= 88
--- then
--- 	X['sBuyList'] = {
--- 					"item_ranged_carry_outfit",
--- 					"item_dragon_lance",
--- 					"item_hand_of_midas",
--- 					"item_aghanims_shard",
--- 					"item_maelstrom",
--- 					"item_hurricane_pike",
--- 					"item_ultimate_scepter",
--- 					"item_mjollnir",
--- 					"item_skadi",
--- 					"item_travel_boots",
--- 					"item_greater_crit",
--- 					"item_moon_shard",
--- 					"item_travel_boots_2",
--- 					"item_ultimate_scepter_2",
--- 					"item_monkey_king_bar",
-
--- 	}
--- end
-
-
 X['sSellList'] = {
-	"item_tango",
-	"item_branches",
-	"item_slippers",
-	"item_circlet",
-
 	"item_wraith_band",
-	"item_power_treads",
-
+	"item_magic_wand",
 	"item_mask_of_madness",
 }
 

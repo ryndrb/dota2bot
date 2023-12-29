@@ -24,9 +24,7 @@ local tTalentTreeList = {
 }
 
 local tAllAbilityBuildList = {
-						{1,4,1,4,1,4,1,4,6,5,6,5,5,5,6},
-						-- {4,1,4,1,1,4,1,4,5,6,6,5,5,5,6},
-						-- {4,1,4,1,4,1,4,1,5,6,6,5,5,5,6},
+						{1,4,1,4,1,4,1,4,6,5,6,5,5,5,6},--pos1,2
 }
 
 local nAbilityBuildList = J.Skill.GetRandomBuild( tAllAbilityBuildList )
@@ -36,29 +34,26 @@ local nTalentBuildList = J.Skill.GetTalentBuild( tTalentTreeList )
 local tOutFitList = {}
 
 tOutFitList['outfit_carry'] = {
-
 	"item_tango",
-	"item_magic_stick",
 	"item_double_branches",
-	"item_sobi_mask",
+	"item_faerie_fire",
+	"item_enchanted_mango",
+	"item_enchanted_mango",
 	
-	"item_ring_of_basilius",
+	"item_bottle",
 	"item_power_treads",
 	"item_magic_wand",
 	"item_dragon_lance",
-	"item_invis_sword",
-	"item_mask_of_madness",
 	"item_black_king_bar",--
-	"item_silver_edge",--
-	"item_butterfly",--
-	"item_satanic",--
 	"item_hurricane_pike",--
-	"item_monkey_king_bar",--
+	"item_butterfly",--
 	"item_aghanims_shard",
-	"item_travel_boots_2",--
+	"item_greater_crit",--
+	"item_satanic",--
+	"item_travel_boots",
 	"item_moon_shard",
+	"item_travel_boots_2",--
 	"item_ultimate_scepter_2",
-
 }
 
 tOutFitList['outfit_mid'] = tOutFitList['outfit_carry']
@@ -72,13 +67,8 @@ tOutFitList['outfit_tank'] = tOutFitList['outfit_carry']
 X['sBuyList'] = tOutFitList[sOutfitType]
 
 X['sSellList'] = {
-
-	"item_power_treads",
+	"item_bottle",
 	"item_magic_wand",
-
-	"item_mask_of_madness",
-	"item_ring_of_basilius",
-
 }
 
 if J.Role.IsPvNMode() or J.Role.IsAllShadow() then X['sBuyList'], X['sSellList'] = { 'PvN_mid' }, {} end

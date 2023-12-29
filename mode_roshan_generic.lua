@@ -19,23 +19,23 @@ local roshanDireLoc     = Vector(-7549, 7562, 1107)
 
 function GetDesire()
     local aliveAlly = J.GetNumOfAliveHeroes(false)
+    local aliveEnemy = J.GetNumOfAliveHeroes(true)
+    local aCount = bot:GetNearbyHeroes(1200, false, BOT_MODE_NONE)
+    local eCount = bot:GetNearbyHeroes(1200, true, BOT_MODE_NONE)
 
     shouldKillRoshan = IsRoshanAlive()
 
     if shouldKillRoshan
     and (J.GetCoresTotalNetworth() / 3) >= AverageCoreNetworth
+    and aliveAlly >= aliveEnemy
     then
-        local desire = BOT_ACTION_DESIRE_HIGH
+        local desire = BOT_ACTION_DESIRE_VERYHIGH
         local nearbyAlly, nearbyAllyCore = IsNearRoshan()
 
-        if aliveAlly >= 4 then
+        if (nearbyAlly > 2 and nearbyAllyCore >= 2)
+        or (roshan ~= nil and (roshan:GetHealth() / roshan:GetMaxHealth()) < 0.3)
+        then
            return desire
-        else
-            if (nearbyAlly > 2 and nearbyAllyCore > 1)
-            or (roshan ~= nil and (roshan:GetHealth() / roshan:GetMaxHealth()) < 0.3)
-            then
-                return 0.95
-            end
         end
     end
 
@@ -44,6 +44,7 @@ end
 
 function Think()
     local timeOfDay, time = CheckTimeOfDay()
+    local nearbyAlly, nearbyAllyCore = IsNearRoshan()
     -- local isInPlace, twinGate = IsInTwinGates(timeOfDay, time)
 
     if timeOfDay == "day" and time > 240
@@ -90,7 +91,9 @@ function Think()
     local nCreeps = bot:GetNearbyNeutralCreeps(800)
     for _, c in pairs(nCreeps) do
         if string.find(c:GetUnitName(), "roshan")
-        and IsEnoughAllies()
+        and (IsEnoughAllies()
+        or (J.IsCore(bot) and c:GetHealth() / c:GetMaxHealth() < 0.3)
+        or nearbyAlly >= 2 and nearbyAllyCore > 0)
         then
             bot:ActionPush_AttackUnit(c, false)
         end

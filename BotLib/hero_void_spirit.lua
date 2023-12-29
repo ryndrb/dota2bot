@@ -34,9 +34,9 @@ tOutFitList['outfit_mid'] = {
     "item_gauntlets",
 
     "item_bottle",
+    "item_bracer",
     "item_boots",
     "item_magic_wand",
-    "item_bracer",
     "item_power_treads",
     "item_echo_sabre",
     "item_ultimate_scepter",
@@ -45,9 +45,9 @@ tOutFitList['outfit_mid'] = {
     "item_travel_boots",
     "item_greater_crit",--
     "item_sheepstick",--
-    "item_travel_boots_2",--
-    "item_nullifier",--
     "item_ultimate_scepter_2",
+    "item_travel_boots_2",--
+    "item_bloodthorn",--
     "item_moon_shard",
     "item_aghanims_shard",
 }
@@ -63,7 +63,6 @@ X['sBuyList'] = tOutFitList[sOutfitType]
 X['sSellList'] = {
     "item_bottle",
     "item_magic_wand",
-
     "item_bracer",
     "item_echo_sabre",
 }

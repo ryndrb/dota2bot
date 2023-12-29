@@ -17,14 +17,14 @@ local sAbilityList = J.Skill.GetAbilityList( bot )
 local sOutfitType = J.Item.GetOutfitType( bot )
 
 local tTalentTreeList = {
-	['t25'] = {10, 0},
-	['t20'] = {0, 10},
-	['t15'] = {10, 0},
-	['t10'] = {0, 10},
+							['t25'] = {10, 0},
+							['t20'] = {0, 10},
+							['t15'] = {10, 0},
+							['t10'] = {10, 0},
 }
 
 local tAllAbilityBuildList = {
-	{2,3,1,1,1,6,1,2,2,2,3,3,6,3,6},
+							{1,2,1,2,1,6,1,2,2,2,2,6,3,3,6},--pos1,2
 }
 
 local nAbilityBuildList = J.Skill.GetRandomBuild( tAllAbilityBuildList )
@@ -37,24 +37,25 @@ local tOutFitList = {}
 
 tOutFitList['outfit_carry'] = {
 
-	"item_double_branches",
-	"item_quelling_blade",
 	"item_tango",
+	"item_double_branches",
+	"item_circlet",
+	"item_circlet",
+	"item_quelling_blade",
 
-	"item_power_treads",
 	"item_magic_wand",
+	"item_power_treads",
 	"item_dragon_lance",
 	"item_desolator",--
 	"item_blink",
-	sRandomItem_1,--
-	"item_hurricane_pike",--
-	"item_greater_crit",--
-	"item_arcane_blink",--
-	"item_nullifier",--
-	"item_moon_shard",
 	"item_aghanims_shard",
+	"item_black_king_bar",--
+	"item_greater_crit",--
+	"item_hurricane_pike",--
+	"item_swift_blink",--
+	"item_sheepstick",--
+	"item_moon_shard",
 	"item_ultimate_scepter_2",
-
 }
 
 tOutFitList['outfit_mid'] = tOutFitList['outfit_carry']
@@ -68,9 +69,10 @@ tOutFitList['outfit_tank'] = tOutFitList['outfit_carry']
 X['sBuyList'] = tOutFitList[sOutfitType]
 
 X['sSellList'] = {
-
+	"item_circlet",
 	"item_quelling_blade",
 	"item_magic_wand",
+	"item_power_treads",
 }
 
 if J.Role.IsPvNMode() or J.Role.IsAllShadow() then X['sBuyList'], X['sSellList'] = { 'PvN_TA' }, {} end

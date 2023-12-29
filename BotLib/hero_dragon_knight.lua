@@ -18,50 +18,64 @@ local sAbilityList = J.Skill.GetAbilityList( bot )
 local sOutfitType = J.Item.GetOutfitType( bot )
 
 local tTalentTreeList = {
-						['t25'] = {10, 0},
-						['t20'] = {10, 0},
-						['t15'] = {10, 0},
-						['t10'] = {0, 10},
+						{--pos2
+							['t25'] = {10, 0},
+							['t20'] = {0, 10},
+							['t15'] = {10, 0},
+							['t10'] = {0, 10},
+						},
+						{--pos3
+							['t25'] = {10, 0},
+							['t20'] = {0, 10},
+							['t15'] = {10, 0},
+							['t10'] = {0, 10},
+						},
 }
 
 local tAllAbilityBuildList = {
-	{1,3,3,2,1,6,1,1,3,3,6,2,2,2,6}, -- mid
-	{2,3,3,1,1,6,1,1,2,2,2,6,3,3,6}, -- off
+						{1,3,3,2,3,6,1,1,1,2,6,2,2,3,6},--pos2
+						{2,3,3,1,1,6,1,1,2,2,2,6,3,3,6},--pos3
 }
 
-local nAbilityBuildList = J.Skill.GetRandomBuild( tAllAbilityBuildList )
-
-local nTalentBuildList = J.Skill.GetTalentBuild( tTalentTreeList )
+local nAbilityBuildList
+local nTalentBuildList
 
 if sOutfitType == "outfit_mid"
-then nAbilityBuildList = tAllAbilityBuildList[1]
-elseif sOutfitType == "outfit_tank" 
-then nAbilityBuildList = tAllAbilityBuildList[2]
+then
+    nAbilityBuildList   = tAllAbilityBuildList[1]
+    nTalentBuildList    = J.Skill.GetTalentBuild(tTalentTreeList[1])
+elseif sOutfitType == "outfit_tank"
+then
+    nAbilityBuildList   = tAllAbilityBuildList[2]
+    nTalentBuildList    = J.Skill.GetTalentBuild(tTalentTreeList[2])
 end
 
 local tOutFitList = {}
 
 tOutFitList['outfit_mid'] = {
+	"item_tango",
+	"item_double_branches",
 	"item_quelling_blade",
 	"item_double_gauntlets",
-	"item_tango",
-	"item_branches",
+
 	"item_bracer",
-	"item_power_treads",
+	"item_bracer",
+	"item_boots",
 	"item_magic_wand",
-
+	"item_power_treads",
+	"item_hand_of_midas",
 	"item_blink",
+	"item_manta",--
 	"item_ultimate_scepter",
-	"item_octarine_core",--
 	"item_black_king_bar",--
-	"item_greater_crit",--
+	"item_octarine_core",--
 	"item_assault",--
-	"item_travel_boots_2",--
-	"item_overwhelming_blink",--
-
-	"item_aghanims_shard",
+	"item_travel_boots",
 	"item_ultimate_scepter_2",
+	"item_overwhelming_blink",--
+	"item_travel_boots_2",--
 	"item_moon_shard",
+	"item_aghanims_shard",
 }
 
 tOutFitList['outfit_carry'] = tOutFitList['outfit_mid']
@@ -71,44 +85,39 @@ tOutFitList['outfit_priest'] = tOutFitList['outfit_mid']
 tOutFitList['outfit_mage'] = tOutFitList['outfit_mid']
 
 tOutFitList['outfit_tank'] = {
-
 	"item_tango",
 	"item_double_branches",
 	"item_quelling_blade",
-	"item_bracer",
-	"item_magic_wand",
-	"item_boots",
+	"item_gauntlets",
+	"item_circlet",
 
-	"item_hand_of_midas",
+	"item_bracer",
+	"item_boots",
+	"item_magic_wand",
 	"item_power_treads",
+	"item_hand_of_midas",
 	"item_blink",
-	"item_black_king_bar",--
 	"item_ultimate_scepter",
+	"item_black_king_bar",--
 	"item_assault",--
 	"item_octarine_core",--
-	"item_sheepstick",--
-	"item_overwhelming_blink",--
+	"item_bloodthorn",--
 	"item_ultimate_scepter_2",
+	"item_travel_boots",
+	"item_overwhelming_blink",--
 	"item_travel_boots_2",--
 
-	"item_aghanims_shard",
 	"item_moon_shard",
-
-
-
+	"item_aghanims_shard",
 }
 
 X['sBuyList'] = tOutFitList[sOutfitType]
 
 X['sSellList'] = {
-
-	"item_power_treads",
 	"item_quelling_blade",
-
+	"item_bracer",
 	"item_magic_wand",
 	"item_hand_of_midas",
-
-	"item_bracer",
 }
 
 if J.Role.IsPvNMode() or J.Role.IsAllShadow() then X['sBuyList'], X['sSellList'] = { 'PvN_tank' }, {"item_power_treads", 'item_quelling_blade'} end

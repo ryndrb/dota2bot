@@ -4312,6 +4312,38 @@ X.ConsiderItemDesire["item_tpscroll"] = function( hItem )
 		return BOT_ACTION_DESIRE_HIGH, hEffectTarget, sCastType, sCastMotive
 	end
 
+	-- Roshan
+	if bot:GetActiveMode() == BOT_MODE_ROSHAN
+	and not J.IsInTeamFight(bot, 1600)
+	and nEnemyCount == 0
+	then
+		local roshan = nil
+		for _, u in pairs(GetUnitList(UNIT_LIST_ALL)) do
+			if rTwinGate == nil then
+				if u:GetUnitName() == "npc_dota_roshan" then
+					roshan = u
+				end
+			end
+		end
+
+		if roshan ~= nil then
+			local lane = nil
+			if roshan:GetLocation().x > 0 then
+				lane = LANE_BOT
+			else
+				lane = LANE_TOP
+			end
+
+			local laneFront = GetLaneFrontLocation( GetTeam(), lane, 0 )
+			hEffectTarget = J.GetNearbyLocationToTp(roshan:GetLocation())
+			sCastMotive = 'roshan'
+			if J.GetLocationToLocationDistance( laneFront, hEffectTarget ) < 6000
+			then
+				return BOT_ACTION_DESIRE_HIGH, hEffectTarget, sCastType, sCastMotive
+			end
+		end
+	end
+
 	--守塔
 	if J.IsDefending( bot )
 		and nModeDesire > BOT_MODE_DESIRE_MODERATE

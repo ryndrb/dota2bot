@@ -18,7 +18,7 @@ Worth noting that most of my testings are done thru Turbo Mode (Bots v Bots) and
 - ***Heroes (Pos: 1,2,3,4,5)***
     - Heroes can't be core or support in their possible roles; strictly core/supports; due to ability usage
     - ***Added***
-        - [2,3] Timbersaw
+        - [3] Timbersaw
         - [3] Mars
         - [2] Storm Spirit
         - [2] Ember Spirit

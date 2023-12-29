@@ -10,14 +10,14 @@ local sAbilityList = J.Skill.GetAbilityList( bot )
 local sOutfitType = J.Item.GetOutfitType( bot )
 
 local tTalentTreeList = {
-    ['t25'] = {0, 10},
-    ['t20'] = {0, 10},
-    ['t15'] = {0, 10},
-    ['t10'] = {0, 10},
+						['t25'] = {0, 10},
+						['t20'] = {0, 10},
+						['t15'] = {0, 10},
+						['t10'] = {10, 0},
 }
 
 local tAllAbilityBuildList = {
-    {1, 3, 2, 1, 1, 6, 1, 3, 3, 3, 6, 2, 2, 2, 6},
+						{1,3,2,1,1,6,1,3,3,3,6,2,2,2,6},--pos2
 }
 
 local nAbilityBuildList = J.Skill.GetRandomBuild( tAllAbilityBuildList )
@@ -28,21 +28,24 @@ local tOutFitList = {}
 
 tOutFitList['outfit_mid'] = {
     "item_tango",
-    "item_magic_wand",
+	"item_double_branches",
+	"item_faerie_fire",
 
-    -- "item_soul_ring",
+	"item_bottle",
+	"item_boots",
+	"item_falcon_blade",
     "item_power_treads",
+    "item_magic_wand",
     "item_witch_blade",
     "item_kaya_and_sange",--
-    "item_black_king_bar",--
 	"item_parasma",--
+    "item_black_king_bar",--
     "item_ultimate_scepter",
-    "item_sheepstick",--
-    "item_sphere",--
-    "item_ultimate_scepter_2",
-    -- "item_revenants_brooch",--
     "item_shivas_guard",--
     "item_aghanims_shard",
+    "item_sheepstick",--
+    "item_ultimate_scepter_2",
+    "item_travel_boots_2",--
     "item_moon_shard",
 }
 
@@ -57,10 +60,9 @@ tOutFitList['outfit_mage'] = tOutFitList['outfit_mid']
 X['sBuyList'] = tOutFitList[sOutfitType]
 
 X['sSellList'] = {
-    "item_tango",
+    "item_bottle",
+	"item_falcon_blade",
     "item_magic_wand",
-
-    "item_soul_ring",
 }
 
 if J.Role.IsPvNMode() or J.Role.IsAllShadow() then X['sBuyList'], X['sSellList'] = { 'PvN_mid' }, {} end
