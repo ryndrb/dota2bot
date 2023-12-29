@@ -67,6 +67,8 @@ tOutFitList['outfit_mage'] = tOutFitList['outfit_carry']
 
 tOutFitList['outfit_tank'] = tOutFitList['outfit_carry']
 
+X['sBuyList'] = tOutFitList[sOutfitType]
+
 X['sSellList'] = {
 	"item_wraith_band",
 	"item_magic_wand",
