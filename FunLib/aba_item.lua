@@ -704,8 +704,7 @@ Item["item_disperser"] 							= { "item_diffusal_blade", "item_eagle", "item_rec
 
 ---------- 7.35 NEW ITEMS ---------------
 Item["item_angels_demise"] 						= { "item_phylactery", "item_lesser_crit", "item_recipe_angels_demise" }
-Item["item_parasma"] 							= { "item_witch_blade", "item_mystic_staff" }
-Item["item_khanda"] 							= { "item_phylactery", "item_lesser_crit", "item_recipe_khanda" }
+Item["item_devastator"] 						= { "item_witch_blade", "item_mystic_staff" }
 
 --新自定义物品
 Item['item_new_1']	= GetItemComponents( 'item_new_1' )[1]

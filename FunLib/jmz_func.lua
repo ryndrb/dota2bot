@@ -3589,6 +3589,57 @@ function J.GetClosestUnitToLocationFrommAll2(hUnit, nRange, vLoc)
 	
 end
 
+function J.CheckTimeOfDay()
+    local cycle = 600
+    local time = DotaTime() % cycle
+    local night = 300
+
+    if time < night then return "day", time
+    else return "night", time
+    end
+end
+
+function J.GetArmorReducers(hero)
+	local reducedArmor = 0
+
+	-- Items (Passives for now)
+	if J.HasItem(hero, "item_desolator")
+	and (hero:GetItemInSlot (6) ~= "item_desolator" or hero:GetItemInSlot(7) ~= "item_desolator" or hero:GetItemInSlot(8) ~= "item_desolator")
+	then
+		reducedArmor = reducedArmor + 6
+	end
+
+	if J.HasItem(hero, "item_assault")
+	and (hero:GetItemInSlot (6) ~= "item_assault" or hero:GetItemInSlot(7) ~= "item_assault" or hero:GetItemInSlot(8) ~= "item_assault")
+	then
+		reducedArmor = reducedArmor + 5
+	end
+
+	if J.HasItem(hero, "item_blight_stone")
+	and (hero:GetItemInSlot (6) ~= "item_blight_stone" or hero:GetItemInSlot(7) ~= "item_blight_stone" or hero:GetItemInSlot(8) ~= "item_blight_stone")
+	then
+		reducedArmor = reducedArmor + 2
+	end
+
+	-- Abilities (Passives for now)
+	local NevermoreDarkLord = hero:GetAbilityByName("nevermore_dark_lord")
+	if hero:GetUnitName() == "npc_dota_hero_nevermore"
+	and NevermoreDarkLord ~= nil
+	and NevermoreDarkLord:GetLevel() > 0
+	then
+		reducedArmor = reducedArmor + NevermoreDarkLord:GetSpecialValueInt("presence_armor_reduction")
+	end
+
+	local NagaSirenRiptide = hero:GetAbilityByName("naga_siren_rip_tide")
+	if hero:GetUnitName() == "npc_dota_hero_naga_siren"
+	and NagaSirenRiptide ~= nil
+	and NagaSirenRiptide:GetLevel() > 0 then
+		reducedArmor = reducedArmor + NagaSirenRiptide:GetSpecialValueInt("armor_reduction")
+	end
+
+	return reducedArmor
+end
+
 function J.ConsolePrintActiveMode(bot)
 	local mode = bot:GetActiveMode()
 

@@ -38,7 +38,7 @@ tOutFitList['outfit_mid'] = {
     "item_magic_wand",
     "item_witch_blade",
     "item_kaya_and_sange",--
-	"item_parasma",--
+	"item_devastator",--
     "item_black_king_bar",--
     "item_ultimate_scepter",
     "item_shivas_guard",--

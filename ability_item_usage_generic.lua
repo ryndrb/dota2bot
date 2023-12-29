@@ -4317,30 +4317,32 @@ X.ConsiderItemDesire["item_tpscroll"] = function( hItem )
 	and not J.IsInTeamFight(bot, 1600)
 	and nEnemyCount == 0
 	then
-		local roshan = nil
-		for _, u in pairs(GetUnitList(UNIT_LIST_ALL)) do
-			if rTwinGate == nil then
-				if u:GetUnitName() == "npc_dota_roshan" then
-					roshan = u
-				end
-			end
+		local lane = nil
+		local roshanLoc = nil
+
+		local timeOfDay, time = J.CheckTimeOfDay()
+		if timeOfDay == "day" and time > 240 then
+			lane = LANE_TOP
+			roshanLoc = Vector(-7549, 7562, 1107)
+		elseif timeOfDay == "day" then
+			lane = LANE_BOT
+			roshanLoc = Vector(7625, -7511, 1092)
+		end
+	
+		if timeOfDay == "night" and time > 540 then
+			lane = LANE_BOT
+			roshanLoc = Vector(7625, -7511, 1092)
+		elseif timeOfDay == "night" then
+			lane = LANE_TOP
+			roshanLoc = Vector(-7549, 7562, 1107)
 		end
 
-		if roshan ~= nil then
-			local lane = nil
-			if roshan:GetLocation().x > 0 then
-				lane = LANE_BOT
-			else
-				lane = LANE_TOP
-			end
-
-			local laneFront = GetLaneFrontLocation( GetTeam(), lane, 0 )
-			hEffectTarget = J.GetNearbyLocationToTp(roshan:GetLocation())
-			sCastMotive = 'roshan'
-			if J.GetLocationToLocationDistance( laneFront, hEffectTarget ) < 6000
-			then
-				return BOT_ACTION_DESIRE_HIGH, hEffectTarget, sCastType, sCastMotive
-			end
+		local laneFront = GetLaneFrontLocation( GetTeam(), lane, 0 )
+		hEffectTarget = J.GetNearbyLocationToTp(roshanLoc)
+		sCastMotive = 'roshan'
+		if J.GetLocationToLocationDistance( laneFront, hEffectTarget ) > 6000
+		then
+			return BOT_ACTION_DESIRE_HIGH, hEffectTarget, sCastType, sCastMotive
 		end
 	end
 

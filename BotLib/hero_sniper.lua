@@ -51,7 +51,7 @@ tOutFitList['outfit_carry'] = {
 	"item_aghanims_shard",
 	"item_greater_crit",--
 	"item_skadi",--
-	"item_khanda",--
+	"item_angels_demise",--
 	"item_travel_boots",
 	"item_satanic",--
 	"item_travel_boots_2",--

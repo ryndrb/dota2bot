@@ -4,7 +4,12 @@ local J = require( GetScriptDirectory()..'/FunLib/jmz_func')
 function Push.GetPushDesire(bot, lane)
 
     local max = 0.9
-    if GetDefendLaneDesire(LANE_TOP) > 0.75 or GetDefendLaneDesire(LANE_MID) > 0.75 or GetDefendLaneDesire(LANE_BOT) > 0.75 then
+    if (GetDefendLaneDesire(LANE_TOP) > 0.75 or GetDefendLaneDesire(LANE_MID) > 0.75 or GetDefendLaneDesire(LANE_BOT) > 0.75)
+    or J.IsCore(bot)
+	and bot:GetActiveMode() == BOT_MODE_ROSHAN
+	and bot:GetActiveModeDesire() > 0.75
+	and not J.CanBeAttacked(GetAncient(GetTeam()))
+    then
         max = 0.75
     end
 
@@ -16,7 +21,7 @@ function Push.GetPushDesire(bot, lane)
     if (J.IsModeTurbo() and DotaTime() < 8 * 60)
 	or DotaTime() < 12 * 60
     then
-        local teamFront = GetLaneFrontAmount(GetTeam(), lane, false)
+        local teamFront = GetLaneFrontAmount(GetTeam(), lane, false) * 0.75
 
         if bot:GetHealth() / bot:GetMaxHealth() < 0.3
         or (enemies ~= nil and allies ~= nil and #enemies > #allies)
@@ -46,6 +51,7 @@ function Push.GetPushDesire(bot, lane)
     if Push.WhichLaneToPush(bot) == lane
     then
         local amount = RemapValClamped(GetLaneFrontAmount(GetTeam(), lane, false), 0, 1, 0, max) --* (GetLaneFrontAmount(GetOpposingTeam(), lane, false))
+        amount = amount * 0.75
 
         if J.DoesTeamHaveAegis(GetUnitList(UNIT_LIST_ALLIED_HEROES))
         then

@@ -51,7 +51,7 @@ tOutFitList['outfit_mid'] = {
 	"item_shivas_guard",--
 	"item_aghanims_shard",
 	"item_travel_boots",
-	"item_parasma",--
+	"item_devastator",--
 	"item_cyclone",
 	"item_ultimate_scepter_2",
 	"item_wind_waker",--

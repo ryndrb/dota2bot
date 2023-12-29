@@ -2,8 +2,6 @@ local bot = GetBot()
 
 local J = require( GetScriptDirectory()..'/FunLib/jmz_func' )
 
-local AverageCoreNetworth = 10001
-
 local killTime = 0.0
 local shouldKillRoshan = false
 local DoingRoshanMessage = DotaTime()
@@ -22,29 +20,41 @@ function GetDesire()
     local aliveEnemy = J.GetNumOfAliveHeroes(true)
     local aCount = bot:GetNearbyHeroes(1200, false, BOT_MODE_NONE)
     local eCount = bot:GetNearbyHeroes(1200, true, BOT_MODE_NONE)
+    local healthPercentage = bot:GetHealth() / bot:GetMaxHealth()
+    
+    local aliveHeroesList = {}
+    for _, h in pairs(GetUnitList(UNIT_LIST_ALLIED_HEROES)) do
+        if h:IsAlive()
+        then
+            table.insert(aliveHeroesList, h)
+        end
+    end
 
     shouldKillRoshan = IsRoshanAlive()
 
     if shouldKillRoshan
-    and (J.GetCoresTotalNetworth() / 3) >= AverageCoreNetworth
     and aliveAlly >= aliveEnemy
+    and healthPercentage > 0.3
+    and HasEnoughDPSForRoshan(aliveHeroesList)
     then
-        local desire = BOT_ACTION_DESIRE_VERYHIGH
-        local nearbyAlly, nearbyAllyCore = IsNearRoshan()
-
-        if (nearbyAlly > 2 and nearbyAllyCore >= 2)
-        or (roshan ~= nil and (roshan:GetHealth() / roshan:GetMaxHealth()) < 0.3)
+        if (roshan ~= nil and (roshan:GetHealth() / roshan:GetMaxHealth()) < 0.3)
+        or (#eCount >= #aCount and J.WeAreStronger(bot, 1600))
         then
-           return desire
+           return 0.94
         end
+
+        if (#aCount > #eCount and not J.WeAreStronger(bot, 1200)) then
+            return 0.27
+        end
+
+        return 0.85
     end
 
     return BOT_ACTION_DESIRE_NONE
 end
 
 function Think()
-    local timeOfDay, time = CheckTimeOfDay()
-    local nearbyAlly, nearbyAllyCore = IsNearRoshan()
+    local timeOfDay, time = J.CheckTimeOfDay()
     -- local isInPlace, twinGate = IsInTwinGates(timeOfDay, time)
 
     if timeOfDay == "day" and time > 240
@@ -92,8 +102,7 @@ function Think()
     for _, c in pairs(nCreeps) do
         if string.find(c:GetUnitName(), "roshan")
         and (IsEnoughAllies()
-        or (J.IsCore(bot) and c:GetHealth() / c:GetMaxHealth() < 0.3)
-        or nearbyAlly >= 2 and nearbyAllyCore > 0)
+        or (J.IsCore(bot) and c:GetHealth() / c:GetMaxHealth() < 0.3))
         then
             bot:ActionPush_AttackUnit(c, false)
         end
@@ -128,48 +137,58 @@ function IsRoshanAlive()
     return false
 end
 
-function CheckTimeOfDay()
-    local cycle = 600
-    local time = DotaTime() % cycle
-    local night = 300
-
-    if time < night then return "day", time
-    else return "night", time
-    end
-end
-
 function IsEnoughAllies()
-    local allies = bot:GetNearbyHeroes(1600, false, BOT_MODE_ROSHAN)
-    if allies ~= nil then
-        return #allies > 2
+    local timeOfDay = J.CheckTimeOfDay()
+    local roshLoc = nil
+
+    if timeOfDay == "day" then
+        roshLoc = roshanRadiantLoc
+    else
+        roshLoc = roshanDireLoc
     end
 
-    return false
+    local allyList = {}
+    for _, h in pairs(GetUnitList(UNIT_LIST_ALLIED_HEROES)) do
+        if GetUnitToLocationDistance(h, roshLoc) < 2000
+        and h:GetActiveMode() == BOT_MODE_ROSHAN
+        then
+            table.insert(allyList, h)
+        end
+    end
+
+    return HasEnoughDPSForRoshan(allyList)
 end
 
-function IsNearRoshan()
-    local nearbyAlly = 0
-    local nearbyAllyCore = 0
-    local unitList = GetUnitList(UNIT_LIST_ALL)
+function HasEnoughDPSForRoshan(heroes)
+    local DPS = 0
+    local DPSThreshold = 0
+    local plannedTimeToKill = 60
 
-    for _, u in pairs(unitList) do
-        if rTwinGate == nil then
-            if u:GetUnitName() == "npc_dota_roshan" then
-                roshan = u
-            end
-        end
+    -- Roshan Stats
+    local baseHealth = 6000
+    local baseArmor = 30
+    local armorPerInterval = 0.375
+    local maxHealthBonusPerInterval = 130 * 2
+
+    local roshanHealth = baseHealth + maxHealthBonusPerInterval * math.floor(DotaTime() / 60)
+
+    for _, h in pairs(heroes) do
+        local roshanArmor = baseArmor + armorPerInterval * math.floor(DotaTime() / 60) - J.GetArmorReducers(h)
+
+        -- Only right click damage for now
+        local attackDamage = h:GetAttackDamage()
+        local attackSpeed = h:GetAttackSpeed()
+
+        local dps = attackDamage * attackSpeed * (1 - roshanArmor / (roshanArmor + 20))
+        DPS = DPS + dps
     end
 
-    if roshan ~= nil
-    and GetUnitToLocationDistance(bot, roshan:GetLocation()) < 2000
-    then
-        nearbyAlly = nearbyAlly + 1
-        if J.IsCore(bot) then
-            nearbyAllyCore = nearbyAllyCore + 1
-        end
-    end
+    DPS =  DPS / #heroes
 
-    return nearbyAlly, nearbyAllyCore
+    DPSThreshold = roshanHealth / plannedTimeToKill
+    -- print(bot:GetUnitName().." => DPS: ", DPS)
+    -- print(bot:GetUnitName().." => DPSThreshold: ", DPSThreshold)
+    return DPS >= DPSThreshold
 end
 
 -- No functionality yet from API
