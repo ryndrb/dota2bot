@@ -30,6 +30,7 @@ tOutFitList['outfit_carry'] = {
     "item_double_branches",
     "item_faerie_fire",
     "item_quelling_blade",
+	"item_circlet",
 
     "item_phase_boots",
     "item_magic_wand",
@@ -39,7 +40,7 @@ tOutFitList['outfit_carry'] = {
     "item_black_king_bar",--
     "item_abyssal_blade",--
     "item_ultimate_scepter",
-    "item_monkey_king_bar",--
+    "item_satanic",--
     "item_swift_blink",--
     "item_ultimate_scepter_2",
     "item_travel_boots",
@@ -59,9 +60,7 @@ tOutFitList['outfit_tank'] = tOutFitList['outfit_carry']
 X['sBuyList'] = tOutFitList[sOutfitType]
 
 X['sSellList'] = {
-    "item_quelling_blade",
-    -- "item_phase_boots",
-
+	"item_circlet",
     "item_magic_wand",
 }
 

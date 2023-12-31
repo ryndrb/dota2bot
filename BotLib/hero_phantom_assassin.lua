@@ -24,9 +24,7 @@ local tTalentTreeList = {
 }
 
 local tAllAbilityBuildList = {
-						{1,2,1,3,1,6,2,2,2,1,6,3,3,3,6},--safe
-						-- {1,2,1,3,1,6,1,2,2,2,6,3,3,3,6},
-						-- {1,3,1,2,1,6,1,3,3,3,6,2,2,2,6},
+						{1,2,1,3,1,6,2,2,2,1,6,3,3,3,6},--pos1
 }
 
 local nAbilityBuildList = J.Skill.GetRandomBuild( tAllAbilityBuildList )
@@ -36,25 +34,24 @@ local nTalentBuildList = J.Skill.GetTalentBuild( tTalentTreeList )
 local tOutFitList = {}
 
 tOutFitList['outfit_carry'] = {
-
 	"item_tango",
 	"item_double_branches",
 	"item_quelling_blade",
 	"item_blight_stone",
 
-	"item_magic_wand",
 	"item_orb_of_corrosion",
+	"item_magic_wand",
 	"item_power_treads",
 	"item_bfury",--
 	"item_black_king_bar",--
 	"item_desolator",--
 	"item_aghanims_shard",
-	"item_abyssal_blade",--
+	"item_basher",
 	"item_satanic",--
-	"item_moon_shard",
 	"item_monkey_king_bar",--
+	"item_abyssal_blade",--
+	"item_moon_shard",
 	"item_ultimate_scepter_2",
-
 }
 
 tOutFitList['outfit_mid'] = tOutFitList['outfit_carry']
@@ -69,9 +66,7 @@ X['sBuyList'] = tOutFitList[sOutfitType]
 
 
 X['sSellList'] = {
-
 	'item_magic_wand',
-
 	"item_orb_of_corrosion",
 	"item_power_treads",
 }

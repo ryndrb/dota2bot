@@ -24,8 +24,7 @@ local tTalentTreeList = {
 }
 
 local tAllAbilityBuildList = {
-						--{2,3,1,2,2,6,2,3,3,3,6,1,1,1,6},
-						{2,3,2,3,2,6,2,1,3,3,6,1,1,1,6},
+						{2,3,2,1,2,6,2,3,3,3,6,1,1,1,6},--pos1,3
 }
 
 local nAbilityBuildList = J.Skill.GetRandomBuild( tAllAbilityBuildList )
@@ -37,72 +36,65 @@ local sRandomItem_1 = RandomInt( 1, 9 ) > 6 and "item_black_king_bar" or "item_h
 local tOutFitList = {}
 
 tOutFitList['outfit_carry'] = {
-
 	"item_tango",
 	"item_double_branches",
+	"item_enchanted_mango",
+	"item_enchanted_mango",
 	"item_quelling_blade",
 
 	"item_vanguard",
-	"item_boots",
-	"item_magic_wand",
+	"item_ring_of_basilius",
 	"item_arcane_boots",
-	-- "item_ultimate_scepter",
+	"item_magic_wand",
+	"item_ultimate_scepter",
 	"item_bloodstone",--
-	"item_heart",--
+	"item_kaya_and_sange",--
 	"item_black_king_bar",--
 	"item_aghanims_shard",
-	"item_kaya_and_sange",--
-	"item_lotus_orb",--
+	"item_eternal_shroud",--
+	"item_travel_boots",
 	"item_assault",--
+	"item_ultimate_scepter_2",
+	"item_travel_boots_2",--
 	"item_moon_shard",
-
--- 	"item_bristleback_outfit",
--- 	"item_aghanims_shard",
--- 	"item_blade_mail",
--- --	"item_voodoo_mask",
--- --	"item_ultimate_scepter",
--- 	"item_lotus_orb",
--- 	"item_eternal_shroud",
--- 	"item_heart",
--- 	"item_travel_boots",
--- 	sRandomItem_1,
--- 	"item_moon_shard",
--- 	"item_travel_boots_2",
--- 	"item_ultimate_scepter_2",
--- 	"item_abyssal_blade",
-
-
 }
 
-tOutFitList['outfit_mid'] = tOutFitList['outfit_carry']
+tOutFitList['outfit_mid'] = tOutFitList['outfit_tank']
 
-tOutFitList['outfit_priest'] = tOutFitList['outfit_carry']
+tOutFitList['outfit_priest'] = tOutFitList['outfit_tank']
 
-tOutFitList['outfit_mage'] = tOutFitList['outfit_carry']
+tOutFitList['outfit_mage'] = tOutFitList['outfit_tank']
 
 tOutFitList['outfit_tank'] = {
+	"item_tango",
+	"item_double_branches",
+	"item_enchanted_mango",
+	"item_enchanted_mango",
+	"item_quelling_blade",
 
-	"item_tank_outfit",
+	"item_vanguard",
+	"item_ring_of_basilius",
+	"item_arcane_boots",
+	"item_magic_wand",
+	"item_ultimate_scepter",
+	"item_bloodstone",--
+	"item_lotus_orb",--
+	"item_black_king_bar",--
 	"item_aghanims_shard",
-	"item_crimson_guard",
-	"item_heavens_halberd",
-	"item_lotus_orb",
-	"item_assault",
-	"item_travel_boots", 
-	"item_heart",
-	"item_moon_shard",
-	"item_travel_boots_2",
+	"item_eternal_shroud",--
+	"item_travel_boots",
+	"item_assault",--
 	"item_ultimate_scepter_2",
-
-
+	"item_travel_boots_2",--
+	"item_moon_shard",
 }
 
 X['sBuyList'] = tOutFitList[sOutfitType]
 
 X['sSellList'] = {
-
 	"item_quelling_blade",
-
+	"item_vanguard",
+	"item_ring_of_basilius",
 	"item_magic_wand",
 }
 

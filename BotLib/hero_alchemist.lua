@@ -26,18 +26,20 @@ local nTalentBuildList = J.Skill.GetTalentBuild( tTalentTreeList )
 local tOutFitList = {}
 
 tOutFitList['outfit_carry'] = {
-
 	"item_tango",
     "item_double_branches",
 	"item_quelling_blade",
-	
-    "item_bracer",
-	"item_phase_boots",
-    "item_radiance",--
+	"item_gauntlets",
+	"item_gauntlets",
+
     "item_magic_wand",
+	"item_power_treads",
+	"item_soul_ring",
+    "item_radiance",--
     "item_blink",
     "item_black_king_bar",--
     "item_assault",--
+	"item_basher",
     "item_swift_blink",--
     "item_aghanims_shard",
     "item_abyssal_blade",--
@@ -45,9 +47,6 @@ tOutFitList['outfit_carry'] = {
     "item_moon_shard",
     "item_travel_boots_2",--
     "item_ultimate_scepter_2",
-
-
-
 }
 
 tOutFitList['outfit_mid'] = tOutFitList['outfit_carry']
@@ -61,13 +60,10 @@ tOutFitList['outfit_tank'] = tOutFitList['outfit_carry']
 X['sBuyList'] = tOutFitList[sOutfitType]
 
 X['sSellList'] = {
-
 	"item_quelling_blade",
     "item_magic_wand",
-	
-    "item_bracer",
-	"item_phase_boots",
-
+	"item_power_treads",
+	"item_soul_ring",
 }
 
 if J.Role.IsPvNMode() or J.Role.IsAllShadow() then X['sBuyList'], X['sSellList'] = { 'PvN_antimage' }, {} end

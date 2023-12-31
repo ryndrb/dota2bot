@@ -20,11 +20,11 @@ local tTalentTreeList = {
 						['t25'] = {10, 0},
 						['t20'] = {10, 0},
 						['t15'] = {0, 10},
-						['t10'] = {0, 10},
+						['t10'] = {10, 0},
 }
 
 local tAllAbilityBuildList = {
-						{2,3,2,1,2,1,2,1,6,1,3,3,3,6,3,6},
+						{2,3,2,1,2,1,2,1,6,1,3,3,3,6,3,6},--pos1
 }
 
 local nAbilityBuildList = J.Skill.GetRandomBuild( tAllAbilityBuildList )
@@ -35,41 +35,21 @@ local nTalentBuildList = J.Skill.GetTalentBuild( tTalentTreeList )
 local tOutFitList = {}
 
 tOutFitList['outfit_carry'] = {
-
 	"item_magic_wand",
 
 	"item_ring_of_basilius",
 	"item_power_treads",
 	"item_manta",
 	"item_butterfly",--
-	"item_skadi",--
-
 	"item_greater_crit",--
-	"item_hurricane_pike",--
-	"item_aghanims_shard",
+	"item_skadi",--
 	"item_monkey_king_bar",--
 	"item_travel_boots",
+	"item_aghanims_shard",
+	"item_disperser",--
 	"item_moon_shard",
-	"item_ultimate_scepter_2",
 	"item_travel_boots_2",--
-
--- 	"item_medusa_outfit",
--- 	"item_ultimate_scepter",
--- 	"item_aghanims_shard",
--- 	"item_dragon_lance",
--- 	"item_manta",
--- 	"item_mjollnir",
--- 	"item_hurricane_pike", 
--- 	"item_travel_boots",
--- 	"item_skadi",
--- --	"item_sphere",	
--- 	"item_ultimate_scepter_2",
--- 	"item_butterfly",
--- 	"item_moon_shard",
--- 	"item_travel_boots_2",
-	
-
-
+	"item_ultimate_scepter_2",
 }
 
 tOutFitList['outfit_mid'] = tOutFitList['outfit_carry']
@@ -83,22 +63,9 @@ tOutFitList['outfit_tank'] = tOutFitList['outfit_carry']
 X['sBuyList'] = tOutFitList[sOutfitType]
 
 X['sSellList'] = {
-
 	"item_magic_wand",
 	"item_ring_of_basilius",
-
-	"item_power_treads",
 	"item_manta",
-
--- 	"item_black_king_bar",
--- 	"item_urn_of_shadows",
-
--- 	"item_travel_boots",
--- 	"item_magic_wand",
-
--- --	"item_satanic",
--- --	"item_dragon_lance",
-
 }
 
 if J.Role.IsPvNMode() or J.Role.IsAllShadow() then X['sBuyList'], X['sSellList'] = { 'PvN_mid' }, {} end

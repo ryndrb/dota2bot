@@ -17,68 +17,64 @@ local sAbilityList = J.Skill.GetAbilityList( bot )
 local sOutfitType = J.Item.GetOutfitType( bot )
 
 local tTalentTreeList = {
-						['t25'] = {10, 0},
-						['t20'] = {0, 10},
+						['t25'] = {0, 10},
+						['t20'] = {10, 0},
 						['t15'] = {0, 10},
 						['t10'] = {0, 10},
 }
 
 local tAllAbilityBuildList = {
-						{3,1,3,2,3,6,3,1,1,1,6,2,2,2,6},
-						{3,1,3,2,3,6,3,2,2,2,6,1,1,1,6},
-						{1,3,1,2,1,6,1,3,3,3,6,2,2,2,6},
+						{3,1,2,3,3,6,3,2,2,2,6,1,1,1,6},--pos3
 }
 
 local nAbilityBuildList = J.Skill.GetRandomBuild( tAllAbilityBuildList )
 
 local nTalentBuildList = J.Skill.GetTalentBuild( tTalentTreeList )
 
+local sLotusHalberd = RandomInt( 1, 2 ) == 1 and "item_lotus_orb" or "item_heavens_halberd"
+
 local tOutFitList = {}
 
-tOutFitList['outfit_carry'] = {
+tOutFitList['outfit_carry'] = tOutFitList['outfit_tank']
 
-	"item_bristleback_outfit",
-	"item_bracer",
-	"item_point_booster",
+tOutFitList['outfit_mid'] = tOutFitList['outfit_tank']
+
+tOutFitList['outfit_priest'] = tOutFitList['outfit_tank']
+
+tOutFitList['outfit_mage'] = tOutFitList['outfit_tank']
+
+tOutFitList['outfit_tank'] = {
+	"item_tango",
+	"item_double_branches",
+	"item_quelling_blade",
+	"item_gauntlets",
+	"item_gauntlets",
+
+	"item_blades_of_attack",
+	"item_phase_boots",
+	"item_soul_ring",
+	"item_magic_wand",
+	"item_ring_of_basilius",
+	"item_vladmir",--
 	"item_blink",
+	"item_aghanims_shard",
+	"item_pipe",--
+	"item_shivas_guard",--
+	sLotusHalberd,--
 	"item_ultimate_scepter",
---	"item_aghanims_shard",
-	"item_black_king_bar",	
-	"item_travel_boots",
-	"item_skadi",
-	"item_satanic",
-	"item_overwhelming_blink",	
+	"item_refresher",--
+	"item_overwhelming_blink",--
 	"item_ultimate_scepter_2",
-	"item_greater_crit",
 	"item_moon_shard",
-	"item_travel_boots_2",
-
 }
-
-tOutFitList['outfit_mid'] = tOutFitList['outfit_carry']
-
-tOutFitList['outfit_priest'] = tOutFitList['outfit_carry']
-
-tOutFitList['outfit_mage'] = tOutFitList['outfit_carry']
-
-tOutFitList['outfit_tank'] = tOutFitList['outfit_carry']
 
 X['sBuyList'] = tOutFitList[sOutfitType]
 
 X['sSellList'] = {
-
-	"item_echo_sabre",
 	"item_quelling_blade",
-
-	"item_black_king_bar",
+	"item_phase_boots",
+	"item_soul_ring",
 	"item_magic_wand",
-
-	"item_greater_crit",
-	"item_hand_of_midas",
-
-	"item_abyssal_blade",
-	"item_blight_stone",
-
 }
 
 

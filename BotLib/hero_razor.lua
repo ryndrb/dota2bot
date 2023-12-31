@@ -32,8 +32,8 @@ local tTalentTreeList = {
 }
 
 local tAllAbilityBuildList = {
-	{2,1,2,1,2,6,2,3,1,1,6,3,3,3,6},--pos1,2
-	{1,2,2,1,1,6,1,3,3,3,6,3,2,2,6},--pos3
+						{2,1,2,1,2,6,2,3,1,1,6,3,3,3,6},--pos1,2
+						{1,2,2,1,1,6,1,3,3,3,6,3,2,2,6},--pos3
 }
 
 local nAbilityBuildList
@@ -52,7 +52,6 @@ end
 local tOutFitList = {}
 
 tOutFitList['outfit_carry'] = {
-
 	"item_tango",
 	"item_double_branches",
 	"item_magic_stick",
@@ -61,18 +60,16 @@ tOutFitList['outfit_carry'] = {
 	"item_power_treads",
 	"item_magic_wand",
 	"item_falcon_blade",
-	"item_manta",
-	"item_aghanims_shard",
+	"item_manta",--
 	"item_black_king_bar",--
+	"item_aghanims_shard",
 	"item_butterfly",--
 	"item_satanic",--
 	"item_assault",--
-	"item_refresher",--
 	"item_skadi",--
-
+	"item_refresher",--
 	"item_moon_shard",
 	"item_ultimate_scepter_2",
-
 }
 
 tOutFitList['outfit_mid'] = tOutFitList['outfit_carry']
@@ -90,18 +87,15 @@ tOutFitList['outfit_tank'] = {
 	"item_wraith_band",
 	"item_boots",
 	"item_magic_wand",
-
 	"item_falcon_blade",
 	"item_power_treads",
-	"item_manta",
+	"item_manta",--
 	"item_black_king_bar",--
 	"item_aghanims_shard",
 	"item_shivas_guard",--
 	"item_assault",--
 	"item_refresher",--
 	"item_satanic",--
-	"item_sheepstick",--
-
 	"item_moon_shard",
 	"item_ultimate_scepter_2",
 }
@@ -113,7 +107,6 @@ X['sSellList'] = {
 	"item_power_treads",
 	"item_magic_wand",
 	"item_falcon_blade",
-	"item_manta",
 	"item_wraith_band",
 }
 

@@ -5,13 +5,13 @@ local Defend = {}
 function Defend.GetDefendDesire(bot, lane)
 
 	local max = 0.9
-	if J.IsCore(bot)
-	and bot:GetActiveMode() == BOT_MODE_ROSHAN
-	and bot:GetActiveModeDesire() > 0.75
-	and not J.CanBeAttacked(GetAncient(GetTeam()))
-	then
-		max = 0.7
-	end
+	-- if J.IsCore(bot)
+	-- and bot:GetActiveMode() == BOT_MODE_ROSHAN
+	-- and bot:GetActiveModeDesire() > 0.75
+	-- and not J.CanBeAttacked(GetAncient(GetTeam()))
+	-- then
+	-- 	max = 0.7
+	-- end
 
 	-- Laning Defend
 	if (J.IsModeTurbo() and DotaTime() < 8 * 60)

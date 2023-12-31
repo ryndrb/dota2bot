@@ -35,11 +35,10 @@ local RandomItem = RandomInt(1, 2) == 1 and "item_black_king_bar" or "item_spher
 local tOutFitList = {}
 
 tOutFitList['outfit_carry'] = {
-
 	"item_tango",
+	"item_double_branches",
 	"item_slippers",
 	"item_circlet",
-	"item_double_branches",
 
 	"item_wraith_band",
 	"item_power_treads",
@@ -47,18 +46,17 @@ tOutFitList['outfit_carry'] = {
 	"item_dragon_lance",
 	"item_yasha",
 	"item_manta",
-	"item_hurricane_pike",--
-	"item_silver_edge",--
 	"item_ultimate_scepter",
+	"item_hurricane_pike",--
 	RandomItem,--
 	"item_butterfly",--
+	"item_greater_crit",--
 	"item_satanic",--
 	"item_ultimate_scepter_2",
-	"item_travel_boots_2",--
+	"item_travel_boots",
 	"item_moon_shard",
+	"item_travel_boots_2",--
 	"item_aghanims_shard",
-
-
 }
 
 tOutFitList['outfit_mid'] = tOutFitList['outfit_carry']
@@ -72,13 +70,9 @@ tOutFitList['outfit_tank'] = tOutFitList['outfit_carry']
 X['sBuyList'] = tOutFitList[sOutfitType]
 
 X['sSellList'] = {
-
 	"item_wraith_band",
 	"item_magic_wand",
-
-	"item_power_treads",
 	"item_manta",
-
 }
 
 if J.Role.IsPvNMode() or J.Role.IsAllShadow() then X['sBuyList'], X['sSellList'] = { 'PvN_ranged_carry' }, {} end

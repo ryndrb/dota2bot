@@ -19,7 +19,7 @@ local sOutfitType = J.Item.GetOutfitType( bot )
 local tTalentTreeList = {
 						['t25'] = {0, 10},
 						['t20'] = {0, 10},
-						['t15'] = {0, 10},
+						['t15'] = {10, 0},
 						['t10'] = {0, 10},
 }
 
@@ -34,25 +34,26 @@ local nTalentBuildList = J.Skill.GetTalentBuild( tTalentTreeList )
 local tOutFitList = {}
 
 tOutFitList['outfit_carry'] = {
-
 	"item_tango",
 	"item_double_branches",
+	"item_slippers",
+	"item_circlet",
 	"item_quelling_blade",
 
 	"item_wraith_band",
 	"item_power_treads",
+	"item_maelstrom",
 	"item_magic_wand",
-	"item_bfury",--
-	"item_sange_and_yasha",--
-	"item_butterfly",--
-	"item_basher",
+	"item_manta",--
+	"item_mjollnir",--
 	"item_skadi",--
+	"item_aghanims_shard",
+	"item_basher",
+	"item_butterfly",--
 	"item_abyssal_blade",--
 	"item_travel_boots_2",--
 	"item_moon_shard",
 	"item_ultimate_scepter_2",
-	"item_aghanims_shard",
-
 }
 
 tOutFitList['outfit_mid'] = tOutFitList['outfit_carry']
@@ -66,12 +67,9 @@ tOutFitList['outfit_tank'] = tOutFitList['outfit_carry']
 X['sBuyList'] = tOutFitList[sOutfitType]
 
 X['sSellList'] = {
-
-	"item_magic_wand",
-
+	"item_quelling_blade",
 	"item_wraith_band",
-	"item_power_treads",
-
+	"item_magic_wand",
 }
 
 

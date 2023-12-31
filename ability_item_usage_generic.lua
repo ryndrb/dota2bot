@@ -1729,17 +1729,11 @@ end
 --芒果
 X.ConsiderItemDesire["item_enchanted_mango"] = function( hItem )
 
-	local nCastRange = 300 + aetherRange
 	local sCastType = 'none'
 	local hEffectTarget = nil
 	local sCastMotive = nil
-	local nInRangeEnmyList = bot:GetNearbyHeroes( nCastRange, true, BOT_MODE_NONE )
 
-
-	if J.IsGoingOnSomeone( bot )
-		and bot:GetMana() < 100 + bot:GetLevel() * 6
-		and J.IsValidHero( botTarget )
-		and J.IsInRange( bot, botTarget, 1000 )
+	if bot:GetMana() < 150
 	then
 		hEffectTarget = bot
 		sCastMotive = '自己吃'
@@ -4340,7 +4334,7 @@ X.ConsiderItemDesire["item_tpscroll"] = function( hItem )
 		local laneFront = GetLaneFrontLocation( GetTeam(), lane, 0 )
 		hEffectTarget = J.GetNearbyLocationToTp(roshanLoc)
 		sCastMotive = 'roshan'
-		if J.GetLocationToLocationDistance( laneFront, hEffectTarget ) > 6000
+		if J.GetLocationToLocationDistance( bot:GetLocation(), roshanLoc ) > 6000
 		then
 			return BOT_ACTION_DESIRE_HIGH, hEffectTarget, sCastType, sCastMotive
 		end
@@ -5762,27 +5756,94 @@ end
 
 --item_soul_ring
 X.ConsiderItemDesire['item_soul_ring'] = function(item)
-	if  J.IsGoingOnSomeone(bot) and bot:GetHealth() - 150 > 0.25 * bot:GetMaxHealth() and bot:GetMana() < 0.5 * bot:GetMaxMana() then
-		local target = bot:GetTarget();
-		if  J.IsValidTarget(target) 
-			and J.IsInRange(target, bot, bot:GetAttackRange() + 250) 
-		then	
-			local skillslot = {0,1,2,3,4,5};
-			for i=1, #skillslot do
-				local ability = bot:GetAbilityInSlot(skillslot[i]);
-				if ability ~= nil 
-					and ability:IsTrained() == true
-					and X.CheckFlag(ability:GetBehavior(), ABILITY_BEHAVIOR_PASSIVE) == false
-					and X.CheckFlag(ability:GetBehavior(), ABILITY_BEHAVIOR_HIDDEN) == false
-					and ( ( ability:GetCooldownTimeRemaining() == 0 and ability:IsFullyCastable() == false ) or ability:IsFullyCastable() )
-					
+
+	local sCastType = 'none'
+	local hEffectTarget = bot
+	local sCastMotive = nil
+	local nInRangeEnmyList = bot:GetNearbyHeroes(nCastRange, true, BOT_MODE_NONE)
+	local aMode = bot:GetActiveMode()
+
+	local currMana = bot:GetMana() / bot:GetMaxMana()
+	local currHealth = bot:GetHealth() / bot:GetMaxHealth()
+
+	if (aMode == BOT_MODE_FARM or aMode == BOT_MODE_LANING)
+	and currHealth > 0.5 and currMana < 0.5
+	then
+		return BOT_ACTION_DESIRE_HIGH, hEffectTarget, sCastType, sCastMotive
+	end
+
+	return BOT_ACTION_DESIRE_NONE
+end
+
+X.ConsiderItemDesire['item_pavise'] = function(item)
+	local nCastRange = 1000 + aetherRange
+	local sCastType = 'unit'
+	local hEffectTarget = nil
+	local sCastMotive = nil
+	local nInRangeEnmyList = bot:GetNearbyHeroes( nCastRange, true, BOT_MODE_NONE )
+	local nNearAllyList = bot:GetNearbyHeroes( nCastRange, false, BOT_MODE_NONE )
+	local health = bot:GetHealth() / bot:GetMaxHealth()
+
+	--对可能被作为敌方目标的队友使用
+	for _, npcAlly in pairs( nNearAllyList )
+	do
+		if J.IsValidHero( npcAlly )
+			and npcAlly ~= bot
+			and not npcAlly:IsMagicImmune()
+			and not npcAlly:IsInvulnerable()
+			and not npcAlly:IsIllusion()
+			and not npcAlly:HasModifier( "modifier_item_pavise_shield" )
+			and not npcAlly:HasModifier( 'modifier_antimage_spell_shield' )
+			and ( J.IsUnitTargetProjectileIncoming( npcAlly, 800 )
+				 or J.IsWillBeCastUnitTargetSpell( npcAlly, 1200 )
+				 or health < 0.2 )
+		then
+			hEffectTarget = npcAlly
+			sCastMotive = '帮助队友'
+			return BOT_ACTION_DESIRE_HIGH, hEffectTarget, sCastType, sCastMotive
+		end
+	end
+
+
+	if J.IsValidHero( botTarget )
+		and J.IsInRange( bot, botTarget, 2400 )
+		and not J.IsInRange( bot, botTarget, 800 )
+	then
+		if #nNearAllyList >= 2
+		then
+			local targetAlly = nil
+			local targetDistance = 9999
+			for _, npcAlly in pairs( nNearAllyList )
+			do
+				if npcAlly ~= bot
+					and not npcAlly:IsIllusion()
+					and J.IsInRange( npcAlly, botTarget, targetDistance )
+					and not npcAlly:HasModifier( "modifier_item_pavise_shield" )
+					and not npcAlly:HasModifier( 'modifier_antimage_spell_shield' )
 				then
-					return BOT_ACTION_DESIRE_ABSOLUTE
+					targetAlly = npcAlly
+					targetDistance = GetUnitToUnitDistance( botTarget, npcAlly )
+					if J.IsHumanPlayer( npcAlly ) then break end
 				end
 			end
-		end		
+			if targetAlly ~= nil
+			then
+				hEffectTarget = targetAlly
+				sCastMotive = '先给前排套上'
+				return BOT_ACTION_DESIRE_HIGH, hEffectTarget, sCastType, sCastMotive
+			end
+		end
 	end
+
 	return BOT_ACTION_DESIRE_NONE
+end
+
+X.ConsiderItemDesire['item_harpoon'] = function(item)
+
+end
+
+X.ConsiderItemDesire['item_disperser'] = function(item)
+
 end
 
 function X.IsTargetedByEnemy( building )

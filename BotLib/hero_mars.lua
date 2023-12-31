@@ -10,36 +10,45 @@ local sAbilityList = J.Skill.GetAbilityList( bot )
 local sOutfitType = J.Item.GetOutfitType( bot )
 
 local tTalentTreeList = {
-    ['t25'] = {10, 0},
-    ['t20'] = {10, 0},
-    ['t15'] = {0, 10},
-    ['t10'] = {0, 10},
+							['t25'] = {10, 0},
+							['t20'] = {10, 0},
+							['t15'] = {0, 10},
+							['t10'] = {0, 10},
 }
 
 local tAllAbilityBuildList = {
-    {2, 1, 1, 2, 1, 6, 1, 2, 2, 3, 6, 3, 3, 3, 6},
+							{2, 1, 1, 2, 1, 6, 1, 2, 2, 3, 6, 3, 3, 3, 6},--pos3
 }
 
 local nAbilityBuildList = J.Skill.GetRandomBuild( tAllAbilityBuildList )
 
 local nTalentBuildList = J.Skill.GetTalentBuild( tTalentTreeList )
 
+local sCrimsonPipe = RandomInt( 1, 2 ) == 1 and "item_crimson_guard" or "item_pipe"
+
 local tOutFitList = {}
 
 tOutFitList['outfit_tank'] = {
-    "item_magic_wand",
+    "item_tango",
+	"item_double_branches",
     "item_quelling_blade",
+	"item_gauntlets",
+	"item_circlet",
 
+	"item_bracer",
+	"item_bracer",
+	"item_boots",
+	"item_magic_wand",
     "item_phase_boots",
-    "item_blade_mail",
     "item_blink",
     "item_black_king_bar",--
-    "item_sheepstick",--
-    "item_refresher",--
-    "item_shivas_guard",--
-    "item_satanic",--
-    "item_overwhelming_blink",--
     "item_aghanims_shard",
+    sCrimsonPipe,--
+    "item_shivas_guard",--
+    "item_refresher",--
+    "item_travel_boots",
+    "item_overwhelming_blink",--
+	"item_travel_boots_2",--
     "item_moon_shard",
     "item_ultimate_scepter_2"
 }
@@ -56,9 +65,8 @@ X['sBuyList'] = tOutFitList[sOutfitType]
 
 X['sSellList'] = {
     "item_quelling_blade",
-    "item_magic_wand",
-
-    "item_blade_mail",
+	"item_bracer",
+	"item_magic_wand",
 }
 
 if J.Role.IsPvNMode() or J.Role.IsAllShadow() then X['sBuyList'], X['sSellList'] = { 'PvN_mid' }, {} end

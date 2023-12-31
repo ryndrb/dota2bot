@@ -17,14 +17,14 @@ local sAbilityList = J.Skill.GetAbilityList( bot )
 local sOutfitType = J.Item.GetOutfitType( bot )
 
 local tTalentTreeList = {
-						['t25'] = {10, 0},
+						['t25'] = {0, 10},
 						['t20'] = {0, 10},
 						['t15'] = {0, 10},
 						['t10'] = {0, 10},
 }
 
 local tAllAbilityBuildList = {
-						{2,3,3,1,3,6,3,1,1,1,6,2,2,2,6}, -- off
+						{2,3,3,1,3,6,3,1,1,1,6,2,2,2,6},--pos3
 }
 
 local nAbilityBuildList = J.Skill.GetRandomBuild( tAllAbilityBuildList )
@@ -34,7 +34,6 @@ local nTalentBuildList = J.Skill.GetTalentBuild( tTalentTreeList )
 local tOutFitList = {}
 
 tOutFitList['outfit_tank'] = {
-	
 	"item_tango",
 	"item_double_branches",
 	"item_quelling_blade",
@@ -43,11 +42,11 @@ tOutFitList['outfit_tank'] = {
 	"item_power_treads",
 	"item_magic_wand",
 	"item_echo_sabre",
-	"item_black_king_bar",--
 	"item_blink",
-	"item_ultimate_scepter",
-	"item_octarine_core",--
 	"item_aghanims_shard",
+	"item_ultimate_scepter",
+	"item_black_king_bar",--
+	"item_octarine_core",--
 	"item_assault",--
 	"item_swift_blink",--
 	"item_ultimate_scepter_2",
@@ -67,15 +66,10 @@ tOutFitList['outfit_mage'] = tOutFitList['outfit_carry']
 X['sBuyList'] = tOutFitList[sOutfitType]
 
 X['sSellList'] = {
-
-	"item_power_treads",
 	"item_quelling_blade",
-
 	"item_bracer",
 	"item_magic_wand",
-	
-	"item_travel_boots",
-
+	"item_echo_sabre",
 }
 
 

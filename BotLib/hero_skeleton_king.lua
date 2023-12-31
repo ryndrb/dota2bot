@@ -17,17 +17,17 @@ local sAbilityList = J.Skill.GetAbilityList( bot )
 local sOutfitType = J.Item.GetOutfitType( bot )
 
 local tTalentTreeList = {
-						['t25'] = {0, 10},
-						['t20'] = {10, 0},
-						['t15'] = {10, 0},
-						['t10'] = {10, 0},
+						{--pos1,3
+							['t25'] = {0, 10},
+							['t20'] = {10, 0},
+							['t15'] = {10, 0},
+							['t10'] = {10, 0},
+						},
 }
 
 
 local tAllAbilityBuildList = {
-						{2,1,2,3,2,6,2,3,3,3,6,1,1,1,6},--pos1
-						-- {1,3,1,2,1,6,1,3,2,2,6,2,3,3,6},--pos3
-						-- {1,3,1,2,1,6,1,3,3,3,6,2,2,2,6},
+						{2,1,2,3,2,6,2,3,3,3,6,1,1,1,6},--pos1,3
 }
 
 local nAbilityBuildList = J.Skill.GetRandomBuild( tAllAbilityBuildList )
@@ -37,27 +37,27 @@ local nTalentBuildList = J.Skill.GetTalentBuild( tTalentTreeList )
 local tOutFitList = {}
 
 tOutFitList['outfit_carry'] = {
-
 	"item_tango",
 	"item_double_branches",
+	"item_gauntlets",
+	"item_gauntlets",
 	"item_quelling_blade",
 
-	"item_bracer",
 	"item_phase_boots",
 	"item_magic_wand",
 	"item_armlet",
 	"item_radiance",--
 	"item_blink",
+	"item_aghanims_shard",
 	"item_assault",--
 	"item_ultimate_scepter",
-	"item_nullifier",--
-	"item_swift_blink",--
-	"item_monkey_king_bar",--
+	"item_overwhelming_blink",--
 	"item_ultimate_scepter_2",
+	"item_abyssal_blade",--
+	"item_travel_boots",
+	"item_refresher",--
 	"item_travel_boots_2",--
 	"item_moon_shard",
-	"item_aghanims_shard",
-
 }
 
 tOutFitList['outfit_mid'] = tOutFitList['outfit_carry']
@@ -67,41 +67,36 @@ tOutFitList['outfit_priest'] = tOutFitList['outfit_carry']
 tOutFitList['outfit_mage'] = tOutFitList['outfit_carry']
 
 tOutFitList['outfit_tank'] = {
-
 	"item_tango",
-	"item_double_branches",
 	"item_quelling_blade",
+	"item_gauntlets",
+	"item_magic_stick",
+	"item_branches",
 
-	"item_phase_boots",
-	"item_armlet",
+	"item_bracer",
 	"item_magic_wand",
+	"item_phase_boots",
 	"item_radiance",--
 	"item_blink",
-	"item_assault",--
 	"item_ultimate_scepter",
-	"item_refresher",--
-	"item_overwhelming_blink",--
-	"item_ultimate_scepter_2",
-	"item_travel_boots",
-	"item_sheepstick",--
-	"item_moon_shard",
-	"item_travel_boots_2",--
+	"item_assault",--
 	"item_aghanims_shard",
-
+	"item_overwhelming_blink",--
+	"item_refresher",--
+	"item_ultimate_scepter_2",
+	"item_nullifier",--
+	"item_travel_boots_2",--
+	"item_moon_shard",
 }
 
 X['sBuyList'] = tOutFitList[sOutfitType]
 
 X['sSellList'] = {
-
+	"item_gauntlets",
 	"item_quelling_blade",
-	"item_bracer",
-
-	"item_phase_boots",
 	"item_magic_wand",
-
 	"item_armlet",
-
+	"item_bracer",
 }
 
 if J.Role.IsPvNMode() or J.Role.IsAllShadow() then X['sBuyList'], X['sSellList'] = { 'PvN_tank' }, {"item_heavens_halberd", 'item_quelling_blade'} end

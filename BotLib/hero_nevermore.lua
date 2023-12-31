@@ -39,6 +39,28 @@ tOutFitList['outfit_carry'] = {
 	"item_faerie_fire",
 	"item_enchanted_mango",
 	"item_enchanted_mango",
+
+	"item_power_treads",
+	"item_magic_wand",
+	"item_dragon_lance",
+	"item_black_king_bar",--
+	"item_hurricane_pike",--
+	"item_butterfly",--
+	"item_aghanims_shard",
+	"item_greater_crit",--
+	"item_satanic",--
+	"item_travel_boots",
+	"item_moon_shard",
+	"item_travel_boots_2",--
+	"item_ultimate_scepter_2",
+}
+
+tOutFitList['outfit_mid'] = {
+	"item_tango",
+	"item_double_branches",
+	"item_faerie_fire",
+	"item_enchanted_mango",
+	"item_enchanted_mango",
 	
 	"item_bottle",
 	"item_power_treads",
@@ -55,8 +77,6 @@ tOutFitList['outfit_carry'] = {
 	"item_travel_boots_2",--
 	"item_ultimate_scepter_2",
 }
-
-tOutFitList['outfit_mid'] = tOutFitList['outfit_carry']
 
 tOutFitList['outfit_priest'] = tOutFitList['outfit_carry']
 

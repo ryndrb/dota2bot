@@ -6,7 +6,6 @@ local killTime = 0.0
 local shouldKillRoshan = false
 local DoingRoshanMessage = DotaTime()
 
-local roshan = nil
 local roshanRadiantLoc  = Vector(7625, -7511, 1092)
 local roshanDireLoc     = Vector(-7549, 7562, 1107)
 
@@ -21,6 +20,14 @@ function GetDesire()
     local aCount = bot:GetNearbyHeroes(1200, false, BOT_MODE_NONE)
     local eCount = bot:GetNearbyHeroes(1200, true, BOT_MODE_NONE)
     local healthPercentage = bot:GetHealth() / bot:GetMaxHealth()
+    local timeOfDay = J.CheckTimeOfDay()
+    local roshLoc = nil
+
+    if timeOfDay == "day" then
+        roshLoc = roshanRadiantLoc
+    else
+        roshLoc = roshanDireLoc
+    end
     
     local aliveHeroesList = {}
     for _, h in pairs(GetUnitList(UNIT_LIST_ALLIED_HEROES)) do
@@ -33,94 +40,96 @@ function GetDesire()
     shouldKillRoshan = IsRoshanAlive()
 
     if shouldKillRoshan
-    and aliveAlly >= aliveEnemy
+    --and aliveAlly >= aliveEnemy
     and healthPercentage > 0.3
     and HasEnoughDPSForRoshan(aliveHeroesList)
     then
-        if (roshan ~= nil and (roshan:GetHealth() / roshan:GetMaxHealth()) < 0.3)
-        or (#eCount >= #aCount and J.WeAreStronger(bot, 1600))
+        if GetUnitToLocationDistance(bot, roshLoc) < 2000
+        and bot:GetActiveMode() == BOT_MODE_ROSHAN
+        and IsEnoughAllies()
         then
-           return 0.94
+           return BOT_ACTION_DESIRE_VERYHIGH
+        elseif GetUnitToLocationDistance(bot, roshLoc) < 2000
+        and bot:GetActiveMode() == BOT_MODE_ROSHAN
+        and not IsEnoughAllies()
+        then
+            return BOT_ACTION_DESIRE_LOW
         end
 
-        if (#aCount > #eCount and not J.WeAreStronger(bot, 1200)) then
-            return 0.27
-        end
-
-        return 0.85
+        return BOT_ACTION_DESIRE_HIGH
     end
 
     return BOT_ACTION_DESIRE_NONE
 end
 
-function Think()
-    local timeOfDay, time = J.CheckTimeOfDay()
-    -- local isInPlace, twinGate = IsInTwinGates(timeOfDay, time)
+-- function Think()
+--     local timeOfDay, time = J.CheckTimeOfDay()
+--     -- local isInPlace, twinGate = IsInTwinGates(timeOfDay, time)
 
-    if timeOfDay == "day" and time > 240
-    then
-        -- if ConsiderTwinGates(timeOfDay, time) then
-        --     bot:ActionPush_MoveToLocation(rTwinGateLoc)
-        -- end
+--     if timeOfDay == "day" and time > 240
+--     then
+--         -- if ConsiderTwinGates(timeOfDay, time) then
+--         --     bot:ActionPush_MoveToLocation(rTwinGateLoc)
+--         -- end
 
-        -- if isInPlace then
-        --     bot:ActionPush_AttackUnit(twinGate, false)
-        -- end
+--         -- if isInPlace then
+--         --     bot:ActionPush_AttackUnit(twinGate, false)
+--         -- end
 
-        bot:ActionPush_MoveToLocation(roshanDireLoc)
-    elseif timeOfDay == "day" then
-        bot:ActionPush_MoveToLocation(roshanRadiantLoc)
-    end
+--         bot:ActionPush_MoveToLocation(roshanDireLoc)
+--     elseif timeOfDay == "day" then
+--         bot:ActionPush_MoveToLocation(roshanRadiantLoc)
+--     end
 
-    if timeOfDay == "night" and time > 540
-    then
-        -- if ConsiderTwinGates(timeOfDay, time) then
-        --     bot:ActionPush_MoveToLocation(dTwinGateLoc)
-        -- end
+--     if timeOfDay == "night" and time > 540
+--     then
+--         -- if ConsiderTwinGates(timeOfDay, time) then
+--         --     bot:ActionPush_MoveToLocation(dTwinGateLoc)
+--         -- end
 
-        -- if isInPlace then
-        --     bot:ActionPush_AttackUnit(twinGate, false)
-        -- end
+--         -- if isInPlace then
+--         --     bot:ActionPush_AttackUnit(twinGate, false)
+--         -- end
 
-        bot:ActionPush_MoveToLocation(roshanRadiantLoc)
-    elseif timeOfDay == "night" then
-        bot:ActionPush_MoveToLocation(roshanDireLoc)
-    end
+--         bot:ActionPush_MoveToLocation(roshanRadiantLoc)
+--     elseif timeOfDay == "night" then
+--         bot:ActionPush_MoveToLocation(roshanDireLoc)
+--     end
 
-    local enemies = bot:GetNearbyHeroes(1200, true, BOT_MODE_NONE)
-    if enemies ~= nil and #enemies > 0 and J.WeAreStronger(bot, 1200)
-    then
-        return bot:ActionPush_AttackUnit(enemies[1], false)
-    end
+--     local enemies = bot:GetNearbyHeroes(1200, true, BOT_MODE_NONE)
+--     if enemies ~= nil and #enemies > 0 and J.WeAreStronger(bot, 1200)
+--     then
+--         return bot:ActionPush_AttackUnit(enemies[1], false)
+--     end
 
-    local creeps = bot:GetNearbyLaneCreeps(1200, true)
-    if creeps ~= nil and #creeps > 0 then
-        return bot:ActionPush_AttackUnit(creeps[1], false)
-    end
+--     local creeps = bot:GetNearbyLaneCreeps(1200, true)
+--     if creeps ~= nil and #creeps > 0 then
+--         return bot:ActionPush_AttackUnit(creeps[1], false)
+--     end
 
-    local nCreeps = bot:GetNearbyNeutralCreeps(800)
-    for _, c in pairs(nCreeps) do
-        if string.find(c:GetUnitName(), "roshan")
-        and (IsEnoughAllies()
-        or (J.IsCore(bot) and c:GetHealth() / c:GetMaxHealth() < 0.3))
-        then
-            bot:ActionPush_AttackUnit(c, false)
-        end
+--     local nCreeps = bot:GetNearbyNeutralCreeps(800)
+--     for _, c in pairs(nCreeps) do
+--         if string.find(c:GetUnitName(), "roshan")
+--         and (IsEnoughAllies()
+--         or (J.IsCore(bot) and c:GetHealth() / c:GetMaxHealth() < 0.3))
+--         then
+--             bot:ActionPush_AttackUnit(c, false)
+--         end
 
-        if (DotaTime() - DoingRoshanMessage) > 15 then
-            DoingRoshanMessage = DotaTime()
-            bot:ActionImmediate_Chat("Let's kill Roshan!", false)
-            if timeOfDay == "day" then
-                bot:ActionImmediate_Ping(7625, -7511, true)
-            else
-                bot:ActionImmediate_Ping(-7549, 7562, true)
-            end
-        end
+--         if (DotaTime() - DoingRoshanMessage) > 15 then
+--             DoingRoshanMessage = DotaTime()
+--             bot:ActionImmediate_Chat("Let's kill Roshan!", false)
+--             if timeOfDay == "day" then
+--                 bot:ActionImmediate_Ping(7625, -7511, true)
+--             else
+--                 bot:ActionImmediate_Ping(-7549, 7562, true)
+--             end
+--         end
 
-        return
-    end
+--         return
+--     end
 
-end
+-- end
 
 function IsRoshanAlive()
     if GetRoshanKillTime() > killTime
@@ -133,7 +142,6 @@ function IsRoshanAlive()
         return true
     end
 
-    roshan = nil
     return false
 end
 

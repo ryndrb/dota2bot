@@ -33,32 +33,15 @@ local nTalentBuildList = J.Skill.GetTalentBuild( tTalentTreeList )
 
 local tOutFitList = {}
 
-tOutFitList['outfit_carry'] = {
+tOutFitList['outfit_carry'] = tOutFitList['outfit_tank']
 
-	"item_sven_outfit",
-	"item_blade_mail",
-	"item_black_king_bar",
-	"item_aghanims_shard",
-	"item_blink",
-	"item_ultimate_scepter",
-	"item_travel_boots",
-	"item_overwhelming_blink",	
-	"item_abyssal_blade",
-	"item_ultimate_scepter_2",
-	"item_heart",
-	"item_moon_shard",
-	"item_travel_boots_2",
+tOutFitList['outfit_mid'] = tOutFitList['outfit_tank']
 
-}
+tOutFitList['outfit_priest'] = tOutFitList['outfit_tank']
 
-tOutFitList['outfit_mid'] = tOutFitList['outfit_carry']
-
-tOutFitList['outfit_priest'] = tOutFitList['outfit_carry']
-
-tOutFitList['outfit_mage'] = tOutFitList['outfit_carry']
+tOutFitList['outfit_mage'] = tOutFitList['outfit_tank']
 
 tOutFitList['outfit_tank'] = {
-
 	"item_tango",
 	"item_double_branches",
 	"item_quelling_blade",
@@ -66,34 +49,29 @@ tOutFitList['outfit_tank'] = {
 
 	"item_vanguard",
 	"item_boots",
-	"item_magic_wand",
 	"item_blink",
+	"item_magic_wand",
 	"item_blade_mail",
 	"item_black_king_bar",--
 	"item_travel_boots",
 	"item_shivas_guard",--
+	"item_aghanims_shard",
 	"item_overwhelming_blink",--
-	"item_travel_boots_2",--
 	"item_heart",--
 	"item_refresher",--
-	"item_aghanims_shard",
+	"item_travel_boots_2",--
 	"item_ultimate_scepter_2",
 	"item_moon_shard",
-
 }
 
 X['sBuyList'] = tOutFitList[sOutfitType]
 
 X['sSellList'] = {
-
 	"item_quelling_blade",
 	"item_ring_of_protection",
-
-	"item_magic_wand",
 	"item_vanguard",
-
+	"item_magic_wand",
 	"item_blade_mail",
-
 }
 
 

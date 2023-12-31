@@ -5,10 +5,6 @@ function Push.GetPushDesire(bot, lane)
 
     local max = 0.9
     if (GetDefendLaneDesire(LANE_TOP) > 0.75 or GetDefendLaneDesire(LANE_MID) > 0.75 or GetDefendLaneDesire(LANE_BOT) > 0.75)
-    or J.IsCore(bot)
-	and bot:GetActiveMode() == BOT_MODE_ROSHAN
-	and bot:GetActiveModeDesire() > 0.75
-	and not J.CanBeAttacked(GetAncient(GetTeam()))
     then
         max = 0.75
     end
@@ -31,7 +27,7 @@ function Push.GetPushDesire(bot, lane)
         end
 
         if Push.ShouldPushWhenLaning(bot, lane)
-        and J.WeAreStronger(bot, 1600)
+        -- and J.WeAreStronger(bot, 1600)
         and creeps ~= nil and #creeps > 1
         then
             return Clamp(teamFront + 0.1, 0.1, max)
@@ -71,10 +67,16 @@ function Push.GetPushDesire(bot, lane)
     return 0.1
 end
 
-local TeamLocation = {}
+-- local TeamLocation = {}
 function Push.WhichLaneToPush(bot)
 
-    TeamLocation[bot:GetPlayerID()] = bot:GetLocation()
+    local TeamLocation = {}
+    for _, h in pairs(GetUnitList(UNIT_LIST_ALLIED_HEROES)) do
+        if h:IsAlive() then
+            TeamLocation[h:GetPlayerID()] = h:GetLocation()
+        end
+    end
+    -- TeamLocation[bot:GetPlayerID()] = bot:GetLocation()
 
     local distanceToTop = 0
     local distanceToMid = 0
@@ -275,7 +277,7 @@ function Push.PushThink(bot, lane)
             local info = GetHeroLastSeenInfo(id)
             -- Take an aggressive guess
             if info.location ~= nil then
-                enemyDistance = enemyDistance + math.max(#(info.location - laneFrontLocation) - info.time * 400, 400)
+                enemyDistance = enemyDistance + math.max(#(info.location - laneFrontLocation)--[[ - info.time * 400]], 400)
                 enemyAlive = enemyAlive + 1
             end
         end

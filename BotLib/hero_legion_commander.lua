@@ -20,7 +20,7 @@ local tTalentTreeList = {
 						['t25'] = {10, 0},
 						['t20'] = {10, 0},
 						['t15'] = {10, 0},
-						['t10'] = {10, 0},
+						['t10'] = {0, 10},
 }
 
 local tAllAbilityBuildList = {
@@ -31,67 +31,47 @@ local nAbilityBuildList = J.Skill.GetRandomBuild( tAllAbilityBuildList )
 
 local nTalentBuildList = J.Skill.GetTalentBuild( tTalentTreeList )
 
+local utilityItems = {"item_crimson_guard", "item_pipe", "item_heavens_halberd"}
+local sCrimsonPipeHalberd = utilityItems[RandomInt(1, #utilityItems)]
+
 local tOutFitList = {}
 
-tOutFitList['outfit_carry'] = {
+tOutFitList['outfit_carry'] = tOutFitList['outfit_tank']
 
-	"item_sven_outfit",
-	--"item_bracer",
-	"item_blade_mail",
-	"item_echo_sabre",
-	"item_aghanims_shard",
-	"item_black_king_bar",
-	"item_travel_boots",
-	"item_greater_crit",
-	"item_abyssal_blade",
---	"item_heart",
-	"item_moon_shard",
-	"item_travel_boots_2",
---	"item_ultimate_scepter_2",
+tOutFitList['outfit_mid'] = tOutFitList['outfit_tank']
 
-}
+tOutFitList['outfit_priest'] = tOutFitList['outfit_tank']
 
-tOutFitList['outfit_mid'] = tOutFitList['outfit_carry']
-
-tOutFitList['outfit_priest'] = tOutFitList['outfit_carry']
-
-tOutFitList['outfit_mage'] = tOutFitList['outfit_carry']
+tOutFitList['outfit_mage'] = tOutFitList['outfit_tank']
 
 tOutFitList['outfit_tank'] = {
-
-	"item_quelling_blade",
 	"item_tango",
 	"item_double_branches",
+	"item_quelling_blade",
 
-	"item_magic_wand",
-	"item_phase_boots",
 	"item_bracer",
-	"item_blink",
+	"item_phase_boots",
+	"item_magic_wand",
 	"item_blade_mail",
+	"item_blink",
 	"item_black_king_bar",--
+	sCrimsonPipeHalberd,--
 	"item_assault",--
-	"item_sheepstick",--
 	"item_greater_crit",--
 	"item_overwhelming_blink",--
 	"item_travel_boots_2",--
 	"item_moon_shard",
 	"item_aghanims_shard",
 	"item_ultimate_scepter_2",
-
 }
 
 X['sBuyList'] = tOutFitList[sOutfitType]
 
 X['sSellList'] = {
-
-	"item_phase_boots",
 	"item_quelling_blade",
-	
-	"item_magic_wand",
 	"item_bracer",
-
+	"item_magic_wand",
 	"item_blade_mail",
-
 }
 
 
