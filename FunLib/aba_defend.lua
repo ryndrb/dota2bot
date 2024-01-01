@@ -14,22 +14,13 @@ function Defend.GetDefendDesire(bot, lane)
 	-- end
 
 	-- Laning Defend
-	if (J.IsModeTurbo() and DotaTime() < 8 * 60)
-	or DotaTime() < 12 * 60
-	then
-		local tFront = 1 - GetLaneFrontAmount(GetTeam(), lane, true)
-		local eFront = 1 - GetLaneFrontAmount(GetOpposingTeam(), lane, true)
-
-		if bot:GetHealth() / bot:GetMaxHealth() < 0.3
-		then
-			return 0.25
-		end
-
-		if Defend.ShouldGoDefend(bot, lane) then
-			return Clamp(eFront, 0.1, max)
-		end
-
-		return 0.1
+	local IDs = GetTeamPlayers(GetTeam())
+    for _, id in pairs(IDs) do
+        if GetHeroLevel(id) < 6
+        and (J.IsModeTurbo() and DotaTime() < 8 * 60 or DotaTime() < 12 * 60)
+        then
+            return 0.1
+        end
     end
 
 	local mul = Defend.GetEnemyAmountMul(lane)

@@ -13,27 +13,13 @@ function Push.GetPushDesire(bot, lane)
     local allies    = bot:GetNearbyHeroes(1600, false, BOT_MODE_NONE)
     local creeps    = bot:GetNearbyCreeps(600 + bot:GetAttackRange(), false)
 
-    -- Laning Push
-    if (J.IsModeTurbo() and DotaTime() < 8 * 60)
-	or DotaTime() < 12 * 60
-    then
-        local teamFront = GetLaneFrontAmount(GetTeam(), lane, false) * 0.75
-
-        if bot:GetHealth() / bot:GetMaxHealth() < 0.3
-        or (enemies ~= nil and allies ~= nil and #enemies > #allies)
-        or bot:WasRecentlyDamagedByTower(1)
+    local IDs = GetTeamPlayers(GetTeam())
+    for _, id in pairs(IDs) do
+        if GetHeroLevel(id) < 6
+        and (J.IsModeTurbo() and DotaTime() < 8 * 60 or DotaTime() < 12 * 60)
         then
             return 0.1
         end
-
-        if Push.ShouldPushWhenLaning(bot, lane)
-        -- and J.WeAreStronger(bot, 1600)
-        and creeps ~= nil and #creeps > 1
-        then
-            return Clamp(teamFront + 0.1, 0.1, max)
-        end
-
-        return 0.1
     end
 
     if bot:GetHealth() / bot:GetMaxHealth() < 0.3
@@ -47,8 +33,6 @@ function Push.GetPushDesire(bot, lane)
     if Push.WhichLaneToPush(bot) == lane
     then
         local amount = RemapValClamped(GetLaneFrontAmount(GetTeam(), lane, false), 0, 1, 0, max) --* (GetLaneFrontAmount(GetOpposingTeam(), lane, false))
-        amount = amount * 0.75
-
         if J.DoesTeamHaveAegis(GetUnitList(UNIT_LIST_ALLIED_HEROES))
         then
             local aegis = 1.3
@@ -67,16 +51,10 @@ function Push.GetPushDesire(bot, lane)
     return 0.1
 end
 
--- local TeamLocation = {}
+local TeamLocation = {}
 function Push.WhichLaneToPush(bot)
 
-    local TeamLocation = {}
-    for _, h in pairs(GetUnitList(UNIT_LIST_ALLIED_HEROES)) do
-        if h:IsAlive() then
-            TeamLocation[h:GetPlayerID()] = h:GetLocation()
-        end
-    end
-    -- TeamLocation[bot:GetPlayerID()] = bot:GetLocation()
+    TeamLocation[bot:GetPlayerID()] = bot:GetLocation()
 
     local distanceToTop = 0
     local distanceToMid = 0

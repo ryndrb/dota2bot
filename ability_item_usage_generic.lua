@@ -4315,7 +4315,7 @@ X.ConsiderItemDesire["item_tpscroll"] = function( hItem )
 		local roshanLoc = nil
 
 		local timeOfDay, time = J.CheckTimeOfDay()
-		if timeOfDay == "day" and time > 240 then
+		if timeOfDay == "day" and time > 270 then
 			lane = LANE_TOP
 			roshanLoc = Vector(-7549, 7562, 1107)
 		elseif timeOfDay == "day" then
@@ -4323,7 +4323,7 @@ X.ConsiderItemDesire["item_tpscroll"] = function( hItem )
 			roshanLoc = Vector(7625, -7511, 1092)
 		end
 	
-		if timeOfDay == "night" and time > 540 then
+		if timeOfDay == "night" and time > 50 then
 			lane = LANE_BOT
 			roshanLoc = Vector(7625, -7511, 1092)
 		elseif timeOfDay == "night" then
@@ -4335,6 +4335,7 @@ X.ConsiderItemDesire["item_tpscroll"] = function( hItem )
 		hEffectTarget = J.GetNearbyLocationToTp(roshanLoc)
 		sCastMotive = 'roshan'
 		if J.GetLocationToLocationDistance( bot:GetLocation(), roshanLoc ) > 6000
+		and J.GetLocationToLocationDistance( bot:GetLocation(), laneFront ) > 3000
 		then
 			return BOT_ACTION_DESIRE_HIGH, hEffectTarget, sCastType, sCastMotive
 		end

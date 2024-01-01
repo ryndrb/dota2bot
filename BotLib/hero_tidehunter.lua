@@ -50,11 +50,10 @@ tOutFitList['outfit_tank'] = {
 	"item_gauntlets",
 	"item_gauntlets",
 
-	"item_blades_of_attack",
-	"item_phase_boots",
+	"item_boots",
 	"item_soul_ring",
 	"item_magic_wand",
-	"item_ring_of_basilius",
+	"item_phase_boots",
 	"item_vladmir",--
 	"item_blink",
 	"item_aghanims_shard",
