@@ -283,7 +283,8 @@ function X.ConsiderSleightOfFist()
 	if J.IsLaning(bot) and J.AllowedToSpam(bot, nManaCost)
 	then
 		local botTarget = bot:GetTarget()
-		if botTarget:GetHealth() <= nDamage
+		if J.IsValidTarget(botTarget)
+		and botTarget:GetHealth() <= nDamage
 		then
 			return BOT_ACTION_DESIRE_VERYHIGH, botTarget:GetLocation()
 		end
