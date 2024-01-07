@@ -137,61 +137,52 @@ function X.ConsiderAetherRemnant()
 		return BOT_ACTION_DESIRE_NONE, 0
 	end
 
-	-- Get some of its values
-	local nRadius    = AetherRemnant:GetSpecialValueInt('radius');
-	local nCastRange = AetherRemnant:GetCastRange()-200;
-	local nCastPoint = AetherRemnant:GetCastPoint( );
-	local nManaCost  = AetherRemnant:GetManaCost( );
-	local nDamage    = AetherRemnant:GetSpecialValueInt( 'impact_damage');
-	
-	local tableNearbyEnemyHeroes = bot:GetNearbyHeroes( nCastRange + nRadius/2, true, BOT_MODE_NONE );
-	
-	for _,npcEnemy in pairs(tableNearbyEnemyHeroes)
+	local nRadius    = AetherRemnant:GetSpecialValueInt('radius')
+	local nCastRange = AetherRemnant:GetCastRange()
+	local nCastPoint = AetherRemnant:GetCastPoint()
+	local nManaCost  = AetherRemnant:GetManaCost()
+	local nDamage    = AetherRemnant:GetSpecialValueInt( 'impact_damage')
+
+	local nEnemyHeroes = bot:GetNearbyHeroes(nCastRange, true, BOT_MODE_NONE)
+
+	for _, npcEnemy in pairs(nEnemyHeroes)
 	do
-		if J.CanCastOnMagicImmune(npcEnemy) and J.CanKillTarget(npcEnemy, nDamage, DAMAGE_TYPE_PHYSICAL) then
-			return BOT_ACTION_DESIRE_HIGH, npcEnemy:GetLocation()
+		if J.IsValidTarget(npcEnemy)
+		and J.CanCastOnNonMagicImmune(npcEnemy)
+		and J.IsInRange(npcEnemy, bot, nCastRange)
+		and J.CanKillTarget(npcEnemy, nDamage, DAMAGE_TYPE_PHYSICAL)
+		then
+			local loc = npcEnemy:GetLocation()
+			local adjLoc = {x = loc.x - 100, y = loc.y - 100, z = loc.z - 100}
+			return BOT_ACTION_DESIRE_HIGH, adjLoc
 		end
 	end
-	
+
 	if J.IsRetreating(bot)
 	then
-		for _,npcEnemy in pairs( tableNearbyEnemyHeroes )
+		for _, npcEnemy in pairs(nEnemyHeroes)
 		do
-			if ( bot:WasRecentlyDamagedByHero( npcEnemy, 2.0 ) and J.CanCastOnMagicImmune(npcEnemy) ) 
+			if bot:WasRecentlyDamagedByHero(npcEnemy, 2.0)
+			and J.CanCastOnNonMagicImmune(npcEnemy)
 			then
-				return BOT_ACTION_DESIRE_HIGH, bot:GetLocation()
+				return BOT_ACTION_DESIRE_MODERATE, bot:GetLocation()
 			end
-		end
-	end
-	
-	if ( J.IsPushing(bot) or J.IsDefending(bot) ) and J.AllowedToSpam(bot, nManaCost)
-	then
-		local lanecreeps = bot:GetNearbyLaneCreeps(nCastRange+200, true);
-		local locationAoE = bot:FindAoELocation( true, false, bot:GetLocation(), nCastRange, nRadius/2, nCastPoint, 0 );
-		if ( locationAoE.count >= 4 and #lanecreeps >= 4  ) 
-		then
-			return BOT_ACTION_DESIRE_LOW, locationAoE.targetloc
-		end
-	end
-	
-	if J.IsInTeamFight(bot, 1200)
-	then
-		local locationAoE = bot:FindAoELocation( true, true, bot:GetLocation(), nCastRange, nRadius/2, 0, 0 );
-		if ( locationAoE.count >= 2 ) 
-		then
-			return BOT_ACTION_DESIRE_MODERATE, locationAoE.targetloc
 		end
 	end
 
 	if J.IsGoingOnSomeone(bot)
 	then
-		local npcTarget = bot:GetTarget();
-		if J.IsValidTarget(npcTarget) and J.CanCastOnMagicImmune(npcTarget) and J.IsInRange(npcTarget, bot, nCastRange) 
+		local npcTarget = bot:GetTarget()
+		if J.IsValidTarget(npcTarget)
+		and J.CanCastOnNonMagicImmune(npcTarget)
+		and J.IsInRange(npcTarget, bot, nCastRange)
 		then
-			return BOT_ACTION_DESIRE_HIGH, npcTarget:GetLocation()
+			local loc = npcTarget:GetLocation()
+			local adjLoc = {x = loc.x - 100, y = loc.y - 100, z = loc.z - 100}
+			return BOT_ACTION_DESIRE_HIGH, adjLoc
 		end
 	end
-	
+
 	return BOT_ACTION_DESIRE_NONE, 0
 end
 
@@ -206,29 +197,22 @@ function X.ConsiderDissimilate()
 
 	if J.IsRetreating(bot)
 	then
-		local tableNearbyEnemyHeroes = bot:GetNearbyHeroes( nRadius+200, true, BOT_MODE_NONE );
-		for _,npcEnemy in pairs( tableNearbyEnemyHeroes )
+		local nEnemyHeroes = bot:GetNearbyHeroes(nRadius * 2, true, BOT_MODE_NONE)
+		for _, npcEnemy in pairs(nEnemyHeroes)
 		do
-			if ( bot:WasRecentlyDamagedByHero( npcEnemy, 2.0 ) ) 
+			if bot:WasRecentlyDamagedByHero(npcEnemy, 2.0)
 			then
 				return BOT_ACTION_DESIRE_MODERATE
 			end
 		end
 	end
-	
-	if J.IsInTeamFight(bot, 1200)
-	then
-		local tableNearbyEnemyHeroes = bot:GetNearbyHeroes( nRadius+200, true, BOT_MODE_NONE );
-		if ( tableNearbyEnemyHeroes ~= nil and #tableNearbyEnemyHeroes >= 2 ) 
-		then
-			return BOT_ACTION_DESIRE_LOW
-		end
-	end
-	
+
 	if J.IsGoingOnSomeone(bot)
 	then
-		local npcTarget = bot:GetTarget();
-		if J.IsValidTarget(npcTarget) and J.CanCastOnNonMagicImmune(npcTarget) and J.IsInRange(npcTarget, bot, nRadius)
+		local npcTarget = bot:GetTarget()
+		if J.IsValidTarget(npcTarget)
+		and J.CanCastOnNonMagicImmune(npcTarget)
+		and J.IsInRange(npcTarget, bot, nRadius)
 		then
 			return BOT_ACTION_DESIRE_HIGH
 		end
@@ -238,55 +222,58 @@ function X.ConsiderDissimilate()
 end
 
 function X.ConsiderResonantPulse()
-    if (not ResonantPulse:IsFullyCastable()) then 
+    if (not ResonantPulse:IsFullyCastable()) then
 		return BOT_ACTION_DESIRE_NONE
 	end
 
 	local nRadius   = ResonantPulse:GetSpecialValueInt( "radius" )
 	local nDamage   = ResonantPulse:GetSpecialValueInt( "damage" )
-	local nManaCost = ResonantPulse:GetManaCost();
+	local nManaCost = ResonantPulse:GetManaCost()
 
-	local tableNearbyEnemyHeroes = bot:GetNearbyHeroes( nRadius, true, BOT_MODE_NONE )
-	
-	for _,npcEnemy in pairs(tableNearbyEnemyHeroes)
+	local nEnemyHeroes = bot:GetNearbyHeroes( nRadius, true, BOT_MODE_NONE )
+
+	for _, npcEnemy in pairs(nEnemyHeroes)
 	do
-		if J.CanCastOnNonMagicImmune(npcEnemy) and ( npcEnemy:IsChanneling() or J.CanKillTarget(npcEnemy, nDamage, DAMAGE_TYPE_MAGICAL) ) then
+		if J.CanCastOnNonMagicImmune(npcEnemy)
+		and J.CanKillTarget(npcEnemy, nDamage, DAMAGE_TYPE_MAGICAL)
+		then
 			return BOT_ACTION_DESIRE_HIGH
 		end
 	end
-	
+
 	if J.IsRetreating(bot)
 	then
-		for _,npcEnemy in pairs( tableNearbyEnemyHeroes )
+		for _,npcEnemy in pairs(nEnemyHeroes)
 		do
-			if ( bot:WasRecentlyDamagedByHero( npcEnemy, 2.0 ) and J.CanCastOnNonMagicImmune(npcEnemy) )
+			if bot:WasRecentlyDamagedByHero(npcEnemy, 2.0)
+			and J.CanCastOnNonMagicImmune(npcEnemy)
 			then
 				return BOT_ACTION_DESIRE_MODERATE
+			end
+
+			if J.CanKillTarget(npcEnemy, nDamage, DAMAGE_TYPE_MAGICAL)
+			and J.CanCastOnNonMagicImmune(npcEnemy)
+			then
+				return BOT_ACTION_DESIRE_HIGH
 			end
 		end
 	end
 
-	if (bot:GetActiveMode() == BOT_MODE_ROSHAN)
-	then
-		local npcTarget = bot:GetAttackTarget();
-		if (J.IsRoshan(npcTarget) and J.CanCastOnMagicImmune(npcTarget) and J.IsInRange(npcTarget, bot, nRadius))
-		then
-			return BOT_ACTION_DESIRE_LOW
-		end
-	end
-	
 	if J.IsInTeamFight(bot, 1200)
 	then
-		if (tableNearbyEnemyHeroes ~= nil and #tableNearbyEnemyHeroes >= 2)
+		if nEnemyHeroes ~= nil and #nEnemyHeroes >= 2
+		and J.CanCastOnNonMagicImmune(nEnemyHeroes[1])
 		then
 			return BOT_ACTION_DESIRE_MODERATE
 		end
 	end
-	
+
 	if J.IsGoingOnSomeone(bot)
 	then
-		local npcTarget = bot:GetTarget();
-		if J.IsValidTarget(npcTarget) and J.CanCastOnNonMagicImmune(npcTarget) and J.IsInRange(npcTarget, bot, nRadius - 50)
+		local npcTarget = bot:GetTarget()
+		if J.IsValidTarget(npcTarget)
+		and J.CanCastOnNonMagicImmune(npcTarget)
+		and J.IsInRange(npcTarget, bot, nRadius)
 		then
 			return BOT_ACTION_DESIRE_HIGH
 		end
@@ -296,62 +283,59 @@ function X.ConsiderResonantPulse()
 end
 
 function X.ConsiderAstralStep()
-	if ( not AstralStep:IsFullyCastable() or bot:IsRooted() or DotaTime() <= remnantCastTime + remnantCastGap ) then 
-		return BOT_ACTION_DESIRE_NONE, {};
+	if not AstralStep:IsFullyCastable()
+	or bot:IsRooted()
+	or DotaTime() <= remnantCastTime + remnantCastGap
+	then
+		return BOT_ACTION_DESIRE_NONE, {}
 	end
-	
-	local nRadius      = AstralStep:GetSpecialValueInt( "radius" );
-	local nCastRange   = AstralStep:GetSpecialValueInt("max_travel_distance")-200;
-	local nCastPoint   = AstralStep:GetCastPoint();
-	local nDamage      = AstralStep:GetSpecialValueInt( "pop_damage" );
-	local nSpeed       = 3000;
-	local nManaCost    = AstralStep:GetManaCost( );
 
-	local tableNearbyEnemyHeroes = bot:GetNearbyHeroes( nCastRange, true, BOT_MODE_NONE );
-	
-	for _,npcEnemy in pairs(tableNearbyEnemyHeroes)
+	local nRadius      = AstralStep:GetSpecialValueInt( "radius" )
+	local nCastRange   = AstralStep:GetSpecialValueInt("max_travel_distance")
+	local nCastPoint   = AstralStep:GetCastPoint()
+	local nDamage      = AstralStep:GetSpecialValueInt( "pop_damage" )
+	local nSpeed       = 3000
+	local nManaCost    = AstralStep:GetManaCost()
+
+	local nEnemyHeroes = bot:GetNearbyHeroes( nCastRange, true, BOT_MODE_NONE )
+
+	for _,npcEnemy in pairs(nEnemyHeroes)
 	do
-		if J.CanCastOnMagicImmune(npcEnemy) and J.CanKillTarget(npcEnemy, nDamage, DAMAGE_TYPE_MAGICAL) then
-			if npcEnemy:GetMovementDirectionStability() < 1.0 then
-				return BOT_ACTION_DESIRE_HIGH, npcEnemy:GetLocation();
-			else
-				local eta = ( GetUnitToUnitDistance(npcEnemy, bot) / nSpeed ) + nCastPoint
-				return BOT_ACTION_DESIRE_HIGH, npcEnemy:GetExtrapolatedLocation(eta)
-			end
+		if J.CanCastOnMagicImmune(npcEnemy)
+		and J.CanKillTarget(npcEnemy, nDamage, DAMAGE_TYPE_MAGICAL)
+		then
+			return BOT_ACTION_DESIRE_HIGH, npcEnemy:GetExtrapolatedLocation(nCastPoint)
 		end
 	end
-	
+
 	if J.IsRetreating(bot)
 	then
-		for _,npcEnemy in pairs( tableNearbyEnemyHeroes )
+		for _, npcEnemy in pairs(nEnemyHeroes)
 		do
-			if ( bot:WasRecentlyDamagedByHero( npcEnemy, 1.0 ) )
+			if (bot:WasRecentlyDamagedByHero(npcEnemy, 2.0))
 			then
-				local loc = J.GetEscapeLoc();
-				return BOT_ACTION_DESIRE_HIGH, J.Site.GetXUnitsTowardsLocation(bot, loc, nCastRange-(#tableNearbyEnemyHeroes*100))
+				local loc = J.GetEscapeLoc()
+				return BOT_ACTION_DESIRE_MODERATE, J.Site.GetXUnitsTowardsLocation(bot, loc, nCastRange)
 			end
 		end
 	end
 
 	if J.IsGoingOnSomeone(bot)
 	then
-		local npcTarget = bot:GetTarget();
-		if J.IsValidTarget(npcTarget) and J.CanCastOnMagicImmune(npcTarget) and not J.IsInRange(npcTarget, bot, 350) and J.IsInRange(npcTarget, bot, nCastRange) 
+		local npcTarget = bot:GetTarget()
+		if J.IsValidTarget(npcTarget)
+		and J.CanCastOnMagicImmune(npcTarget)
+		and J.IsInRange(npcTarget, bot, nCastRange)
 		then
-			local targetAlly  = npcTarget:GetNearbyHeroes(1000, false, BOT_MODE_NONE)
-			local targetEnemy = npcTarget:GetNearbyHeroes(1000, true, BOT_MODE_NONE)
+			local targetAlly  = npcTarget:GetNearbyHeroes(nCastRange, false, BOT_MODE_NONE)
+			local targetEnemy = npcTarget:GetNearbyHeroes(nCastRange, true, BOT_MODE_NONE)
 			if targetEnemy ~= nil and targetAlly ~= nil and #targetEnemy >= #targetAlly then
-				if npcTarget:GetMovementDirectionStability() < 1.0 then
-					return BOT_ACTION_DESIRE_HIGH, npcTarget:GetLocation()
-				else
-					local eta = (GetUnitToUnitDistance(npcTarget, bot) / nSpeed ) + nCastPoint
-					return BOT_ACTION_DESIRE_HIGH, npcTarget:GetExtrapolatedLocation(eta)
-				end
+				return BOT_ACTION_DESIRE_HIGH, npcTarget:GetExtrapolatedLocation(nCastPoint)
 			end
 		end
 	end
-	
-	return BOT_ACTION_DESIRE_NONE, {};
+
+	return BOT_ACTION_DESIRE_NONE, {}
 end
 
 return X

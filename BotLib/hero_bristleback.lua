@@ -148,11 +148,13 @@ modifier_bristleback_warpath_stack
 local abilityQ = bot:GetAbilityByName( sAbilityList[1] )
 local abilityW = bot:GetAbilityByName( sAbilityList[2] )
 local abilityAS = bot:GetAbilityByName( sAbilityList[4] )
+local Bristleback = bot:GetAbilityByName( "bristleback_bristleback" )
 
 
 local castQDesire, castQTarget
 local castWDesire
 local castASDesire, castASTarget
+local BristlebackDesire, BristlebackLoc
 
 local nKeepMana, nMP, nHP, nLV, hEnemyList, botTarget
 
@@ -181,20 +183,21 @@ function X.SkillsComplement()
 
 		return
 	end
-	
-	
+
+	BristlebackDesire, BristlebackLoc = X.ConsiderBristleback()
+	if (BristlebackDesire > 0 and bot:HasScepter())
+	then
+		bot:ActionQueue_UseAbilityOnLocation( Bristleback, BristlebackLoc )
+		return
+	end
+
 	castQDesire, castQTarget = X.ConsiderQ()
 	if ( castQDesire > 0 )
 	then
 
 		J.SetQueuePtToINT( bot, true )
 
-		if bot:HasScepter()
-		then
-			bot:ActionQueue_UseAbility( abilityQ )
-		else
-			bot:ActionQueue_UseAbilityOnEntity( abilityQ, castQTarget )
-		end
+		bot:ActionQueue_UseAbilityOnEntity( abilityQ, castQTarget )
 		return
 	end
 
@@ -453,6 +456,50 @@ function X.ConsiderAS()
 
 	return BOT_ACTION_DESIRE_NONE, 0
 
+end
+
+function X.ConsiderBristleback()
+	if not Bristleback:IsTrained()
+	or not Bristleback:IsFullyCastable()
+	then
+		return BOT_ACTION_DESIRE_NONE, 0
+	end
+
+	if J.IsInTeamFight( bot, 1400 )
+	then
+		local nAoeLoc = J.GetAoeEnemyHeroLocation( bot, 700, 700, 2 )
+		if nAoeLoc ~= nil
+		then
+			return BOT_ACTION_DESIRE_HIGH, nAoeLoc
+		end
+	end
+
+	if J.IsGoingOnSomeone( bot )
+	then
+		local targetHero = J.GetProperTarget( bot )
+		if J.IsValidHero( targetHero )
+		and J.IsInRange( bot, targetHero, 700 )
+		and J.CanCastOnNonMagicImmune( targetHero )
+		then
+			return BOT_ACTION_DESIRE_HIGH, targetHero:GetLocation()
+		end
+	end
+
+	if J.IsRetreating( bot )
+	then
+		local nEnemyHeroes = bot:GetNearbyHeroes( 700, true, BOT_MODE_NONE )
+		if nEnemyHeroes ~= nil and nEnemyHeroes > 0
+		then
+			local targetHero = nEnemyHeroes[1]
+			if J.IsValidHero( targetHero )
+			and J.CanCastOnNonMagicImmune( targetHero )
+			then
+				return BOT_ACTION_DESIRE_MODERATE, targetHero:GetLocation()
+			end
+		end
+	end
+
+	return BOT_ACTION_DESIRE_NONE, 0
 end
 
 return X

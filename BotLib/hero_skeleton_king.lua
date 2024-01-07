@@ -17,17 +17,15 @@ local sAbilityList = J.Skill.GetAbilityList( bot )
 local sOutfitType = J.Item.GetOutfitType( bot )
 
 local tTalentTreeList = {
-						{--pos1,3
 							['t25'] = {0, 10},
 							['t20'] = {10, 0},
 							['t15'] = {10, 0},
 							['t10'] = {10, 0},
-						},
 }
 
 
 local tAllAbilityBuildList = {
-						{2,1,2,3,2,6,2,3,3,3,6,1,1,1,6},--pos1,3
+							{2,1,2,3,2,6,2,3,3,3,6,1,1,1,6},--pos1,3
 }
 
 local nAbilityBuildList = J.Skill.GetRandomBuild( tAllAbilityBuildList )

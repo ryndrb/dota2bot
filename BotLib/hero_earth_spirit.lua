@@ -305,13 +305,14 @@ function X.ConsiderRollingBoulder()
 
 	if nStoneCR > 1600 then nStoneCR = 1300 end
 
-	local eHeroes = bot:GetNearbyHeroes( nRadius, true, BOT_MODE_NONE );
-	for _, npcEnemy in pairs( eHeroes )
+	local nEnemyHeroes = bot:GetNearbyHeroes( nRadius, true, BOT_MODE_NONE)
+	for _, npcEnemy in pairs(nEnemyHeroes)
 	do
-		if (npcEnemy:IsChanneling())
+		if npcEnemy:IsChanneling()
+		or J.IsCastingUltimateAbility(npcEnemy)
 		then
-			local loc = J.GetCorrectLoc(npcEnemy, (GetUnitToUnitDistance(bot, npcEnemy) / nRSpeed) + nDelay)
-			return BOT_ACTION_DESIRE_HIGH, loc, true
+			local loc = J.GetCorrectLoc(npcEnemy, nDelay)
+			return BOT_ACTION_DESIRE_HIGH, loc, false
 		end
 	end
 
@@ -367,10 +368,14 @@ function X.ConsiderRollingBoulder()
 				else
 					return BOT_ACTION_DESIRE_HIGH, loc, true
 				end
-			end	
-		elseif nStone < 1 and J.IsValidTarget(npcTarget) and J.CanCastOnNonMagicImmune(npcTarget) and J.IsInRange(npcTarget, bot, nUnitCR / 2)  then
-			local loc = J.GetCorrectLoc(npcTarget, GetUnitToUnitDistance(bot, target)/nSpeed)
-			return BOT_ACTION_DESIRE_HIGH, loc, false;
+			end
+		elseif nStone < 1
+		and J.IsValidTarget(npcTarget)
+		and J.CanCastOnNonMagicImmune(npcTarget)
+		and J.IsInRange(npcTarget, bot, nUnitCR)
+		then
+			local loc = J.GetCorrectLoc(npcTarget, nDelay)
+			return BOT_ACTION_DESIRE_HIGH, loc, false
 		end
 	end
 

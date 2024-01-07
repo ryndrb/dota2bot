@@ -392,12 +392,11 @@ function GetDesire()
 		return BOT_MODE_DESIRE_HIGH;
 	end
 	
-	if GetGameMode() ~= GAMEMODE_MO
-	   --and ( J.Site.IsTimeToFarm(bot) or pushTime > DotaTime() - 8.0 )
-	   and ( J.Site.IsTimeToFarm(bot))
-	   --and ( not X.IsHumanPlayerInTeam() or enemyKills > allyKills + 16 ) 
-	   and ( bot:GetNextItemPurchaseValue() > 0 or not bot:HasModifier("modifier_item_moon_shard_consumed") )
-	   --and ( DotaTime() > 7 * 60 or bot:GetLevel() >= 8 or ( bot:GetAttackRange() < 220 and bot:GetLevel() >= 6 ) )	   
+	if GetGameMode() ~= GAMEMODE_MO 
+	and ( J.Site.IsTimeToFarm(bot) or pushTime > DotaTime() - 8.0 )
+	-- and ( not X.IsHumanPlayerInTeam() or enemyKills > allyKills + 16 ) 
+	and ( bot:GetNextItemPurchaseValue() > 0 or not bot:HasModifier("modifier_item_moon_shard_consumed") )
+	-- and ( DotaTime() > 7 * 60 or bot:GetLevel() >= 8 or ( bot:GetAttackRange() < 220 and bot:GetLevel() >= 6 ) )	   
 	then
 		if J.GetDistanceFromEnemyFountain(bot) > 4000 
 		then
@@ -470,12 +469,11 @@ function GetDesire()
 						end
 					end
 					
-					-- local farmDistance = GetUnitToLocationDistance(bot,preferedCamp.cattr.location);
+					local farmDistance = GetUnitToLocationDistance(bot,preferedCamp.cattr.location);
 					
-					-- if botName == 'npc_dota_hero_medusa' and farmDistance < 133 then return 0.33 end 
+					if botName == 'npc_dota_hero_medusa' and farmDistance < 133 then return 0.33 end 
 					
-					-- return math.floor((RemapValClamped(farmDistance, 6000, 0, BOT_MODE_DESIRE_MODERATE, BOT_MODE_DESIRE_VERYHIGH))*10)/10;
-					return BOT_MODE_DESIRE_HIGH
+					return math.floor((RemapValClamped(farmDistance, 6000, 0, BOT_MODE_DESIRE_MODERATE, BOT_MODE_DESIRE_VERYHIGH))*10)/10;
 				end
 			end
 		end
@@ -726,9 +724,9 @@ function Think()
 				bot:Action_MoveToLocation(targetFarmLoc);
 				return;
 		else
-			local neutralCreeps = bot:GetNearbyNeutralCreeps(1600); 
+			local neutralCreeps = bot:GetNearbyNeutralCreeps(1000); 
 			
-			if #neutralCreeps >= 1 then
+			if #neutralCreeps >= 2 then
 				
 				farmState = 1;
 				

@@ -192,9 +192,15 @@ function X.SkillsComplement()
 	if ( castQDesire > 0 ) 
 	then
 		J.SetReportMotive(bDebugMode,sMotive);		
-	
+
 		J.SetQueuePtToINT(bot, true)
-				
+
+		if bot:HasScepter()
+		and castQTarget ~= nil
+		then
+			bot:ActionQueue_UseAbilityOnLocation( abilityQ, castQTarget:GetLocation() )
+		end
+
 		bot:ActionQueue_UseAbilityOnEntity( abilityQ, castQTarget )
 		return;
 	end

@@ -2,13 +2,6 @@ local Push = {}
 local J = require( GetScriptDirectory()..'/FunLib/jmz_func')
 
 function Push.GetPushDesire(bot, lane)
-
-    local max = 0.9
-    if (GetDefendLaneDesire(LANE_TOP) > 0.75 or GetDefendLaneDesire(LANE_MID) > 0.75 or GetDefendLaneDesire(LANE_BOT) > 0.75)
-    then
-        max = 0.75
-    end
-
     local enemies   = bot:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
     local allies    = bot:GetNearbyHeroes(1600, false, BOT_MODE_NONE)
     local creeps    = bot:GetNearbyCreeps(600 + bot:GetAttackRange(), false)
@@ -30,31 +23,43 @@ function Push.GetPushDesire(bot, lane)
         return 0.25
     end
 
+    local aAliveCount = J.GetNumOfAliveHeroes(false)
+    local eAliveCount = J.GetNumOfAliveHeroes(true)
     if Push.WhichLaneToPush(bot) == lane
+    and aAliveCount >= eAliveCount
     then
-        local amount = RemapValClamped(GetLaneFrontAmount(GetTeam(), lane, false), 0, 1, 0, max) --* (GetLaneFrontAmount(GetOpposingTeam(), lane, false))
+        local amount = RemapValClamped(GetLaneFrontAmount(GetTeam(), lane, false), 0, 1, 0, 0.75) * (GetLaneFrontAmount(GetOpposingTeam(), lane, false))
         if J.DoesTeamHaveAegis(GetUnitList(UNIT_LIST_ALLIED_HEROES))
         then
             local aegis = 1.3
             amount = amount * aegis
         end
 
-        local aAliveCount = J.GetNumOfAliveHeroes(false)
-        local eAliveCount = J.GetNumOfAliveHeroes(true)
-        local tot = ((aAliveCount - eAliveCount) / (aAliveCount + eAliveCount)) / 2
+        local tot = ((aAliveCount - eAliveCount) / (aAliveCount + eAliveCount)) * 0.15
         amount = amount + tot
 
-        return Clamp(amount, 0.25, max)
+        local nHeroesInLane = Push.GetEnemyCountInLane(lane)
+        if ((#nHeroesInLane[1] - #nHeroesInLane[2]) / (#nHeroesInLane[1] + #nHeroesInLane[2])) * 0.15 < 0
+        then
+            amount = amount + ((#nHeroesInLane[1] - #nHeroesInLane[2]) / (#nHeroesInLane[1] + #nHeroesInLane[2])) * 0.15
+        end
 
+        return Clamp(amount, 0.1, 0.75 + tot)
     end
 
     return 0.1
 end
 
-local TeamLocation = {}
+-- local TeamLocation = {}
 function Push.WhichLaneToPush(bot)
 
-    TeamLocation[bot:GetPlayerID()] = bot:GetLocation()
+    -- TeamLocation[bot:GetPlayerID()] = bot:GetLocation()
+    local TeamLocation = {}
+    for _, u in pairs(GetUnitList(UNIT_LIST_ALLIED_HEROES)) do
+        if u:IsAlive() then
+            TeamLocation[u:GetPlayerID()] = u:GetLocation()
+        end
+    end
 
     local distanceToTop = 0
     local distanceToMid = 0
@@ -235,6 +240,33 @@ function Push.ShouldPushWhenLaning(bot, lane)
 	end
 end
 
+function Push.GetEnemyCountInLane(lane)
+	local nEnemies = {}
+    local nAllies = {}
+    local nAllyList = GetUnitList(UNIT_LIST_ALLIED_HEROES)
+	local nEnemyList = GetUnitList(UNIT_LIST_ENEMY_HEROES)
+
+	for _, enemy in pairs(nEnemyList) do
+		local lanefrontloc = GetLaneFrontLocation(GetTeam(), lane, 0)
+
+		if GetUnitToLocationDistance(enemy, lanefrontloc) <= 1600
+		then
+			table.insert(nEnemies, enemy)
+		end
+	end
+
+    for _, enemy in pairs(nAllyList) do
+		local lanefrontloc = GetLaneFrontLocation(GetTeam(), lane, 0)
+
+		if GetUnitToLocationDistance(enemy, lanefrontloc) <= 1600
+		then
+			table.insert(nAllies, enemy)
+		end
+	end
+
+	return {nAllies, nEnemies}
+end
+
 function Push.PushThink(bot, lane)
 
     if bot:IsChanneling() or bot:IsUsingAbility() then
@@ -255,7 +287,7 @@ function Push.PushThink(bot, lane)
             local info = GetHeroLastSeenInfo(id)
             -- Take an aggressive guess
             if info.location ~= nil then
-                enemyDistance = enemyDistance + math.max(#(info.location - laneFrontLocation)--[[ - info.time * 400]], 400)
+                enemyDistance = enemyDistance + math.max(#(info.location - laneFrontLocation) - info.time * 400, 400)
                 enemyAlive = enemyAlive + 1
             end
         end

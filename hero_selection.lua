@@ -779,83 +779,175 @@ function X.IsBanByChat( sHero )
 end
 
 
-local sTianStarList =
+local TIWinners =
 {
-"Lara Croft",
-"Aloy (Horizon Zero Dawn)",
-"Tracer (Overwatch)",
-"Yennefer of Vengerberg (The Witcher)",
-"Chun-Li (Street Fighter)",
-"Samus Aran (Metroid)",
-"Zelda (The Legend of Zelda)",
-"Morrigan Aensland (Darkstalkers)",
-"Tifa Lockhart (Final Fantasy VII)",
-"Aerith Gainsborough (Final Fantasy VII)",
-"Jill Valentine (Resident Evil)",
-"Ciri (The Witcher)",
-"Miranda Lawson (Mass Effect)",
-"Kasumi Goto (Mass Effect)",
-"Athena (Borderlands)",
-"Cortana (Halo)",
-"Quiet (Metal Gear Solid V)",
-"Sophitia Alexandra (Soulcalibur)",
-"Clementine (The Walking Dead)",
-"Mai Shiranui (King of Fighters)",
-"Sonya Blade (Mortal Kombat)",
-"Aela the Huntress (The Elder Scrolls V: Skyrim)",
-"Mileena (Mortal Kombat)",
-"Cassandra Alexandra (Soulcalibur)",
-"FemShep (Commander Shepard, Mass Effect)",
-"Ellie (The Last of Us)",
-"Serana (The Elder Scrolls V: Skyrim)",
-"Y'shtola Rhul (Final Fantasy XIV)",
-"Bayonetta",
-"Isabela (Dragon Age II)",
-"Yuna (Final Fantasy X)",
-"2B (NieR: Automata)",
---"天哭星",
---"天败星",
+	-- Winners
+	{--ti1
+		"Na'Vi.Dendi",
+		"Na'Vi.XBOCT",
+		"Na'Vi.Artsyle",
+		"Na'Vi.LighTofHeaveN",
+		"Na'Vi.Puppey",
+	},
+	{--ti2
+		"iG.Ferrari_430",
+		"iG.YYF",
+		"iG.Zhou",
+		"iG.Faith",
+		"iG.ChuaN",
+	},
+	{--ti3
+		"Alliance.s4",
+		"Alliance.AdmiralBulldog",
+		"Alliance.Loda",
+		"Alliance.Akke",
+		"Alliance.EGM",
+	},
+	{--ti4
+		"Newbee.Mu",
+		"Newbee.xiao8",
+		"Newbee.Hao",
+		"Newbee.SanSheng",
+		"Newbee.Banana",
+	},
+	{--ti5
+		"EG.SumaiL",
+		"EG.UNiVeRsE",
+		"EG.Fear",
+		"EG.ppd",
+		"EG.Aui_2000",
+	},
+	{--ti6
+		"Wings.bLink",
+		"Wings.Faith_bian",
+		"Wings.shadow",
+		"Wings.iceice",
+		"Wings.y`",
+	},
+	{--ti7
+		"Liquid.Miracle-",
+		"Liquid.MinD_ContRoL",
+		"Liquid.MATUMBAMAN",
+		"Liquid.KurokY",
+		"Liquid.Gh",
+	},
+	{--ti8,9
+		"OG.Topson",
+		"OG.Ceb",
+		"OG.ana",
+		"OG.N0tail",
+		"OG.JerAx",
+	},
+	{--ti10
+		"TSpirit.TORONTOTOKYO",
+		"TSpirit.Collapse",
+		"TSpirit.Yatoro",
+		"TSpirit.Miposhka",
+		"TSpirit.Mira",
+	},
+	{--ti11
+		"Tundra.Nine",
+		"Tundra.33",
+		"Tundra.skiter",
+		"Tundra.Sneyking",
+		"Tundra.Saksa",
+	},
+	{--ti12
+		"TSpirit.Larl",
+		"TSpirit.Collapse",
+		"TSpirit.Yatoro雨",
+		"TSpirit.Miposhka",
+		"TSpirit.Mira",
+	},
 }
 
-
-local sDiStarsList =
+local TIRunnerUps =
 {
-"Zero Two",
-"Mikasa Ackerman",
-"Rem",
-"Asuka Langley Soryu",
-"Bulma",
-"Saber (Artoria Pendragon)",
-"Hinata Hyuga",
-"Erza Scarlet",
-"Inori Yuzuriha",
-"Rukia Kuchiki",
-"Rei Ayanami",
-"Nami",
-"Android 18",
-"Rias Gremory",
-"Tsuyu Asui (Froppy)",
-"Kallen Stadtfeld",
-"Yoruichi Shihouin",
-"Nico Robin",
-"Mai Sakurajima",
-"Holo",
-"Nezuko Kamado",
-"Yuno Gasai",
-"Kagome Higurashi",
-"Lucy Heartfilia",
-"Yukino Yukinoshita",
-"Sakura Haruno",
-"Misty (Kasumi)",
-"Akeno Himejima",
-"C.C. (Code Geass)",
-"Tohru Honda",
-"Mikoto Misaka",
-}
-
-local sHeroNameList = {
-	"Zach Milton",
-	""
+-- Runner-Ups
+	{--ti1
+		"EHOME.QQQ",
+		"EHOME.X!!",
+		"EHOME.820",
+		"EHOME.SJQ",
+		"EHOME.LaNm",
+	},
+	{--ti2
+		"Na'Vi.Dendi",
+		"Na'Vi.LighTofHeaveN",
+		"Na'Vi.XBOCT",
+		"Na'Vi.ARS-ART",
+		"Na'Vi.Puppey",
+	},
+	{--ti3
+		"Na'Vi.Dendi",
+		"Na'Vi.Funn1k",
+		"Na'Vi.XBOCT",
+		"Na'Vi.KuroKy",
+		"Na'Vi.Puppey",
+	},
+	{--ti4
+		"VG.Super",
+		"VG.rOtk",
+		"VG.Sylar",
+		"VG.fy",
+		"VG.Fenrir",
+	},
+	{--ti5
+		"CDEC.Shiki",
+		"CDEC.Xz",
+		"CDEC.Agressif",
+		"CDEC.Q",
+		"CDEC.Garder",
+	},
+	{--ti6
+		"DC.w33",
+		"DC.Moo",
+		"DC.Resolut1on",
+		"DC.MiSeRy",
+		"DC.Saksa",
+	},
+	{--ti7
+		"Newbee.Sccc",
+		"Newbee.kpii",
+		"Newbee.Moogy",
+		"Newbee.Faith",
+		"Newbee.Kaka",
+	},
+	{--ti8
+		"PSG.LGD.Somnus` M",
+		"PSG.LGD.Chalice",
+		"PSG.LGD.Ame",
+		"PSG.LGD.xNova",
+		"PSG.LGD.fy",
+	},
+	{--ti9
+		"Liquid.w33",
+		"Liquid.MinD_ContRoL",
+		"Liquid.Miracle-",
+		"Liquid.KuroKy",
+		"Liquid.Gh",
+	},
+	{--ti10
+		"PSG.LGD.NothingToSay",
+		"PSG.LGD.Faith_bian",
+		"PSG.LGD.Ame",
+		"PSG.LGD.y`",
+		"PSG.LGD.XinQ",
+	},
+	{--ti11
+		"Secret.Nisha",
+		"Secret.Resolut1on",
+		"Secret.Crystallis",
+		"Secret.Puppey",
+		"Secret.Zayac",
+	},
+	{--ti12
+		"GG.Quinn",
+		"GG.Ace",
+		"GG.dyrachyo",
+		"GG.Seleri",
+		"GG.tOfu",
+	},
 }
 
 function X.GetRandomNameList( sStarList )
@@ -971,8 +1063,8 @@ function GetBotNames()
 
 	if bUserMode then return HeroSet['ZhanDuiMing'] end
 
- 	return GetTeam() == TEAM_RADIANT and X.GetRandomNameList( sTianStarList ) or X.GetRandomNameList( sDiStarsList )
-
+ 	-- return GetTeam() == TEAM_RADIANT and X.GetRandomNameList( TIWinners ) or X.GetRandomNameList( TIRunnerUps )
+	return GetTeam() == TEAM_RADIANT and TIWinners[RandomInt(1, #TIWinners)] or TIRunnerUps[RandomInt(1, #TIRunnerUps)]
 end
 
 

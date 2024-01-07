@@ -4,15 +4,6 @@ local Defend = {}
 
 function Defend.GetDefendDesire(bot, lane)
 
-	local max = 0.9
-	-- if J.IsCore(bot)
-	-- and bot:GetActiveMode() == BOT_MODE_ROSHAN
-	-- and bot:GetActiveModeDesire() > 0.75
-	-- and not J.CanBeAttacked(GetAncient(GetTeam()))
-	-- then
-	-- 	max = 0.7
-	-- end
-
 	-- Laning Defend
 	local IDs = GetTeamPlayers(GetTeam())
     for _, id in pairs(IDs) do
@@ -24,11 +15,6 @@ function Defend.GetDefendDesire(bot, lane)
     end
 
 	local mul = Defend.GetEnemyAmountMul(lane)
-	-- print(bot:GetUnitName()..": "..tostring(lane)..": ", RemapValClamped(GetLaneFrontAmount(GetTeam(), lane, true), 0, 1, max, 0) * (1 - GetLaneFrontAmount(GetOpposingTeam(), lane, true)) * mul[lane])
-	-- print(tostring(max).." remappedddd "..bot:GetUnitName()..": "..tostring(lane)..": ", RemapValClamped(GetLaneFrontAmount(GetTeam(), lane, false), 0.0, 1, max, 0))
-	-- print(tostring(max).." lane frontE "..bot:GetUnitName()..": "..tostring(lane)..": ", 1 - GetLaneFrontAmount(GetOpposingTeam(), lane, true))
-	-- print(tostring(max).." lane frontA "..bot:GetUnitName()..": "..tostring(lane)..": ", GetLaneFrontAmount(GetTeam(), lane, true))
-
 	local tFront = GetLaneFrontAmount(GetTeam(), lane, true)
 	local eFront = 1 - GetLaneFrontAmount(GetOpposingTeam(), lane, true)
 
@@ -41,8 +27,8 @@ function Defend.GetDefendDesire(bot, lane)
     then
         if Defend.ShouldGoDefend(bot, lane)
         then
-			local amount = --[[RemapValClamped(tFront, 0, 1, max, 0) *]] eFront * mul[lane]
-			return Clamp(amount, 0.1, max)
+			local amount = RemapValClamped(tFront, 0, 1, 0.75, 0) * eFront * mul[lane]
+			return Clamp(amount, 0.1, 0.9)
         end
 	end
 
@@ -133,35 +119,38 @@ function Defend.ShouldGoDefend(bot, lane)
 	local building, mul = Defend.GetFurthestBuildingOnLane(lane)
 	local pos = J.GetPosition(bot)
 
-	if (J.IsModeTurbo() and DotaTime() < 8 * 60)
-	or DotaTime() < 12 * 60
-	then
-		if GetTeam() == TEAM_RADIANT then
-			if lane == LANE_TOP
-			and (pos == 3 or pos == 4) then
-				return true
-			elseif lane == LANE_MID
-			and pos == 2 then
-				return true
-			elseif lane == LANE_BOT
-			and (pos == 1 or pos == 5) then
-				return true
+	local IDs = GetTeamPlayers(GetTeam())
+    for _, id in pairs(IDs) do
+        if GetHeroLevel(id) < 6
+        and (J.IsModeTurbo() and DotaTime() < 8 * 60 or DotaTime() < 12 * 60)
+        then
+			if GetTeam() == TEAM_RADIANT then
+				if lane == LANE_TOP
+				and (pos == 3 or pos == 4) then
+					return true
+				elseif lane == LANE_MID
+				and pos == 2 then
+					return true
+				elseif lane == LANE_BOT
+				and (pos == 1 or pos == 5) then
+					return true
+				end
+			elseif GetTeam() == TEAM_DIRE then
+				if lane == LANE_TOP
+				and (pos == 1 or pos == 5) then
+					return true
+				elseif lane == LANE_MID
+				and pos == 2 then
+					return true
+				elseif lane == LANE_BOT
+				and (pos == 3 or pos == 4) then
+					return true
+				end
 			end
-		elseif GetTeam() == TEAM_DIRE then
-			if lane == LANE_TOP
-			and (pos == 1 or pos == 5) then
-				return true
-			elseif lane == LANE_MID
-			and pos == 2 then
-				return true
-			elseif lane == LANE_BOT
-			and (pos == 3 or pos == 4) then
-				return true
-			end
-		end
 
-		return false
-	end
+			return false
+        end
+    end
 
 	if Enemies == 1 then
 		if pos == 2
@@ -396,10 +385,7 @@ function Defend.GetEnemyCountInLane(lane, isHero)
 
 	for _, enemy in pairs(unitList) do
 		local distance = GetUnitToUnitDistance(building, enemy)
-		local lanefrontloc = GetLaneFrontLocation(GetTeam(), lane, 0)
-
-		if distance <= 1600
-		and GetUnitToLocationDistance(building, lanefrontloc) <= 1600
+		if distance < 1600
 		then
 			table.insert(units, enemy)
 		end

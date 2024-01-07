@@ -4307,39 +4307,39 @@ X.ConsiderItemDesire["item_tpscroll"] = function( hItem )
 	end
 
 	-- Roshan
-	if bot:GetActiveMode() == BOT_MODE_ROSHAN
-	and not J.IsInTeamFight(bot, 1600)
-	and nEnemyCount == 0
-	then
-		local lane = nil
-		local roshanLoc = nil
+	-- if bot:GetActiveMode() == BOT_MODE_ROSHAN
+	-- and not J.IsInTeamFight(bot, 1600)
+	-- and nEnemyCount == 0
+	-- then
+	-- 	local lane = nil
+	-- 	local roshanLoc = nil
 
-		local timeOfDay, time = J.CheckTimeOfDay()
-		if timeOfDay == "day" and time > 270 then
-			lane = LANE_TOP
-			roshanLoc = Vector(-7549, 7562, 1107)
-		elseif timeOfDay == "day" then
-			lane = LANE_BOT
-			roshanLoc = Vector(7625, -7511, 1092)
-		end
+	-- 	local timeOfDay, time = J.CheckTimeOfDay()
+	-- 	if timeOfDay == "day" and time > 270 then
+	-- 		lane = LANE_TOP
+	-- 		roshanLoc = Vector(-7549, 7562, 1107)
+	-- 	elseif timeOfDay == "day" then
+	-- 		lane = LANE_BOT
+	-- 		roshanLoc = Vector(7625, -7511, 1092)
+	-- 	end
 	
-		if timeOfDay == "night" and time > 50 then
-			lane = LANE_BOT
-			roshanLoc = Vector(7625, -7511, 1092)
-		elseif timeOfDay == "night" then
-			lane = LANE_TOP
-			roshanLoc = Vector(-7549, 7562, 1107)
-		end
+	-- 	if timeOfDay == "night" and time > 50 then
+	-- 		lane = LANE_BOT
+	-- 		roshanLoc = Vector(7625, -7511, 1092)
+	-- 	elseif timeOfDay == "night" then
+	-- 		lane = LANE_TOP
+	-- 		roshanLoc = Vector(-7549, 7562, 1107)
+	-- 	end
 
-		local laneFront = GetLaneFrontLocation( GetTeam(), lane, 0 )
-		hEffectTarget = J.GetNearbyLocationToTp(roshanLoc)
-		sCastMotive = 'roshan'
-		if J.GetLocationToLocationDistance( bot:GetLocation(), roshanLoc ) > 6000
-		and J.GetLocationToLocationDistance( bot:GetLocation(), laneFront ) > 3000
-		then
-			return BOT_ACTION_DESIRE_HIGH, hEffectTarget, sCastType, sCastMotive
-		end
-	end
+	-- 	local laneFront = GetLaneFrontLocation( GetTeam(), lane, 0 )
+	-- 	hEffectTarget = J.GetNearbyLocationToTp(roshanLoc)
+	-- 	sCastMotive = 'roshan'
+	-- 	if J.GetLocationToLocationDistance( bot:GetLocation(), roshanLoc ) > 6000
+	-- 	and J.GetLocationToLocationDistance( bot:GetLocation(), laneFront ) > 3000
+	-- 	then
+	-- 		return BOT_ACTION_DESIRE_HIGH, hEffectTarget, sCastType, sCastMotive
+	-- 	end
+	-- end
 
 	--守塔
 	if J.IsDefending( bot )
@@ -5761,7 +5761,6 @@ X.ConsiderItemDesire['item_soul_ring'] = function(item)
 	local sCastType = 'none'
 	local hEffectTarget = bot
 	local sCastMotive = nil
-	local nInRangeEnmyList = bot:GetNearbyHeroes(nCastRange, true, BOT_MODE_NONE)
 	local aMode = bot:GetActiveMode()
 
 	local currMana = bot:GetMana() / bot:GetMaxMana()

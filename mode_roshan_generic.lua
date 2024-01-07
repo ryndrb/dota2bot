@@ -45,18 +45,16 @@ function GetDesire()
     and HasEnoughDPSForRoshan(aliveHeroesList)
     then
         if GetUnitToLocationDistance(bot, roshLoc) < 1000
-        and bot:GetActiveMode() == BOT_MODE_ROSHAN
         and IsEnoughAllies()
         then
            return BOT_ACTION_DESIRE_ABSOLUTE
         elseif GetUnitToLocationDistance(bot, roshLoc) < 1000
-        and bot:GetActiveMode() == BOT_MODE_ROSHAN
         and not IsEnoughAllies()
         then
             return BOT_ACTION_DESIRE_LOW
         end
 
-        return BOT_ACTION_DESIRE_HIGH
+        return BOT_ACTION_DESIRE_VERYHIGH
     end
 
     return BOT_ACTION_DESIRE_NONE
