@@ -84,21 +84,31 @@ function X.MinionThink( hMinionUnit )
 	end
 end
 
-local abilityQ = bot:GetAbilityByName( sAbilityList[1] )
-local abilityW = bot:GetAbilityByName( sAbilityList[2] )
-local abilityR = bot:GetAbilityByName( sAbilityList[6] )
-local abilityRR = bot:GetAbilityByName( 'shredder_return_chakram' )
+local WhirlingDeath 	= bot:GetAbilityByName( sAbilityList[1] )
+local TimberChain 		= bot:GetAbilityByName( sAbilityList[2] )
+local Chakram 			= bot:GetAbilityByName( sAbilityList[6] )
+local ChakramReturn 	= bot:GetAbilityByName( 'shredder_return_chakram' )
+local Chakram2 			= bot:GetAbilityByName( 'shredder_chakram_2' )
+local ChakramReturn2 	= bot:GetAbilityByName( 'shredder_return_chakram_2' )
+local Flamethrower 		= bot:GetAbilityByName( 'shredder_flamethrower' )
 
 
-local castQDesire
-local castWDesire
-local castRDesire
-local castRRDesire
+local WhirlingDeathDesire
+local TimberChainDesire
+local ChakramDesire
+local ChakramReturnDesire
+local Chakram2Desire
+local ChakramReturn2Desire
+local FlamethrowerDesire
 local closingDesire
 
 local ultLoc
 local ultETA1 = 0
 local ultTime1 = 0
+
+local ultLoc2
+local ultETA2 = 0
+local ultTime2 = 0
 
 local function GetUltLoc(npcBot, enemy, nManaCost, nCastRange, s)
 
@@ -137,318 +147,590 @@ end
 
 function X.SkillsComplement()
 
-	if J.CanNotUseAbility( bot ) then return end
+	if J.CanNotUseAbility(bot) then return end
 
-	castQDesire = X.ConsiderQ()
-	castWDesire, castTree, castType = X.ConsiderW()
-	castRDesire, castCHLocation, eta = X.ConsiderR()
-	castRRDesire = X.ConsiderRR()
-	closingDesire, target = X.ConsiderClosing()
+	WhirlingDeathDesire 				= X.ConsiderWhirlingDeath()
+	TimberChainDesire, TreeLoc 			= X.ConsiderTimberChain()
+	ChakramDesire, ChakramLoc, eta 		= X.ConsiderChakram()
+	ChakramReturnDesire 				= X.ConsiderChakramReturn()
+	Chakram2Desire, Chakram2Loc, eta2	= X.ConsiderChakram2()
+	ChakramReturn2Desire				= X.ConsiderChakramReturn2()
+	FlamethrowerDesire					= X.ConsiderFlamethrower()
+	closingDesire, target 				= X.ConsiderClosing()
 
-	-- Return Chakram
-	if ( castRRDesire > 0 ) 
+	if (WhirlingDeathDesire > 0)
 	then
-		bot:Action_UseAbility( abilityRR );
-		ultLoc = Vector(-6376, 6419, 0); 
-		return;
-	end
-
-	-- Cast Chakram
-	if ( castRDesire > 0 ) 
-	then
-		bot:Action_UseAbilityOnLocation( abilityR, castCHLocation );
-		ultLoc = castCHLocation; 
-		ultTime1 = DotaTime();
-		ultETA1 = eta + 0.5;
-		return;
-	end
-
-	if ( castWDesire > 0 )
-	then
-		if castType == "tree" then
-			bot:Action_UseAbilityOnLocation( abilityW, GetTreeLocation(castTree) )
-		else
-			bot:Action_UseAbilityOnLocation( abilityW, castTree )
-		end	
+        bot:Action_UseAbility(WhirlingDeath)
 		return
 	end
 
-	if ( castQDesire > 0 )
+	if (TimberChainDesire > 0)
 	then
-        bot:Action_UseAbility(abilityQ)
+		bot:Action_UseAbilityOnLocation(TimberChain, TreeLoc)
 		return
 	end
 
-	closingDesire, target = X.ConsiderClosing()
-	if closingDesire > 0 then
-		bot:Action_MoveToLocation(target);
+	if (ChakramDesire > 0)
+	then
+		bot:Action_UseAbilityOnLocation(Chakram, ChakramLoc)
+		ultLoc = ChakramLoc
+		ultTime1 = DotaTime()
+		ultETA1 = eta + 0.5
+		return
+	end
+
+	if (ChakramReturnDesire > 0)
+	then
+		bot:Action_UseAbility(ChakramReturn)
+		ultLoc = bot:GetLocation()
+		return
+	end
+
+	if (Chakram2Desire > 0)
+	then
+		bot:Action_UseAbilityOnLocation(Chakram2, Chakram2Loc)
+		ultLoc2 = ChakramLoc
+		ultTime2 = DotaTime()
+		ultETA2 = eta2 + 0.5
+		return
+	end
+
+	if (ChakramReturn2Desire > 0)
+	then
+		bot:Action_UseAbility(ChakramReturn)
+		ultLoc2 = bot:GetLocation()
+		return
+	end
+
+	if (FlamethrowerDesire > 0)
+	then
+		bot:Action_UseAbility(Flamethrower)
+		return
+	end
+
+	if closingDesire > 0
+	then
+		bot:Action_MoveToLocation(target)
 		return
 	end
 end
 
-function X.ConsiderQ()
-	-- Make sure it's castable
-	if ( not abilityQ:IsFullyCastable() ) then 
-		return BOT_ACTION_DESIRE_NONE;
+function X.ConsiderWhirlingDeath()
+	if (not WhirlingDeath:IsFullyCastable()) then
+		return BOT_ACTION_DESIRE_NONE
 	end
 
+	local nRadius = WhirlingDeath:GetSpecialValueInt("whirling_radius")
+	local nDamage = WhirlingDeath:GetSpecialValueInt("whirling_damage")
+	local nMana = bot:GetMana() / bot:GetMaxMana()
 
-	-- Get some of its values
-	local nRadius = abilityQ:GetSpecialValueInt( "whirling_radius" );
-	local nCastRange = 0;
-	local nDamage = abilityQ:GetSpecialValueInt("whirling_damage");
-
-	--------------------------------------
-	-- Mode based usage
-	--------------------------------------
-
-	-- If we're seriously retreating, see if we can land a stun on someone who's damaged us recently
 	if J.IsRetreating(bot)
 	then
-		local tableNearbyEnemyHeroes = bot:GetNearbyHeroes( nRadius, true, BOT_MODE_NONE );
-		for _,npcEnemy in pairs( tableNearbyEnemyHeroes )
+		local nEnemyHeroes = bot:GetNearbyHeroes(nRadius, true, BOT_MODE_NONE)
+		for _, npcEnemy in pairs(nEnemyHeroes)
 		do
-			if ( bot:WasRecentlyDamagedByHero( npcEnemy, 1.0 ) and J.CanCastOnNonMagicImmune(npcEnemy)  ) 
+			if (bot:WasRecentlyDamagedByHero(npcEnemy, 1.0)
+			and J.CanCastOnNonMagicImmune(npcEnemy))
 			then
-				return BOT_ACTION_DESIRE_HIGH;
+				return BOT_ACTION_DESIRE_MODERATE
 			end
 		end
 	end
-	
-	if J.IsInTeamFight(bot, 1200)
+
+	if J.IsPushing(bot) or J.IsDefending(bot)
 	then
-		local tableNearbyEnemyHeroes = bot:GetNearbyHeroes( nRadius, true, BOT_MODE_NONE );
-		if ( tableNearbyEnemyHeroes ~= nil and #tableNearbyEnemyHeroes >= 2 ) then
-			return BOT_ACTION_DESIRE_ABSOLUTE;
+		local nCreeps = bot:GetNearbyLaneCreeps(nRadius, true)
+		if nCreeps ~= nil and #nCreeps >= 3
+		and nMana > 0.2
+		then
+			return BOT_ACTION_DESIRE_MODERATE
 		end
 	end
 
-	-- If we're farming and can kill 3+ creeps with LSA
-	if J.IsPushing(bot) or J.IsLaning(bot) or J.IsFarming(bot)
-	then
-		local NearbyCreeps = bot:GetNearbyLaneCreeps(nRadius, true);
-		if NearbyCreeps ~= nil and #NearbyCreeps >= 2 and bot:GetMana()/bot:GetMaxMana() > 0.2 then 
-			return BOT_ACTION_DESIRE_HIGH
-		end
-	end
-	
-	-- If we're going after someone
 	if J.IsGoingOnSomeone(bot)
 	then
-		local npcTarget = bot:GetTarget();
+		local npcTarget = bot:GetTarget()
 
-		if J.IsValidTarget(npcTarget) and J.CanCastOnNonMagicImmune(npcTarget) and J.IsInRange(npcTarget, bot, nRadius)
+		if J.IsValidTarget(npcTarget)
+		and J.CanCastOnNonMagicImmune(npcTarget)
+		and J.IsInRange(npcTarget, bot, nRadius)
 		then
-			return BOT_ACTION_DESIRE_ABSOLUTE;
+			return BOT_ACTION_DESIRE_HIGH
 		end
 	end
 
 	if J.IsFarming(bot)
 	then
-		local NearbyCreeps = bot:GetNearbyNeutralCreeps(nRadius);
-		if NearbyCreeps ~= nil and #NearbyCreeps >= 2 and bot:GetMana() / bot:GetMaxMana() > 0.2 then 
+		local nCreeps = bot:GetNearbyNeutralCreeps(nRadius)
+
+		if nCreeps ~= nil and #nCreeps >= 2
+		and nMana > 0.2
+		then
+			return BOT_ACTION_DESIRE_HIGH
+		end
+	end
+
+	if J.IsLaning(bot)
+	then
+		local target = bot:GetTarget()
+
+		if J.IsValidTarget(target)
+		and J.CanCastOnNonMagicImmune(target)
+		and J.CanKillTarget(target, nDamage)
+		and J.IsInRange(bot, target, nRadius)
+		and nMana > 0.2
+		then
 			return BOT_ACTION_DESIRE_HIGH
 		end
 	end
 
 
-	return BOT_ACTION_DESIRE_NONE;
+	return BOT_ACTION_DESIRE_NONE
 
 end
 
-function X.ConsiderW()
-	-- Make sure it's castable
-	if ( not abilityW:IsFullyCastable() ) 
-	then 
-		return BOT_ACTION_DESIRE_NONE, 0;
+function X.ConsiderTimberChain()
+	if (not TimberChain:IsFullyCastable())
+	then
+		return BOT_ACTION_DESIRE_NONE, 0
 	end
-	-- Get some of its values
-	local nRadius = abilityW:GetSpecialValueInt( "chain_radius" );
-	local nSpeed = abilityW:GetSpecialValueInt( "speed" );
-	local nCastRange = J.GetProperCastRange(false, bot, abilityW:GetCastRange());
-	local nDamage = abilityW:GetSpecialValueInt("damage");
+
+	local nRadius = TimberChain:GetSpecialValueInt("chain_radius")
+	local nSpeed = TimberChain:GetSpecialValueInt("speed")
+	local nCastRange = J.GetProperCastRange(false, bot, TimberChain:GetCastRange())
+	local nDamage = TimberChain:GetSpecialValueInt("damage")
+	local nWhirlingDamage = WhirlingDeath:GetSpecialValueInt("whirling_damage")
 
 	if J.IsStuck(bot)
 	then
-		return BOT_ACTION_DESIRE_VERYHIGH, J.Site.GetXUnitsTowardsLocation( GetAncient(GetTeam()):GetLocation(), nCastRange ), "loc";
+		return BOT_ACTION_DESIRE_HIGH, J.Site.GetXUnitsTowardsLocation(bot, GetAncient(GetTeam()):GetLocation(), nCastRange)
 	end
-	
-	-- If we're seriously retreating, see if we can land a stun on someone who's damaged us recently
-	if J.IsRetreating(bot) and bot:DistanceFromFountain() > 1000
+
+	if J.IsRetreating(bot)
+	and bot:DistanceFromFountain() > 1000
 	then
-		local tableNearbyEnemyHeroes = bot:GetNearbyHeroes( 1200, true, BOT_MODE_NONE );
-		if tableNearbyEnemyHeroes ~= nil and #tableNearbyEnemyHeroes >= 1 then
-			local BRTree = GetBestRetreatTree(bot, nCastRange);
-			if BRTree ~= nil then
-				return BOT_ACTION_DESIRE_ABSOLUTE, BRTree, "loc";
+		local nEnemyHeroes = bot:GetNearbyHeroes(1200, true, BOT_MODE_NONE)
+
+		if nEnemyHeroes ~= nil
+		and #nEnemyHeroes > 1
+		then
+			local RetreatTree = GetBestRetreatTree(bot, nCastRange)
+
+			if RetreatTree ~= nil
+			then
+				return BOT_ACTION_DESIRE_HIGH, RetreatTree
 			end
 		end
 	end
-	
-	-- If we're going after someone
+
 	if J.IsGoingOnSomeone(bot)
 	then
-		local npcTarget = bot:GetTarget();
-		if ( J.IsValidTarget(npcTarget) and J.CanCastOnNonMagicImmune(npcTarget) and J.IsInRange(npcTarget, bot, nCastRange) and
-			not AreTreesBetween( npcTarget:GetLocation(),nRadius ) ) 
+		local npcTarget = bot:GetTarget()
+
+		if J.IsValidTarget(npcTarget)
+		and J.CanCastOnNonMagicImmune(npcTarget)
+		and J.IsInRange(npcTarget, bot, nCastRange)
+		and not AreTreesBetween(npcTarget:GetLocation(), nRadius)
 		then
-			local BTree = GetBestTree(bot, npcTarget, nCastRange, nRadius);
-			if BTree ~= nil then
-				return BOT_ACTION_DESIRE_ABSOLUTE, BTree, "tree";
+			local EngageTree = GetBestTree(bot, npcTarget, nCastRange, nRadius)
+
+			if EngageTree ~= nil
+			then
+
+				if bot:GetLevel() < 6
+				and not J.CanKillTarget(npcTarget, nDamage + nWhirlingDamage, DAMAGE_TYPE_PURE)
+				then
+					return BOT_ACTION_DESIRE_LOW, GetTreeLocation(EngageTree)
+				end
+
+				return BOT_ACTION_DESIRE_HIGH, GetTreeLocation(EngageTree)
 			end
 		end
 	end
-	
-	return BOT_ACTION_DESIRE_NONE, 0;
 
-
+	return BOT_ACTION_DESIRE_NONE, 0
 end
 
-function X.ConsiderR()
-	-- Make sure it's castable
-	if ( not abilityR:IsFullyCastable() or abilityR:IsHidden() ) 
-	then 
-		return BOT_ACTION_DESIRE_NONE, 0, 0;
+function X.ConsiderChakram()
+	if (not Chakram:IsFullyCastable() or Chakram:IsHidden())
+	then
+		return BOT_ACTION_DESIRE_NONE, 0, 0
 	end
 
+	local nRadius = Chakram:GetSpecialValueFloat("radius")
+	local nSpeed = Chakram:GetSpecialValueFloat("speed")
+	local nCastRange = J.GetProperCastRange(false, bot, Chakram:GetCastRange())
+	local nManaCost = Chakram:GetManaCost()
+	local nDamage = Chakram:GetSpecialValueInt("pass_damage")
+	local nMana = bot:GetMana() / bot:GetMaxMana()
 
-	-- Get some of its values
-	local nRadius = abilityR:GetSpecialValueFloat( "radius" );
-	local nSpeed = abilityR:GetSpecialValueFloat( "speed" );
-	local nCastRange = J.GetProperCastRange(false, bot, abilityR:GetCastRange());
-	local nManaCost = abilityR:GetManaCost( );
-	local nDamage = 2*abilityR:GetSpecialValueInt("pass_damage");
-
-	--------------------------------------
-	-- Mode based usage
-	-------------------------------------
-	-- If we're seriously retreating, see if we can land a stun on someone who's damaged us recently
 	if J.IsRetreating(bot)
 	then
-		local tableNearbyEnemyHeroes = bot:GetNearbyHeroes( 1000, true, BOT_MODE_NONE );
-		for _,npcEnemy in pairs( tableNearbyEnemyHeroes )
+		local nEnemyHeroes = bot:GetNearbyHeroes(nRadius, true, BOT_MODE_NONE)
+		for _, npcEnemy in pairs(nEnemyHeroes)
 		do
-			if ( bot:WasRecentlyDamagedByHero( npcEnemy, 1.0 ) ) 
+			if bot:WasRecentlyDamagedByHero(npcEnemy, 1.0)
 			then
-				local loc = npcEnemy:GetLocation();
-				local eta = GetUnitToLocationDistance(bot, loc) / nSpeed;
-				return BOT_ACTION_DESIRE_MODERATE, loc, eta;
+				local loc = npcEnemy:GetLocation()
+				local eta = GetUnitToLocationDistance(bot, loc) / nSpeed
+
+				if J.CanKillTarget(target, nDamage, DAMAGE_TYPE_PURE)
+				then
+					return BOT_ACTION_DESIRE_HIGH, loc, eta
+				end
+
+				return BOT_ACTION_DESIRE_LOW, loc, eta
 			end
 		end
 	end
 
-	-- If we're pushing or defending a lane and can hit 4+ creeps, go for it
-	if J.IsDefending(bot) or J.IsPushing(bot) or J.IsLaning(bot) or J.IsFarming(bot)
-	then
-		local locationAoE = bot:FindAoELocation( true, false, bot:GetLocation(), nCastRange, nRadius, 0, 0 );
-		if ( locationAoE.count >= 2 and bot:GetMana() / bot:GetMaxMana() > 0.2 ) 
-		then
-			local loc = locationAoE.targetloc;
-			local eta = GetUnitToLocationDistance(bot, loc) / nSpeed;
-			return BOT_ACTION_DESIRE_ABSOLUTE, loc, eta;
-		end
-	end
-
-
-	-- If we're going after someone
 	if J.IsGoingOnSomeone(bot)
 	then
-		local npcTarget = bot:GetTarget();
-		if J.IsValidTarget(npcTarget) and J.CanCastOnNonMagicImmune(npcTarget) and J.IsInRange(npcTarget, bot, nCastRange-200) 
+		local npcTarget = bot:GetTarget()
+		if J.IsValidTarget(npcTarget)
+		and J.CanCastOnNonMagicImmune(npcTarget)
+		and J.IsInRange(npcTarget, bot, nCastRange)
 		then
-			local Loc = GetUltLoc(bot, npcTarget, nManaCost, nCastRange, nSpeed)
-			if Loc ~= nil then
-				local eta = GetUnitToLocationDistance(bot, Loc) / nSpeed;
-				return BOT_ACTION_DESIRE_HIGH, Loc, eta;
+			local loc = GetUltLoc(bot, npcTarget, nManaCost, nCastRange, nSpeed)
+			if loc ~= nil
+			then
+				local eta = GetUnitToLocationDistance(bot, loc) / nSpeed
+				return BOT_ACTION_DESIRE_HIGH, loc, eta
 			end
 		end
 	end
-	--
-	return BOT_ACTION_DESIRE_NONE, 0;
+
+	if J.IsDefending(bot)
+	or J.IsPushing(bot)
+	or J.IsFarming(bot)
+	then
+		local locationAoE = bot:FindAoELocation(true, false, bot:GetLocation(), nCastRange, nRadius, 0, 0)
+
+		if locationAoE.count >= 2
+		and nMana > 0.2
+		then
+			local loc = locationAoE.targetloc
+			local eta = GetUnitToLocationDistance(bot, loc) / nSpeed
+
+			return BOT_ACTION_DESIRE_MODERATE, loc, eta
+		end
+	end
+
+	if J.IsLaning(bot)
+	then
+		local target = bot:GetTarget()
+
+		if J.IsValidTarget(target)
+		and J.CanCastOnNonMagicImmune(target)
+		and J.IsInRange(nCastRange)
+		and J.CanKillTarget(target, nDamage, DAMAGE_TYPE_PURE)
+		then
+			local loc = locationAoE.targetloc
+			local eta = GetUnitToLocationDistance(bot, loc) / nSpeed
+
+			return BOT_ACTION_DESIRE_HIGH, loc, eta
+		end
+	end
+
+	return BOT_ACTION_DESIRE_NONE, 0
 end
 
-function X.ConsiderRR()
-	-- Make sure it's castable
-	if ( ultLoc == 0 or not abilityRR:IsFullyCastable() or abilityRR:IsHidden() ) then 
-		return BOT_ACTION_DESIRE_NONE;
-	end
-	
-	if DotaTime() < ultTime1 + ultETA1 or StillTraveling(1) then 
-		return BOT_ACTION_DESIRE_NONE;
-	end	
-	
-	local nRadius = abilityR:GetSpecialValueFloat( "radius" );
-	local nDamage = abilityR:GetSpecialValueInt("pass_damage");
-	local nManaCost = abilityR:GetManaCost( );
-	
-	if bot:GetMana() < 100 or GetUnitToLocationDistance(bot, ultLoc) > 1600 then
-		return BOT_ACTION_DESIRE_HIGH;
-	end
-	
-	if  J.IsDefending(bot) or J.IsPushing(bot) 
+function X.ConsiderChakramReturn()
+	if ultLoc == 0
+	or not ChakramReturn:IsFullyCastable()
+	or ChakramReturn:IsHidden()
 	then
-		local nUnits = 0;
-		local nLowHPUnits = 0;
-		local NearbyUnits = bot:GetNearbyLaneCreeps(1300, true);
-		for _,c in pairs(NearbyUnits)
-		do 
+		return BOT_ACTION_DESIRE_NONE
+	end
+
+	if DotaTime() < ultTime1 + ultETA1
+	or StillTraveling(1)
+	then
+		return BOT_ACTION_DESIRE_NONE
+	end
+
+	local nRadius = Chakram:GetSpecialValueFloat( "radius" )
+	local nDamage = Chakram:GetSpecialValueInt("pass_damage")
+	local nManaCost = Chakram:GetManaCost()
+	local nMana = bot:GetMana() / bot:GetMaxMana()
+
+	local nUnits = 0
+	local nNearbyCreeps = bot:GetNearbyLaneCreeps(1300, true)
+
+	for _, c in pairs(nNearbyCreeps)
+	do
+		if GetUnitToLocationDistance(c, ultLoc) < nRadius  then
+			nUnits = nUnits + 1
+		end
+	end
+
+	if nMana < 0.15
+	or GetUnitToLocationDistance(bot, ultLoc) > 1600
+	or nUnits == 0
+	then
+		return BOT_ACTION_DESIRE_HIGH
+	end
+
+	if J.IsDefending(bot)
+	or J.IsPushing(bot)
+	then
+		local nUnits = 0
+		local nLowHPUnits = 0
+		local nNearbyCreeps = bot:GetNearbyLaneCreeps(1300, true)
+
+		for _, c in pairs(nNearbyCreeps)
+		do
 			if GetUnitToLocationDistance(c, ultLoc) < nRadius  then
-				nUnits = nUnits + 1;
+				nUnits = nUnits + 1
 			end
-			if GetUnitToLocationDistance(c, ultLoc) < nRadius and c:GetHealth() <= nDamage then
+
+			if GetUnitToLocationDistance(c, ultLoc) < nRadius
+			and c:GetHealth() <= nDamage then
 				nLowHPUnits = nLowHPUnits + 1
 			end
 		end
-		if nUnits == 0 or nLowHPUnits >= 1  then
+
+		if nUnits == 0
+		or nLowHPUnits >= 1
+		then
 			return BOT_ACTION_DESIRE_HIGH
 		end
 	end
-	
-	if  bot:GetActiveMode() == BOT_MODE_RETREAT or J.IsGoingOnSomeone(bot) 
+
+	if J.IsRetreating(bot)
+	or J.IsGoingOnSomeone(bot)
 	then
-		local nUnits = 0;
-		local nLowHPUnits = 0;
-		local NearbyUnits = bot:GetNearbyHeroes(1000, true, BOT_MODE_NONE);
-		for _,c in pairs(NearbyUnits)
-		do 
-			if GetUnitToLocationDistance(c, ultLoc) < nRadius  then
-				nUnits = nUnits + 1;
-			end
-			if GetUnitToLocationDistance(c, ultLoc) < nRadius and c:GetHealth() <= nDamage / 2 then
-				nLowHPUnits = nLowHPUnits + 1;
+		local nUnits = 0
+		local nNearbyHeroes = bot:GetNearbyHeroes(1000, true, BOT_MODE_NONE)
+
+		for _, h in pairs(nNearbyHeroes)
+		do
+			if GetUnitToLocationDistance(h, ultLoc) < nRadius
+			then
+				nUnits = nUnits + 1
 			end
 		end
-		if nUnits == 0 or nLowHPUnits >= 1 then
-			return BOT_ACTION_DESIRE_HIGH;
+
+		if nUnits == 0
+		then
+			return BOT_ACTION_DESIRE_HIGH
 		end
 	end
-	
-	local enemies = bot:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
-	local creeps = bot:GetNearbyLaneCreeps(1600, true)
-	if #enemies == 0 and #creeps <= 2 then
-		return BOT_ACTION_DESIRE_ABSOLUTE
+
+	return BOT_ACTION_DESIRE_NONE
+end
+
+function X.ConsiderChakram2()
+	if not Chakram2:IsFullyCastable()
+	or Chakram2:IsHidden()
+	then
+		return BOT_ACTION_DESIRE_NONE, 0, 0
 	end
-	
-	return BOT_ACTION_DESIRE_NONE;
+
+	local nRadius = Chakram2:GetSpecialValueFloat("radius")
+	local nSpeed = Chakram2:GetSpecialValueFloat("speed")
+	local nCastRange = J.GetProperCastRange(false, bot, Chakram2:GetCastRange())
+	local nManaCost = Chakram2:GetManaCost()
+	local nDamage = Chakram2:GetSpecialValueInt("pass_damage")
+	local nMana = bot:GetMana() / bot:GetMaxMana()
+
+	if J.IsRetreating(bot)
+	then
+		local nEnemyHeroes = bot:GetNearbyHeroes(nRadius, true, BOT_MODE_NONE)
+		for _, npcEnemy in pairs(nEnemyHeroes)
+		do
+			if bot:WasRecentlyDamagedByHero(npcEnemy, 1.0)
+			then
+				local loc = npcEnemy:GetLocation()
+				local eta = GetUnitToLocationDistance(bot, loc) / nSpeed
+
+				if J.CanKillTarget(target, nDamage, DAMAGE_TYPE_PURE)
+				then
+					return BOT_ACTION_DESIRE_MODERATE, loc, eta
+				end
+
+				return BOT_ACTION_DESIRE_LOW, loc, eta
+			end
+		end
+	end
+
+	if J.IsGoingOnSomeone(bot)
+	then
+		local npcTarget = bot:GetTarget()
+		if J.IsValidTarget(npcTarget)
+		and J.CanCastOnNonMagicImmune(npcTarget)
+		and J.IsInRange(npcTarget, bot, nCastRange)
+		then
+			local loc = GetUltLoc(bot, npcTarget, nManaCost, nCastRange, nSpeed)
+			if loc ~= nil
+			then
+				local eta = GetUnitToLocationDistance(bot, loc) / nSpeed
+				return BOT_ACTION_DESIRE_MODERATE, loc, eta
+			end
+		end
+	end
+
+	if J.IsDefending(bot)
+	or J.IsPushing(bot)
+	or J.IsFarming(bot)
+	then
+		local locationAoE = bot:FindAoELocation(true, false, bot:GetLocation(), nCastRange, nRadius, 0, 0)
+
+		if locationAoE.count >= 2
+		and nMana > 0.2
+		then
+			local loc = locationAoE.targetloc
+			local eta = GetUnitToLocationDistance(bot, loc) / nSpeed
+
+			return BOT_ACTION_DESIRE_LOW, loc, eta
+		end
+	end
+
+	if J.IsLaning(bot)
+	then
+		local target = bot:GetTarget()
+
+		if J.IsValidTarget(target)
+		and J.CanCastOnNonMagicImmune(target)
+		and J.IsInRange(nCastRange)
+		and J.CanKillTarget(target, nDamage, DAMAGE_TYPE_PURE)
+		then
+			local loc = locationAoE.targetloc
+			local eta = GetUnitToLocationDistance(bot, loc) / nSpeed
+
+			return BOT_ACTION_DESIRE_MODERATE, loc, eta
+		end
+	end
+
+	return BOT_ACTION_DESIRE_NONE, 0
+end
+
+function X.ConsiderChakramReturn2()
+	if ultLoc2 == 0
+	or not ChakramReturn2:IsFullyCastable()
+	or ChakramReturn2:IsHidden()
+	then
+		return BOT_ACTION_DESIRE_NONE
+	end
+
+	if DotaTime() < ultTime2 + ultETA2
+	or StillTraveling(2)
+	then
+		return BOT_ACTION_DESIRE_NONE
+	end
+
+	local nRadius = Chakram2:GetSpecialValueFloat( "radius" )
+	local nDamage = Chakram2:GetSpecialValueInt("pass_damage")
+	local nMana = bot:GetMana() / bot:GetMaxMana()
+
+	local nUnits = 0
+	local nNearbyCreeps = bot:GetNearbyLaneCreeps(1300, true)
+
+	for _, c in pairs(nNearbyCreeps)
+	do
+		if GetUnitToLocationDistance(c, ultLoc2) < nRadius  then
+			nUnits = nUnits + 1
+		end
+	end
+
+	if nMana < 0.15
+	or GetUnitToLocationDistance(bot, ultLoc2) > 1600
+	or nUnits == 0
+	then
+		return BOT_ACTION_DESIRE_HIGH
+	end
+
+	if J.IsDefending(bot)
+	or J.IsPushing(bot)
+	then
+		local nUnits = 0
+		local nLowHPUnits = 0
+		local nNearbyCreeps = bot:GetNearbyLaneCreeps(1300, true)
+
+		for _, c in pairs(nNearbyCreeps)
+		do
+			if GetUnitToLocationDistance(c, ultLoc2) < nRadius  then
+				nUnits = nUnits + 1
+			end
+
+			if GetUnitToLocationDistance(c, ultLoc2) < nRadius
+			and c:GetHealth() <= nDamage then
+				nLowHPUnits = nLowHPUnits + 1
+			end
+		end
+
+		if nUnits == 0
+		or nLowHPUnits >= 1
+		then
+			return BOT_ACTION_DESIRE_HIGH
+		end
+	end
+
+	if J.IsRetreating(bot)
+	or J.IsGoingOnSomeone(bot)
+	then
+		local nUnits = 0
+		local nNearbyHeroes = bot:GetNearbyHeroes(1000, true, BOT_MODE_NONE)
+
+		for _, h in pairs(nNearbyHeroes)
+		do
+			if GetUnitToLocationDistance(h, ultLoc2) < nRadius
+			then
+				nUnits = nUnits + 1
+			end
+		end
+
+		if nUnits == 0
+		then
+			return BOT_ACTION_DESIRE_HIGH
+		end
+	end
+
+	return BOT_ACTION_DESIRE_NONE
 end
 
 function X.ConsiderClosing()
-
-	-- Make sure it's castable
-	if ( not bot:HasModifier("modifier_shredder_chakram_disarm") ) then 
-		return BOT_ACTION_DESIRE_NONE, 0;
+	if (not bot:HasModifier("modifier_shredder_chakram_disarm"))
+	then
+		return BOT_ACTION_DESIRE_NONE, 0
 	end
-	
+
 	if J.IsGoingOnSomeone(bot)
 	then
-		local npcTarget = bot:GetTarget();
-		if J.IsValidTarget(npcTarget) and J.IsInRange(bot, npcTarget, 1000) 
+		local npcTarget = bot:GetTarget()
+
+		if J.IsValidTarget(npcTarget)
+		and J.IsInRange(bot, npcTarget, 1000)
 		then
-			return BOT_ACTION_DESIRE_MODERATE, npcTarget:GetLocation();
+			return BOT_ACTION_DESIRE_MODERATE, npcTarget:GetLocation()
 		end
 	end
-	
-	return BOT_ACTION_DESIRE_NONE, 0;
+
+	return BOT_ACTION_DESIRE_NONE, 0
+end
+
+function X.ConsiderFlamethrower()
+	if not ChakramReturn2:IsFullyCastable()
+	then
+		return BOT_ACTION_DESIRE_NONE
+	end
+
+	local nRange = Flamethrower:GetSpecialValueInt('length')
+
+	if J.IsGoingOnSomeone(bot)
+	then
+		local target = bot:GetTarget()
+
+		if J.IsValidTarget(target)
+		and bot:IsFacingLocation(target:GetLocation(), 0)
+		and J.IsInRange(bot, target, nRange)
+		and J.CanCastOnNonMagicImmune(target)
+		then
+			return BOT_ACTION_DESIRE_MODERATE
+		end
+	end
+
+	return BOT_ACTION_DESIRE_NONE
 end
 
 -- HELPER FUNCS

@@ -7,7 +7,7 @@ Might want to scale Push desire with core networths so that bots farm more and i
 (or any aggresive logic), they might get out-pushed (since those will bring all 5 everytime), which will make this script defend all the time and cores not able farm (non-Turbo). Also, evasion and damage reduction
 items are just too good in bots games (since itemization isn't dynamic), so it's still lineup dependent.
 
-Worth noting that most of my testings are done thru Turbo Mode (Bots v Bots) and Hard difficulty (not Unfair).
+Worth noting that I also use a vscript to improve the bots GPM (XPM later) and also have them able to get neutral items (Check Buff).
 
 - ***Key Scripts***
     - BOT Experiment (by Furiospuppy)
@@ -54,6 +54,7 @@ Worth noting that most of my testings are done thru Turbo Mode (Bots v Bots) and
         - [ ] Dynamic item builds
         - [ ] Clear wave faster with abilities
         - [ ] Functionality for new hero ablities gained through Aghs/Shard
+        - [/] vscript to increase bots GPM (XPM later) and for them to acquire neutral items
     - ***Improve***
         - [ ] Some heroes ability usage
         - [ ] Item usage
