@@ -111,6 +111,18 @@ function X.SkillsComplement()
     ActivateFireRemnantDesire, ARemnantLoc 	= X.ConsiderActivateFireRemnant()
     FireRemnantDesire, FireRemnantLoc		= X.ConsiderFireRemnant()
 
+	if ( SleightOfFistDesire > 0 )
+	then
+		bot:Action_UseAbilityOnLocation( SleightOfFist, SoFLoc )
+		return
+	end
+
+	if ( SearingChainsDesire > 0 )
+	then
+		bot:Action_UseAbility( SearingChains )
+		return
+	end
+
     if ( FireRemnantDesire > 0 )
 	then
 		bot:Action_UseAbilityOnLocation( FireRemnant, FireRemnantLoc )
@@ -122,18 +134,6 @@ function X.SkillsComplement()
 	if ( ActivateFireRemnantDesire > 0 )
 	then
 		bot:Action_UseAbilityOnLocation( ActivateFireRemnant, ARemnantLoc )
-		return
-	end
-
-	if ( SearingChainsDesire > 0 )
-	then
-		bot:Action_UseAbility( SearingChains )
-		return
-	end
-
-	if ( SleightOfFistDesire > 0 )
-	then
-		bot:Action_UseAbilityOnLocation( SleightOfFist, SoFLoc )
 		return
 	end
 

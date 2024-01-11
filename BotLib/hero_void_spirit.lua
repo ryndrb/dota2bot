@@ -108,7 +108,13 @@ function X.SkillsComplement()
     DissimilateDesire                       = X.ConsiderDissimilate()
     ResonantPulseDesire                     = X.ConsiderResonantPulse()
     AstralStepDesire, astralStepLoc         = X.ConsiderAstralStep()
-   
+
+    if AstralStepDesire > 0
+    then
+        remnantCastTime = DotaTime()
+        bot:Action_UseAbilityOnLocation(AstralStep, astralStepLoc)
+    end
+
     if AetherRemnantDesire > 0
     then
         bot:Action_UseAbilityOnLocation(AetherRemnant, aetherRemnantLoc)
@@ -123,13 +129,6 @@ function X.SkillsComplement()
     then
         bot:Action_UseAbility(ResonantPulse)
     end
-
-    if AstralStepDesire > 0
-    then
-        remnantCastTime = DotaTime()
-        bot:Action_UseAbilityOnLocation(AstralStep, astralStepLoc)
-    end
-
 end
 
 function X.ConsiderAetherRemnant()
