@@ -39,17 +39,20 @@ function Buff:Init()
     Timers:CreateTimer(function()
         NeutralItems.GiveNeutralItems(TeamRadiant, TeamDire)
 
-        for _, h in pairs(TeamRadiant) do
-            if Helper.IsCore(h, TeamRadiant)
-            then
-                GPM.UpdateBotGold(h)
+        if not Helper.IsTurboMode()
+        then
+            for _, h in pairs(TeamRadiant) do
+                if Helper.IsCore(h, TeamRadiant)
+                then
+                    GPM.UpdateBotGold(h)
+                end
             end
-        end
 
-        for _, h in pairs(TeamDire) do
-            if Helper.IsCore(h, TeamDire)
-            then
-                GPM.UpdateBotGold(h)
+            for _, h in pairs(TeamDire) do
+                if Helper.IsCore(h, TeamDire)
+                then
+                    GPM.UpdateBotGold(h)
+                end
             end
         end
 

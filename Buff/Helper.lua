@@ -20,4 +20,13 @@ function Helper.DotaTime()
     return time
 end
 
+function Helper.IsTurboMode()
+    if GameRules:State_Get() == 10
+    then
+        return true
+    end
+
+    return false
+end
+
 return Helper

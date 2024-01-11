@@ -62,7 +62,7 @@ local Tier4NeutralItems = {
     --[[Ascetic Cap]]           "item_ascetic_cap",
     --[[Aviana's Feather]]      "item_avianas_feather",
     --[[Ninja Gear]]            "item_ninja_gear",
-    --[[Telescope]]             "item_telescope",
+    --[[Telescope]]             "item_spy_gadget",
     --[[Trickster Cloak]]       "item_trickster_cloak",
     --[[Stormcrafter]]          "item_stormcrafter",
     --[[Ancient Guardian]]      "item_ancient_guardian",
@@ -75,7 +75,7 @@ local Tier4NeutralItems = {
 local Tier5NeutralItems = {
     --[[Force Boots]]           "item_force_boots",
     --[[Stygian Desolator]]     "item_desolator_2",
-    --[[]]                      "item_seer_stone",
+    --[[Seer Stone]]            "item_seer_stone",
     --[[Mirror Shield]]         "item_mirror_shield",
     --[[Apex]]                  "item_apex",
     --[[Book of the Dead]]      "item_demonicon",
@@ -90,8 +90,11 @@ local Tier5NeutralItems = {
 -- Just give out random for now.
 -- Will work out a decent algorithm later to better assign suitable items.
 function NeutralItems.GiveNeutralItems(TeamRadiant, TeamDire)
+    local isTurboMode = Helper.IsTurboMode()
+
     -- Tier 1 Neutral Items
-    if Helper.DotaTime() >= 7 * 60 and not isTierOneDone
+    if (isTurboMode and Helper.DotaTime() >= 3.5 * 60 or Helper.DotaTime() >= 7 * 60)
+    and not isTierOneDone
     then
         GameRules:SendCustomMessage('Bots receiving Tier 1 Neutral Items...', 0, 0)
 
@@ -107,7 +110,8 @@ function NeutralItems.GiveNeutralItems(TeamRadiant, TeamDire)
     end
 
     -- Tier 2 Neutral Items
-    if Helper.DotaTime() >= 17 * 60 and not isTierTwoDone
+    if (isTurboMode and Helper.DotaTime() >= 8.5 * 60 or Helper.DotaTime() >= 17 * 60)
+    and not isTierTwoDone
     then
         GameRules:SendCustomMessage('Bots receiving Tier 2 Neutral Items...', 0, 0)
 
@@ -123,9 +127,10 @@ function NeutralItems.GiveNeutralItems(TeamRadiant, TeamDire)
     end
 
     -- Tier 3 Neutral Items
-    if Helper.DotaTime() >= 27 * 60 and not isTierThreeDone
+    if (isTurboMode and Helper.DotaTime() >= 13.5 * 60 or Helper.DotaTime() >= 27 * 60)
+    and not isTierThreeDone
     then
-        GameRules:SendCustomMessage('Bots receiving Tier 2 Neutral Items...', 0, 0)
+        GameRules:SendCustomMessage('Bots receiving Tier 3 Neutral Items...', 0, 0)
 
         for _, h in pairs(TeamRadiant) do
             NeutralItems.GiveItem(Tier3NeutralItems[RandomInt(1, #Tier3NeutralItems)], h, isTierTwoDone)
@@ -139,9 +144,10 @@ function NeutralItems.GiveNeutralItems(TeamRadiant, TeamDire)
     end
 
     -- Tier 4 Neutral Items
-    if Helper.DotaTime() >= 37 * 60 and not isTierFourDone
+    if (isTurboMode and Helper.DotaTime() >= (18 * 60 + 20) or Helper.DotaTime() >= 37 * 60)
+    and not isTierFourDone
     then
-        GameRules:SendCustomMessage('Bots receiving Tier 2 Neutral Items...', 0, 0)
+        GameRules:SendCustomMessage('Bots receiving Tier 4 Neutral Items...', 0, 0)
 
         for _, h in pairs(TeamRadiant) do
             NeutralItems.GiveItem(Tier4NeutralItems[RandomInt(1, #Tier4NeutralItems)], h, isTierThreeDone)
@@ -155,9 +161,10 @@ function NeutralItems.GiveNeutralItems(TeamRadiant, TeamDire)
     end
 
     -- Tier 5 Neutral Items
-    if Helper.DotaTime() >= 60 * 60 and not isTierFiveDone
+    if (isTurboMode and Helper.DotaTime() >= 30 * 60 or Helper.DotaTime() >= 60 * 60)
+    and not isTierFiveDone
     then
-        GameRules:SendCustomMessage('Bots receiving Tier 2 Neutral Items...', 0, 0)
+        GameRules:SendCustomMessage('Bots receiving Tier 5 Neutral Items...', 0, 0)
 
         for _, h in pairs(TeamRadiant) do
             NeutralItems.GiveItem(Tier5NeutralItems[RandomInt(1, #Tier5NeutralItems)], h, isTierFourDone)
