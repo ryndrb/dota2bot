@@ -40,21 +40,9 @@ function GetDesire()
     shouldKillRoshan = IsRoshanAlive()
 
     if shouldKillRoshan
-    --and aliveAlly >= aliveEnemy
-    and healthPercentage > 0.3
     and HasEnoughDPSForRoshan(aliveHeroesList)
     then
-        if GetUnitToLocationDistance(bot, roshLoc) < 1000
-        and IsEnoughAllies()
-        then
-           return BOT_ACTION_DESIRE_ABSOLUTE
-        elseif GetUnitToLocationDistance(bot, roshLoc) < 1000
-        and not IsEnoughAllies()
-        then
-            return BOT_ACTION_DESIRE_LOW
-        end
-
-        return BOT_ACTION_DESIRE_VERYHIGH
+        return Clamp(GetRoshanDesire(), 0, 0.9) * 2
     end
 
     return BOT_ACTION_DESIRE_NONE

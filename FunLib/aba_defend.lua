@@ -15,8 +15,8 @@ function Defend.GetDefendDesire(bot, lane)
     end
 
 	local mul = Defend.GetEnemyAmountMul(lane)
-	local tFront = GetLaneFrontAmount(GetTeam(), lane, true)
-	local eFront = 1 - GetLaneFrontAmount(GetOpposingTeam(), lane, true)
+	local tFront = RemapValClamped(GetLaneFrontAmount(GetTeam(), lane, true), 0, 1, 0.75, 0)
+	local eFront = RemapValClamped(1 - GetLaneFrontAmount(GetOpposingTeam(), lane, true), 0, 1, 0, 0.75)
 
 	if bot:GetHealth() / bot:GetMaxHealth() < 0.3
 	then
@@ -27,7 +27,17 @@ function Defend.GetDefendDesire(bot, lane)
     then
         if Defend.ShouldGoDefend(bot, lane)
         then
-			local amount = RemapValClamped(tFront, 0, 1, 0.75, 0) * eFront * mul[lane]
+			-- local amount = tFront * eFront * mul[lane]
+			local ancient = GetAncient(GetTeam())
+			local amount = 0
+
+			if J.CanBeAttacked(ancient)
+			then
+				amount = Clamp(GetDefendLaneDesire(lane), 0.25, 1) * mul[lane]
+			else
+				amount = GetDefendLaneDesire(lane) * mul[lane]
+			end
+
 			return Clamp(amount, 0.1, 0.9)
         end
 	end
@@ -197,37 +207,37 @@ function Defend.GetFurthestBuildingOnLane(lane)
 
 		FurthestBuilding = GetTower(bot:GetTeam(), TOWER_TOP_2)
 		if Defend.IsValidBuildingTarget(FurthestBuilding) then
-			return FurthestBuilding, 1
+			return FurthestBuilding, 2
 		end
 		
 		FurthestBuilding = GetTower(bot:GetTeam(), TOWER_TOP_3)
 		if Defend.IsValidBuildingTarget(FurthestBuilding) then
-			return FurthestBuilding, 1
+			return FurthestBuilding, 2.5
 		end
 		
 		FurthestBuilding = GetBarracks(bot:GetTeam(), BARRACKS_TOP_MELEE)
 		if Defend.IsValidBuildingTarget(FurthestBuilding) then
-			return FurthestBuilding, 1
+			return FurthestBuilding, 2.5
 		end
 		
 		FurthestBuilding = GetBarracks(bot:GetTeam(), BARRACKS_TOP_RANGED)
 		if Defend.IsValidBuildingTarget(FurthestBuilding) then
-			return FurthestBuilding, 1
+			return FurthestBuilding, 2.5
 		end
 		
 		FurthestBuilding = GetTower(bot:GetTeam(), TOWER_BASE_1)
 		if Defend.IsValidBuildingTarget(FurthestBuilding) then
-			return GetAncient(bot:GetTeam()), 1
+			return GetAncient(bot:GetTeam()), 2.5
 		end
 		
 		FurthestBuilding = GetTower(bot:GetTeam(), TOWER_BASE_2)
 		if Defend.IsValidBuildingTarget(FurthestBuilding) then
-			return GetAncient(bot:GetTeam()), 1
+			return GetAncient(bot:GetTeam()), 2.5
 		end
 		
 		FurthestBuilding = GetAncient(bot:GetTeam())
 		if Defend.IsValidBuildingTarget(FurthestBuilding) then
-			return GetAncient(bot:GetTeam()), 1
+			return GetAncient(bot:GetTeam()), 3
 		end
 	end
 	
@@ -239,37 +249,37 @@ function Defend.GetFurthestBuildingOnLane(lane)
 		
 		FurthestBuilding = GetTower(bot:GetTeam(), TOWER_MID_2)
 		if Defend.IsValidBuildingTarget(FurthestBuilding) then
-			return FurthestBuilding, 1
+			return FurthestBuilding, 2
 		end
 		
 		FurthestBuilding = GetTower(bot:GetTeam(), TOWER_MID_3)
 		if Defend.IsValidBuildingTarget(FurthestBuilding) then
-			return FurthestBuilding, 1
+			return FurthestBuilding, 2.5
 		end
 		
 		FurthestBuilding = GetBarracks(bot:GetTeam(), BARRACKS_MID_MELEE)
 		if Defend.IsValidBuildingTarget(FurthestBuilding) then
-			return FurthestBuilding, 1
+			return FurthestBuilding, 2.5
 		end
 		
 		FurthestBuilding = GetBarracks(bot:GetTeam(), BARRACKS_MID_RANGED)
 		if Defend.IsValidBuildingTarget(FurthestBuilding) then
-			return FurthestBuilding, 1
+			return FurthestBuilding, 2.5
 		end
 		
 		FurthestBuilding = GetTower(bot:GetTeam(), TOWER_BASE_1)
 		if Defend.IsValidBuildingTarget(FurthestBuilding) then
-			return GetAncient(bot:GetTeam()), 1
+			return GetAncient(bot:GetTeam()), 2.5
 		end
 		
 		FurthestBuilding = GetTower(bot:GetTeam(), TOWER_BASE_2)
 		if Defend.IsValidBuildingTarget(FurthestBuilding) then
-			return GetAncient(bot:GetTeam()), 1
+			return GetAncient(bot:GetTeam()), 2.5
 		end
 		
 		FurthestBuilding = GetAncient(bot:GetTeam())
 		if Defend.IsValidBuildingTarget(FurthestBuilding) then
-			return GetAncient(bot:GetTeam()), 1
+			return GetAncient(bot:GetTeam()), 3
 		end
 	end
 	
@@ -281,37 +291,37 @@ function Defend.GetFurthestBuildingOnLane(lane)
 		
 		FurthestBuilding = GetTower(bot:GetTeam(), TOWER_BOT_2)
 		if Defend.IsValidBuildingTarget(FurthestBuilding) then
-			return FurthestBuilding, 1
+			return FurthestBuilding, 2
 		end
 		
 		FurthestBuilding = GetTower(bot:GetTeam(), TOWER_BOT_3)
 		if Defend.IsValidBuildingTarget(FurthestBuilding) then
-			return FurthestBuilding, 1
+			return FurthestBuilding, 2.5
 		end
 		
 		FurthestBuilding = GetBarracks(bot:GetTeam(), BARRACKS_BOT_MELEE)
 		if Defend.IsValidBuildingTarget(FurthestBuilding) then
-			return FurthestBuilding, 1
+			return FurthestBuilding, 2.5
 		end
 		
 		FurthestBuilding = GetBarracks(bot:GetTeam(), BARRACKS_BOT_RANGED)
 		if Defend.IsValidBuildingTarget(FurthestBuilding) then
-			return FurthestBuilding, 1
+			return FurthestBuilding, 2.5
 		end
 		
 		FurthestBuilding = GetTower(bot:GetTeam(), TOWER_BASE_1)
 		if Defend.IsValidBuildingTarget(FurthestBuilding) then
-			return GetAncient(bot:GetTeam()), 1
+			return GetAncient(bot:GetTeam()), 2.5
 		end
 		
 		FurthestBuilding = GetTower(bot:GetTeam(), TOWER_BASE_2)
 		if Defend.IsValidBuildingTarget(FurthestBuilding) then
-			return GetAncient(bot:GetTeam()), 1
+			return GetAncient(bot:GetTeam()), 2.5
 		end
 		
 		FurthestBuilding = GetAncient(bot:GetTeam())
 		if Defend.IsValidBuildingTarget(FurthestBuilding) then
-			return GetAncient(bot:GetTeam()), 1
+			return GetAncient(bot:GetTeam()), 3
 		end
 	end
 	

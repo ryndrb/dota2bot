@@ -26,10 +26,14 @@ function GetDesire()
 		return BOT_ACTION_DESIRE_NONE
 	end
 
-	if (isBotCore and networth < 4500)
-	or (J.IsModeTurbo() and DotaTime() < 8 * 60 or DotaTime() < 12 * 60)
+	if (J.IsModeTurbo() and DotaTime() < 8 * 60 or DotaTime() < 12 * 60)
 	or botLV < 6
 	then
+		if isBotCore and networth < 4500
+		then
+			return BOT_MODE_DESIRE_HIGH
+		end
+
 		return BOT_MODE_DESIRE_MODERATE
 	end
 

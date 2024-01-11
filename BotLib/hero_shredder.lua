@@ -395,7 +395,7 @@ function X.ConsiderChakram()
 			if loc ~= nil
 			then
 				local eta = GetUnitToLocationDistance(bot, loc) / nSpeed
-				return BOT_ACTION_DESIRE_HIGH, loc, eta
+				return BOT_ACTION_DESIRE_HIGH, npcTarget:GetLocation(), eta
 			end
 		end
 	end
@@ -565,7 +565,7 @@ function X.ConsiderChakram2()
 			if loc ~= nil
 			then
 				local eta = GetUnitToLocationDistance(bot, loc) / nSpeed
-				return BOT_ACTION_DESIRE_MODERATE, loc, eta
+				return BOT_ACTION_DESIRE_MODERATE, npcTarget:GetLocation(), eta
 			end
 		end
 	end

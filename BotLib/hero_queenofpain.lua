@@ -199,6 +199,7 @@ function X.SkillsComplement()
 		and castQTarget ~= nil
 		then
 			bot:ActionQueue_UseAbilityOnLocation( abilityQ, castQTarget:GetLocation() )
+			return
 		end
 
 		bot:ActionQueue_UseAbilityOnEntity( abilityQ, castQTarget )

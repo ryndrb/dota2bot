@@ -26,9 +26,13 @@ function Push.GetPushDesire(bot, lane)
     local aAliveCount = J.GetNumOfAliveHeroes(false)
     local eAliveCount = J.GetNumOfAliveHeroes(true)
     if Push.WhichLaneToPush(bot) == lane
-    and aAliveCount >= eAliveCount
+    and aAliveCount > eAliveCount
     then
-        local amount = RemapValClamped(GetLaneFrontAmount(GetTeam(), lane, false), 0, 1, 0, 0.75) * (GetLaneFrontAmount(GetOpposingTeam(), lane, false))
+        local aFront = RemapValClamped(GetLaneFrontAmount(GetTeam(), lane, true), 0, 1, 0, 0.75)
+        local eFront = RemapValClamped(GetLaneFrontAmount(GetOpposingTeam(), lane, true), 0, 1, 0, 0.75)
+        -- local amount = aFront * eFront
+        local amount = RemapValClamped(GetPushLaneDesire(lane), 0, 1, 0, 0.75)
+
         if J.DoesTeamHaveAegis(GetUnitList(UNIT_LIST_ALLIED_HEROES))
         then
             local aegis = 1.3
@@ -56,7 +60,9 @@ function Push.WhichLaneToPush(bot)
     -- TeamLocation[bot:GetPlayerID()] = bot:GetLocation()
     local TeamLocation = {}
     for _, u in pairs(GetUnitList(UNIT_LIST_ALLIED_HEROES)) do
-        if u:IsAlive() then
+        if u:IsAlive()
+        and J.IsCore(u)
+        then
             TeamLocation[u:GetPlayerID()] = u:GetLocation()
         end
     end
@@ -66,18 +72,19 @@ function Push.WhichLaneToPush(bot)
     local distanceToBot = 0
 
     local IDs = GetTeamPlayers(GetTeam())
+    local aAliveCount = J.GetNumOfAliveHeroes(false)
+    local eAliveCount = J.GetNumOfAliveHeroes(true)
 
-    if J.GetNumOfAliveHeroes(true) <= 2 or J.DoesTeamHaveAegis(GetUnitList(UNIT_LIST_ALLIED_HEROES))
+    if aAliveCount > eAliveCount
+    or J.DoesTeamHaveAegis(GetUnitList(UNIT_LIST_ALLIED_HEROES))
     then
         for _, id in pairs(IDs) do
             if TeamLocation[id] ~= nil then
                 if IsHeroAlive(id) then
-                    distanceToTop = math.max(distanceToTop, #(GetLaneFrontLocation(GetTeam(), LANE_TOP, 0.0) - TeamLocation[id]))
-                    distanceToMid = math.max(distanceToMid, #(GetLaneFrontLocation(GetTeam(), LANE_MID, 0.0) - TeamLocation[id]))
-                    distanceToBot = math.max(distanceToBot, #(GetLaneFrontLocation(GetTeam(), LANE_BOT, 0.0) - TeamLocation[id]))
+                    distanceToTop = distanceToTop + math.max(distanceToTop, #(GetLaneFrontLocation(GetTeam(), LANE_TOP, 0.0) - TeamLocation[id]))
+                    distanceToMid = distanceToMid + math.max(distanceToMid, #(GetLaneFrontLocation(GetTeam(), LANE_MID, 0.0) - TeamLocation[id]))
+                    distanceToBot = distanceToBot + math.max(distanceToBot, #(GetLaneFrontLocation(GetTeam(), LANE_BOT, 0.0) - TeamLocation[id]))
                 end
-            else
-                return Push.TeamPushLane()
             end
         end
     else
@@ -90,7 +97,6 @@ function Push.WhichLaneToPush(bot)
     and distanceToBot < distanceToMid
     -- and (GetBarracks(GetOpposingTeam(), BARRACKS_BOT_MELEE) ~= nil or GetBarracks(GetOpposingTeam(), BARRACKS_BOT_RANGED) ~= nil) 
     then
-        -- Push.ChatIfChanged("Pushing Bot");
         return LANE_BOT
     end
 
@@ -98,7 +104,6 @@ function Push.WhichLaneToPush(bot)
     and distanceToTop < distanceToBot
     -- and (GetBarracks(GetOpposingTeam(), BARRACKS_TOP_MELEE) ~= nil or GetBarracks(GetOpposingTeam(), BARRACKS_TOP_RANGED) ~= nil) 
     then
-        -- Push.ChatIfChanged("Pushing Top");
         return LANE_TOP
     end
 
@@ -106,7 +111,6 @@ function Push.WhichLaneToPush(bot)
     and distanceToMid < distanceToBot
     -- and (GetBarracks(GetOpposingTeam(), BARRACKS_MID_MELEE) ~= nil or GetBarracks(GetOpposingTeam(), BARRACKS_MID_RANGED) ~= nil) 
     then
-    -- Push.ChatIfChanged("Pushing Mid");
         return LANE_MID
     end
 
@@ -281,6 +285,7 @@ function Push.PushThink(bot, lane)
     local enemyAlive = 0
     local teammateDistance = 0
     local teammateAlive = 0
+    local nRange = bot:GetAttackRange()
   
     for _, id in pairs(enemyIds) do
         if IsHeroAlive(id) then
@@ -305,11 +310,11 @@ function Push.PushThink(bot, lane)
 
     local offset = -math.max(teammateDistance / teammateAlive - enemyDistance / enemyAlive, 0)
 
-    if J.WeAreStronger(bot, 1200) and #bot:GetNearbyHeroes(1600, false, BOT_MODE_NONE) >= enemyAlive then
+    if J.WeAreStronger(bot, 700 + nRange) and #bot:GetNearbyHeroes(700 + nRange, false, BOT_MODE_NONE) >= enemyAlive then
         offset = 0
     end
 
-    local towers = bot:GetNearbyTowers(1600, true)
+    local towers = bot:GetNearbyTowers(700 + nRange, true)
 
     local attackRange       = bot:GetAttackRange()
     local targetLoc         = GetLaneFrontLocation(GetTeam(), lane, offset) - J.RandomForwardVector(attackRange)
@@ -332,18 +337,18 @@ function Push.PushThink(bot, lane)
         end
     end
 
-    local enemies = bot:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
-    if enemies ~= nil and #enemies > 0 and J.WeAreStronger(bot, 1200)
+    local enemies = bot:GetNearbyHeroes(700 + nRange, true, BOT_MODE_NONE)
+    if enemies ~= nil and #enemies > 0 and J.WeAreStronger(bot, 700)
     then
         return bot:ActionPush_AttackUnit(enemies[1], false)
     end
 
-    local creeps = bot:GetNearbyLaneCreeps(1600, true)
+    local creeps = bot:GetNearbyLaneCreeps(700 + nRange, true)
     if creeps ~= nil and #creeps > 0 then
-        return bot:ActionPush_AttackUnit(creeps[1], false)
+        return bot:ActionPush_AttackUnit(creeps[#creeps], false)
     end
 
-    local barracks = bot:GetNearbyBarracks(1600, true);
+    local barracks = bot:GetNearbyBarracks(700 + nRange, true);
     if barracks ~= nil and #barracks > 0 then
         if J.CanBeAttacked(barracks[1]) then
             return bot:ActionPush_AttackUnit(barracks[1], false)
