@@ -21,7 +21,10 @@ function Helper.DotaTime()
 end
 
 function Helper.IsTurboMode()
-    if GameRules:State_Get() == 10
+    local courier = Entities:FindByName(nil, 'npc_dota_courier')
+    local moveSpeed = courier:GetMoveSpeedModifier(courier:GetBaseMoveSpeed(), true)
+
+    if moveSpeed == 1100
     then
         return true
     end
