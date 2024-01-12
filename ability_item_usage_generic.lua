@@ -1326,10 +1326,11 @@ X.ConsiderItemDesire["item_bloodstone"] = function( hItem )
 
 
 	if J.IsGoingOnSomeone( bot )
+	and (nInRangeEnmyList >= 2 or J.GetHP(bot) < 0.3)
 	then
 		if J.IsValidHero( botTarget )
 			and J.IsInRange( bot, botTarget, nCastRange )
-			and botTarget:WasRecentlyDamagedByAnyHero( 2.0 )
+			and bot:WasRecentlyDamagedByAnyHero( 2.0 )
 			and J.CanCastOnNonMagicImmune( botTarget )
 		then
 			hEffectTarget = bot
@@ -1557,7 +1558,7 @@ X.ConsiderItemDesire["item_cyclone"] = function( hItem )
 	if J.CanCastOnNonMagicImmune( bot )
 		and #hNearbyEnemyHeroList > 0
 	then
-		if bot:GetHealth() < 216 and bot:WasRecentlyDamagedByAnyHero( 3.0 )
+		if J.GetHP(bot) < 0.2 and bot:WasRecentlyDamagedByAnyHero( 3.0 )
 		then
 			hEffectTarget = bot
 			sCastMotive = '撤退:'..J.Chat.GetNormName( hEffectTarget )
@@ -3771,7 +3772,47 @@ end
 --大勋章
 X.ConsiderItemDesire["item_solar_crest"] = function( hItem )
 
-	return X.ConsiderItemDesire["item_medallion_of_courage"]( hItem )
+	local nCastRange = 1000
+	local sCastType = 'unit'
+	local hEffectTarget = nil
+	local sCastMotive = nil
+	local hAllyList = J.GetAlliesNearLoc(bot:GetLocation(), 1000)
+
+	for _, npcAlly in pairs(hAllyList)
+	do
+		if J.IsValidHero( npcAlly )
+		and J.IsInRange( bot, npcAlly, nCastRange )
+		and not npcAlly:HasModifier( 'modifier_legion_commander_press_the_attack' )
+		and not npcAlly:IsMagicImmune()
+		and not npcAlly:IsInvulnerable()
+		and npcAlly:CanBeSeen()
+		then
+			if not npcAlly:IsBot()
+			and npcAlly:GetAttackTarget() ~= nil
+			and npcAlly:GetMaxHealth() - npcAlly:GetHealth() >= 120
+			then
+				hEffectTarget = npcAlly
+				sCastMotive = 'Solar Crest'
+				return BOT_ACTION_DESIRE_HIGH, hEffectTarget, sCastType, sCastMotive
+			end
+
+			if J.IsGoingOnSomeone(npcAlly)
+			then
+				local allyTarget = J.GetProperTarget(npcAlly)
+
+				if J.IsValidHero(allyTarget)
+				and npcAlly:IsFacingLocation( allyTarget:GetLocation(), 20)
+				and J.IsInRange(npcAlly, allyTarget, npcAlly:GetAttackRange() + 100)
+				then
+					hEffectTarget = npcAlly
+					sCastMotive = 'Solar Crest'
+					return BOT_ACTION_DESIRE_HIGH, hEffectTarget, sCastType, sCastMotive
+				end
+			end
+		end
+	end
+
+	return BOT_ACTION_DESIRE_NONE
 
 end
 
@@ -4823,49 +4864,19 @@ end
 --纷争
 X.ConsiderItemDesire["item_veil_of_discord"] = function( hItem )
 
-	local nCastRange = 1000 + aetherRange
-	local sCastType = 'ground'
+	local nCastRange = 900
+	local sCastType = 'none'
 	local hEffectTarget = nil
 	local sCastMotive = nil
-	local nInRangeEnmyList = bot:GetNearbyHeroes( nCastRange, true, BOT_MODE_NONE )
+	local nInRangeEnmyList = bot:GetNearbyHeroes( nCastRange + 50, true, BOT_MODE_NONE )
 
-
-	local hEnemyList= bot:GetNearbyHeroes( 1600, true, BOT_MODE_NONE )
-	if hEnemyList ~= nil and #hEnemyList > 0
+	local hNearbyCreepList = bot:GetNearbyCreeps( nCastRange, true )
+	if #hNearbyCreepList >= 6
+		or #nInRangeEnmyList >= 1
 	then
-		local nAOELocation = bot:FindAoELocation( true, true, bot:GetLocation(), nCastRange, 500 , 0, 0 )
-		if nAOELocation.count >= 2
-			and GetUnitToLocationDistance( bot, nAOELocation.targetloc ) <= nCastRange
-		then
-			hEffectTarget = nAOELocation.targetloc
-			sCastMotive = 'Aoe远处敌人'
-			return BOT_ACTION_DESIRE_HIGH, hEffectTarget, sCastType, sCastMotive
-		end
-	end
-
-	hEnemyList = bot:GetNearbyHeroes( 1000, true, BOT_MODE_NONE )
-	if hEnemyList ~= nil and #hEnemyList > 0
-	then
-		local nAOELocation = bot:FindAoELocation( true, true, bot:GetLocation(), 800, 400 , 0, 0 )
-		if nAOELocation.count >= 1
-			and GetUnitToLocationDistance( bot, nAOELocation.targetloc ) <= 1000
-		then
-			hEffectTarget = nAOELocation.targetloc
-			sCastMotive = 'Aoe近处敌人'
-			return BOT_ACTION_DESIRE_HIGH, hEffectTarget, sCastType, sCastMotive
-		end
-	end
-
-	local LaneCreeps=bot:GetNearbyLaneCreeps( 1500, true )
-	if LaneCreeps ~= nil and #LaneCreeps >= 6 then
-		local nAOELocation = bot:FindAoELocation( true, false, bot:GetLocation(), nCastRange, 400 , 0, 0 )
-		if nAOELocation.count >= 8
-			and GetUnitToLocationDistance( bot, nAOELocation.targetloc ) <= nCastRange
-		then
-			hEffectTarget = nAOELocation.targetloc
-			sCastMotive = 'Aoe小兵'
-			return BOT_ACTION_DESIRE_HIGH, hEffectTarget, sCastType, sCastMotive
-		end
+		hEffectTarget = bot
+		sCastMotive = '启动希瓦'
+		return BOT_ACTION_DESIRE_HIGH, hEffectTarget, sCastType, sCastMotive
 	end
 
 	return BOT_ACTION_DESIRE_NONE
