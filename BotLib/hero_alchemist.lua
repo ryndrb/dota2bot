@@ -91,12 +91,13 @@ local UnstableConcoctionThrow   = bot:GetAbilityByName( "alchemist_unstable_conc
 local UnstableConcoction        = bot:GetAbilityByName( "alchemist_unstable_concoction" )
 local AcidSpray                 = bot:GetAbilityByName( "alchemist_acid_spray" )
 local ChemicalRage              = bot:GetAbilityByName( "alchemist_chemical_rage" )
-
+local BerserkPotion             = bot:GetAbilityByName( "alchemist_berserk_potion" )
 
 local UnstableConcoctionThrowDesire
 local UnstableConcoctionDesire
 local AcidSprayDesire
 local ChemicalRageDesire
+local BerserkPotionDesire
 
 local defDuration = 2
 local offDuration = 4.25
@@ -104,306 +105,377 @@ local CCStartTime = 0
 
 function X.SkillsComplement()
 
-    if J.CanNotUseAbility( bot ) or bot:IsInvisible() then return end
+    if J.CanNotUseAbility(bot) or bot:IsInvisible() then return end
 
-    AcidSprayDesire, AcidSprayLocation              = X.ConsiderAcidSpray();
-	UnstableConcoctionThrowDesire, ThrowLocation    = X.ConsiderUnstableConcoctionThrow();
-	UnstableConcoctionDesire                        = X.ConsiderUnstableConcoction();
-	ChemicalRageDesire                              = X.ConsiderChemicalRage();
-	
-	if ( ChemicalRageDesire > 0 ) 
+	ChemicalRageDesire = X.ConsiderChemicalRage()
+	if (ChemicalRageDesire > 0)
 	then
-		bot:Action_UseAbility( ChemicalRage );
-		return;
-	end
-
-	if ( UnstableConcoctionThrowDesire > 0 ) 
-	then
-		bot:Action_UseAbilityOnEntity( UnstableConcoctionThrow, ThrowLocation );
-		return;
-	end
-	
-	if ( AcidSprayDesire > 0 ) 
-	then
-		bot:Action_UseAbilityOnLocation( AcidSpray, AcidSprayLocation );
-		return;
-	end
-	
-	if ( UnstableConcoctionDesire > 0 ) 
-	then
-		bot:Action_UseAbility( UnstableConcoction );
-		CCStartTime =  DotaTime();
+		bot:Action_UseAbility( ChemicalRage)
 		return
 	end
 
+	UnstableConcoctionThrowDesire, ThrowLocation = X.ConsiderUnstableConcoctionThrow()
+	if (UnstableConcoctionThrowDesire > 0)
+	then
+		bot:Action_UseAbilityOnEntity(UnstableConcoctionThrow, ThrowLocation)
+		return
+	end
+
+	AcidSprayDesire, AcidSprayLocation = X.ConsiderAcidSpray()
+	if (AcidSprayDesire > 0)
+	then
+		bot:Action_UseAbilityOnLocation( AcidSpray, AcidSprayLocation )
+		return
+	end
+
+	UnstableConcoctionDesire = X.ConsiderUnstableConcoction()
+	if (UnstableConcoctionDesire > 0)
+	then
+		bot:Action_UseAbility(UnstableConcoction)
+		CCStartTime =  DotaTime()
+		return
+	end
+
+	BerserkPotionDesire, PotionTarget = X.ConsiderBerserkPotion()
+	if (BerserkPotionDesire > 0)
+	then
+		bot:Action_UseAbilityOnEntity(UnstableConcoctionThrow, PotionTarget)
+		return
+	end
 end
 
 function X.ConsiderUnstableConcoction()
-
-	-- Make sure it's castable
-	if ( not UnstableConcoction:IsFullyCastable() ) then 
-		return BOT_ACTION_DESIRE_NONE;
+	if not UnstableConcoction:IsFullyCastable()
+	then
+		return BOT_ACTION_DESIRE_NONE
 	end
 
-	-- Get some of its values
+	local npcTarget = bot:GetTarget()
+
 	local nCastRange = UnstableConcoction:GetCastRange()
-	local nDamage = UnstableConcoction:GetSpecialValueInt( "max_damage" );
+	local nDamage = UnstableConcoction:GetSpecialValueInt("max_damage")
 
-	--------------------------------------
-	-- Mode based usage
-	--------------------------------------
-
-	-- If we're seriously retreating, see if we can land a stun on someone who's damaged us recently
 	if J.IsRetreating(bot)
 	then
-		local tableNearbyEnemyHeroes = bot:GetNearbyHeroes( nCastRange, true, BOT_MODE_NONE );
-		for _,npcEnemy in pairs( tableNearbyEnemyHeroes )
+		local nEnemyHeroes = bot:GetNearbyHeroes(nCastRange, true, BOT_MODE_NONE)
+
+		for _, npcEnemy in pairs(nEnemyHeroes)
 		do
-			if ( bot:WasRecentlyDamagedByHero( npcEnemy, 1.0 )  and J.CanCastOnNonMagicImmune(npcEnemy) ) 
+			if bot:WasRecentlyDamagedByHero(npcEnemy, 1.0)
+			and J.CanCastOnNonMagicImmune(npcEnemy)
 			then
 				return BOT_ACTION_DESIRE_MODERATE
 			end
 		end
 	end
 
-	-- If a mode has set a target, and we can kill them, do it
-	local npcTarget = bot:GetTarget();
-	if ( J.IsValidTarget(npcTarget) and J.CanCastOnNonMagicImmune(npcTarget) )
+	if J.IsValidTarget(npcTarget)
+	and J.CanCastOnNonMagicImmune(npcTarget)
+	and J.CanKillTarget(npcTarget, nDamage, DAMAGE_TYPE_PHYSICAL)
+	and J.IsInRange(npcTarget, bot, nCastRange - 200)
 	then
-		if (  J.CanKillTarget(npcTarget, nDamage, DAMAGE_TYPE_PHYSICAL) and J.IsInRange(npcTarget, bot, nCastRange - 200)  )
-		then
-			return BOT_ACTION_DESIRE_HIGH
-		end
+		return BOT_ACTION_DESIRE_HIGH
 	end
-	
-	-- If we're going after someone
+
 	if J.IsGoingOnSomeone(bot)
 	then
-		if J.IsValidTarget(npcTarget) and J.CanCastOnNonMagicImmune(npcTarget) and J.IsInRange(npcTarget, bot, nCastRange - 200)
+		if J.IsValidTarget(npcTarget)
+		and J.CanCastOnNonMagicImmune(npcTarget)
+		and J.IsInRange(npcTarget, bot, nCastRange - 200)
 		then
 			return BOT_ACTION_DESIRE_HIGH
 		end
 	end
 
-	return BOT_ACTION_DESIRE_NONE;
-
+	return BOT_ACTION_DESIRE_NONE
 end
 
 function X.ConsiderUnstableConcoctionThrow()
-
-	-- Make sure it's castable
-	if ( not UnstableConcoctionThrow:IsFullyCastable() or UnstableConcoctionThrow:IsHidden() ) then 
-		return BOT_ACTION_DESIRE_NONE, 0;
-	end
-	
-	-- Get some of its values
-	local nCastRange = UnstableConcoctionThrow:GetCastRange();
-	local nDamage = UnstableConcoction:GetSpecialValueInt( "max_damage" );
-	
-	
-	-- If a mode has set a target, and we can kill them, do it
-	local npcTarget = bot:GetTarget();
-	if ( J.IsValidTarget(npcTarget) and J.CanCastOnNonMagicImmune(npcTarget) )
-	then
-		if ( ( DotaTime() == CCStartTime + offDuration or 
-				J.CanKillTarget(npcTarget, nDamage, DAMAGE_TYPE_PHYSICAL)  ) and 
-				J.IsInRange(npcTarget, bot, nCastRange + 200) )
-		then
-			return BOT_ACTION_DESIRE_HIGH, npcTarget;
-		end
-	end
-	
-	
-	-- If we're seriously retreating, see if we can land a stun on someone who's damaged us recently
-	if J.IsRetreating(bot)
-	then
-		local tableNearbyEnemyHeroes = bot:GetNearbyHeroes( nCastRange, true, BOT_MODE_NONE );
-		for _,npcEnemy in pairs( tableNearbyEnemyHeroes )
-		do 
-			if ( bot:WasRecentlyDamagedByHero( npcEnemy, 2.0 ) and J.CanCastOnNonMagicImmune(npcEnemy) and DotaTime() >= CCStartTime + defDuration ) 
-			then
-				return BOT_ACTION_DESIRE_HIGH, npcEnemy;
-			end
-		end
-	end
-
-	-- If we're going after someone
-	if J.IsGoingOnSomeone(bot)
-	then
-		if J.IsValidTarget(npcTarget) and 
-		   J.CanCastOnNonMagicImmune(npcTarget) and 
-		   ( DotaTime() >= CCStartTime + offDuration or npcTarget:GetHealth() < nDamage or npcTarget:IsChanneling() ) 
-		then
-			return BOT_ACTION_DESIRE_HIGH, npcTarget;
-		end
-	end
-
-	local tableNearbyEnemyHeroes = bot:GetNearbyHeroes( 1300, true, BOT_MODE_NONE );
-	for _,npcEnemy in pairs( tableNearbyEnemyHeroes )
-	do
-		if ( J.CanCastOnNonMagicImmune(npcEnemy) and 
-		   ( DotaTime() >= CCStartTime + offDuration or npcEnemy:GetHealth() < nDamage or npcEnemy:IsChanneling() ) and 
-		   J.IsInRange(npcTarget, bot, nCastRange+200)  ) 
-		then
-			return BOT_ACTION_DESIRE_HIGH, npcEnemy;
-		end
-	end
-	
-	return BOT_ACTION_DESIRE_NONE, 0
-end
-
-function X.ConsiderAcidSpray()
-
-	-- Make sure it's castable
-	if ( not AcidSpray:IsFullyCastable() ) 
+	if not UnstableConcoctionThrow:IsFullyCastable()
+	or UnstableConcoctionThrow:IsHidden()
 	then 
 		return BOT_ACTION_DESIRE_NONE, 0
 	end
 
+	local nCastRange = UnstableConcoctionThrow:GetCastRange()
+	local nDamage = UnstableConcoction:GetSpecialValueInt("max_damage")
+	local npcTarget = bot:GetTarget()
 
-	-- Get some of its values
-	local nRadius = AcidSpray:GetSpecialValueInt( "radius" );
-	local nCastRange = AcidSpray:GetCastRange();
-	local nCastPoint = AcidSpray:GetCastPoint( );
+	if J.IsValidTarget(npcTarget)
+	and J.CanCastOnNonMagicImmune(npcTarget)
+	then
+		if ((DotaTime() == CCStartTime + offDuration or J.CanKillTarget(npcTarget, nDamage, DAMAGE_TYPE_PHYSICAL))
+		and J.IsInRange(npcTarget, bot, nCastRange + 200))
+		then
+			return BOT_ACTION_DESIRE_HIGH, npcTarget
+		end
+	end
 
-	--------------------------------------
-	-- Mode based usage
-	--------------------------------------
-	-- If we're seriously retreating, see if we can land a stun on someone who's damaged us recently
 	if J.IsRetreating(bot)
 	then
-		local tableNearbyEnemyHeroes = bot:GetNearbyHeroes( nCastRange, true, BOT_MODE_NONE );
-		for _,npcEnemy in pairs( tableNearbyEnemyHeroes )
+		local nEnemyHeroes = bot:GetNearbyHeroes(nCastRange, true, BOT_MODE_NONE)
+
+		for _, npcEnemy in pairs(nEnemyHeroes)
 		do
-			if ( bot:WasRecentlyDamagedByHero( npcEnemy, 2.0 ) ) 
+			if J.IsValidTarget(npcEnemy)
+			and bot:WasRecentlyDamagedByHero(npcEnemy, 2.0)
+			and J.CanCastOnNonMagicImmune(npcEnemy)
+			and DotaTime() >= CCStartTime + defDuration
+			and J.IsInRange(npcTarget, bot, nCastRange + 200)
 			then
-				return BOT_ACTION_DESIRE_MODERATE, bot:GetLocation();
+				return BOT_ACTION_DESIRE_HIGH, npcEnemy
 			end
 		end
 	end
-	
-	if bot:GetActiveMode() == BOT_MODE_FARM 
-	then
-		local locationAoE = bot:FindAoELocation( true, false, bot:GetLocation(), 400, 300, 0, 0 );
-		if  locationAoE.count >= 3 then
-			return BOT_ACTION_DESIRE_HIGH, locationAoE.targetloc;
-		end
-	end	
-	
-	if ( bot:GetActiveMode() == BOT_MODE_ROSHAN  ) 
-	then
-		local npcTarget = bot:GetAttackTarget();
-		if ( J.IsRoshan(npcTarget) and J.CanCastOnMagicImmune(npcTarget) and J.IsInRange(npcTarget, bot, nCastRange)  )
-		then
-			return BOT_ACTION_DESIRE_MODERATE, npcTarget:GetLocation();
-		end
-	end
-	
-	-- If we're pushing or defending a lane and can hit 4+ creeps, go for it
-	if ( bot:GetActiveMode() == BOT_MODE_LANING or
-	     J.IsDefending(bot) or J.IsPushing(bot) ) and bot:GetMana() / bot:GetMaxMana() > 0.5
-	then
-		local lanecreeps = bot:GetNearbyLaneCreeps(nCastRange+200, true);
-		local locationAoE = bot:FindAoELocation( true, false, bot:GetLocation(), nCastRange, nRadius/2, 0, 0 );
-		if ( locationAoE.count >= 4 and #lanecreeps >= 4  ) 
-		then
-			return BOT_ACTION_DESIRE_HIGH, locationAoE.targetloc;
-		end
-	end
-	
-	if J.IsInTeamFight(bot, 1200)
-	then
-		local locationAoE = bot:FindAoELocation( true, true, bot:GetLocation(), nCastRange, nRadius/2, 0, 0 );
-		if  locationAoE.count >= 2 then
-			return BOT_ACTION_DESIRE_HIGH, locationAoE.targetloc;
-		end
-	end
-	
-	-- If we're going after someone
+
 	if J.IsGoingOnSomeone(bot)
 	then
-		local npcTarget = bot:GetTarget();
-		if ( J.IsValidTarget(npcTarget) and J.CanCastOnNonMagicImmune(npcTarget) and J.IsInRange(npcTarget, bot, nCastRange) ) 
+		if J.IsValidTarget(npcTarget)
+		and J.CanCastOnNonMagicImmune(npcTarget)
+		and (DotaTime() >= CCStartTime + offDuration or npcTarget:GetHealth() < nDamage or npcTarget:IsChanneling())
+		and J.IsInRange(npcTarget, bot, nCastRange + 200)
 		then
-			local EnemyHeroes = npcTarget:GetNearbyHeroes( nRadius, false, BOT_MODE_NONE );
-			if ( #EnemyHeroes >= 2 )
+			return BOT_ACTION_DESIRE_HIGH, npcTarget
+		end
+	end
+
+	local nEnemyHeroes = bot:GetNearbyHeroes(1300, true, BOT_MODE_NONE)
+
+	for _, npcEnemy in pairs(nEnemyHeroes)
+	do
+		if (J.CanCastOnNonMagicImmune(npcEnemy)
+		and (DotaTime() >= CCStartTime + offDuration or npcEnemy:GetHealth() < nDamage or npcEnemy:IsChanneling())
+		and J.IsInRange(npcTarget, bot, nCastRange+200))
+		then
+			return BOT_ACTION_DESIRE_HIGH, npcEnemy
+		end
+	end
+
+	return BOT_ACTION_DESIRE_NONE, 0
+end
+
+function X.ConsiderAcidSpray()
+	if not AcidSpray:IsFullyCastable()
+	then
+		return BOT_ACTION_DESIRE_NONE, 0
+	end
+
+	local nRadius = AcidSpray:GetSpecialValueInt("radius")
+	local nCastRange = AcidSpray:GetCastRange()
+	local nCastPoint = AcidSpray:GetCastPoint()
+
+	if J.IsRetreating(bot)
+	then
+		local tableNearbyEnemyHeroes = bot:GetNearbyHeroes(nCastRange, true, BOT_MODE_NONE)
+
+		for _, npcEnemy in pairs(tableNearbyEnemyHeroes)
+		do
+			if bot:WasRecentlyDamagedByHero(npcEnemy, 2.0)
 			then
-				return BOT_ACTION_DESIRE_MODERATE, npcTarget:GetExtrapolatedLocation( nCastPoint );
+				return BOT_ACTION_DESIRE_MODERATE, bot:GetLocation()
 			end
 		end
 	end
-	
-	local skThere, skLoc = J.IsSandKingThere(bot, nCastRange+200, 2.0);
-	
-	if skThere then
-		return BOT_ACTION_DESIRE_MODERATE, skLoc;
+
+	if J.IsFarming(bot)
+	then
+		local locationAoE = bot:FindAoELocation(true, false, bot:GetLocation(), nCastRange, nRadius, 0, 0)
+
+		if  locationAoE.count >= 4
+		then
+			return BOT_ACTION_DESIRE_HIGH, locationAoE.targetloc
+		end
 	end
-	
-	return BOT_ACTION_DESIRE_NONE, 0;
+
+	if J.IsDoingRoshan(bot)
+	then
+		local npcTarget = bot:GetAttackTarget()
+
+		if J.IsRoshan(npcTarget)
+		and J.CanCastOnMagicImmune(npcTarget)
+		and J.IsInRange(npcTarget, bot, nCastRange)
+		then
+			return BOT_ACTION_DESIRE_MODERATE, npcTarget:GetLocation()
+		end
+	end
+
+	if (J.IsLaning(bot) or J.IsDefending(bot) or J.IsPushing(bot))
+	and bot:GetMana() / bot:GetMaxMana() > 0.5
+	then
+		local nLaneCreeps = bot:GetNearbyLaneCreeps(nCastRange, true)
+		local locationAoE = bot:FindAoELocation(true, false, bot:GetLocation(), nCastRange, nRadius, 0, 0)
+
+		if (locationAoE.count >= 4 and #nLaneCreeps >= 4)
+		then
+			return BOT_ACTION_DESIRE_HIGH, locationAoE.targetloc
+		end
+	end
+
+	if J.IsInTeamFight(bot, 1200)
+	then
+		local locationAoE = bot:FindAoELocation(true, true, bot:GetLocation(), nCastRange, nRadius, 0, 0)
+
+		if  locationAoE.count >= 2
+		then
+			return BOT_ACTION_DESIRE_HIGH, locationAoE.targetloc
+		end
+	end
+
+	if J.IsGoingOnSomeone(bot)
+	then
+		local npcTarget = bot:GetTarget()
+
+		if J.IsValidTarget(npcTarget)
+		and J.CanCastOnNonMagicImmune(npcTarget)
+		and J.IsInRange(npcTarget, bot, nCastRange)
+		then
+			local nEnemyHeroes = npcTarget:GetNearbyHeroes( nRadius, false, BOT_MODE_NONE)
+
+			if #nEnemyHeroes >= 2
+			then
+				return BOT_ACTION_DESIRE_MODERATE, npcTarget:GetExtrapolatedLocation(nCastPoint)
+			end
+		end
+	end
+
+	local skThere, skLoc = J.IsSandKingThere(bot, nCastRange, 2.0)
+
+	if skThere
+	then
+		return BOT_ACTION_DESIRE_MODERATE, skLoc
+	end
+
+	return BOT_ACTION_DESIRE_NONE, 0
 end
 
 function X.ConsiderChemicalRage()
-	-- Make sure it's castable
-	if ( not ChemicalRage:IsFullyCastable() ) then 
-		return BOT_ACTION_DESIRE_NONE;
+	if not ChemicalRage:IsFullyCastable()
+	then
+		return BOT_ACTION_DESIRE_NONE
 	end
-	
-	local nRadius = 1000;
-	
-	if bot:GetHealth() / bot:GetMaxHealth() < 0.5 then
+
+	local nRadius = 1000
+
+	if bot:GetHealth() / bot:GetMaxHealth() < 0.5
+	then
 		return BOT_ACTION_DESIRE_LOW
 	end
-	
-	-- If we're seriously retreating, see if we can land a stun on someone who's damaged us recently
+
 	if J.IsRetreating(bot)
 	then
-		local tableNearbyEnemyHeroes = bot:GetNearbyHeroes( nRadius, true, BOT_MODE_NONE );
-		for _,npcEnemy in pairs( tableNearbyEnemyHeroes )
+		local nEnemyHeroes = bot:GetNearbyHeroes(nRadius, true, BOT_MODE_NONE)
+		for _,npcEnemy in pairs(nEnemyHeroes)
 		do
-			if ( bot:WasRecentlyDamagedByHero( npcEnemy, 1.0 ) ) 
+			if bot:WasRecentlyDamagedByHero(npcEnemy, 1.0)
 			then
 				return BOT_ACTION_DESIRE_MODERATE
 			end
 		end
 	end
-	
-	if bot:GetActiveMode() == BOT_MODE_FARM and bot:GetHealth()/bot:GetMaxHealth() < 0.55
+
+	if J.IsFarming(bot)
+	and bot:GetHealth() / bot:GetMaxHealth() < 0.3
 	then
-		local npcTarget = bot:GetAttackTarget();
-		if npcTarget ~= nil then
+		local npcTarget = bot:GetAttackTarget()
+
+		if npcTarget ~= nil
+		then
 			return BOT_ACTION_DESIRE_HIGH
 		end
-	end	
-	
-	if ( bot:GetActiveMode() == BOT_MODE_ROSHAN  ) 
+	end
+
+	if J.IsDoingRoshan(bot)
 	then
-		local npcTarget = bot:GetTarget();
-		if ( J.IsRoshan(npcTarget) and J.CanCastOnMagicImmune(npcTarget) and J.IsInRange(npcTarget, bot, 300)  )
+		local npcTarget = bot:GetTarget()
+
+		if J.IsRoshan(npcTarget)
+		and J.CanCastOnMagicImmune(npcTarget)
 		then
 			return BOT_ACTION_DESIRE_MODERATE
 		end
 	end
-	
+
 	if J.IsInTeamFight(bot, 1200)
 	then
-		local tableNearbyEnemyHeroes = bot:GetNearbyHeroes( nRadius, true, BOT_MODE_NONE  );
-		if ( #tableNearbyEnemyHeroes >= 2 )
+		local tableNearbyEnemyHeroes = bot:GetNearbyHeroes(nRadius, true, BOT_MODE_NONE)
+		if #tableNearbyEnemyHeroes >= 2
 		then
 			return BOT_ACTION_DESIRE_HIGH
 		end
 	end
-	
-	-- If we're going after someone
+
 	if  J.IsGoingOnSomeone(bot)
 	then
-		local npcTarget = bot:GetTarget();
-		if ( J.IsValidTarget(npcTarget) and J.CanCastOnNonMagicImmune(npcTarget) and J.IsInRange(npcTarget, bot, nRadius-400) ) 
+		local npcTarget = bot:GetTarget()
+
+		if J.IsValidTarget(npcTarget)
+		and J.CanCastOnNonMagicImmune(npcTarget)
+		and J.IsInRange(npcTarget, bot, nRadius - 400)
 		then
 			return BOT_ACTION_DESIRE_HIGH
 		end
 	end
-	
+
 	return BOT_ACTION_DESIRE_NONE
+end
+
+function X.ConsiderBerserkPotion()
+
+	if not BerserkPotion:IsFullyCastable() then return 0, nil end
+
+	local nCastRange = BerserkPotion:GetCastRange()
+	local hAllyList = J.GetAlliesNearLoc(bot:GetLocation(), 1600)
+
+	for _, npcAlly in pairs(hAllyList)
+	do
+		if J.IsValidHero( npcAlly )
+		and J.IsInRange( bot, npcAlly, nCastRange )
+		and not npcAlly:HasModifier( 'modifier_legion_commander_press_the_attack' )
+		and not npcAlly:IsMagicImmune()
+		and not npcAlly:IsInvulnerable()
+		and npcAlly:CanBeSeen()
+		then
+			if not npcAlly:IsBot()
+			and npcAlly:GetAttackTarget() ~= nil
+			and npcAlly:GetMaxHealth() - npcAlly:GetHealth() >= 120
+			then
+				return BOT_ACTION_DESIRE_HIGH, npcAlly
+			end
+
+			if J.IsDisabled( npcAlly )
+			then
+				return BOT_ACTION_DESIRE_HIGH, npcAlly
+			end
+
+			if J.IsRetreating(npcAlly)
+			and J.IsRunning(npcAlly)
+			and npcAlly:GetMaxHealth() - npcAlly:GetHealth() >= 300
+			and npcAlly:WasRecentlyDamagedByAnyHero(5.0)
+			and npcAlly:IsFacingLocation(GetAncient( GetTeam() ):GetLocation(), 30)
+			then
+				return BOT_ACTION_DESIRE_HIGH, npcAlly
+			end
+
+			if J.IsGoingOnSomeone(npcAlly)
+			then
+				local allyTarget = J.GetProperTarget(npcAlly)
+
+				if J.IsValidHero(allyTarget)
+				and npcAlly:IsFacingLocation( allyTarget:GetLocation(), 20)
+				and J.IsInRange(npcAlly, allyTarget, npcAlly:GetAttackRange() + 100)
+				then
+					return BOT_ACTION_DESIRE_HIGH, npcAlly, sCastMotive
+				end
+			end
+
+			if J.GetHP(npcAlly) < 0.3
+			then
+				return BOT_ACTION_DESIRE_HIGH, npcAlly, sCastMotive
+			end
+		end
+	end
+
+	return BOT_ACTION_DESIRE_NONE, nil
 end
 
 return X

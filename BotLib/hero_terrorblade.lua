@@ -104,54 +104,53 @@ function X.SkillsComplement()
 
     if J.CanNotUseAbility(bot) then return end
 
-    ReflectionDesire, ReflectionLoc = X.ConsiderReflection()
-	ConjureImageDesire              = X.ConsiderConjureImage()
-	MetamorphosisDesire             = X.ConsiderMetamorphosis()
-	SunderDesire, SunderTarget      = X.ConsiderSunder()
-    DemonZealDesire                 = X.ConsiderDemonZeal()
-    TerrorWaveDesire                = X.ConsiderTerrorWave()
-
-    if ( SunderDesire > 0 ) 
+	SunderDesire, SunderTarget = X.ConsiderSunder()
+    if (SunderDesire > 0)
 	then
-		bot:Action_UseAbilityOnEntity( Sunder, SunderTarget );
+		bot:Action_UseAbilityOnEntity(Sunder, SunderTarget)
 		return
 	end
 
-	if ( DemonZealDesire > 0 and J.HasAghanimsShard(bot))
+	ReflectionDesire, ReflectionLoc = X.ConsiderReflection()
+	if (ReflectionDesire > 0)
 	then
-		bot:Action_UseAbility( DemonZeal )
+		bot:Action_UseAbilityOnLocation(Reflection, ReflectionLoc)
 		return
 	end
 
-    if ( TerrorWaveDesire > 0 and bot:HasScepter()) 
+	ConjureImageDesire = X.ConsiderConjureImage()
+	if (ConjureImageDesire > 0)
 	then
-		bot:Action_UseAbility( TerrorWave )
+		bot:Action_UseAbility(ConjureImage)
 		return
 	end
 
-	if ( MetamorphosisDesire > 0 )
+	TerrorWaveDesire = X.ConsiderTerrorWave()
+    if (TerrorWaveDesire > 0)
 	then
-        bot:Action_UseAbility( Metamorphosis )
+		bot:Action_UseAbility(TerrorWave)
 		return
 	end
 
-	if ( ConjureImageDesire > 0 ) 
+	MetamorphosisDesire = X.ConsiderMetamorphosis()
+	if (MetamorphosisDesire > 0)
 	then
-		bot:Action_UseAbility( ConjureImage );
+        bot:Action_UseAbility(Metamorphosis)
 		return
 	end
 
-	if ( ReflectionDesire > 0 ) 
+    DemonZealDesire = X.ConsiderDemonZeal()
+	if (DemonZealDesire > 0)
 	then
-		bot:Action_UseAbilityOnLocation( Reflection, ReflectionLoc );
+		bot:Action_UseAbility(DemonZeal)
 		return
 	end
 end
 
 function X.ConsiderReflection()
-	if ( not Reflection:IsFullyCastable() ) 
-	then 
-		return BOT_ACTION_DESIRE_NONE
+	if not Reflection:IsFullyCastable()
+	then
+		return BOT_ACTION_DESIRE_NONE, nil
 	end
 
 	local nRadius      = Reflection:GetSpecialValueInt('range')
@@ -160,10 +159,24 @@ function X.ConsiderReflection()
 	local nManaCost    = Reflection:GetManaCost( )
 	local nAttackRange = bot:GetAttackRange( )
 
+	if J.IsRetreating(bot)
+	then
+		local tableNearbyEnemyHeroes = bot:GetNearbyHeroes(nRadius, true, BOT_MODE_NONE)
+
+		for _, npcEnemy in pairs(tableNearbyEnemyHeroes)
+		do
+			if bot:WasRecentlyDamagedByHero(npcEnemy, 2.0)
+			then
+				return BOT_ACTION_DESIRE_MODERATE, npcEnemy:GetLocation()
+			end
+		end
+	end
+
 	if J.IsInTeamFight(bot, 1200)
 	then
-		local locationAoE = bot:FindAoELocation( true, true, bot:GetLocation(), nCastRange, nRadius/2, 0, 0 )
-		if ( locationAoE.count >= 2 )
+		local locationAoE = bot:FindAoELocation(true, true, bot:GetLocation(), nCastRange, nRadius, 0, 0)
+
+		if locationAoE.count >= 2
 		then
 			return BOT_ACTION_DESIRE_HIGH, locationAoE.targetloc
 		end
@@ -171,50 +184,60 @@ function X.ConsiderReflection()
 
 	if J.IsGoingOnSomeone(bot)
 	then
-		local npcTarget = bot:GetTarget();
-		if J.IsValidTarget(npcTarget) and J.CanCastOnNonMagicImmune(npcTarget) and J.IsInRange(npcTarget, bot, nCastRange) 
+		local npcTarget = bot:GetTarget()
+
+		if J.IsValidTarget(npcTarget)
+		and J.CanCastOnNonMagicImmune(npcTarget)
+		and J.IsInRange(npcTarget, bot, nCastRange)
 		then
 			return BOT_ACTION_DESIRE_HIGH, npcTarget:GetLocation()
 		end
 	end
---
-	return BOT_ACTION_DESIRE_NONE
+
+	return BOT_ACTION_DESIRE_NONE, nil
 end
 
 function X.ConsiderConjureImage()
 
-	if ( not ConjureImage:IsFullyCastable() ) then 
+	if not ConjureImage:IsFullyCastable()
+	then
 		return BOT_ACTION_DESIRE_NONE
 	end
 
-	local nRadius = 800;
+	local nRadius = 800
 	local nRange = 1200
 
 	if J.IsRetreating(bot)
 	then
-		local tableNearbyEnemyHeroes = bot:GetNearbyHeroes( nRange, true, BOT_MODE_NONE )
-		for _,npcEnemy in pairs( tableNearbyEnemyHeroes )
+		local tableNearbyEnemyHeroes = bot:GetNearbyHeroes(nRange, true, BOT_MODE_NONE)
+
+		for _, npcEnemy in pairs(tableNearbyEnemyHeroes)
 		do
-			if (bot:WasRecentlyDamagedByHero( npcEnemy, 2.0 )) 
+			if bot:WasRecentlyDamagedByHero(npcEnemy, 2.0)
 			then
 				return BOT_ACTION_DESIRE_MODERATE
 			end
 		end
 	end
 
-	if  J.IsDefending(bot) or J.IsPushing(bot)
+	if J.IsDefending(bot) or J.IsPushing(bot)
 	then
 		local tableNearbyEnemyCreeps = bot:GetNearbyLaneCreeps( nRange, true );
 		local tableNearbyEnemyTowers = bot:GetNearbyTowers( nRange, true );
-		if ( tableNearbyEnemyCreeps ~= nil or tableNearbyEnemyTowers ~= nil ) and bot:GetMana()/bot:GetMaxMana() > 0.5  then
+
+		if (tableNearbyEnemyCreeps ~= nil or tableNearbyEnemyTowers ~= nil)
+		and bot:GetMana() / bot:GetMaxMana() > 0.5
+		then
 			return BOT_ACTION_DESIRE_HIGH
 		end
 	end
-	
+
 	if J.IsGoingOnSomeone(bot)
 	then
-		local npcTarget = bot:GetTarget();
-		if  J.IsValidTarget(npcTarget) and J.IsInRange( npcTarget, bot, nRange)
+		local npcTarget = bot:GetTarget()
+
+		if  J.IsValidTarget(npcTarget)
+		and J.IsInRange( npcTarget, bot, nRange)
 		then
 			return BOT_ACTION_DESIRE_HIGH
 		end
@@ -223,15 +246,18 @@ function X.ConsiderConjureImage()
     if J.IsLaning(bot)
 	then
 		local npcTarget = bot:GetTarget()
-		if  J.IsValidTarget(npcTarget) and J.IsInRange( npcTarget, bot, nRange)
+
+		if  J.IsValidTarget(npcTarget)
 		then
 			return BOT_ACTION_DESIRE_HIGH
 		end
 	end
 
-    if J.IsFarming(bot) then
+    if J.IsFarming(bot)
+	then
         local npcTarget = bot:GetTarget()
-		if  J.IsValidTarget(npcTarget) and J.IsInRange( npcTarget, bot, nRange)
+
+		if  J.IsValidTarget(npcTarget)
 		then
 			return BOT_ACTION_DESIRE_ABSOLUTE
 		end
@@ -241,60 +267,72 @@ function X.ConsiderConjureImage()
 end
 
 function X.ConsiderMetamorphosis()
-	if ( not Metamorphosis:IsFullyCastable() ) then
+	if not Metamorphosis:IsFullyCastable()
+	or bot:HasModifier('modifier_terrorblade_metamorphosis_transform')
+	then
 		return BOT_ACTION_DESIRE_NONE
 	end
-	
-	local nRadius = bot:GetAttackRange() + Metamorphosis:GetSpecialValueInt( "bonus_range" )
-	
+
+	local nRadius = bot:GetAttackRange() + Metamorphosis:GetSpecialValueInt("bonus_range")
+
 	if J.IsInTeamFight(bot, 1200)
 	then
-		local tableNearbyEnemyHeroes = bot:GetNearbyHeroes( nRadius, true, BOT_MODE_NONE  );
-		if ( tableNearbyEnemyHeroes ~= nil and #tableNearbyEnemyHeroes >= 2 )
+		local tableNearbyEnemyHeroes = bot:GetNearbyHeroes(nRadius, true, BOT_MODE_NONE)
+
+		if (tableNearbyEnemyHeroes ~= nil and #tableNearbyEnemyHeroes >= 2)
 		then
+			print("TEAMFIGHT")
 			return BOT_ACTION_DESIRE_HIGH
 		end
 	end
-	
+
 	if J.IsGoingOnSomeone(bot)
 	then
 		local npcTarget = bot:GetTarget()
         local enemy = bot:GetNearbyHeroes(nRadius, true, BOT_MODE_NONE)
 
 		if enemy ~= nil and (#enemy == 1 or #enemy == 2)
-        and J.IsValidTarget(npcTarget) and J.IsInRange( npcTarget, bot, nRadius)
+        and J.IsValidTarget(npcTarget)
+		and J.IsInRange( npcTarget, bot, nRadius)
 		and J.IsCore(npcTarget)
 		then
+			print("GOING SOMEONE")
 			return BOT_ACTION_DESIRE_MODERATE
 		end
 	end
-	
+
 	return BOT_ACTION_DESIRE_NONE
 end
 
 function X.ConsiderSunder()
-	if ( not Sunder:IsFullyCastable() ) then 
+	if not Sunder:IsFullyCastable()
+	then
 		return BOT_ACTION_DESIRE_NONE, 0
 	end
 
 	local nCastRange = Sunder:GetCastRange()
-	
-	if J.IsRetreating(bot) and bot:GetHealth() / bot:GetMaxHealth() < 0.35 
+
+	if J.IsRetreating(bot)
+	and bot:GetHealth() / bot:GetMaxHealth() < 0.35
 	then
-		local tableNearbyEnemyHeroes = bot:GetNearbyHeroes(nCastRange + 200, true, BOT_MODE_NONE)
+		local tableNearbyEnemyHeroes = bot:GetNearbyHeroes(nCastRange, true, BOT_MODE_NONE)
 		local sunderTarget = J.GetMostHPPercent(tableNearbyEnemyHeroes, true)
-		if sunderTarget ~= nil then
+
+		if sunderTarget ~= nil
+		then
 			return BOT_ACTION_DESIRE_HIGH, sunderTarget
 		end
 	end
-	
-	if J.IsInTeamFight(bot, 1200) and bot:GetHealth() / bot:GetMaxHealth() < 0.35 
+
+	if J.IsInTeamFight(bot, 1200)
+	and bot:GetHealth() / bot:GetMaxHealth() < 0.35
 	then
-		local tableNearbyEnemyHeroes = bot:GetNearbyHeroes( nCastRange + 200, true, BOT_MODE_NONE)
+		local tableNearbyEnemyHeroes = bot:GetNearbyHeroes(nCastRange, true, BOT_MODE_NONE)
 		local sunderTarget = J.GetMostHPPercent(tableNearbyEnemyHeroes, true)
-		if (sunderTarget ~= nil)
+
+		if sunderTarget ~= nil
 		then
-			return BOT_ACTION_DESIRE_HIGH, npcMostHealthyEnemy
+			return BOT_ACTION_DESIRE_HIGH, sunderTarget
 		end
 	end
 
@@ -302,18 +340,18 @@ function X.ConsiderSunder()
 end
 
 function X.ConsiderDemonZeal()
-    if ( not Metamorphosis:IsFullyCastable() ) then
+    if not Metamorphosis:IsFullyCastable()
+	or not J.HasAghanimsShard(bot)
+	then
 		return BOT_ACTION_DESIRE_NONE
 	end
 
     local healthCost = bot:GetHealth() * 0.20
-    local nRadius = bot:GetAttackRange() + Metamorphosis:GetSpecialValueInt( "bonus_range" )
+    local nRadius = bot:GetAttackRange() + Metamorphosis:GetSpecialValueInt("bonus_range")
 
     if J.IsInTeamFight(bot, 1200)
 	then
-		local tableNearbyEnemyHeroes = bot:GetNearbyHeroes( nRadius, true, BOT_MODE_NONE  );
-		if ( tableNearbyEnemyHeroes ~= nil and #tableNearbyEnemyHeroes >= 2 )
-        and bot:GetHealth() > (bot:GetHealth() - healthCost)
+		if bot:GetHealth() > (bot:GetHealth() - healthCost)
 		then
 			return BOT_ACTION_DESIRE_HIGH
 		end
@@ -323,45 +361,51 @@ function X.ConsiderDemonZeal()
 	then
 		local npcTarget = bot:GetTarget()
 
-		if J.IsValidTarget(npcTarget) and J.IsInRange( npcTarget, bot, nRadius)
+		if J.IsValidTarget(npcTarget)
+		and J.IsInRange( npcTarget, bot, nRadius)
         and bot:GetHealth() > (bot:GetHealth() - healthCost)
 		then
 			return BOT_ACTION_DESIRE_MODERATE
 		end
 	end
-	
+
 	return BOT_ACTION_DESIRE_NONE
 end
 
 function X.ConsiderTerrorWave()
-    if ( not Metamorphosis:IsFullyCastable() ) then
+    if not Metamorphosis:IsFullyCastable()
+	or bot:HasModifier('modifier_terrorblade_metamorphosis_transform')
+	or not bot:HasScepter()
+	then
 		return BOT_ACTION_DESIRE_NONE
 	end
-	
-	local nRadius = bot:GetAttackRange() + Metamorphosis:GetSpecialValueInt( "bonus_range" )
-	
+
+	local nRadius = bot:GetAttackRange() + Metamorphosis:GetSpecialValueInt("bonus_range")
+
 	if J.IsInTeamFight(bot, 1200)
 	then
-		local tableNearbyEnemyHeroes = bot:GetNearbyHeroes( nRadius, true, BOT_MODE_NONE  );
-		if ( tableNearbyEnemyHeroes ~= nil and #tableNearbyEnemyHeroes >= 2 )
+		local tableNearbyEnemyHeroes = bot:GetNearbyHeroes(nRadius, true, BOT_MODE_NONE)
+
+		if (tableNearbyEnemyHeroes ~= nil and #tableNearbyEnemyHeroes >= 2)
 		then
 			return BOT_ACTION_DESIRE_HIGH
 		end
 	end
-	
+
 	if J.IsGoingOnSomeone(bot)
 	then
 		local npcTarget = bot:GetTarget()
-        local enemy = bot:GetNearbyHeroes(nRadius, true, BOT_MODE_NONE)
+        local enemy = bot:GetNearbyHeroes(1200, true, BOT_MODE_NONE)
 
 		if enemy ~= nil and (#enemy == 1 or #enemy == 2)
-        and J.IsValidTarget(npcTarget) and J.IsInRange( npcTarget, bot, nRadius)
+        and J.IsValidTarget(npcTarget)
+		and J.IsInRange( npcTarget, bot, nRadius)
 		and J.IsCore(npcTarget)
 		then
 			return BOT_ACTION_DESIRE_MODERATE
 		end
 	end
-	
+
 	return BOT_ACTION_DESIRE_NONE
 end
 

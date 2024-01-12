@@ -84,23 +84,25 @@ function X.MinionThink( hMinionUnit )
 	end
 end
 
-local WhirlingDeath 	= bot:GetAbilityByName( sAbilityList[1] )
-local TimberChain 		= bot:GetAbilityByName( sAbilityList[2] )
-local Chakram 			= bot:GetAbilityByName( sAbilityList[6] )
+local WhirlingDeath 	= bot:GetAbilityByName( 'shredder_whirling_death' )
+local TimberChain 		= bot:GetAbilityByName( 'shredder_timber_chain' )
+local ReactiveArmor     = bot:GetAbilityByName( 'shredder_reactive_armor' )
+local Chakram 			= bot:GetAbilityByName( 'shredder_chakram' )
 local ChakramReturn 	= bot:GetAbilityByName( 'shredder_return_chakram' )
 local Chakram2 			= bot:GetAbilityByName( 'shredder_chakram_2' )
 local ChakramReturn2 	= bot:GetAbilityByName( 'shredder_return_chakram_2' )
 local Flamethrower 		= bot:GetAbilityByName( 'shredder_flamethrower' )
 
 
-local WhirlingDeathDesire
-local TimberChainDesire
-local ChakramDesire
-local ChakramReturnDesire
-local Chakram2Desire
-local ChakramReturn2Desire
-local FlamethrowerDesire
-local closingDesire
+local WhirlingDeathDesire = 0
+local TimberChainDesire = 0
+local ReactiveArmorDesire = 0
+local ChakramDesire = 0
+local ChakramReturnDesire = 0
+local Chakram2Desire = 0
+local ChakramReturn2Desire = 0
+local FlamethrowerDesire = 0
+local ClosingDesire = 0
 
 local ultLoc
 local ultETA1 = 0
@@ -149,66 +151,72 @@ function X.SkillsComplement()
 
 	if J.CanNotUseAbility(bot) then return end
 
-	WhirlingDeathDesire 				= X.ConsiderWhirlingDeath()
-	TimberChainDesire, TreeLoc 			= X.ConsiderTimberChain()
-	ChakramDesire, ChakramLoc, eta 		= X.ConsiderChakram()
-	ChakramReturnDesire 				= X.ConsiderChakramReturn()
-	Chakram2Desire, Chakram2Loc, eta2	= X.ConsiderChakram2()
-	ChakramReturn2Desire				= X.ConsiderChakramReturn2()
-	FlamethrowerDesire					= X.ConsiderFlamethrower()
-	closingDesire, target 				= X.ConsiderClosing()
-
-	if (WhirlingDeathDesire > 0)
+	ChakramReturnDesire = X.ConsiderChakramReturn()
+	if (ChakramReturnDesire > 0)
 	then
-        bot:Action_UseAbility(WhirlingDeath)
+		ultLoc = bot:GetLocation()
+		bot:Action_UseAbility(ChakramReturn)
 		return
 	end
 
+	ChakramReturn2Desire = X.ConsiderChakramReturn2()
+	if (ChakramReturn2Desire > 0)
+	then
+		ultLoc2 = bot:GetLocation()
+		bot:Action_UseAbility(ChakramReturn2)
+		return
+	end
+
+	ChakramDesire, ChakramLoc, eta = X.ConsiderChakram()
+	if (ChakramDesire > 0)
+	then
+		ultLoc = ChakramLoc
+		ultTime1 = DotaTime()
+		ultETA1 = eta + 0.5
+		bot:Action_UseAbilityOnLocation(Chakram, ChakramLoc)
+		return
+	end
+
+	Chakram2Desire, Chakram2Loc, eta2 = X.ConsiderChakram2()
+	if (Chakram2Desire > 0)
+	then
+		ultLoc2 = Chakram2Loc
+		ultTime2 = DotaTime()
+		ultETA2 = eta2 + 0.5
+		bot:Action_UseAbilityOnLocation(Chakram2, Chakram2Loc)
+		return
+	end
+
+	TimberChainDesire, TreeLoc = X.ConsiderTimberChain()
 	if (TimberChainDesire > 0)
 	then
 		bot:Action_UseAbilityOnLocation(TimberChain, TreeLoc)
 		return
 	end
 
-	if (ChakramDesire > 0)
+	WhirlingDeathDesire = X.ConsiderWhirlingDeath()
+	if (WhirlingDeathDesire > 0)
 	then
-		bot:Action_UseAbilityOnLocation(Chakram, ChakramLoc)
-		ultLoc = ChakramLoc
-		ultTime1 = DotaTime()
-		ultETA1 = eta + 0.5
+        bot:Action_UseAbility(WhirlingDeath)
 		return
 	end
 
-	if (ChakramReturnDesire > 0)
+	ReactiveArmorDesire = X.ConsiderReactiveArmor()
+	if (ReactiveArmorDesire > 0)
 	then
-		bot:Action_UseAbility(ChakramReturn)
-		ultLoc = bot:GetLocation()
+        bot:Action_UseAbility(ReactiveArmor)
 		return
 	end
 
-	if (Chakram2Desire > 0)
-	then
-		bot:Action_UseAbilityOnLocation(Chakram2, Chakram2Loc)
-		ultLoc2 = ChakramLoc
-		ultTime2 = DotaTime()
-		ultETA2 = eta2 + 0.5
-		return
-	end
-
-	if (ChakramReturn2Desire > 0)
-	then
-		bot:Action_UseAbility(ChakramReturn)
-		ultLoc2 = bot:GetLocation()
-		return
-	end
-
+	FlamethrowerDesire = X.ConsiderFlamethrower()
 	if (FlamethrowerDesire > 0)
 	then
 		bot:Action_UseAbility(Flamethrower)
 		return
 	end
 
-	if closingDesire > 0
+	ClosingDesire, target = X.ConsiderClosing()
+	if (ClosingDesire > 0)
 	then
 		bot:Action_MoveToLocation(target)
 		return
@@ -312,7 +320,7 @@ function X.ConsiderTimberChain()
 		local nEnemyHeroes = bot:GetNearbyHeroes(1200, true, BOT_MODE_NONE)
 
 		if nEnemyHeroes ~= nil
-		and #nEnemyHeroes > 1
+		and #nEnemyHeroes > 0
 		then
 			local RetreatTree = GetBestRetreatTree(bot, nCastRange)
 
@@ -351,6 +359,51 @@ function X.ConsiderTimberChain()
 	return BOT_ACTION_DESIRE_NONE, 0
 end
 
+function X.ConsiderReactiveArmor()
+	if not ReactiveArmor:IsFullyCastable()
+	or ReactiveArmor:IsPassive()
+	or not bot:HasScepter()
+	then
+		return BOT_ACTION_DESIRE_NONE
+	end
+
+	local nCastRange = 1000
+	local nInRangeEnmyList = bot:GetNearbyHeroes(nCastRange, true, BOT_MODE_NONE)
+
+	if J.GetHP(bot) < 0.3
+	then
+		return BOT_ACTION_DESIRE_HIGH
+	end
+
+	if J.IsRetreating(bot)
+	then
+		local nEnemyHeroes = bot:GetNearbyHeroes(nRadius, true, BOT_MODE_NONE)
+
+		for _, npcEnemy in pairs(nEnemyHeroes)
+		do
+			if bot:WasRecentlyDamagedByHero(npcEnemy, 1.0)
+			then
+				return BOT_ACTION_DESIRE_MODERATE
+			end
+		end
+	end
+
+	if J.IsGoingOnSomeone(bot)
+	and nInRangeEnmyList >= 2
+	then
+		local botTarget = bot:GetTarget()
+
+		if J.IsValidHero(botTarget)
+		and J.IsInRange(bot, botTarget, nCastRange)
+		and bot:WasRecentlyDamagedByAnyHero(2.0)
+		then
+			return BOT_ACTION_DESIRE_HIGH
+		end
+	end
+
+	return BOT_ACTION_DESIRE_NONE
+end
+
 function X.ConsiderChakram()
 	if (not Chakram:IsFullyCastable() or Chakram:IsHidden())
 	then
@@ -374,7 +427,7 @@ function X.ConsiderChakram()
 				local loc = npcEnemy:GetLocation()
 				local eta = GetUnitToLocationDistance(bot, loc) / nSpeed
 
-				if J.CanKillTarget(target, nDamage, DAMAGE_TYPE_PURE)
+				if J.CanKillTarget(npcEnemy, nDamage, DAMAGE_TYPE_PURE)
 				then
 					return BOT_ACTION_DESIRE_HIGH, loc, eta
 				end
@@ -425,6 +478,8 @@ function X.ConsiderChakram()
 		and J.IsInRange(nCastRange)
 		and J.CanKillTarget(target, nDamage, DAMAGE_TYPE_PURE)
 		then
+			local locationAoE = bot:FindAoELocation(true, false, bot:GetLocation(), nCastRange, nRadius, 0, 0)
+
 			local loc = locationAoE.targetloc
 			local eta = GetUnitToLocationDistance(bot, loc) / nSpeed
 
@@ -436,7 +491,7 @@ function X.ConsiderChakram()
 end
 
 function X.ConsiderChakramReturn()
-	if ultLoc == 0
+	if (ultLoc == 0 or ultLoc == nil)
 	or not ChakramReturn:IsFullyCastable()
 	or ChakramReturn:IsHidden()
 	then
@@ -544,7 +599,7 @@ function X.ConsiderChakram2()
 				local loc = npcEnemy:GetLocation()
 				local eta = GetUnitToLocationDistance(bot, loc) / nSpeed
 
-				if J.CanKillTarget(target, nDamage, DAMAGE_TYPE_PURE)
+				if J.CanKillTarget(npcEnemy, nDamage, DAMAGE_TYPE_PURE)
 				then
 					return BOT_ACTION_DESIRE_MODERATE, loc, eta
 				end
@@ -595,6 +650,8 @@ function X.ConsiderChakram2()
 		and J.IsInRange(nCastRange)
 		and J.CanKillTarget(target, nDamage, DAMAGE_TYPE_PURE)
 		then
+			local locationAoE = bot:FindAoELocation(true, false, bot:GetLocation(), nCastRange, nRadius, 0, 0)
+
 			local loc = locationAoE.targetloc
 			local eta = GetUnitToLocationDistance(bot, loc) / nSpeed
 
@@ -606,7 +663,7 @@ function X.ConsiderChakram2()
 end
 
 function X.ConsiderChakramReturn2()
-	if ultLoc2 == 0
+	if (ultLoc2 == 0 or ultLoc2 == nil)
 	or not ChakramReturn2:IsFullyCastable()
 	or ChakramReturn2:IsHidden()
 	then
@@ -711,6 +768,7 @@ end
 
 function X.ConsiderFlamethrower()
 	if not ChakramReturn2:IsFullyCastable()
+	or not J.HasAghanimsShard(bot)
 	then
 		return BOT_ACTION_DESIRE_NONE
 	end

@@ -88,209 +88,252 @@ function X.MinionThink( hMinionUnit )
 
 end
 
-local castQDesire
-local castWDesire
-local castRDesire
+local TimeWalk 			= bot:GetAbilityByName( "faceless_void_time_walk" )
+local TimeDilation 		= bot:GetAbilityByName( "faceless_void_time_dilation" )
+local Chronosphere 		= bot:GetAbilityByName( "faceless_void_chronosphere" )
+local TimeWalkReverse 	= bot:GetAbilityByName( "faceless_void_time_walk_reverse" )
 
-local abilityQ = bot:GetAbilityByName( "faceless_void_time_walk" )
-local abilityW = bot:GetAbilityByName( "faceless_void_time_dilation" )
-local abilityR = bot:GetAbilityByName( "faceless_void_chronosphere" )
+local TimeWalkDesire
+local TimeDilationDesire
+local ChronosphereDesire
+local TimeWalkReverseDesire
+
+local hasTimeWalked = false
+local hasChronod = false
+local timeSinceTimeWalked = 0
 
 function X.SkillsComplement()
 
     if J.CanNotUseAbility( bot ) then return end
 
-    castQDesire, castQLocation  = X.ConsiderQ();
-	castWDesire                 = X.ConsiderW();
-	castRDesire, castRLocation  = X.ConsiderR();
-
-    if ( castQDesire > 0 ) 
+	TimeWalkDesire, TimeWalkLoc = X.ConsiderTimeWalk()
+    if (TimeWalkDesire > 0)
 	then
-        J.SetQueuePtToINT( bot, false )
-		bot:Action_UseAbilityOnLocation( abilityQ, castQLocation )
-		return
-	end	
-
-    if ( castRDesire > 0 ) 
-	then
-		bot:Action_UseAbilityOnLocation( abilityR, castRLocation )
-		return
-	end	
-	
-	if ( castWDesire > 0 ) 
-	then
-        J.SetQueuePtToINT( bot, false )
-		bot:Action_UseAbility( abilityW )
+        J.SetQueuePtToINT(bot, false)
+		hasTimeWalked = true
+		timeSinceTimeWalked = DotaTime()
+		bot:Action_UseAbilityOnLocation(TimeWalk, TimeWalkLoc)
 		return
 	end
 
+	TimeDilationDesire = X.ConsiderTimeDilation()
+	if (TimeDilationDesire > 0)
+	then
+        J.SetQueuePtToINT(bot, false)
+		bot:Action_UseAbility(TimeDilation)
+		return
+	end
+
+	TimeWalkReverseDesire = X.ConsiderTimeWalkReverse()
+	if (TimeWalkReverseDesire > 0)
+	then
+		hasTimeWalked = false
+		hasChronod = false
+		bot:Action_UseAbility(TimeWalkReverse)
+		return
+	end
+
+	ChronosphereDesire, ChronoLoc = X.ConsiderChronosphere()
+    if (ChronosphereDesire > 0)
+	then
+		hasChronod = true
+		bot:Action_UseAbilityOnLocation(Chronosphere, ChronoLoc)
+		return
+	end
 end
 
-function X.ConsiderQ()
+function X.ConsiderTimeWalk()
+	if not TimeWalk:IsFullyCastable()
+	or bot:IsRooted()
+	or bot:HasModifier("modifier_faceless_void_chronosphere_speed")
+	then
+		return BOT_ACTION_DESIRE_NONE, 0
+	end
 
-	-- Make sure it's castable
-	if ( not abilityQ:IsFullyCastable() or bot:IsRooted() ) 
-	then 
-		return BOT_ACTION_DESIRE_NONE, 0;
-	end
-	
-	if ( bot:HasModifier("modifier_faceless_void_chronosphere_speed") ) 
-	then 
-		return BOT_ACTION_DESIRE_NONE, 0;
-	end
-	
-	-- Get some of its values
-	local nCastRange = abilityQ:GetSpecialValueInt("range");
-	local nCastPoint = abilityQ:GetCastPoint( );
+	local nCastRange 	= TimeWalk:GetSpecialValueInt("range")
+	local nCastPoint 	= TimeWalk:GetCastPoint()
+	local nAttackRange 	= bot:GetAttackRange()
 
 	if J.IsStuck(bot)
 	then
-		local loc = J.GetEscapeLoc();
-		return BOT_ACTION_DESIRE_HIGH, J.Site.GetXUnitsTowardsLocation(bot, loc, nCastRange );
+		local loc = J.GetEscapeLoc()
+		return BOT_ACTION_DESIRE_HIGH, J.Site.GetXUnitsTowardsLocation(bot, loc, nCastRange)
 	end
-	
-	-- If we're seriously retreating, see if we can land a stun on someone who's damaged us recently
+
 	if J.IsRetreating(bot)
 	then
-		local tableNearbyEnemyHeroes = bot:GetNearbyHeroes( 1000, true, BOT_MODE_NONE );
-		if ( bot:WasRecentlyDamagedByAnyHero(2.0) or bot:WasRecentlyDamagedByTower(2.0) or ( tableNearbyEnemyHeroes ~= nil and #tableNearbyEnemyHeroes > 1  ) )
+		local nEnemyHeroes = bot:GetNearbyHeroes(1000, true, BOT_MODE_NONE)
+
+		if bot:WasRecentlyDamagedByAnyHero(2.0)
+		or bot:WasRecentlyDamagedByTower(2.0)
+		or (nEnemyHeroes ~= nil and #nEnemyHeroes > 1)
 		then
-			local loc = J.GetEscapeLoc();
-		    return BOT_ACTION_DESIRE_HIGH, J.Site.GetXUnitsTowardsLocation(bot, loc, nCastRange );
-		end	
+			local loc = J.GetEscapeLoc()
+		    return BOT_ACTION_DESIRE_HIGH, J.Site.GetXUnitsTowardsLocation(bot, loc, nCastRange)
+		end
 	end
-	
+
 	if J.IsGoingOnSomeone(bot)
 	then
-		local npcTarget = bot:GetTarget();
-		if J.IsValidTarget(npcTarget) and J.CanCastOnMagicImmune(npcTarget) and not J.IsInRange(npcTarget, bot, 200) and J.IsInRange(npcTarget, bot, nCastRange) 
+		local npcTarget = bot:GetTarget()
+
+		if J.IsValidTarget(npcTarget)
+		and J.CanCastOnMagicImmune(npcTarget)
+		and J.IsInRange(npcTarget, bot, nCastRange)
+		and not J.IsInRange(npcTarget, bot, nAttackRange)
 		then
-			local tableNearbyEnemies = npcTarget:GetNearbyHeroes( 1000, false, BOT_MODE_NONE );
-			local tableNearbyAllies = npcTarget:GetNearbyHeroes( 1200, true, BOT_MODE_NONE );
-			if #tableNearbyEnemies <= #tableNearbyAllies then
-				return BOT_ACTION_DESIRE_MODERATE, npcTarget:GetExtrapolatedLocation( (GetUnitToUnitDistance(npcTarget, bot) / 3000) + nCastPoint );
+			local nEnemyHeroes = npcTarget:GetNearbyHeroes(1000, false, BOT_MODE_NONE)
+			local nAlliesHeroes = npcTarget:GetNearbyHeroes(1200, true, BOT_MODE_NONE)
+
+			if #nEnemyHeroes <= #nAlliesHeroes
+			then
+				return BOT_ACTION_DESIRE_MODERATE, npcTarget:GetExtrapolatedLocation((GetUnitToUnitDistance(npcTarget, bot) / 3000) + nCastPoint)
 			end
 		end
 	end
-	
-	return BOT_ACTION_DESIRE_NONE, 0;
+
+	return BOT_ACTION_DESIRE_NONE, 0
 end
 
-function X.ConsiderW()
+function X.ConsiderTimeDilation()
 
-	-- Make sure it's castable
-	if ( not abilityW:IsFullyCastable() ) 
-	then 
-		return BOT_ACTION_DESIRE_NONE;
-	end
-
-	if ( castQDesire > 0 ) 
+	if not TimeDilation:IsFullyCastable()
 	then
-		return BOT_ACTION_DESIRE_NONE;
+		return BOT_ACTION_DESIRE_NONE
 	end
-	
-	-- Get some of its values
-	local nRadius = abilityW:GetSpecialValueInt("radius");
 
-	-- If we're seriously retreating, see if we can land a stun on someone who's damaged us recently
+	local nRadius = TimeDilation:GetSpecialValueInt("radius");
+
 	if J.IsRetreating(bot)
 	then
-		local tableNearbyEnemyHeroes = bot:GetNearbyHeroes( nRadius, true, BOT_MODE_NONE );
-		for _,npcEnemy in pairs( tableNearbyEnemyHeroes )
+		local nEnemyHeroes = bot:GetNearbyHeroes(nRadius, true, BOT_MODE_NONE)
+		for _, npcEnemy in pairs(nEnemyHeroes)
 		do
-			if ( bot:WasRecentlyDamagedByHero( npcEnemy, 2.0 ) ) 
+			if bot:WasRecentlyDamagedByHero(npcEnemy, 2.0)
+			and J.CanCastOnNonMagicImmune(npcEnemy)
 			then
-				return BOT_ACTION_DESIRE_MODERATE;
+				return BOT_ACTION_DESIRE_MODERATE
 			end
 		end
 	end
-	
+
 	if J.IsInTeamFight(bot, 1200)
 	then
-		local tableNearbyEnemyHeroes = bot:GetNearbyHeroes( nRadius - 200, true, BOT_MODE_NONE );
-		if (tableNearbyEnemyHeroes ~= nil and #tableNearbyEnemyHeroes >= 2) then
-			return BOT_ACTION_DESIRE_MODERATE;
+		local nEnemyHeroes = bot:GetNearbyHeroes(nRadius, true, BOT_MODE_NONE)
+
+		if nEnemyHeroes ~= nil
+		and #nEnemyHeroes >= 2
+		then
+			return BOT_ACTION_DESIRE_HIGH
 		end
 	end
-	
+
 	if J.IsGoingOnSomeone(bot)
 	then
-		local npcTarget = bot:GetTarget();
-		local tableNearbyEnemyHeroes = bot:GetNearbyHeroes( nRadius, true, BOT_MODE_NONE );
-		if J.IsValidTarget(npcTarget) and J.CanCastOnNonMagicImmune(npcTarget) and J.IsInRange(npcTarget, bot, nRadius)
+		local npcTarget = bot:GetTarget()
+
+		if J.IsValidTarget(npcTarget)
+		and J.CanCastOnNonMagicImmune(npcTarget)
+		and J.IsInRange(npcTarget, bot, nRadius)
 		then
-			return BOT_ACTION_DESIRE_MODERATE;
+			return BOT_ACTION_DESIRE_MODERATE
 		end
 	end
-	
-	return BOT_ACTION_DESIRE_NONE;
+
+	return BOT_ACTION_DESIRE_NONE
 end
 
-function X.ConsiderR()
-
-	-- Make sure it's castable
-	if ( not abilityR:IsFullyCastable() ) 
-	then 
-		return BOT_ACTION_DESIRE_NONE, 0;
+function X.ConsiderChronosphere()
+	if not Chronosphere:IsFullyCastable()
+	then
+		return BOT_ACTION_DESIRE_NONE, 0
 	end
 
-	-- Get some of its values
-	local nRadius = abilityR:GetSpecialValueInt("radius");
-	local nCastRange = abilityR:GetCastRange();
+	local nRadius = Chronosphere:GetSpecialValueInt("radius")
+	local nDuration = Chronosphere:GetSpecialValueInt("duration")
+	local nCastRange = Chronosphere:GetCastRange()
+	local nAttackDamage = bot:GetAttackDamage()
+	local nAttackSpeed = bot:GetAttackSpeed()
 
-	-- If we're seriously retreating, see if we can land a stun on someone who's damaged us recently
 	if J.IsRetreating(bot)
 	then
-		local tableNearbyEnemyHeroes = bot:GetNearbyHeroes( nCastRange+(nRadius/2), true, BOT_MODE_NONE );
-		local tableNearbyAllyHeroes = bot:GetNearbyHeroes( 1000, false, BOT_MODE_ATTACK );
-		if tableNearbyAllyHeroes ~= nil and  #tableNearbyAllyHeroes >= 2 then
-			for _,npcEnemy in pairs( tableNearbyEnemyHeroes )
+		local nEnemyHeroes = bot:GetNearbyHeroes( nCastRange+(nRadius/2), true, BOT_MODE_NONE)
+		local nAllyHeroes = bot:GetNearbyHeroes( 1000, false, BOT_MODE_ATTACK)
+
+		if nEnemyHeroes ~= nil
+		and #nAllyHeroes >= 2
+		then
+			for _, npcEnemy in pairs(nEnemyHeroes)
 			do
-				if bot:WasRecentlyDamagedByHero( npcEnemy, 2.0 ) 
+				if bot:WasRecentlyDamagedByHero(npcEnemy, 2.0)
 				then
-					local allies = J.GetAlliesNearLoc(npcEnemy:GetLocation(), nRadius);
-					if #allies <= 2 then
-						return BOT_ACTION_DESIRE_LOW, npcEnemy:GetLocation();
-					end	
+					local allies = J.GetAlliesNearLoc(npcEnemy:GetLocation(), nRadius)
+					if #allies < 2
+					then
+						return BOT_ACTION_DESIRE_LOW, npcEnemy:GetLocation()
+					end
 				end
 			end
 		end
 	end
-	
+
 	if J.IsInTeamFight(bot, 1200)
 	then
-		local locationAoE = bot:FindAoELocation( true, true, bot:GetLocation(), nCastRange, nRadius/2, 0, 0 );
-		if ( locationAoE.count >= 2 ) then
+		local locationAoE = bot:FindAoELocation(true, true, bot:GetLocation(), nCastRange, nRadius / 2, 0, 0)
+
+		if locationAoE.count >= 2
+		then
             return BOT_ACTION_DESIRE_HIGH, locationAoE.targetloc
 		end
 	end
-	
+
 	if J.IsGoingOnSomeone(bot)
 	then
-		local npcTarget = bot:GetTarget();
-		if ( J.IsValidTarget(npcTarget) and J.CanCastOnMagicImmune(npcTarget) and J.IsInRange(npcTarget, bot, nCastRange+(nRadius/2)) )   
+		local npcTarget = bot:GetTarget()
+		if J.IsValidTarget(npcTarget)
+		and J.CanCastOnMagicImmune(npcTarget)
+		and J.IsInRange(npcTarget, bot, nCastRange + (nRadius / 2))
 		then
-            local enemies = bot:GetNearbyHeroes(nRadius, true, BOT_MODE_NONE)
-            if #enemies == 1
-            then
-                if bot:GetOffensivePower() >= (bot:GetTarget()):GetHealth()
-                and J.IsCore(npcTarget)
-                then
-                    return BOT_ACTION_DESIRE_ABSOLUTE, npcTarget:GetLocation()
-                end
+            local nEnemyHeroes = bot:GetNearbyHeroes(1000, true, BOT_MODE_NONE)
 
-                if not J.IsCore(npcTarget)
+            if nEnemyHeroes ~= nil
+			and #nEnemyHeroes == 1
+            then
+                if J.IsCore(npcTarget)
+				and J.CanKillTarget(npcTarget, nAttackDamage * nAttackSpeed * nDuration, DAMAGE_TYPE_PHYSICAL)
                 then
-                    return 0, 0
+                    return BOT_ACTION_DESIRE_HIGH, npcTarget:GetLocation()
+				elseif not J.IsCore(npcTarget)
+				then
+					return BOT_ACTION_DESIRE_LOW, npcTarget:GetLocation()
                 end
             end
 
             return BOT_ACTION_DESIRE_MODERATE, npcTarget:GetLocation()
 		end
 	end
-	
---
-	return BOT_ACTION_DESIRE_NONE;
+
+	return BOT_ACTION_DESIRE_NONE, 0
+end
+
+function X.ConsiderTimeWalkReverse()
+	if not TimeWalkReverse:IsFullyCastable()
+	then
+		return BOT_ACTION_DESIRE_NONE
+	end
+
+	local BotTarget = bot:GetTarget()
+
+	if hasTimeWalked
+	and not hasChronod
+	and DotaTime() - timeSinceTimeWalked() < 1.5
+	and (J.IsDefending(bot) or J.IsPushing(bot))
+	and (BotTarget ~= nil and BotTarget:IsHero())
+	then
+		return BOT_ACTION_DESIRE_MODERATE
+	end
+
+	return BOT_ACTION_DESIRE_NONE
 end
 
 return X

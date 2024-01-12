@@ -246,7 +246,7 @@ function X.SkillsComplement()
 	then
 		local opMidTower1 = GetTower( GetOpposingTeam(), TOWER_MID_1 )
 		local myMidTower1 = GetTower( GetTeam(), TOWER_MID_1 )
-		midLoc = J.GetUnitTowardDistanceLocation( opMidTower1, myMidTower1, 928 )
+		midLoc = J.GetUnitTowardDistanceLocation( bot, myMidTower1, 928 )
 		topLoc = GetTower( GetTeam(), TOWER_TOP_1 ):GetLocation()
 		botLoc = GetTower( GetTeam(), TOWER_BOT_1 ):GetLocation()
 	end

@@ -232,13 +232,13 @@ function X.ConsiderBoulderSmash()
 	if J.IsRetreating(bot) and bot:WasRecentlyDamagedByAnyHero( 1.0 )
 	then
 		if stoneNearby then
-			local tableNearbyEnemyHeroes = bot:GetNearbyHeroes( nStone, true, BOT_MODE_NONE )
+			local tableNearbyEnemyHeroes = bot:GetNearbyHeroes( nStoneCR, true, BOT_MODE_NONE )
 			local target = J.GetClosestUnit(tableNearbyEnemyHeroes)
 			if target ~= nil then
 				return BOT_ACTION_DESIRE_HIGH, target:GetLocation(), false, true
 			end
 		elseif nStone >= 1 then
-			local tableNearbyEnemyHeroes = bot:GetNearbyHeroes( nStone, true, BOT_MODE_NONE )
+			local tableNearbyEnemyHeroes = bot:GetNearbyHeroes( nStoneCR, true, BOT_MODE_NONE )
 			local target = J.GetClosestUnit(tableNearbyEnemyHeroes)
 			if target ~= nil then
 				return BOT_ACTION_DESIRE_HIGH, target:GetLocation(), true, false
@@ -270,7 +270,7 @@ function X.ConsiderBoulderSmash()
 		local npcTarget = bot:GetTarget();
 		if J.IsValidTarget(npcTarget) and J.CanCastOnNonMagicImmune(npcTarget) and J.IsInRange(npcTarget, bot, nStoneCR + 200) 
 		then
-			local loc = J.GetCorrectLoc(npcTarget, GetUnitToUnitDistance(bot, target) / nSpeed)
+			local loc = J.GetCorrectLoc(npcTarget, GetUnitToUnitDistance(bot, npcTarget) / nSpeed)
 			if stoneNearby then
 				return BOT_ACTION_DESIRE_HIGH, loc, false, true;
 			elseif nStone >= 1 then
@@ -362,7 +362,7 @@ function X.ConsiderRollingBoulder()
 			local targetAlly  = npcTarget:GetNearbyHeroes(1000, false, BOT_MODE_NONE)
 			local targetEnemy = npcTarget:GetNearbyHeroes(1000, true, BOT_MODE_NONE)
 			if targetEnemy ~= nil and targetAlly ~= nil and #targetEnemy >= #targetAlly then
-				local loc = J.GetCorrectLoc(npcTarget, GetUnitToUnitDistance(bot, target)/nRSpeed)
+				local loc = J.GetCorrectLoc(npcTarget, GetUnitToUnitDistance(bot, npcTarget)/nRSpeed)
 				if IsStoneInPath(loc, (nUnitCR / 2) + 200) then
 					return BOT_ACTION_DESIRE_HIGH, loc, false
 				else

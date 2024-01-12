@@ -97,45 +97,48 @@ local EnrageDesire
 function X.SkillsComplement()
     if J.CanNotUseAbility(bot) then return end
 
-    EarthshockDesire    = X.ConsiderEarthshock();
-	OverpowerDesire     = X.ConsiderOverpower();
-	EnrageDesire        = X.ConsiderEnrage();
-
-    if (EnrageDesire > 0) 
+	EnrageDesire = X.ConsiderEnrage()
+    if (EnrageDesire > 0)
 	then
 		bot:Action_UseAbility(Enrage)
 		return
 	end
 
-	if (EarthshockDesire > 0)
-	then
-		bot:Action_UseAbility(Earthshock)
-		return
-	end
-	
+	OverpowerDesire = X.ConsiderOverpower()
 	if (OverpowerDesire > 0)
 	then
 		bot:Action_UseAbility(Overpower)
 		return
 	end
+
+	EarthshockDesire = X.ConsiderEarthshock()
+	if (EarthshockDesire > 0)
+	then
+		bot:Action_UseAbility(Earthshock)
+		return
+	end
 end
 
 function X.ConsiderEarthshock()
-	if ( not Earthshock:IsFullyCastable() ) then 
+	if not Earthshock:IsFullyCastable()
+	then
 		return BOT_ACTION_DESIRE_NONE
 	end
 
-	local nRadius = Earthshock:GetSpecialValueInt( "shock_radius" )
-	local nCastRange = 0
+	local nRadius = Earthshock:GetSpecialValueInt("shock_radius")
 	local nDamage = Earthshock:GetAbilityDamage()
 
 	if J.IsRetreating(bot)
 	then
-		local tableNearbyEnemyHeroes = bot:GetNearbyHeroes( 2*nRadius, true, BOT_MODE_NONE )
-		if ( #tableNearbyEnemyHeroes > 0 and ( bot:WasRecentlyDamagedByAnyHero(2.0) or bot:WasRecentlyDamagedByTower(2.0) ) ) 
+		local tableNearbyEnemyHeroes = bot:GetNearbyHeroes(2 * nRadius, true, BOT_MODE_NONE)
+
+		if #tableNearbyEnemyHeroes > 0
+		and (bot:WasRecentlyDamagedByAnyHero(2.0) or bot:WasRecentlyDamagedByTower(2.0))
 		then
 			local loc = J.GetEscapeLoc()
-			if bot:IsFacingLocation(loc, 15) then
+
+			if bot:IsFacingLocation(loc, 15)
+			then
 				return BOT_ACTION_DESIRE_MODERATE
 			end
 		end
@@ -144,54 +147,77 @@ function X.ConsiderEarthshock()
 	if J.IsGoingOnSomeone(bot)
 	then
 		local npcTarget = bot:GetTarget()
-		if J.IsValidTarget(npcTarget) and J.CanCastOnNonMagicImmune(npcTarget) and J.IsInRange(npcTarget, bot, nRadius)
+
+		if J.IsValidTarget(npcTarget)
+		and J.IsInRange(npcTarget, bot, nRadius)
 		then
-			return BOT_ACTION_DESIRE_HIGH
+			if J.CanKillTarget(npcTarget, nDamage, DAMAGE_TYPE_MAGICAL)
+			then
+				return BOT_ACTION_DESIRE_HIGH
+			end
+
+			return BOT_ACTION_DESIRE_MODERATE
 		end
 	end
 
 	return BOT_ACTION_DESIRE_NONE
-
 end
 
 function X.ConsiderOverpower()
-	if ( not Overpower:IsFullyCastable() ) then 
-		return BOT_ACTION_DESIRE_NONE;
-	end
-	
-	if J.IsPushing(bot) and bot:GetMana() / bot:GetMaxMana() >= 0.65 
+	if not Overpower:IsFullyCastable()
 	then
-		local tableNearbyEnemyTowers = bot:GetNearbyTowers( 800, true )
-		if tableNearbyEnemyTowers ~= nil and #tableNearbyEnemyTowers >= 1 and tableNearbyEnemyTowers[1] ~= nil and
-		   J.IsInRange(tableNearbyEnemyTowers[1], bot, 300)
+		return BOT_ACTION_DESIRE_NONE
+	end
+
+	local nMana = bot:GetMana() / bot:GetMaxMana()
+	local nManaCost = Overpower:GetManaCost()
+	local nAttackRange = bot:GetAttackRange()
+
+	if J.IsPushing(bot)
+	and nMana > 0.5
+	then
+		local tableNearbyEnemyTowers = bot:GetNearbyTowers(800, true)
+
+		if tableNearbyEnemyTowers ~= nil
+		and #tableNearbyEnemyTowers >= 1
+		and tableNearbyEnemyTowers[1] ~= nil
+		and
+		   J.IsInRange(tableNearbyEnemyTowers[1], bot, nAttackRange)
 		then
-			return BOT_ACTION_DESIRE_MODERATE
+			return BOT_ACTION_DESIRE_HIGH
 		end
 	end
-	
+
 	if J.IsFarming(bot)
+	and nMana > nManaCost * 2
 	then
 		local npcTarget = bot:GetAttackTarget()
-		if npcTarget ~= nil then
-			return BOT_ACTION_DESIRE_HIGH
-		end
-	end	
-	
-	if ( bot:GetActiveMode() == BOT_MODE_ROSHAN  )
-	then
-		local npcTarget = bot:GetAttackTarget()
-		if ( J.IsRoshan(npcTarget) and J.CanCastOnMagicImmune(npcTarget) and J.IsInRange(npcTarget, bot, 300)  )
+
+		if npcTarget ~= nil
 		then
 			return BOT_ACTION_DESIRE_HIGH
 		end
 	end
-	
+
+	if J.IsDoingRoshan(bot)
+	then
+		local npcTarget = bot:GetAttackTarget()
+
+		if J.IsRoshan(npcTarget)
+		and J.IsInRange(npcTarget, bot, nAttackRange)
+		then
+			return BOT_ACTION_DESIRE_HIGH
+		end
+	end
+
 	if J.IsGoingOnSomeone(bot)
 	then
 		local npcTarget = bot:GetTarget()
-		if J.IsValidTarget(npcTarget) and J.CanCastOnMagicImmune(npcTarget) and J.IsInRange(npcTarget, bot, 400) 
+
+		if J.IsValidTarget(npcTarget)
+		and J.IsInRange(npcTarget, bot, nAttackRange * 2)
 		then
-			return BOT_ACTION_DESIRE_MODERATE
+			return BOT_ACTION_DESIRE_HIGH
 		end
 	end
 
@@ -199,44 +225,66 @@ function X.ConsiderOverpower()
 end
 
 function X.ConsiderEnrage()
-	if ( not Enrage:IsFullyCastable() ) then 
+	if not Enrage:IsFullyCastable()
+	then
 		return BOT_ACTION_DESIRE_NONE
 	end
-	
+
+	local nAttackRange = bot:GetAttackRange()
+
 	if J.IsRetreating(bot)
 	then
-		local tableNearbyEnemyHeroes = bot:GetNearbyHeroes( 800, true, BOT_MODE_NONE );
-		for _,npcEnemy in pairs( tableNearbyEnemyHeroes )
+		local tableNearbyEnemyHeroes = bot:GetNearbyHeroes(800, true, BOT_MODE_NONE)
+
+		for _, npcEnemy in pairs(tableNearbyEnemyHeroes)
 		do
-			if ( bot:WasRecentlyDamagedByHero( npcEnemy, 2.0 ) ) 
+			if bot:WasRecentlyDamagedByHero(npcEnemy, 2.0)
 			then
+				if not J.WeAreStronger(bot, 800)
+				then
+					return BOT_ACTION_DESIRE_HIGH
+				end
+
 				return BOT_ACTION_DESIRE_MODERATE
 			end
 		end
 	end
-	
-	if  J.IsFarming(bot) and bot:GetHealth()/bot:GetMaxHealth() < 0.20
+
+	if J.IsFarming(bot)
+	and J.GetHP(bot) < 0.25
 	then
 		local npcTarget = bot:GetAttackTarget()
-		if npcTarget ~= nil then
-			return BOT_ACTION_DESIRE_MODERATE
-		end
-	end	
-	
-	if ( bot:GetActiveMode() == BOT_MODE_ROSHAN  ) and bot:GetHealth()/bot:GetMaxHealth() < 0.65
-	then
-		local npcTarget = bot:GetAttackTarget()
-		if ( J.IsRoshan(npcTarget) and J.CanCastOnMagicImmune(npcTarget) and J.IsInRange(npcTarget, bot, 300)  )
+
+		if npcTarget ~= nil
 		then
 			return BOT_ACTION_DESIRE_MODERATE
 		end
 	end
-	
-	if J.IsGoingOnSomeone(bot) and bot:GetHealth()/bot:GetMaxHealth() < 0.65
+
+	if J.IsDoingRoshan(bot)
+	and J.GetHP(bot) < 0.4
+	then
+		local npcTarget = bot:GetAttackTarget()
+
+		if J.IsRoshan(npcTarget)
+		and J.IsInRange(npcTarget, bot, nAttackRange)
+		then
+			return BOT_ACTION_DESIRE_HIGH
+		end
+	end
+
+	if J.IsGoingOnSomeone(bot)
 	then
 		local npcTarget = bot:GetTarget()
-		if J.IsValidTarget(npcTarget) and J.CanCastOnMagicImmune(npcTarget) and J.IsInRange(npcTarget, bot, 300) 
+
+		if J.IsValidTarget(npcTarget)
+		and J.IsInRange(npcTarget, bot, nAttackRange)
 		then
+			if J.GetHP(bot) < 0.5
+			then
+				return BOT_ACTION_DESIRE_HIGH
+			end
+
 			return BOT_ACTION_DESIRE_MODERATE
 		end
 	end
