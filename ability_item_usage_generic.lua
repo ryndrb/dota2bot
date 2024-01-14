@@ -1324,14 +1324,19 @@ X.ConsiderItemDesire["item_bloodstone"] = function( hItem )
 	local sCastMotive = nil
 	local nInRangeEnmyList = bot:GetNearbyHeroes( nCastRange, true, BOT_MODE_NONE )
 
+	if bot:WasRecentlyDamagedByAnyHero(2.0)
+	and J.GetHP(bot) < 0.3
+	then
+		hEffectTarget = bot
+		sCastMotive = "亡魂胸针进攻:"..J.Chat.GetNormName( botTarget )
+		return BOT_ACTION_DESIRE_HIGH, hEffectTarget, sCastType, sCastMotive
+	end
+
 
 	if J.IsGoingOnSomeone( bot )
-	and (nInRangeEnmyList >= 2 or J.GetHP(bot) < 0.3)
+	and (#nInRangeEnmyList >= 2 or J.GetHP(bot) < 0.3)
 	then
-		if J.IsValidHero( botTarget )
-			and J.IsInRange( bot, botTarget, nCastRange )
-			and bot:WasRecentlyDamagedByAnyHero( 2.0 )
-			and J.CanCastOnNonMagicImmune( botTarget )
+		if bot:WasRecentlyDamagedByAnyHero( 2.0 )
 		then
 			hEffectTarget = bot
 			sCastMotive = "亡魂胸针进攻:"..J.Chat.GetNormName( botTarget )
@@ -4404,7 +4409,6 @@ X.ConsiderItemDesire["item_tpscroll"] = function( hItem )
 		then
 			hEffectTarget = tpLoc
 			sCastMotive = '前往守塔:'..sLane
-			-- return GetDesireForEachRole(), hEffectTarget, sCastType, sCastMotive
 			return BOT_ACTION_DESIRE_ABSOLUTE, hEffectTarget, sCastType, sCastMotive
 		end
 	end
@@ -5786,6 +5790,7 @@ X.ConsiderItemDesire['item_soul_ring'] = function(item)
 	return BOT_ACTION_DESIRE_NONE
 end
 
+-- 7.33 New Items
 X.ConsiderItemDesire['item_pavise'] = function(item)
 	local nCastRange = 1000 + aetherRange
 	local sCastType = 'unit'
@@ -5855,6 +5860,64 @@ end
 
 X.ConsiderItemDesire['item_disperser'] = function(item)
 
+end
+
+X.ConsiderItemDesire['item_blood_grenade'] = function(item)
+	local nRadius = 700
+	local sCastType = 'ground'
+	local hEffectTarget = nil
+	local sCastMotive = nil
+	local nInRangeEnmyList = bot:GetNearbyHeroes( nRadius, true, BOT_MODE_NONE )
+	local nNearAllyList = bot:GetNearbyHeroes( nRadius, false, BOT_MODE_NONE )
+	local nHealth = bot:GetHealth()
+	local nHealthCost = 75
+	local nDamage = 50
+	local botTarget = bot:GetTarget()
+
+	if botTarget ~= nil
+	and J.CanKillTarget(botTarget, nDamage, DAMAGE_TYPE_MAGICAL)
+	and J.CanCastOnNonMagicImmune( botTarget )
+	and J.IsInRange( bot, botTarget, nRadius )
+	and nHealth > nHealthCost * 2
+	then
+		hEffectTarget = botTarget:GetLocation()
+		sCastMotive = 'Blood Grenade'
+		return BOT_ACTION_DESIRE_HIGH, hEffectTarget, sCastType, sCastMotive
+	end
+
+	if J.IsRetreating( bot )
+	and nHealth > nHealthCost * 2
+	then
+		local enemyHeroList = bot:GetNearbyHeroes( nRadius, true, BOT_MODE_NONE )
+		local targetHero = enemyHeroList[1]
+
+		if J.IsValidHero( targetHero )
+		and J.CanCastOnNonMagicImmune( targetHero )
+		and J.IsInRange( bot, targetHero, nRadius )
+		and not targetHero:IsDisarmed()
+		then
+			hEffectTarget = targetHero:GetLocation()
+			sCastMotive = 'Blood Grenade'
+			return BOT_ACTION_DESIRE_HIGH, hEffectTarget, sCastType, sCastMotive
+		end		
+	end	
+
+	if J.IsGoingOnSomeone( bot )
+	and (nHealth * 100) > (nHealthCost * 2)
+	then
+		local targetHero = J.GetProperTarget( bot )
+
+		if J.IsValidHero( targetHero )
+		and J.IsInRange( bot, targetHero, nRadius )
+		and J.CanCastOnNonMagicImmune( targetHero )
+		then
+			hEffectTarget = targetHero:GetLocation()
+			sCastMotive = 'Blood Grenade'
+			return BOT_ACTION_DESIRE_HIGH, hEffectTarget, sCastType, sCastMotive
+		end
+	end
+
+	return BOT_ACTION_DESIRE_NONE, 0
 end
 
 function X.IsTargetedByEnemy( building )
@@ -5973,56 +6036,3 @@ function AbilityLevelUpThink()
 
 end
 -- dota2jmz@163.com QQ:2462331592..
-
-function GetDesireForEachRole()
-	local desire = BOT_ACTION_DESIRE_HIGH
-
-	if J.Role.CanBeSupport( bot:GetUnitName() ) 
-	then
-		desire = BOT_ACTION_DESIRE_ABSOLUTE
-	end
-	
-	if (DotaTime() <= 15 * 60)
-	then
-		if J.Role.CanBeOfflaner(bot:GetUnitName())
-		then
-			desire = BOT_ACTION_DESIRE_MODERATE
-		elseif J.Role.CanBeMidlaner(bot:GetUnitName())
-		then
-			desire = BOT_ACTION_DESIRE_LOW
-		elseif J.Role.CanBeSafeLaneCarry(bot:GetUnitName())
-		then
-			desire = BOT_ACTION_DESIRE_VERYLOW
-		end
-	end
-
-	if (DotaTime() > 15 * 60) and (DotaTime() < 25 * 60)
-	then
-		if J.Role.CanBeOfflaner(bot:GetUnitName())
-		then
-			desire = BOT_ACTION_DESIRE_MODERATE
-		elseif J.Role.CanBeMidlaner(bot:GetUnitName())
-		then
-			desire = BOT_ACTION_DESIRE_MODERATE
-		elseif J.Role.CanBeSafeLaneCarry(bot:GetUnitName())
-		then
-			desire = BOT_ACTION_DESIRE_LOW
-		end
-	end
-
-	if (DotaTime() > 25 * 60) and (DotaTime() < 35 * 60)
-	then
-		if J.Role.CanBeOfflaner(bot:GetUnitName())
-		then
-			desire = BOT_ACTION_DESIRE_HIGH
-		elseif J.Role.CanBeMidlaner(bot:GetUnitName())
-		then
-			desire = BOT_ACTION_DESIRE_HIGH
-		elseif J.Role.CanBeSafeLaneCarry(bot:GetUnitName())
-		then
-			desire = BOT_ACTION_DESIRE_MODERATE
-		end
-	end
-
-	return desire
-end

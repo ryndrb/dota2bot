@@ -337,51 +337,6 @@ local sFifthList = {
 ---------------------------------------------------------
 ---------------------------------------------------------
 
-local sPriestList = {
-
-	"npc_dota_hero_jakiro",
-	"npc_dota_hero_lich",
-		--"npc_dota_hero_lina",
-		-- "npc_dota_hero_necrolyte",
-	"npc_dota_hero_oracle",
-	"npc_dota_hero_pugna",
-	"npc_dota_hero_shadow_shaman",
-	"npc_dota_hero_silencer",
-	"npc_dota_hero_skywrath_mage",
-	"npc_dota_hero_warlock",
-	"npc_dota_hero_witch_doctor",
-	"npc_dota_hero_zuus",
-	"npc_dota_hero_lion",
-	"npc_dota_hero_dazzle",
-	"npc_dota_hero_bane",
-		-- "npc_dota_hero_queenofpain",
-	"npc_dota_hero_death_prophet",
-
-}
-
-local sMageList = {
-
-	"npc_dota_hero_crystal_maiden",
-	"npc_dota_hero_death_prophet",
-	"npc_dota_hero_jakiro",
-	"npc_dota_hero_lich",
-		--"npc_dota_hero_lina",
-		--"npc_dota_hero_necrolyte",
-	"npc_dota_hero_oracle",
-	"npc_dota_hero_pugna",
-	"npc_dota_hero_shadow_shaman",
-	"npc_dota_hero_silencer",
-	"npc_dota_hero_skywrath_mage",
-	"npc_dota_hero_warlock",
-	"npc_dota_hero_witch_doctor",
-	"npc_dota_hero_zuus",
-	"npc_dota_hero_lion",
-	"npc_dota_hero_dazzle",
-	"npc_dota_hero_bane",
-		-- "npc_dota_hero_queenofpain",
-
-}
-
 local sCarryList = {
 
 	"npc_dota_hero_antimage",
@@ -415,6 +370,32 @@ local sCarryList = {
 
 }
 
+local sMidList = {
+	"npc_dota_hero_templar_assassin",
+	"npc_dota_hero_arc_warden",
+	"npc_dota_hero_mirana",
+	"npc_dota_hero_razor",
+	"npc_dota_hero_sniper",
+	"npc_dota_hero_viper",
+	"npc_dota_hero_nevermore",
+
+	"npc_dota_hero_lina",
+	"npc_dota_hero_dragon_knight",
+	"npc_dota_hero_kunkka",
+	"npc_dota_hero_queenofpain",
+	"npc_dota_hero_necrolyte",
+	"npc_dota_hero_huskar",
+	"npc_dota_hero_ogre_magi",
+	"npc_dota_hero_bounty_hunter",
+	"npc_dota_hero_death_prophet",
+	"npc_dota_hero_zuus",
+
+	"npc_dota_hero_storm_spirit",
+	"npc_dota_hero_ember_spirit",
+	"npc_dota_hero_void_spirit",
+	"npc_dota_hero_earth_spirit",
+	"npc_dota_hero_tiny",
+}
 
 local sTankList = {
 	"npc_dota_hero_bristleback",
@@ -434,39 +415,45 @@ local sTankList = {
 	"npc_dota_hero_viper",
 	"npc_dota_hero_necrolyte",
 	"npc_dota_hero_tidehunter",
+	"npc_dota_hero_death_prophet",
 
 	"npc_dota_hero_shredder",
 	"npc_dota_hero_mars",
 }
 
+local sPriestList = {
 
-local sMidList = {
-
-	"npc_dota_hero_templar_assassin",
-	"npc_dota_hero_arc_warden",
-	"npc_dota_hero_mirana",
-	"npc_dota_hero_razor",
-	"npc_dota_hero_sniper",
-	"npc_dota_hero_viper",
-	"npc_dota_hero_nevermore",
-
-	"npc_dota_hero_lina",
-	"npc_dota_hero_dragon_knight",
-	"npc_dota_hero_kunkka",
-	"npc_dota_hero_queenofpain",
-	"npc_dota_hero_necrolyte",
-	"npc_dota_hero_huskar",
-	"npc_dota_hero_ogre_magi",
-	"npc_dota_hero_bounty_hunter",
-
-	"npc_dota_hero_storm_spirit",
-	"npc_dota_hero_ember_spirit",
-	"npc_dota_hero_void_spirit",
-	"npc_dota_hero_earth_spirit",
-	"npc_dota_hero_tiny",
-	
+	"npc_dota_hero_crystal_maiden",
+	"npc_dota_hero_jakiro",
+	"npc_dota_hero_lich",
+	"npc_dota_hero_oracle",
+	"npc_dota_hero_pugna",
+	"npc_dota_hero_shadow_shaman",
+	"npc_dota_hero_silencer",
+	"npc_dota_hero_skywrath_mage",
+	"npc_dota_hero_warlock",
+	"npc_dota_hero_witch_doctor",
+	"npc_dota_hero_lion",
+	"npc_dota_hero_dazzle",
+	"npc_dota_hero_bane",
 }
 
+local sMageList = {
+
+	"npc_dota_hero_crystal_maiden",
+	"npc_dota_hero_jakiro",
+	"npc_dota_hero_lich",
+	"npc_dota_hero_oracle",
+	"npc_dota_hero_pugna",
+	"npc_dota_hero_shadow_shaman",
+	"npc_dota_hero_silencer",
+	"npc_dota_hero_skywrath_mage",
+	"npc_dota_hero_warlock",
+	"npc_dota_hero_witch_doctor",
+	"npc_dota_hero_lion",
+	"npc_dota_hero_dazzle",
+	"npc_dota_hero_bane",
+}
 
 tSelectPoolList = {
 	[1] = sMidList,

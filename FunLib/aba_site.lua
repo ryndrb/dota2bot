@@ -523,6 +523,8 @@ local tFarmerList = {
 	["npc_dota_hero_nevermore"] = true,
 	["npc_dota_hero_dragon_knight"] = true,
 	["npc_dota_hero_lina"] = true,
+	["npc_dota_hero_death_prophet"] = true,
+	["npc_dota_hero_zuus"] = true,
 
 	["npc_dota_hero_shredder"] = true,
 	["npc_dota_hero_mars"] = true,
@@ -580,6 +582,8 @@ local tFarmHeroList = {
 	["npc_dota_hero_nevermore"] = true,
 	["npc_dota_hero_dragon_knight"] = true,
 	["npc_dota_hero_lina"] = true,
+	["npc_dota_hero_death_prophet"] = true,
+	["npc_dota_hero_zuus"] = true,
 
 	["npc_dota_hero_shredder"] = true,
 	["npc_dota_hero_mars"] = true,
@@ -1840,8 +1844,8 @@ Site.ConsiderIsTimeToFarm["npc_dota_hero_lina"] = function()
 	local bot = GetBot()
 	local networth = bot:GetNetWorth()
 
-	if bot:GetActiveMode() ~= BOT_MODE_LANING 
-	or networth <= 30000 then
+	if networth < 30000
+	then
 		return true
 	end
 
@@ -1853,6 +1857,14 @@ Site.ConsiderIsTimeToFarm["npc_dota_hero_queenofpain"] = function()
 end
 
 Site.ConsiderIsTimeToFarm["npc_dota_hero_necrolyte"] = function()
+	return Site.ConsiderIsTimeToFarm["npc_dota_hero_lina"]
+end
+
+Site.ConsiderIsTimeToFarm["npc_dota_hero_death_prophet"] = function()
+	return Site.ConsiderIsTimeToFarm["npc_dota_hero_lina"]
+end
+
+Site.ConsiderIsTimeToFarm["npc_dota_hero_zuus"] = function()
 	return Site.ConsiderIsTimeToFarm["npc_dota_hero_lina"]
 end
 

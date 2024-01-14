@@ -3640,6 +3640,51 @@ function J.GetArmorReducers(hero)
 	return reducedArmor
 end
 
+local killTime = 0.0
+function J.IsRoshanAlive()
+	if GetRoshanKillTime() > killTime
+    then
+        killTime = GetRoshanKillTime()
+    end
+
+    if DotaTime() - GetRoshanKillTime() >= (J.IsModeTurbo() and (6 * 60) or (11 * 60))
+    then
+        return true
+    end
+
+    return false
+end
+
+function J.HasEnoughDPSForRoshan(heroes)
+    local DPS = 0
+    local DPSThreshold = 0
+    local plannedTimeToKill = 60
+
+    -- Roshan Stats
+    local baseHealth = 6000
+    local baseArmor = 30
+    local armorPerInterval = 0.375
+    local maxHealthBonusPerInterval = 130 * 2
+
+    local roshanHealth = baseHealth + maxHealthBonusPerInterval * math.floor(DotaTime() / 60)
+
+    for _, h in pairs(heroes) do
+        local roshanArmor = baseArmor + armorPerInterval * math.floor(DotaTime() / 60) - J.GetArmorReducers(h)
+
+        -- Only right click damage for now
+        local attackDamage = h:GetAttackDamage()
+        local attackSpeed = h:GetAttackSpeed()
+
+        local dps = attackDamage * attackSpeed * (1 - roshanArmor / (roshanArmor + 20))
+        DPS = DPS + dps
+    end
+
+    DPS =  DPS / #heroes
+
+    DPSThreshold = roshanHealth / plannedTimeToKill
+    return DPS >= DPSThreshold
+end
+
 function J.ConsolePrintActiveMode(bot)
 	local mode = bot:GetActiveMode()
 

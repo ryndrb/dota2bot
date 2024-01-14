@@ -18,13 +18,13 @@ local sOutfitType = J.Item.GetOutfitType( bot )
 
 local tTalentTreeList = {
 						['t25'] = {0, 10},
-						['t20'] = {10, 0},
-						['t15'] = {0, 10},
+						['t20'] = {0, 10},
+						['t15'] = {10, 0},
 						['t10'] = {10, 0},
 }
 
 local tAllAbilityBuildList = {
-						{1,2,1,3,1,6,1,2,2,2,6,3,3,3,6},
+						{1,3,1,2,1,6,1,2,2,2,3,6,3,3,6},
 }
 
 local nAbilityBuildList = J.Skill.GetRandomBuild( tAllAbilityBuildList )
@@ -33,66 +33,75 @@ local nTalentBuildList = J.Skill.GetTalentBuild( tTalentTreeList )
 
 local tOutFitList = {}
 
-tOutFitList['outfit_carry'] = {
+tOutFitList['outfit_carry'] = tOutFitList['outfit_priest']
 
-	"item_crystal_maiden_outfit",
---	"item_glimmer_cape",
---	"item_aghanims_shard",
-	"item_force_staff",
-	"item_cyclone",
-	"item_sheepstick",
-	"item_wind_waker",
-	"item_bloodthorn",
-	"item_moon_shard",
-
-}
-
-tOutFitList['outfit_mid'] = tOutFitList['outfit_carry']
+tOutFitList['outfit_mid'] = tOutFitList['outfit_priest']
 
 tOutFitList['outfit_priest'] = {
+	"item_tango",
+	"item_tango",
+	"item_double_branches",
+	"item_enchanted_mango",
+	"item_blood_grenade",
 
-	"item_priest_outfit",
-	"item_urn_of_shadows",
-	"item_mekansm",
-	"item_glimmer_cape",
---	"item_aghanims_shard",
-	"item_guardian_greaves",
-	"item_spirit_vessel",
---	"item_wraith_pact",
-	"item_shivas_guard",
-	"item_sheepstick",
+	"item_boots",
+	"item_tranquil_boots",
+	"item_magic_wand",
+	"item_glimmer_cape",--
+	"item_aether_lens",--
+	"item_aghanims_shard",
+	"item_force_staff",--
+	"item_boots_of_bearing",--
+	"item_cyclone",
+	"item_lotus_orb",--
+	"item_wind_waker",--
+	"item_recipe_ultimate_scepter_2",
 	"item_moon_shard",
-
 }
 
 tOutFitList['outfit_mage'] = {
+	"item_tango",
+	"item_tango",
+	"item_double_branches",
+	"item_enchanted_mango",
+	"item_blood_grenade",
 
-	"item_mage_outfit",
-	"item_ancient_janggo",
-	"item_glimmer_cape",
-	"item_boots_of_bearing",
-	"item_pipe",
+	"item_boots",
+	"item_arcane_boots",
+	"item_magic_wand",
+	"item_glimmer_cape",--
+	"item_aether_lens",--
 	"item_aghanims_shard",
-	"item_veil_of_discord",
-	"item_wind_waker",
-	"item_sheepstick",
+	"item_force_staff",--
+	"item_guardian_greaves",--
+	"item_cyclone",
+	"item_lotus_orb",--
+	"item_wind_waker",--
+	"item_recipe_ultimate_scepter_2",
 	"item_moon_shard",
-
 }
 
 tOutFitList['outfit_tank'] = tOutFitList['outfit_carry']
 
 X['sBuyList'] = tOutFitList[sOutfitType]
 
-X['sSellList'] = {
-
-	"item_shivas_guard",
+Pos4SellList = {
 	"item_magic_wand",
-
-	"item_cyclone",
-	"item_magic_wand",
-
 }
+
+Pos5SellList = {
+	"item_magic_wand",
+}
+
+X['sSellList'] = {}
+
+if sOutfitType == "outfit_priest"
+then
+    X['sSellList'] = Pos4SellList
+elseif sOutfitType == "outfit_mage"
+then
+    X['sSellList'] = Pos5SellList
+end
 
 if J.Role.IsPvNMode() or J.Role.IsAllShadow() then X['sBuyList'], X['sSellList'] = { 'PvN_mage' }, {} end
 
@@ -639,6 +648,25 @@ function X.ConsiderR()
 	local nDamage = abilityR:GetAbilityDamage()
 	local nDamageType = DAMAGE_TYPE_MAGICAL
 	local nInRangeEnemyList = bot:GetNearbyHeroes( nCastRange, true, BOT_MODE_NONE )
+	local nInWardRangeEnemyList = bot:GetNearbyHeroes( 1400, true, BOT_MODE_NONE )
+
+	if J.IsInTeamFight( bot, 1400 )
+	and J.HasAghanimsShard(bot)
+	then
+		if #nInWardRangeEnemyList >= 2
+		then
+			local nAllyUnits = GetUnitList(UNIT_LIST_ALLIES)
+
+			for _, a in pairs(nAllyUnits)
+			do
+				if (string.find(a:GetUnitName(), "nether_ward"))
+				and J.IsInRange(bot, a, nCastRange)
+				then
+					return BOT_ACTION_DESIRE_HIGH, a, "Nether Ward"..J.Chat.GetNormName( botTarget )
+				end
+			end
+		end
+	end
 
 	if J.IsGoingOnSomeone( bot )
 	then

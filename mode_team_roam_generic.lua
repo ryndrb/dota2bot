@@ -1525,6 +1525,8 @@ function X.IsSpecialCarry(bot)
 		["npc_dota_hero_lina"] = true,
 		["npc_dota_hero_queenofpain"] = true,
 		["npc_dota_hero_necrolyte"] = true,
+		["npc_dota_hero_death_prophet"] = true,
+		["npc_dota_hero_zuus"] = true,
 
 		["npc_dota_hero_shredder"] = true,
 		["npc_dota_hero_mars"] = true,
@@ -1548,23 +1550,20 @@ function X.IsSpecialSupport(bot)
     
 	local botName = bot:GetUnitName();
 	
-	local tSpecialSupportList = {
-		["npc_dota_hero_bane"] = true, 
+	local tSpecialSupportList = {	  
 		["npc_dota_hero_crystal_maiden"] = true,
-		["npc_dota_hero_dazzle"] = true,
-		["npc_dota_hero_death_prophet"] = true, 		
 		["npc_dota_hero_jakiro"] = true,
 		["npc_dota_hero_lich"] = true,
-		["npc_dota_hero_lion"] = true,
 		["npc_dota_hero_oracle"] = true,
 		["npc_dota_hero_pugna"] = true,
 		["npc_dota_hero_shadow_shaman"] = true,
 		["npc_dota_hero_silencer"] = true,
 		["npc_dota_hero_skywrath_mage"] = true,
-		["npc_dota_hero_warlock"] = true,		  
-		["npc_dota_hero_windrunner"] = true,		  
-		["npc_dota_hero_witch_doctor"] = true,		  
-		["npc_dota_hero_zuus"] = true, 		
+		["npc_dota_hero_warlock"] = true,
+		["npc_dota_hero_witch_doctor"] = true,
+		["npc_dota_hero_lion"] = true,
+		["npc_dota_hero_dazzle"] = true,
+		["npc_dota_hero_bane"] = true,
 	}
 	
 	return tSpecialSupportList[botName] == true

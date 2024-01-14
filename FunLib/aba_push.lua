@@ -15,10 +15,20 @@ function Push.GetPushDesire(bot, lane)
         end
     end
 
+    local aliveHeroesList = {}
+    for _, h in pairs(GetUnitList(UNIT_LIST_ALLIED_HEROES)) do
+        if h:IsAlive()
+        then
+            table.insert(aliveHeroesList, h)
+        end
+    end
+
     if bot:GetHealth() / bot:GetMaxHealth() < 0.3
+    or (J.IsRoshanAlive() and J.HasEnoughDPSForRoshan(aliveHeroesList))
     or (enemies ~= nil and allies ~= nil and #enemies > #allies)
     or bot:WasRecentlyDamagedByTower(1)
     or not J.WeAreStronger(bot, 1600)
+    or (J.IsLaning(bot) or J.IsFarming(bot))
     then
         return 0.25
     end

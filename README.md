@@ -33,6 +33,8 @@ Worth noting that I also use a vscript to improve the bots GPM (XPM later) and a
         - [2] Necrophos
         - [2] Lina
         - [2] Queen Of Pain (buggy?)
+        - [2,3] Death Prophet
+        - [2] Zeus
 
 - ***"Attempted" Logic Changes (still)***
     - Pushing

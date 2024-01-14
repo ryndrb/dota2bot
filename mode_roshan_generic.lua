@@ -17,18 +17,8 @@ local roshanDireLoc     = Vector(-7549, 7562, 1107)
 function GetDesire()
     local aliveAlly = J.GetNumOfAliveHeroes(false)
     local aliveEnemy = J.GetNumOfAliveHeroes(true)
-    local aCount = bot:GetNearbyHeroes(1200, false, BOT_MODE_NONE)
-    local eCount = bot:GetNearbyHeroes(1200, true, BOT_MODE_NONE)
     local healthPercentage = bot:GetHealth() / bot:GetMaxHealth()
-    local timeOfDay = J.CheckTimeOfDay()
-    local roshLoc = nil
 
-    if timeOfDay == "day" then
-        roshLoc = roshanRadiantLoc
-    else
-        roshLoc = roshanDireLoc
-    end
-    
     local aliveHeroesList = {}
     for _, h in pairs(GetUnitList(UNIT_LIST_ALLIED_HEROES)) do
         if h:IsAlive()
@@ -37,12 +27,25 @@ function GetDesire()
         end
     end
 
-    shouldKillRoshan = IsRoshanAlive()
+    shouldKillRoshan = J.IsRoshanAlive()
+
+    local enemies = bot:GetNearbyHeroes(700 + bot:GetAttackRange(), true, BOT_MODE_NONE)
+    if enemies ~= nil
+    and #enemies > 0
+    then
+        return BOT_ACTION_DESIRE_LOW
+    end
 
     if shouldKillRoshan
-    and HasEnoughDPSForRoshan(aliveHeroesList)
+    and J.HasEnoughDPSForRoshan(aliveHeroesList)
+    and healthPercentage > 0.3
     then
-        return Clamp(GetRoshanDesire(), 0, 0.9) * 2
+        if IsEnoughAllies()
+        then
+            return BOT_ACTION_DESIRE_ABSOLUTE
+        end
+
+        return Clamp(GetRoshanDesire(), 0.1, 1) * 2
     end
 
     return BOT_ACTION_DESIRE_NONE
@@ -82,24 +85,25 @@ function Think()
         bot:ActionPush_MoveToLocation(roshanDireLoc)
     end
 
-    local enemies = bot:GetNearbyHeroes(1200, true, BOT_MODE_NONE)
-    if enemies ~= nil and #enemies > 0 and J.WeAreStronger(bot, 1200)
+    local nRange = bot:GetAttackRange() + 700
+
+    local enemies = bot:GetNearbyHeroes(nRange, true, BOT_MODE_NONE)
+    if enemies ~= nil and #enemies > 0 and J.WeAreStronger(bot, nRange)
     then
         return bot:ActionPush_AttackUnit(enemies[1], false)
     end
 
-    local creeps = bot:GetNearbyLaneCreeps(1200, true)
+    local creeps = bot:GetNearbyLaneCreeps(nRange, true)
     if creeps ~= nil and #creeps > 0 then
-        return bot:ActionPush_AttackUnit(creeps[1], false)
+        bot:ActionPush_AttackUnit(creeps[1], false)
     end
 
-    local nCreeps = bot:GetNearbyNeutralCreeps(800)
+    local nCreeps = bot:GetNearbyNeutralCreeps(nRange)
     for _, c in pairs(nCreeps) do
         if string.find(c:GetUnitName(), "roshan")
-        and (IsEnoughAllies()
-        or (J.IsCore(bot) and c:GetHealth() / c:GetMaxHealth() < 0.3))
+        and (IsEnoughAllies() or (J.IsCore(bot) and c:GetHealth() / c:GetMaxHealth() < 0.3))
         then
-            bot:ActionPush_AttackUnit(c, false)
+            return bot:ActionPush_AttackUnit(c, false)
         end
 
         if (DotaTime() - DoingRoshanMessage) > 15 then
@@ -111,24 +115,7 @@ function Think()
                 bot:ActionImmediate_Ping(-7549, 7562, true)
             end
         end
-
-        return
     end
-
-end
-
-function IsRoshanAlive()
-    if GetRoshanKillTime() > killTime
-    then
-        killTime = GetRoshanKillTime()
-    end
-
-    if DotaTime() - GetRoshanKillTime() >= (J.IsModeTurbo() and (6 * 60) or (11 * 60))
-    then
-        return true
-    end
-
-    return false
 end
 
 function IsEnoughAllies()
@@ -150,39 +137,7 @@ function IsEnoughAllies()
         end
     end
 
-    return HasEnoughDPSForRoshan(allyList)
-end
-
-function HasEnoughDPSForRoshan(heroes)
-    local DPS = 0
-    local DPSThreshold = 0
-    local plannedTimeToKill = 60
-
-    -- Roshan Stats
-    local baseHealth = 6000
-    local baseArmor = 30
-    local armorPerInterval = 0.375
-    local maxHealthBonusPerInterval = 130 * 2
-
-    local roshanHealth = baseHealth + maxHealthBonusPerInterval * math.floor(DotaTime() / 60)
-
-    for _, h in pairs(heroes) do
-        local roshanArmor = baseArmor + armorPerInterval * math.floor(DotaTime() / 60) - J.GetArmorReducers(h)
-
-        -- Only right click damage for now
-        local attackDamage = h:GetAttackDamage()
-        local attackSpeed = h:GetAttackSpeed()
-
-        local dps = attackDamage * attackSpeed * (1 - roshanArmor / (roshanArmor + 20))
-        DPS = DPS + dps
-    end
-
-    DPS =  DPS / #heroes
-
-    DPSThreshold = roshanHealth / plannedTimeToKill
-    -- print(bot:GetUnitName().." => DPS: ", DPS)
-    -- print(bot:GetUnitName().." => DPSThreshold: ", DPSThreshold)
-    return DPS >= DPSThreshold
+    return J.HasEnoughDPSForRoshan(allyList)
 end
 
 -- No functionality yet from API

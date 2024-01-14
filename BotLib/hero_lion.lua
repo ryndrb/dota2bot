@@ -18,13 +18,13 @@ local sOutfitType = J.Item.GetOutfitType( bot )
 
 local tTalentTreeList = {
 						['t25'] = {10, 0},
-						['t20'] = {0, 10},
+						['t20'] = {10, 0},
 						['t15'] = {10, 0},
-						['t10'] = {10, 0},
+						['t10'] = {0, 10},
 }
 
 local tAllAbilityBuildList = {
-						{1,2,3,1,1,6,1,3,2,2,6,2,3,3,6},
+						{1,3,3,2,3,6,3,1,1,1,6,2,2,2,6},
 }
 
 local nAbilityBuildList = J.Skill.GetRandomBuild( tAllAbilityBuildList )
@@ -33,73 +33,71 @@ local nTalentBuildList = J.Skill.GetTalentBuild( tTalentTreeList )
 
 local tOutFitList = {}
 
-tOutFitList['outfit_carry'] = {
-
-	"item_crystal_maiden_outfit",
-	"item_force_staff",
---	"item_glimmer_cape",
-	"item_aghanims_shard",
-	"item_ultimate_scepter",
-	"item_cyclone",
-	"item_hurricane_pike",
-	"item_bloodthorn",
-	"item_wind_waker",
-	"item_moon_shard",
-	"item_octarine_core",
-	"item_ultimate_scepter_2",
-
-}
+tOutFitList['outfit_carry'] = tOutFitList['outfit_carry']
 
 tOutFitList['outfit_mid'] = tOutFitList['outfit_carry']
 
+tOutFitList['outfit_tank'] = tOutFitList['outfit_carry']
+
 tOutFitList['outfit_priest'] = {
+	"item_tango",
+	"item_tango",
+	"item_double_branches",
+	"item_blood_grenade",
 
-	"item_priest_outfit",
-	"item_urn_of_shadows",
-	"item_mekansm",
-	"item_glimmer_cape",
+	"item_tranquil_boots",
+	"item_magic_wand",
 	"item_aghanims_shard",
-	"item_guardian_greaves",
-	"item_spirit_vessel",
+	"item_aether_lens",--
+	"item_glimmer_cape",--
 	"item_ultimate_scepter",
---	"item_wraith_pact",
-	"item_shivas_guard",
+	"item_boots_of_bearing",--
+	"item_force_staff",--
+	"item_aeon_disk",--
+	"item_wind_waker",--
+	"item_recipe_ultimate_scepter_2",
 	"item_moon_shard",
-	"item_octarine_core",
-	"item_ultimate_scepter_2",
-
 }
 
 tOutFitList['outfit_mage'] = {
+	"item_tango",
+	"item_tango",
+	"item_double_branches",
+	"item_blood_grenade",
 
-	"item_mage_outfit",
-	"item_ancient_janggo",
-	"item_glimmer_cape",
-	"item_boots_of_bearing",
-	"item_pipe",
+	"item_arcane_boots",
+	"item_magic_wand",
 	"item_aghanims_shard",
-	"item_veil_of_discord",
+	"item_aether_lens",--
+	"item_glimmer_cape",--
+	"item_guardian_greaves",--
+	"item_force_staff",--
 	"item_ultimate_scepter",
-	"item_cyclone",
-	"item_octarine_core",
-	"item_wind_waker",
-	"item_ultimate_scepter_2",
-
+	"item_aeon_disk",--
+	"item_wind_waker",--
+	"item_recipe_ultimate_scepter_2",
+	"item_moon_shard",
 }
-
-tOutFitList['outfit_tank'] = tOutFitList['outfit_carry']
 
 X['sBuyList'] = tOutFitList[sOutfitType]
 
-X['sSellList'] = {
-
-	"item_vladmir",
+Pos4SellList = {
 	"item_magic_wand",
-	
-	"item_cyclone",
-	"item_magic_wand",
-
 }
+
+Pos5SellList = {
+	"item_magic_wand",
+}
+
+X['sSellList'] = {}
+
+if sOutfitType == "outfit_priest"
+then
+    X['sSellList'] = Pos4SellList
+elseif sOutfitType == "outfit_mage"
+then
+    X['sSellList'] = Pos5SellList
+end
 
 if J.Role.IsPvNMode() or J.Role.IsAllShadow() then X['sBuyList'], X['sSellList'] = { 'PvN_mage' }, {} end
 

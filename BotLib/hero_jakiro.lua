@@ -18,13 +18,13 @@ local sOutfitType = J.Item.GetOutfitType( bot )
 
 local tTalentTreeList = {
 						['t25'] = {10, 0},
-						['t20'] = {0, 10},
+						['t20'] = {10, 0},
 						['t15'] = {10, 0},
 						['t10'] = {0, 10},
 }
 
 local tAllAbilityBuildList = {
-						{1,3,1,2,1,6,1,2,2,2,6,3,3,3,6},
+						{1,3,1,2,1,6,1,2,2,2,6,3,3,3},
 }
 
 local nAbilityBuildList = J.Skill.GetRandomBuild( tAllAbilityBuildList )
@@ -33,85 +33,77 @@ local nTalentBuildList = J.Skill.GetTalentBuild( tTalentTreeList )
 
 local tOutFitList = {}
 
-tOutFitList['outfit_carry'] = {
-
-	"item_crystal_maiden_outfit",
---	"item_glimmer_cape",
-	"item_aghanims_shard",
-	"item_force_staff",
-	"item_ultimate_scepter",
-	"item_hurricane_pike",
-	"item_cyclone", 
-	"item_sheepstick",
-	"item_wind_waker",
-	"item_refresher",
-	"item_lotus_orb",
-	"item_moon_shard",
-	"item_ultimate_scepter_2",
-
-}
+tOutFitList['outfit_carry'] = tOutFitList['outfit_carry']
 
 tOutFitList['outfit_mid'] = tOutFitList['outfit_carry']
 
+tOutFitList['outfit_tank'] = tOutFitList['outfit_carry']
+
 tOutFitList['outfit_priest'] = {
-
 	"item_tango",
 	"item_tango",
-	"item_mango_tree",
-	"item_mango_tree",
-	"item_faerie_fire",
-	"item_branches",
+	"item_double_branches",
+	"item_enchanted_mango",
+	"item_enchanted_mango",
+	"item_blood_grenade",
 
-	"item_arcane_boots",
+	"item_boots",
 	"item_magic_wand",
+	"item_tranquil_boots",
 	"item_force_staff",--
-
 	"item_aghanims_shard",
-	"item_cyclone",
-
-	"item_aether_lens",--
+	"item_glimmer_cape",--
 	"item_ultimate_scepter",
 	"item_boots_of_bearing",--
-	"item_sheepstick",--
+	"item_octarine_core",--
 	"item_shivas_guard",--
-	"item_wind_waker",--
-
-	"item_ultimate_scepter_2"
-
+	"item_aeon_disk",--
+	"item_recipe_ultimate_scepter_2",
+	"item_moon_shard",
 }
 
 tOutFitList['outfit_mage'] = {
+	"item_tango",
+	"item_tango",
+	"item_double_branches",
+	"item_enchanted_mango",
+	"item_enchanted_mango",
+	"item_blood_grenade",
 
-	"item_mage_outfit",
-	"item_ancient_janggo",
-	"item_glimmer_cape",
-	"item_boots_of_bearing",
-	"item_pipe",
+	"item_boots",
+	"item_magic_wand",
+	"item_arcane_boots",
+	"item_force_staff",--
 	"item_aghanims_shard",
-	"item_veil_of_discord",
-	"item_cyclone",
-	"item_sheepstick",
-	"item_wind_waker",
+	"item_glimmer_cape",--
+	"item_ultimate_scepter",
+	"item_guardian_greaves",--
+	"item_octarine_core",--
+	"item_sheepstick",--
+	"item_aeon_disk",--
+	"item_recipe_ultimate_scepter_2",
 	"item_moon_shard",
-	"item_ultimate_scepter_2",
-
 }
-
-tOutFitList['outfit_tank'] = tOutFitList['outfit_carry']
 
 X['sBuyList'] = tOutFitList[sOutfitType]
 
-X['sSellList'] = {
-
-	"item_tango",
-	"item_mango_tree",
-	"item_faerie_fire",
-	"item_branches",
-
-	"item_arcane_boots",
+Pos4SellList = {
 	"item_magic_wand",
-	
 }
+
+Pos5SellList = {
+	"item_magic_wand",
+}
+
+X['sSellList'] = {}
+
+if sOutfitType == "outfit_priest"
+then
+    X['sSellList'] = Pos4SellList
+elseif sOutfitType == "outfit_mage"
+then
+    X['sSellList'] = Pos5SellList
+end
 
 if J.Role.IsPvNMode() or J.Role.IsAllShadow() then X['sBuyList'], X['sSellList'] = { 'PvN_mage' }, {} end
 

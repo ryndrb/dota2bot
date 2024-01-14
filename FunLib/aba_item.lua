@@ -196,6 +196,7 @@ Item['sBasicItems'] = {
 	'item_blitz_knuckles', --闪电指套
 	'item_voodoo_mask', --巫毒面具
 	'item_fluffy_hat', --毛毛帽
+	'item_blood_grenade',
 }
 
 Item['sSeniorItems'] = {
@@ -243,6 +244,7 @@ Item['sTopItems'] = {
 	'item_faerie_fire',
 	'item_enchanted_mango',
 	'item_infused_raindrop',
+	'item_blood_grenade',
 
 	'item_abyssal_blade',
 	'item_aether_lens',
@@ -340,6 +342,7 @@ Item['tEarlyItem'] = {
 	 -- 'item_ancient_janggo',
 	 'item_refresher_shard',
 	 'item_cheese',
+	 'item_blood_grenade',
 }
 
 Item['tEarlyBoots'] = {
@@ -372,6 +375,7 @@ local sConsumableList = {
 	'item_faerie_fire',
 	'item_enchanted_mango',
 	'item_infused_raindrop',
+	'item_blood_grenade',
 
 	'item_mango_tree',
 	'item_royal_jelly',
@@ -701,6 +705,7 @@ Item["item_pavise"] 							= { "item_energy_booster", "item_ring_of_protection",
 Item["item_phylactery"] 						= { "item_point_booster", "item_diadem", "item_recipe_phylactery" }
 Item["item_harpoon"] 							= { "item_echo_sabre", "item_diadem", "item_recipe_harpoon" }
 Item["item_disperser"] 							= { "item_diffusal_blade", "item_eagle", "item_recipe_disperser" }
+Item["item_blood_grenade"] 						= GetItemComponents( 'item_blood_grenade' )[1]
 
 ---------- 7.35 NEW ITEMS ---------------
 Item["item_angels_demise"] 						= { "item_phylactery", "item_lesser_crit", "item_recipe_angels_demise" }

@@ -18,7 +18,17 @@ function Defend.GetDefendDesire(bot, lane)
 	local tFront = RemapValClamped(GetLaneFrontAmount(GetTeam(), lane, true), 0, 1, 0.75, 0)
 	local eFront = RemapValClamped(1 - GetLaneFrontAmount(GetOpposingTeam(), lane, true), 0, 1, 0, 0.75)
 
+    local aliveHeroesList = {}
+    for _, h in pairs(GetUnitList(UNIT_LIST_ALLIED_HEROES)) do
+        if h:IsAlive()
+        then
+            table.insert(aliveHeroesList, h)
+        end
+    end
+
 	if bot:GetHealth() / bot:GetMaxHealth() < 0.3
+	or (J.IsRoshanAlive() and J.HasEnoughDPSForRoshan(aliveHeroesList) and eFront < 0.87)
+	or (J.IsLaning(bot) or (J.IsFarming(bot) and (mul[lane] < 3 or eFront < 0.9)))
 	then
 		return 0.25
 	end
