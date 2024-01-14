@@ -158,11 +158,13 @@ modifier_bounty_hunter_track
 local abilityQ = bot:GetAbilityByName( sAbilityList[1] )
 local abilityW = bot:GetAbilityByName( sAbilityList[2] )
 local abilityE = bot:GetAbilityByName( sAbilityList[3] )
+local FriendlyShadow = bot:GetAbilityByName( 'bounty_hunter_wind_walk_ally' )
 local abilityR = bot:GetAbilityByName( sAbilityList[6] )
 local talent3 = bot:GetAbilityByName( sTalentList[3] )
 
 local castQDesire, castQTarget
 local castEDesire
+local FriendlyShadowDesire, FriendlyShadowTarget
 local castRDesire, castRTarget
 
 local nKeepMana, nMP, nHP, nLV, hEnemyList, hAllyList, botTarget, sMotive
@@ -196,6 +198,14 @@ function X.SkillsComplement()
 		J.SetQueuePtToINT( bot, false )
 
 		bot:ActionQueue_UseAbility( abilityE )
+		return
+	end
+
+	FriendlyShadowDesire, FriendlyShadowTarget = X.ConsiderFriendlyShadow()
+	if (FriendlyShadowDesire > 0)
+	then
+		J.SetQueuePtToINT(bot, false)
+		bot:ActionQueue_UseAbilityOnEntity(FriendlyShadow, FriendlyShadowTarget)
 		return
 	end
 
@@ -566,7 +576,53 @@ function X.ConsiderR()
 
 end
 
+function X.ConsiderFriendlyShadow()
+	if not FriendlyShadow:IsTrained()
+	or not FriendlyShadow:IsFullyCastable()
+	then
+		return BOT_ACTION_DESIRE_NONE, nil
+	end
 
+	local nCastRange = FriendlyShadow:GetCastRange()
+	local nAllyHeroes = bot:GetNearbyHeroes(nCastRange, false, BOT_MODE_NONE)
+
+	for _, ally in pairs(nAllyHeroes) do
+		if J.IsGoingOnSomeone(ally)
+		and J.IsInRange(bot, ally, nCastRange)
+		and J.IsNotSelf(bot, ally)
+		and not J.IsRealInvisible(ally)
+		then
+			return BOT_ACTION_DESIRE_HIGH, ally
+		end
+
+		if J.IsRetreating(ally)
+		and ally:WasRecentlyDamagedByAnyHero(3.0)
+		and ally:DistanceFromFountain() > 800
+		and J.IsInRange(bot, ally, nCastRange)
+		and J.IsNotSelf(bot, ally)
+		and not J.IsRealInvisible(ally)
+		and #hEnemyList >= 1
+		then
+			return BOT_ACTION_DESIRE_HIGH, ally
+		end
+
+		if J.IsInEnemyArea(bot)
+		then
+			local nEnemies = bot:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
+			local nEnemyTowers = bot:GetNearbyTowers(1600, true)
+
+			if nEnemies ~= nil and nEnemyTowers ~= nil
+			and #nEnemies == 0 and #nEnemyTowers == 0
+			and J.IsInRange(bot, ally, nCastRange)
+			and J.IsNotSelf(bot, ally)
+			and not J.IsRealInvisible(ally)
+			then
+				return BOT_ACTION_DESIRE_HIGH, ally
+			end
+		end
+	end
+
+	return BOT_ACTION_DESIRE_NONE, nil
+end
 
 return X
--- dota2jmz@163.com QQ:2462331592..

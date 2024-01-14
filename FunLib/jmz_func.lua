@@ -3685,6 +3685,15 @@ function J.HasEnoughDPSForRoshan(heroes)
     return DPS >= DPSThreshold
 end
 
+function J.IsNotSelf(bot, ally)
+	if bot:GetUnitName() ~= ally:GetUnitName()
+	then
+		return true
+	end
+
+	return false
+end
+
 function J.ConsolePrintActiveMode(bot)
 	local mode = bot:GetActiveMode()
 

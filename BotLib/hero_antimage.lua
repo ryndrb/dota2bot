@@ -122,12 +122,16 @@ modifier_antimage_counterspell
 local abilityW = bot:GetAbilityByName( sAbilityList[2] )
 local abilityE = bot:GetAbilityByName( sAbilityList[3] )
 local abilityR = bot:GetAbilityByName( sAbilityList[6] )
+local CounterSpellAlly 	= bot:GetAbilityByName( 'antimage_counterspell_ally' )
+local BlinkFragment		= bot:GetAbilityByName( 'antimage_mana_overload' )
 local talent3 = bot:GetAbilityByName( sTalentList[3] )
 
 
 local castWDesire, castWLocation
 local castEDesire
 local castRDesire, castRTarget
+local CounterSpellAllyDesire, CounterSpellAllyTarget
+local BlinkFragmentDesire, FragmentLocation
 local castWEDesire, castWELocation, castWEType
 local castWRDesire, castWRLocation, castWRTarget
 
@@ -135,6 +139,14 @@ local castWRDesire, castWRLocation, castWRTarget
 local nKeepMana, nMP, nHP, nLV, hEnemyHeroList
 
 function X.SkillsComplement()
+
+	if J.CanNotUseAbility( bot ) or bot:IsInvisible() then return end
+
+	nKeepMana = 180
+	nMP = bot:GetMana()/bot:GetMaxMana()
+	nHP = bot:GetHealth()/bot:GetMaxHealth()
+	nLV = bot:GetLevel()
+	hEnemyHeroList = bot:GetNearbyHeroes( 1600, true, BOT_MODE_NONE )
 
 	if X.ConsiderSpecialE() > 0
 	then
@@ -144,14 +156,14 @@ function X.SkillsComplement()
 		return
 	end
 
-	if J.CanNotUseAbility( bot ) or bot:IsInvisible() then return end
-
-
-	nKeepMana = 180
-	nMP = bot:GetMana()/bot:GetMaxMana()
-	nHP = bot:GetHealth()/bot:GetMaxHealth()
-	nLV = bot:GetLevel()
-	hEnemyHeroList = bot:GetNearbyHeroes( 1600, true, BOT_MODE_NONE )
+	BlinkFragmentDesire, FragmentLocation = X.ConsiderBlinkFragment()
+	print(tostring(BlinkFragmentDesire)..": ", FragmentLocation)
+	if (BlinkFragmentDesire > 0)
+	then
+		J.SetQueuePtToINT(bot, false)
+		bot:ActionQueue_UseAbilityOnLocation(BlinkFragment, FragmentLocation)
+		return
+	end
 
 	castWDesire, castWLocation = X.ConsiderW()
 	if ( castWDesire > 0 )
@@ -182,6 +194,14 @@ function X.SkillsComplement()
 		J.SetQueuePtToINT( bot, false )
 
 		bot:ActionQueue_UseAbility( abilityE )
+		return
+	end
+
+	CounterSpellAllyDesire, CounterSpellAllyTarget = X.ConsiderCounterSpellAlly()
+	if (CounterSpellAllyDesire > 0)
+	then
+		J.SetQueuePtToINT(bot, false)
+		bot:ActionQueue_UseAbilityOnEntity(CounterSpellAlly, CounterSpellAllyTarget)
 		return
 	end
 
@@ -700,6 +720,69 @@ function X.ConsiderR()
 	return 0
 end
 
+function X.ConsiderCounterSpellAlly()
+	if not J.HasAghanimsShard(bot)
+	or not CounterSpellAlly:IsTrained()
+	or not CounterSpellAlly:IsFullyCastable()
+	then
+		return BOT_ACTION_DESIRE_NONE, nil
+	end
+
+	local cCastRange = CounterSpellAlly:GetCastRange()
+	local nAllyHeroes = bot:GetNearbyHeroes(cCastRange, false, BOT_MODE_NONE)
+
+	for _, ally in pairs(nAllyHeroes) do
+		if J.IsInRange(bot, ally, cCastRange)
+		and J.IsUnitTargetProjectileIncoming(ally, 400)
+		and not ally:IsMagicImmune()
+		then
+			return BOT_ACTION_DESIRE_HIGH, ally
+		end
+
+		if not ally:HasModifier("modifier_sniper_assassinate")
+		and not ally:IsMagicImmune()
+		then
+			if J.IsWillBeCastUnitTargetSpell(ally, cCastRange)
+			then
+				return BOT_ACTION_DESIRE_HIGH, ally
+			end
+		end
+	end
+
+	return BOT_ACTION_DESIRE_NONE, nil
+end
+
+function X.ConsiderBlinkFragment()
+	if not bot:HasScepter()
+	or not BlinkFragment:IsTrained()
+	or not BlinkFragment:IsFullyCastable()
+	then
+		return BOT_ACTION_DESIRE_NONE, 0
+	end
+
+	local nCastRange = abilityW:GetSpecialValueInt('value')
+	local nCastPoint = BlinkFragment:GetCastPoint()
+	local nEnemysHerosInRange = bot:GetNearbyHeroes(nCastRange, true, BOT_MODE_NONE)
+	local npcTarget = J.GetProperTarget(bot)
+
+	if J.IsRetreating(bot)
+	and (nEnemysHerosInRange ~= nil and #nEnemysHerosInRange > 0)
+	then
+		bot:SetTarget(nEnemysHerosInRange[1])
+		return BOT_ACTION_DESIRE_MODERATE, nEnemysHerosInRange[1]:GetLocation()
+	end
+
+	if J.IsGoingOnSomeone(bot)
+	then
+		if J.IsValidHero(npcTarget)
+		and not npcTarget:IsAttackImmune()
+		and J.IsInRange(npcTarget, bot, nCastRange)
+		then
+			return BOT_ACTION_DESIRE_HIGH, npcTarget:GetLocation()
+		end
+	end
+
+	return BOT_ACTION_DESIRE_NONE, 0
+end
 
 return X
--- dota2jmz@163.com QQ:2462331592..

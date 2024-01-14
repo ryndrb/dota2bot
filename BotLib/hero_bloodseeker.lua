@@ -161,12 +161,13 @@ modifier_bloodseeker_rupture
 
 local abilityQ = bot:GetAbilityByName( sAbilityList[1] )
 local abilityW = bot:GetAbilityByName( sAbilityList[2] )
-local abilityD = bot:GetAbilityByName( sAbilityList[4] )
 local abilityR = bot:GetAbilityByName( sAbilityList[6] )
+local BloodMist = bot:GetAbilityByName( 'bloodseeker_blood_mist' )
 
 local castQDesire, castQTarget = 0
 local castWDesire, castWLocation = 0
 local castRDesire, castRTarget = 0
+local BloodMistDesire
 
 local nKeepMana, nMP, nHP, nLV, hEnemyHeroList
 
@@ -186,15 +187,12 @@ function X.SkillsComplement()
 	hEnemyHeroList = bot:GetNearbyHeroes( 1600, true, BOT_MODE_NONE )
 
 
-	castDDesire = X.ConsiderD()
-	if ( castDDesire > 0 )
+	BloodMistDesire = X.ConsiderBloodMist()
+	if (BloodMistDesire > 0)
 	then
-
 		bot:Action_ClearActions( false )
-
-		bot:ActionQueue_UseAbility( abilityD )
+		bot:ActionQueue_UseAbility(BloodMist)
 		return
-
 	end
 
 
@@ -233,54 +231,44 @@ function X.SkillsComplement()
 
 end
 
-function X.ConsiderD()
+function X.ConsiderBloodMist()
 
-	if not bot:HasScepter()	
-		or not abilityD:IsFullyCastable() 
-	then return 0 end
-
-	local nCastRange = 400
-		
-	local nInRangeEnemyHeroList = bot:GetNearbyHeroes(nCastRange, true, BOT_MODE_NONE)
-	local botTarget = J.GetProperTarget(bot)
-	
-	--如果是开启状态, 关闭技能
-	if abilityD:GetToggleState()
+	if not bot:HasScepter()
+	or not BloodMist:IsFullyCastable()
 	then
-	
-		--1, 血量过低
-		if nHP < 0.14
+		return BOT_MODE_NONE
+	end
+
+	local nRadius = 450
+	local nInRangeEnemyHeroList = bot:GetNearbyHeroes(nRadius, true, BOT_MODE_NONE)
+	local botTarget = J.GetProperTarget(bot)
+
+	if BloodMist:GetToggleState() == true
+	then
+		if nHP < 0.2
 		then
 			return BOT_ACTION_DESIRE_HIGH
 		end
-		
-		--2, 范围内无敌人
+
 		if #nInRangeEnemyHeroList == 0
 		then
-			return BOT_ACTION_DESIRE_HIGH
+			return BOT_ACTION_DESIRE_ABSOLUTE
 		end
-
 	end
-	
-	
-	--如果是关闭状态, 切换为开启
-	if not abilityD:GetToggleState()
-		and nHP > 0.25
+
+	if not BloodMist:GetToggleState() == false
+	and nHP > 0.5
 	then
-		if J.IsValidHero( botTarget )
-			and J.IsInRange( bot, botTarget, nCastRange * 0.8 )
-			and J.CanCastOnNonMagicImmune( botTarget )
+		if J.IsValidHero(botTarget)
+		and J.IsInRange(bot, botTarget, nRadius * 0.8)
+		and J.CanCastOnNonMagicImmune(botTarget)
 		then
 			return BOT_ACTION_DESIRE_HIGH
-		end	
+		end
 	end
-	
-
 
 	return BOT_MODE_NONE
-
 end
-
 
 function X.ConsiderQ()
 

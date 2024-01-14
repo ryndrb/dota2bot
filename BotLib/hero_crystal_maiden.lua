@@ -56,7 +56,7 @@ tOutFitList['outfit_priest'] = {
 	"item_force_staff",--
 	"item_sheepstick",--
 	"item_aeon_disk",--
-	"item_recipe_ultimate_scepter_2",
+	"item_ultimate_scepter_2",
 	"item_moon_shard",
 }
 
@@ -77,7 +77,7 @@ tOutFitList['outfit_mage'] = {
 	"item_force_staff",--
 	"item_sheepstick",--
 	"item_aeon_disk",--
-	"item_recipe_ultimate_scepter_2",
+	"item_ultimate_scepter_2",
 	"item_moon_shard",
 }
 
@@ -154,11 +154,13 @@ local aetherRange = 0
 local abilityQ = bot:GetAbilityByName( sAbilityList[1] )
 local abilityW = bot:GetAbilityByName( sAbilityList[2] )
 local abilityR = bot:GetAbilityByName( sAbilityList[6] )
+local CrystalClone = bot:GetAbilityByName( sAbilityList[4] )
 local talent2 = bot:GetAbilityByName( sTalentList[2] )
 
 local castQDesire, castQLoc = 0
 local castWDesire, castWTarget = 0
 local castRDesire = 0
+local CrystalCloneDesire = 0
 
 local nKeepMana, nMP, nHP, nLV
 
@@ -177,6 +179,13 @@ function X.SkillsComplement()
 	if aether ~= nil then aetherRange = 250 end
 --	if talent2:IsTrained() then aetherRange = aetherRange + talent2:GetSpecialValueInt( 'value' ) end
 
+	CrystalCloneDesire = X.ConsiderCrystalClone()
+	if (CrystalCloneDesire > 0)
+	then
+		J.SetQueuePtToINT( bot, false )
+		bot:ActionQueue_UseAbility(CrystalClone)
+		return
+	end
 
 	castQDesire, castQLoc = X.ConsiderQ()
 	if ( castQDesire > 0 )
@@ -878,6 +887,41 @@ function X.ConsiderR()
 
 	return BOT_ACTION_DESIRE_NONE
 
+end
+
+function X.ConsiderCrystalClone()
+	if not CrystalClone:IsTrained()
+	or not CrystalClone:IsFullyCastable()
+	then
+		return BOT_ACTION_DESIRE_NONE
+	end
+
+	local nRange = bot:GetAttackRange()
+
+	if J.IsRetreating(bot)
+	and not J.IsRealInvisible(bot)
+	and not bot:IsFacingLocation(GetAncient(GetTeam()):GetLocation(), 45)
+	and not J.IsRealInvisible(bot)
+	and bot:DistanceFromFountain() > 600
+	and bot:WasRecentlyDamagedByAnyHero(4.0)
+	then
+		return BOT_ACTION_DESIRE_MODERATE
+	end
+
+	if J.IsGoingOnSomeone(bot)
+	then
+		local botTarget = bot:GetTarget()
+
+		if J.IsValidHero(botTarget)
+		and J.IsInRange(bot, botTarget, nRange - 150)
+		and J.CanCastOnNonMagicImmune(botTarget)
+		and bot:IsFacingLocation(botTarget:GetLocation(), 30)
+		then
+			return BOT_ACTION_DESIRE_HIGH
+		end
+	end
+
+	return BOT_ACTION_DESIRE_NONE
 end
 
 function X.cm_GetWeakestUnit( nEnemyUnits )

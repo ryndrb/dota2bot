@@ -55,8 +55,38 @@ Worth noting that I also use a vscript to improve the bots GPM (XPM later) and a
         - [ ] Tormentor
         - [ ] Dynamic item builds
         - [ ] Clear wave faster with abilities
-        - [ ] Functionality for new hero ablities gained through Aghs/Shard
-        - [/] vscript to increase bots GPM (XPM later) and for them to acquire neutral items
+        - [x] Functionality for new ablities gained through Aghs/Shard
+            - Alchemist
+                - [x] Shard
+                - [ ] Scepter
+            - Antimage
+                - [x] Shard
+                - [x] Scepter
+            - Arc Warden
+                - [N] Shard
+                - [N] Scepter
+            - Axe
+                - [N] Shard
+                - [N] Scepter
+            - Bane
+                - [N] Shard
+                - [N] Scepter
+            - Bloodseeker
+                - [N] Shard
+                - [x] Scepter
+            - Bounty Hunter
+                - [N] Shard
+                - [x] Scepter
+            - Bristleback
+                - [x] Shard
+                - [x] Scepter
+            - Chaos Knight
+                - [N] Shard
+                - [N] Scepter
+            - Crystal Maiden
+                - [x] Shard
+                - [x] Scepter
+        - [x] vscript to increase bots GPM (XPM later) and for them to acquire neutral items
     - ***Improve***
         - [ ] Some heroes ability usage
         - [ ] Item usage
