@@ -37,8 +37,8 @@ Worth noting that I also use a vscript to improve the bots GPM (XPM later) and a
         - [2] Zeus
 
 - ***"Attempted" Logic Changes (still)***
-    - Pushing
-    - Defending
+    - Pushing (Roughly default still)
+    - Defending (Roughly default still)
     - Do Roshan
 
 - ***Items***
@@ -86,7 +86,7 @@ Worth noting that I also use a vscript to improve the bots GPM (XPM later) and a
             - Crystal Maiden
                 - [x] Shard
                 - [x] Scepter
-        - [x] vscript to increase bots GPM (XPM later) and for them to acquire neutral items
+        - [x] vscript to increase bots GPM (XPM later) and for them to acquire neutral items (local host only)
     - ***Improve***
         - [ ] Some heroes ability usage
         - [ ] Item usage
