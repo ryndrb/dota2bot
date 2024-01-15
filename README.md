@@ -1,13 +1,37 @@
 # Dota 2 Bot Script
 
 This is a Dota 2 Bot Script based mostly on Beginner:AI by (dota2jmz@163.com). Some changes are based upon other existing bot scripts; personal use mostly; adding heroes. Trying to get use to the API and code base.
-It's not necessarily better than the origin script (due to Push/Defend logic/timings, can get cook early game), though this wins quite a lot against it when spectating (if no Sniper/Viper/Warlock).
+It's not necessarily better than the origin script (due to the changes Push/Defend logic/timings, can get cook early game). Just tryna alleviate cheesiness and make bots movement more organic and objective base.
+It's a work in progress.
 
-Might want to scale Push desire with core networths so that bots farm more and increase their CS, though it's only good if also going against this bot script. If matched against others, like Beginner:AI
-(or any aggresive logic), they might get out-pushed (since those will bring all 5 everytime), which will make this script defend all the time and cores not able farm (non-Turbo). Also, evasion and damage reduction
+Might want to scale Push desire with core networths so that bots farm more and increase their CS (though my vscript Buff alleviate this). Also, evasion/damage reduction/aura
 items are just too good in bots games (since itemization isn't dynamic), so it's still lineup dependent.
 
 Worth noting that I also use a vscript to improve the bots GPM (XPM later) and also have them able to get neutral items (Check Buff).
+
+- ***To Use***
+    - Since Valve hasn't fixed the workshop bug yet, bot scripts (that were uploaded before the bug occured) are only playable through local host lobby.
+    - To use this (ignore the first two if Git is installed):
+        - Go to Steam/steamapps/workshop/content/570.
+        - Find the folder inside 570 named: `3139791706`, then copy it.
+        - Go to Steam/steamapps/common/dota 2 beta/game/dota/scripts/vscripts. You will see that there is a `bots` folder inside. Either delete this folder or rename it.
+            - Alternatively, if you have Git installed (easier and better way):
+                - Once you've deleted or renamed the bots folder, create a new folder called `bots`.
+                - Open Command Prompt inside this folder (Right Click on Windows 11). Type: `git clone https://github.com/ryndrb/dota2bot.git`.
+                - The contents of this repository will then be downloaded. And everytime this repository is updated, open Command Prompt inside the `bots` folder. Type: `git pull`.
+                - Ignore 4.
+        - Paste your copy of `3139791706`, and rename it to `bots`.
+        - Then, launch DotA 2.
+        - Click `Play Dota`. Under `Custom Lobbies`, select `Create`.
+        - Under the `Lobby Settings` at the bottom, select `Edit`. Then, in the drop down `Radiant Bots` and `Dire Bots` menus, select `Local Dev Script`.
+        - Click OK, and it should be good to go.
+            - The lobby has 5 slots (This is for Radiant only for now):
+                -  1st is for Position 2 (Mid Lane)
+                -  2nd is for Position 3 (Off Lane)
+                -  3rd is for Position 1 (Safe Lane)
+                -  4th is for Position 5 (Support Safe Lane)
+                -  5th is for Position 4 (Support Off Lane)
+        - (For non-Git) Everytime there is an update, the contents inside the `3139791706` folder needs to be copy and pasted to the `bots` folder.
 
 - ***Key Scripts***
     - BOT Experiment (by Furiospuppy)
@@ -86,6 +110,18 @@ Worth noting that I also use a vscript to improve the bots GPM (XPM later) and a
             - Crystal Maiden
                 - [x] Shard
                 - [x] Scepter
+            - Dazzle
+                - [N] Shard
+                - [N] Scepter
+            - Death Prophet
+                - [N] Shard
+                - [N] Scepter
+            - Dragon Knight
+                - [N] Shard
+                - [N] Scepter
+            - Drow Ranger
+                - [x] Shard
+                - [N] Scepter
         - [x] vscript to increase bots GPM (XPM later) and for them to acquire neutral items (local host only)
     - ***Improve***
         - [ ] Some heroes ability usage

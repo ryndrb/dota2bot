@@ -50,13 +50,13 @@ tOutFitList['outfit_carry'] = {
 	"item_hurricane_pike",--
 	RandomItem,--
 	"item_butterfly",--
+	"item_aghanims_shard",
 	"item_greater_crit",--
 	"item_satanic",--
 	"item_ultimate_scepter_2",
 	"item_travel_boots",
 	"item_moon_shard",
 	"item_travel_boots_2",--
-	"item_aghanims_shard",
 }
 
 tOutFitList['outfit_mid'] = tOutFitList['outfit_carry']
@@ -126,11 +126,13 @@ modifier_drow_ranger_marksmanship_reduction
 local abilityQ = bot:GetAbilityByName( sAbilityList[1] )
 local abilityW = bot:GetAbilityByName( sAbilityList[2] )
 local abilityE = bot:GetAbilityByName( sAbilityList[3] )
+local Glacier 	= bot:GetAbilityByName( 'drow_ranger_glacier' )
 local abilityM = nil
 
 local castQDesire, castQTarget
 local castWDesire, castWLocation
 local castEDesire, castELocation
+local GlacierDesire
 local castMDesire
 local castWMDesire, castWMLocation
 
@@ -149,6 +151,15 @@ function X.SkillsComplement()
 	hEnemyList = bot:GetNearbyHeroes( 1600, true, BOT_MODE_NONE )
 	hAllyList = J.GetAlliesNearLoc( bot:GetLocation(), 1600 )
 	abilityM = J.IsItemAvailable( "item_mask_of_madness" )
+
+	GlacierDesire = X.ConsiderGlacier()
+	if GlacierDesire > 0
+	then
+		J.SetQueuePtToINT(bot, true)
+
+		bot:ActionQueue_UseAbility(Glacier)
+		return
+	end
 
 	castEDesire, castELocation = X.ConsiderE()
 	if castEDesire > 0
@@ -730,6 +741,48 @@ function X.ConsiderQ()
 	return BOT_ACTION_DESIRE_NONE, nil
 end
 
+function X.ConsiderGlacier()
+	if not Glacier:IsTrained()
+	or not Glacier:IsFullyCastable()
+	then
+		return BOT_ACTION_DESIRE_NONE
+	end
+
+	local nAttackRange = bot:GetAttackRange()
+	local nEnemyHeroes = bot:GetNearbyHeroes(nAttackRange, true, BOT_MODE_NONE)
+	local nAllyHeroes = bot:GetNearbyHeroes(nAttackRange, true, BOT_MODE_ATTACK)
+	local botTarget = bot:GetTarget()
+
+	local alliesAroundLoc = J.GetAlliesNearLoc(bot:GetLocation(), 500)
+
+	if #alliesAroundLoc > 1
+	then
+		return BOT_ACTION_DESIRE_LOW
+	end
+
+	if J.IsRetreating(bot)
+	and ((#nEnemyHeroes ~= nil and #nEnemyHeroes >= 2) or J.GetHP(bot) < 0.3)
+	then
+		if nAllyHeroes ~= nil
+		and #nAllyHeroes >= 1
+		then
+			return BOT_ACTION_DESIRE_LOW
+		end
+
+		return BOT_ACTION_DESIRE_HIGH
+	end
+
+	if J.IsGoingOnSomeone(bot)
+	then
+		if (abilityE:IsFullyCastable() and J.CanCastOnNonMagicImmune(botTarget))
+		and J.IsInRange(bot, botTarget, abilityE:GetCastRange() + 200)
+		then
+			return BOT_ACTION_DESIRE_HIGH
+		end
+	end
+
+	return BOT_ACTION_DESIRE_NONE
+end
 
 return X
 -- dota2jmz@163.com QQ:2462331592..
