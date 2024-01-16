@@ -74,71 +74,55 @@ tOutFitList['outfit_carry'] = {
 }
 
 tOutFitList['outfit_mid'] = {
-
 	"item_tango",
 	"item_double_branches",
 	"item_faerie_fire",
 
 	"item_bottle",
+	"item_null_talisman",
 	"item_boots",
 	"item_magic_wand",
-	"item_aether_lens",--
 	"item_travel_boots",
+	"item_aether_lens",--
 	"item_aghanims_shard",
 	"item_ultimate_scepter",
-	"item_ethereal_blade",--
 	"item_black_king_bar",--
+	"item_ethereal_blade",--
 	"item_octarine_core",--
+	"item_sheepstick",--
 	"item_ultimate_scepter_2",
 	"item_travel_boots_2",--
-	"item_sheepstick",--
 	"item_moon_shard",
-}
-
-tOutFitList['outfit_priest'] = {
-
-	"item_priest_outfit",
-	"item_urn_of_shadows",
-	"item_mekansm",
-	"item_glimmer_cape",
-	"item_aghanims_shard",
-	"item_guardian_greaves",
-	"item_spirit_vessel",
---	"item_wraith_pact",
---	"item_ultimate_scepter",
-	"item_shivas_guard",
-	"item_moon_shard",
---	"item_ultimate_scepter_2",
-	"item_sheepstick",
-
-}
-
-tOutFitList['outfit_mage'] = {
-
-	"item_mage_outfit",
-	"item_ancient_janggo",
-	"item_glimmer_cape",
-	"item_boots_of_bearing",
-	"item_pipe",
-	"item_aghanims_shard",
-	"item_veil_of_discord",
-	"item_cyclone",
-	"item_sheepstick",
-	"item_wind_waker",
-	"item_moon_shard",
---	"item_ultimate_scepter_2",
-
 }
 
 tOutFitList['outfit_tank'] = tOutFitList['outfit_carry']
 
+tOutFitList['outfit_priest'] = tOutFitList['outfit_carry']
+
+tOutFitList['outfit_mage'] = tOutFitList['outfit_carry']
+
 X['sBuyList'] = tOutFitList[sOutfitType]
 
-X['sSellList'] = {
-	"item_bottle",
+Pos1SellList = {
 	"item_magic_wand",
 	"item_falcon_blade",
 }
+
+Pos2SellList = {
+	"item_bottle",
+	"item_null_talisman",
+	"item_magic_wand",
+}
+
+X['sSellList'] = {}
+
+if sOutfitType == "outfit_carry"
+then
+    X['sSellList'] = Pos1SellList
+elseif sOutfitType == "outfit_mid"
+then
+    X['sSellList'] = Pos2SellList
+end
 
 if J.Role.IsPvNMode() or J.Role.IsAllShadow() then X['sBuyList'], X['sSellList'] = { 'PvN_mage' }, {} end
 
