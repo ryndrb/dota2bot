@@ -10,7 +10,7 @@ items are just too good in bots games (since itemization isn't dynamic), so it's
 Worth noting that I also use a vscript to improve the bots GPM (XPM later) and also have them able to get neutral items (Check Buff).
 
 - ***To Use***
-    - Since Valve hasn't fixed the workshop bug yet, bot scripts (that were uploaded before the bug occured) are only playable through local host lobby.
+    - Since Valve hasn't fixed the workshop bug yet, bot scripts (that were uploaded after the bug occured) are only playable through local host lobby.
     - To use this (ignore the first two if Git is installed):
         - Go to Steam/steamapps/workshop/content/570.
         - Find the folder inside 570 named: `3139791706`, then copy it.
