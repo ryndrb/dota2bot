@@ -570,23 +570,20 @@ function X.ConsiderNosedive()
 	local nRadius   = 500
 	local botTarget  = J.GetProperTarget(bot)
 	local nEnemyHeroes = bot:GetNearbyHeroes(nCastRange, true, BOT_MODE_NONE)
+	local nAllyHeroes = bot:GetNearbyHeroes(nCastRange, false, BOT_MODE_ATTACK)
 
 	if J.IsRetreating(bot)
 	then
-		local nAllyHeroes = bot:GetNearbyHeroes(nCastRange, false, BOT_MODE_ATTACK)
+		if (#nEnemyHeroes >= #nAllyHeroes or not J.WeAreStronger(bot, nRadius))
+		and not J.IsRealInvisible(bot)
+		and bot:IsFacingLocation(GetAncient(GetTeam()):GetLocation(), 30)
+		and bot:DistanceFromFountain() > 600
+		and bot:WasRecentlyDamagedByAnyHero(4.0)
+		then
+			local loc = J.GetEscapeLoc()
+			local location = J.Site.GetXUnitsTowardsLocation(bot, loc, nCastRange)
 
-		for _, enemy in pairs(nEnemyHeroes) do
-			if #nAllyHeroes >= 1
-			and not J.IsRealInvisible(enemy)
-			and enemy:IsFacingLocation(GetAncient(GetTeam()):GetLocation(), 30)
-			and enemy:DistanceFromFountain() > 600
-			and enemy:WasRecentlyDamagedByAnyHero(4.0)
-			then
-				local loc = J.GetEscapeLoc()
-				local location = J.Site.GetXUnitsTowardsLocation(bot, loc, nCastRange)
-
-				return BOT_ACTION_DESIRE_HIGH, location
-			end
+			return BOT_ACTION_DESIRE_HIGH, location
 		end
 	end
 
