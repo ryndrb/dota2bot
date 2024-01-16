@@ -79,95 +79,39 @@ Worth noting that I also use a vscript to improve the bots GPM (XPM later) and a
         - [ ] Tormentor
         - [ ] Dynamic item builds
         - [ ] Clear wave faster with abilities
-        - [x] Functionality for new ablities gained through Aghs/Shard
-            - Alchemist
-                - [x] Shard
-                - [ ] Scepter
-            - Antimage
-                - [x] Shard
-                - [x] Scepter
-            - Arc Warden
-                - [N] Shard
-                - [N] Scepter
-            - Axe
-                - [N] Shard
-                - [N] Scepter
-            - Bane
-                - [N] Shard
-                - [N] Scepter
-            - Bloodseeker
-                - [N] Shard
-                - [x] Scepter
-            - Bounty Hunter
-                - [N] Shard
-                - [x] Scepter
-            - Bristleback
-                - [x] Shard
-                - [x] Scepter
-            - Chaos Knight
-                - [N] Shard
-                - [N] Scepter
-            - Crystal Maiden
-                - [x] Shard
-                - [x] Scepter
-            - Dazzle
-                - [N] Shard
-                - [N] Scepter
-            - Death Prophet
-                - [N] Shard
-                - [N] Scepter
-            - Dragon Knight
-                - [N] Shard
-                - [N] Scepter
-            - Drow Ranger
-                - [x] Shard
-                - [N] Scepter
-            - Earth Spirit
-                - [x] Shard
-                - [ ] Scepter
-            - Ember Spirit
-                - [N] Shard
-                - [N] Scepter
-            - Huskar
-                - [N] Shard
-                - [N] Scepter
-            - Jakiro
-                - [x] Shard
-                - [N] Scepter
-            - Juggernaut
-                - [N] Shard
-                - [x] Scepter
-            - Kunkka
-                - [x] Shard
-                - [x] Scepter
-            - Legion Commander
-                - [N] Shard
-                - [N] Scepter
-            - Lich
-                - [x] Shard
-                - [x] Scepter
-            - Lina
-                - [N] Shard
-                - [x] Scepter
-            - Lion
-                - [N] Shard
-                - [N] Scepter
-            - Luna
-                - [N] Shard
-                - [x] Scepter
-            - Mars
-                - [N] Shard
-                - [N] Scepter
-            - Medusa
-                - [N] Shard
-                - [N] Scepter
-            - Mirana
-                - [N] Shard
-                - [N] Scepter
-            - Naga Siren
-                - [N] Shard
-                - [x] Scepter
         - [x] vscript to increase bots GPM (XPM later) and for them to acquire neutral items (local host only)
+        - [x] Functionality for new active ablities gained through Aghs/Shard
+            | Hero                  | Shard   | Scepter 
+            |:---------------------:|:-------:|:-------:
+            | Alchemist             | &check; | &cross;
+            | Antimage              | &check; | &check;
+            | Arc Warden            | -       | -
+            | Axe                   | -       | -
+            | Bane                  | -       | -
+            | Bloodseeker           | -       | &check;
+            | Bounty Hunter         | -       | &check;
+            | Bristleback           | &check; | &check;
+            | Chaos Knight          | -       | -
+            | Crystal Maiden        | &check; | &check;
+            | Dazzle                | -       | -
+            | Death Prophet         | -       | -
+            | Dragon Knight         | -       | -
+            | Drow Ranger           | &check; | -
+            | Earth Spirit          | &check; | &cross;
+            | Ember Spirit          | -       | -
+            | Huskar                | -       | -
+            | Jakiro                | &check; | -
+            | Juggernaut            | -       | &check;
+            | Kunkka                | &check; | &check;
+            | Legion Commander      | -       | -
+            | Lich                  | &check; | &check;
+            | Lina                  | -       | &check;
+            | Lion                  | -       | -
+            | Luna                  | -       | &check;
+            | Mars                  | -       | -
+            | Medusa                | -       | -
+            | Mirana                | -       | -
+            | Naga Siren            | -       | &check;
     - ***Improve***
         - [ ] Some heroes ability usage
         - [ ] Item usage
