@@ -112,6 +112,38 @@ Worth noting that I also use a vscript to improve the bots GPM (XPM later) and a
             | Medusa                | -       | -
             | Mirana                | -       | -
             | Naga Siren            | -       | &check;
+            | Necrophos             | &check; | -
+            | Ogre Magi             | &check; | &check;
+            | Omniknight            | -       | -
+            | Oracle                | &check; | -
+            | Phantom Assasin       | &check; | -
+            | Phantom Lancer        | &check; | -
+            | Pugna                 | -       | -
+            | Queen of Pain         | -       | -
+            | Razor                 | -       | -
+            | Riki                  | -       | -
+            | Sand King             | -       | -
+            | Shadow Fiend          | &cross; | -
+            | Shadow Shaman         | -       | -
+            | Silencer              | -       | -
+            | Skywrath Mage         | -       | -
+            | Slardar               | -       | -
+            | Slark                 | -       | -
+            | Sniper                | -       | -
+            | Storm Sprit           | -       | -
+            | Sven                  | -       | &cross;
+            | Templar Assasin       | -       | &cross;
+            | Terrorblade           | &check; | &check;
+            | Tidehunter            | &check; | -
+            | Timbersaw             | &check; | &check;
+            | Tiny                  | -       | &check;
+            | Ursa                  | -       | -
+            | Viper                 | -       | &check;
+            | Void Spirit           | -       | -
+            | Warlock               | -       | -
+            | Witch Doctor          | &check; | -
+            | Wraith King           | -       | -
+            | Zeus                  | &check; | &check;
     - ***Improve***
         - [ ] Some heroes ability usage
         - [ ] Item usage

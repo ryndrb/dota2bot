@@ -217,11 +217,17 @@ function X.ConsiderR()
 		return BOT_ACTION_DESIRE_NONE
 	end
 
+	if J.IsRetreating(bot)
+	and J.GetHP(bot) < 0.4
+	then
+		return BOT_ACTION_DESIRE_HIGH
+	end
+
 	if J.IsGoingOnSomeone( bot )
 	then
 		if J.IsValidHero( botTarget )
-			and J.IsInRange( bot, botTarget, 800 )
-			and J.CanCastOnMagicImmune( botTarget )
+		and J.IsInRange( bot, botTarget, 1200 )
+		and not J.IsInRange( bot, botTarget, 650 )
 		then
 			return BOT_ACTION_DESIRE_HIGH
 		end

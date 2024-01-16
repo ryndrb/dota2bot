@@ -127,6 +127,7 @@ local abilityQ = bot:GetAbilityByName( sAbilityList[1] )
 local abilityW = bot:GetAbilityByName( sAbilityList[2] )
 local abilityE = bot:GetAbilityByName( sAbilityList[3] )
 local abilityR = bot:GetAbilityByName( sAbilityList[6] )
+local DeadInTheWater = bot:GetAbilityByName( 'tidehunter_dead_in_the_water' )
 local talent3 = bot:GetAbilityByName( sTalentList[3] )
 
 
@@ -134,6 +135,7 @@ local castQDesire, castQTarget
 local castWDesire, castWTarget
 local castEDesire, castETarget
 local castRDesire, castRTarget
+local DeadInTheWaterDesire, AnchorTarget
 
 local nKeepMana, nMP, nHP, nLV, hEnemyList, hAllyList, botTarget, sMotive
 local aetherRange = 0
@@ -178,6 +180,7 @@ function X.SkillsComplement()
 		J.SetQueuePtToINT( bot, true )
 		
 		if bot:HasScepter()
+		and castQTarget ~= nil
 		then
 			bot:ActionQueue_UseAbilityOnLocation( abilityQ, castQTarget:GetLocation() )
 		else
@@ -195,6 +198,15 @@ function X.SkillsComplement()
 		--J.SetQueuePtToINT( bot, true )
 
 		bot:Action_UseAbility( abilityE )
+		return
+	end
+
+	DeadInTheWaterDesire, AnchorTarget = X.ConsiderDeadInTheWater()
+	if DeadInTheWaterDesire > 0
+	then
+		J.SetReportMotive( bDebugMode, sMotive )
+		J.SetQueuePtToINT( bot, true )
+		bot:ActionQueue_UseAbilityOnEntity(DeadInTheWater, AnchorTarget)
 		return
 	end
 
@@ -662,7 +674,59 @@ function X.ConsiderR()
 
 end
 
+function X.ConsiderDeadInTheWater()
+	if not DeadInTheWater:IsTrained()
+	or not DeadInTheWater:IsFullyCastable()
+	then
+		return BOT_ACTION_DESIRE_NONE, nil
+	end
+
+	local nCastRange = DeadInTheWater:GetCastRange()
+	local nInRangeEnmyList = bot:GetNearbyHeroes(nCastRange, true, BOT_MODE_NONE)
+
+	if J.IsRetreating(bot)
+	then
+		for _, npcEnemy in pairs(nInRangeEnmyList)
+		do
+			if J.IsValid(npcEnemy)
+			and J.IsMoving(npcEnemy)
+			and J.IsInRange(npcEnemy, bot, nCastRange)
+			and bot:WasRecentlyDamagedByHero(npcEnemy, 4.0)
+			and J.CanCastOnNonMagicImmune(npcEnemy)
+			and X.IsWithoutSpellShield(npcEnemy)
+			and not J.IsDisabled(npcEnemy)
+			then
+				return BOT_ACTION_DESIRE_HIGH, npcEnemy
+			end
+		end
+	end
+
+	if J.IsGoingOnSomeone(bot)
+	then
+		if J.IsValidHero(botTarget)
+		and J.IsMoving(botTarget)
+		and J.IsInRange(botTarget, bot, nCastRange)
+		and J.CanCastOnNonMagicImmune(botTarget)
+		and X.IsWithoutSpellShield(botTarget)
+		and not J.IsDisabled(botTarget)
+		then
+			return BOT_ACTION_DESIRE_HIGH, botTarget
+		end
+	end
+
+	local npcEnemy = nInRangeEnmyList[1]
+	if J.IsValidHero(npcEnemy)
+	and J.IsMoving(npcEnemy)
+	and J.IsInRange(bot, npcEnemy, nCastRange - 100)
+	and J.CanCastOnNonMagicImmune(npcEnemy)
+	and X.IsWithoutSpellShield(npcEnemy)
+	and not J.IsDisabled(npcEnemy)
+	and J.IsRunning(npcEnemy)
+	then
+		return BOT_ACTION_DESIRE_HIGH, npcEnemy
+	end
+
+	return BOT_ACTION_DESIRE_NONE, nil
+end
 
 return X
--- dota2jmz@163.com QQ:2462331592..
-

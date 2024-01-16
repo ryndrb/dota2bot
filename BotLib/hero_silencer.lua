@@ -210,6 +210,7 @@ function X.SkillsComplement()
 
 		-- bot:ActionQueue_UseAbilityOnEntity( abilityE, castETarget )
 		if bot:HasScepter()
+		and castETarget ~= nil
 		then
 			bot:ActionQueue_UseAbilityOnLocation( abilityE, castETarget:GetLocation() )
 		else

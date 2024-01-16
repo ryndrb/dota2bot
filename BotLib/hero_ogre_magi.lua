@@ -168,7 +168,7 @@ local abilityQ = bot:GetAbilityByName( sAbilityList[1] )
 local abilityW = bot:GetAbilityByName( sAbilityList[2] )
 local abilityE = bot:GetAbilityByName( sAbilityList[3] )
 local abilityD = bot:GetAbilityByName( sAbilityList[4] )
-local abilityAS = bot:GetAbilityByName( sAbilityList[5] )
+local FireShield = bot:GetAbilityByName( sAbilityList[5] )
 local talent2 = bot:GetAbilityByName( sTalentList[2] )
 local talent8 = bot:GetAbilityByName( sTalentList[8] )
 
@@ -176,7 +176,7 @@ local castQDesire, castQTarget
 local castWDesire, castWTarget
 local castEDesire, castETarget
 local castDDesire, castDTarget
-local castASDesire, castASTarget
+local FireShieldDesire, FireShieldTarget
 
 
 local nKeepMana, nMP, nHP, nLV, hEnemyList, hAllyList, botTarget, sMotive
@@ -251,14 +251,14 @@ function X.SkillsComplement()
 		return
 	end
 	
-	castASDesire, castASTarget, sMotive = X.ConsiderAS()
-	if ( castASDesire > 0 )
+	FireShieldDesire, FireShieldTarget, sMotive = X.ConsiderFireShield()
+	if ( FireShieldDesire > 0 )
 	then
 		J.SetReportMotive( bDebugMode, sMotive )
 
 		J.SetQueuePtToINT( bot, true )
 
-		bot:ActionQueue_UseAbilityOnEntity( abilityAS, castASTarget )
+		bot:ActionQueue_UseAbilityOnEntity( FireShield, FireShieldTarget )
 		return
 
 	end
@@ -1061,37 +1061,38 @@ function X.ConsiderD()
 end
 
 
-function X.ConsiderAS()
+function X.ConsiderFireShield()
 
-	if not abilityAS:IsTrained()
-		or not abilityAS:IsFullyCastable() 
+	if not FireShield:IsTrained()
+	or not FireShield:IsFullyCastable()
 	then
 		return BOT_ACTION_DESIRE_NONE, 0
 	end
 
 	local nRadius = 600
-	local nCastRange = abilityAS:GetCastRange()
-	local nCastPoint = abilityAS:GetCastPoint()
-	local nManaCost = abilityAS:GetManaCost()
+	local nCastRange = FireShield:GetCastRange() + aetherRange
+	local nCastPoint = FireShield:GetCastPoint()
+	local nManaCost = FireShield:GetManaCost()
 
 	for _, npcEnemy in pairs( hEnemyList )
-	do 
+	do
 		if J.IsValidHero( npcEnemy )
-			and J.CanCastOnNonMagicImmune( npcEnemy )
+		and J.CanCastOnNonMagicImmune( npcEnemy )
 		then
 			local enemyTarget = npcEnemy:GetAttackTarget()
+
 			if enemyTarget ~= nil
-				and J.IsInRange( bot, enemyTarget, nCastRange + 120 )
-				and not enemyTarget:HasModifier( 'modifier_fountain_glyph' )
-				and not enemyTarget:HasModifier( 'modifier_ogre_magi_smash_buff' )
+			and J.IsInRange( bot, enemyTarget, nCastRange )
+			and not enemyTarget:HasModifier( 'modifier_fountain_glyph' )
+			and not enemyTarget:HasModifier( 'modifier_ogre_magi_smash_buff' )
 			then
 				if enemyTarget:IsTower() and npcEnemy:IsBot()
 				then
 					return BOT_ACTION_DESIRE_HIGH, enemyTarget, "AS-守塔"
 				end
-				
+
 				if enemyTarget:IsHero()
-					and not enemyTarget:IsIllusion()
+				and not enemyTarget:IsIllusion()
 				then
 					return BOT_ACTION_DESIRE_HIGH, enemyTarget, "AS-保护队友:"..J.Chat.GetNormName(enemyTarget)
 				end

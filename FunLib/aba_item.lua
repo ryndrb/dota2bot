@@ -662,7 +662,7 @@ Item['item_vanguard']	= GetItemComponents( 'item_vanguard' )[1]
 
 Item['item_veil_of_discord']	= GetItemComponents( 'item_veil_of_discord' )[1]
 
-Item['item_vladmir']	= {"item_ring_of_basilius", "item_lifesteal", "item_buckler", "item_blades_of_attack", "item_recipe_vladmir"}
+Item['item_vladmir']	= {"item_ring_of_basilius", "item_lifesteal", "item_buckler", "item_blades_of_attack"}
 
 Item['item_wraith_band']	= GetItemComponents( 'item_wraith_band' )[1]
 

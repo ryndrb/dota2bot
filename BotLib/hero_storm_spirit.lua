@@ -87,19 +87,19 @@ local ElectricVortex 	= bot:GetAbilityByName( "storm_spirit_electric_vortex" )
 local Overload 			= bot:GetAbilityByName( "storm_spirit_overload" )
 local BallLightning 	= bot:GetAbilityByName( "storm_spirit_ball_lightning" )
 
+local OverloadDesire = 0
+
 function X.SkillsComplement()
 	if J.CanNotUseAbility(bot) then return end
 
-    StaticRemnantDesire 						= X.ConsiderStaticRemnant()
-    ElectricVortexDesire, ElectricVortexTarget 	= X.ConsiderElectricVortex()
-    BallLightningDesire, BallLightningLoc 		= X.ConsiderBallLightning()
-
+    BallLightningDesire, BallLightningLoc = X.ConsiderBallLightning()
     if (BallLightningDesire > 0)
 	then
 		bot:Action_UseAbilityOnLocation(BallLightning, BallLightningLoc)
 		return
 	end
 
+	ElectricVortexDesire, ElectricVortexTarget = X.ConsiderElectricVortex()
 	if (ElectricVortexDesire > 0)
 	then
 		if bot:HasScepter() then
@@ -111,6 +111,14 @@ function X.SkillsComplement()
 		end
 	end
 
+	OverloadDesire = X.ConsiderOverload()
+	if (OverloadDesire > 0)
+	then
+		bot:Action_UseAbility(Overload)
+		return
+	end
+
+	StaticRemnantDesire = X.ConsiderStaticRemnant()
 	if (StaticRemnantDesire > 0)
 	then
 		bot:Action_UseAbility(StaticRemnant)
@@ -240,6 +248,29 @@ function X.ConsiderElectricVortex()
 	end
 
 	return BOT_ACTION_DESIRE_NONE, 0
+end
+
+function X.ConsiderOverload()
+	if not Overload:IsTrained()
+	or not Overload:IsFullyCastable()
+	then
+		return BOT_ACTION_DESIRE_NONE
+	end
+
+	local nActivationRadius = 750
+	local nInRangeEnemyList = bot:GetNearbyHeroes(nActivationRadius, true, BOT_MODE_NONE)
+	local nInRangeAllyList = bot:GetNearbyHeroes(nActivationRadius, false, BOT_MODE_ATTACK)
+
+	if J.IsInTeamFight(bot, 1200) and bot:HasScepter()
+	then
+		if (nInRangeEnemyList ~= nil and #nInRangeEnemyList >= 1)
+		and (nInRangeAllyList ~= nil and #nInRangeAllyList >= 1)
+		then
+			return BOT_ACTION_DESIRE_HIGH, nil
+		end
+	end
+
+	return BOT_ACTION_DESIRE_NONE
 end
 
 function X.ConsiderBallLightning()
