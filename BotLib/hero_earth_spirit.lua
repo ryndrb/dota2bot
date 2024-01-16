@@ -91,57 +91,62 @@ end
 local BoulderSmash = bot:GetAbilityByName( "earth_spirit_boulder_smash" )
 local RollingBoulder = bot:GetAbilityByName( "earth_spirit_rolling_boulder" )
 local GeomagneticGrip = bot:GetAbilityByName( "earth_spirit_geomagnetic_grip" )
-local StoneCaller = bot:GetAbilityByName( "earth_spirit_stone_caller" )
-local Petrify = bot:GetAbilityByName( "earth_spirit_petrify" )
+local StoneRemnant = bot:GetAbilityByName( "earth_spirit_stone_caller" )
 local Magnetize = bot:GetAbilityByName( "earth_spirit_magnetize" )
 local GripAllies = bot:GetAbilityByName( "special_bonus_unique_earth_spirit_2" )
+local EchantRemnant = bot:GetAbilityByName( "earth_spirit_petrify" )
 
 local BoulderSmashDesire = 0
 local RollingBoulderDesire = 0
 local GeomagneticGripDesire = 0
-local StoneCallerDesire = 0
-local PetrifyDesire = 0
+local StoneRemnantDesire = 0
+local EchantRemnantDesire = 0
 local MagnetizeDesire = 0
 local GripAlliesDesire = 0
 
 local nStone = 0
 local stoneCast = -100
 local stoneCastGap = 1
+local stoneToGripLoc
 
 function X.SkillsComplement()
 
-    if bot:IsUsingAbility() or bot:IsChanneling() or bot:IsSilenced() or bot:NumQueuedActions() > 0 then return end
+    if bot:IsUsingAbility()
+	or bot:IsChanneling()
+	or bot:IsSilenced()
+	or bot:NumQueuedActions() > 0
+	then
+		return
+	end
 
-    BoulderSmashDesire, boulderLoc, castBS, QStoneNear  = X.ConsiderBoulderSmash()
-    RollingBoulderDesire, rollLoc, castRB               = X.ConsiderRollingBoulder()
-    GeomagneticGripDesire, gripLoc, castGG              = X.ConsiderGeomagneticGrip()
-    StoneCallerDesire, callerLoc                        = X.ConsiderStoneCaller()
-    PetrifyDesire, petrifyTarget                        = X.ConsiderPetrify()
-    MagnetizeDesire                                     = X.ConsiderMagnetize()
-
-    if StoneCaller:IsFullyCastable()
+    if StoneRemnant:IsFullyCastable()
     then
         nStone = 1
     else
         nStone = 0
     end
 
+	MagnetizeDesire = X.ConsiderMagnetize()
     if MagnetizeDesire > 0
     then
         bot:Action_UseAbility(Magnetize)
+		return
     end
 
-    if PetrifyDesire > 0
+	EchantRemnantDesire, EnchantTarget = X.ConsiderEchantRemnant()
+    if EchantRemnantDesire > 0
     then
-        bot:ActionQueue_UseAbilityOnEntity(Petrify, petrifyTarget)
+        bot:ActionQueue_UseAbilityOnEntity(EchantRemnant, EnchantTarget)
 		bot:ActionQueue_UseAbilityOnLocation(BoulderSmash, bot:GetLocation() + RandomVector(800))
+		return
     end
 
+	BoulderSmashDesire, boulderLoc, castBS, QStoneNear = X.ConsiderBoulderSmash()
     if BoulderSmashDesire > 0
 	then
 		if castBS then
 			bot:Action_ClearActions(false)
-			bot:ActionQueue_UseAbilityOnLocation(StoneCaller, bot:GetLocation())
+			bot:ActionQueue_UseAbilityOnLocation(StoneRemnant, bot:GetLocation())
 			bot:ActionQueue_UseAbilityOnLocation(BoulderSmash, boulderLoc)
 			return;
 		else
@@ -155,12 +160,13 @@ function X.SkillsComplement()
 		end
 	end
 
+	RollingBoulderDesire, rollLoc, castRB = X.ConsiderRollingBoulder()
     if RollingBoulderDesire > 0
 	then
 		if castRB then
 			bot:Action_ClearActions(false)
 			bot:ActionQueue_UseAbilityOnLocation(RollingBoulder, rollLoc)
-			bot:ActionQueue_UseAbilityOnLocation(StoneCaller, J.Site.GetXUnitsTowardsLocation(bot, rollLoc, 300))
+			bot:ActionQueue_UseAbilityOnLocation(StoneRemnant, J.Site.GetXUnitsTowardsLocation(bot, rollLoc, 300))
 			return
 		else
 			bot:Action_UseAbilityOnLocation( RollingBoulder, rollLoc)
@@ -168,22 +174,31 @@ function X.SkillsComplement()
 		end
 	end
 
+	GeomagneticGripDesire, gripLoc, castStoneThenGrip = X.ConsiderGeomagneticGrip()
     if GeomagneticGripDesire > 0
 	then
-		if castGG then
-			bot:Action_ClearActions(false);
-			bot:ActionQueue_UseAbilityOnLocation(StoneCaller, gripLoc)
+		if castStoneThenGrip
+		then
+			bot:Action_ClearActions(false)
+			bot:ActionQueue_UseAbilityOnLocation(StoneRemnant, gripLoc)
 			bot:ActionQueue_UseAbilityOnLocation(GeomagneticGrip, gripLoc)
 			return
 		else
-			bot:Action_UseAbilityOnLocation( GeomagneticGrip, gripLoc )
+			if J.HasAghanimsShard(bot)
+			then
+				bot:Action_UseAbilityOnEntity(GeomagneticGrip, gripLoc)
+			else
+				bot:Action_UseAbilityOnLocation(GeomagneticGrip, gripLoc)
+			end
+
 			return
 		end
 	end
-	
-	if StoneCallerDesire > 0
+
+	StoneRemnantDesire, callerLoc = X.ConsiderStoneRemnant()
+	if StoneRemnantDesire > 0
 	then
-		bot:Action_UseAbilityOnLocation( StoneCaller, callerLoc)
+		bot:Action_UseAbilityOnLocation( StoneRemnant, callerLoc)
 		stoneCast = DotaTime()
 		return
 	end
@@ -383,49 +398,79 @@ function X.ConsiderRollingBoulder()
 end
 
 function X.ConsiderGeomagneticGrip()
-    if ( not GeomagneticGrip:IsFullyCastable() ) then
-		return BOT_ACTION_DESIRE_NONE, 0, false, false
+    if not GeomagneticGrip:IsFullyCastable()
+	then
+		return BOT_ACTION_DESIRE_NONE, 0, false
 	end
 
 	local nRadius     = GeomagneticGrip:GetSpecialValueInt('radius')
 	local nSearchRad  = 175
 	local nCastRange  = GeomagneticGrip:GetCastRange()
-	local nCastPoint  = GeomagneticGrip:GetCastPoint( )
-	local nManaCost   = GeomagneticGrip:GetManaCost( )
+	local nCastPoint  = GeomagneticGrip:GetCastPoint()
+	local nManaCost   = GeomagneticGrip:GetManaCost()
 	local nDamage     = GeomagneticGrip:GetSpecialValueInt('rock_damage')
 
-	if GripAllies ~= nil and GripAllies:IsTrained() then
-		local tableNearbyAllies = bot:GetNearbyHeroes( nCastRange + 200, false, BOT_MODE_NONE )
-		for _,ally in pairs(tableNearbyAllies)
+	if J.HasAghanimsShard(bot)
+	then
+		local tableNearbyAllies = bot:GetNearbyHeroes(nCastRange, false, BOT_MODE_NONE)
+		local tableNearbyEnemies = bot:GetNearbyHeroes(300, false, BOT_MODE_NONE)
+
+		for _, ally in pairs(tableNearbyAllies)
 		do
-			if ally:GetActiveMode() == BOT_MODE_RETREAT and ally:WasRecentlyDamagedByAnyHero(2.0) then
-				return BOT_ACTION_DESIRE_HIGH, ally:GetLocation(), false, true
+			if J.GetHP(ally) < 0.4
+			and J.IsInRange(bot, ally, nCastRange)
+			and not J.IsInRange(bot, ally, nCastRange - 250)
+			and #tableNearbyEnemies == 0
+			then
+				return BOT_ACTION_DESIRE_HIGH, ally, false
+			end
+
+			if J.IsRetreating(ally)
+			and ally:WasRecentlyDamagedByAnyHero(2.0)
+			and J.IsInRange(bot, ally, nCastRange)
+			and not J.IsInRange(bot, ally, nCastRange - 250)
+			and #tableNearbyEnemies == 0
+			then
+				return BOT_ACTION_DESIRE_HIGH, ally, false
 			end
 		end
 	end
 
-	local tableNearbyEnemyHeroes = bot:GetNearbyHeroes( nCastRange, true, BOT_MODE_NONE )
+	local tableNearbyEnemyHeroes = bot:GetNearbyHeroes(nCastRange, true, BOT_MODE_NONE)
 	local target = J.GetCanBeKilledUnit(tableNearbyEnemyHeroes, nDamage, DAMAGE_TYPE_MAGICAL, false)
-	if target ~= nil then
-		local loc = J.GetCorrectLoc(target, 2*nCastPoint)
-		local stoneNearby = IsStoneNearby(loc, nSearchRad)
-		if stoneNearby and ( nStone >= 1 or  nStone < 1 ) then
-			return BOT_ACTION_DESIRE_HIGH, loc, false, true
-		elseif nStone >= 1 then
-			return BOT_ACTION_DESIRE_HIGH, loc, true, false
+
+	if target ~= nil
+	and J.CanCastOnNonMagicImmune(target)
+	and J.IsInRange(bot, target, nCastRange)
+	then
+		local loc = J.GetCorrectLoc(target, 2 * nCastPoint)
+		local stoneNearby = IsStoneNearby(loc, nCastRange)
+
+		if stoneNearby
+		then
+			return BOT_ACTION_DESIRE_HIGH, stoneToGripLoc, false
+		elseif not stoneNearby
+		and nStone >= 1
+		then
+			return BOT_ACTION_DESIRE_HIGH, loc, true
 		end
 	end
 
 	if J.IsInTeamFight(bot, 1200)
 	then
 		local locationAoE = bot:FindAoELocation( true, true, bot:GetLocation(), nCastRange, nRadius, nCastPoint, 0)
+
 		if (locationAoE.count >= 2)
 		then
-			local stoneNearby = IsStoneNearby(locationAoE.targetloc, nSearchRad)
-			if stoneNearby and ( nStone >= 1 or  nStone < 1 ) then
-				return BOT_ACTION_DESIRE_HIGH, locationAoE.targetloc, false, true
-			elseif nStone >= 1 then
-				return BOT_ACTION_DESIRE_HIGH, locationAoE.targetloc, true, false
+			local stoneNearby = IsStoneNearby(locationAoE.targetloc, nCastRange)
+
+			if stoneNearby
+			then
+				return BOT_ACTION_DESIRE_MODERATE, stoneToGripLoc, false
+			elseif not stoneNearby
+			and nStone >= 1
+			then
+				return BOT_ACTION_DESIRE_MODERATE, locationAoE.targetloc, true
 			end
 		end
 	end
@@ -433,17 +478,27 @@ function X.ConsiderGeomagneticGrip()
 	if J.IsGoingOnSomeone(bot)
 	then
 		local npcTarget = bot:GetTarget()
-		if J.IsValidTarget(npcTarget) and J.CanCastOnNonMagicImmune(npcTarget) and J.IsInRange(npcTarget, bot, nCastRange - 200)
+		if J.IsValidTarget(npcTarget)
+		and J.CanCastOnNonMagicImmune(npcTarget)
+		and J.IsInRange(npcTarget, bot, nCastRange)
+		and J.CanKillTarget(npcTarget, nDamage, DAMAGE_TYPE_MAGICAL)
 		then
-			local targetAlly  = npcTarget:GetNearbyHeroes(1000, false, BOT_MODE_NONE)
-			local targetEnemy = npcTarget:GetNearbyHeroes(1000, true, BOT_MODE_NONE)
-			if targetEnemy ~= nil and targetAlly ~= nil and #targetEnemy >= #targetAlly then
-				local loc = J.GetCorrectLoc(npcTarget, 2*nCastPoint)
-				local stoneNearby = IsStoneNearby(loc, nSearchRad)
-				if stoneNearby and ( nStone >= 1 or  nStone < 1 ) then
-					return BOT_ACTION_DESIRE_HIGH, loc, false, true
-				elseif nStone >= 1 then
-					return BOT_ACTION_DESIRE_HIGH, loc, true, false
+			local targetAlly  = npcTarget:GetNearbyHeroes(nCastRange, false, BOT_MODE_NONE)
+			local targetEnemy = npcTarget:GetNearbyHeroes(nCastRange, true, BOT_MODE_NONE)
+
+			if targetEnemy ~= nil and targetAlly ~= nil
+			and #targetEnemy >= #targetAlly
+			then
+				local loc = J.GetCorrectLoc(npcTarget, 2 * nCastPoint)
+				local stoneNearby = IsStoneNearby(loc, nCastRange)
+
+				if stoneNearby
+				then
+					return BOT_ACTION_DESIRE_HIGH, stoneToGripLoc, false
+				elseif not stoneNearby
+				and nStone >= 1
+				then
+					return BOT_ACTION_DESIRE_HIGH, loc, true
 				end
 			end
 		end
@@ -452,8 +507,8 @@ function X.ConsiderGeomagneticGrip()
 	return BOT_ACTION_DESIRE_NONE, 0, false, false
 end
 
-function X.ConsiderStoneCaller()
-	if (not StoneCaller:IsFullyCastable()) then 
+function X.ConsiderStoneRemnant()
+	if (not StoneRemnant:IsFullyCastable()) then 
 		return BOT_ACTION_DESIRE_NONE, 0
 	end
 
@@ -461,7 +516,7 @@ function X.ConsiderStoneCaller()
 		return BOT_ACTION_DESIRE_NONE, 0
 	end
 
-	local nCastRange  = StoneCaller:GetCastRange( )
+	local nCastRange  = StoneRemnant:GetCastRange( )
 	local nRadius     = Magnetize:GetSpecialValueInt('rock_search_radius')
 
 	local tableNearbyEnemyHeroes = bot:GetNearbyHeroes( nCastRange - 200, true, BOT_MODE_NONE )
@@ -479,12 +534,14 @@ function X.ConsiderStoneCaller()
 	return BOT_ACTION_DESIRE_NONE, 0
 end
 
-function X.ConsiderPetrify()
-	if ( not Petrify:IsFullyCastable() ) then
-		return BOT_ACTION_DESIRE_NONE, 0
+function X.ConsiderEchantRemnant()
+	if not EchantRemnant:IsTrained()
+	or not EchantRemnant:IsFullyCastable()
+	then
+		return BOT_ACTION_DESIRE_NONE, nil
 	end
 
-	return BOT_ACTION_DESIRE_NONE, 0
+	return BOT_ACTION_DESIRE_NONE, nil
 end
 
 function X.ConsiderMagnetize()
@@ -534,6 +591,7 @@ function IsStoneNearby(location, radius)
 	local units = GetUnitList(UNIT_LIST_ALLIED_OTHER);
 	for _,u in pairs(units) do
 		if u ~= nil and u:GetUnitName() == "npc_dota_earth_spirit_stone" and GetUnitToLocationDistance(u, location) < radius then
+			stoneToGripLoc = u:GetLocation()
 			return true;
 		end
 	end

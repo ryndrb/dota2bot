@@ -119,11 +119,13 @@ modifier_luna_eclipse
 --]]
 
 local abilityQ = bot:GetAbilityByName( sAbilityList[1] )
+local MoonGlaives = bot:GetAbilityByName( 'luna_moon_glaive' )
 local abilityR = bot:GetAbilityByName( sAbilityList[6] )
 local talent2 = bot:GetAbilityByName( sTalentList[2] )
 local talent6 = bot:GetAbilityByName( sTalentList[6] )
 
 local castQDesire, castQTarget = 0
+local MoonGlaivesDesire
 local castRDesire = 0
 
 local nKeepMana, nMP, nHP, nLV
@@ -148,6 +150,12 @@ function X.SkillsComplement()
 --	if talent2:IsTrained() then aetherRange = aetherRange + talent2:GetSpecialValueInt( "value" ) end
 	if talent6:IsTrained() then talent6BonusDamage = talent6:GetSpecialValueInt( "value" ) end
 
+	MoonGlaivesDesire = X.ConsiderMoonGlaives()
+	if (MoonGlaivesDesire > 0)
+	then
+		bot:Action_UseAbility(MoonGlaives)
+		return
+	end
 
 	castRDesire = X.ConsiderR()
 	if ( castRDesire > 0 )
@@ -419,6 +427,79 @@ function X.ConsiderQ()
 
 	return 0
 
+end
+
+function X.ConsiderMoonGlaives()
+	if not MoonGlaives:IsTrained()
+	and not MoonGlaives:IsFullyCastable()
+	then
+		return BOT_ACTION_DESIRE_NONE
+	end
+
+	local nRadius   = 175
+	local nDamage   = bot:GetAttackDamage() * 0.7
+	local nManaCost = MoonGlaives:GetManaCost()
+	local nEnemyHeroes = bot:GetNearbyHeroes(nRadius + bot:GetAttackRange(), true, BOT_MODE_NONE)
+
+	if J.GetHP(bot) < 0.3
+	and nEnemyHeroes ~= nil and nEnemyHeroes >= 1
+	then
+		return BOT_ACTION_DESIRE_HIGH
+	end
+
+	if J.IsGoingOnSomeone(bot)
+	then
+		local npcTarget = bot:GetTarget()
+
+		if J.IsValidTarget(npcTarget)
+		and J.IsInRange(npcTarget, bot, nRadius * 2)
+		then
+			return BOT_ACTION_DESIRE_HIGH
+		end
+	end
+
+	if J.IsRetreating(bot)
+	then
+		for _, npcEnemy in pairs(nEnemyHeroes)
+		do
+			if bot:WasRecentlyDamagedByHero(npcEnemy, 2.0)
+			then
+				return BOT_ACTION_DESIRE_HIGH
+			end
+		end
+	end
+
+	if J.IsFarming(bot)
+	then
+		local nNeutralCreeps = bot:GetNearbyNeutralCreeps(nRadius)
+
+		if nNeutralCreeps ~= nil and #nNeutralCreeps >= 3
+		then
+			return BOT_ACTION_DESIRE_HIGH
+		end
+	end
+
+	if J.IsDoingRoshan(bot)
+	then
+		local npcTarget = bot:GetAttackTarget()
+
+		if J.IsRoshan(npcTarget)
+		and J.IsInRange(npcTarget, bot, nRadius)
+		then
+			return BOT_ACTION_DESIRE_MODERATE
+		end
+	end
+
+	if J.IsInTeamFight(bot, 1200)
+	then
+		if nEnemyHeroes ~= nil and #nEnemyHeroes >= 2
+		and J.IsInRange(nEnemyHeroes[1], bot, nRadius * 2)
+		then
+			return BOT_ACTION_DESIRE_HIGH
+		end
+	end
+
+	return BOT_ACTION_DESIRE_NONE
 end
 
 function X.ConsiderR()

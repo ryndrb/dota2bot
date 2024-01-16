@@ -192,6 +192,7 @@ local abilityQ = bot:GetAbilityByName( sAbilityList[1] )
 local abilityW = bot:GetAbilityByName( sAbilityList[2] )
 local abilityE = bot:GetAbilityByName( sAbilityList[3] )
 local abilityR = bot:GetAbilityByName( sAbilityList[6] )
+local FlameCloak = bot:GetAbilityByName( 'lina_flame_cloak' )
 local talent2 = bot:GetAbilityByName( sTalentList[2] )
 local talent4 = bot:GetAbilityByName( sTalentList[4] )
 local talent7 = bot:GetAbilityByName( sTalentList[7] )
@@ -199,6 +200,7 @@ local talent7 = bot:GetAbilityByName( sTalentList[7] )
 local castQDesire, castQLocation
 local castWDesire, castWLocation
 local castRDesire, castRTarget
+local FlameCloakDesire
 
 
 local nKeepMana, nMP, nHP, nLV, hEnemyList, hAllyList, botTarget, sMotive
@@ -230,7 +232,12 @@ function X.SkillsComplement()
 --	if talent2:IsTrained() then aetherRange = aetherRange + talent2:GetSpecialValueInt( "value" ) end
 	if talent4:IsTrained() then talent4Damage = talent4Damage + talent4:GetSpecialValueInt( "value" ) end
 
-
+	FlameCloakDesire = X.ConsiderFlameCloak()
+	if (FlameCloakDesire > 0)
+	then
+		bot:Action_UseAbility(FlameCloak)
+		return
+	end
 
 	castRDesire, castRTarget, sMotive = X.ConsiderR()
 	if ( castRDesire > 0 )
@@ -768,6 +775,39 @@ function X.CanCastAbilityROnTarget( nTarget )
 
 	return false
 
+end
+
+function X.ConsiderFlameCloak()
+	if not FlameCloak:IsTrained()
+	or not FlameCloak:IsFullyCastable()
+	then
+		return BOT_ACTION_DESIRE_NONE
+	end
+
+	local nAttackRange = bot:GetAttackRange()
+	local nEnemyHeroes = bot:GetNearbyHeroes(nAttackRange, true, BOT_MODE_NONE)
+	local nAlliedHeroes = bot:GetNearbyHeroes(nAttackRange, false, BOT_MODE_NONE)
+
+	if J.IsRetreating(bot)
+	and (nEnemyHeroes ~= nil and nAlliedHeroes ~= nil and nEnemyHeroes >= nAlliedHeroes)
+	and not J.WeAreStronger(bot, nAttackRange)
+	then
+		return BOT_ACTION_DESIRE_HIGH
+	end
+
+	if J.IsGoingOnSomeone(bot)
+	and (nEnemyHeroes ~= nil and #nEnemyHeroes >= 2)
+	then
+		local botTarget = bot:GetTarget()
+
+		if J.IsValidTarget(botTarget)
+		and J.CanCastOnNonMagicImmune(botTarget)
+		then
+			return BOT_ACTION_DESIRE_HIGH
+		end
+	end
+
+	return BOT_ACTION_DESIRE_NONE
 end
 
 return X

@@ -129,16 +129,17 @@ local abilityW = bot:GetAbilityByName( sAbilityList[2] )
 local abilityE = bot:GetAbilityByName( sAbilityList[3] )
 local abilityR = bot:GetAbilityByName( sAbilityList[6] )
 local abilitySR = bot:GetAbilityByName( 'naga_siren_song_of_the_siren_cancel' )
+local ReelIn = bot:GetAbilityByName( 'naga_siren_reel_in' )
 
 local castQDesire, castQTarget
 local castWDesire, castWTarget
 local castEDesire, castETarget
 local castRDesire, castRTarget
 local castSRDesire, castSRTarget
+local ReelInDesire
 
 local nKeepMana,nMP,nHP,nLV,hEnemyList,hAllyList,botTarget,sMotive;
 local aetherRange = 0
-
 
 function X.SkillsComplement()
 
@@ -179,6 +180,14 @@ function X.SkillsComplement()
 		J.SetQueuePtToINT(bot, true)
 	
 		bot:ActionQueue_UseAbilityOnEntity( abilityW, castWTarget )
+		return;
+	end
+
+	ReelInDesire = X.ConsiderReelIn()
+	if (ReelInDesire > 0)
+	then
+		J.SetQueuePtToINT(bot, true)
+		bot:Action_UseAbility(ReelIn)
 		return;
 	end
 	
@@ -372,7 +381,7 @@ function X.ConsiderW()
 	for _,npcEnemy in pairs( nInBonusEnemyList )
 	do
 		if J.IsValid(npcEnemy)
-		   and J.CanCastOnNonMagicImmune(npcEnemy)
+		   and (J.CanCastOnNonMagicImmune(npcEnemy) or (J.CanCastOnMagicImmune(npcEnemy) and bot:HasScepter()))
 		   and npcEnemy:IsChanneling()
 		   and npcEnemy:HasModifier( 'modifier_teleporting' )
 	   then			
@@ -389,7 +398,7 @@ function X.ConsiderW()
 	then
 		if J.IsValidHero( botTarget )
 			and J.IsInRange( botTarget, bot, nCastRange )
-			and J.CanCastOnNonMagicImmune( botTarget )			
+			and (J.CanCastOnNonMagicImmune( botTarget ) or (J.CanCastOnMagicImmune(botTarget) and bot:HasScepter()))
 			and J.CanCastOnTargetAdvanced( botTarget )
 			and not J.IsDisabled( botTarget )
 			and J.IsRunning( botTarget ) 
@@ -410,7 +419,7 @@ function X.ConsiderW()
 					or npcEnemy:HasModifier( 'modifier_invisible' )
 					or npcEnemy:HasModifier( 'modifier_item_shadow_amulet_fade' )
 				then
-					if J.CanCastOnNonMagicImmune( npcEnemy )
+					if ((J.CanCastOnNonMagicImmune( npcEnemy )) or (J.CanCastOnMagicImmune(npcEnemy) and bot:HasScepter()))
 						and J.CanCastOnTargetAdvanced( npcEnemy )
 						and not npcEnemy:HasModifier( 'modifier_item_dustofappearance' )
 						and not npcEnemy:HasModifier( 'modifier_slardar_amplify_damage' )
@@ -437,7 +446,7 @@ function X.ConsiderW()
 		for _, npcEnemy in pairs( nInRangeEnemyList )
 		do
 			if J.IsValid( npcEnemy )				
-				and J.CanCastOnNonMagicImmune( npcEnemy )
+				and (J.CanCastOnNonMagicImmune( npcEnemy ) or (J.CanCastOnMagicImmune(npcEnemy) and bot:HasScepter()))
 				and J.CanCastOnTargetAdvanced( npcEnemy )
 				and not J.IsDisabled( npcEnemy )
 				and not npcEnemy:IsDisarmed()
@@ -549,7 +558,44 @@ function X.ConsiderSR()
 	
 end
 
+function X.ConsiderReelIn()
+	if not bot:HasScepter()
+	or not ReelIn:IsFullyCastable()
+	or J.IsInTeamFight(bot, 1400)
+	then
+		return BOT_ACTION_DESIRE_NONE
+	end
+
+	local nRange = 1400
+	local nInRangeAllyList = bot:GetNearbyHeroes(nRange, false, BOT_MODE_NONE)
+	local nInRangeEnemyList = bot:GetNearbyHeroes(nRange, true, BOT_MODE_NONE)
+
+	for _, npcEnemy in pairs(nInRangeEnemyList)
+	do
+		if J.IsValidHero(npcEnemy)
+		and J.IsInRange(bot, npcEnemy, nRange)
+		and not J.IsInRange(bot, npcEnemy, bot:GetAttackRange() * 2)
+		and npcEnemy:HasModifier('modifier_naga_siren_ensnare')
+		and #nInRangeAllyList >= #nInRangeEnemyList
+		then
+			return BOT_ACTION_DESIRE_HIGH
+		end
+	end
+
+	if J.IsGoingOnSomeone(bot)
+	then
+		if J.IsValidHero(botTarget)
+		and J.IsInRange(bot, botTarget, nRange)
+		and not J.IsInRange( bot, botTarget, bot:GetAttackRange() * 2)
+		and bot:IsFacingLocation(botTarget:GetLocation(), 30)
+		and botTarget:HasModifier('modifier_naga_siren_ensnare')
+		and #nInRangeAllyList >= #nInRangeEnemyList
+		then
+			return BOT_ACTION_DESIRE_HIGH
+		end
+	end
+
+	return BOT_ACTION_DESIRE_NONE
+end
 
 return X
--- dota2jmz@163.com QQ:2462331592
-

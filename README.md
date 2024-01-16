@@ -122,6 +122,51 @@ Worth noting that I also use a vscript to improve the bots GPM (XPM later) and a
             - Drow Ranger
                 - [x] Shard
                 - [N] Scepter
+            - Earth Spirit
+                - [x] Shard
+                - [ ] Scepter
+            - Ember Spirit
+                - [N] Shard
+                - [N] Scepter
+            - Huskar
+                - [N] Shard
+                - [N] Scepter
+            - Jakiro
+                - [x] Shard
+                - [N] Scepter
+            - Juggernaut
+                - [N] Shard
+                - [x] Scepter
+            - Kunkka
+                - [x] Shard
+                - [x] Scepter
+            - Legion Commander
+                - [N] Shard
+                - [N] Scepter
+            - Lich
+                - [x] Shard
+                - [x] Scepter
+            - Lina
+                - [N] Shard
+                - [x] Scepter
+            - Lion
+                - [N] Shard
+                - [N] Scepter
+            - Luna
+                - [N] Shard
+                - [x] Scepter
+            - Mars
+                - [N] Shard
+                - [N] Scepter
+            - Medusa
+                - [N] Shard
+                - [N] Scepter
+            - Mirana
+                - [N] Shard
+                - [N] Scepter
+            - Naga Siren
+                - [N] Shard
+                - [x] Scepter
         - [x] vscript to increase bots GPM (XPM later) and for them to acquire neutral items (local host only)
     - ***Improve***
         - [ ] Some heroes ability usage
