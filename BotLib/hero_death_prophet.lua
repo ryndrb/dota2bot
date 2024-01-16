@@ -116,7 +116,6 @@ Pos2SellList = {
 Pos3SellList = {
 	"item_circlet",
 	"item_magic_wand",
-	"item_arcane_boots",
 }
 
 X['sSellList'] = {}
