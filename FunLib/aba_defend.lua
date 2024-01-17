@@ -26,9 +26,13 @@ function Defend.GetDefendDesire(bot, lane)
         end
     end
 
+	if (J.IsRoshanAlive() and J.HasEnoughDPSForRoshan(aliveHeroesList) and eFront < 0.87)
+	then
+		return BOT_MODE_DESIRE_NONE
+	end
+
 	if bot:GetHealth() / bot:GetMaxHealth() < 0.3
-	or (J.IsRoshanAlive() and J.HasEnoughDPSForRoshan(aliveHeroesList) and eFront < 0.87)
-	or (J.IsLaning(bot) or (J.IsFarming(bot) and (mul[lane] < 3 or eFront < 0.9)))
+	or (J.IsFarming(bot) and (mul[lane] < 3 or eFront < 0.9))
 	then
 		return 0.25
 	end

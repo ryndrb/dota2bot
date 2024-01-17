@@ -23,8 +23,13 @@ function Push.GetPushDesire(bot, lane)
         end
     end
 
+    if J.IsRoshanAlive()
+    and J.HasEnoughDPSForRoshan(aliveHeroesList)
+    then
+        return BOT_MODE_DESIRE_NONE
+    end
+
     if bot:GetHealth() / bot:GetMaxHealth() < 0.3
-    or (J.IsRoshanAlive() and J.HasEnoughDPSForRoshan(aliveHeroesList))
     or (enemies ~= nil and allies ~= nil and #enemies > #allies)
     or bot:WasRecentlyDamagedByTower(1)
     or not J.WeAreStronger(bot, 1600)
@@ -354,8 +359,18 @@ function Push.PushThink(bot, lane)
     end
 
     local creeps = bot:GetNearbyLaneCreeps(700 + nRange, true)
-    if creeps ~= nil and #creeps > 0 then
-        return bot:ActionPush_AttackUnit(creeps[#creeps], false)
+    if creeps ~= nil and #creeps > 0
+    then
+        local targetCreep = creeps[1]
+
+        for _, c in pairs(creeps) do
+            if targetCreep:GetAttackDamage() < c:GetAttackDamage()
+            then
+                targetCreep = c
+            end
+        end
+
+        return bot:ActionPush_AttackUnit(targetCreep, false)
     end
 
     local barracks = bot:GetNearbyBarracks(700 + nRange, true);
