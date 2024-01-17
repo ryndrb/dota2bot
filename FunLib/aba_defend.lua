@@ -16,7 +16,7 @@ function Defend.GetDefendDesire(bot, lane)
 
 	local mul = Defend.GetEnemyAmountMul(lane)
 	local tFront = RemapValClamped(GetLaneFrontAmount(GetTeam(), lane, true), 0, 1, 0.75, 0)
-	local eFront = RemapValClamped(1 - GetLaneFrontAmount(GetOpposingTeam(), lane, true), 0, 1, 0, 0.75)
+	local eFront = 1 - GetLaneFrontAmount(GetOpposingTeam(), lane, true)
 
     local aliveHeroesList = {}
     for _, h in pairs(GetUnitList(UNIT_LIST_ALLIED_HEROES)) do
@@ -26,7 +26,7 @@ function Defend.GetDefendDesire(bot, lane)
         end
     end
 
-	if (J.IsRoshanAlive() and J.HasEnoughDPSForRoshan(aliveHeroesList) and eFront < 0.87)
+	if (J.IsRoshanAlive() and J.HasEnoughDPSForRoshan(aliveHeroesList) and (mul[lane] < 3 or eFront < 0.9))
 	then
 		return BOT_MODE_DESIRE_NONE
 	end
@@ -47,7 +47,7 @@ function Defend.GetDefendDesire(bot, lane)
 
 			if J.CanBeAttacked(ancient)
 			then
-				amount = Clamp(GetDefendLaneDesire(lane), 0.25, 1) * mul[lane]
+				amount = BOT_ACTION_DESIRE_HIGH * mul[lane]
 			else
 				amount = GetDefendLaneDesire(lane) * mul[lane]
 			end

@@ -45,6 +45,7 @@ function GetDesire()
 
     if shouldKillRoshan
     and initDPSFlag
+    and aliveAlly >= aliveEnemy
     then
         if healthPercentage < 0.3
         then
@@ -141,7 +142,7 @@ function IsEnoughAllies()
 
     local allyList = {}
     for _, h in pairs(GetUnitList(UNIT_LIST_ALLIED_HEROES)) do
-        if GetUnitToLocationDistance(h, roshLoc) < 2000
+        if GetUnitToLocationDistance(h, roshLoc) < 1600
         then
             table.insert(allyList, h)
         end

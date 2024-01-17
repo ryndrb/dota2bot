@@ -4332,7 +4332,8 @@ X.ConsiderItemDesire["item_tpscroll"] = function( hItem )
 
 	if bot:GetLevel() > 12 and bot:DistanceFromFountain() < 600 then nMinTPDistance = nMinTPDistance + 600 end
 
-	if (nMode == BOT_MODE_LANING and J.IsCore(bot)) then
+	if nMode == BOT_MODE_LANING
+	then
 		hEffectTarget, shouldTp = X.GetLaningTPLocation(bot, nMinTPDistance, botLocation)
 		sCastMotive = '出去发育'
 		if shouldTp then
