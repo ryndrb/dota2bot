@@ -442,7 +442,7 @@ function X.ConsiderMoonGlaives()
 	local nEnemyHeroes = bot:GetNearbyHeroes(nRadius + bot:GetAttackRange(), true, BOT_MODE_NONE)
 
 	if J.GetHP(bot) < 0.3
-	and nEnemyHeroes ~= nil and nEnemyHeroes >= 1
+	and nEnemyHeroes ~= nil and #nEnemyHeroes >= 1
 	then
 		return BOT_ACTION_DESIRE_HIGH
 	end
