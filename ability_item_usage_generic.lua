@@ -5875,6 +5875,7 @@ X.ConsiderItemDesire['item_blood_grenade'] = function(item)
 	local botTarget = bot:GetTarget()
 
 	if botTarget ~= nil
+	and J.IsValidHero(botTarget)
 	and J.CanKillTarget(botTarget, nDamage, DAMAGE_TYPE_MAGICAL)
 	and J.CanCastOnNonMagicImmune( botTarget )
 	and J.IsInRange( bot, botTarget, nRadius )
