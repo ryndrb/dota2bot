@@ -240,8 +240,7 @@ local sHasDevelopmentHeroList = {
 	"npc_dota_hero_void_spirit",
 	"npc_dota_hero_earth_spirit",
 	"npc_dota_hero_tiny",
-
-
+	"npc_dota_hero_abaddon",
 }
 
 
@@ -422,7 +421,6 @@ local sTankList = {
 }
 
 local sPriestList = {
-
 	"npc_dota_hero_crystal_maiden",
 	"npc_dota_hero_jakiro",
 	"npc_dota_hero_lich",
@@ -436,10 +434,11 @@ local sPriestList = {
 	"npc_dota_hero_lion",
 	"npc_dota_hero_dazzle",
 	"npc_dota_hero_bane",
+
+	"npc_dota_hero_abaddon",
 }
 
 local sMageList = {
-
 	"npc_dota_hero_crystal_maiden",
 	"npc_dota_hero_jakiro",
 	"npc_dota_hero_lich",
@@ -453,6 +452,8 @@ local sMageList = {
 	"npc_dota_hero_lion",
 	"npc_dota_hero_dazzle",
 	"npc_dota_hero_bane",
+
+	"npc_dota_hero_abaddon",
 }
 
 tSelectPoolList = {

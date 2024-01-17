@@ -42,22 +42,23 @@ Worth noting that I also use a vscript to improve the bots GPM (XPM later) and a
 - ***Heroes (Pos: 1,2,3,4,5)***
     - Heroes can't be core or support in their possible roles; strictly core/supports; due to ability usage
     - ***Added***
-        - [3] Timbersaw
-        - [3] Mars
-        - [2] Storm Spirit
+        - [4,5] Abaddon
+        - [1] Alchemist
+        - [2] Earth Spirit
         - [2] Ember Spirit
         - [1] Faceless Void
-        - [1] Alchemist
+        - [3] Mars
+        - [2] Storm Spirit
         - [1] Terrorblade
+        - [3] Timbersaw
+        - [1,2] Tiny
         - [1] Ursa
         - [2] Void Spirit
-        - [2] Earth Spirit
-        - [1,2] Tiny
     - ***Changed***
-        - [2] Necrophos
-        - [2] Lina
-        - [2] Queen Of Pain (buggy?)
         - [2,3] Death Prophet
+        - [1,2] Lina
+        - [2,3] Necrophos
+        - [2] Queen Of Pain (buggy?)
         - [2] Zeus
 
 - ***"Attempted" Logic Changes (still)***
@@ -83,6 +84,7 @@ Worth noting that I also use a vscript to improve the bots GPM (XPM later) and a
         - [x] Functionality for new active ablities gained through Aghs/Shard
             | Hero                  | Shard   | Scepter 
             |:---------------------:|:-------:|:-------:
+            | Abaddon               | -       | -
             | Alchemist             | &check; | &cross;
             | Antimage              | &check; | &check;
             | Arc Warden            | -       | -

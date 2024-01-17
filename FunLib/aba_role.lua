@@ -1621,7 +1621,7 @@ function X.IsRemovedFromSupportPoll( hero )
 end
 
 X['off'] = {
-	'npc_dota_hero_abaddon',
+	-- 'npc_dota_hero_abaddon',
 	'npc_dota_hero_abyssal_underlord',
 	'npc_dota_hero_axe',
 	'npc_dota_hero_batrider',
@@ -1722,6 +1722,7 @@ X['safe'] = {
 }
 
 X['supp'] = {
+	'npc_dota_hero_abaddon',
 	'npc_dota_hero_ancient_apparition',
 	'npc_dota_hero_bane',
 --	'npc_dota_hero_bounty_hunter',
@@ -2188,7 +2189,7 @@ function X.IsABAHero()
 		["npc_dota_hero_ember_spirit"] = true,
 		["npc_dota_hero_void_spirit"] = true,
 		["npc_dota_hero_earth_spirit"] = true,
-	
+		["npc_dota_hero_abaddon"] = true,
 	}
 
 	return sABAHeroIndex[botName] == true
