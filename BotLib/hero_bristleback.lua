@@ -488,7 +488,7 @@ function X.ConsiderBristleback()
 	if J.IsRetreating( bot )
 	then
 		local nEnemyHeroes = bot:GetNearbyHeroes( 700, true, BOT_MODE_NONE )
-		if nEnemyHeroes ~= nil and nEnemyHeroes > 0
+		if nEnemyHeroes ~= nil and #nEnemyHeroes > 0
 		then
 			local targetHero = nEnemyHeroes[1]
 			if J.IsValidHero( targetHero )
