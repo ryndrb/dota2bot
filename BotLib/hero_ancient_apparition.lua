@@ -213,8 +213,8 @@ function X.ConsiderColdFeet()
             if J.GetHP(bot) <= 0.5
             and bot:WasRecentlyDamagedByHero(enemyHero, 2)
             and J.CanCastOnNonMagicImmune(enemyHero)
-            and J.IsInRange(bot, botTarget, nCastRange)
-            and not botTarget:HasModifier('modifier_cold_feet')
+            and J.IsInRange(bot, enemyHero, nCastRange)
+            and not enemyHero:HasModifier('modifier_cold_feet')
             then
                 return BOT_ACTION_DESIRE_HIGH, enemyHero
             end
@@ -266,10 +266,10 @@ function X.ConsiderIceVortex()
 		do
             if bot:WasRecentlyDamagedByHero(enemyHero, 2)
             and J.GetHP(bot) <= 0.5
-            and J.IsValidTarget(botTarget)
+            and J.IsValidTarget(enemyHero)
             and J.CanCastOnNonMagicImmune(enemyHero)
-            and J.IsInRange(bot, botTarget, nCastRange)
-            and not botTarget:HasModifier('modifier_ice_vortex')
+            and J.IsInRange(bot, enemyHero, nCastRange)
+            and not enemyHero:HasModifier('modifier_ice_vortex')
 			then
 				return BOT_ACTION_DESIRE_HIGH, enemyHero:GetExtrapolatedLocation(nCastPoint)
 			end
