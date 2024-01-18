@@ -2190,6 +2190,7 @@ function X.IsABAHero()
 		["npc_dota_hero_void_spirit"] = true,
 		["npc_dota_hero_earth_spirit"] = true,
 		["npc_dota_hero_abaddon"] = true,
+		["npc_dota_hero_ancient_apparition"] = true,
 	}
 
 	return sABAHeroIndex[botName] == true

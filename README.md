@@ -40,10 +40,12 @@ Worth noting that I also use a vscript to improve the bots GPM (XPM later) and a
 
 # Tinkering About
 - ***Heroes (Pos: 1,2,3,4,5)***
-    - Heroes can't be core or support in their possible roles; strictly core/supports; due to ability usage
+    - Heroes can't be core or support in their possible roles; strictly core/supports; due to ability usage.
+    - All Supports are both 4 and 5 for now.
     - ***Added***
         - [4,5] Abaddon
         - [1] Alchemist
+        - [4,5] Ancient Apparition
         - [2] Earth Spirit
         - [2] Ember Spirit
         - [1] Faceless Void
@@ -86,6 +88,7 @@ Worth noting that I also use a vscript to improve the bots GPM (XPM later) and a
             |:---------------------:|:-------:|:-------:
             | Abaddon               | -       | -
             | Alchemist             | &check; | &cross;
+            | Ancient Apparition    | -       | -
             | Antimage              | &check; | &check;
             | Arc Warden            | -       | -
             | Axe                   | -       | -

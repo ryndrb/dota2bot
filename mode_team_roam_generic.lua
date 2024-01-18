@@ -1564,7 +1564,9 @@ function X.IsSpecialSupport(bot)
 		["npc_dota_hero_lion"] = true,
 		["npc_dota_hero_dazzle"] = true,
 		["npc_dota_hero_bane"] = true,
+
 		["npc_dota_hero_abaddon"] = true,
+		["npc_dota_hero_ancient_apparition"] = true,
 	}
 	
 	return tSpecialSupportList[botName] == true

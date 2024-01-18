@@ -241,6 +241,7 @@ local sHasDevelopmentHeroList = {
 	"npc_dota_hero_earth_spirit",
 	"npc_dota_hero_tiny",
 	"npc_dota_hero_abaddon",
+	"npc_dota_hero_ancient_apparition",
 }
 
 
@@ -436,6 +437,7 @@ local sPriestList = {
 	"npc_dota_hero_bane",
 
 	"npc_dota_hero_abaddon",
+	"npc_dota_hero_ancient_apparition",
 }
 
 local sMageList = {
@@ -454,6 +456,7 @@ local sMageList = {
 	"npc_dota_hero_bane",
 
 	"npc_dota_hero_abaddon",
+	"npc_dota_hero_ancient_apparition",
 }
 
 tSelectPoolList = {

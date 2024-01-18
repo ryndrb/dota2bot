@@ -3694,6 +3694,19 @@ function J.IsNotSelf(bot, ally)
 	return false
 end
 
+function J.IsThereCoreNearby(nRadius)
+    local nAllyHeroes = GetBot():GetNearbyHeroes(nRadius, false, BOT_MODE_NONE)
+
+    for _, ally in pairs(nAllyHeroes) do
+        if J.IsCore(ally)
+        then
+            return true
+        end
+    end
+
+    return false
+end
+
 function J.ConsolePrintActiveMode(bot)
 	local mode = bot:GetActiveMode()
 
