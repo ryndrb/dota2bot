@@ -19,6 +19,7 @@ local initDPSFlag = false
 function GetDesire()
     local aliveAlly = J.GetNumOfAliveHeroes(false)
     local aliveEnemy = J.GetNumOfAliveHeroes(true)
+    local hasSameOrMoreHero = aliveAlly >= aliveEnemy
     local healthPercentage = bot:GetHealth() / bot:GetMaxHealth()
 
     local aliveHeroesList = {}
@@ -45,7 +46,7 @@ function GetDesire()
 
     if shouldKillRoshan
     and initDPSFlag
-    and aliveAlly >= aliveEnemy
+    and (hasSameOrMoreHero or (not hasSameOrMoreHero and IsEnoughAllies()))
     then
         if healthPercentage < 0.3
         then
