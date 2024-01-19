@@ -665,22 +665,32 @@ function X.MinionWithSkillThink(minion)
 end
 
 
-function X.MinionThink(  hMinionUnit )
+function X.MinionThink(hMinionUnit)
+	if bot == nil
+	then
+		bot = GetBot()
+	end
 
-	if bot == nil then bot = GetBot(); end
-	
-	if X.IsValidUnit(hMinionUnit) then
-		if hMinionUnit:IsIllusion() then
-			X.IllusionThink(hMinionUnit);
-		elseif X.IsAttackingWard(hMinionUnit:GetUnitName()) then
-			return;
-		elseif X.CantBeControlled(hMinionUnit:GetUnitName()) then
-			X.CantBeControlledThink(hMinionUnit);
+	if X.IsValidUnit(hMinionUnit)
+	then
+		if hMinionUnit:IsIllusion()
+		then
+			X.IllusionThink(hMinionUnit)
+		elseif X.IsAttackingWard(hMinionUnit:GetUnitName())
+		then
+			return
+		elseif X.CantBeControlled(hMinionUnit:GetUnitName())
+		then
+			X.CantBeControlledThink(hMinionUnit)
+		-- future stuff below for zoo
+		elseif X.IsMinionWithNoSkill(hMinionUnit:GetUnitName())
+		then
+			X.IllusionThink(hMinionUnit)
+		elseif X.IsMinionWithSkill(hMinionUnit:GetUnitName())
+		then
+			X.IllusionThink(hMinionUnit)
 		end
 	end
-	
 end
 
-
 return X;
--- dota2jmz@163.com QQ:2462331592..
