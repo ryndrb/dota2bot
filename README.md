@@ -46,6 +46,8 @@ Worth noting that I also use a vscript to improve the bots GPM (XPM later) and a
         - [4,5] Abaddon
         - [1] Alchemist
         - [4,5] Ancient Apparition
+        - [2,3] Batrider
+        - [3] Beastmaster
         - [2] Earth Spirit
         - [2] Ember Spirit
         - [1] Faceless Void
@@ -93,6 +95,8 @@ Worth noting that I also use a vscript to improve the bots GPM (XPM later) and a
             | Arc Warden            | -       | -
             | Axe                   | -       | -
             | Bane                  | -       | -
+            | Batrider              | -       | -
+            | Beastmaster           | -       | -
             | Bloodseeker           | -       | &check;
             | Bounty Hunter         | -       | &check;
             | Bristleback           | &check; | &check;
@@ -150,6 +154,6 @@ Worth noting that I also use a vscript to improve the bots GPM (XPM later) and a
             | Wraith King           | -       | -
             | Zeus                  | &check; | &check;
     - ***Improve***
-        - [ ] Some heroes ability usage
+        - [ ] Some heroes ability usage (too spammy, ends up not having enough mana)
         - [ ] Item usage
     

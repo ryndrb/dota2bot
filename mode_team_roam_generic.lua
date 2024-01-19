@@ -51,11 +51,18 @@ function GetDesire()
 		beSpecialCarry = X.IsSpecialCarry(bot)
 		beSpecialSupport = X.IsSpecialSupport(bot)	
 	end
-	
+
 	if not bot:IsAlive() or bot:GetCurrentActionType() == BOT_ACTION_TYPE_DELAY then
 		return BOT_MODE_DESIRE_NONE;
 	end
-	
+
+	-- Hero Roam Abilities
+	if bot:GetUnitName() == "npc_dota_hero_batrider"
+	and bot:HasModifier("modifier_batrider_flaming_lasso_self")
+	then
+		return BOT_MODE_DESIRE_ABSOLUTE
+	end
+
 	--捡碎片
 	if bot:GetLevel() > 15 then
 		if DotaTime() >= droppedCheck + 2.0 then
@@ -210,9 +217,23 @@ function Think()
 		end
 		return
 	end
-	
+
 	if J.CanNotUseAction(bot) then return end
-	
+
+	if bot:GetUnitName() == 'npc_dota_hero_batrider'
+	then
+		local nAllyHeroes = bot:GetNearbyHeroes(1200, false, BOT_MODE_ATTACK)
+
+		if nAllyHeroes ~= nil and #nAllyHeroes >= 1
+		then
+			bot:Action_MoveToLocation(nAllyHeroes[#nAllyHeroes]:GetLocation())
+		else
+			bot:Action_MoveToLocation(J.GetTeamFountain())
+		end
+
+		return
+	end
+
 	if towerCreepMode 
 	then
 		bot:Action_AttackUnit( towerCreep, true );
@@ -1539,6 +1560,8 @@ function X.IsSpecialCarry(bot)
 		["npc_dota_hero_void_spirit"] = true,
 		["npc_dota_hero_earth_spirit"] = true,
 		["npc_dota_hero_tiny"] = true,
+		["npc_dota_hero_batrider"] = true,
+		["npc_dota_hero_beastmaster"] = true,
 	}
 	
 	return tSpecialCarryList[botName] == true

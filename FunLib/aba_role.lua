@@ -1654,6 +1654,7 @@ X['off'] = {
 X['mid'] = {
 	--'npc_dota_hero_alchemist',
 	'npc_dota_hero_arc_warden',
+	'npc_dota_hero_batrider',
 	'npc_dota_hero_bloodseeker',
 	'npc_dota_hero_broodmother',
 	'npc_dota_hero_clinkz',
@@ -2191,6 +2192,8 @@ function X.IsABAHero()
 		["npc_dota_hero_earth_spirit"] = true,
 		["npc_dota_hero_abaddon"] = true,
 		["npc_dota_hero_ancient_apparition"] = true,
+		["npc_dota_hero_batrider"] = true,
+		["npc_dota_hero_beastmaster"] = true,
 	}
 
 	return sABAHeroIndex[botName] == true

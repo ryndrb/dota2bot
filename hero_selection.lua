@@ -242,6 +242,8 @@ local sHasDevelopmentHeroList = {
 	"npc_dota_hero_tiny",
 	"npc_dota_hero_abaddon",
 	"npc_dota_hero_ancient_apparition",
+	"npc_dota_hero_batrider",
+	"npc_dota_hero_beastmaster",
 }
 
 
@@ -395,6 +397,7 @@ local sMidList = {
 	"npc_dota_hero_void_spirit",
 	"npc_dota_hero_earth_spirit",
 	"npc_dota_hero_tiny",
+	"npc_dota_hero_batrider",
 }
 
 local sTankList = {
@@ -419,6 +422,8 @@ local sTankList = {
 
 	"npc_dota_hero_shredder",
 	"npc_dota_hero_mars",
+	"npc_dota_hero_batrider",
+	"npc_dota_hero_beastmaster",
 }
 
 local sPriestList = {

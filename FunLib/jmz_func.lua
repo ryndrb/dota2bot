@@ -3707,6 +3707,27 @@ function J.IsThereCoreNearby(nRadius)
     return false
 end
 
+function J.GetStrongestUnit(nRange, hUnit, bEnemy, bMagicImune, fTime)
+	local units = hUnit:GetNearbyHeroes(nRange, bEnemy, BOT_MODE_NONE)
+	local strongest = nil
+	local maxPower = 0
+
+	for i = 1, #units do
+		if J.IsValidTarget(units[i])
+		and ((bMagicImune == true and J.CanCastOnMagicImmune(units[i]) == true) or (bMagicImune == false and J.CanCastOnNonMagicImmune(units[i]) == true))
+		then
+			local power = units[i]:GetEstimatedDamageToTarget(true, hUnit, fTime, DAMAGE_TYPE_ALL)
+
+			if power > maxPower
+			then
+				maxPower = power
+				strongest = units[i]
+			end
+		end
+	end
+	return strongest
+end
+
 function J.ConsolePrintActiveMode(bot)
 	local mode = bot:GetActiveMode()
 
