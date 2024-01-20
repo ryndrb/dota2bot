@@ -773,7 +773,7 @@ function X.ConsiderFlameCloak()
 	local nAlliedHeroes = bot:GetNearbyHeroes(nAttackRange, false, BOT_MODE_NONE)
 
 	if J.IsRetreating(bot)
-	and (nEnemyHeroes ~= nil and nAlliedHeroes ~= nil and nEnemyHeroes >= nAlliedHeroes)
+	and (nEnemyHeroes ~= nil and nAlliedHeroes ~= nil and #nEnemyHeroes >= #nAlliedHeroes)
 	and not J.WeAreStronger(bot, nAttackRange)
 	then
 		return BOT_ACTION_DESIRE_HIGH
