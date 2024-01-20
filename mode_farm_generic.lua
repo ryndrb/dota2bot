@@ -201,7 +201,22 @@ function GetDesire()
 		-- beVeryHighFarmer = X.IsVeryHighFarmer(bot);
 		beVeryHighFarmer = J.IsCore(bot)
 	end
-	
+
+	local loc
+	if GetTeam() == TEAM_RADIANT
+	then
+		loc = Vector(-8075, -1148, 1000)
+	else
+		loc = Vector(8132, 1102, 1000)
+	end
+
+	local nCreeps = bot:GetNearbyNeutralCreeps(700)
+	for _, c in pairs(nCreeps) do
+		if c:GetUnitName() == "npc_dota_miniboss" or #J.GetAlliesNearLoc(loc, 700) >= 2
+		then
+			return 0
+		end
+	end
 	
 	if teamPlayers == nil then teamPlayers = GetTeamPlayers(GetTeam()) end
 	
