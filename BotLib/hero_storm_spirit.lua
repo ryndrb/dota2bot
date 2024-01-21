@@ -290,23 +290,22 @@ function X.ConsiderBallLightning()
 
 	if J.IsLaning(bot)
 	then
-		if (nAllyHeroes ~= nil and #nAllyHeroes > 0 and #nInBonusEnemyList == 1)
-		or J.WillMixedDamageKillTarget(botTarget, bot:GetAttackDamage(), nRDamage + nODamage, 0, nCastPoint)
+		if J.IsValidTarget(botTarget)
+		and ((nAllyHeroes ~= nil and #nAllyHeroes > 0 and #nInBonusEnemyList == 1)
+		or J.WillMixedDamageKillTarget(botTarget, bot:GetAttackDamage(), nRDamage + nODamage, 0, nCastPoint))
 		then
-			return BOT_ACTION_DESIRE_HIGH
+			return BOT_ACTION_DESIRE_HIGH, botTarget:GetExtrapolatedLocation(nCastPoint)
 		end
-
-		return BOT_ACTION_DESIRE_LOW
 	end
 
 	if J.IsGoingOnSomeone(bot)
-	and GetUnitToUnitDistance(bot, botTarget) > bot:GetAttackRange()
-	and not botTarget:HasModifier("modifier_black_king_bar_immune")
-	and nAllyHeroes ~= nil and #nAllyHeroes >= #nInBonusEnemyList
 	then
 		if J.IsValidTarget(botTarget)
 		and J.IsInRange(bot, botTarget, 1200)
 		and J.CanCastOnNonMagicImmune(botTarget)
+		and GetUnitToUnitDistance(bot, botTarget) > bot:GetAttackRange()
+		and not botTarget:HasModifier("modifier_black_king_bar_immune")
+		and nAllyHeroes ~= nil and #nAllyHeroes >= #nInBonusEnemyList
 		then
 			return BOT_ACTION_DESIRE_HIGH, botTarget:GetExtrapolatedLocation(nCastPoint)
 		end
