@@ -3394,19 +3394,18 @@ function J.GetClosestUnit(units)
 end
 
 function J.IsModeTurbo()
-
     if GetGameMode() ~= GAMEMODE_AP
-    or GetGameMode() ~= GAMEMODE_CM
-    or GetGameMode() ~= GAMEMODE_RD
-    or GetGameMode() ~= GAMEMODE_SD
-    or GetGameMode() ~= GAMEMODE_AR
-    or GetGameMode() ~= GAMEMODE_REVERSE_CM
-    or GetGameMode() ~= GAMEMODE_MO
-    or GetGameMode() ~= GAMEMODE_CD
-    or GetGameMode() ~= GAMEMODE_ABILITY_DRAFT
-    or GetGameMode() ~= GAMEMODE_ARDM
-    or GetGameMode() ~= GAMEMODE_1V1MID
-    or GetGameMode() ~= GAMEMODE_ALL_DRAFT
+    and GetGameMode() ~= GAMEMODE_CM
+    and GetGameMode() ~= GAMEMODE_RD
+    and GetGameMode() ~= GAMEMODE_SD
+    and GetGameMode() ~= GAMEMODE_AR
+    and GetGameMode() ~= GAMEMODE_REVERSE_CM
+    and GetGameMode() ~= GAMEMODE_MO
+    and GetGameMode() ~= GAMEMODE_CD
+    and GetGameMode() ~= GAMEMODE_ABILITY_DRAFT
+    and GetGameMode() ~= GAMEMODE_ARDM
+    and GetGameMode() ~= GAMEMODE_1V1MID
+    and GetGameMode() ~= GAMEMODE_ALL_DRAFT
     then
         return true
     end
