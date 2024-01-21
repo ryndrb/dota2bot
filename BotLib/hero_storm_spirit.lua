@@ -290,7 +290,7 @@ function X.ConsiderBallLightning()
 
 	if J.IsLaning(bot)
 	then
-		if (nAllyHeroes ~= nil and nAllyHeroes > 0 and #nInBonusEnemyList == 1)
+		if (nAllyHeroes ~= nil and #nAllyHeroes > 0 and #nInBonusEnemyList == 1)
 		or J.WillMixedDamageKillTarget(botTarget, bot:GetAttackDamage(), nRDamage + nODamage, 0, nCastPoint)
 		then
 			return BOT_ACTION_DESIRE_HIGH
