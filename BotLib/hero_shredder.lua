@@ -767,8 +767,8 @@ function X.ConsiderClosing()
 end
 
 function X.ConsiderFlamethrower()
-	if not ChakramReturn2:IsFullyCastable()
-	or not J.HasAghanimsShard(bot)
+	if not Flamethrower:IsTrained()
+	or not ChakramReturn2:IsFullyCastable()
 	then
 		return BOT_ACTION_DESIRE_NONE
 	end
