@@ -431,7 +431,7 @@ end
 
 function X.ConsiderMoonGlaives()
 	if not MoonGlaives:IsTrained()
-	and not MoonGlaives:IsFullyCastable()
+	or not MoonGlaives:IsFullyCastable()
 	then
 		return BOT_ACTION_DESIRE_NONE
 	end
