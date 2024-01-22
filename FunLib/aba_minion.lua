@@ -1028,7 +1028,7 @@ function X.ConsiderBrewLinkMove(hMinionUnit)
 	elseif distanceToMid < distanceToTop and distanceToMid < distanceToBot
 	then
 		loc = GetLaneFrontLocation(GetTeam(), LANE_MID, 0.0)
-	elseif distanceToBot < distanceToTop and distanceToBot < laneFrontLocMid
+	elseif distanceToBot < distanceToTop and distanceToBot < distanceToMid
 	then
 		loc = GetLaneFrontLocation(GetTeam(), LANE_BOT, 0.0)
 	end
