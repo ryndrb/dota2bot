@@ -768,7 +768,7 @@ end
 
 function X.ConsiderFlamethrower()
 	if not Flamethrower:IsTrained()
-	or not ChakramReturn2:IsFullyCastable()
+	or not Flamethrower:IsFullyCastable()
 	then
 		return BOT_ACTION_DESIRE_NONE
 	end
