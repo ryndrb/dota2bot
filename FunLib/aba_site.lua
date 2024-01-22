@@ -2022,6 +2022,18 @@ Site.ConsiderIsTimeToFarm["npc_dota_hero_broodmother"] = function()
 	return false
 end
 
+Site.ConsiderIsTimeToFarm["npc_dota_hero_centaur"] = function()
+	local bot = GetBot()
+	local networth = bot:GetNetWorth()
+	local lastHits = bot:GetLastHits()
+
+	if lastHits < 1000 then
+		return true
+	end
+
+	return false
+end
+
 ------------------------------------------------------------------
 
 --根据地点来刷新阵营

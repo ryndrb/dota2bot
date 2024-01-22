@@ -1580,6 +1580,7 @@ function X.IsSpecialCarry(bot)
 		["npc_dota_hero_beastmaster"] = true,
 		["npc_dota_hero_brewmaster"] = true,
 		["npc_dota_hero_broodmother"] = true,
+		["npc_dota_hero_centaur"] = true,
 	}
 	
 	return tSpecialCarryList[botName] == true
