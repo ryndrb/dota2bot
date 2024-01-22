@@ -90,7 +90,7 @@ local DrunkenBrawlerDesire, ActionType
 local PrimalCompanionDesire
 local PrimalSplitDesire
 
-if bot.drunkenBrawlerState == nil and DotaTime() < 0 then bot.drunkenBrawlerState = 0 end
+if bot.drunkenBrawlerState == nil and DotaTime() < 0 then bot.drunkenBrawlerState = 1 end
 
 function X.SkillsComplement()
 	if J.CanNotUseAbility(bot)
