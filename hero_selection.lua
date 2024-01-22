@@ -399,6 +399,7 @@ local sMidList = {
 	"npc_dota_hero_earth_spirit",
 	"npc_dota_hero_tiny",
 	"npc_dota_hero_batrider",
+	"npc_dota_hero_broodmother",
 }
 
 local sTankList = {
@@ -426,6 +427,7 @@ local sTankList = {
 	"npc_dota_hero_batrider",
 	"npc_dota_hero_beastmaster",
 	"npc_dota_hero_brewmaster",
+	"npc_dota_hero_broodmother",
 }
 
 local sPriestList = {

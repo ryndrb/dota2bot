@@ -2010,6 +2010,18 @@ Site.ConsiderIsTimeToFarm["npc_dota_hero_brewmaster"] = function()
 	return false
 end
 
+Site.ConsiderIsTimeToFarm["npc_dota_hero_broodmother"] = function()
+	local bot = GetBot()
+	local networth = bot:GetNetWorth()
+	local lastHits = bot:GetLastHits()
+
+	if lastHits < 1000 then
+		return true
+	end
+
+	return false
+end
+
 ------------------------------------------------------------------
 
 --根据地点来刷新阵营

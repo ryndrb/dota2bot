@@ -49,6 +49,7 @@ Worth noting that I also use a vscript to improve the bots GPM (XPM later) and a
         - [2,3] Batrider
         - [3] Beastmaster
         - [3] Brewmaster
+        - [2,3] Broodmother
         - [2] Earth Spirit
         - [2] Ember Spirit
         - [1] Faceless Void
@@ -99,6 +100,7 @@ Worth noting that I also use a vscript to improve the bots GPM (XPM later) and a
             | Batrider              | -       | -
             | Beastmaster           | -       | -
             | Brewmaster            | -       | &cross;
+            | Broodmother           | -       | &cross;
             | Bloodseeker           | -       | &check;
             | Bounty Hunter         | -       | &check;
             | Bristleback           | &check; | &check;

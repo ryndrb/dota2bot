@@ -2195,6 +2195,7 @@ function X.IsABAHero()
 		["npc_dota_hero_batrider"] = true,
 		["npc_dota_hero_beastmaster"] = true,
 		["npc_dota_hero_brewmaster"] = true,
+		["npc_dota_hero_broodmother"] = true,
 	}
 
 	return sABAHeroIndex[botName] == true
