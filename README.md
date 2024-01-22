@@ -48,6 +48,7 @@ Worth noting that I also use a vscript to improve the bots GPM (XPM later) and a
         - [4,5] Ancient Apparition
         - [2,3] Batrider
         - [3] Beastmaster
+        - [3] Brewmaster
         - [2] Earth Spirit
         - [2] Ember Spirit
         - [1] Faceless Void
@@ -97,6 +98,7 @@ Worth noting that I also use a vscript to improve the bots GPM (XPM later) and a
             | Bane                  | -       | -
             | Batrider              | -       | -
             | Beastmaster           | -       | -
+            | Brewmaster            | -       | &cross;
             | Bloodseeker           | -       | &check;
             | Bounty Hunter         | -       | &check;
             | Bristleback           | &check; | &check;

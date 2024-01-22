@@ -11,6 +11,7 @@
 local X = {};
 
 local bot = GetBot();
+local J = require(GetScriptDirectory()..'/FunLib/jmz_func')
 
 local nTeamAncient = GetAncient(GetTeam());
 local vTeamAncientLoc = nil;
@@ -77,6 +78,21 @@ function X.IsFamiliar(unit_name)
 	return unit_name == "npc_dota_visage_familiar1"
 		or unit_name == "npc_dota_visage_familiar2"
 		or unit_name == "npc_dota_visage_familiar3";
+end
+
+function X.IsBrewLink(unit_name)
+	return unit_name == "npc_dota_brewmaster_earth_1"
+		or unit_name ==  "npc_dota_brewmaster_earth_2"
+		or unit_name ==  "npc_dota_brewmaster_earth_3"
+		or unit_name ==  "npc_dota_brewmaster_storm_1"
+		or unit_name ==  "npc_dota_brewmaster_storm_2"
+		or unit_name ==  "npc_dota_brewmaster_storm_3"
+		or unit_name ==  "npc_dota_brewmaster_fire_1"
+		or unit_name ==  "npc_dota_brewmaster_fire_2"
+		or unit_name ==  "npc_dota_brewmaster_fire_3"
+		or unit_name ==  "npc_dota_brewmaster_void_1"
+		or unit_name ==  "npc_dota_brewmaster_void_2"
+		or unit_name ==  "npc_dota_brewmaster_void_3"
 end
 
 function X.IsMinionWithNoSkill(unit_name)
@@ -523,7 +539,12 @@ function X.CheckFlag(bitfield, flag)
 end
 
 function X.CanCastAbility(ability)
-	return ability ~= nil and ability:IsFullyCastable() and ability:IsPassive() == false;
+	return ability ~= nil
+		and ability:IsFullyCastable()
+		and ability:GetName() ~= ''
+		and not ability:IsPassive()
+		and not ability:IsHidden()
+		and not ability:IsNull()
 end
 
 function X.ConsiderUnitTarget(minion, ability)
@@ -648,23 +669,374 @@ function X.CastAbilityThink(minion)
 
 end
 
-function X.MinionWithSkillThink(minion)
-	if X.IsBusy(minion) then return; end
-	if minion.abilities == nil then X.InitiateAbility(minion); end
-	X.CastAbilityThink(minion);
-	minion.attackDesire, minion.target = X.ConsiderIllusionAttack(minion);
-	minion.moveDesire, minion.loc      = X.ConsiderIllusionMove(minion);
-	if minion.attackDesire > 0 then
-		minion:Action_AttackUnit(minion.target, true);
+function X.MinionWithSkillThink(hMinionUnit)
+	if X.IsBusy(hMinionUnit)
+	then
 		return
 	end
-	if minion.moveDesire > 0 then
-		minion:Action_MoveToLocation(minion.loc);
+
+	for i = 1, #hMinionUnit.abilities
+	do
+		if X.CanCastAbility(hMinionUnit.abilities[i])
+		then
+			if X.CheckFlag(hMinionUnit.abilities[i]:GetBehavior(), ABILITY_BEHAVIOR_UNIT_TARGET)
+			then
+				if hMinionUnit.abilities[i]:GetName() == 'ogre_magi_frost_armor'
+				then
+					local nCastRange = hMinionUnit.abilities[i]:GetCastRange()
+					local nAllyList = hMinionUnit:GetNearbyHeroes(nCastRange + 150, false, BOT_MODE_NONE)
+
+					if nAllyList ~= nil and #nAllyList > 0
+					then
+						for i = 1, #nAllyList
+						do
+							if J.IsValidTarget(nAllyList[i])
+							and J.CanCastOnNonMagicImmune(nAllyList[i])
+							and not nAllyList[i]:HasModifier('modifier_ogre_magi_frost_armor')
+							then
+								hMinionUnit:Action_UseAbilityOnEntity(hMinionUnit.abilities[i], nAllyList[i])
+							end
+						end
+					end
+				else
+					hMinionUnit.castDesire, hMinionUnitTarget = X.ConsiderUnitTarget(hMinionUnit, hMinionUnit.abilities[i])
+					if hMinionUnit.castDesire > 0
+					then
+						hMinionUnit:ActionPush_UseAbilityOnEntity(hMinionUnit.abilities[i], hMinionUnitTarget)
+						return
+					end
+				end
+			elseif X.CheckFlag(hMinionUnit.abilities[i]:GetBehavior(), ABILITY_BEHAVIOR_POINT)
+			then
+				hMinionUnit.castDesire, loc = X.ConsiderPointTarget(hMinionUnit, hMinionUnit.abilities[i])
+				if hMinionUnit.castDesire > 0
+				then
+					hMinionUnit:ActionPush_UseAbilityOnLocation(hMinionUnit.abilities[i], loc)
+					return
+				end
+			elseif X.CheckFlag(hMinionUnit.abilities[i]:GetBehavior(), ABILITY_BEHAVIOR_NO_TARGET)
+			then
+				hMinionUnit.castDesire = X.ConsiderNoTarget(hMinionUnit, hMinionUnit.abilities[i])
+				if hMinionUnit.castDesire > 0
+				then
+					hMinionUnit:ActionPush_UseAbility(hMinionUnit.abilities[i])
+					return
+				end
+			end
+		end
+	end
+
+	hMinionUnit.attackDesire, hMinionUnit.attackTarget = X.ConsiderIllusionAttack(hMinionUnit)
+	hMinionUnit.moveDesire, hMinionUnit.moveLocation = X.ConsiderIllusionMove(hMinionUnit)
+
+	if hMinionUnit.attackDesire > 0
+	then
+		hMinionUnit:Action_AttackUnit(hMinionUnit.attackTarget, false)
+		return
+	end
+
+	if hMinionUnit.moveDesire > 0
+	then
+		hMinionUnit:Action_MoveToLocation(hMinionUnit.moveLocation)
 		return
 	end
 end
 
+function X.BrewLinkThink(hMinionUnit)
+	if X.IsBusy(hMinionUnit)
+	then
+		return
+	end
+	if hMinionUnit.abilities == nil
+	then X.InitiateAbility(hMinionUnit)
+	end
+	for i = 1, #hMinionUnit.abilities
+	do
+		if X.CanCastAbility(hMinionUnit.abilities[i])
+		then
+			hMinionUnit.castDesire, hMinionUnit.target, TargetType = X.ConsiderBrewLinkUseAbilities(hMinionUnit, hMinionUnit.abilities[i])
+			if hMinionUnit.castDesire > 0
+			then
+				if TargetType == 'no_target'
+				then
+					hMinionUnit:Action_UseAbility(hMinionUnit.abilities[i])
+					return
+				elseif TargetType == 'point'
+				then
+					hMinionUnit:Action_UseAbilityOnLocation(hMinionUnit.abilities[i], hMinionUnit.target)
+					return
+				elseif TargetType == 'unit'
+				then
+					hMinionUnit:Action_UseAbilityOnEntity(hMinionUnit.abilities[i], hMinionUnit.target)
+					return
+				elseif TargetType == 'tree'
+				then
+					hMinionUnit:Action_UseAbilityOnTree(hMinionUnit.abilities[i], hMinionUnit.target)
+					return
+				end
+			end
+		end
+	end
 
+	hMinionUnit.retreatDesire, hMinionUnit.retreatLocation = X.ConsiderBrewLinkRetreat(hMinionUnit)
+	hMinionUnit.attackDesire, hMinionUnit.attackTarget = X.ConsiderBrewLinkAttack(hMinionUnit)
+	hMinionUnit.moveDesire, hMinionUnit.moveLocation = X.ConsiderBrewLinkMove(hMinionUnit)
+
+	if hMinionUnit.retreatDesire > 0
+	then
+		hMinionUnit:Action_MoveToLocation(hMinionUnit.retreatLocation)
+		return
+	end
+	if hMinionUnit.attackDesire > 0
+	then
+		hMinionUnit:Action_AttackUnit(hMinionUnit.attackTarget, false)
+		return
+	end
+	if hMinionUnit.moveDesire > 0
+	then
+		hMinionUnit:Action_MoveToLocation(hMinionUnit.moveLocation)
+		return
+	end
+end
+
+function X.ConsiderBrewLinkUseAbilities(hMinionUnit, ability)
+	if ability:GetName() == 'brewmaster_earth_hurl_boulder'
+	then
+		local nCastRange = J.GetProperCastRange(false, hMinionUnit, ability:GetCastRange())
+		local weakestTarget = J.GetVulnerableWeakestUnit(hMinionUnit, true, true, nCastRange)
+
+		if weakestTarget ~= nil
+		then
+			return BOT_ACTION_DESIRE_HIGH, weakestTarget, 'unit'
+		end
+	elseif ability:GetName() == 'brewmaster_thunder_clap'
+	then
+		local nRadius = ability:GetSpecialValueInt("radius")
+		local nEnemyHeroes = hMinionUnit:GetNearbyHeroes(nRadius, true, BOT_MODE_NONE)
+
+		if nEnemyHeroes ~= nil and #nEnemyHeroes >= 1
+		then
+			return BOT_ACTION_DESIRE_HIGH, nil, 'no_target'
+		end
+	elseif ability:GetName() == 'brewmaster_drunken_brawler'
+	then
+		local nAttackRange = hMinionUnit:GetAttackRange()
+		local nEnemyHeroes = hMinionUnit:GetNearbyHeroes(nAttackRange, true, BOT_MODE_NONE)
+
+		if nEnemyHeroes ~= nil and #nEnemyHeroes >= 1
+		then
+			return BOT_ACTION_DESIRE_HIGH, nil, 'no_target'
+		end
+	elseif ability:GetName() == 'brewmaster_storm_dispel_magic'
+	then
+		local nCastRange = J.GetProperCastRange(false, hMinionUnit, ability:GetCastRange())
+		local nAllyHeroes = hMinionUnit:GetNearbyHeroes(nCastRange, false, BOT_MODE_NONE)
+
+		for i = 1, #nAllyHeroes
+		do
+			if J.IsDisabled(nAllyHeroes[i])
+			then
+				return BOT_ACTION_DESIRE_LOW, nAllyHeroes[i]:GetLocation(), 'point'
+			end
+		end
+
+		local nEnemyHeroes = hMinionUnit:GetNearbyHeroes(1200, true, BOT_MODE_NONE)
+
+		if nEnemyHeroes ~= nil and #nEnemyHeroes == 1
+		and nEnemyHeroes[1]:HasModifier("modifier_brewmaster_storm_cyclone")
+		then
+			return BOT_ACTION_DESIRE_LOW, nEnemyHeroes[1]:GetLocation(), 'point'
+		end
+	elseif ability:GetName() == 'brewmaster_storm_cyclone'
+	then
+		local nCastRange = J.GetProperCastRange(false, hMinionUnit, ability:GetCastRange())
+		local targetStrongest = J.GetStrongestUnit(nCastRange, hMinionUnit, true, false, 5.0)
+
+		if targetStrongest ~= nil
+		then
+			return BOT_ACTION_DESIRE_HIGH, targetStrongest, 'unit'
+		end
+
+		local nEnemyHeroes = hMinionUnit:GetNearbyHeroes(nCastRange, true, BOT_MODE_NONE)
+
+		for i = 1, #nEnemyHeroes
+		do
+			if (J.IsValidTarget(nEnemyHeroes[i]) and nEnemyHeroes[i]:IsChanneling() and J.CanCastOnNonMagicImmune(nEnemyHeroes[i]))
+			or (J.IsValidTarget(nEnemyHeroes[i]) and J.IsDisabled(nEnemyHeroes[i]) and J.CanCastOnNonMagicImmune(nEnemyHeroes[i]) )
+			then
+				return BOT_ACTION_DESIRE_LOW, nEnemyHeroes[i], 'unit'
+			end
+		end
+	elseif ability:GetName() == 'brewmaster_storm_wind_walk'
+	then
+		local nEnemyLaneCreeps = hMinionUnit:GetNearbyLaneCreeps(1200, true)
+		local nEnemyHeroes = hMinionUnit:GetNearbyHeroes(1200, true, BOT_MODE_NONE)
+
+		if #nEnemyLaneCreeps == 0 and #nEnemyHeroes == 0
+		then
+			return BOT_ACTION_DESIRE_HIGH, nil, 'no_target'
+		end
+	elseif ability:GetName() == 'brewmaster_cinder_brew'
+	then
+		local nCastRange = J.GetProperCastRange(false, hMinionUnit, ability:GetCastRange())
+		local targetStrongest = J.GetStrongestUnit(nCastRange, hMinionUnit, true, false, 5.0)
+
+		if targetStrongest ~= nil then
+			return BOT_ACTION_DESIRE_HIGH, targetStrongest:GetLocation(), 'point'
+		end
+	elseif ability:GetName() == 'brewmaster_void_astral_pull'
+	then
+		local nCastRage = J.GetProperCastRange(false, hMinionUnit, ability:GetCastRange())
+		local nAllyHeroes = hMinionUnit:GetNearbyHeroes(1200, false, BOT_MODE_NONE)
+		local nEnemyHeroes = hMinionUnit:GetUnitName(1200, true, BOT_MODE_NONE)
+
+		for _, enemyHero in pairs(nEnemyHeroes)
+		do
+			if J.IsValidTarget(enemyHero)
+			and J.CanCastOnNonMagicImmune(enemyHero)
+			and (enemyHero:IsChanneling() or J.IsCastingUltimateAbility(enemyHero))
+			and J.IsInRange(hMinionUnit, enemyHero, nCastRage)
+			then
+				if nAllyHeroes ~= nil and #nAllyHeroes > 0
+				and hMinionUnit:IsFacingLocation(nAllyHeroes[#nAllyHeroes]:GetLocation(), 30)
+				then
+					return BOT_ACTION_DESIRE_HIGH, enemyHero, 'unit'
+				end
+			end
+		end
+
+		for _, allyHero in pairs(nAllyHeroes)
+		do
+			if J.IsValidHero(allyHero)
+			and allyHero:GetUnitName() == 'npc_dota_brewmaster_earth'
+			and J.GetHP(allyHero) < 0.45
+			then
+				if J.IsInRange(hMinionUnit, allyHero, nCastRage)
+				and hMinionUnit:IsFacingLocation(vTeamAncientLoc, 30)
+				then
+					return BOT_ACTION_DESIRE_HIGH, allyHero, 'unit'
+				end
+			end
+		end
+	end
+
+	return BOT_MODE_DESIRE_NONE
+end
+
+function X.ConsiderBrewLinkRetreat(hMinionUnit)
+	if X.IsBusy(hMinionUnit) or X.CantMove(hMinionUnit)
+	then
+		return BOT_ACTION_DESIRE_NONE, 0
+	end
+
+	local nAllyHeroes = hMinionUnit:GetNearbyHeroes(globRadius, false, BOT_MODE_NONE)
+	local nEnemyHeroes = hMinionUnit:GetNearbyHeroes(globRadius, true, BOT_MODE_NONE)
+
+	if (#nAllyHeroes == 0 and #nEnemyHeroes >= 2)
+	or J.GetHP(hMinionUnit) < 0.4
+	then
+		local loc = J.GetEscapeLoc()
+
+		if hMinionUnit:GetUnitName() ~= 'npc_dota_brewmaster_earth'
+		then
+			return BOT_ACTION_DESIRE_LOW, loc
+		else
+			return BOT_ACTION_DESIRE_HIGH, loc
+		end
+	end
+
+	return BOT_ACTION_DESIRE_NONE, 0
+end
+
+function X.ConsiderBrewLinkAttack(hMinionUnit)
+	if X.IsBusy(hMinionUnit) or X.CantAttack(hMinionUnit)
+	then
+		return BOT_ACTION_DESIRE_NONE, nil
+	end
+
+	local nUnitList = hMinionUnit:GetNearbyHeroes(globRadius, true, BOT_MODE_NONE)
+
+	if nUnitList == nil or #nUnitList == 0
+	then
+		nUnitList = hMinionUnit:GetNearbyLaneCreeps(globRadius, true)
+	end
+
+	if nUnitList == nil or #nUnitList == 0
+	then
+		nUnitList = hMinionUnit:GetNearbyTowers(globRadius, true)
+	end
+
+	if nUnitList == nil or #nUnitList == 0
+	then
+		nUnitList = hMinionUnit:GetNearbyBarracks(globRadius, true)
+	end
+
+	if nUnitList ~= nil and #nUnitList > 0
+	then
+		local targetWeakest = X.GetWeakest(nUnitList)
+
+		if targetWeakest ~= nil
+		then
+			return BOT_ACTION_DESIRE_HIGH, targetWeakest
+		end
+	end
+
+	return BOT_ACTION_DESIRE_NONE, nil
+end
+
+function X.ConsiderBrewLinkMove(hMinionUnit)
+	if X.CantMove(hMinionUnit)
+	then
+		return BOT_MODE_DESIRE_NONE, 0
+	end
+
+	local nUnitList = hMinionUnit:GetNearbyHeroes(globRadius, true, BOT_MODE_NONE)
+
+	if nUnitList == nil or #nUnitList == 0
+	then
+		nUnitList = hMinionUnit:GetNearbyLaneCreeps(globRadius, true);
+	end
+
+	if nUnitList == nil or #nUnitList == 0
+	then
+		nUnitList = hMinionUnit:GetNearbyTowers(globRadius, true);
+	end
+
+	if nUnitList == nil or #nUnitList == 0
+	then
+		nUnitList = hMinionUnit:GetNearbyBarracks(globRadius, true);
+	end
+
+	if nUnitList ~= nil and #nUnitList > 0
+	then
+		local targetWeakest = X.GetWeakest(nUnitList)
+
+		if targetWeakest ~= nil
+		then
+			return BOT_ACTION_DESIRE_HIGH, targetWeakest:GetLocation()
+		end
+	end
+
+	local loc = vTeamAncientLoc
+	local distanceToTop = math.max(0, #(GetLaneFrontLocation(GetTeam(), LANE_TOP, 0.0) - bot:GetLocation()))
+    local distanceToMid = math.max(0, #(GetLaneFrontLocation(GetTeam(), LANE_MID, 0.0) - bot:GetLocation()))
+    local distanceToBot = math.max(0, #(GetLaneFrontLocation(GetTeam(), LANE_BOT, 0.0) - bot:GetLocation()))
+
+	if distanceToTop < distanceToMid and distanceToTop < distanceToBot
+	then
+		loc = GetLaneFrontLocation(GetTeam(), LANE_TOP, 0.0)
+	elseif distanceToMid < distanceToTop and distanceToMid < distanceToBot
+	then
+		loc = GetLaneFrontLocation(GetTeam(), LANE_MID, 0.0)
+	elseif distanceToBot < distanceToTop and distanceToBot < laneFrontLocMid
+	then
+		loc = GetLaneFrontLocation(GetTeam(), LANE_BOT, 0.0)
+	end
+
+	return BOT_MODE_DESIRE_HIGH, loc
+end
+
+-- MINION THINK
 function X.MinionThink(hMinionUnit)
 	if bot == nil
 	then
@@ -682,15 +1054,17 @@ function X.MinionThink(hMinionUnit)
 		elseif X.CantBeControlled(hMinionUnit:GetUnitName())
 		then
 			X.CantBeControlledThink(hMinionUnit)
-		-- future stuff below for zoo
 		elseif X.IsMinionWithNoSkill(hMinionUnit:GetUnitName())
 		then
 			X.IllusionThink(hMinionUnit)
 		elseif X.IsMinionWithSkill(hMinionUnit:GetUnitName())
 		then
-			X.IllusionThink(hMinionUnit)
+			X.MinionWithSkillThink(hMinionUnit)
+		elseif X.IsBrewLink(hMinionUnit:GetUnitName())
+		then
+			X.BrewLinkThink(hMinionUnit)
 		end
 	end
 end
 
-return X;
+return X

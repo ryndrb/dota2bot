@@ -1578,6 +1578,7 @@ function X.IsSpecialCarry(bot)
 		["npc_dota_hero_tiny"] = true,
 		["npc_dota_hero_batrider"] = true,
 		["npc_dota_hero_beastmaster"] = true,
+		["npc_dota_hero_brewmaster"] = true,
 	}
 	
 	return tSpecialCarryList[botName] == true
