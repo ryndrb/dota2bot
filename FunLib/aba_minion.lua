@@ -888,7 +888,7 @@ function X.ConsiderBrewLinkUseAbilities(hMinionUnit, ability)
 	then
 		local nCastRage = J.GetProperCastRange(false, hMinionUnit, ability:GetCastRange())
 		local nAllyHeroes = hMinionUnit:GetNearbyHeroes(1200, false, BOT_MODE_NONE)
-		local nEnemyHeroes = hMinionUnit:GetUnitName(1200, true, BOT_MODE_NONE)
+		local nEnemyHeroes = hMinionUnit:GetNearbyHeroes(1200, true, BOT_MODE_NONE)
 
 		for _, enemyHero in pairs(nEnemyHeroes)
 		do

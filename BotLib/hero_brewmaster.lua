@@ -119,9 +119,9 @@ function X.SkillsComplement()
         return
     end
 
-    -- Eh, it's whatever. It 'rights itself' most of the time...
     DrunkenBrawlerDesire, ActionType = X.ConsiderDrunkenBrawler()
     if DrunkenBrawlerDesire > 0
+    and DotaTime() > 0
     then
         if ActionType ~= nil
         then
@@ -150,10 +150,11 @@ function X.SkillsComplement()
             steps = ((state - curr) + 4) % 4
             if steps > 0
             then
-                bot.drunkenBrawlerState = state
                 for _ = 1, steps
                 do
                     bot:Action_UseAbility(DrunkenBrawler)
+                    bot.drunkenBrawlerState = bot.drunkenBrawlerState + 1
+                    if bot.drunkenBrawlerState > 4 then bot.drunkenBrawlerState = 1 end
                 end
                 return
             end
