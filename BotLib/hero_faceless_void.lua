@@ -257,8 +257,8 @@ function X.ConsiderChronosphere()
 
 	if J.IsRetreating(bot)
 	then
-		local nEnemyHeroes = bot:GetNearbyHeroes( nCastRange+(nRadius/2), true, BOT_MODE_NONE)
-		local nAllyHeroes = bot:GetNearbyHeroes( 1000, false, BOT_MODE_ATTACK)
+		local nEnemyHeroes = bot:GetNearbyHeroes(nCastRange, true, BOT_MODE_NONE)
+		local nAllyHeroes = bot:GetNearbyHeroes(1000, false, BOT_MODE_NONE)
 
 		if nEnemyHeroes ~= nil
 		and #nAllyHeroes >= 2
@@ -266,6 +266,7 @@ function X.ConsiderChronosphere()
 			for _, npcEnemy in pairs(nEnemyHeroes)
 			do
 				if bot:WasRecentlyDamagedByHero(npcEnemy, 2.0)
+				and not J.IsSuspiciousIllusion(npcEnemy)
 				then
 					local allies = J.GetAlliesNearLoc(npcEnemy:GetLocation(), nRadius)
 					if #allies < 2
@@ -279,7 +280,7 @@ function X.ConsiderChronosphere()
 
 	if J.IsInTeamFight(bot, 1200)
 	then
-		local locationAoE = bot:FindAoELocation(true, true, bot:GetLocation(), nCastRange, nRadius / 2, 0, 0)
+		local locationAoE = bot:FindAoELocation(true, true, bot:GetLocation(), nCastRange, nRadius, 0, 0)
 
 		if locationAoE.count >= 2
 		then
@@ -292,7 +293,8 @@ function X.ConsiderChronosphere()
 		local npcTarget = bot:GetTarget()
 		if J.IsValidTarget(npcTarget)
 		and J.CanCastOnMagicImmune(npcTarget)
-		and J.IsInRange(npcTarget, bot, nCastRange + (nRadius / 2))
+		and J.IsInRange(npcTarget, bot, nCastRange)
+		and not J.IsSuspiciousIllusion(npcTarget)
 		then
             local nEnemyHeroes = bot:GetNearbyHeroes(1000, true, BOT_MODE_NONE)
 
@@ -317,7 +319,8 @@ function X.ConsiderChronosphere()
 end
 
 function X.ConsiderTimeWalkReverse()
-	if not TimeWalkReverse:IsFullyCastable()
+	if not TimeWalkReverse:IsTrained()
+	or not TimeWalkReverse:IsFullyCastable()
 	then
 		return BOT_ACTION_DESIRE_NONE
 	end
