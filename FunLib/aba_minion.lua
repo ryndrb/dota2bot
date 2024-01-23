@@ -148,7 +148,13 @@ function X.IsMinionWithNoSkill(unit_name)
 		or unit_name == "npc_dota_dark_troll_warlord_skeleton_warrior"
 		or unit_name == "npc_dota_necronomicon_warrior_1"
 		or unit_name == "npc_dota_necronomicon_warrior_2"
-		or unit_name == "npc_dota_necronomicon_warrior_3";
+		or unit_name == "npc_dota_necronomicon_warrior_3"
+		or unit_name == "npc_dota_creep_goodguys_melee"
+		or unit_name == "npc_dota_creep_goodguys_melee_upgraded"
+		or unit_name == "npc_dota_creep_goodguys_ranged"
+		or unit_name == "npc_dota_creep_goodguys_ranged_upgraded"
+		or unit_name == "npc_dota_goodguys_siege"
+		or unit_name == "npc_dota_goodguys_siege_upgraded"
 end
 
 local remnant = {
@@ -675,6 +681,11 @@ function X.MinionWithSkillThink(hMinionUnit)
 		return
 	end
 
+	if hMinionUnit.abilities == nil
+	then
+		X.InitiateAbility(hMinionUnit)
+	end
+
 	for i = 1, #hMinionUnit.abilities
 	do
 		if X.CanCastAbility(hMinionUnit.abilities[i])
@@ -688,13 +699,13 @@ function X.MinionWithSkillThink(hMinionUnit)
 
 					if nAllyList ~= nil and #nAllyList > 0
 					then
-						for i = 1, #nAllyList
+						for j = 1, #nAllyList
 						do
-							if J.IsValidTarget(nAllyList[i])
-							and J.CanCastOnNonMagicImmune(nAllyList[i])
-							and not nAllyList[i]:HasModifier('modifier_ogre_magi_frost_armor')
+							if J.IsValidTarget(nAllyList[j])
+							and J.CanCastOnNonMagicImmune(nAllyList[j])
+							and not nAllyList[j]:HasModifier('modifier_ogre_magi_frost_armor')
 							then
-								hMinionUnit:Action_UseAbilityOnEntity(hMinionUnit.abilities[i], nAllyList[i])
+								hMinionUnit:Action_UseAbilityOnEntity(hMinionUnit.abilities[j], nAllyList[j])
 							end
 						end
 					end
@@ -702,7 +713,7 @@ function X.MinionWithSkillThink(hMinionUnit)
 					hMinionUnit.castDesire, hMinionUnitTarget = X.ConsiderUnitTarget(hMinionUnit, hMinionUnit.abilities[i])
 					if hMinionUnit.castDesire > 0
 					then
-						hMinionUnit:ActionPush_UseAbilityOnEntity(hMinionUnit.abilities[i], hMinionUnitTarget)
+						hMinionUnit:Action_UseAbilityOnEntity(hMinionUnit.abilities[i], hMinionUnitTarget)
 						return
 					end
 				end
@@ -711,7 +722,7 @@ function X.MinionWithSkillThink(hMinionUnit)
 				hMinionUnit.castDesire, loc = X.ConsiderPointTarget(hMinionUnit, hMinionUnit.abilities[i])
 				if hMinionUnit.castDesire > 0
 				then
-					hMinionUnit:ActionPush_UseAbilityOnLocation(hMinionUnit.abilities[i], loc)
+					hMinionUnit:Action_UseAbilityOnLocation(hMinionUnit.abilities[i], loc)
 					return
 				end
 			elseif X.CheckFlag(hMinionUnit.abilities[i]:GetBehavior(), ABILITY_BEHAVIOR_NO_TARGET)
@@ -719,7 +730,7 @@ function X.MinionWithSkillThink(hMinionUnit)
 				hMinionUnit.castDesire = X.ConsiderNoTarget(hMinionUnit, hMinionUnit.abilities[i])
 				if hMinionUnit.castDesire > 0
 				then
-					hMinionUnit:ActionPush_UseAbility(hMinionUnit.abilities[i])
+					hMinionUnit:Action_UseAbility(hMinionUnit.abilities[i])
 					return
 				end
 			end
