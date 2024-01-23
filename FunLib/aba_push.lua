@@ -15,6 +15,16 @@ function Push.GetPushDesire(bot, lane)
         end
     end
 
+    local maxDesire = 0.9
+    local nMode = bot:GetActiveMode()
+    local nModeDesire = bot:GetActiveModeDesire()
+
+	if (nMode == BOT_MODE_DEFEND_TOWER_TOP or nMode == BOT_MODE_DEFEND_TOWER_MID or nMode == BOT_MODE_DEFEND_TOWER_BOT)
+    and nModeDesire > 0.75
+    then
+        maxDesire = 0.5
+    end
+
     local aliveHeroesList = {}
     for _, h in pairs(GetUnitList(UNIT_LIST_ALLIED_HEROES)) do
         if h:IsAlive()
@@ -63,7 +73,7 @@ function Push.GetPushDesire(bot, lane)
             amount = amount + ((#nHeroesInLane[1] - #nHeroesInLane[2]) / (#nHeroesInLane[1] + #nHeroesInLane[2])) * 0.15
         end
 
-        return Clamp(amount, 0.1, 0.75 + tot)
+        return Clamp(amount, 0.1, maxDesire + tot)
     end
 
     return 0.1
