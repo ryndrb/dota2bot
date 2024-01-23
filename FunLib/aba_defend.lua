@@ -46,7 +46,7 @@ function Defend.GetDefendDesire(bot, lane)
 			local amount = 0
 			local nEnemyLaneFrontLoc = GetLaneFrontLocation(GetOpposingTeam(), lane, 0)
 
-			if GetUnitToUnitDistance(nEnemyLaneFrontLoc, ancient) < 1600
+			if J.GetLocationToLocationDistance(nEnemyLaneFrontLoc, ancient:GetLocation()) < 1600
 			or eFront > 0.9
 			then
 				amount = BOT_ACTION_DESIRE_HIGH * mul[lane]
