@@ -11,19 +11,18 @@ Worth noting that I also use a vscript to improve the bots GPM (XPM later) and a
 
 - ***To Use***
     - Since Valve hasn't fixed the workshop bug yet, bot scripts (that were uploaded after the bug occured) are only playable through local host lobby.
-    - To use this (ignore the first two if Git is installed):
-        - Go to Steam/steamapps/workshop/content/570.
-        - Find the folder inside 570 named: `3139791706`, then copy it.
+    - To use this:
         - Go to Steam/steamapps/common/dota 2 beta/game/dota/scripts/vscripts. You will see that there is a `bots` folder inside. Either delete this folder or rename it.
-            - Alternatively, if you have Git installed (easier and better way):
-                - Once you've deleted or renamed the bots folder, create a new folder called `bots`.
-                - Open Command Prompt inside this folder (Right Click on Windows 11). Type: `git clone https://github.com/ryndrb/dota2bot.git`.
-                - The contents of this repository will then be downloaded. And everytime this repository is updated, open Command Prompt inside the `bots` folder. Type: `git pull`.
-                - Ignore 4.
-        - Paste your copy of `3139791706`, and rename it to `bots`.
+            - Once you've deleted or renamed the bots folder, create a new folder called `bots`.
+            - Download the files on this repo by going to `<> Code` and Under `Local`, select `Download ZIP`.
+            - Extract the contents of the zip inside the `bots` folder.
+            - Alternatively, if you have Git installed (ignore 2-3 from above):
+                - Open Command Prompt inside the folder (Right Click on Windows 11). Type: `git clone https://github.com/ryndrb/dota2bot.git`.
+                - The contents of this repository will then be downloaded. And everytime this repository is updated, open Command Prompt inside the `bots` folder. Type: `git pull` to update the files inside the folder.
         - Then, launch DotA 2.
         - Click `Play Dota`. Under `Custom Lobbies`, select `Create`.
         - Under the `Lobby Settings` at the bottom, select `Edit`. Then, in the drop down `Radiant Bots` and `Dire Bots` menus, select `Local Dev Script`.
+        - The `Server Location` must be `Local Host`.
         - Click OK, and it should be good to go.
             - The lobby has 5 slots (This is for Radiant only for now):
                 -  1st is for Position 2 (Mid Lane)
@@ -31,7 +30,7 @@ Worth noting that I also use a vscript to improve the bots GPM (XPM later) and a
                 -  3rd is for Position 1 (Safe Lane)
                 -  4th is for Position 5 (Support Safe Lane)
                 -  5th is for Position 4 (Support Off Lane)
-        - (For non-Git) Everytime there is an update, the contents inside the `3139791706` folder needs to be copy and pasted to the `bots` folder.
+        - (For non-Git) Everytime there is an update, you have to re-download the files and replaced the ones on the `bots` folder.
 
 - ***Key Scripts***
     - BOT Experiment (by Furiospuppy)
