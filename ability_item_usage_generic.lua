@@ -5856,11 +5856,132 @@ X.ConsiderItemDesire['item_pavise'] = function(item)
 end
 
 X.ConsiderItemDesire['item_harpoon'] = function(item)
+	local nCastRange = 700 + aetherRange
+	local sCastType = 'unit'
+	local hEffectTarget = nil
+	local sCastMotive = nil
 
+	local nAttackRange = bot:GetAttackRange()
+	local botTarget = J.GetProperTarget(bot)
+
+	if J.IsGoingOnSomeone(bot)
+	then
+		if J.IsValidTarget(botTarget)
+		and J.IsInRange(bot, botTarget, nCastRange + nAttackRange)
+		and not J.IsInRange(bot, botTarget, nCastRange / 2)
+		and not J.IsSuspiciousIllusion(botTarget)
+		then
+			hEffectTarget = botTarget
+			sCastMotive = 'Harpoon'
+
+			if J.WeAreStronger(bot, nCastRange + nAttackRange)
+			then
+				return BOT_ACTION_DESIRE_HIGH, hEffectTarget, sCastType, sCastMotive
+			else
+				return BOT_ACTION_DESIRE_MODERATE, hEffectTarget, sCastType, sCastMotive
+			end
+		end
+	end
+
+	return BOT_ACTION_DESIRE_NONE
 end
 
 X.ConsiderItemDesire['item_disperser'] = function(item)
+	local nCastRange = 600 + aetherRange
+	local sCastType = 'unit'
+	local hEffectTarget = nil
+	local sCastMotive = nil
 
+	local nAttackRange = bot:GetAttackRange()
+	local botTarget = J.GetProperTarget(bot)
+	local nAllyHeroes = bot:GetNearbyHeroes(nCastRange, false, BOT_MODE_NONE)
+	local nEnemyHeroes = bot:GetNearbyHeroes(nCastRange + nAttackRange, true, BOT_MODE_NONE)
+
+	if J.IsDisabled(bot)
+	then
+		if nEnemyHeroes ~= nil and #nEnemyHeroes >= 1
+		then
+			hEffectTarget = bot
+			sCastMotive = 'Disperser'
+			return BOT_ACTION_DESIRE_HIGH, hEffectTarget, sCastType, sCastMotive
+		end
+	end
+
+	for _, allyHero in pairs(nAllyHeroes)
+	do
+		if nEnemyHeroes ~= nil and #nEnemyHeroes >= 1
+		and allyHero:WasRecentlyDamagedByAnyHero(2)
+		and not J.IsSuspiciousIllusion(allyHero)
+		then
+			hEffectTarget = allyHero
+			sCastMotive = 'Disperser'
+
+			if J.IsDisabled(allyHero)
+			then
+				return BOT_ACTION_DESIRE_HIGH, hEffectTarget, sCastType, sCastMotive
+			end
+
+			if allyHero:GetActiveMode() == BOT_MODE_RETREAT
+			and J.GetHP(allyHero) < 0.42
+			then
+				return BOT_ACTION_DESIRE_HIGH, hEffectTarget, sCastType, sCastMotive
+			end
+		end
+	end
+
+	if J.IsGoingOnSomeone(bot)
+	then
+		if J.IsValidTarget(botTarget)
+		and J.CanCastOnNonMagicImmune(botTarget)
+		and J.IsInRange(bot, botTarget, nCastRange)
+		and not J.IsSuspiciousIllusion(botTarget)
+		and not J.IsDisabled(botTarget)
+		then
+			if botTarget:GetCurrentMovementSpeed() > bot:GetCurrentMovementSpeed()
+			and bot:IsFacingLocation(botTarget:GetLocation(), 30)
+			and not botTarget:IsFacingLocation(bot:GetLocation(), 30)
+			then
+				hEffectTarget = RandomInt(1, 100) > 20 and botTarget or bot -- 20% ourself, more fun
+				sCastMotive = 'Disperser'
+
+				if J.WeAreStronger(bot, nCastRange + nAttackRange)
+				then
+					return BOT_ACTION_DESIRE_HIGH, hEffectTarget, sCastType, sCastMotive
+				else
+					return BOT_ACTION_DESIRE_MODERATE, hEffectTarget, sCastType, sCastMotive
+				end
+			end
+		end
+	end
+
+	if J.IsInTeamFight(bot, nCastRange + nAttackRange)
+	then
+		local nNearbyAllies = J.GetAlliesNearLoc(bot:GetLocation(), nCastRange)
+
+		if nNearbyAllies ~= nil and nNearbyAllies >= 1
+		and nEnemyHeroes ~= nil and #nEnemyHeroes >= 2
+		then
+			hEffectTarget = bot
+			sCastMotive = 'Disperser'
+			return BOT_ACTION_DESIRE_HIGH, hEffectTarget, sCastType, sCastMotive
+		end
+	end
+
+	if J.IsRetreating(bot)
+	then
+		if nEnemyHeroes ~= nil and #nEnemyHeroes >= 1
+		then
+			if not J.WeAreStronger(bot, nCastRange + nAttackRange)
+			or J.GetHP(bot) < 0.33
+			then
+				hEffectTarget = RandomInt(1, 100) > 10 and bot or botTarget -- 90% ourself, more fun
+				sCastMotive = 'Disperser'
+				return BOT_ACTION_DESIRE_HIGH, hEffectTarget, sCastType, sCastMotive
+			end
+		end
+	end
+
+	return BOT_ACTION_DESIRE_NONE
 end
 
 X.ConsiderItemDesire['item_blood_grenade'] = function(item)
