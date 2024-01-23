@@ -39,7 +39,6 @@ tOutFitList['outfit_tank'] = {
 
     "item_helm_of_iron_will",
     "item_phase_boots",
-    "item_ultimate_scepter",--testtsetstsetset
     "item_magic_wand",
     "item_veil_of_discord",
     "item_blink",
@@ -52,6 +51,7 @@ tOutFitList['outfit_tank'] = {
     "item_overwhelming_blink",--
     "item_travel_boots_2",--
     "item_moon_shard",
+    "item_ultimate_scepter",
     "item_recipe_ultimate_scepter_2",
 }
 
