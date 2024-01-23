@@ -72,6 +72,15 @@ function GetDesire()
 		return BOT_MODE_DESIRE_NONE;
 	end
 
+    local nMode = bot:GetActiveMode()
+    local nModeDesire = bot:GetActiveModeDesire()
+
+	if (nMode == BOT_MODE_DEFEND_TOWER_TOP or nMode == BOT_MODE_DEFEND_TOWER_MID or nMode == BOT_MODE_DEFEND_TOWER_BOT)
+    and nModeDesire > 0.75
+    then
+        return BOT_ACTION_DESIRE_LOW
+    end
+
 	-- Hero Roam Abilities
 	if bot:GetUnitName() == "npc_dota_hero_batrider"
 	and bot:HasModifier("modifier_batrider_flaming_lasso_self")
