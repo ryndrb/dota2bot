@@ -595,24 +595,33 @@ end
 
 
 function X.ConsiderNoTarget(minion, ability)
-	local nRadius = ability:GetSpecialValueInt("radius");
-	if bot:GetActiveMode() == BOT_MODE_RETREAT and bot:WasRecentlyDamagedByAnyHero(2.0) then
-		local enemies = minion:GetNearbyHeroes(nRadius, true, BOT_MODE_NONE);
-		if #enemies > 0 then
-			for i=1, #enemies do
-				if X.IsValidTarget(enemies[i]) and X.CanCastOnTarget(enemies[i], ability) then
-					return BOT_ACTION_DESIRE_HIGH;
+	local nRadius = ability:GetSpecialValueInt("radius")
+
+	if J.IsRetreating(bot) and bot:WasRecentlyDamagedByAnyHero(2.0)
+	then
+		local enemies = minion:GetNearbyHeroes(nRadius, true, BOT_MODE_NONE)
+
+		if #enemies > 0
+		then
+			for i = 1, #enemies
+			do
+				if X.IsValidTarget(enemies[i]) and X.CanCastOnTarget(enemies[i], ability)
+				then
+					return BOT_ACTION_DESIRE_HIGH
 				end
 			end
 		end
-	elseif bot:GetActiveMode() == BOT_MODE_ATTACK or bot:GetActiveMode() == BOT_MODE_DEFEND_ALLY then
-		local target = bot:GetAttackTarget();
-		--print(tostring(target))
-		if X.IsValidTarget(target) and X.CanCastOnTarget(target, ability) and X.IsInRange(minion, target, nRadius) then
-			return BOT_ACTION_DESIRE_HIGH;
+	elseif J.IsGoingOnSomeone(bot) or bot:GetActiveMode() == BOT_MODE_DEFEND_ALLY
+	then
+		local target = bot:GetAttackTarget()
+
+		if X.IsValidTarget(target) and X.CanCastOnTarget(target, ability) and X.IsInRange(minion, target, nRadius)
+		then
+			return BOT_ACTION_DESIRE_HIGH
 		end
 	end
-	return BOT_ACTION_DESIRE_HIGH;
+
+	return BOT_ACTION_DESIRE_NONE
 end
 
 function X.CastThink(minion, ability)
