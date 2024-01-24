@@ -2034,6 +2034,70 @@ Site.ConsiderIsTimeToFarm["npc_dota_hero_centaur"] = function()
 	return false
 end
 
+-- Get Chen creep
+Site.ConsiderIsTimeToFarm["npc_dota_hero_chen"] = function()
+	local bot = GetBot()
+	local nCastRange = HolyPersuasion:GetCastRange()
+	local HolyPersuasion = bot:GetAbilityByName('chen_holy_persuasion')
+	local nMaxUnit = HolyPersuasion:GetSpecialValueInt('max_units')
+    local nMaxLevel = HolyPersuasion:GetSpecialValueInt('level_req')
+
+	local nGoodCreep = {
+        "npc_dota_neutral_alpha_wolf",
+        "npc_dota_neutral_centaur_khan",
+        "npc_dota_neutral_polar_furbolg_ursa_warrior",
+        "npc_dota_neutral_dark_troll_warlord",
+        "npc_dota_neutral_satyr_hellcaller",
+        "npc_dota_neutral_enraged_wildkin",
+        "npc_dota_neutral_warpine_raider",
+    }
+
+	local unitTable = {}
+    for _, unit in pairs(GetUnitList(UNIT_LIST_ALLIES))
+    do
+        if string.find(unit:GetUnitName(), 'neutral')
+        and unit:HasModifier('modifier_chen_holy_persuasion')
+        then
+            table.insert(unitTable, unit)
+        end
+    end
+
+	if HolyPersuasion:IsFullyCastable()
+	and #unitTable < 2 -- Just 2 for now to stop from farming much as a Support
+	then
+		local nNeutralCreeps = bot:GetNearbyNeutralCreeps(nCastRange)
+
+		if nNeutralCreeps ~= nil and #nNeutralCreeps > 0
+		-- and bot:GetAttackTarget():IsCreep()
+		then
+			for _, creep in pairs(nNeutralCreeps)
+			do
+				if creep ~= nil
+				and creep:CanBeSeen()
+				and creep:IsAlive()
+				and not creep:IsNull()
+				and not creep:IsBuilding()
+				then
+					for _, gCreep in pairs(nGoodCreep)
+					do
+						if creep:GetUnitName() == gCreep
+						and creep:GetLevel() <= nMaxLevel
+						then
+							return true
+						end
+					end
+				end
+			end
+
+			return false
+		else
+			return true
+		end
+	end
+
+	return false
+end
+
 ------------------------------------------------------------------
 
 --根据地点来刷新阵营

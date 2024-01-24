@@ -247,6 +247,7 @@ local sHasDevelopmentHeroList = {
 	"npc_dota_hero_brewmaster",
 	"npc_dota_hero_broodmother",
 	"npc_dota_hero_centaur",
+	"npc_dota_hero_chen",
 }
 
 
@@ -450,6 +451,7 @@ local sPriestList = {
 
 	"npc_dota_hero_abaddon",
 	"npc_dota_hero_ancient_apparition",
+	"npc_dota_hero_chen",
 }
 
 local sMageList = {
@@ -469,6 +471,7 @@ local sMageList = {
 
 	"npc_dota_hero_abaddon",
 	"npc_dota_hero_ancient_apparition",
+	"npc_dota_hero_chen",
 }
 
 tSelectPoolList = {
