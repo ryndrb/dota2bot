@@ -338,6 +338,27 @@ end
 function X.IllusionThink(minion)
 	minion.attackDesire, minion.target = X.ConsiderIllusionAttack(minion);
 	minion.moveDesire, minion.loc      = X.ConsiderIllusionMove(minion);
+
+	if bot:GetUnitName() == 'npc_dota_hero_chen'
+	or bot:GetUnitName() == 'npc_dota_hero_beastmaster'
+	then
+		minion.retreatDesire, minion.retreatLoc = X.ConsiderBrewLinkRetreat(minion)
+		minion.attackDesire, minion.target = X.ConsiderBrewLinkAttack(minion)
+		minion.moveDesire, minion.loc = X.ConsiderBrewLinkMove(minion)
+
+		if minion.retreatDesire > 0
+		then
+			if bot:IsAlive() and J.IsRetreating(bot)
+			then
+				minion:Action_MoveToLocation(bot:GetLocation())
+			else
+				minion:Action_MoveToLocation(minion.retreatLoc)
+			end
+
+			return
+		end
+	end
+
 	if minion.attackDesire > 0 then
 		if minion.target:IsAttackImmune() or minion.target:IsInvulnerable()
 		then
@@ -348,9 +369,10 @@ function X.IllusionThink(minion)
 			return
 		end
 	end
-	if minion.moveDesire > 0 
+
+	if minion.moveDesire > 0
 	then
-		minion:Action_MoveToLocation(minion.loc);
+		minion:Action_MoveToLocation(minion.loc)
 		return
 	end
 end
@@ -530,7 +552,8 @@ function X.IsMinionWithSkill(unit_name)
 		or unit_name == "npc_dota_neutral_black_dragon"
 		or unit_name == "npc_dota_necronomicon_archer_1"
 		or unit_name == "npc_dota_necronomicon_archer_2"
-		or unit_name == "npc_dota_necronomicon_archer_3";
+		or unit_name == "npc_dota_necronomicon_archer_3"
+		or unit_name == "npc_dota_neutral_warpine_raider"
 end
 
 function X.InitiateAbility(minion)
