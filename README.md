@@ -101,15 +101,15 @@ Worth noting that I also use a vscript to improve the bots GPM (XPM later) and a
             | Bane                  | -       | -
             | Batrider              | -       | -
             | Beastmaster           | -       | -
-            | Brewmaster            | -       | &cross;
-            | Broodmother           | -       | &cross;
-            | Centaur               | -       | &check;
-            | Chen                  | &cross; | &cross;
-            | Clinkz                | &check; | &check;
             | Bloodseeker           | -       | &check;
             | Bounty Hunter         | -       | &check;
+            | Brewmaster            | -       | &cross;
             | Bristleback           | &check; | &check;
+            | Broodmother           | -       | &cross;
+            | Centaur               | -       | &check;
             | Chaos Knight          | -       | -
+            | Chen                  | &cross; | &cross;
+            | Clinkz                | &check; | &check;
             | Crystal Maiden        | &check; | &check;
             | Dazzle                | -       | -
             | Death Prophet         | -       | -
