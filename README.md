@@ -51,6 +51,7 @@ Worth noting that I also use a vscript to improve the bots GPM (XPM later) and a
         - [2,3] Broodmother
         - [3] Centaur
         - [4,5] Chen
+        - [1,2] Clinkz
         - [2] Earth Spirit
         - [2] Ember Spirit
         - [1] Faceless Void
@@ -104,6 +105,7 @@ Worth noting that I also use a vscript to improve the bots GPM (XPM later) and a
             | Broodmother           | -       | &cross;
             | Centaur               | -       | &check;
             | Chen                  | &cross; | &cross;
+            | Clinkz                | &check; | &check;
             | Bloodseeker           | -       | &check;
             | Bounty Hunter         | -       | &check;
             | Bristleback           | &check; | &check;

@@ -1692,6 +1692,7 @@ X['safe'] = {
 	'npc_dota_hero_antimage',
 	'npc_dota_hero_chaos_knight',
 	--"npc_dota_hero_mars",
+	'npc_dota_hero_clinkz',
 	'npc_dota_hero_drow_ranger',
 	'npc_dota_hero_faceless_void',
 	'npc_dota_hero_gyrocopter',
@@ -2136,7 +2137,6 @@ function X.IsABAHero()
 		["npc_dota_hero_bounty_hunter"] = true,
 		["npc_dota_hero_bristleback"] = true, 
 		["npc_dota_hero_chaos_knight"] = true, 
-		["npc_dota_hero_clinkz"] = true, 
 		["npc_dota_hero_crystal_maiden"] = true,
 		["npc_dota_hero_dazzle"] = true,
 		["npc_dota_hero_death_prophet"] = true, 		
@@ -2198,6 +2198,7 @@ function X.IsABAHero()
 		["npc_dota_hero_broodmother"] = true,
 		["npc_dota_hero_centaur"] = true,
 		["npc_dota_hero_chen"] = true,
+		["npc_dota_hero_clinkz"] = true,
 	}
 
 	return sABAHeroIndex[botName] == true

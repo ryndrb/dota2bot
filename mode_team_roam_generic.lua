@@ -164,9 +164,18 @@ function GetDesire()
 			if cAbility == nil then cAbility = bot:GetAbilityByName( "shadow_shaman_shackles" ) end;
 			if cAbility:IsInAbilityPhase() or bot:IsChanneling() then
 				return BOT_MODE_DESIRE_ABSOLUTE;
-			end	
+			end
+	elseif botName == "npc_dota_hero_clinkz"
+	then
+		if cAbility == nil then cAbility = bot:GetAbilityByName("clinkz_burning_barrage") end
+		if cAbility:IsTrained()
+		then
+			if cAbility:IsInAbilityPhase() or bot:IsChanneling() then
+				return BOT_MODE_DESIRE_ABSOLUTE
+			end
+		end
 	end
-	
+
 	if beSpecialSupport
 	then
 		 local npcTarget,targetDesire = X.SupportFindTarget(bot);
@@ -1590,6 +1599,7 @@ function X.IsSpecialCarry(bot)
 		["npc_dota_hero_brewmaster"] = true,
 		["npc_dota_hero_broodmother"] = true,
 		["npc_dota_hero_centaur"] = true,
+		["npc_dota_hero_clinkz"] = true,
 	}
 	
 	return tSpecialCarryList[botName] == true

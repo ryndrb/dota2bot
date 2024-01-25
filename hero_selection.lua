@@ -248,6 +248,7 @@ local sHasDevelopmentHeroList = {
 	"npc_dota_hero_broodmother",
 	"npc_dota_hero_centaur",
 	"npc_dota_hero_chen",
+	"npc_dota_hero_clinkz",
 }
 
 
@@ -344,7 +345,6 @@ local sFifthList = {
 ---------------------------------------------------------
 
 local sCarryList = {
-
 	"npc_dota_hero_antimage",
 	"npc_dota_hero_arc_warden",
 	"npc_dota_hero_bloodseeker",
@@ -373,7 +373,7 @@ local sCarryList = {
 	"npc_dota_hero_terrorblade",
 	"npc_dota_hero_ursa",
 	"npc_dota_hero_tiny",
-
+	"npc_dota_hero_clinkz",
 }
 
 local sMidList = {
@@ -403,6 +403,7 @@ local sMidList = {
 	"npc_dota_hero_tiny",
 	"npc_dota_hero_batrider",
 	"npc_dota_hero_broodmother",
+	"npc_dota_hero_clinkz",
 }
 
 local sTankList = {

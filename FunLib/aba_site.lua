@@ -1243,12 +1243,6 @@ Site.ConsiderIsTimeToFarm["npc_dota_hero_chaos_knight"] = function()
 
 end
 
-Site.ConsiderIsTimeToFarm["npc_dota_hero_clinkz"] = function()
-
-	return Site.ConsiderIsTimeToFarm["npc_dota_hero_templar_assassin"]()
-
-end
-
 Site.ConsiderIsTimeToFarm["npc_dota_hero_dragon_knight"] = function()
 
 	local bot = GetBot()
@@ -2023,6 +2017,18 @@ Site.ConsiderIsTimeToFarm["npc_dota_hero_broodmother"] = function()
 end
 
 Site.ConsiderIsTimeToFarm["npc_dota_hero_centaur"] = function()
+	local bot = GetBot()
+	local networth = bot:GetNetWorth()
+	local lastHits = bot:GetLastHits()
+
+	if lastHits < 1000 then
+		return true
+	end
+
+	return false
+end
+
+Site.ConsiderIsTimeToFarm["npc_dota_hero_clinkz"] = function()
 	local bot = GetBot()
 	local networth = bot:GetNetWorth()
 	local lastHits = bot:GetLastHits()
