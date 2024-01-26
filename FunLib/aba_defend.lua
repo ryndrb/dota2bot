@@ -54,7 +54,7 @@ function Defend.GetDefendDesire(bot, lane)
 				amount = GetDefendLaneDesire(lane) * mul[lane]
 			end
 
-			return Clamp(amount, 0.1, 0.9)
+			return Clamp(amount, 0.1, 1)
         end
 	end
 
@@ -142,41 +142,7 @@ end
 
 function Defend.ShouldGoDefend(bot, lane)
 	local Enemies = Defend.GetEnemyCountInLane(lane, true)
-	local building, mul = Defend.GetFurthestBuildingOnLane(lane)
 	local pos = J.GetPosition(bot)
-
-	local IDs = GetTeamPlayers(GetTeam())
-    for _, id in pairs(IDs) do
-        if GetHeroLevel(id) < 6
-        and (J.IsModeTurbo() and DotaTime() < 8 * 60 or DotaTime() < 12 * 60)
-        then
-			if GetTeam() == TEAM_RADIANT then
-				if lane == LANE_TOP
-				and (pos == 3 or pos == 4) then
-					return true
-				elseif lane == LANE_MID
-				and pos == 2 then
-					return true
-				elseif lane == LANE_BOT
-				and (pos == 1 or pos == 5) then
-					return true
-				end
-			elseif GetTeam() == TEAM_DIRE then
-				if lane == LANE_TOP
-				and (pos == 1 or pos == 5) then
-					return true
-				elseif lane == LANE_MID
-				and pos == 2 then
-					return true
-				elseif lane == LANE_BOT
-				and (pos == 3 or pos == 4) then
-					return true
-				end
-			end
-
-			return false
-        end
-    end
 
 	if Enemies == 1 then
 		if pos == 2
@@ -203,7 +169,7 @@ function Defend.ShouldGoDefend(bot, lane)
 
 	if Enemies == 0
 	and J.IsCore(bot)
-	and bot:GetActiveMode() == BOT_MODE_FARM
+	and J.IsFarming(bot)
 	then
 		return false
 	end
@@ -399,7 +365,7 @@ end
 
 function Defend.GetEnemyCountInLane(lane, isHero)
 	local units = {}
-	local building = Defend.GetFurthestBuildingOnLane(lane)
+	local laneFrontLoc = GetLaneFrontLocation(GetTeam(), lane, 0)
 	local unitList = nil
 
 	if isHero
@@ -410,7 +376,7 @@ function Defend.GetEnemyCountInLane(lane, isHero)
 	end
 
 	for _, enemy in pairs(unitList) do
-		local distance = GetUnitToUnitDistance(building, enemy)
+		local distance = GetUnitToLocationDistance(enemy, laneFrontLoc)
 		if distance < 1600
 		then
 			table.insert(units, enemy)
