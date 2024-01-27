@@ -1629,6 +1629,7 @@ function X.IsSpecialSupport(bot)
 		["npc_dota_hero_abaddon"] = true,
 		["npc_dota_hero_ancient_apparition"] = true,
 		["npc_dota_hero_chen"] = true,
+		["npc_dota_hero_rattletrap"] = true,
 	}
 	
 	return tSpecialSupportList[botName] == true

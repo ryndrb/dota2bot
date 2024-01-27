@@ -52,6 +52,7 @@ Worth noting that I also use a vscript to improve the bots GPM (XPM later) and a
         - [3] Centaur
         - [4,5] Chen
         - [1,2] Clinkz
+        - [4,5] Clockwerk
         - [2] Earth Spirit
         - [2] Ember Spirit
         - [1] Faceless Void
@@ -110,6 +111,7 @@ Worth noting that I also use a vscript to improve the bots GPM (XPM later) and a
             | Chaos Knight          | -       | -
             | Chen                  | &cross; | &cross;
             | Clinkz                | &check; | &check;
+            | Clockwerk             | &check; | &check;
             | Crystal Maiden        | &check; | &check;
             | Dazzle                | -       | -
             | Death Prophet         | -       | -

@@ -1747,6 +1747,7 @@ X['supp'] = {
 	'npc_dota_hero_oracle',
 	'npc_dota_hero_phoenix',
 	'npc_dota_hero_pudge',
+	'npc_dota_hero_rattletrap',
 	'npc_dota_hero_rubick',
 	'npc_dota_hero_shadow_demon',
 	'npc_dota_hero_shadow_shaman',
@@ -2199,6 +2200,7 @@ function X.IsABAHero()
 		["npc_dota_hero_centaur"] = true,
 		["npc_dota_hero_chen"] = true,
 		["npc_dota_hero_clinkz"] = true,
+		["npc_dota_hero_rattletrap"] = true,
 	}
 
 	return sABAHeroIndex[botName] == true
