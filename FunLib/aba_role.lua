@@ -2185,12 +2185,7 @@ function X.IsABAHero()
 		["npc_dota_hero_zuus"] = true, 		
 
 		-- NEW ADDED HEROES --
-		["npc_dota_hero_shredder"] = true, 		
-		["npc_dota_hero_mars"] = true, 		
-		["npc_dota_hero_storm_spirit"] = true,
-		["npc_dota_hero_ember_spirit"] = true,
-		["npc_dota_hero_void_spirit"] = true,
-		["npc_dota_hero_earth_spirit"] = true,
+		["npc_dota_hero_alchemist"] = true,
 		["npc_dota_hero_abaddon"] = true,
 		["npc_dota_hero_ancient_apparition"] = true,
 		["npc_dota_hero_batrider"] = true,
@@ -2200,7 +2195,18 @@ function X.IsABAHero()
 		["npc_dota_hero_centaur"] = true,
 		["npc_dota_hero_chen"] = true,
 		["npc_dota_hero_clinkz"] = true,
+		["npc_dota_hero_dark_seer"] = true,
+		["npc_dota_hero_earth_spirit"] = true,
+		["npc_dota_hero_ember_spirit"] = true,
+		["npc_dota_hero_faceless_void"] = true,
+		["npc_dota_hero_mars"] = true,
 		["npc_dota_hero_rattletrap"] = true,
+		["npc_dota_hero_shredder"] = true,
+		["npc_dota_hero_storm_spirit"] = true,
+		["npc_dota_hero_terrorblade"] = true,
+		["npc_dota_hero_tiny"] = true,
+		["npc_dota_hero_ursa"] = true,
+		["npc_dota_hero_void_spirit"] = true,
 	}
 
 	return sABAHeroIndex[botName] == true

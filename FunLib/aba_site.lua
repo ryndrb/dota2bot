@@ -2040,6 +2040,18 @@ Site.ConsiderIsTimeToFarm["npc_dota_hero_clinkz"] = function()
 	return false
 end
 
+Site.ConsiderIsTimeToFarm["npc_dota_hero_dark_seer"] = function()
+	local bot = GetBot()
+	local networth = bot:GetNetWorth()
+	local lastHits = bot:GetLastHits()
+
+	if lastHits < 1000 then
+		return true
+	end
+
+	return false
+end
+
 -- Get Chen creep
 Site.ConsiderIsTimeToFarm["npc_dota_hero_chen"] = function()
 	local bot = GetBot()

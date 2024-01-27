@@ -229,17 +229,7 @@ local sHasDevelopmentHeroList = {
 
 
 	-- NEW ADDED HEROES --
-	"npc_dota_hero_shredder",
-	"npc_dota_hero_mars",
-	"npc_dota_hero_storm_spirit",
-	"npc_dota_hero_ember_spirit",
-	"npc_dota_hero_faceless_void",
 	"npc_dota_hero_alchemist",
-	"npc_dota_hero_terrorblade",
-	"npc_dota_hero_ursa",
-	"npc_dota_hero_void_spirit",
-	"npc_dota_hero_earth_spirit",
-	"npc_dota_hero_tiny",
 	"npc_dota_hero_abaddon",
 	"npc_dota_hero_ancient_apparition",
 	"npc_dota_hero_batrider",
@@ -249,7 +239,18 @@ local sHasDevelopmentHeroList = {
 	"npc_dota_hero_centaur",
 	"npc_dota_hero_chen",
 	"npc_dota_hero_clinkz",
+	"npc_dota_hero_dark_seer",
+	"npc_dota_hero_earth_spirit",
+	"npc_dota_hero_ember_spirit",
+	"npc_dota_hero_faceless_void",
+	"npc_dota_hero_mars",
 	"npc_dota_hero_rattletrap",
+	"npc_dota_hero_shredder",
+	"npc_dota_hero_storm_spirit",
+	"npc_dota_hero_terrorblade",
+	"npc_dota_hero_tiny",
+	"npc_dota_hero_ursa",
+	"npc_dota_hero_void_spirit",
 }
 
 
@@ -434,6 +435,7 @@ local sTankList = {
 	"npc_dota_hero_brewmaster",
 	"npc_dota_hero_broodmother",
 	"npc_dota_hero_centaur",
+	"npc_dota_hero_dark_seer",
 }
 
 local sPriestList = {

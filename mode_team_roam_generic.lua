@@ -1600,6 +1600,7 @@ function X.IsSpecialCarry(bot)
 		["npc_dota_hero_broodmother"] = true,
 		["npc_dota_hero_centaur"] = true,
 		["npc_dota_hero_clinkz"] = true,
+		["npc_dota_hero_dark_seer"] = true,
 	}
 	
 	return tSpecialCarryList[botName] == true
