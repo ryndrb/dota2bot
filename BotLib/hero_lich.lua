@@ -55,6 +55,7 @@ tOutFitList['outfit_priest'] = {
 	"item_glimmer_cape",--
 	"item_aether_lens",--
 	"item_boots_of_bearing",--
+	"item_ultimate_scepter",
 	"item_phylactery",--
 	"item_refresher",--
 	"item_recipe_ultimate_scepter_2",
@@ -77,6 +78,7 @@ tOutFitList['outfit_mage'] = {
 	"item_glimmer_cape",--
 	"item_aether_lens",--
 	"item_guardian_greaves",--
+	"item_ultimate_scepter",
 	"item_phylactery",--
 	"item_refresher",--
 	"item_recipe_ultimate_scepter_2",
