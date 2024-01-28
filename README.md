@@ -39,8 +39,8 @@ Worth noting that I also use a vscript to improve the bots GPM (XPM later) and a
 
 # Tinkering About
 - ***Heroes (Pos: 1,2,3,4,5)***
-    - Heroes can't be core or support in their possible roles; strictly core/supports; due to ability usage.
     - All Supports are both 4 and 5 for now.
+    - ^. Supports that does damage and CC are just inherently better in bot games compared to non-.
     - ***Added***
         - [4,5] Abaddon
         - [1] Alchemist
