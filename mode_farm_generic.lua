@@ -205,9 +205,9 @@ function GetDesire()
 	if not bInitDone
 	then
 		bInitDone = true
-		beNormalFarmer = X.IsNormalFarmer()
-		beHighFarmer = X.IsHighFarmer()
-		beVeryHighFarmer = X.IsVeryHighFarmer()
+		beNormalFarmer = X.IsNormalFarmer(bot)
+		beHighFarmer = X.IsHighFarmer(bot)
+		beVeryHighFarmer = X.IsVeryHighFarmer(bot)
 	end
 
 	local loc
