@@ -1575,6 +1575,8 @@ function X.IsSpecialCarry(bot)
 		
 		return tSpecialCarryList[botName] == true
 	end
+
+	return false
 end
 
 
