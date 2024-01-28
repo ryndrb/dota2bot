@@ -709,7 +709,7 @@ end
 function J.CanCastOnNonMagicImmune( npcTarget )
 
 	return npcTarget:CanBeSeen()
-			and not npcTarget:IsMagicImmune()
+			and (not npcTarget:IsMagicImmune() or J.IsInEtherealForm( npcTarget ))
 			and not npcTarget:IsInvulnerable()
 			and not J.IsSuspiciousIllusion( npcTarget )
 			and not J.HasForbiddenModifier( npcTarget )
@@ -717,6 +717,13 @@ function J.CanCastOnNonMagicImmune( npcTarget )
 
 end
 
+function J.IsInEtherealForm( npcTarget )
+	return npcTarget:HasModifier( "modifier_ghost_state" )
+    or npcTarget:HasModifier( "modifier_item_ethereal_blade_ethereal" )
+    or npcTarget:HasModifier( "modifier_necrolyte_death_seeker" )
+    or npcTarget:HasModifier( "modifier_necrolyte_sadist_active" )
+    or npcTarget:HasModifier( "modifier_pugna_decrepify" )
+end
 
 function J.CanCastOnTargetAdvanced( npcTarget )
 
