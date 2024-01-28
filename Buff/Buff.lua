@@ -1,4 +1,5 @@
 dofile('bots/Buff/Timers')
+dofile('bots/Buff/Experience')
 dofile('bots/Buff/GPM')
 dofile('bots/Buff/NeutralItems')
 dofile('bots/Buff/Helper')
@@ -46,6 +47,8 @@ function Buff:Init()
                 then
                     GPM.UpdateBotGold(h)
                 end
+
+                XP.UpdateXP(h, TeamRadiant)
             end
 
             for _, h in pairs(TeamDire) do
@@ -53,6 +56,8 @@ function Buff:Init()
                 then
                     GPM.UpdateBotGold(h)
                 end
+
+                XP.UpdateXP(h, TeamDire)
             end
         end
 
