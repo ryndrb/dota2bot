@@ -2196,6 +2196,7 @@ function X.IsABAHero()
 		["npc_dota_hero_chen"] = true,
 		["npc_dota_hero_clinkz"] = true,
 		["npc_dota_hero_dark_seer"] = true,
+		["npc_dota_hero_dark_willow"] = true,
 		["npc_dota_hero_earth_spirit"] = true,
 		["npc_dota_hero_ember_spirit"] = true,
 		["npc_dota_hero_faceless_void"] = true,

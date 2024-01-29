@@ -240,6 +240,7 @@ local sHasDevelopmentHeroList = {
 	"npc_dota_hero_chen",
 	"npc_dota_hero_clinkz",
 	"npc_dota_hero_dark_seer",
+	"npc_dota_hero_dark_willow",
 	"npc_dota_hero_earth_spirit",
 	"npc_dota_hero_ember_spirit",
 	"npc_dota_hero_faceless_void",
@@ -457,6 +458,7 @@ local sPriestList = {
 	"npc_dota_hero_ancient_apparition",
 	"npc_dota_hero_chen",
 	"npc_dota_hero_rattletrap",
+	-- "npc_dota_hero_dark_willow",
 }
 
 local sMageList = {
@@ -478,6 +480,7 @@ local sMageList = {
 	"npc_dota_hero_ancient_apparition",
 	"npc_dota_hero_chen",
 	"npc_dota_hero_rattletrap",
+	-- "npc_dota_hero_dark_willow",
 }
 
 tSelectPoolList = {

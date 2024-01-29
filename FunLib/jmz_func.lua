@@ -3902,6 +3902,88 @@ function J.IsAllyHeroBetweenMeAndTarget(hSource, hTarget, vLoc, nRadius)
 	return false
 end
 
+local sIgnoreAbilityIndex = {
+	["antimage_blink"] = true,
+	["arc_warden_magnetic_field"] = true,
+	["arc_warden_spark_wraith"] = true,
+	["arc_warden_tempest_double"] = true,
+	["chaos_knight_phantasm"] = true,
+	["clinkz_burning_army"] = true,
+	["death_prophet_exorcism"] = true,
+	["dragon_knight_elder_dragon_form"] = true,
+	["juggernaut_healing_ward"] = true,
+	["necrolyte_death_pulse"] = true,
+	["necrolyte_sadist"] = true,
+	["omniknight_guardian_angel"] = true,
+	["phantom_assassin_blur"] = true,
+	["pugna_nether_ward"] = true,
+	["skeleton_king_mortal_strike"] = true,
+	["sven_warcry"] = true,
+	["sven_gods_strength"] = true,
+	["templar_assassin_refraction"] = true,
+	["templar_assassin_psionic_trap"] = true,
+	["windrunner_windrun"] = true,
+	["witch_doctor_voodoo_restoration"] = true,
+}
+function J.DidEnemyCastAbility()
+	local bot = GetBot()
+	local nEnemyHeroes = bot:GetNearbyHeroes(1200, true, BOT_MODE_NONE)
+
+	for _, npcEnemy in pairs(nEnemyHeroes)
+	do
+		if  npcEnemy ~= nil and npcEnemy:IsAlive()
+		and npcEnemy:IsFacingLocation(bot:GetLocation(), 30)
+		and (npcEnemy:IsCastingAbility() or npcEnemy:IsUsingAbility())
+		then
+			local nAbility = npcEnemy:GetCurrentActiveAbility()
+			if nAbility ~= nil
+			then
+				local nAbilityBehavior = nAbility:GetBehavior()
+				local sAbilityName = nAbility:GetName()
+
+				if nAbilityBehavior ~= ABILITY_BEHAVIOR_UNIT_TARGET
+				and (npcEnemy:IsBot() or npcEnemy:GetLevel() >= 5)
+				and not sIgnoreAbilityIndex[sAbilityName]
+				then
+					return true
+				end
+
+				if  nAbilityBehavior == ABILITY_BEHAVIOR_UNIT_TARGET
+				and npcEnemy:GetLevel() >= 6
+				and not npcEnemy:IsBot()
+				and not J.IsAllyUnitSpell(sAbilityName)
+				and (not J.IsProjectileUnitSpell(sAbilityName) or J.IsInRange(bot, npcEnemy, 400))
+				then
+					return true
+				end
+			end
+		end
+	end
+
+	return false
+end
+
+function J.GetWeakestUnit(nEnemyUnits)
+	local nWeakestUnit = nil
+	local nWeakestUnitLowestHealth = 10000
+
+	for _, unit in pairs(nEnemyUnits)
+	do
+		if 	unit:IsAlive()
+        and J.CanCastOnNonMagicImmune(unit)
+        and J.CanCastOnTargetAdvanced(unit)
+		then
+			if unit:GetHealth() < nWeakestUnitLowestHealth
+			then
+				nWeakestUnitLowestHealth = unit:GetHealth()
+				nWeakestUnit = unit
+			end
+		end
+	end
+
+	return nWeakestUnit, nWeakestUnitLowestHealth
+end
+
 function J.ConsolePrintActiveMode(bot)
 	local mode = bot:GetActiveMode()
 
