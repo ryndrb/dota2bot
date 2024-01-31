@@ -56,6 +56,7 @@ Worth noting that I also use a vscript to improve the bots GPM (XPM later) and a
         - [3] Dark Seer
         - ~~[4,5] Dark Willow~~
         - [3] Dawnbreaker
+        - [4,5] Disruptor
         - [2] Earth Spirit
         - [2] Ember Spirit
         - [1] Faceless Void
@@ -121,6 +122,7 @@ Worth noting that I also use a vscript to improve the bots GPM (XPM later) and a
             | Dawnbreaker           | -       | -
             | Dazzle                | -       | -
             | Death Prophet         | -       | -
+            | Disruptor             | -       | -
             | Dragon Knight         | -       | -
             | Drow Ranger           | &check; | -
             | Earth Spirit          | &check; | &cross;
