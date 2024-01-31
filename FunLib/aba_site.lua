@@ -495,8 +495,6 @@ local tFarmerList = {
 	["npc_dota_hero_bristleback"] = true,
 	["npc_dota_hero_chaos_knight"] = true,
 	["npc_dota_hero_drow_ranger"] = true,
-	["npc_dota_hero_huskar"] = true,
-	["npc_dota_hero_kunkka"] = true,
 	["npc_dota_hero_luna"] = true,
 	["npc_dota_hero_medusa"] = true,
 	["npc_dota_hero_phantom_assassin"] = true,
@@ -506,46 +504,31 @@ local tFarmerList = {
 	["npc_dota_hero_sniper"] = true,
 	["npc_dota_hero_sven"] = true,
 	["npc_dota_hero_templar_assassin"] = true,
-	["npc_dota_hero_viper"] = true,
-	["npc_dota_hero_ogre_magi"] = true,
-	["npc_dota_hero_sand_king"] = true,
 	["npc_dota_hero_riki"] = true,
-	["npc_dota_hero_bounty_hunter"] = true,
-	["npc_dota_hero_slardar"] = true,
-	["npc_dota_hero_legion_commander"] = true,
-	["npc_dota_hero_omniknight"] = true,
-	["npc_dota_hero_tidehunter"] = true,
-	["npc_dota_hero_axe"] = true,
 	["npc_dota_hero_slark"] = true,
 	["npc_dota_hero_juggernaut"] = true,
-	["npc_dota_hero_mirana"] = true,
 	["npc_dota_hero_naga_siren"] = true,
 	["npc_dota_hero_nevermore"] = true,
-	["npc_dota_hero_dragon_knight"] = true,
 	["npc_dota_hero_lina"] = true,
-	["npc_dota_hero_death_prophet"] = true,
-	["npc_dota_hero_zuus"] = true,
 
-	["npc_dota_hero_shredder"] = true,
-	["npc_dota_hero_mars"] = true,
-	["npc_dota_hero_storm_spirit"] = true,
-	["npc_dota_hero_ember_spirit"] = true,
-	["npc_dota_hero_faceless_void"] = true,
 	["npc_dota_hero_alchemist"] = true,
+	["npc_dota_hero_clinkz"] = true,
+	["npc_dota_hero_faceless_void"] = true,
 	["npc_dota_hero_terrorblade"] = true,
-	["npc_dota_hero_ursa"] = true,
-	["npc_dota_hero_void_spirit"] = true,
-	["npc_dota_hero_earth_spirit"] = true,
 	["npc_dota_hero_tiny"] = true,
+	["npc_dota_hero_ursa"] = true,
 }
-function Site.IsSpecialFarmer( bot )
 
+function Site.IsSpecialFarmer(bot)
 	local botName = bot:GetUnitName()
 
-	return tFarmerList[botName] == true
+	if Site.GetPosition(bot) == 1
+	then
+		return tFarmerList[botName] == true
+	end
 
+	return false
 end
-
 
 local tFarmHeroList = {
 	["npc_dota_hero_antimage"] = true,
@@ -554,8 +537,6 @@ local tFarmHeroList = {
 	["npc_dota_hero_bristleback"] = true,
 	["npc_dota_hero_chaos_knight"] = true,
 	["npc_dota_hero_drow_ranger"] = true,
-	["npc_dota_hero_huskar"] = true,
-	["npc_dota_hero_kunkka"] = true,
 	["npc_dota_hero_luna"] = true,
 	["npc_dota_hero_medusa"] = true,
 	["npc_dota_hero_phantom_assassin"] = true,
@@ -565,44 +546,54 @@ local tFarmHeroList = {
 	["npc_dota_hero_sniper"] = true,
 	["npc_dota_hero_sven"] = true,
 	["npc_dota_hero_templar_assassin"] = true,
-	["npc_dota_hero_viper"] = true,
-	["npc_dota_hero_ogre_magi"] = true,
-	["npc_dota_hero_sand_king"] = true,
 	["npc_dota_hero_riki"] = true,
+	["npc_dota_hero_slark"] = true,
+	["npc_dota_hero_juggernaut"] = true,
+	["npc_dota_hero_naga_siren"] = true,
+	["npc_dota_hero_nevermore"] = true,
+	["npc_dota_hero_lina"] = true,
+	["npc_dota_hero_mirana"] = true,
+	["npc_dota_hero_viper"] = true,
+	["npc_dota_hero_dragon_knight"] = true,
+	["npc_dota_hero_kunkka"] = true,
+	["npc_dota_hero_queenofpain"] = true,
+	["npc_dota_hero_necrolyte"] = true,
+	["npc_dota_hero_huskar"] = true,
+	["npc_dota_hero_ogre_magi"] = true,
 	["npc_dota_hero_bounty_hunter"] = true,
+	["npc_dota_hero_death_prophet"] = true,
+	["npc_dota_hero_zuus"] = true,
+	["npc_dota_hero_sand_king"] = true,
 	["npc_dota_hero_slardar"] = true,
 	["npc_dota_hero_legion_commander"] = true,
 	["npc_dota_hero_omniknight"] = true,
-	["npc_dota_hero_tidehunter"] = true,
 	["npc_dota_hero_axe"] = true,
-	["npc_dota_hero_slark"] = true,
-	["npc_dota_hero_juggernaut"] = true,
-	["npc_dota_hero_mirana"] = true,
-	["npc_dota_hero_naga_siren"] = true,
-	["npc_dota_hero_nevermore"] = true,
-	["npc_dota_hero_dragon_knight"] = true,
-	["npc_dota_hero_lina"] = true,
-	["npc_dota_hero_death_prophet"] = true,
-	["npc_dota_hero_zuus"] = true,
+	["npc_dota_hero_tidehunter"] = true,
 
-	["npc_dota_hero_shredder"] = true,
-	["npc_dota_hero_mars"] = true,
-	["npc_dota_hero_storm_spirit"] = true,
+	["npc_dota_hero_alchemist"] = true,
+	["npc_dota_hero_batrider"] = true,
+	["npc_dota_hero_beastmaster"] = true,
+	["npc_dota_hero_brewmaster"] = true,
+	["npc_dota_hero_broodmother"] = true,
+	["npc_dota_hero_centaur"] = true,
+	["npc_dota_hero_clinkz"] = true,
+	["npc_dota_hero_dark_seer"] = true,
+	["npc_dota_hero_dawnbreaker"] = true,
+	["npc_dota_hero_earth_spirit"] = true,
 	["npc_dota_hero_ember_spirit"] = true,
 	["npc_dota_hero_faceless_void"] = true,
-	["npc_dota_hero_alchemist"] = true,
+	["npc_dota_hero_mars"] = true,
+	["npc_dota_hero_shredder"] = true,
+	["npc_dota_hero_storm_spirit"] = true,
 	["npc_dota_hero_terrorblade"] = true,
+	["npc_dota_hero_tiny"] = true,
 	["npc_dota_hero_ursa"] = true,
 	["npc_dota_hero_void_spirit"] = true,
-	["npc_dota_hero_earth_spirit"] = true,
-	["npc_dota_hero_tiny"] = true,
 }
+
 function Site.IsShouldFarmHero( bot )
-
 	local botName = bot:GetUnitName()
-
 	return tFarmHeroList[botName] == true
-
 end
 
 
@@ -2201,6 +2192,25 @@ function Site.GetAroundAllyCount( bot, nRadius )
 
 	return nCount
 
+end
+
+function Site.GetPosition(bot)
+	local heroID = GetTeamPlayers(GetTeam())
+	local pos = 1
+
+	if GetSelectedHeroName(heroID[1]) == bot:GetUnitName() then
+		pos = 2
+	elseif GetSelectedHeroName(heroID[2]) == bot:GetUnitName() then
+		pos = 3
+	elseif GetSelectedHeroName(heroID[3]) == bot:GetUnitName() then
+		pos = 1
+	elseif GetSelectedHeroName(heroID[4]) == bot:GetUnitName() then
+		pos = 5
+	elseif GetSelectedHeroName(heroID[5]) == bot:GetUnitName() then
+		pos = 4
+	end
+
+	return pos
 end
 
 return Site
