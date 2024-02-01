@@ -49,7 +49,7 @@ function Defend.GetDefendDesire(bot, lane)
 			if J.GetLocationToLocationDistance(nEnemyLaneFrontLoc, ancient:GetLocation()) < 1600
 			or eFront > 0.9
 			then
-				amount = BOT_ACTION_DESIRE_HIGH * mul[lane]
+				amount = BOT_ACTION_DESIRE_ABSOLUTE
 			else
 				amount = GetDefendLaneDesire(lane) * mul[lane]
 			end
@@ -375,11 +375,22 @@ function Defend.GetEnemyCountInLane(lane, isHero)
 		unitList = GetUnitList(UNIT_LIST_ENEMY_CREEPS)
 	end
 
-	for _, enemy in pairs(unitList) do
+	for _, enemy in pairs(unitList)
+	do
 		local distance = GetUnitToLocationDistance(enemy, laneFrontLoc)
-		if distance < 1600
+
+		if isHero
 		then
-			table.insert(units, enemy)
+			if  distance < 1600
+			and not J.IsSuspiciousIllusion(enemy)
+			then
+				table.insert(units, enemy)
+			end
+		else
+			if distance < 1600
+			then
+				table.insert(units, enemy)
+			end
 		end
 	end
 
