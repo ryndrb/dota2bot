@@ -426,7 +426,6 @@ function X.ConsiderDoom()
 		end
 
 		if  npcMostDangerousEnemy ~= nil
-        and J.IsCore(npcMostDangerousEnemy)
 		then
 			return BOT_ACTION_DESIRE_HIGH, npcMostDangerousEnemy
 		end
