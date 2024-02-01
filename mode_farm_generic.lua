@@ -1270,6 +1270,7 @@ function X.IsNormalFarmer(bot)
 	or botName == "npc_dota_hero_centaur"
 	or botName == "npc_dota_hero_dark_seer"
 	or botName == "npc_dota_hero_dawnbreaker"
+	or botName == "npc_dota_hero_doom_bringer"
 	)
 end
 
@@ -1303,6 +1304,7 @@ function X.IsHighFarmer(bot)
 	or botName == "npc_dota_hero_batrider"
 	or botName == "npc_dota_hero_broodmother"
 	or botName == "npc_dota_hero_clinkz"
+	or botName == "npc_dota_hero_doom_bringer"
 	)
 end
 

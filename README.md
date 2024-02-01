@@ -57,6 +57,7 @@ Worth noting that I also use a vscript to improve the bots GPM (XPM later) and a
         - ~~[4,5] Dark Willow~~
         - [3] Dawnbreaker
         - [4,5] Disruptor
+        - [3] Doom
         - [2] Earth Spirit
         - [2] Ember Spirit
         - [1] Faceless Void
@@ -88,7 +89,8 @@ Worth noting that I also use a vscript to improve the bots GPM (XPM later) and a
     - ***Fix***
         - [ ] Warding
         - [ ] Rune behaviour
-        - [ ] Bots standing around (related to PushThink?)
+        - [ ] Bots standing around
+        - [ ] Doom apparently not able to Devour abilities (might just be Valve bug tho)
     - ***Add***
         - [ ] Tormentor
         - [ ] Dynamic item builds
@@ -123,6 +125,7 @@ Worth noting that I also use a vscript to improve the bots GPM (XPM later) and a
             | Dazzle                | -       | -
             | Death Prophet         | -       | -
             | Disruptor             | -       | -
+            | Doom                  | -       | -
             | Dragon Knight         | -       | -
             | Drow Ranger           | &check; | -
             | Earth Spirit          | &check; | &cross;

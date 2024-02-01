@@ -243,6 +243,7 @@ local sHasDevelopmentHeroList = {
 	"npc_dota_hero_dark_willow",
 	"npc_dota_hero_dawnbreaker",
 	"npc_dota_hero_disruptor",
+	"npc_dota_hero_doom_bringer",
 	"npc_dota_hero_earth_spirit",
 	"npc_dota_hero_ember_spirit",
 	"npc_dota_hero_faceless_void",
@@ -409,6 +410,7 @@ local sMidList = {
 	"npc_dota_hero_batrider",
 	"npc_dota_hero_broodmother",
 	"npc_dota_hero_clinkz",
+	"npc_dota_hero_doom_bringer",
 }
 
 local sTankList = {
@@ -440,6 +442,7 @@ local sTankList = {
 	"npc_dota_hero_centaur",
 	"npc_dota_hero_dark_seer",
 	"npc_dota_hero_dawnbreaker",
+	"npc_dota_hero_doom_bringer",
 }
 
 local sPriestList = {
