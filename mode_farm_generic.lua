@@ -1,17 +1,8 @@
-----------------------------------------------------------------------------------------------------
---- The Creation Come From: BOT EXPERIMENT Credit:FURIOUSPUPPY
---- BOT EXPERIMENT Author: Arizona Fauzie 2018.11.21
---- Link:http://steamcommunity.com/sharedfiles/filedetails/?id=837040016
---- Refactor: 决明子 Email: dota2jmz@163.com 微博@Dota2_决明子
---- Link:http://steamcommunity.com/sharedfiles/filedetails/?id=1573671599
---- Link:http://steamcommunity.com/sharedfiles/filedetails/?id=1627071163
-----------------------------------------------------------------------------------------------------
 if GetBot():IsInvulnerable() or not GetBot():IsHero() or not string.find(GetBot():GetUnitName(), "hero") or GetBot():IsIllusion() then
 	return;
 end
 
 local bot = GetBot();
-local bDebugMode = ( 1 == 10 )
 local X = {}
 local J = require( GetScriptDirectory()..'/FunLib/jmz_func')
 local RB = Vector(-7174.000000, -6671.00000, 0.000000)
@@ -28,10 +19,6 @@ local farmState = 0;
 local teamPlayers = nil;
 local nLaneList = {LANE_TOP, LANE_MID, LANE_BOT};
 local nTpSolt = 15
-
-
-local t3Destroyed = false;
-
 
 local runTime = 0;
 local shouldRunTime = 0
@@ -55,143 +42,22 @@ local beNormalFarmer = false;
 local beHighFarmer = false;
 local beVeryHighFarmer = false;
 
-local sBotVersion,sVersionDate = J.Role.GetBotVersion();
+local isWelcomeMessageDone = false
 
-local bPushNoticeDone = false;
-local bAllNotice = true;
-local nPushNoticeTime = nil;
+function GetDesire()
 
-local nLobbyNoticeTime = -90
-
-if J.Role.IsPvNMode()
-then
-	sVersionDate = sVersionDate.." (3V5)"
-end
-
-
-local sNoticeList = {
-	
-	[1] = "创建本地主机房间设置AI即可与好友一起游戏",
-	[2] = "暂停功能会导致客户端BUG引发机器人重复出鞋的问题",
-	[3] = "寻找AI玩家一起游戏, 等着你过来体验翻倍难度",
-	[4] = "跟车队5人一起玩AI, 等你加群游戏新体验",
-	[5] = "可以和我们公屏聊天互动, 武斗文斗同时进行",
-	[6] = "血魔25级大招天赋会导致客户端BUG并卡顿, 不要去点",		
-	[7] = "天地星AI交流群④: 877599588, 欢迎你的加入",
-	[8] = "现已实装禁止拾取大药补丁, 老哥们别钓了ORZ..",
-	[9] = "安装补丁后, 设置服:务器地点为本地主机才可生效",
-	[10] = "等√社度假回来, AI也许就会使用中立物品代币了",
-	[11] = "广告位招租 ↖(^ω^)↗,请联系:dota2jmz@163.匚om",
-	[12] = "可以在群文件里下载补丁, 禁用AI微光披风",
-	
-}
-
-local hasTestDone = false
-
-
-function GetDesire()	
-
-
-
-	--设置夜魇方公告延迟 
-	if not bPushNoticeDone
-	   and DotaTime() < 0
-	   and GetTeam() == TEAM_DIRE
-	   and bot == GetTeamMember(5)
-	   and GetTeamPlayers(GetOpposingTeam())[5] ~= nil
-	   and IsPlayerBot( GetTeamPlayers(GetOpposingTeam())[5])
-	   and nPushNoticeTime == nil
+	if  not isWelcomeMessageDone
+	and J.GetPosition(bot) == 5
 	then
-		nPushNoticeTime = DotaTime();
-		bAllNotice = false
-	end
-	
-	--播放开局公告
-	if not bPushNoticeDone
-	   and DotaTime() < 0
-	   and bot:GetGold() < 300 
-	   and bot == GetTeamMember(5)
-	   and (GetTeam() ~= TEAM_DIRE 
-	         or nPushNoticeTime == nil
-			 or nPushNoticeTime + 2.0 < DotaTime())
-	then
-	
-		local sPushVersion = "随机搭配"
-		if sBotVersion == "New" then sPushVersion = "固定搭配" end 
-		local firstMessage = "(QQ交流群:877599588)天地星AI: "..sPushVersion..sVersionDate		
-		local secondMessage = firstMessage
-		
-
-		if J.Role.GetKeyType() ~= 0
+		if J.IsModeTurbo() and DotaTime() > -45 or DotaTime() > -60
 		then
-			local sKeyType = J.Role.GetKeyType()
-			local sUserName = J.Role.GetUserName()
-			-- firstMessage = J.Chat.GetLocalWord(sKeyType)..sVersionDate
-			if sUserName ~= "" and sUserName ~= " " and sUserName ~= "   " and sUserName ~= nil  
-			then
-				firstMessage = sUserName
-			end
-		end	
-		
-		bot:ActionImmediate_Chat( firstMessage, true)
-		
-		if firstMessage ~= secondMessage and GetTeamMember( 1 ):IsBot()
-		then
-			local sKeyType = J.Role.GetKeyType()
-			local sUserName = J.Role.GetUserName()
-			secondMessage = J.Chat.GetLocalWord(sKeyType)..sVersionDate
-			bot:ActionImmediate_Chat( secondMessage, true)
-		end
-		
-		if not J.Role.IsUserMode()
-		then
-			if bAllNotice
-			then			
-				bot:ActionImmediate_Chat("AI游戏群:459875234, 加群和其他玩家一起挑战多倍难度.",true);
-	
-			else
-				local sNoticeMessage = sNoticeList[RandomInt(1,#sNoticeList)]
-				bot:ActionImmediate_Chat(sNoticeMessage,true);
-			end
-		end		
-		
-		--夜魇方推送提示
-		if GetTeam() == TEAM_DIRE
-		then
-			if J.Role.IsWillPastKey()
-			then
-				bot:ActionImmediate_Chat("当前使用的锦囊包即将停止更新修复.",true);
-			elseif J.Role.IsPastKey()
-			then
-				bot:ActionImmediate_Chat("当前使用的锦囊包已经停止更新修复.",true);			
-			end		
-		end	
-
-		--X.SetPushBonus( bot )
-		
-		bPushNoticeDone = true
-	end
-	
-	
-	--播放创建房间提示
-	if DotaTime() < 100
-		and nLobbyNoticeTime < DotaTime() - 15.0
-		and bot == GetTeamMember(5)
-		and GetTeam() == TEAM_DIRE
-		and not J.Role["bLobbyGame"]
-		and GetGameMode() == GAMEMODE_AP
-	then
-		local sVersion = J.Role.GetBotVersion()
-		if sVersion == "New" or sVersion == "Mid"
-		then
-			bot:ActionImmediate_Chat("提示:由于没有通过创建比赛房间来使用AI, 大部分英雄会失效(客户端的BUG), 请不要直接在主界面开始机器人练习.", true);
-			nLobbyNoticeTime = DotaTime()
+			bot:ActionImmediate_Chat("Welcome to TinkeringABo(u)t.", true)
+			bot:ActionImmediate_Chat("Check out the GitHub page to get the latest files: https://github.com/ryndrb/dota2bot", true)
+			bot:ActionImmediate_Chat("If you have any feedback in improving the experience, kindly post them on the Steam Workshop page.", true)
+			bot:ActionImmediate_Chat("Have a good time!", true)
+			isWelcomeMessageDone = true
 		end
 	end
-
-	-------------#############---------
-	--if true then return 0 end
-	-----------------------------------
 
 	local nMode = bot:GetActiveMode()
     local nModeDesire = bot:GetActiveModeDesire()

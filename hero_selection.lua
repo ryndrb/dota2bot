@@ -1,17 +1,6 @@
----------------------------------------------------------------------------
---- The Creation Come From: A Beginner AI
---- Author: 决明子 Email: dota2jmz@163.com 微博@Dota2_决明子
---- Link:http://steamcommunity.com/sharedfiles/filedetails/?id=1573671599
---- Link:http://steamcommunity.com/sharedfiles/filedetails/?id=1627071163
----------------------------------------------------------------------------
--- 有多少人工, 才有多么智能
--- How much artificial, how many intelligence.
-------------------------------------------------------2017.08.20
-
 local X = {}
-local bDebugMode = ( 1 == 10 )
 local sSelectHero = "npc_dota_hero_zuus"
-local fLastSlectTime, fLastRand, nRand = -100, 0, 0
+local fLastSlectTime, fLastRand = -100, 0
 local nDelayTime = nil
 local nHumanCount = 0
 local sBanList = {}
@@ -19,31 +8,20 @@ local sSelectList = {}
 local tSelectPoolList = {}
 local tRecommendSelectPoolList = {}
 local tLaneAssignList = {}
-local bInitLineupDone = false
 
 local bUserMode = false
-local bLaneAssignActive = true  --默认手动分路
-local bLineupActive = false
+local bLaneAssignActive = true
 local bLineupReserve = false
-local bLineupNotRepeated = false
 
-local teamSelections = {}
-
-
---夜魇有玩家时AI也走中路补丁
-local nDireFirstLaneType = 1 --夜魇默认一楼1中路, 2是下路, 3是上路
+local nDireFirstLaneType = 1
 if pcall( require,  'game/bot_dire_first_lane_type' )
 then
 	nDireFirstLaneType = require( 'game/bot_dire_first_lane_type' )
 end
 
-
 local Role = require( GetScriptDirectory()..'/FunLib/aba_role' )
 local Chat = require( GetScriptDirectory()..'/FunLib/aba_chat' )
 local HeroSet = {}
-local sHeroSetLineupList = {}
-local sHeroSetLaneAssignList = {}
-local sUserKeyDir = Chat.GetUserKeyDir()
 
 --[[
 'npc_dota_hero_abaddon',
@@ -170,93 +148,6 @@ local sUserKeyDir = Chat.GetUserKeyDir()
 'npc_dota_hero_marci',
 'npc_dota_hero_primal_beast',
 --]]
-
-
-local sHasDevelopmentHeroList = {
-
-
-	"npc_dota_hero_silencer",
-	"npc_dota_hero_warlock",
-	"npc_dota_hero_necrolyte",
-	"npc_dota_hero_oracle",
-	"npc_dota_hero_witch_doctor",
-	"npc_dota_hero_lich",
-	"npc_dota_hero_death_prophet",
-	"npc_dota_hero_lion",
-	"npc_dota_hero_dazzle",
-	"npc_dota_hero_crystal_maiden",
-	"npc_dota_hero_zuus",
-	"npc_dota_hero_jakiro",
-	"npc_dota_hero_skywrath_mage",
-	"npc_dota_hero_lina",
-	"npc_dota_hero_queenofpain",
-	"npc_dota_hero_pugna",
-	"npc_dota_hero_shadow_shaman",
-	"npc_dota_hero_bane",
-	"npc_dota_hero_sven",
-	"npc_dota_hero_luna",
-	"npc_dota_hero_antimage",
-	"npc_dota_hero_arc_warden",
-	"npc_dota_hero_drow_ranger",
-	"npc_dota_hero_bloodseeker",
-	"npc_dota_hero_phantom_assassin",
-	"npc_dota_hero_phantom_lancer",
-	"npc_dota_hero_naga_siren",
-	"npc_dota_hero_huskar",
-	"npc_dota_hero_riki",
-	"npc_dota_hero_tidehunter",
-	"npc_dota_hero_axe",
-	"npc_dota_hero_slark",
-	"npc_dota_hero_juggernaut",
-	"npc_dota_hero_chaos_knight",
-	"npc_dota_hero_bristleback",
-	"npc_dota_hero_dragon_knight",
-	"npc_dota_hero_kunkka",
-	"npc_dota_hero_skeleton_king", 
-	"npc_dota_hero_ogre_magi",
-	"npc_dota_hero_sand_king",
-	"npc_dota_hero_bounty_hunter",
-	"npc_dota_hero_slardar",
-	"npc_dota_hero_legion_commander",
-	"npc_dota_hero_omniknight",
-	"npc_dota_hero_sniper",
-	"npc_dota_hero_viper",
-	"npc_dota_hero_nevermore",
-	"npc_dota_hero_medusa", 
-	"npc_dota_hero_templar_assassin",
-	"npc_dota_hero_razor",
-	"npc_dota_hero_mirana",
-
-
-	-- NEW ADDED HEROES --
-	"npc_dota_hero_alchemist",
-	"npc_dota_hero_abaddon",
-	"npc_dota_hero_ancient_apparition",
-	"npc_dota_hero_batrider",
-	"npc_dota_hero_beastmaster",
-	"npc_dota_hero_brewmaster",
-	"npc_dota_hero_broodmother",
-	"npc_dota_hero_centaur",
-	"npc_dota_hero_chen",
-	"npc_dota_hero_clinkz",
-	"npc_dota_hero_dark_seer",
-	"npc_dota_hero_dark_willow",
-	"npc_dota_hero_dawnbreaker",
-	"npc_dota_hero_disruptor",
-	"npc_dota_hero_doom_bringer",
-	"npc_dota_hero_earth_spirit",
-	"npc_dota_hero_ember_spirit",
-	"npc_dota_hero_faceless_void",
-	"npc_dota_hero_mars",
-	"npc_dota_hero_rattletrap",
-	"npc_dota_hero_shredder",
-	"npc_dota_hero_storm_spirit",
-	"npc_dota_hero_terrorblade",
-	"npc_dota_hero_tiny",
-	"npc_dota_hero_ursa",
-	"npc_dota_hero_void_spirit",
-}
-
 
 local sFirstList = {
 
@@ -507,22 +398,6 @@ tRecommendSelectPoolList = {
 	[5] = sFirstList,
 }
 
-
---For Mid Version Random Lineup-------------
-local sBotVersion = Role.GetBotVersion()
-if sBotVersion == 'Mid'
-then
-	tSelectPoolList = {
-		[1] = sHasDevelopmentHeroList,
-		[2] = sHasDevelopmentHeroList,
-		[3] = sHasDevelopmentHeroList,
-		[4] = sHasDevelopmentHeroList,
-		[5] = sHasDevelopmentHeroList,
-	}
-end
-
-
---预挑选阵容
 sSelectList = {
 	[1] = tSelectPoolList[1][RandomInt( 1, #tSelectPoolList[1] )],
 	[2] = tSelectPoolList[2][RandomInt( 1, #tSelectPoolList[2] )],
@@ -531,80 +406,6 @@ sSelectList = {
 	[5] = tSelectPoolList[5][RandomInt( 1, #tSelectPoolList[5] )],
 }
 
-
-
-
-
-if pcall( function( sDir ) require( sDir ) end, sUserKeyDir )
-then
-		
-	local sUserKey = require( sUserKeyDir )
-
-	Role.SetUserKey( sUserKey )
-
-	local sHeroSetDir = Chat.GetHeroSetDir()
-	
-	if Role.GetKeyLV() >= 2
-		and pcall( function( sDir ) require( sDir ) end, sHeroSetDir )
-	then		
-		
-		bUserMode = true
-		
-		HeroSet = require( sHeroSetDir )	
-
-		Role["nUserModeLevel"] = Chat.GetRawGameWord( HeroSet['JiHuoCeLue'] ) == true and Role.GetKeyLV() or 1
-		Role["sUserName"] = HeroSet['ZhanDuiJunShi']
-
-		if Role["nUserModeLevel"] <= 1 then bUserMode = false end
-
-		if bUserMode
-		then
-			
-			bLineupActive = true 
-			sHeroSetLineupList = Chat.GetHeroSelectList( HeroSet['ZhenRong'] )
-			
-			if Chat.GetRawGameWord( HeroSet['FenLuShengXiao'] ) == false then bLaneAssignActive = false end
-				
-			sHeroSetLaneAssignList = Chat.GetLaneAssignList( HeroSet['FenLu'] )
-					
-			if Chat.GetRawGameWord( HeroSet['NeiBuTiaoXuan'] ) == true then bLineupReserve = true end	
-			
-			local sRadomHeroPoolDir = Chat.GetRandomHeroPoolDir()
-						
-			if pcall( function( sDir ) require( sDir ) end, sRadomHeroPoolDir )
-			then
-				local RandomHeroPool = require( sRadomHeroPoolDir )
-				if Chat.GetRawGameWord( RandomHeroPool['JiHuoSuiJi'] ) == true
-				then
-					
-					tSelectPoolList = {
-								[1] = Chat.GetHeroSelectList( RandomHeroPool['1'] ),
-								[2] = Chat.GetHeroSelectList( RandomHeroPool['2'] ),
-								[3] = Chat.GetHeroSelectList( RandomHeroPool['3'] ),
-								[4] = Chat.GetHeroSelectList( RandomHeroPool['4'] ),
-								[5] = Chat.GetHeroSelectList( RandomHeroPool['5'] ),
-					}
-					
-					if Chat.GetRawGameWord( RandomHeroPool['JiHuoZhenRongChi'] ) == true
-					then
-						bLineupNotRepeated = true
-						sHeroSetLineupList = Chat.GetRandomLineupFromHeroPool( RandomHeroPool['ZhenRongChi'] )
-					end
-				end
-			end
-		end
-		
-	end
-end
-
-------------------------------------------------
-------------------------------------------------
---初始化阵容和英雄池完毕
-------------------------------------------------
-------------------------------------------------
-
-
---初始分路
 if GetTeam() == TEAM_RADIANT
 then
 	local nRadiantLane = {
@@ -629,9 +430,6 @@ else
 	tLaneAssignList = nDireLane
 end
 
-
-
---如果安装了夜魇有玩家时AI也走中路补丁(不为2), 交换预选阵容和分路
 if nDireFirstLaneType == 2 and GetTeam() == TEAM_DIRE
 then
 	sSelectList[1], sSelectList[2] = sSelectList[2], sSelectList[1]
@@ -646,29 +444,6 @@ then
 	tLaneAssignList[1], tLaneAssignList[3] = tLaneAssignList[3], tLaneAssignList[1]
 end
 
-
-
-
---根据用户配置初始列表
---初始化英雄池, 英雄表, 英雄分路
---tSelectPoolList, sSelectList, tLaneAssignList
-function X.SetLineupInit()
-
-	if bInitLineupDone then return end
-
-	if bLineupActive 
-	then 
-		sSelectList = sHeroSetLineupList 
-		tLaneAssignList = sHeroSetLaneAssignList
-	end
-	
-	bInitLineupDone = true
-	
-	
-
-end
-
-
 function X.GetMoveTable( nTable )
 
 	local nLenth = #nTable
@@ -681,7 +456,6 @@ function X.GetMoveTable( nTable )
 
 end
 
-
 function X.IsExistInTable( sString, sStringList )
 
 	for _, sTemp in pairs( sStringList )
@@ -690,9 +464,7 @@ function X.IsExistInTable( sString, sStringList )
 	end
 
 	return false
-
 end
-
 
 function X.IsHumanNotReady( nTeam )
 
@@ -718,9 +490,7 @@ function X.IsHumanNotReady( nTeam )
 	end
 
 	return true
-
 end
-
 
 function X.GetNotRepeatHero( nTable )
 
@@ -739,7 +509,6 @@ function X.GetNotRepeatHero( nTable )
 			if ( IsTeamPlayer( id ) and GetSelectedHeroName( id ) == sHero )
 				or ( IsCMBannedHero( sHero ) )
 				or ( X.IsBanByChat( sHero ) )
-				--or ( sHero == 'sRandomHero' )
 			then
 				bRepeated = true
 				table.remove( nTable, nRand )
@@ -750,11 +519,7 @@ function X.GetNotRepeatHero( nTable )
 	end
 
 	return sHero
-	
 end
-
-
-
 
 function X.IsRepeatHero( sHero )
 
@@ -769,23 +534,16 @@ function X.IsRepeatHero( sHero )
 	end
 
 	return false
-
 end
-
 
 if bUserMode and HeroSet['JinYongAI'] ~= nil
 then
 	sBanList = Chat.GetHeroSelectList( HeroSet['JinYongAI'] )
 end
 
-
-
 function X.SetChatHeroBan( sChatText )
-
 	sBanList[#sBanList + 1] = string.lower( sChatText )
-
 end
-
 
 function X.IsBanByChat( sHero )
 
@@ -800,7 +558,6 @@ function X.IsBanByChat( sHero )
 
 	return false
 end
-
 
 local TIWinners =
 {
@@ -974,8 +731,6 @@ local TIRunnerUps =
 }
 
 function X.GetRandomNameList( sStarList )
-
-	
 	local sNameList = {sStarList[1]}
 	table.remove( sStarList, 1 )
 
@@ -985,74 +740,33 @@ function X.GetRandomNameList( sStarList )
 		table.insert( sNameList, sStarList[nRand] )
 		table.remove( sStarList, nRand )
 	end
-	
 
 	return sNameList
-
 end
 
-
 function Think()
-
-	if not bInitLineupDone then X.SetLineupInit() return end
-
 	if GetGameState() == GAME_STATE_HERO_SELECTION then
 		InstallChatCallback( function ( tChat ) X.SetChatHeroBan( tChat.string ) end )
 	end
-	
 
 	if ( GameTime() < 3.0 and not bLineupReserve )
 	   or fLastSlectTime > GameTime() - fLastRand
 	   or X.IsHumanNotReady( GetTeam() )
 	   or X.IsHumanNotReady( GetOpposingTeam() )
-	then 
-		if GetGameMode() ~= 23 then return end  --非加速则延迟挑选, 加速模式延迟挑选有BUG
+	then
+		if GetGameMode() ~= 23 then return end
 	end
 
 	if nDelayTime == nil then nDelayTime = GameTime() fLastRand = RandomInt( 12, 34 )/10 end
 	if nDelayTime ~= nil and nDelayTime > GameTime() - fLastRand then return end
-	
-	--自定义挑选
-	if bLineupActive
-	then
-		local nIDs = GetTeamPlayers( GetTeam() )
-		
-		for i, id in pairs( nIDs )
-		do
-			if ( IsPlayerBot( id ) or bLineupReserve )
-				and ( GetSelectedHeroName( id ) == "" )
-			then
-				sSelectHero = sSelectList[i]
 
-				if sSelectHero == "sRandomHero"
-					or ( bLineupNotRepeated and X.IsRepeatHero( sSelectHero ) )
-				then
-					sSelectHero = X.GetNotRepeatHero( tSelectPoolList[i] )
-					if not IsPlayerBot( id ) then sSelectHero = Chat['sAllHeroList'][RandomInt( 2, 121 )] end
-				end
-
-				SelectHero( id, sSelectHero )
-				
-				if Role["bLobbyGame"] == false then Role["bLobbyGame"] = true end
-
-				fLastSlectTime = GameTime()
-				fLastRand = RandomInt( 3, 9 )/10
-				break
-			end
-		end
-		return
-	end
-
-	--常规挑选
 	local nIDs = GetTeamPlayers( GetTeam() )
-	
 	for i, id in pairs( nIDs )
 	do
 		if IsPlayerBot( id ) and GetSelectedHeroName( id ) == ""
 		then
-
 			if X.IsRepeatHero( sSelectList[i] ) 
-				or ( nHumanCount == 0 --无玩家时阵容更偏向预设值
+				or ( nHumanCount == 0
 					 and RandomInt( 1, 99 ) <= 75
 					 and not X.IsExistInTable( sSelectList[i], tRecommendSelectPoolList[i] ) )
 			then
@@ -1061,15 +775,7 @@ function Think()
 				sSelectHero = sSelectList[i]
 			end
 
-			-------******************************-----------------------------------------------
-			-- if GetTeam() ~= TEAM_DIRE and i == 2 then sSelectHero = "npc_dota_hero_lina" end 
-			-- if GetTeam() ~= TEAM_DIRE and i == 1 then sSelectHero = "npc_dota_hero_antimage" end 
-		
-			
-			------------------------------------------------------------------------------------
-
 			SelectHero( id, sSelectHero )
-			
 			if Role["bLobbyGame"] == false then Role["bLobbyGame"] = true end
 
 			fLastSlectTime = GameTime()
@@ -1077,25 +783,13 @@ function Think()
 			break
 		end
 	end
-
-
 end
 
-
 function GetBotNames()
-
-	if bUserMode then return HeroSet['ZhanDuiMing'] end
-
- 	-- return GetTeam() == TEAM_RADIANT and X.GetRandomNameList( TIWinners ) or X.GetRandomNameList( TIRunnerUps )
 	return GetTeam() == TEAM_RADIANT and TIWinners[RandomInt(1, #TIWinners)] or TIRunnerUps[RandomInt(1, #TIRunnerUps)]
 end
 
-
-
 local bPvNLaneAssignDone = false
-
--- if bLaneAssignActive
--- then
 function UpdateLaneAssignments()
 
 	if DotaTime() > 0
@@ -1109,8 +803,4 @@ function UpdateLaneAssignments()
 	end
 
 	return tLaneAssignList
-
 end
--- end
-
--- dota2jmz@163.com QQ:2462331592..

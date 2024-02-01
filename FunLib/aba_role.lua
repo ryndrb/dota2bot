@@ -1,21 +1,4 @@
-----------------------------------------------------------------------------------------------------
---- The Creation Come From: BOT EXPERIMENT Credit:FURIOUSPUPPY
---- BOT EXPERIMENT Author: Arizona Fauzie
---- Link:http://steamcommunity.com/sharedfiles/filedetails/?id=837040016
---- Refactor: 决明子 Email: dota2jmz@163.com 微博@Dota2_决明子
---- Link:http://steamcommunity.com/sharedfiles/filedetails/?id=1573671599
---- Link:http://steamcommunity.com/sharedfiles/filedetails/?id=1627071163
-----------------------------------------------------------------------------------------------------
-
 local X = {}
-
-local sBotVersion = "New"
--- local sBotVersion = "Mid"
-local sVersionDate = " 7.34, 2023/12/04"
-
-function X.GetBotVersion()
-	return sBotVersion, sVersionDate
-end
 
 ----------------------------------------------------------------------------------------------------
 
