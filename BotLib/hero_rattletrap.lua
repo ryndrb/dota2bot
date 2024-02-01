@@ -502,7 +502,7 @@ function X.ConsiderHookshot()
 
 		for _, camp in pairs(nNeutralCamps)
         do
-			local campDist = J.GetDistance(camp.location, targetLoc)
+			local campDist = J.GetDistance(camp.location, escapeLoc)
 
 			if campDist < targetLoc
 			and GetUnitToLocationDistance(bot, camp.location) > 700
