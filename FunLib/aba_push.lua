@@ -6,13 +6,10 @@ function Push.GetPushDesire(bot, lane)
     local allies    = bot:GetNearbyHeroes(1600, false, BOT_MODE_NONE)
     local creeps    = bot:GetNearbyCreeps(600 + bot:GetAttackRange(), false)
 
-    local IDs = GetTeamPlayers(GetTeam())
-    for _, id in pairs(IDs) do
-        if GetHeroLevel(id) < 6
-        and (J.IsModeTurbo() and DotaTime() < 8 * 60 or DotaTime() < 12 * 60)
-        then
-            return 0.1
-        end
+    if (J.IsModeTurbo() and DotaTime() < 8 * 60 or DotaTime() < 12 * 60)
+    then
+        if J.IsCore(bot) then return 0 end
+        if bot:GetLevel() < 6 then return 0.1 end
     end
 
     local maxDesire = 0.9
