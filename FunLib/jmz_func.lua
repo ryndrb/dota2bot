@@ -709,7 +709,7 @@ end
 function J.CanCastOnNonMagicImmune( npcTarget )
 
 	return npcTarget:CanBeSeen()
-			and (not npcTarget:IsMagicImmune() or J.IsInEtherealForm( npcTarget ))
+			and (not npcTarget:IsMagicImmune() or (not npcTarget:IsMagicImmune() and J.IsInEtherealForm( npcTarget )))
 			and not npcTarget:IsInvulnerable()
 			and not J.IsSuspiciousIllusion( npcTarget )
 			and not J.HasForbiddenModifier( npcTarget )
