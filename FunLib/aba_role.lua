@@ -2186,6 +2186,7 @@ function X.IsABAHero()
 		["npc_dota_hero_disruptor"] = true,
 		["npc_dota_hero_doom_bringer"] = true,
 		["npc_dota_hero_earth_spirit"] = true,
+		["npc_dota_hero_earthshaker"] = true,
 		["npc_dota_hero_ember_spirit"] = true,
 		["npc_dota_hero_faceless_void"] = true,
 		["npc_dota_hero_mars"] = true,

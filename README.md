@@ -40,7 +40,7 @@ Worth noting that I also use a vscript to improve the bots GPM (XPM later) and a
 # Tinkering About
 - ***Heroes (Pos: 1,2,3,4,5)***
     - All Supports are both 4 and 5 for now.
-    - ^. Supports that does damage and CC are just inherently better in bot games compared to non-.
+    - ^. Supports that does damage, CC, or is Ranged are just inherently better in bot games compared to Melee or non-. (Since positioning and movement are Valve default.)
     - ***Added***
         - [4,5] Abaddon
         - [1] Alchemist
@@ -59,6 +59,7 @@ Worth noting that I also use a vscript to improve the bots GPM (XPM later) and a
         - [4,5] Disruptor
         - [3] Doom
         - [2] Earth Spirit
+        - [4,5] Earthshaker
         - [2] Ember Spirit
         - [1] Faceless Void
         - [3] Mars
@@ -129,6 +130,7 @@ Worth noting that I also use a vscript to improve the bots GPM (XPM later) and a
             | Dragon Knight         | -       | -
             | Drow Ranger           | &check; | -
             | Earth Spirit          | &check; | &cross;
+            | Earthshaker           | -       | -
             | Ember Spirit          | -       | -
             | Huskar                | -       | -
             | Jakiro                | &check; | -
