@@ -45,7 +45,7 @@ function Defend.GetDefendDesire(bot, lane)
 			if J.GetLocationToLocationDistance(nEnemyLaneFrontLoc, ancient:GetLocation()) < 1600
 			or eFront > 0.9
 			then
-				amount = BOT_ACTION_DESIRE_ABSOLUTE
+				amount = BOT_ACTION_DESIRE_HIGH * mul[lane]
 			else
 				amount = GetDefendLaneDesire(lane) * mul[lane]
 			end
