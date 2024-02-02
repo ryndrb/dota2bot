@@ -95,13 +95,14 @@ tOutFitList['outfit_mage'] = tOutFitList['outfit_carry']
 
 X['sBuyList'] = tOutFitList[sOutfitType]
 
-Pos4SellList = {
+Pos2SellList = {
+    "item_quelling_blade",
+    "item_bottle",
 	"item_magic_wand",
 }
 
 Pos3SellList = {
 	"item_quelling_blade",
-    "item_helm_of_iron_will",
     "item_magic_wand",
 }
 
