@@ -2071,8 +2071,8 @@ end
 -- Get Chen creep
 Site.ConsiderIsTimeToFarm["npc_dota_hero_chen"] = function()
 	local bot = GetBot()
-	local nCastRange = HolyPersuasion:GetCastRange()
 	local HolyPersuasion = bot:GetAbilityByName('chen_holy_persuasion')
+	local nCastRange = HolyPersuasion:GetCastRange()
 	local nMaxUnit = HolyPersuasion:GetSpecialValueInt('max_units')
     local nMaxLevel = HolyPersuasion:GetSpecialValueInt('level_req')
 
