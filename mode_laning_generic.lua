@@ -25,8 +25,8 @@ function GetDesire()
 
 	if isBotCore and networth < 4500
 	then
-		return BOT_MODE_DESIRE_VERYHIGH
+		return BOT_MODE_DESIRE_HIGH
 	end
 
-	return BOT_MODE_DESIRE_NONE
+	return BOT_MODE_DESIRE_VERYLOW
 end

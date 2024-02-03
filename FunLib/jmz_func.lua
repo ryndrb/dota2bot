@@ -3401,21 +3401,17 @@ function J.GetClosestUnit(units)
 end
 
 function J.IsModeTurbo()
-    if GetGameMode() ~= GAMEMODE_AP
-    and GetGameMode() ~= GAMEMODE_CM
-    and GetGameMode() ~= GAMEMODE_RD
-    and GetGameMode() ~= GAMEMODE_SD
-    and GetGameMode() ~= GAMEMODE_AR
-    and GetGameMode() ~= GAMEMODE_REVERSE_CM
-    and GetGameMode() ~= GAMEMODE_MO
-    and GetGameMode() ~= GAMEMODE_CD
-    and GetGameMode() ~= GAMEMODE_ABILITY_DRAFT
-    and GetGameMode() ~= GAMEMODE_ARDM
-    and GetGameMode() ~= GAMEMODE_1V1MID
-    and GetGameMode() ~= GAMEMODE_ALL_DRAFT
-    then
-        return true
-    end
+	for _, u in pairs(GetUnitList(UNIT_LIST_ALLIES))
+	do
+		if  u ~= nil
+		and u:GetUnitName() == 'npc_dota_courier'
+		then
+			if u:GetCurrentMovementSpeed() == 1100
+			then
+				return true
+			end
+		end
+	end
 
     return false
 end
