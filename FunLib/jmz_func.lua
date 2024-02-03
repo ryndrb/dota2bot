@@ -3980,6 +3980,18 @@ function J.GetWeakestUnit(nEnemyUnits)
 	return nWeakestUnit, nWeakestUnitLowestHealth
 end
 
+function J.AdjustLocationWithOffset(vLoc, offset, target)
+	local targetLoc = vLoc
+
+	local facingDir = target:GetFacing()
+	local offsetX = offset * math.cos(facingDir)
+	local offsetY = offset * math.sin(facingDir)
+
+	targetLoc = targetLoc + Vector(offsetX, offsetY)
+
+	return targetLoc
+end
+
 function J.ConsolePrintActiveMode(bot)
 	local mode = bot:GetActiveMode()
 
