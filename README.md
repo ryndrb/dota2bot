@@ -61,6 +61,7 @@ Worth noting that I also use a vscript to improve the bots GPM (XPM later) and a
         - [2] Earth Spirit
         - [4,5] Earthshaker
         - [2] Ember Spirit
+        - [4,5] Enchantress
         - [1] Faceless Void
         - [3] Mars
         - [2] Storm Spirit
@@ -132,6 +133,7 @@ Worth noting that I also use a vscript to improve the bots GPM (XPM later) and a
             | Earth Spirit          | &check; | &cross;
             | Earthshaker           | -       | -
             | Ember Spirit          | -       | -
+            | Enchantress           | &check; | &check;
             | Huskar                | -       | -
             | Jakiro                | &check; | -
             | Juggernaut            | -       | &check;

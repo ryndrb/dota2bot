@@ -1606,6 +1606,7 @@ function X.IsSpecialSupport(bot)
 		["npc_dota_hero_dark_willow"] = true,
 		["npc_dota_hero_disruptor"] = true,
 		["npc_dota_hero_earthshaker"] = true,
+		["npc_dota_hero_enchantress"] = true,
 	}
 	
 	return tSpecialSupportList[botName] == true
