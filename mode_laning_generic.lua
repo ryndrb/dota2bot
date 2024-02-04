@@ -13,7 +13,7 @@ function GetDesire()
 		return BOT_ACTION_DESIRE_NONE
 	end
 
-	if isEarlyGame or botLV < 6
+	if isEarlyGame and botLV < 6
 	then
 		if isBotCore
 		then
