@@ -35,7 +35,6 @@ Worth noting that I also use a vscript to improve the bots GPM (XPM later) and a
 - ***Key Scripts***
     - BOT Experiment (by Furiospuppy)
     - ExtremePush (https://github.com/insraq/dota2bots)
-    - PhalanxBot (https://steamcommunity.com/sharedfiles/filedetails/?id=2873408973&searchtext=)
 
 # Tinkering About
 - ***Heroes (Pos: 1,2,3,4,5)***
