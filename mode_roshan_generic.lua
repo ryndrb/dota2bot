@@ -21,6 +21,7 @@ function GetDesire()
     local aliveEnemy = J.GetNumOfAliveHeroes(true)
     local hasSameOrMoreHero = aliveAlly >= aliveEnemy
     local healthPercentage = bot:GetHealth() / bot:GetMaxHealth()
+    local timeOfDay = J.CheckTimeOfDay()
 
     local aliveHeroesList = {}
     for _, h in pairs(GetUnitList(UNIT_LIST_ALLIED_HEROES)) do
@@ -37,14 +38,31 @@ function GetDesire()
         initDPSFlag = true
     end
 
-    local enemies = bot:GetNearbyHeroes(700 + bot:GetAttackRange(), true, BOT_MODE_NONE)
-    if enemies ~= nil
-    and #enemies > 0
+    local nTeamFightLocation = J.GetTeamFightLocation(bot)
+    if nTeamFightLocation ~= nil
     then
-        return BOT_ACTION_DESIRE_LOW
+        if  timeOfDay == 'day'
+        and GetUnitToLocationDistance(bot, roshanRadiantLoc) < 1000
+        and GetUnitToLocationDistance(bot, nTeamFightLocation) < 1600
+        then
+            return BOT_ACTION_DESIRE_NONE
+        else
+            if  timeOfDay == 'night'
+            and GetUnitToLocationDistance(bot, roshanDireLoc) < 1000
+            and GetUnitToLocationDistance(bot, nTeamFightLocation) < 1600
+            then
+                return BOT_ACTION_DESIRE_NONE
+            end
+        end
     end
 
-    if shouldKillRoshan
+    local nEnemyHeroes = bot:GetNearbyHeroes(700 + bot:GetAttackRange(), true, BOT_MODE_NONE)
+    if nEnemyHeroes ~= nil and #nEnemyHeroes > 0
+    then
+        return BOT_ACTION_DESIRE_NONE
+    end
+
+    if  shouldKillRoshan
     and initDPSFlag
     and (hasSameOrMoreHero or (not hasSameOrMoreHero and IsEnoughAllies()))
     then

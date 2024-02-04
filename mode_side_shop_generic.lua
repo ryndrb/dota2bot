@@ -278,3 +278,7 @@
 
 -- 	return false
 -- end
+
+function GetDesire()
+    return 0
+end

@@ -65,25 +65,36 @@ function Defend.WhichLaneToDefend(lane)
 	local laneAmountEnemyMid = (1 - GetLaneFrontAmount(GetOpposingTeam(), LANE_MID, true))
 	local laneAmountEnemyBot = (1 - GetLaneFrontAmount(GetOpposingTeam(), LANE_BOT, true))
 
-	local laneAmountTop = GetLaneFrontAmount(GetTeam(), LANE_TOP, true) * laneAmountEnemyTop * mul[LANE_TOP]
-    local laneAmountMid = GetLaneFrontAmount(GetTeam(), LANE_MID, true) * laneAmountEnemyMid * mul[LANE_MID]
-    local laneAmountBot = GetLaneFrontAmount(GetTeam(), LANE_BOT, true) * laneAmountEnemyBot * mul[LANE_BOT]
+	local laneAmountTop = GetLaneFrontAmount(GetTeam(), LANE_TOP, true)
+    local laneAmountMid = GetLaneFrontAmount(GetTeam(), LANE_MID, true)
+    local laneAmountBot = GetLaneFrontAmount(GetTeam(), LANE_BOT, true)
 
+	if laneAmountEnemyTop == 0 then laneAmountEnemyTop = 0.1 end
+	if laneAmountEnemyMid == 0 then laneAmountEnemyMid = 0.1 end
+	if laneAmountEnemyBot == 0 then laneAmountEnemyBot = 0.1 end
 
-    if laneAmountTop < laneAmountBot
-    and laneAmountTop < laneAmountMid
+	if laneAmountTop == 0 then laneAmountTop = 0.1 end
+	if laneAmountMid == 0 then laneAmountMid = 0.1 end
+	if laneAmountBot == 0 then laneAmountBot = 0.1 end
+
+	laneAmountTop = laneAmountTop * laneAmountEnemyTop * mul[LANE_TOP]
+	laneAmountMid = laneAmountMid * laneAmountEnemyMid * mul[LANE_MID]
+	laneAmountBot = laneAmountBot * laneAmountEnemyBot * mul[LANE_BOT]
+
+    if laneAmountTop > laneAmountBot
+    and laneAmountTop > laneAmountMid
     then
         return LANE_TOP
     end
 
-    if laneAmountBot < laneAmountTop
-    and laneAmountBot < laneAmountMid
+    if laneAmountBot > laneAmountTop
+    and laneAmountBot > laneAmountMid
     then
         return LANE_BOT
     end
 
-    if laneAmountMid < laneAmountTop
-    and laneAmountMid < laneAmountBot
+    if laneAmountMid > laneAmountTop
+    and laneAmountMid > laneAmountBot
     then
         return LANE_MID
     end
