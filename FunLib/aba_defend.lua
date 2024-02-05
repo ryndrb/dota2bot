@@ -81,20 +81,20 @@ function Defend.WhichLaneToDefend(lane)
 	laneAmountMid = laneAmountMid * laneAmountEnemyMid * mul[LANE_MID]
 	laneAmountBot = laneAmountBot * laneAmountEnemyBot * mul[LANE_BOT]
 
-    if laneAmountTop > laneAmountBot
-    and laneAmountTop > laneAmountMid
+    if laneAmountTop < laneAmountBot
+    and laneAmountTop < laneAmountMid
     then
         return LANE_TOP
     end
 
-    if laneAmountBot > laneAmountTop
-    and laneAmountBot > laneAmountMid
+    if laneAmountBot < laneAmountTop
+    and laneAmountBot < laneAmountMid
     then
         return LANE_BOT
     end
 
-    if laneAmountMid > laneAmountTop
-    and laneAmountMid > laneAmountBot
+    if laneAmountMid < laneAmountTop
+    and laneAmountMid < laneAmountBot
     then
         return LANE_MID
     end
