@@ -174,6 +174,15 @@ function GetDesire()
 				return BOT_MODE_DESIRE_ABSOLUTE
 			end
 		end
+	elseif botName == "npc_dota_hero_tiny"
+	then
+		if cAbility == nil then cAbility = bot:GetAbilityByName("tiny_tree_channel") end
+		if cAbility:IsTrained()
+		then
+			if cAbility:IsInAbilityPhase() or bot:IsChanneling() then
+				return BOT_MODE_DESIRE_ABSOLUTE
+			end
+		end
 	end
 
 	if beSpecialSupport

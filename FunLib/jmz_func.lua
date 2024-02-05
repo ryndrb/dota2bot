@@ -455,6 +455,21 @@ function J.GetAlliesNearLoc( vLoc, nRadius )
 
 end
 
+function J.GetEnemiesNearLoc(vLoc, nRadius)
+	local enemies = {}
+	for _, enemyHero in pairs(GetUnitList(UNIT_LIST_ENEMY_HEROES))
+	do
+		if  J.IsValidHero(enemyHero)
+		and GetUnitToLocationDistance(enemyHero, vLoc) <= nRadius
+		and not J.IsSuspiciousIllusion(enemyHero)
+		then
+			table.insert(enemies, enemyHero)
+		end
+	end
+
+	return enemies
+end
+
 
 function J.IsAllyHeroBetweenAllyAndEnemy( hAlly, hEnemy, vLoc, nRadius )
 
