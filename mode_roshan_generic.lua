@@ -76,7 +76,7 @@ function GetDesire()
             return BOT_ACTION_DESIRE_ABSOLUTE
         end
 
-        return Clamp(GetRoshanDesire(), 0.1, 0.9) * 2
+        return GetRoshanDesire()
     end
 
     return BOT_ACTION_DESIRE_NONE
