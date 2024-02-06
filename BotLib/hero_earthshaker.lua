@@ -446,11 +446,11 @@ function X.ConsiderEchoSlam()
 
 	if J.IsInTeamFight(bot, 1200)
 	then
-        local nInRangeEnemy = bot:GetNearbyHeroes(nRadius, true, BOT_MODE_NONE)
+        local nInRangeEnemy = bot:GetNearbyHeroes(nRadius / 2, true, BOT_MODE_NONE)
 
         if HasBlink()
         then
-            local nLocationAoE = bot:FindAoELocation(true, true, bot:GetLocation(), 1199, nRadius, 0, 0)
+            local nLocationAoE = bot:FindAoELocation(true, true, bot:GetLocation(), 1199, nRadius / 2, 0, 0)
 
             if nLocationAoE.count >= 3
             then
@@ -477,7 +477,7 @@ function X.ConsiderTotemSlam()
 
         if J.IsInTeamFight(bot, 1200)
         then
-            local nLocationAoE = bot:FindAoELocation(true, true, bot:GetLocation(), nCastRange, nRadius, nLeapDuration, 0)
+            local nLocationAoE = bot:FindAoELocation(true, true, bot:GetLocation(), nCastRange, nRadius / 2, nLeapDuration, 0)
 
             if  nLocationAoE.count >= 3
             then
