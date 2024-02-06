@@ -22,36 +22,27 @@ function Defend.GetDefendDesire(bot, lane)
         end
     end
 
-	if (J.IsRoshanAlive() and J.HasEnoughDPSForRoshan(aliveHeroesList) and (mul[lane] < 3 or eFront < 0.9))
-	then
-		return BOT_MODE_DESIRE_NONE
-	end
-
 	if bot:GetHealth() / bot:GetMaxHealth() < 0.3
 	or (J.IsFarming(bot) and (mul[lane] < 3 or eFront < 0.9))
 	then
 		return 0.25
 	end
 
-    if Defend.WhichLaneToDefend(lane) == lane
-    then
-        if Defend.ShouldGoDefend(bot, lane)
-        then
-			-- local amount = tFront * eFront * mul[lane]
-			local ancient = GetAncient(GetTeam())
-			local amount = 0
-			local nEnemyLaneFrontLoc = GetLaneFrontLocation(GetOpposingTeam(), lane, 0)
+	if Defend.ShouldGoDefend(bot, lane)
+	then
+		local ancient = GetAncient(GetTeam())
+		local nDefendDesire = 0
+		local nEnemyLaneFrontLoc = GetLaneFrontLocation(GetOpposingTeam(), lane, 0)
 
-			if J.GetLocationToLocationDistance(nEnemyLaneFrontLoc, ancient:GetLocation()) < 1600
-			or eFront > 0.9
-			then
-				amount = BOT_ACTION_DESIRE_HIGH * mul[lane]
-			else
-				amount = GetDefendLaneDesire(lane) * mul[lane]
-			end
+		if J.GetLocationToLocationDistance(nEnemyLaneFrontLoc, ancient:GetLocation()) < 1600
+		or eFront > 0.9
+		then
+			nDefendDesire = BOT_ACTION_DESIRE_HIGH * mul[lane]
+		else
+			nDefendDesire = GetDefendLaneDesire(lane) * mul[lane]
+		end
 
-			return Clamp(amount, 0.1, 1)
-        end
+		return Clamp(nDefendDesire, 0.1, 0.9)
 	end
 
 	return 0.1
@@ -68,6 +59,13 @@ function Defend.WhichLaneToDefend(lane)
 	local laneAmountTop = GetLaneFrontAmount(GetTeam(), LANE_TOP, true)
     local laneAmountMid = GetLaneFrontAmount(GetTeam(), LANE_MID, true)
     local laneAmountBot = GetLaneFrontAmount(GetTeam(), LANE_BOT, true)
+
+	local nEnemyLaneFrontLoc = GetLaneFrontLocation(GetOpposingTeam(), lane, 0)
+	if J.GetLocationToLocationDistance(nEnemyLaneFrontLoc, GetAncient(GetTeam()):GetLocation()) < 1600
+	or (1 - GetLaneFrontAmount(GetOpposingTeam(), lane, true)) >= 0.8
+	then
+		return lane
+	end
 
 	if laneAmountEnemyTop == 0 then laneAmountEnemyTop = 0.1 end
 	if laneAmountEnemyMid == 0 then laneAmountEnemyMid = 0.1 end

@@ -73,12 +73,9 @@ function GetDesire()
 	end
 
     local nMode = bot:GetActiveMode()
-    local nModeDesire = bot:GetActiveModeDesire()
-
 	if (nMode == BOT_MODE_DEFEND_TOWER_TOP or nMode == BOT_MODE_DEFEND_TOWER_MID or nMode == BOT_MODE_DEFEND_TOWER_BOT)
-    and nModeDesire > 0.75
     then
-        return BOT_ACTION_DESIRE_LOW
+        return BOT_ACTION_DESIRE_NONE
     end
 
 	-- Hero Roam Abilities

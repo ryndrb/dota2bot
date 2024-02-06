@@ -51,21 +51,16 @@ function GetDesire()
 	then
 		if J.IsModeTurbo() and DotaTime() > -45 or DotaTime() > -60
 		then
-			bot:ActionImmediate_Chat("Welcome to TinkeringABo(u)t.", true)
 			bot:ActionImmediate_Chat("Check out the GitHub page to get the latest files: https://github.com/ryndrb/dota2bot", true)
 			bot:ActionImmediate_Chat("If you have any feedback in improving the experience, kindly post them on the Steam Workshop page.", true)
-			bot:ActionImmediate_Chat("Have a good time!", true)
 			isWelcomeMessageDone = true
 		end
 	end
 
 	local nMode = bot:GetActiveMode()
-    local nModeDesire = bot:GetActiveModeDesire()
-
 	if (nMode == BOT_MODE_DEFEND_TOWER_TOP or nMode == BOT_MODE_DEFEND_TOWER_MID or nMode == BOT_MODE_DEFEND_TOWER_BOT)
-    and nModeDesire > 0.75
     then
-        return BOT_ACTION_DESIRE_LOW
+        return BOT_ACTION_DESIRE_NONE
     end
 
 	if not bInitDone

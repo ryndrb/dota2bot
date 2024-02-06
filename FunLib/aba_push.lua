@@ -2,24 +2,28 @@ local Push = {}
 local J = require( GetScriptDirectory()..'/FunLib/jmz_func')
 
 function Push.GetPushDesire(bot, lane)
-    local enemies   = bot:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
-    local allies    = bot:GetNearbyHeroes(1600, false, BOT_MODE_NONE)
-    local creeps    = bot:GetNearbyCreeps(600 + bot:GetAttackRange(), false)
-
     if (J.IsModeTurbo() and DotaTime() < 8 * 60 or DotaTime() < 12 * 60)
     then
         if J.IsCore(bot) then return 0 end
         if bot:GetLevel() < 6 then return 0.1 end
     end
 
-    local maxDesire = 0.9
+    local maxDesire = 0.75
     local nMode = bot:GetActiveMode()
     local nModeDesire = bot:GetActiveModeDesire()
 
 	if (nMode == BOT_MODE_DEFEND_TOWER_TOP or nMode == BOT_MODE_DEFEND_TOWER_MID or nMode == BOT_MODE_DEFEND_TOWER_BOT)
-    and nModeDesire > 0.75
     then
         maxDesire = 0.5
+    end
+
+    local botTarget = bot:GetAttackTarget()
+    if  J.IsValidBuilding(botTarget)
+    and (botTarget:HasModifier('modifier_backdoor_protection')
+        or botTarget:HasModifier('modifier_backdoor_protection_in_base')
+        or botTarget:HasModifier('modifier_backdoor_protection_active'))
+    then
+        return 0.1
     end
 
     local aliveHeroesList = {}
@@ -30,19 +34,21 @@ function Push.GetPushDesire(bot, lane)
         end
     end
 
-    if J.IsRoshanAlive()
-    and J.HasEnoughDPSForRoshan(aliveHeroesList)
-    then
-        return BOT_MODE_DESIRE_NONE
-    end
+    local nNearByAlliesLanePush = {
+        [LANE_TOP] = BOT_MODE_PUSH_TOWER_TOP,
+        [LANE_MID] = BOT_MODE_PUSH_TOWER_MID,
+        [LANE_BOT] = BOT_MODE_PUSH_TOWER_BOT,
+    }
 
-    if bot:GetHealth() / bot:GetMaxHealth() < 0.3
-    or (enemies ~= nil and allies ~= nil and #enemies > #allies)
-    or bot:WasRecentlyDamagedByTower(1)
-    or not J.WeAreStronger(bot, 1600)
-    or (J.IsLaning(bot) or J.IsFarming(bot))
+    local nEnemyHeroes = bot:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
+    local nAllyHeroes = bot:GetNearbyHeroes(1600, true, nNearByAlliesLanePush[lane])
+
+    if  (nEnemyHeroes ~= nil and nAllyHeroes ~= nil
+        and #nEnemyHeroes > #nAllyHeroes)
+        or  (J.IsRoshanAlive() and J.HasEnoughDPSForRoshan(aliveHeroesList))
+    or  bot:WasRecentlyDamagedByTower(2)
     then
-        return 0.25
+        return 0.1
     end
 
     local aAliveCount = J.GetNumOfAliveHeroes(false)
@@ -50,27 +56,24 @@ function Push.GetPushDesire(bot, lane)
     if Push.WhichLaneToPush(bot) == lane
     and aAliveCount > eAliveCount
     then
-        local aFront = RemapValClamped(GetLaneFrontAmount(GetTeam(), lane, true), 0, 1, 0, 0.75)
-        local eFront = RemapValClamped(GetLaneFrontAmount(GetOpposingTeam(), lane, true), 0, 1, 0, 0.75)
-        -- local amount = aFront * eFront
-        local amount = RemapValClamped(GetPushLaneDesire(lane), 0, 1, 0, 0.75)
+        local nPushDesire = RemapValClamped(GetPushLaneDesire(lane), 0, 1, 0, 0.75)
 
         if J.DoesTeamHaveAegis(GetUnitList(UNIT_LIST_ALLIED_HEROES))
         then
             local aegis = 1.3
-            amount = amount * aegis
+            nPushDesire = nPushDesire * aegis
         end
 
         local tot = ((aAliveCount - eAliveCount) / (aAliveCount + eAliveCount)) * 0.15
-        amount = amount + tot
+        nPushDesire = nPushDesire + tot
 
         local nHeroesInLane = Push.GetEnemyCountInLane(lane)
         if ((#nHeroesInLane[1] - #nHeroesInLane[2]) / (#nHeroesInLane[1] + #nHeroesInLane[2])) * 0.15 < 0
         then
-            amount = amount + ((#nHeroesInLane[1] - #nHeroesInLane[2]) / (#nHeroesInLane[1] + #nHeroesInLane[2])) * 0.15
+            nPushDesire = nPushDesire + ((#nHeroesInLane[1] - #nHeroesInLane[2]) / (#nHeroesInLane[1] + #nHeroesInLane[2])) * 0.15
         end
 
-        return Clamp(amount, 0.1, maxDesire + tot)
+        return Clamp(nPushDesire, 0.1, maxDesire + tot)
     end
 
     return 0.1
@@ -275,7 +278,9 @@ function Push.GetEnemyCountInLane(lane)
 	for _, enemy in pairs(nEnemyList) do
 		local lanefrontloc = GetLaneFrontLocation(GetTeam(), lane, 0)
 
-		if GetUnitToLocationDistance(enemy, lanefrontloc) <= 1600
+		if  J.IsValidHero(enemy)
+        and not J.IsSuspiciousIllusion(enemy)
+        and GetUnitToLocationDistance(enemy, lanefrontloc) <= 1600
 		then
 			table.insert(nEnemies, enemy)
 		end
@@ -331,11 +336,6 @@ function Push.PushThink(bot, lane)
     end
 
     local offset = -math.max(teammateDistance / teammateAlive - enemyDistance / enemyAlive, 0)
-
-    if J.WeAreStronger(bot, 700 + nRange) and #bot:GetNearbyHeroes(700 + nRange, false, BOT_MODE_NONE) >= enemyAlive then
-        offset = 0
-    end
-
     local towers = bot:GetNearbyTowers(700 + nRange, true)
 
     local attackRange       = bot:GetAttackRange()
@@ -350,19 +350,19 @@ function Push.PushThink(bot, lane)
         targetLoc = towers[1]:GetLocation() + (targetLoc - towers[1]:GetLocation()):Normalized() * attackRange
     end
 
-    bot:ActionPush_MoveToLocation(targetLoc)
+    bot:Action_MoveToLocation(targetLoc)
 
     local ancient = GetAncient(GetOpposingTeam())
     if GetUnitToUnitDistance(bot, ancient) < 1600 then
         if J.CanBeAttacked(ancient) then
-            return bot:ActionPush_AttackUnit(ancient, false)
+            return bot:Action_AttackUnit(ancient, false)
         end
     end
 
     local enemies = bot:GetNearbyHeroes(700 + nRange, true, BOT_MODE_NONE)
     if enemies ~= nil and #enemies > 0 and J.WeAreStronger(bot, 700)
     then
-        return bot:ActionPush_AttackUnit(enemies[1], false)
+        return bot:Action_AttackUnit(enemies[1], false)
     end
 
     local creeps = bot:GetNearbyLaneCreeps(700 + nRange, true)
@@ -377,19 +377,19 @@ function Push.PushThink(bot, lane)
             end
         end
 
-        return bot:ActionPush_AttackUnit(targetCreep, false)
+        return bot:Action_AttackUnit(targetCreep, false)
     end
 
     local barracks = bot:GetNearbyBarracks(700 + nRange, true);
     if barracks ~= nil and #barracks > 0 then
         if J.CanBeAttacked(barracks[1]) then
-            return bot:ActionPush_AttackUnit(barracks[1], false)
+            return bot:Action_AttackUnit(barracks[1], false)
         end
     end
 
     if towers ~= nil and #towers > 0 then
         if J.CanBeAttacked(towers[1]) then
-            return bot:ActionPush_AttackUnit(towers[1], false)
+            return bot:Action_AttackUnit(towers[1], false)
         end
     end
 

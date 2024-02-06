@@ -14,6 +14,8 @@ local roshanDireLoc     = Vector(-7549, 7562, 1107)
 -- local rTwinGateLoc = Vector(5888, -7168, 256)
 -- local dTwinGateLoc = Vector(6144, 7552, 256)
 
+local sinceRoshAliveTime = 0
+local roshTimeFlag = false
 local initDPSFlag = false
 
 function GetDesire()
@@ -32,6 +34,19 @@ function GetDesire()
     end
 
     shouldKillRoshan = J.IsRoshanAlive()
+
+    if  shouldKillRoshan
+    and not roshTimeFlag
+    then
+        sinceRoshAliveTime = DotaTime()
+        roshTimeFlag = true
+    else
+        if not shouldKillRoshan
+        then
+            sinceRoshAliveTime = 0
+            roshTimeFlag = false
+        end
+    end
 
     if J.HasEnoughDPSForRoshan(aliveHeroesList)
     then
@@ -66,17 +81,10 @@ function GetDesire()
     and initDPSFlag
     and (hasSameOrMoreHero or (not hasSameOrMoreHero and IsEnoughAllies()))
     then
-        if healthPercentage < 0.3
-        then
-            return BOT_ACTION_DESIRE_LOW
-        end
+        local mul = RemapValClamped(sinceRoshAliveTime, sinceRoshAliveTime, sinceRoshAliveTime + (5 * 60), 1, 2)
+        local nRoshanDesire = (GetRoshanDesire() * mul)
 
-        if IsEnoughAllies()
-        then
-            return BOT_ACTION_DESIRE_ABSOLUTE
-        end
-
-        return GetRoshanDesire()
+        return Clamp(nRoshanDesire, 0, 0.9)
     end
 
     return BOT_ACTION_DESIRE_NONE
