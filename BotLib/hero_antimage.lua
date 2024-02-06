@@ -157,7 +157,6 @@ function X.SkillsComplement()
 	end
 
 	BlinkFragmentDesire, FragmentLocation = X.ConsiderBlinkFragment()
-	print(tostring(BlinkFragmentDesire)..": ", FragmentLocation)
 	if (BlinkFragmentDesire > 0)
 	then
 		J.SetQueuePtToINT(bot, false)
