@@ -183,6 +183,16 @@ function GetDesire()
 				return BOT_MODE_DESIRE_ABSOLUTE
 			end
 		end
+	elseif botName == "npc_dota_hero_void_spirit"
+	then
+		if cAbility == nil then cAbility = bot:GetAbilityByName("void_spirit_dissimilate") end
+		if cAbility:IsTrained()
+		then
+			if  bot:HasModifier("modifier_void_spirit_dissimilate_phase")
+			then
+				return BOT_MODE_DESIRE_ABSOLUTE
+			end
+		end
 	end
 
 	if beSpecialSupport
@@ -272,6 +282,27 @@ function Think()
 			bot:Action_MoveToLocation(nAllyHeroes[#nAllyHeroes]:GetLocation())
 		else
 			bot:Action_MoveToLocation(J.GetTeamFountain())
+		end
+
+		return
+	end
+
+	if  bot:GetUnitName() == 'npc_dota_hero_void_spirit'
+	and bot:HasModifier('modifier_void_spirit_dissimilate_phase')
+	then
+		local nEnemyHeroes = bot:GetNearbyHeroes(1200, true, BOT_MODE_NONE)
+
+		if J.IsGoingOnSomeone(bot)
+		then
+			if nEnemyHeroes ~= nil and #nEnemyHeroes >= 1
+			then
+				bot:Action_MoveToLocation(nEnemyHeroes[1]:GetLocation())
+			end
+		end
+
+		if J.IsRetreating(bot)
+		then
+			bot:Action_MoveToLocation(J.GetEscapeLoc())
 		end
 
 		return
