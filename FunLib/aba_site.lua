@@ -582,6 +582,7 @@ local tFarmHeroList = {
 	["npc_dota_hero_doom_bringer"] = true,
 	["npc_dota_hero_earth_spirit"] = true,
 	["npc_dota_hero_ember_spirit"] = true,
+	["npc_dota_hero_enigma"] = true,
 	["npc_dota_hero_faceless_void"] = true,
 	["npc_dota_hero_mars"] = true,
 	["npc_dota_hero_shredder"] = true,
@@ -2057,6 +2058,18 @@ Site.ConsiderIsTimeToFarm["npc_dota_hero_dawnbreaker"] = function()
 end
 
 Site.ConsiderIsTimeToFarm["npc_dota_hero_doom_bringer"] = function()
+	local bot = GetBot()
+	local networth = bot:GetNetWorth()
+	local lastHits = bot:GetLastHits()
+
+	if lastHits < 1000 then
+		return true
+	end
+
+	return false
+end
+
+Site.ConsiderIsTimeToFarm["npc_dota_hero_enigma"] = function()
 	local bot = GetBot()
 	local networth = bot:GetNetWorth()
 	local lastHits = bot:GetLastHits()

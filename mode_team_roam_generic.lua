@@ -190,6 +190,15 @@ function GetDesire()
 				return BOT_MODE_DESIRE_ABSOLUTE
 			end
 		end
+	elseif botName == "npc_dota_hero_enigma"
+	then
+		if cAbility == nil then cAbility = bot:GetAbilityByName("enigma_black_hole") end
+		if cAbility:IsTrained()
+		then
+			if cAbility:IsInAbilityPhase() or bot:IsChanneling() then
+				return BOT_MODE_DESIRE_ABSOLUTE
+			end
+		end
 	end
 
 	if beSpecialSupport
