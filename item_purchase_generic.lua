@@ -81,8 +81,6 @@ local function GeneralPurchase()
 
 	if bot.currentComponentToBuy == "item_infused_raindrop"
 		or bot.currentComponentToBuy == "item_tome_of_knowledge"
-		or bot.currentComponentToBuy == "item_ward_observer"
-		or bot.currentComponentToBuy == "item_ward_sentry"
 		or bot.currentComponentToBuy == "item_flask"
 	then
 		if GetItemStockCount( bot.currentComponentToBuy ) <= 0
@@ -245,8 +243,6 @@ local function TurboModeGeneralPurchase()
 
 	if bot.currentComponentToBuy == "item_infused_raindrop"
 		or bot.currentComponentToBuy == "item_tome_of_knowledge"
-		or bot.currentComponentToBuy == "item_ward_observer"
-		or bot.currentComponentToBuy == "item_ward_sentry"
 	then
 		if GetItemStockCount( bot.currentComponentToBuy ) <= 0
 		then
@@ -376,7 +372,31 @@ function ItemPurchaseThink()
 			return
 		end
 	end
-		
+
+	-- Observer and Sentry Wards
+	if (J.GetPosition(bot) == 4)
+	then
+		if  GetItemStockCount("item_ward_sentry" ) > 0
+		and botGold >= GetItemCost("item_ward_sentry")
+		and Item.GetEmptyInventoryAmount(bot) >= 1
+		and Item.GetItemCharges(bot, "item_ward_sentry") < 2
+		and bot:GetCourierValue() == 0
+		then
+			bot:ActionImmediate_PurchaseItem("item_ward_sentry")
+		end
+	end
+
+	if (J.GetPosition(bot) == 5)
+	then
+		if  GetItemStockCount("item_ward_observer" ) > 0
+		and botGold >= GetItemCost("item_ward_observer")
+		and Item.GetEmptyInventoryAmount(bot) >= 1
+		and Item.GetItemCharges(bot, "item_ward_observer") < 2
+		and bot:GetCourierValue() == 0
+		then
+			bot:ActionImmediate_PurchaseItem("item_ward_observer")
+		end
+	end
 	
 	--为自己购买魔晶
 	if not hasBuyShard
