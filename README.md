@@ -1,8 +1,7 @@
 # Dota 2 Bot Script
 
 This is a Dota 2 Bot Script based mostly on Beginner:AI by (dota2jmz@163.com). Some changes are based upon other existing bot scripts; personal use mostly; adding heroes. Trying to get use to the API and code base.
-It's not necessarily better than the origin script (due to the changes Push/Defend logic/timings, can get cook early game). Just tryna alleviate cheesiness and make bots movement more organic and objective base.
-It's a work in progress.
+Just trying to alleviate cheesiness and make bots movement more organic and objective base. It's a work in progress.
 
 Might want to scale Push desire with core networths so that bots farm more and increase their CS (though my vscript Buff alleviate this). Also, evasion/damage reduction/aura
 items are just too good in bots games (since itemization isn't dynamic), so it's still lineup dependent.
@@ -39,7 +38,7 @@ Worth noting that I also use a vscript to improve the bots GPM (XPM later) and a
 # Tinkering About
 - ***Heroes (Pos: 1,2,3,4,5)***
     - All Supports are both 4 and 5 for now.
-    - ^. Supports that does damage, CC, or is Ranged are just inherently better in bot games compared to Melee or non-. (Since positioning and movement are Valve default.)
+    - ^. Supports that does damage, CC, or is Ranged are just inherently 'better' for the most part in bot games compared to Melee or non-. (Since positioning and movement are Valve default.)
     - ***Added***
         - [4,5] Abaddon
         - [1] Alchemist

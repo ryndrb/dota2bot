@@ -392,7 +392,7 @@ function Site.IsLocationHaveTrueSight( vLocation )
 	for _, ward in pairs( WardList )
 	do
 		if Site.IsSentry( ward )
-			and GetUnitToLocationDistance( ward, wardLoc ) <= trueSightRad
+			and GetUnitToLocationDistance( ward, vLocation ) <= trueSightRad
 		then
 			return true
 		end

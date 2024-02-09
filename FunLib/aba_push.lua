@@ -41,7 +41,7 @@ function Push.GetPushDesire(bot, lane)
     }
 
     local nEnemyHeroes = bot:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
-    local nAllyHeroes = bot:GetNearbyHeroes(1600, true, nNearByAlliesLanePush[lane])
+    local nAllyHeroes = bot:GetNearbyHeroes(1600, false, nNearByAlliesLanePush[lane])
 
     if  (nEnemyHeroes ~= nil and nAllyHeroes ~= nil
         and #nEnemyHeroes > #nAllyHeroes)
