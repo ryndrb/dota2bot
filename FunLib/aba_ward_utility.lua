@@ -376,7 +376,8 @@ function X.GetItemWard(bot)
 		local item = bot:GetItemInSlot(i)
 
 		if  item ~= nil
-		and item:GetName() == 'item_ward_observer'
+		and (item:GetName() == 'item_ward_observer'
+			or item:GetName() == 'item_ward_sentry')
         then
 			return item
 		end
@@ -399,7 +400,14 @@ function X.IsPingedByHumanPlayer(bot)
             and GetUnitToUnitDistance(bot, member) < 1200
             then
 				local ping = member:GetMostRecentPing()
-				local wardSlot = member:FindItemSlot("item_ward_observer")
+				local wardType = "item_ward_observer"
+
+				if J.HasItem(bot, "item_ward_sentry")
+				then
+					wardType = "item_ward_sentry"
+				end
+
+				local wardSlot = member:FindItemSlot(wardType)
 
 				if  GetUnitToLocationDistance(bot, ping.location) <= 600
                 and GameTime() - ping.time < 5
@@ -496,12 +504,11 @@ end
 
 function X.IsWard(ward)
     local bot = GetBot()
-    local pos = J.GetPosition(bot)
 
-    if pos == 4
+    if J.HasItem(bot, "item_ward_sentry")
     then
         return ward:GetUnitName() == "npc_dota_sentry_wards"
-    elseif pos == 5
+    elseif J.HasItem(bot, "item_ward_observer")
     then
         return ward:GetUnitName() == "npc_dota_observer_wards"
     end

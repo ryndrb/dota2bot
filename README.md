@@ -73,7 +73,7 @@ Worth noting that I also use a vscript to improve the bots GPM (XPM later) and a
         - [2,3] Death Prophet
         - [1,2] Lina
         - [2,3] Necrophos
-        - [2] Queen Of Pain (buggy?)
+        - [2] Queen Of Pain
         - [2] Zeus
 
 - ***"Attempted" Logic Changes (still)***
@@ -88,9 +88,13 @@ Worth noting that I also use a vscript to improve the bots GPM (XPM later) and a
 
 - ***Plan To "Fix/Add/Improve" (if possible)***
     - ***Fix***
-        - [ ] Warding
+        - [x] Warding
+            - Observer and Sentry share the same ward spots for now.
+                - Sentries might be placed in teamfights.
+            - Pos 4 -> Sentry
+            - Pos 5 -> Observer
+                - Due to how ward slots work. No API func to tell which ward is in front.
         - [ ] Rune behaviour
-        - [ ] Bots standing around
         - [ ] Doom apparently not able to Devour abilities (might just be Valve bug tho)
     - ***Add***
         - [ ] Tormentor

@@ -376,25 +376,29 @@ function ItemPurchaseThink()
 	-- Observer and Sentry Wards
 	if (J.GetPosition(bot) == 4)
 	then
-		if  GetItemStockCount("item_ward_sentry" ) > 0
-		and botGold >= GetItemCost("item_ward_sentry")
+		local wardType = 'item_ward_sentry'
+
+		if  GetItemStockCount(wardType) > 0
+		and botGold >= GetItemCost(wardType)
 		and Item.GetEmptyInventoryAmount(bot) >= 1
-		and Item.GetItemCharges(bot, "item_ward_sentry") < 2
+		and Item.GetItemCharges(bot, wardType) < 2
 		and bot:GetCourierValue() == 0
 		then
-			bot:ActionImmediate_PurchaseItem("item_ward_sentry")
+			bot:ActionImmediate_PurchaseItem(wardType)
 		end
 	end
 
 	if (J.GetPosition(bot) == 5)
 	then
-		if  GetItemStockCount("item_ward_observer" ) > 0
-		and botGold >= GetItemCost("item_ward_observer")
+		local wardType = 'item_ward_observer'
+
+		if  GetItemStockCount(wardType) > 0
+		and botGold >= GetItemCost(wardType)
 		and Item.GetEmptyInventoryAmount(bot) >= 1
-		and Item.GetItemCharges(bot, "item_ward_observer") < 2
+		and Item.GetItemCharges(bot, wardType) < 2
 		and bot:GetCourierValue() == 0
 		then
-			bot:ActionImmediate_PurchaseItem("item_ward_observer")
+			bot:ActionImmediate_PurchaseItem(wardType)
 		end
 	end
 	

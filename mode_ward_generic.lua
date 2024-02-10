@@ -76,6 +76,7 @@ function GetDesire()
 		Pinged, Member = Ward.IsPingedByHumanPlayer(bot)
 		if Pinged
 		then
+			bot.ward = true
 			return RemapValClamped(GetUnitToUnitDistance(bot, Member), 1200, 0, BOT_MODE_DESIRE_HIGH, BOT_MODE_DESIRE_VERYHIGH)
 		end
 
@@ -96,7 +97,7 @@ function GetDesire()
 		and not IsEnemyCloserToWardLocation(WardTargetLocation, WardTargetDist)
 		then
 			bot.ward = true
-			return RemapValClamped(WardTargetDist, 6000, 0, BOT_MODE_DESIRE_MODERATE, BOT_MODE_DESIRE_VERYHIGH)
+			return RemapValClamped(WardTargetDist, 6400, 0, BOT_MODE_DESIRE_MODERATE, BOT_MODE_DESIRE_VERYHIGH)
 		end
 	else
 		bot.lastPlayerChat = nil
@@ -130,17 +131,20 @@ function OnEnd()
 	ItemWard = nil
 	Member = nil
 
-	local wardSlot = bot:FindItemSlot('item_ward_observer')
-
-	if  wardSlot >= 0
-	and wardSlot <= 5
+	if ItemWard ~= nil
 	then
-		local mostCostItem = FindMostItemSlot()
+		local wardSlot = bot:FindItemSlot(ItemWard:GetName())
 
-		if mostCostItem ~= -1
+		if  wardSlot >= 0
+		and wardSlot <= 5
 		then
-			bot:ActionImmediate_SwapItems(wardSlot, mostCostItem)
-			return
+			local mostCostItem = FindMostItemSlot()
+
+			if mostCostItem ~= -1
+			then
+				bot:ActionImmediate_SwapItems(wardSlot, mostCostItem)
+				return
+			end
 		end
 	end
 end
