@@ -39,7 +39,9 @@ local cheeseCheck = -90;
 local refShardCheck = -90;
 local pickedItem = nil;
 
---可优化补充捡物品的逻辑在这里,移动换物品的逻辑到物品购买里
+local ShouldAttackSpecialUnit = false
+local SpecialUnitTarget = nil
+
 function GetDesire()
 
 	if not beInitDone 
@@ -77,6 +79,12 @@ function GetDesire()
     then
         return BOT_ACTION_DESIRE_NONE
     end
+
+	ShouldAttackSpecialUnit = CanAttackSpecialUnit()
+	if ShouldAttackSpecialUnit
+	then
+		return BOT_ACTION_DESIRE_VERYHIGH
+	end
 
 	-- Hero Roam Abilities
 	if bot:GetUnitName() == "npc_dota_hero_batrider"
@@ -290,6 +298,13 @@ function Think()
 			bot:Action_MoveToLocation(J.GetTeamFountain())
 		end
 
+		return
+	end
+
+	if  ShouldAttackSpecialUnit
+	and SpecialUnitTarget ~= nil
+	then
+		bot:Action_AttackUnit(SpecialUnitTarget, false)
 		return
 	end
 
@@ -1850,6 +1865,32 @@ function X.HasHumanAlly( bot )
 	
 	return false 
 		
+end
+
+function CanAttackSpecialUnit()
+	local nAttackRange = bot:GetAttackRange() + 200
+	local nUnits = GetUnitList(UNIT_LIST_ENEMIES)
+	
+	for _, unit in pairs(nUnits)
+	do
+		if J.IsValid(unit)
+		then		
+			if string.find(unit:GetUnitName(), 'healing_ward')
+			or string.find(unit:GetUnitName(), 'observer_ward')
+			or string.find(unit:GetUnitName(), 'sentry_ward')
+			or string.find(unit:GetUnitName(), 'warlock_golem')
+			then
+				if  GetUnitToUnitDistance(bot, unit) <= nAttackRange
+				and J.CanBeAttacked(unit)
+				then
+					SpecialUnitTarget = unit
+					return true
+				end
+			end
+		end
+	end
+
+	return false
 end
 
 -- dota2jmz@163.com QQ:2462331592..

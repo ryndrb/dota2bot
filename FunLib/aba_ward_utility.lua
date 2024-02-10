@@ -5,47 +5,24 @@ local J = require(GetScriptDirectory()..'/FunLib/jmz_func')
 local nVisionRadius = 1600
 
 -- Radiant Warding Spots
-local RADIANT_T3TOPFALL = Vector(-6590, -3126, 256)
-local RADIANT_T3MIDFALL = Vector(-4346, -3929, 256)
-local RADIANT_T3BOTFALL = Vector(-3650, -6116, 256)
+-- Game Start
+local RADIANT_GAME_START_1 = Vector(-250, -1089, 128)
+local RADIANT_GAME_START_2 = Vector(2026, -3903, 128)
 
-local RADIANT_T2TOPFALL = Vector(-7529, -516, 256)
-local RADIANT_T2MIDFALL = Vector(-4333, -1031, 535)
-local RADIANT_T2BOTFALL = Vector(760, -4600, 535)
-
-local RADIANT_T1TOPFALL = Vector(-4110, 1510, 535)
-local RADIANT_T1MIDFALL = Vector(-1082, -2208, 256)
-local RADIANT_T1BOTFALL = Vector(3859, -4611, 535)
-
-local RADIANT_MANDATE1 = Vector(-250, -1089, 128)
-local RADIANT_MANDATE2 = Vector(-1932, 202, 128)
+-- Laning Phase
+local RADIANT_LANE_PHASE_1 = Vector(2306, -3001, 128)
+local RADIANT_LANE_PHASE_2 = Vector(-3048, 1779, 128)
+local RADIANT_LANE_PHASE_3 = Vector(-3556, 6446, 128)
 
 -- Dire Warding Spots
-local DIRE_T3TOPFALL = Vector(3149, 5704, 256)
-local DIRE_T3MIDFALL = Vector(4071, 3459, 256)
-local DIRE_T3BOTFALL = Vector(6321, 2674, 256)
+-- Game Start
+local DIRE_GAME_START_1 = Vector(-491, 303, 128)
+local DIRE_GAME_START_2 = Vector(-7045, 4110, 128)
 
-local DIRE_T2TOPFALL = Vector(-772, 3608, 527)
-local DIRE_T2MIDFALL = Vector(1044, 3323, 399)
-local DIRE_T2BOTFALL = Vector(4610, 767, 527)
-
-local DIRE_T1TOPFALL = Vector(-2409, 5274, 256)
-local DIRE_T1MIDFALL = Vector(2055, -771, 527)
-local DIRE_T1BOTFALL = Vector(4476, -1703, 128)
-
-local DIRE_MANDATE1 = Vector(-491, 303, 128)
-local DIRE_MANDATE2 = Vector(1160, -483, 128)
-
--- Aggresive Warding
-local RADIANT_AGGRESSIVETOP = DIRE_T2TOPFALL
-local RADIANT_AGGRESSIVEMID1 = DIRE_T1MIDFALL
-local RADIANT_AGGRESSIVEMID2 = DIRE_T2MIDFALL
-local RADIANT_AGGRESSIVEBOT = DIRE_T2BOTFALL
-
-local DIRE_AGGRESSIVETOP = RADIANT_T1TOPFALL
-local DIRE_AGGRESSIVEMID1 = RADIANT_T2TOPFALL
-local DIRE_AGGRESSIVEMID2 = RADIANT_T2MIDFALL
-local DIRE_AGGRESSIVEBOT = RADIANT_T2BOTFALL
+-- Laning Phase
+local DIRE_LANE_PHASE_1 = Vector(-5217, 2501, 128)
+local DIRE_LANE_PHASE_2 = Vector(-2462, 1534, 0)
+local DIRE_LANE_PHASE_3 = Vector(3851, -4636, 353)
 
 local nTowerList = {
 	TOWER_TOP_1,
@@ -59,63 +36,290 @@ local nTowerList = {
 	TOWER_BOT_3,
 }
 
-local WardSpotTowerFallRadiant = {
-	RADIANT_T1TOPFALL,
-	RADIANT_T1MIDFALL,
-	RADIANT_T1BOTFALL,
-	RADIANT_T2TOPFALL,
-	RADIANT_T2MIDFALL,
-	RADIANT_T2BOTFALL,
-	RADIANT_T3TOPFALL,
-	RADIANT_T3MIDFALL,
-	RADIANT_T3BOTFALL,
+-- #############################################################
+-- RADIANT
+-- #############################################################
+local WardSpotAliveTeamTowerRadiant = {
+	[TOWER_TOP_1] = {
+						Vector(-3290, 5302, 128),
+						Vector(-5217, 2463, 128),
+					},
+	[TOWER_MID_1] = {
+						Vector(-3048, 1779, 128),
+						Vector( 449, -1953, 128),
+					},
+	[TOWER_BOT_1] = {
+						Vector(2306, -3001, 128),
+						Vector(3897, -4626, 535),
+					},
+
+	[TOWER_TOP_2] = {
+						Vector(-4575, 469, 256),
+						Vector(-7581, 335, 256),
+					},
+	[TOWER_MID_2] = {
+						Vector(-3615, -1757, 256),
+						Vector( -410, -2488, 256),
+					},
+	[TOWER_BOT_2] = {
+						Vector(2551, -7177, 407),
+						Vector(1297, -5594, 256),
+					},
+
+	[TOWER_TOP_3] = {
+						Vector(-6558, -3055, 256),
+						Vector(-5111, -1788, 256),
+					},
+	[TOWER_MID_3] = {
+						Vector(-4346, -3911, 256),
+						Vector(-4346, -3911, 256),
+					},
+	[TOWER_BOT_3] = {
+						Vector( -993, -5074, 256),
+						Vector(-3623, -6089, 256),
+					},
 }
 
-local WardSpotTowerFallDire = {
-	DIRE_T1TOPFALL,
-	DIRE_T1MIDFALL,
-	DIRE_T1BOTFALL,
-	DIRE_T2TOPFALL,
-	DIRE_T2MIDFALL,
-	DIRE_T2BOTFALL,
-	DIRE_T3TOPFALL,
-	DIRE_T3MIDFALL,
-	DIRE_T3BOTFALL,
+local InvadeWardSpotDeadEnemyTowerDire = {
+	[TOWER_TOP_1] = {
+						Vector(-4737, 7936, 128),
+						Vector(-1545, 6902, 399),
+						Vector(-2563, 7593, 128),
+						Vector(-1930, 4128, 256),
+						Vector( -767, 3599, 527),
+						Vector( -844, 4673, 256),
+					},
+	[TOWER_MID_1] = {
+						Vector(1038, 3309, 399),
+						Vector( 836, 1950, 128),
+						Vector(2054, -777, 527),
+						Vector(3440, -704, 256),
+					},
+	[TOWER_BOT_1] = {
+						Vector(4646, -1805, 128),
+						Vector(7622, -2553, 256),
+						Vector(7677, -1581, 527),
+						Vector(5093,  -238, 256),
+					},
+
+	[TOWER_TOP_2] = {
+						Vector( 462, 4408, 128),
+						Vector(  50, 8668, 512),
+						Vector(3069, 6554, 256),
+						Vector(2334, 4270, 128),
+					},
+	[TOWER_MID_2] = {
+						Vector(4610,  759, 527),
+						Vector(3400,  986, 256),
+						Vector(1048, 3313, 399),
+						Vector(4590, 2915, 256),
+					},
+	[TOWER_BOT_2] = {
+						Vector(8130,  700, 256),
+						Vector(4610,  759, 527),
+						Vector(7143, 2210, 256),
+						Vector(5521, 2649, 256),
+					},
+
+	[TOWER_TOP_3] = {
+						Vector(3107, 2986, 256),
+						Vector(4441, 5559, 256),
+					},
+	[TOWER_MID_3] = {
+						Vector(4474, 3877, 256),
+						Vector(5747, 5298, 256),
+					},
+	[TOWER_BOT_3] = {
+						Vector(6003, 3884, 256),
+						Vector(5124, 2755, 256),
+					},
 }
 
-function X.GetMandatorySpot()
-	local MandatorySpotRadiant = {
-		RADIANT_MANDATE1,
-		RADIANT_MANDATE2
+-- #############################################################
+-- DIRE
+-- #############################################################
+local WardSpotAliveTeamTowerDire = {
+	[TOWER_TOP_1] = {
+						Vector(-2845, 3282, 256),
+						Vector(-5163, 2560, 128),
+					},
+	[TOWER_MID_1] = {
+						Vector(-1454, 728, 0),
+						Vector(2740, -1604, 256),
+					},
+	[TOWER_BOT_1] = {
+						Vector(3537, -3396, 128),
+						Vector(3809,  -986, 256),
+					},
+
+	[TOWER_TOP_2] = {
+						Vector(-1964, 4150, 256),
+						Vector(-1538, 6897, 399),
+					},
+	[TOWER_MID_2] = {
+						Vector(3116, -274, 256),
+						Vector(1052, 3306, 399),
+					},
+	[TOWER_BOT_2] = {
+						Vector(7661, -1543, 527),
+						Vector(5041,  -369, 256),
+						Vector(4616,   756, 527),
+					},
+
+	[TOWER_TOP_3] = {
+						Vector(3122, 5724, 256),
+						Vector(2165, 4029, 128),
+					},
+	[TOWER_MID_3] = {
+						Vector(4007, 3492, 256),
+						Vector(3351, 1759, 128),
+					},
+	[TOWER_BOT_3] = {
+						Vector(6350, 2653, 256),
+						Vector(4670,  781, 527),
+					},
+}
+
+local InvadeWardSpotDeadEnemyTowerRadiant = {
+	[TOWER_TOP_1] = {
+						Vector(-4120, 1499, 535),
+						Vector(-7900, 1786, 535),
+						Vector(-7561,  372, 256),
+						Vector(-4576,  451, 256),
+					},
+	[TOWER_MID_1] = {
+						Vector(-4320, -1028, 535),
+						Vector(-3408,  -339, 256),
+						Vector(-1305, -2479, 256),
+						Vector(-1451, -3310, 256),
+						Vector(-1451, -3310, 256),
+						Vector(-2582, -3851, 256),
+						Vector( -284, -3538, 256),
+					},
+	[TOWER_BOT_1] = {
+						Vector(3851, -4636, 353),
+						Vector(4708, -7817, 128),
+						Vector(2586, -7189, 407),
+						Vector(1263, -5657, 256),
+						Vector( 771, -4630, 535),
+						Vector(1110, -7836, 128),
+					},
+
+	[TOWER_TOP_2] = {
+						Vector(-5285, -1585, 256),
+						Vector(-8143, -1519, 256),
+						Vector(-7373, -2822, 256),
+						Vector(-5685, -3139, 256),
+					},
+	[TOWER_MID_2] = {
+						Vector(-1587, -3742, 256),
+						Vector(-4334, -1054, 535),
+						Vector(-3269, -1425, 256),
+						Vector(-3791, -4518, 256),
+						Vector(-5167, -3419, 256),
+						Vector(-4907, -2860, 128),
+						Vector(-3088, -4273, 128),
+					},
+	[TOWER_BOT_2] = {
+						Vector(-1060, -5068, 256),
+						Vector(-1314, -7927, 128),
+						Vector(-3323, -7154, 256),
+						Vector(-3609, -5320, 256),
+						Vector(-2755, -5275, 128),
+					},
+
+	[TOWER_TOP_3] = {
+						Vector(-6401, -4286, 256),
+					},
+	[TOWER_MID_3] = {
+						Vector(-4912, -4403, 256),
+						Vector(-4912, -4403, 256),
+						Vector(-6170,  5643, 256),
+					},
+	[TOWER_BOT_3] = {
+						Vector(-4853, -5937, 256),
+					},
+}
+
+function X.GetLaningPhaseWardSpots()
+	local WardSpotRadiant = {
+		RADIANT_LANE_PHASE_1,
+		RADIANT_LANE_PHASE_2,
+		RADIANT_LANE_PHASE_3,
 	}
 
-	local MandatorySpotDire = {
-		DIRE_MANDATE1,
-		DIRE_MANDATE2
+	local WardSpotDire = {
+		DIRE_LANE_PHASE_1,
+		DIRE_LANE_PHASE_2,
+		DIRE_LANE_PHASE_3,
 	}
 
 	if GetTeam() == TEAM_RADIANT
     then
-		return MandatorySpotRadiant
+		return WardSpotRadiant
 	else
-		return MandatorySpotDire
+		return WardSpotDire
 	end
 end
 
-function X.GetWardSpotWhenTowerFall()
+function X.GetGameStartWardSpots()
+	local WardSpotRadiant = {
+		RADIANT_GAME_START_1,
+		RADIANT_GAME_START_2,
+	}
+
+	local WardSpotDire = {
+		DIRE_GAME_START_1,
+		DIRE_GAME_START_2,
+	}
+
+	if GetTeam() == TEAM_RADIANT
+    then
+		return WardSpotRadiant
+	else
+		return WardSpotDire
+	end
+end
+
+function X.GetWardSpotBeforeTowerFall()
 	local wardSpot = {}
 
 	for i = 1, #nTowerList
 	do
 		local t = GetTower(GetTeam(),  nTowerList[i])
 
-		if t == nil
+		if t ~= nil
+		or (t == GetTower(GetTeam(), TOWER_TOP_3) == nil
+			or t == GetTower(GetTeam(), TOWER_MID_3) == nil
+			or t == GetTower(GetTeam(), TOWER_BOT_3) == nil)
         then
+			if (t == GetTower(GetTeam(), TOWER_TOP_2)
+				and GetTower(GetTeam(), TOWER_TOP_1) ~= nil)
+			or (t == GetTower(GetTeam(), TOWER_TOP_3)
+				and GetTower(GetTeam(), TOWER_TOP_2) ~= nil)
+			or (t == GetTower(GetTeam(), TOWER_MID_2)
+				and GetTower(GetTeam(), TOWER_MID_1) ~= nil)
+			or (t == GetTower(GetTeam(), TOWER_MID_3)
+				and GetTower(GetTeam(), TOWER_MID_2) ~= nil)
+			or (t == GetTower(GetTeam(), TOWER_BOT_2)
+				and GetTower(GetTeam(), TOWER_BOT_1) ~= nil)
+			or (t == GetTower(GetTeam(), TOWER_BOT_3)
+				and GetTower(GetTeam(), TOWER_BOT_2) ~= nil)
+			then
+				break
+			end
+
 			if GetTeam() == TEAM_RADIANT
             then
-				table.insert(wardSpot, WardSpotTowerFallRadiant[i])
+				for j = 1, #WardSpotAliveTeamTowerRadiant[nTowerList[i]]
+				do
+					table.insert(wardSpot, WardSpotAliveTeamTowerRadiant[nTowerList[i]][j])
+				end
 			else
-				table.insert(wardSpot, WardSpotTowerFallDire[i])
+				for j = 1, #WardSpotAliveTeamTowerDire[nTowerList[i]]
+				do
+					table.insert(wardSpot, WardSpotAliveTeamTowerDire[nTowerList[i]][j])
+				end
 			end
 		end
 	end
@@ -123,27 +327,47 @@ function X.GetWardSpotWhenTowerFall()
 	return wardSpot
 end
 
-function X.GetAggressiveSpot()
-	local AggressiveDire = {
-		DIRE_AGGRESSIVETOP,
-		DIRE_AGGRESSIVEMID1,
-		DIRE_AGGRESSIVEMID2,
-		DIRE_AGGRESSIVEBOT
-	}
+function X.GetWardSpotDeadEnemyTowerDire()
+	local wardSpot = {}
 
-	local AggressiveRadiant = {
-		RADIANT_AGGRESSIVETOP,
-		RADIANT_AGGRESSIVEMID1,
-		RADIANT_AGGRESSIVEMID2,
-		RADIANT_AGGRESSIVEBOT
-	}
+	for i = 1, #nTowerList
+	do
+		local t = GetTower(GetOpposingTeam(),  nTowerList[i])
 
-	if GetTeam() == TEAM_RADIANT
-    then
-		return AggressiveRadiant
-	else
-		return AggressiveDire
+		if t == nil
+        then
+			if (t == GetTower(GetOpposingTeam(), TOWER_TOP_2)
+				and GetTower(GetOpposingTeam(), TOWER_TOP_1) ~= nil)
+			or (t == GetTower(GetOpposingTeam(), TOWER_TOP_3)
+				and GetTower(GetOpposingTeam(), TOWER_TOP_2) ~= nil)
+			or (t == GetTower(GetOpposingTeam(), TOWER_MID_2)
+				and GetTower(GetOpposingTeam(), TOWER_MID_1) ~= nil)
+			or (t == GetTower(GetOpposingTeam(), TOWER_MID_3)
+				and GetTower(GetOpposingTeam(), TOWER_MID_2) ~= nil)
+			or (t == GetTower(GetOpposingTeam(), TOWER_BOT_2)
+				and GetTower(GetOpposingTeam(), TOWER_BOT_1) ~= nil)
+			or (t == GetTower(GetOpposingTeam(), TOWER_BOT_3)
+				and GetTower(GetOpposingTeam(), TOWER_BOT_2) ~= nil)
+			then
+				break
+			end
+
+			if GetTeam() == TEAM_RADIANT
+            then
+				for j = 1, #InvadeWardSpotDeadEnemyTowerDire[nTowerList[i]]
+				do
+					table.insert(wardSpot, InvadeWardSpotDeadEnemyTowerDire[nTowerList[i]][j])
+				end
+			else
+				for j = 1, #InvadeWardSpotDeadEnemyTowerRadiant[nTowerList[i]]
+				do
+					table.insert(wardSpot, InvadeWardSpotDeadEnemyTowerRadiant[nTowerList[i]][j])
+				end
+			end
+		end
 	end
+
+	return wardSpot
 end
 
 function X.GetItemWard(bot)
@@ -152,8 +376,7 @@ function X.GetItemWard(bot)
 		local item = bot:GetItemInSlot(i)
 
 		if  item ~= nil
-        and (item:GetName() == 'item_ward_observer'
-            or item:GetName() == 'item_ward_sentry')
+		and item:GetName() == 'item_ward_observer'
         then
 			return item
 		end
@@ -194,31 +417,44 @@ end
 function X.GetAvailableSpot(bot)
 	local availableSpot = {}
 
-	for _, spot in pairs(X.GetMandatorySpot())
-    do
-		if not X.IsOtherWardClose(spot)
-        then
-			table.insert(availableSpot, spot)
-		end
-	end
-
-	for _, spot in pairs(X.GetWardSpotWhenTowerFall())
-    do
-		if not X.IsOtherWardClose(spot)
-        then
-			table.insert(availableSpot, spot)
-		end
-	end
-
-    if DotaTime() > 5 * 60
-    then
-		for _, spot in pairs(X.GetAggressiveSpot())
-        do
-			if  GetUnitToLocationDistance(bot, spot) <= 1200
-            and not X.IsOtherWardClose(spot)
-            then
+	if DotaTime() < 0
+	then
+		for _, spot in pairs(X.GetGameStartWardSpots())
+		do
+			if not X.IsOtherWardClose(spot)
+			then
 				table.insert(availableSpot, spot)
 			end
+		end
+
+		return availableSpot
+	end
+
+	if (J.IsModeTurbo() and DotaTime() < 8 * 60)
+	or DotaTime() < 12 * 60
+	then
+		for _, spot in pairs(X.GetLaningPhaseWardSpots())
+		do
+			if not X.IsOtherWardClose(spot)
+			then
+				table.insert(availableSpot, spot)
+			end
+		end
+	end
+
+	for _, spot in pairs(X.GetWardSpotBeforeTowerFall())
+    do
+		if not X.IsOtherWardClose(spot)
+        then
+			table.insert(availableSpot, spot)
+		end
+	end
+
+	for _, spot in pairs(X.GetWardSpotDeadEnemyTowerDire())
+    do
+		if not X.IsOtherWardClose(spot)
+        then
+			table.insert(availableSpot, spot)
 		end
 	end
 

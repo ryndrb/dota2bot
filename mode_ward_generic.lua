@@ -69,7 +69,8 @@ function GetDesire()
 
 	ItemWard = Ward.GetItemWard(bot)
 
-	if ItemWard ~= nil
+	if  ItemWard ~= nil
+	and ItemWard:GetCooldownTimeRemaining() == 0
 	then
 
 		Pinged, Member = Ward.IsPingedByHumanPlayer(bot)
