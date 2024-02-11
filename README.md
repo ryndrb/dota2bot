@@ -1,12 +1,14 @@
 # Dota 2 Bot Script
 
-This is a Dota 2 Bot Script based mostly on Beginner:AI by (dota2jmz@163.com). Some changes are based upon other existing bot scripts; personal use mostly; adding heroes. Trying to get use to the API and code base.
+This is a Dota 2 Bot Script based off of Beginner:AI by (dota2jmz@163.com). Some changes are based upon other existing bot scripts; personal use mostly; adding heroes. Trying to get use to the API and code base.
 Just trying to alleviate cheesiness and make bots movement more organic and objective base. It's a work in progress.
 
 Might want to scale Push desire with core networths so that bots farm more and increase their CS (though my vscript Buff alleviate this). Also, evasion/damage reduction/aura
 items are just too good in bots games (since itemization isn't dynamic), so it's still lineup dependent.
 
 Worth noting that I also use a vscript to improve the bots GPM (XPM later) and also have them able to get neutral items (Check Buff).
+
+To anyone who've found this or is using it, if you have any feedback in improving the script, kindly post them on the Steam Workshop page: https://steamcommunity.com/workshop/filedetails/discussion/3139791706/4143942846477191222/
 
 - ***To Use***
     - Since Valve hasn't fixed the workshop bug yet, bot scripts (that were uploaded after the bug occured) are only playable through local host lobby.
@@ -63,6 +65,7 @@ Worth noting that I also use a vscript to improve the bots GPM (XPM later) and a
         - [3] Enigma
         - [1] Faceless Void
         - [4,5] Grimstroke
+        - [1] Gyrocopter
         - [3] Mars
         - [2] Storm Spirit
         - [1] Terrorblade
@@ -141,6 +144,7 @@ Worth noting that I also use a vscript to improve the bots GPM (XPM later) and a
             | Enigma                | -       | -
             | Faceless Void         | &check; | -
             | Grimstroke            | -       | &check;
+            | Gyrocopter            | -       | -
             | Huskar                | -       | -
             | Jakiro                | &check; | -
             | Juggernaut            | -       | &check;

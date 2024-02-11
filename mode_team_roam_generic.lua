@@ -1614,6 +1614,7 @@ function X.IsSpecialCarry(bot)
 			["npc_dota_hero_clinkz"] = true,
 			["npc_dota_hero_drow_ranger"] = true,
 			["npc_dota_hero_faceless_void"] = true,
+			["npc_dota_hero_gyrocopter"] = true,
 			["npc_dota_hero_juggernaut"] = true,
 			["npc_dota_hero_lina"] = true,
 			["npc_dota_hero_luna"] = true,
