@@ -1668,6 +1668,7 @@ function X.IsSpecialSupport(bot)
 		["npc_dota_hero_disruptor"] = true,
 		["npc_dota_hero_earthshaker"] = true,
 		["npc_dota_hero_enchantress"] = true,
+		["npc_dota_hero_grimstroke"] = true,
 	}
 	
 	return tSpecialSupportList[botName] == true
@@ -1870,12 +1871,13 @@ end
 function CanAttackSpecialUnit()
 	local nAttackRange = bot:GetAttackRange() + 200
 	local nUnits = GetUnitList(UNIT_LIST_ENEMIES)
-	
+
 	for _, unit in pairs(nUnits)
 	do
 		if J.IsValid(unit)
-		then		
+		then
 			if string.find(unit:GetUnitName(), 'healing_ward')
+			or string.find(unit:GetUnitName(), 'grimstroke_ink_creature')
 			or string.find(unit:GetUnitName(), 'observer_ward')
 			or string.find(unit:GetUnitName(), 'sentry_ward')
 			or string.find(unit:GetUnitName(), 'warlock_golem')
@@ -1892,5 +1894,3 @@ function CanAttackSpecialUnit()
 
 	return false
 end
-
--- dota2jmz@163.com QQ:2462331592..
