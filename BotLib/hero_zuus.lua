@@ -50,7 +50,7 @@ tOutFitList['outfit_mid'] = {
 	"item_ultimate_scepter",
 	"item_travel_boots",
 	"item_octarine_core",--
-	"item_recipe_ultimate_scepter_2",
+	"item_ultimate_scepter_2",
 	"item_angels_demise",--
 	"item_travel_boots_2",--
 	"item_moon_shard",

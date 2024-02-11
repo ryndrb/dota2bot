@@ -49,7 +49,7 @@ tOutFitList['outfit_tank'] = {
     "item_harpoon",--
     "item_abyssal_blade",--
     "item_ultimate_scepter",
-    "item_recipe_ultimate_scepter_2",
+    "item_ultimate_scepter_2",
     "item_moon_shard",
 }
 

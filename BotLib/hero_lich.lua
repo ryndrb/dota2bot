@@ -58,7 +58,7 @@ tOutFitList['outfit_priest'] = {
 	"item_ultimate_scepter",
 	"item_phylactery",--
 	"item_refresher",--
-	"item_recipe_ultimate_scepter_2",
+	"item_ultimate_scepter_2",
 	"item_moon_shard"
 }
 
@@ -81,7 +81,7 @@ tOutFitList['outfit_mage'] = {
 	"item_ultimate_scepter",
 	"item_phylactery",--
 	"item_refresher",--
-	"item_recipe_ultimate_scepter_2",
+	"item_ultimate_scepter_2",
 	"item_moon_shard"
 }
 

@@ -56,7 +56,7 @@ tOutFitList['outfit_priest'] = {
 	"item_octarine_core",--
 	"item_black_king_bar",--
 	"item_refresher",--
-	"item_recipe_ultimate_scepter_2",
+	"item_ultimate_scepter_2",
 	"item_moon_shard",
 }
 
@@ -76,7 +76,7 @@ tOutFitList['outfit_mage'] = {
 	"item_octarine_core",--
 	"item_black_king_bar",--
 	"item_refresher",--
-	"item_recipe_ultimate_scepter_2",
+	"item_ultimate_scepter_2",
 	"item_moon_shard",
 }
 

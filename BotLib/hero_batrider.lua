@@ -60,7 +60,7 @@ tOutFitList['outfit_mid'] = {
     "item_ultimate_scepter",
     "item_refresher",--
     "item_overwhelming_blink",--
-    "item_recipe_ultimate_scepter_2",
+    "item_ultimate_scepter_2",
     "item_travel_boots_2",--
     "item_aghanims_shard",
     "item_moon_shard",
@@ -85,7 +85,7 @@ tOutFitList['outfit_tank'] = {
     "item_octarine_core",--
     "item_refresher",--
     "item_overwhelming_blink",--
-    "item_recipe_ultimate_scepter_2",
+    "item_ultimate_scepter_2",
     "item_travel_boots_2",--
     "item_aghanims_shard",
     "item_moon_shard",
