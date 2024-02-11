@@ -62,6 +62,7 @@ Worth noting that I also use a vscript to improve the bots GPM (XPM later) and a
         - [4,5] Enchantress
         - [3] Enigma
         - [1] Faceless Void
+        - [4,5] Grimstroke
         - [3] Mars
         - [2] Storm Spirit
         - [1] Terrorblade
@@ -138,6 +139,8 @@ Worth noting that I also use a vscript to improve the bots GPM (XPM later) and a
             | Ember Spirit          | -       | -
             | Enchantress           | &check; | &check;
             | Enigma                | -       | -
+            | Faceless Void         | &check; | -
+            | Grimstroke            | -       | &check;
             | Huskar                | -       | -
             | Jakiro                | &check; | -
             | Juggernaut            | -       | &check;

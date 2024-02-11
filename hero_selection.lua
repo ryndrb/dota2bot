@@ -360,6 +360,7 @@ local sPriestList = {
 	"npc_dota_hero_disruptor",
 	"npc_dota_hero_earthshaker",
 	"npc_dota_hero_enchantress",
+	"npc_dota_hero_grimstroke",
 }
 
 local sMageList = {
@@ -385,6 +386,7 @@ local sMageList = {
 	"npc_dota_hero_disruptor",
 	"npc_dota_hero_earthshaker",
 	"npc_dota_hero_enchantress",
+	"npc_dota_hero_grimstroke",
 }
 
 tSelectPoolList = {

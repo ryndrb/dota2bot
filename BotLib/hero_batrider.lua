@@ -412,8 +412,8 @@ function X.ConsiderFlamingLasso()
 	then
         local botStrongestTarget = J.GetStrongestUnit(nCastRange, bot, true, false, nDuration)
 
-        if J.IsValidTarget(botStrongestTarget
-        and J.CanCastOnMagicImmune(botStrongestTarget))
+        if J.IsValidTarget(botStrongestTarget)
+        and J.CanCastOnMagicImmune(botStrongestTarget)
         and J.IsInRange(bot, botStrongestTarget, nCastRange)
         and not J.IsSuspiciousIllusion(botStrongestTarget)
         then

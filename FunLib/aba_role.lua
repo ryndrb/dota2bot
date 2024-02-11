@@ -2193,6 +2193,7 @@ function X.IsABAHero()
 		["npc_dota_hero_enchantress"] = true,
 		["npc_dota_hero_enigma"] = true,
 		["npc_dota_hero_faceless_void"] = true,
+		["npc_dota_hero_grimstroke"] = true,
 		["npc_dota_hero_mars"] = true,
 		["npc_dota_hero_rattletrap"] = true,
 		["npc_dota_hero_shredder"] = true,
