@@ -49,7 +49,7 @@ tOutFitList['outfit_tank'] = {
     "item_black_king_bar",--
     "item_aghanims_shard",
     "item_refresher",--
-    "item_recipe_ultimate_scepter_2",
+    "item_ultimate_scepter_2",
     "item_arcane_blink",--
     "item_moon_shard",
 }

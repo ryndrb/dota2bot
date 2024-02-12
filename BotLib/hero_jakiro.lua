@@ -58,7 +58,7 @@ tOutFitList['outfit_priest'] = {
 	"item_octarine_core",--
 	"item_shivas_guard",--
 	"item_aeon_disk",--
-	"item_recipe_ultimate_scepter_2",
+	"item_ultimate_scepter_2",
 	"item_moon_shard",
 }
 
@@ -81,7 +81,7 @@ tOutFitList['outfit_mage'] = {
 	"item_octarine_core",--
 	"item_sheepstick",--
 	"item_aeon_disk",--
-	"item_recipe_ultimate_scepter_2",
+	"item_ultimate_scepter_2",
 	"item_moon_shard",
 }
 

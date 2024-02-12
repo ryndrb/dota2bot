@@ -47,7 +47,7 @@ tOutFitList['outfit_priest'] = {
     "item_ethereal_blade",--
     "item_refresher",--
     "item_aeon_disk",--
-    "item_recipe_ultimate_scepter_2",
+    "item_ultimate_scepter_2",
     "item_moon_shard",
 }
 
@@ -68,7 +68,7 @@ tOutFitList['outfit_mage'] = {
     "item_ethereal_blade",--
     "item_aeon_disk",--
     "item_refresher",--
-    "item_recipe_ultimate_scepter_2",
+    "item_ultimate_scepter_2",
     "item_moon_shard",
 }
 
