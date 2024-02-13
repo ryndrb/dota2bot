@@ -66,6 +66,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
         - [1] Faceless Void
         - [4,5] Grimstroke
         - [1] Gyrocopter
+        - ~~[4,5] Hoodwink~~
         - [3] Mars
         - [2] Storm Spirit
         - [1] Terrorblade
@@ -79,6 +80,11 @@ To anyone who've found this or is using it, if you have any feedback in improvin
         - [2,3] Necrophos
         - [2] Queen Of Pain
         - [2] Zeus
+    - ***Bugged (Internal)***
+        - Dark Willow
+            - Passive.
+        - Hoodwink
+            - Hardly enters Attack mode (Valve default).
 
 - ***"Attempted" Logic Changes (still)***
     - Pushing (Roughly default still)
@@ -145,6 +151,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
             | Faceless Void         | &check; | -
             | Grimstroke            | -       | &check;
             | Gyrocopter            | -       | -
+            | ~~Hoodwink~~          | &check; | &check;
             | Huskar                | -       | -
             | Jakiro                | &check; | -
             | Juggernaut            | -       | &check;

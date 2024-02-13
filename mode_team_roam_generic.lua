@@ -1670,6 +1670,7 @@ function X.IsSpecialSupport(bot)
 		["npc_dota_hero_earthshaker"] = true,
 		["npc_dota_hero_enchantress"] = true,
 		["npc_dota_hero_grimstroke"] = true,
+		["npc_dota_hero_hoodwink"] = true,
 	}
 	
 	return tSpecialSupportList[botName] == true
