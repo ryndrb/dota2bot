@@ -306,6 +306,7 @@ function X.ConsiderInfernalBlade()
     local nAbilityLevel = InfernalBlade:GetLevel()
     local botTarget = J.GetProperTarget(bot)
     local nDamagePct = InfernalBlade:GetSpecialValueInt('burn_damage_pct') / 100
+    local nDuration = InfernalBlade:GetSpecialValueInt('burn_duration')
 
 	local nEnemyHeroes = bot:GetNearbyHeroes(nCastRange + 70, true, BOT_MODE_NONE)
 	for _, enemyHero in pairs(nEnemyHeroes)
@@ -318,10 +319,10 @@ function X.ConsiderInfernalBlade()
             if enemyHero:IsChanneling()
             or J.IsCastingUltimateAbility(enemyHero)
             then
-                return BOT_ACTION_DESIRE_HIGH, npcEnemy
+                return BOT_ACTION_DESIRE_HIGH, enemyHero
             end
 
-            if  J.WillKillTarget(enemyHero, enemyHero:GetMaxHealth() * nDamagePct, DAMAGE_TYPE_MAGICAL, nCastPoint)
+            if  J.WillKillTarget(enemyHero, enemyHero:GetMaxHealth() * nDamagePct, DAMAGE_TYPE_MAGICAL, nDuration)
             and GetUnitToUnitDistance(bot, enemyHero) <= nCastRange
             then
                 return BOT_ACTION_DESIRE_HIGH, enemyHero
