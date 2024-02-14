@@ -1879,6 +1879,7 @@ function CanAttackSpecialUnit()
 		if J.IsValid(unit)
 		then
 			if string.find(unit:GetUnitName(), 'healing_ward')
+			or string.find(unit:GetUnitName(), 'forged_spirit')
 			or string.find(unit:GetUnitName(), 'grimstroke_ink_creature')
 			or string.find(unit:GetUnitName(), 'observer_ward')
 			or string.find(unit:GetUnitName(), 'sentry_ward')

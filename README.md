@@ -67,6 +67,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
         - [4,5] Grimstroke
         - [1] Gyrocopter
         - ~~[4,5] Hoodwink~~
+        - [2] Invoker
         - [3] Mars
         - [2] Storm Spirit
         - [1] Terrorblade
@@ -153,6 +154,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
             | Gyrocopter            | -       | -
             | ~~Hoodwink~~          | &check; | &check;
             | Huskar                | -       | -
+            | Invoker               | -       | &check;
             | Jakiro                | &check; | -
             | Juggernaut            | -       | &check;
             | Kunkka                | &check; | &check;

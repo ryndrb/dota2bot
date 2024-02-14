@@ -586,6 +586,7 @@ local tFarmHeroList = {
 	["npc_dota_hero_enigma"] = true,
 	["npc_dota_hero_faceless_void"] = true,
 	["npc_dota_hero_gyrocopter"] = true,
+	["npc_dota_hero_invoker"] = true,
 	["npc_dota_hero_mars"] = true,
 	["npc_dota_hero_shredder"] = true,
 	["npc_dota_hero_storm_spirit"] = true,
@@ -2084,6 +2085,18 @@ Site.ConsiderIsTimeToFarm["npc_dota_hero_enigma"] = function()
 end
 
 Site.ConsiderIsTimeToFarm["npc_dota_hero_gyrocopter"] = function()
+	local bot = GetBot()
+	local networth = bot:GetNetWorth()
+	local lastHits = bot:GetLastHits()
+
+	if lastHits < 1000 then
+		return true
+	end
+
+	return false
+end
+
+Site.ConsiderIsTimeToFarm["npc_dota_hero_invoker"] = function()
 	local bot = GetBot()
 	local networth = bot:GetNetWorth()
 	local lastHits = bot:GetLastHits()

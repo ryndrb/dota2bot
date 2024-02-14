@@ -2197,6 +2197,7 @@ function X.IsABAHero()
 		["npc_dota_hero_grimstroke"] = true,
 		["npc_dota_hero_gyrocopter"] = true,
 		["npc_dota_hero_hoodwink"] = true,
+		["npc_dota_hero_invoker"] = true,
 		["npc_dota_hero_mars"] = true,
 		["npc_dota_hero_rattletrap"] = true,
 		["npc_dota_hero_shredder"] = true,
