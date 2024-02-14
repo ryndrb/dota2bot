@@ -1,5 +1,5 @@
 This script is insprired by Fretbots. It runs in conjuction with the bot script. When playing with AP, bots are typically underfarmed and (underleveled), due to their tendency to roam and not really farm much.
-So, I made this to increase their GPM and (XPM) accordingly based on their role (cores only). I only care about increasing their GPM and (XPM), hence I'm not using Fretbots.
+So, I made this to increase their GPM and XPM accordingly based on their role (cores only). I only care about increasing their GPM and XPM, hence I'm not using Fretbots.
 
 I also added a functionality for bots to get neutral items. It is random for now.
 

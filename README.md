@@ -6,7 +6,7 @@ Just trying to alleviate cheesiness and make bots movement more organic and obje
 Might want to scale Push desire with core networths so that bots farm more and increase their CS (though my vscript Buff alleviate this). Also, evasion/damage reduction/aura
 items are just too good in bots games (since itemization isn't dynamic), so it's still lineup dependent.
 
-Worth noting that I also use a vscript to improve the bots GPM (XPM later) and also have them able to get neutral items (Check Buff).
+Worth noting that I also use a vscript to improve the bots GPM and XPM (AP only), and also have them able to get neutral items (Check Buff).
 
 To anyone who've found this or is using it, if you have any feedback in improving the script, kindly post them on the Steam Workshop page: https://steamcommunity.com/workshop/filedetails/discussion/3139791706/4143942846477191222/
 
@@ -111,7 +111,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
         - [ ] Tormentor
         - [ ] Dynamic item builds
         - [ ] Clear wave faster with abilities
-        - [x] vscript to increase bots GPM (XPM later) and for them to acquire neutral items (local host only)
+        - [x] vscript to increase bots GPM and XPM (AP only), and for them to acquire neutral items (local host only)
         - [x] Functionality for new active ablities gained through Aghs/Shard
             | Hero                  | Shard   | Scepter 
             |:---------------------:|:-------:|:-------:
