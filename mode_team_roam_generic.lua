@@ -207,6 +207,12 @@ function GetDesire()
 				return BOT_MODE_DESIRE_ABSOLUTE
 			end
 		end
+	elseif botName == "npc_dota_hero_keeper_of_the_light"
+	then
+		if cAbility == nil then cAbility = bot:GetAbilityByName("keeper_of_the_light_illuminate") end
+		if cAbility:IsInAbilityPhase() or bot:IsChanneling() or bot:HasModifier('modifier_keeper_of_the_light_illuminate') then
+			return BOT_MODE_DESIRE_ABSOLUTE
+		end
 	end
 
 	if beSpecialSupport

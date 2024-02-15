@@ -304,6 +304,7 @@ local sMidList = {
 	"npc_dota_hero_clinkz",
 	"npc_dota_hero_doom_bringer",
 	"npc_dota_hero_invoker",
+	"npc_dota_hero_keeper_of_the_light",
 }
 
 local sTankList = {
