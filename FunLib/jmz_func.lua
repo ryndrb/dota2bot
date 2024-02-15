@@ -4007,6 +4007,10 @@ function J.AdjustLocationWithOffset(vLoc, offset, target)
 	return targetLoc
 end
 
+function J.IsInLaningPhase()
+	return (J.IsModeTurbo() and DotaTime() < 8 * 60) or DotaTime() < 12 * 60
+end
+
 function J.ConsolePrintActiveMode(bot)
 	local mode = bot:GetActiveMode()
 
