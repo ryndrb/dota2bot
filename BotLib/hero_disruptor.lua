@@ -377,22 +377,27 @@ function X.ConsiderStaticStorm()
 
 		if nLocationAoE.count >= 2
         then
-            local isChronod = false
-            for _, enemyHero in pairs(nEnemyHeroes)
-            do
-                if  J.IsValidHero(enemyHero)
-                and GetUnitToLocationDistance(enemyHero, nLocationAoE.targetloc) <= 150
-                and enemyHero:HasModifier('modifier_faceless_void_chronosphere')
-                and not J.IsSuspiciousIllusion(enemyHero)
-                then
-                    isChronod = true
-                    break
-                end
-            end
+            local realEnemyCount = J.GetEnemiesNearLoc(nLocationAoE.targetloc, nRadius)
 
-            if not isChronod
+            if realEnemyCount ~= nil and #realEnemyCount >= 2
             then
-                return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc
+                local isChronod = false
+                for _, enemyHero in pairs(nEnemyHeroes)
+                do
+                    if  J.IsValidHero(enemyHero)
+                    and GetUnitToLocationDistance(enemyHero, nLocationAoE.targetloc) <= 150
+                    and enemyHero:HasModifier('modifier_faceless_void_chronosphere')
+                    and not J.IsSuspiciousIllusion(enemyHero)
+                    then
+                        isChronod = true
+                        break
+                    end
+                end
+
+                if not isChronod
+                then
+                    return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc
+                end
             end
 		end
 	end
@@ -413,22 +418,27 @@ function X.ConsiderKineticStorm()
 
             if nLocationAoE.count >= 2
             then
-                local isChronod = false
-                for _, enemyHero in pairs(nEnemyHeroes)
-                do
-                    if  J.IsValidHero(enemyHero)
-                    and GetUnitToLocationDistance(enemyHero, nLocationAoE.targetloc) <= 150
-                    and enemyHero:HasModifier('modifier_faceless_void_chronosphere')
-                    and not J.IsSuspiciousIllusion(enemyHero)
-                    then
-                        isChronod = true
-                        break
-                    end
-                end
+                local realEnemyCount = J.GetEnemiesNearLoc(nLocationAoE.targetloc, nRadius)
 
-                if not isChronod
+                if realEnemyCount ~= nil and #realEnemyCount >= 2
                 then
-                    return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc
+                    local isChronod = false
+                    for _, enemyHero in pairs(nEnemyHeroes)
+                    do
+                        if  J.IsValidHero(enemyHero)
+                        and GetUnitToLocationDistance(enemyHero, nLocationAoE.targetloc) <= 150
+                        and enemyHero:HasModifier('modifier_faceless_void_chronosphere')
+                        and not J.IsSuspiciousIllusion(enemyHero)
+                        then
+                            isChronod = true
+                            break
+                        end
+                    end
+
+                    if not isChronod
+                    then
+                        return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc
+                    end
                 end
             end
         end
