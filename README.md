@@ -69,6 +69,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
         - ~~[4,5] Hoodwink~~
         - [2] Invoker
         - [2] Keeper of the Light
+        - [2] Leshrac
         - [3] Mars
         - [2] Storm Spirit
         - [1] Terrorblade
@@ -161,6 +162,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
             | Keeper of the Light   | &check; | &check;
             | Kunkka                | &check; | &check;
             | Legion Commander      | -       | -
+            | Leshrac               | -       | &check;
             | Lich                  | &check; | &check;
             | Lina                  | -       | &check;
             | Lion                  | -       | -
