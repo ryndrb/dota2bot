@@ -515,6 +515,7 @@ local tFarmerList = {
 	["npc_dota_hero_clinkz"] = true,
 	["npc_dota_hero_gyrocopter"] = true,
 	["npc_dota_hero_faceless_void"] = true,
+	["npc_dota_hero_life_stealer"] = true,
 	["npc_dota_hero_terrorblade"] = true,
 	["npc_dota_hero_tiny"] = true,
 	["npc_dota_hero_ursa"] = true,
@@ -589,6 +590,7 @@ local tFarmHeroList = {
 	["npc_dota_hero_invoker"] = true,
 	["npc_dota_hero_keeper_of_the_light"] = true,
 	["npc_dota_hero_leshrac"] = true,
+	["npc_dota_hero_life_stealer"] = true,
 	["npc_dota_hero_mars"] = true,
 	["npc_dota_hero_shredder"] = true,
 	["npc_dota_hero_storm_spirit"] = true,
@@ -2123,6 +2125,18 @@ Site.ConsiderIsTimeToFarm["npc_dota_hero_keeper_of_the_light"] = function()
 end
 
 Site.ConsiderIsTimeToFarm["npc_dota_hero_leshrac"] = function()
+	local bot = GetBot()
+	local networth = bot:GetNetWorth()
+	local lastHits = bot:GetLastHits()
+
+	if lastHits < 1000 then
+		return true
+	end
+
+	return false
+end
+
+Site.ConsiderIsTimeToFarm["npc_dota_hero_life_stealer"] = function()
 	local bot = GetBot()
 	local networth = bot:GetNetWorth()
 	local lastHits = bot:GetLastHits()

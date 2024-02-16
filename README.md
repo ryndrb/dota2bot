@@ -70,6 +70,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
         - [2] Invoker
         - [2] Keeper of the Light
         - [2] Leshrac
+        - [1] Lifestealer
         - [3] Mars
         - [2] Storm Spirit
         - [1] Terrorblade
@@ -164,6 +165,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
             | Legion Commander      | -       | -
             | Leshrac               | -       | &check;
             | Lich                  | &check; | &check;
+            | Lifestealer           | &check; | -
             | Lina                  | -       | &check;
             | Lion                  | -       | -
             | Luna                  | -       | &check;

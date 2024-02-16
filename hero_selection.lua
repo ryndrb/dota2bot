@@ -272,6 +272,7 @@ local sCarryList = {
 	"npc_dota_hero_tiny",
 	"npc_dota_hero_clinkz",
 	"npc_dota_hero_gyrocopter",
+	"npc_dota_hero_life_stealer",
 }
 
 local sMidList = {

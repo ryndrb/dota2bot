@@ -2201,6 +2201,7 @@ function X.IsABAHero()
 		["npc_dota_hero_invoker"] = true,
 		["npc_dota_hero_keeper_of_the_light"] = true,
 		["npc_dota_hero_leshrac"] = true,
+		["npc_dota_hero_life_stealer"] = true,
 		["npc_dota_hero_mars"] = true,
 		["npc_dota_hero_rattletrap"] = true,
 		["npc_dota_hero_shredder"] = true,
