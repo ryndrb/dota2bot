@@ -111,7 +111,9 @@ To anyone who've found this or is using it, if you have any feedback in improvin
         - [ ] Rune behaviour
         - [ ] Doom apparently not able to Devour abilities (might just be Valve bug tho)
     - ***Add***
-        - [ ] Tormentor
+        - [x] Tormentor
+            - Desire decreases starting at minute (20; 35 (AP)).
+            - Tricky to harmonize with others due to its nature.
         - [ ] Dynamic item builds
         - [ ] Clear wave faster with abilities
         - [x] vscript to increase bots GPM and XPM (AP only), and for them to acquire neutral items (local host only)
