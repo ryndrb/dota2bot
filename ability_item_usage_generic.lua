@@ -4388,6 +4388,30 @@ X.ConsiderItemDesire["item_tpscroll"] = function( hItem )
 	-- 	end
 	-- end
 
+	--Tormentor
+	if  bot:GetActiveMode() == BOT_MODE_SIDE_SHOP
+	and not J.IsInTeamFight(bot, 1200)
+	and not J.IsGoingOnSomeone(bot)
+	and not J.IsDefending(bot)
+	and nEnemyCount == 0
+	then
+		local loc = 0
+		if GetTeam() == TEAM_RADIANT
+		then
+			loc = Vector(-8075, -1148, 1000)
+		else
+			loc = Vector(8132, 1102, 1000)
+		end
+
+		hEffectTarget = J.GetNearbyLocationToTp(loc)
+		sCastMotive = 'tormentor'
+
+		if J.GetLocationToLocationDistance(bot:GetLocation(), loc) > 2000
+		then
+			return BOT_ACTION_DESIRE_HIGH, hEffectTarget, sCastType, sCastMotive
+		end
+	end
+
 	--守塔
 	if J.IsDefending( bot )
 		and nModeDesire > BOT_MODE_DESIRE_MODERATE
