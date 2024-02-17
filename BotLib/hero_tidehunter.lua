@@ -693,7 +693,7 @@ function X.ConsiderDeadInTheWater()
 			and J.IsInRange(npcEnemy, bot, nCastRange)
 			and bot:WasRecentlyDamagedByHero(npcEnemy, 4.0)
 			and J.CanCastOnNonMagicImmune(npcEnemy)
-			and X.IsWithoutSpellShield(npcEnemy)
+			and IsWithoutSpellShield(npcEnemy)
 			and not J.IsDisabled(npcEnemy)
 			then
 				return BOT_ACTION_DESIRE_HIGH, npcEnemy
@@ -707,7 +707,7 @@ function X.ConsiderDeadInTheWater()
 		and J.IsMoving(botTarget)
 		and J.IsInRange(botTarget, bot, nCastRange)
 		and J.CanCastOnNonMagicImmune(botTarget)
-		and X.IsWithoutSpellShield(botTarget)
+		and IsWithoutSpellShield(botTarget)
 		and not J.IsDisabled(botTarget)
 		then
 			return BOT_ACTION_DESIRE_HIGH, botTarget
@@ -719,7 +719,7 @@ function X.ConsiderDeadInTheWater()
 	and J.IsMoving(npcEnemy)
 	and J.IsInRange(bot, npcEnemy, nCastRange - 100)
 	and J.CanCastOnNonMagicImmune(npcEnemy)
-	and X.IsWithoutSpellShield(npcEnemy)
+	and IsWithoutSpellShield(npcEnemy)
 	and not J.IsDisabled(npcEnemy)
 	and J.IsRunning(npcEnemy)
 	then
@@ -727,6 +727,12 @@ function X.ConsiderDeadInTheWater()
 	end
 
 	return BOT_ACTION_DESIRE_NONE, nil
+end
+
+function IsWithoutSpellShield(npcEnemy)
+	return not npcEnemy:HasModifier("modifier_item_sphere_target")
+			and not npcEnemy:HasModifier("modifier_antimage_spell_shield")
+			and not npcEnemy:HasModifier("modifier_item_lotus_orb_active")
 end
 
 return X
