@@ -166,7 +166,7 @@ function X.SkillsComplement()
 
 		J.SetQueuePtToINT( bot, true )
 
-		bot:ActionQueue_UseAbility( abilityR )
+		bot:ActionQueue_UseAbilityOnEntity( abilityR, castRTarget )
 		return
 	end
 	
@@ -709,18 +709,11 @@ function X.ConsiderR()
 
 	if not abilityR:IsFullyCastable() then return 0 end
 
-	local nSkillLV = abilityR:GetLevel()
 	local nRadius = abilityR:GetSpecialValueInt( 'radius' )	
 	local nCastRange = nRadius
 	
 	if bot:HasScepter() then nCastRange = 1600 end
-	
-	local nCastPoint = abilityR:GetCastPoint()
-	local nManaCost = abilityR:GetManaCost()
-	local nDamage = 0
-	local nDamageType = DAMAGE_TYPE_MAGICAL
---	local nInRangeEnemyList = J.GetAroundEnemyHeroList( nCastRange )
---	local nInBonusEnemyList = J.GetAroundEnemyHeroList( nCastRange + 200 )
+
 	local hCastTarget = nil
 	local sCastMotive = nil
 
@@ -732,9 +725,10 @@ function X.ConsiderR()
 		if J.IsValidHero( botTarget )
 			and J.IsInRange( bot, botTarget, 500 )
 			and J.CanCastOnMagicImmune( botTarget )
+			and not J.IsSuspiciousIllusion(botTarget)
 			and not J.IsDisabled( botTarget )
 			and not botTarget:IsDisarmed()
-			and botTarget:GetAttackTarget() ~= nil
+			and botTarget:GetAttackTarget() == bot
 		then
 			hCastTarget = bot
 			sCastMotive = 'R-辅助攻击:'..J.Chat.GetNormName( botTarget )
@@ -751,8 +745,6 @@ function X.ConsiderR()
 			and npcAlly:IsAlive()
 			and ( bot:HasScepter() or J.IsInRange( bot, npcAlly, 700 ) )
 		then
-		
-			--团战时辅助进攻
 			if J.IsInTeamFight( npcAlly, 1300 )
 			then
 				local allyList = J.GetAlliesNearLoc( npcAlly:GetLocation(), nCastRange )
@@ -782,9 +774,6 @@ function X.ConsiderR()
 					end
 				end
 			end
-					
-			
-			--逃跑时辅助攻击
 			if J.IsRetreating( npcAlly )
 				and npcAlly:WasRecentlyDamagedByAnyHero( 5.0 )
 			then
@@ -796,18 +785,11 @@ function X.ConsiderR()
 					sCastMotive = 'R-逃跑时辅助攻击:'..J.Chat.GetNormName( hCastTarget )
 					return BOT_ACTION_DESIRE_HIGH, hCastTarget, sCastMotive	
 				end
-			end		
-			
+			end
 		end
 	end
 
-
 	return BOT_ACTION_DESIRE_NONE
-
-
 end
 
-
 return X
--- dota2jmz@163.com QQ:2462331592
-

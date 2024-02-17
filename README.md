@@ -208,4 +208,5 @@ To anyone who've found this or is using it, if you have any feedback in improvin
     - ***Improve***
         - [ ] Some heroes ability usage (too spammy, ends up not having enough mana)
         - [ ] Item usage
+        - [ ] Re(factor/write) old code for consistency
     
