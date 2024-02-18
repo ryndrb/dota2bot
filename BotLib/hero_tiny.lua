@@ -596,7 +596,7 @@ function X.ConsiderTreeThrow()
 				if  nInRangeEnemy ~= nil and #nInRangeEnemy >= 1
 				and GetUnitToUnitDistance(creep, nInRangeEnemy[1]) <= 600
 				then
-					return BOT_ACTION_DESIRE_HIGH, creep:GetLocation()
+					return BOT_ACTION_DESIRE_HIGH, creep
 				end
 			end
 		end
