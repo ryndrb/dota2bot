@@ -71,6 +71,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
         - [2] Keeper of the Light
         - [2] Leshrac
         - [1] Lifestealer
+        - [1] Lycan
         - [3] Mars
         - [2] Storm Spirit
         - [1] Terrorblade
@@ -78,6 +79,8 @@ To anyone who've found this or is using it, if you have any feedback in improvin
         - [1,2] Tiny
         - [1] Ursa
         - [2] Void Spirit
+    - ***Later***
+        - Lone Druid
     - ***Changed***
         - [2,3] Death Prophet
         - [1,2] Lina
@@ -171,6 +174,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
             | Lina                  | -       | &check;
             | Lion                  | -       | -
             | Luna                  | -       | &check;
+            | Lycan                 | -       | &cross;
             | Mars                  | -       | -
             | Medusa                | -       | -
             | Mirana                | -       | -

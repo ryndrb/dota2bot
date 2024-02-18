@@ -591,6 +591,7 @@ local tFarmHeroList = {
 	["npc_dota_hero_keeper_of_the_light"] = true,
 	["npc_dota_hero_leshrac"] = true,
 	["npc_dota_hero_life_stealer"] = true,
+	["npc_dota_hero_lycan"] = true,
 	["npc_dota_hero_mars"] = true,
 	["npc_dota_hero_shredder"] = true,
 	["npc_dota_hero_storm_spirit"] = true,
@@ -2137,6 +2138,18 @@ Site.ConsiderIsTimeToFarm["npc_dota_hero_leshrac"] = function()
 end
 
 Site.ConsiderIsTimeToFarm["npc_dota_hero_life_stealer"] = function()
+	local bot = GetBot()
+	local networth = bot:GetNetWorth()
+	local lastHits = bot:GetLastHits()
+
+	if lastHits < 1000 then
+		return true
+	end
+
+	return false
+end
+
+Site.ConsiderIsTimeToFarm["npc_dota_hero_lycan"] = function()
 	local bot = GetBot()
 	local networth = bot:GetNetWorth()
 	local lastHits = bot:GetLastHits()

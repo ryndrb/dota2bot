@@ -4011,6 +4011,18 @@ function J.IsInLaningPhase()
 	return (J.IsModeTurbo() and DotaTime() < 8 * 60) or DotaTime() < 12 * 60
 end
 
+function J.IsTormentor(nTarget)
+	return nTarget ~= nil
+			and not nTarget:IsNull()
+			and nTarget:CanBeSeen()
+			and nTarget:IsAlive()
+			and string.find(nTarget:GetUnitName(), 'miniboss') ~= nil
+end
+
+function J.IsDoingTormentor(bot)
+	return bot:GetActiveMode() == BOT_MODE_SIDE_SHOP
+end
+
 function J.ConsolePrintActiveMode(bot)
 	local mode = bot:GetActiveMode()
 

@@ -77,7 +77,6 @@ X['bDeafaultAbility'] = false
 X['bDeafaultItem'] = false
 
 function X.MinionThink(hMinionUnit)
-    print('DEBUG 4')
     Minion.MinionThink(hMinionUnit)
 end
 

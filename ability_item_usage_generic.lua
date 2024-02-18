@@ -2325,6 +2325,16 @@ X.ConsiderItemDesire["item_helm_of_the_dominator"] = function( hItem )
 	local hEffectTarget = nil
 	local sCastMotive = nil
 
+	for _, unit in pairs(GetUnitList(UNIT_LIST_ALLIED_CREEPS))
+	do
+		if  J.IsValid(unit)
+		and unit:HasModifier('modifier_dominated')
+		and unit:IsAncientCreep()
+		then
+			return BOT_ACTION_DESIRE_NONE, hEffectTarget, 'sCastType', sCastMotive
+		end
+	end
+
 	local maxHP = 0
 	local hCreep = nil
 	local hNearbyCreepList = bot:GetNearbyCreeps( nCastRange, true )

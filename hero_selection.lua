@@ -340,6 +340,7 @@ local sTankList = {
 	"npc_dota_hero_dawnbreaker",
 	"npc_dota_hero_doom_bringer",
 	"npc_dota_hero_enigma",
+	"npc_dota_hero_lycan",
 }
 
 local sPriestList = {
