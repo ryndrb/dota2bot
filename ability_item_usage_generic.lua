@@ -1210,6 +1210,11 @@ X.ConsiderItemDesire["item_blink"] = function( hItem )
 	--先手进攻
 	if J.IsGoingOnSomeone( bot )
 	then
+		if bot:GetUnitName() == 'npc_dota_hero_magnataur' and bot.shouldBlink
+		then
+			return BOT_ACTION_DESIRE_NONE
+		end
+
 		if J.IsValidHero( botTarget )
 			and J.IsInRange( bot, botTarget, nCastRange + 400 )
 			and J.CanCastOnMagicImmune( botTarget )

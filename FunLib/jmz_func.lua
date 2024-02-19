@@ -3778,6 +3778,25 @@ function J.IsHeroBetweenMeAndLocation(hSource, vLoc, nRadius)
 	return false
 end
 
+function J.IsEnemyBetweenMeAndLocation(hSource, vLoc, nRadius)
+	local vStart = hSource:GetLocation()
+	local vEnd = vLoc
+	local bot = GetBot()
+
+	local nEnemyHeroes = bot:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
+	for _, enemyHero in pairs(nEnemyHeroes)
+    do
+		if enemyHero ~= hSource
+		and not J.IsSuspiciousIllusion(enemyHero)
+		then
+			local tResult = PointToLineDistance(vStart, vEnd, enemyHero:GetLocation())
+			if  tResult ~= nil and tResult.within and tResult.distance < nRadius + 25 then return true end
+		end
+	end
+
+	return false
+end
+
 function J.IsHeroBetweenMeAndTarget(hSource, hTarget, vLoc, nRadius)
 	local vStart = hSource:GetLocation()
 	local vEnd = vLoc
@@ -4021,6 +4040,36 @@ end
 
 function J.IsDoingTormentor(bot)
 	return bot:GetActiveMode() == BOT_MODE_SIDE_SHOP
+end
+
+function J.IsLocationInChrono(loc)
+	for _, enemyHero in pairs(GetUnitList(UNIT_LIST_ENEMY_HEROES))
+	do
+		if  J.IsValidHero(enemyHero)
+		and not J.IsSuspiciousIllusion(enemyHero)
+		and GetUnitToLocationDistance(enemyHero, loc) < 300
+		and enemyHero:HasModifier('modifier_faceless_void_chronosphere_freeze')
+		then
+			return true
+		end
+	end
+
+	return false
+end
+
+function J.IsLocationInBlackHole(loc)
+	for _, enemyHero in pairs(GetUnitList(UNIT_LIST_ENEMY_HEROES))
+	do
+		if  J.IsValidHero(enemyHero)
+		and not J.IsSuspiciousIllusion(enemyHero)
+		and GetUnitToLocationDistance(enemyHero, loc) < 300
+		and enemyHero:HasModifier('modifier_enigma_black_hole_pull')
+		then
+			return true
+		end
+	end
+
+	return false
 end
 
 function J.ConsolePrintActiveMode(bot)
