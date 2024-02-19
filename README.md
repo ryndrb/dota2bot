@@ -71,7 +71,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
         - [2] Keeper of the Light
         - [2] Leshrac
         - [1] Lifestealer
-        - [1] Lycan
+        - [3] Lycan
         - [3] Magnus
         - ~~[1,3] Marci~~
         - [3] Mars
