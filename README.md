@@ -73,6 +73,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
         - [1] Lifestealer
         - [1] Lycan
         - [3] Magnus
+        - ~~[1,3] Marci~~
         - [3] Mars
         - [2] Storm Spirit
         - [1] Terrorblade
@@ -93,6 +94,8 @@ To anyone who've found this or is using it, if you have any feedback in improvin
             - Passive.
         - Hoodwink
             - Hardly enters Attack mode (Valve default).
+        - Marci
+            - Passive.
 
 - ***"Attempted" Logic Changes (still)***
     - Pushing (Roughly default still)
@@ -178,6 +181,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
             | Lycan                 | -       | &cross;
             | Magnus                | -       | &check;
             | Mars                  | -       | -
+            | ~~Marci~~             | -       | -
             | Medusa                | -       | -
             | Mirana                | -       | -
             | Naga Siren            | -       | &check;

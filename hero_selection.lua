@@ -273,6 +273,7 @@ local sCarryList = {
 	"npc_dota_hero_clinkz",
 	"npc_dota_hero_gyrocopter",
 	"npc_dota_hero_life_stealer",
+	-- "npc_dota_hero_marci",
 }
 
 local sMidList = {
@@ -342,6 +343,7 @@ local sTankList = {
 	"npc_dota_hero_enigma",
 	"npc_dota_hero_lycan",
 	"npc_dota_hero_magnataur",
+	-- "npc_dota_hero_marci",
 }
 
 local sPriestList = {

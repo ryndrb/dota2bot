@@ -1748,6 +1748,7 @@ function X.IsSpecialCarry(bot)
 			["npc_dota_hero_life_stealer"] = true,
 			["npc_dota_hero_lina"] = true,
 			["npc_dota_hero_luna"] = true,
+			["npc_dota_hero_marci"] = true,
 			["npc_dota_hero_medusa"] = true,
 			["npc_dota_hero_naga_siren"] = true,
 			["npc_dota_hero_nevermore"] = true,
