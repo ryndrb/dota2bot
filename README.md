@@ -72,7 +72,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
         - [2] Leshrac
         - [1] Lifestealer
         - [1] Lycan
-        - [1] Magnus
+        - [3] Magnus
         - [3] Mars
         - [2] Storm Spirit
         - [1] Terrorblade
