@@ -4072,6 +4072,50 @@ function J.IsLocationInBlackHole(loc)
 	return false
 end
 
+function J.GetMeepos()
+	local Meepos = {}
+
+	for _, allyHero in pairs(GetUnitList(UNIT_LIST_ALLIED_HEROES))
+	do
+		if  J.IsValidHero(allyHero)
+		and allyHero:GetUnitName() == 'npc_dota_hero_meepo'
+		and not J.IsSuspiciousIllusion(allyHero)
+		then
+			table.insert(Meepos, allyHero)
+		end
+	end
+
+	return Meepos
+end
+
+function J.IsMeepoClone(hero)
+	if  J.IsValidHero(hero)
+	and hero:GetUnitName() == 'npc_dota_hero_meepo'
+	then
+		for i = 0, 5
+		do
+			local hItem = hero:GetItemInSlot(i)
+
+			if  hItem ~= nil
+			and not (hItem:GetName() == 'item_boots'
+					or hItem:GetName() == 'item_tranquil_boots'
+					or hItem:GetName() == 'item_arcane_boots'
+					or hItem:GetName() == 'item_power_treads'
+					or hItem:GetName() == 'item_phase_boots'
+					or hItem:GetName() == 'item_travel_boots'
+					or hItem:GetName() == 'item_boots_of_bearing'
+					or hItem:GetName() == 'item_guardian_greaves'
+					or hItem:GetName() == 'item_travel_boots_2'
+				)  
+			then
+				return false
+			end
+		end
+
+		return true
+    end
+end
+
 function J.ConsolePrintActiveMode(bot)
 	local mode = bot:GetActiveMode()
 

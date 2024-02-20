@@ -322,6 +322,15 @@ function GetDesire()
 		if cAbility:IsInAbilityPhase() or bot:IsChanneling() or bot:HasModifier('modifier_keeper_of_the_light_illuminate') then
 			return BOT_MODE_DESIRE_ABSOLUTE
 		end
+	elseif botName == "npc_dota_hero_meepo"
+	then
+		if cAbility == nil then cAbility = bot:GetAbilityByName("meepo_poof") end
+		if cAbility:IsTrained()
+		then
+			if cAbility:IsInAbilityPhase() or bot:IsChanneling() then
+				return BOT_MODE_DESIRE_ABSOLUTE
+			end
+		end
 	end
 
 	if beSpecialSupport
@@ -1750,6 +1759,7 @@ function X.IsSpecialCarry(bot)
 			["npc_dota_hero_luna"] = true,
 			["npc_dota_hero_marci"] = true,
 			["npc_dota_hero_medusa"] = true,
+			["npc_dota_hero_meepo"] = true,
 			["npc_dota_hero_naga_siren"] = true,
 			["npc_dota_hero_nevermore"] = true,
 			["npc_dota_hero_phantom_assassin"] = true,

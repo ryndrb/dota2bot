@@ -274,6 +274,7 @@ local sCarryList = {
 	"npc_dota_hero_gyrocopter",
 	"npc_dota_hero_life_stealer",
 	-- "npc_dota_hero_marci",
+	"npc_dota_hero_meepo",
 }
 
 local sMidList = {
@@ -308,6 +309,7 @@ local sMidList = {
 	"npc_dota_hero_invoker",
 	"npc_dota_hero_keeper_of_the_light",
 	"npc_dota_hero_leshrac",
+	"npc_dota_hero_meepo",
 }
 
 local sTankList = {

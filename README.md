@@ -75,6 +75,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
         - [3] Magnus
         - ~~[1,3] Marci~~
         - [3] Mars
+        - [1,2] Meepo
         - [2] Storm Spirit
         - [1] Terrorblade
         - [3] Timbersaw
@@ -183,6 +184,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
             | Mars                  | -       | -
             | ~~Marci~~             | -       | -
             | Medusa                | -       | -
+            | Meeepo                | &check; | &check;
             | Mirana                | -       | -
             | Naga Siren            | -       | &check;
             | Necrophos             | &check; | -

@@ -3939,7 +3939,7 @@ X.ConsiderItemDesire["item_tango"] = function( hItem )
 						and npcAlly:GetMaxHealth() - npcAlly:GetHealth() > 200
 						and not npcAlly:HasModifier( "modifier_tango_heal" )
 						and not npcAlly:HasModifier( "modifier_arc_warden_tempest_double" )
-						and npcAlly:GetUnitName() ~= "npc_dota_hero_meepo"
+						and J.IsMeepoClone(bot)
 						and J.Item.GetItemCount( npcAlly, "item_tango_single" ) == 0
 						and J.Item.GetEmptyInventoryAmount( npcAlly ) >= 4
 					then
@@ -5997,7 +5997,7 @@ X.ConsiderItemDesire['item_disperser'] = function(item)
 	then
 		local nNearbyAllies = J.GetAlliesNearLoc(bot:GetLocation(), nCastRange)
 
-		if nNearbyAllies ~= nil and nNearbyAllies >= 1
+		if nNearbyAllies ~= nil and #nNearbyAllies >= 1
 		and nEnemyHeroes ~= nil and #nEnemyHeroes >= 2
 		then
 			hEffectTarget = bot

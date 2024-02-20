@@ -177,7 +177,30 @@ function GetDesire()
 		if preferedCamp == nil then preferedCamp = J.Site.GetClosestNeutralSpwan(bot, availableCamp) end;
 		return 0.99;
 	end
-	
+
+	if  bot:IsAlive()
+	and J.IsMeepoClone(bot)
+	then
+		if J.IsDoingRoshan(bot)
+		then
+			local botTarget = bot:GetAttackTarget()
+
+			if  J.IsRoshan(botTarget)
+			and J.IsInRange(bot, botTarget, 400)
+			and J.GetHP(botTarget) < 0.33
+			then
+				if preferedCamp == nil then preferedCamp = J.Site.GetClosestNeutralSpwan(bot, availableCamp) end
+				return BOT_MODE_DESIRE_ABSOLUTE
+			end
+		end
+
+		if nMode == BOT_MODE_ITEM
+		then
+			if preferedCamp == nil then preferedCamp = J.Site.GetClosestNeutralSpwan(bot, availableCamp) end
+			return bot:GetActiveModeDesire() + 0.1
+		end
+	end
+
 	if not bot:IsAlive() 
 	   or ( bot:WasRecentlyDamagedByAnyHero(2.5) and bot:GetAttackTarget() == nil )
 	   or ( bot:GetActiveMode() == BOT_MODE_RETREAT and bot:GetActiveModeDesire() >= BOT_MODE_DESIRE_HIGH )
@@ -1173,6 +1196,7 @@ function X.IsHighFarmer(bot)
 	or botName == "npc_dota_hero_invoker"
 	or botName == "npc_dota_hero_keeper_of_the_light"
 	or botName == "npc_dota_hero_leshrac"
+	or botName == "npc_dota_hero_meepo"
 	)
 end
 
@@ -1211,6 +1235,7 @@ function X.IsVeryHighFarmer(bot)
 	or botName == "npc_dota_hero_gyrocopter"
 	or botName == "npc_dota_hero_life_stealer"
 	or botName == "npc_dota_hero_marci"
+	or botName == "npc_dota_hero_meepo"
 	)
 end
 
