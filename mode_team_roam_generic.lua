@@ -48,6 +48,9 @@ local harassTarget = nil
 local shouldLastHitCreep = false
 local lastHitCreepTarget = nil
 
+local shouldMoveToCreep = false
+local moveTargetLocation
+
 function GetDesire()
 
 	if not beInitDone 
@@ -63,54 +66,57 @@ function GetDesire()
 	-- Last Hit
 	if J.IsInLaningPhase()
 	then
-		if not shouldLastHitCreep
+		local nMode = bot:GetActiveMode()
+		local nModeDesire = bot:GetActiveModeDesire()
+		local nInRangeAlly = bot:GetNearbyHeroes(700, false, BOT_MODE_NONE)
+		local nInRangeEnemy = bot:GetNearbyHeroes(700, true, BOT_MODE_NONE)
+		local nEnemyLaneCreeps = bot:GetNearbyLaneCreeps(700, true)
+		local nAttackRange = bot:GetAttackRange()
+
+		if  not shouldLastHitCreep
+		and nInRangeEnemy ~= nil
+		and #nInRangeEnemy == 0
 		then
-			local nAttackRange = bot:GetAttackRange()
-			if nAttackRange <= 324 then nAttackRange = nAttackRange + 300 end
-
-			local nInRangeAlly = bot:GetNearbyHeroes(700, false, BOT_MODE_NONE)
-			local nInRangeEnemy = bot:GetNearbyHeroes(700, true, BOT_MODE_NONE)
-			local nEnemyLaneCreeps = bot:GetNearbyLaneCreeps(nAttackRange, true)
-
 			-- Last Hit
 			for _, creep in pairs(nEnemyLaneCreeps)
 			do
 				if  J.IsValid(creep)
 				and J.CanBeAttacked(creep)
-				and creep:GetHealth() <= X.GetAttackDamageToCreep(bot)
+				and J.WillKillTarget(creep, X.GetAttackDamageToCreep(bot), DAMAGE_TYPE_PHYSICAL, J.GetAttackProDelayTime(bot, creep))
 				then
-					if  (J.GetHP(bot) > 0.5
-						or (J.GetHP(bot) < 0.5
-							and (not bot:WasRecentlyDamagedByAnyHero(3) or not bot:WasRecentlyDamagedByTower(2))))
-					and not shouldHarass
-					and nInRangeAlly ~= nil and nInRangeEnemy ~= nil
-					and ((#nInRangeAlly >= #nInRangeEnemy)
-						or (#nInRangeEnemy > #nInRangeAlly
-							and J.GetHP(bot) > 0.75
-							and #nInRangeEnemy <= 2))
-					and (J.IsCore(bot)
-						or (not J.IsCore(bot) and not J.IsThereCoreNearby(500)))
-					then
-						shouldLastHitCreep = true
-						lastHitCreepTarget = creep
-						return BOT_ACTION_DESIRE_ABSOLUTE
-					end
-				end
-			end
+					local nInRangeCreepHero = creep:GetNearbyHeroes(700, false, BOT_MODE_NONE)
 
-			local nLaneCreeps = bot:GetNearbyLaneCreeps(nAttackRange, false)
-			-- Deny
-			for _, creep in pairs(nLaneCreeps)
-			do
-				if  J.IsValid(creep)
-				and J.CanBeAttacked(creep)
-				and creep:GetHealth() <= bot:GetAttackDamage()
-				then
-					if not J.IsRetreating(bot)
+					if nInRangeCreepHero ~= nil and #nInRangeCreepHero == 0
 					then
-						shouldLastHitCreep = true
-						lastHitCreepTarget = creep
-						return BOT_ACTION_DESIRE_VERYHIGH
+						if  (J.GetHP(bot) > 0.5
+							or (J.GetHP(bot) < 0.5
+								and (not bot:WasRecentlyDamagedByAnyHero(3) or not bot:WasRecentlyDamagedByTower(2))))
+						-- and nInRangeAlly ~= nil and nInRangeEnemy ~= nil
+						-- and #nInRangeAlly >= #nInRangeEnemy
+						-- and #nInRangeEnemy <= 2
+						and (J.IsCore(bot)
+							or (not J.IsCore(bot) and not J.IsThereCoreNearby(500)))
+						then
+							local nCreepInRangeHero = creep:GetNearbyHeroes(700, false, BOT_MODE_NONE)
+
+							if nCreepInRangeHero ~= nil and #nCreepInRangeHero == 0
+							then
+								if  GetUnitToUnitDistance(bot, creep) > nAttackRange
+								and not shouldMoveToCreep
+								then
+									shouldMoveToCreep = true
+									moveTargetLocation = creep:GetLocation()
+									return nModeDesire + 0.1
+								else
+									shouldMoveToCreep = false
+								end
+
+								shouldLastHitCreep = true
+								lastHitCreepTarget = creep
+								return nModeDesire + 0.1
+							end
+
+						end
 					end
 				end
 			end
@@ -121,28 +127,29 @@ function GetDesire()
 		-- Harass
 		if not shouldHarass
 		then
-			local nAttackRange = bot:GetAttackRange()
-			if nAttackRange <= 324 then nAttackRange = nAttackRange + 300 end
-
-			local nInRangeAlly = bot:GetNearbyHeroes(700, false, BOT_MODE_NONE)
-			local nInRangeEnemy = bot:GetNearbyHeroes(700, true, BOT_MODE_NONE)
-
-			local nEnemyLaneCreeps = bot:GetNearbyLaneCreeps(nAttackRange, true)
-
 			local canLastHitCount = 0
+
 			for _, creep in pairs(nEnemyLaneCreeps)
 			do
 				if  J.IsValid(creep)
 				and J.CanBeAttacked(creep)
-				and creep:GetHealth() <= X.GetAttackDamageToCreep(bot)
+				and J.GetHP(creep) <= 0.5
 				then
 					canLastHitCount = canLastHitCount + 1
 				end
 			end
 
-			if (J.IsCore(bot) and canLastHitCount == 0)
-			or (not J.IsCore(bot))
+			if  J.GetHP(bot) > 0.41
+			and ((J.IsCore(bot) and not canLastHitCount == 0)
+				or (not J.IsCore(bot)))
 			then
+				-- MK Range
+				if nAttackRange < 300
+				then
+					nAttackRange = 300
+				end
+
+				nInRangeEnemy = bot:GetNearbyHeroes(nAttackRange, true, BOT_MODE_NONE)
 				if nInRangeEnemy ~= nil and #nInRangeEnemy >= 1
 				then
 					if  J.IsValidHero(nInRangeEnemy[1])
@@ -152,9 +159,21 @@ function GetDesire()
 					and nInRangeAlly ~= nil and nInRangeEnemy
 					and #nInRangeAlly >= #nInRangeEnemy
 					then
-						shouldHarass = true
-						harassTarget = nInRangeEnemy[1]
-						return BOT_MODE_DESIRE_HIGH + 0.03
+						local nInRangeTower = nInRangeEnemy[1]:GetNearbyTowers(700, false)
+
+						if nInRangeTower ~= nil and #nInRangeTower == 0
+						then
+							shouldHarass = true
+							harassTarget = nInRangeEnemy[1]
+
+							if J.IsLaning(bot)
+							then
+								if (J.IsHumanPlayer(nInRangeEnemy[1]) or J.IsCore(nInRangeEnemy[1])) then return nModeDesire + 0.1 end
+								return BOT_MODE_DESIRE_MODERATE + 0.1
+							else
+								return BOT_MODE_DESIRE_MODERATE + 0.1
+							end
+						end
 					end
 				end
 			end
@@ -425,10 +444,16 @@ function Think()
 		return
 	end
 
+	if shouldMoveToCreep
+	then
+		bot:Action_MoveToLocation(moveTargetLocation)
+		return
+	end
+
 	if  shouldLastHitCreep
 	and lastHitCreepTarget ~= nil
 	then
-		bot:Action_AttackUnit(lastHitCreepTarget, false)
+		bot:Action_AttackUnit(lastHitCreepTarget, true)
 		return
 	end
 
