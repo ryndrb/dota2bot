@@ -356,8 +356,8 @@ function X.ConsiderPoof()
         and J.IsValidHero(nInRangeEnemy[1])
         and J.CanCastOnNonMagicImmune(nInRangeEnemy[1])
         and J.IsInRange(bot, nInRangeEnemy[1], 1000)
-        and J.IsRunning(nInRangeAlly[1])
-        and nInRangeAlly[1]:IsFacingLocation(bot:GetLocation(), 30)
+        and J.IsRunning(nInRangeEnemy[1])
+        and nInRangeEnemy[1]:IsFacingLocation(bot:GetLocation(), 30)
         and not J.IsSuspiciousIllusion(nInRangeEnemy[1])
         then
             local targetMeepo = nil
