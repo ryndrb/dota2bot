@@ -460,7 +460,7 @@ function X.ConsiderFlamebreak()
 			and (J.IsKeyWordUnit('ranged', creep) or J.IsKeyWordUnit('siege', creep) or J.IsKeyWordUnit('flagbearer', creep))
 			and creep:GetHealth() <= nDamage
 			then
-				local nCreepInRangeHero = creep:GetNearbyHeroes(500, true, BOT_MODE_NONE)
+				local nCreepInRangeHero = creep:GetNearbyHeroes(500, false, BOT_MODE_NONE)
 
 				if nCreepInRangeHero ~= nil and #nCreepInRangeHero >= 1
 				then

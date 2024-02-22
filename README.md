@@ -76,6 +76,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
         - ~~[1,3] Marci~~
         - [3] Mars
         - [1,2] Meepo
+        - [1,2] Monkey King
         - [2] Storm Spirit
         - [1] Terrorblade
         - [3] Timbersaw
@@ -187,6 +188,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
             | Medusa                | -       | -
             | Meeepo                | &check; | &check;
             | Mirana                | -       | -
+            | Monkey King           | &cross; | -
             | Naga Siren            | -       | &check;
             | Necrophos             | &check; | -
             | Ogre Magi             | &check; | &check;

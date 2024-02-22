@@ -1197,6 +1197,7 @@ function X.IsHighFarmer(bot)
 	or botName == "npc_dota_hero_keeper_of_the_light"
 	or botName == "npc_dota_hero_leshrac"
 	or botName == "npc_dota_hero_meepo"
+	or botName == "npc_dota_hero_monkey_king"
 	)
 end
 
@@ -1236,6 +1237,7 @@ function X.IsVeryHighFarmer(bot)
 	or botName == "npc_dota_hero_life_stealer"
 	or botName == "npc_dota_hero_marci"
 	or botName == "npc_dota_hero_meepo"
+	or botName == "npc_dota_hero_monkey_king"
 	)
 end
 

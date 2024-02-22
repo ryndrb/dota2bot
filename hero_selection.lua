@@ -310,6 +310,7 @@ local sMidList = {
 	"npc_dota_hero_keeper_of_the_light",
 	"npc_dota_hero_leshrac",
 	"npc_dota_hero_meepo",
+	"npc_dota_hero_monkey_king",
 }
 
 local sTankList = {
