@@ -122,6 +122,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
         - [x] Tormentor
             - Desire decreases starting at minute (20; 35 (AP)).
             - Tricky to harmonize with others due to its nature.
+        - [ ] Spell usage for Tormentor and Roshan
         - [ ] Dynamic item builds
         - [ ] Clear wave faster with abilities
         - [x] vscript to increase bots GPM and XPM (AP only), and for them to acquire neutral items (local host only)
