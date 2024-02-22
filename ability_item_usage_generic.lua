@@ -1210,7 +1210,10 @@ X.ConsiderItemDesire["item_blink"] = function( hItem )
 	--先手进攻
 	if J.IsGoingOnSomeone( bot )
 	then
-		if bot:GetUnitName() == 'npc_dota_hero_magnataur' and bot.shouldBlink
+		if  bot.shouldBlink
+		and (bot:GetUnitName() == 'npc_dota_hero_batrider'
+			or bot:GetUnitName() == 'npc_dota_hero_beastmaster'
+			or bot:GetUnitName() == 'npc_dota_hero_magnataur')
 		then
 			return BOT_ACTION_DESIRE_NONE
 		end
