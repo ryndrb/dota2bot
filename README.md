@@ -121,6 +121,8 @@ To anyone who've found this or is using it, if you have any feedback in improvin
             - Pos 4 -> Sentry
             - Pos 5 -> Observer
                 - Due to how ward slots work. No API func to tell which ward is in front.
+            - Use Danger Ping (Crtl + Alt + Left Click) to tell bots to Ward the ping location if they're suitable to do so.
+                - Must be within 1200 units to the pinged bot (for now).
         - [ ] Rune behaviour
         - [ ] Doom apparently not able to Devour abilities (might just be Valve bug tho)
     - ***Add***

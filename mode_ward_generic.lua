@@ -8,8 +8,8 @@ local Ward = require(GetScriptDirectory() ..'/FunLib/aba_ward_utility')
 
 local AvailableSpots = {}
 local nWardCastRange = 500
-local Member = nil
 local ItemWard = nil
+local WardTargetDist = 0
 local WardTargetLocation
 local SmokeOfDeceit = nil
 local WardCastTime = J.IsModeTurbo() and -45 or -90
@@ -73,11 +73,13 @@ function GetDesire()
 	and ItemWard:GetCooldownTimeRemaining() == 0
 	then
 
-		Pinged, Member = Ward.IsPingedByHumanPlayer(bot)
-		if Pinged
+		Pinged, WardTargetLocation = Ward.IsPingedByHumanPlayer(bot)
+		if  Pinged
+		and WardTargetLocation ~= nil
+		and not Ward.IsOtherWardClose(WardTargetLocation)
 		then
 			bot.ward = true
-			return RemapValClamped(GetUnitToUnitDistance(bot, Member), 1200, 0, BOT_MODE_DESIRE_HIGH, BOT_MODE_DESIRE_VERYHIGH)
+			return RemapValClamped(GetUnitToLocationDistance(bot, WardTargetLocation), 1200, 0, BOT_MODE_DESIRE_HIGH, BOT_ACTION_DESIRE_VERYHIGH)
 		end
 
 		AvailableSpots = Ward.GetAvailableSpot(bot)
@@ -127,9 +129,9 @@ end
 
 function OnEnd()
 	AvailableSpots = {}
+	bot.ward = false
 	bot.steal = false
 	ItemWard = nil
-	Member = nil
 
 	if ItemWard ~= nil
 	then
@@ -156,15 +158,10 @@ function Think()
 		return
 	end
 
-	if Member ~= nil
-	then
-		bot:Action_UseAbilityOnEntity(ItemWard, Member)
-		return
-	end
-
 	if bot.ward
 	then
-		if WardTargetDist <= nWardCastRange
+		if (WardTargetDist <= nWardCastRange)
+		or Pinged
 		then
 			if DotaTime() > ItemSwapTime + 7.0
 			then
