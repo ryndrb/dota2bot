@@ -276,6 +276,7 @@ local sCarryList = {
 	-- "npc_dota_hero_marci",
 	"npc_dota_hero_meepo",
 	-- "npc_dota_hero_muerta",
+	"npc_dota_hero_furion",
 }
 
 local sMidList = {
@@ -348,6 +349,7 @@ local sTankList = {
 	"npc_dota_hero_lycan",
 	"npc_dota_hero_magnataur",
 	-- "npc_dota_hero_marci",
+	"npc_dota_hero_furion",
 }
 
 local sPriestList = {

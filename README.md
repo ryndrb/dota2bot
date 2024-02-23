@@ -78,6 +78,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
         - [1,2] Meepo
         - [1,2] Monkey King
         - ~~[1] Muerta~~
+        - [1,3] Nature's Prophet
         - [2] Storm Spirit
         - [1] Terrorblade
         - [3] Timbersaw
@@ -197,6 +198,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
             | Monkey King           | &cross; | -
             | ~~Muerta~~            | -       | -
             | Naga Siren            | -       | &check;
+            | Nature's Prophet      | -       | &check;
             | Necrophos             | &check; | -
             | Ogre Magi             | &check; | &check;
             | Omniknight            | -       | -
