@@ -319,7 +319,7 @@ function ItemPurchaseThink()
 	then return	end
 
 	if bot:HasModifier( 'modifier_arc_warden_tempest_double' )
-	or J.IsMeepoClone(bot)
+	or (DotaTime() > 0 and J.IsMeepoClone(bot))
 	then
 		bot.itemToBuy = {}
 		return
