@@ -77,6 +77,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
         - [3] Mars
         - [1,2] Meepo
         - [1,2] Monkey King
+        - ~~[1] Muerta~~
         - [2] Storm Spirit
         - [1] Terrorblade
         - [3] Timbersaw
@@ -85,6 +86,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
         - [2] Void Spirit
     - ***Later***
         - Lone Druid
+        - Morphling
     - ***Changed***
         - [2,3] Death Prophet
         - [1,2] Lina
@@ -97,6 +99,8 @@ To anyone who've found this or is using it, if you have any feedback in improvin
         - Hoodwink
             - Hardly enters Attack mode (Valve default).
         - Marci
+            - Passive.
+        - Muerta
             - Passive.
 
 - ***"Attempted" Logic Changes (still)***
@@ -189,6 +193,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
             | Meeepo                | &check; | &check;
             | Mirana                | -       | -
             | Monkey King           | &cross; | -
+            | ~~Muerta~~            | -       | -
             | Naga Siren            | -       | &check;
             | Necrophos             | &check; | -
             | Ogre Magi             | &check; | &check;

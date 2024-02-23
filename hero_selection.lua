@@ -275,6 +275,7 @@ local sCarryList = {
 	"npc_dota_hero_life_stealer",
 	-- "npc_dota_hero_marci",
 	"npc_dota_hero_meepo",
+	-- "npc_dota_hero_muerta",
 }
 
 local sMidList = {

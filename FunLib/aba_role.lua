@@ -1477,6 +1477,18 @@ X["hero_roles"] = {
 		['pusher'] = 0
 	},
 
+	["npc_dota_hero_muerta"] = {
+		['carry'] = 3,
+		['disabler'] = 1,
+		['durable'] = 0,
+		['escape'] = 0,
+		['initiator'] = 0,
+		['jungler'] = 0,
+		['nuker'] = 0,
+		['support'] = 1,
+		['pusher'] = 0
+	},
+
 }
 
 X["bottle"] = {
@@ -1692,6 +1704,7 @@ X['safe'] = {
 	-- 'npc_dota_hero_lycan',
 	'npc_dota_hero_meepo',
 	'npc_dota_hero_monkey_king',
+	'npc_dota_hero_muerta',
 	'npc_dota_hero_naga_siren',
 	'npc_dota_hero_phantom_assassin',
 	'npc_dota_hero_phantom_lancer',
@@ -2212,6 +2225,7 @@ function X.IsABAHero()
 		["npc_dota_hero_mars"] = true,
 		["npc_dota_hero_meepo"] = true,
 		["npc_dota_hero_monkey_king"] = true,
+		["npc_dota_hero_muerta"] = true,
 		["npc_dota_hero_rattletrap"] = true,
 		["npc_dota_hero_shredder"] = true,
 		["npc_dota_hero_storm_spirit"] = true,
