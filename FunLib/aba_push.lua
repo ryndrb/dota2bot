@@ -9,13 +9,13 @@ function Push.GetPushDesire(bot, lane)
     end
 
     local maxDesire = 0.75
-    local nMode = bot:GetActiveMode()
-    local nModeDesire = bot:GetActiveModeDesire()
+    -- local nMode = bot:GetActiveMode()
+    -- local nModeDesire = bot:GetActiveModeDesire()
 
-	if (nMode == BOT_MODE_DEFEND_TOWER_TOP or nMode == BOT_MODE_DEFEND_TOWER_MID or nMode == BOT_MODE_DEFEND_TOWER_BOT)
-    then
-        maxDesire = 0.5
-    end
+	-- if (nMode == BOT_MODE_DEFEND_TOWER_TOP or nMode == BOT_MODE_DEFEND_TOWER_MID or nMode == BOT_MODE_DEFEND_TOWER_BOT)
+    -- then
+    --     maxDesire = 0.5
+    -- end
 
     local botTarget = bot:GetAttackTarget()
     if  J.IsValidBuilding(botTarget)
@@ -56,7 +56,7 @@ function Push.GetPushDesire(bot, lane)
     if Push.WhichLaneToPush(bot) == lane
     and aAliveCount > eAliveCount
     then
-        local nPushDesire = RemapValClamped(GetPushLaneDesire(lane), 0, 1, 0, 0.75)
+        local nPushDesire = RemapValClamped(GetPushLaneDesire(lane), 0.1, 1, 0.1, maxDesire)
 
         if J.DoesTeamHaveAegis(GetUnitList(UNIT_LIST_ALLIED_HEROES))
         then
@@ -100,22 +100,32 @@ function Push.WhichLaneToPush(bot)
     local aAliveCount = J.GetNumOfAliveHeroes(false)
     local eAliveCount = J.GetNumOfAliveHeroes(true)
 
-    if aAliveCount > eAliveCount
-    or J.DoesTeamHaveAegis(GetUnitList(UNIT_LIST_ALLIED_HEROES))
-    then
-        for _, id in pairs(IDs) do
-            if TeamLocation[id] ~= nil then
-                if IsHeroAlive(id) then
-                    distanceToTop = distanceToTop + math.max(distanceToTop, #(GetLaneFrontLocation(GetTeam(), LANE_TOP, 0.0) - TeamLocation[id]))
-                    distanceToMid = distanceToMid + math.max(distanceToMid, #(GetLaneFrontLocation(GetTeam(), LANE_MID, 0.0) - TeamLocation[id]))
-                    distanceToBot = distanceToBot + math.max(distanceToBot, #(GetLaneFrontLocation(GetTeam(), LANE_BOT, 0.0) - TeamLocation[id]))
-                end
+    -- if aAliveCount > eAliveCount
+    -- or J.DoesTeamHaveAegis(GetUnitList(UNIT_LIST_ALLIED_HEROES))
+    -- then
+    --     for _, id in pairs(IDs) do
+    --         if TeamLocation[id] ~= nil then
+    --             if IsHeroAlive(id) then
+    --                 distanceToTop = distanceToTop + math.max(distanceToTop, #(GetLaneFrontLocation(GetTeam(), LANE_TOP, 0.0) - TeamLocation[id]))
+    --                 distanceToMid = distanceToMid + math.max(distanceToMid, #(GetLaneFrontLocation(GetTeam(), LANE_MID, 0.0) - TeamLocation[id]))
+    --                 distanceToBot = distanceToBot + math.max(distanceToBot, #(GetLaneFrontLocation(GetTeam(), LANE_BOT, 0.0) - TeamLocation[id]))
+    --             end
+    --         end
+    --     end
+    -- else
+    --     distanceToTop = math.max(0, #(GetLaneFrontLocation(GetTeam(), LANE_TOP, 0.0) - bot:GetLocation()))
+    --     distanceToMid = math.max(0, #(GetLaneFrontLocation(GetTeam(), LANE_MID, 0.0) - bot:GetLocation()))
+    --     distanceToBot = math.max(0, #(GetLaneFrontLocation(GetTeam(), LANE_BOT, 0.0) - bot:GetLocation()))
+    -- end
+
+    for _, id in pairs(IDs) do
+        if TeamLocation[id] ~= nil then
+            if IsHeroAlive(id) then
+                distanceToTop = distanceToTop + math.max(distanceToTop, #(GetLaneFrontLocation(GetTeam(), LANE_TOP, 0.0) - TeamLocation[id]))
+                distanceToMid = distanceToMid + math.max(distanceToMid, #(GetLaneFrontLocation(GetTeam(), LANE_MID, 0.0) - TeamLocation[id]))
+                distanceToBot = distanceToBot + math.max(distanceToBot, #(GetLaneFrontLocation(GetTeam(), LANE_BOT, 0.0) - TeamLocation[id]))
             end
         end
-    else
-        distanceToTop = math.max(0, #(GetLaneFrontLocation(GetTeam(), LANE_TOP, 0.0) - bot:GetLocation()))
-        distanceToMid = math.max(0, #(GetLaneFrontLocation(GetTeam(), LANE_MID, 0.0) - bot:GetLocation()))
-        distanceToBot = math.max(0, #(GetLaneFrontLocation(GetTeam(), LANE_BOT, 0.0) - bot:GetLocation()))
     end
 
     if distanceToBot < distanceToTop
