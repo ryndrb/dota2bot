@@ -350,6 +350,7 @@ local sTankList = {
 	"npc_dota_hero_magnataur",
 	-- "npc_dota_hero_marci",
 	"npc_dota_hero_furion",
+	"npc_dota_hero_night_stalker",
 }
 
 local sPriestList = {
