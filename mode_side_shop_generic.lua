@@ -4,8 +4,7 @@ local J = require( GetScriptDirectory()..'/FunLib/jmz_func' )
 local Tormentor = nil
 
 local tormentorMessageTime = DotaTime()
-local humanPingTime = DotaTime()
-local humanPing = nil
+local canDoTormentor = false
 
 local RadiantTormentorLoc = Vector(-8075, -1148, 1000)
 local DireTormentorLoc = Vector(8132, 1102, 1000)
@@ -29,9 +28,8 @@ then
 end
 
 function GetDesire()
-    local allies = J.GetAlliesNearLoc(loc, 400)
+    local nAllyInLoc = J.GetAlliesNearLoc(loc, 400)
 	local aliveAlly = J.GetNumOfAliveHeroes(false)
-    local aliveEnemy = J.GetNumOfAliveHeroes(true)
 	local aveDistance, heroCount = GetAveTeamDistance()
     local healthPercentage = bot:GetHealth() / bot:GetMaxHealth()
 	local spawnTime = J.IsModeTurbo() and 10 or 20
@@ -46,7 +44,15 @@ function GetDesire()
     local currTime = DotaTime()
     local startTimer = J.IsModeTurbo() and 15 * 60 or 35 * 60
     local timeForLowDesire = J.IsModeTurbo() and 20 * 60 or 45 * 60
-    local nModeDesire = RemapValClamped(currTime, startTimer, timeForLowDesire, BOT_ACTION_DESIRE_HIGH, BOT_MODE_DESIRE_LOW)
+    local nModeDesire = RemapValClamped(currTime, startTimer, timeForLowDesire, BOT_ACTION_DESIRE_HIGH, BOT_MODE_DESIRE_VERYLOW)
+
+	local enemyAncient = GetAncient(GetOpposingTeam())
+	if GetUnitToUnitDistance(bot, enemyAncient) < 3200
+	or (topFrontP > 0.9 or midFrontP > 0.9 or botFrontP > 0.9)
+	or (topFrontD > 0.9 or midFrontD > 0.9 or botFrontD > 0.9)
+	then
+		return BOT_ACTION_DESIRE_NONE
+	end
 
 	if DidSomeoneSeeTormentorAlive()
 	then
@@ -85,25 +91,6 @@ function GetDesire()
 	if DotaTime() >= spawnTime * 60
 	and (DotaTime() - bot.lastKillTime) >= (spawnTime / 2) * 60
 	then
-		-- for i = 1, 5
-		-- do
-		-- 	local member = GetTeamMember(i)
-		-- 	if member ~= nil
-		-- 	and not IsPlayerBot(member)
-		-- 	and not member:IsIllusion()
-		-- 	and member:IsAlive()
-		-- 	then
-		-- 		humanPing = member:GetMostRecentPing()
-
-		-- 		if DotaTime() - humanPing.time < 30
-		-- 		and J.GetLocationToLocationDistance(humanPing.location, loc) < 600
-		-- 		and humanPing.normal_ping
-		-- 		then
-		-- 			return BOT_ACTION_DESIRE_VERYHIGH
-		-- 		end
-		-- 	end
-		-- end
-
 		-- Go check
 		if not IsTormentorAlive()
 		then
@@ -147,9 +134,13 @@ function GetDesire()
 	and aveLevel > 12.6
     and (((bot.lastKillTime == 0 and aliveAlly >= 4)
         or (bot.lastKillTime > 0 and aliveAlly >= 3)))
+	and J.GetAliveAllyCoreCount() >= 2
 	then
+		canDoTormentor = true
+
         if  healthPercentage < 0.3
-        and Tormentor ~= nil and J.GetHP(Tormentor) > 0.2
+        and J.IsValid(Tormentor)
+		and J.GetHP(Tormentor) > 0.2
         then
             return BOT_ACTION_DESIRE_NONE
         end
@@ -164,7 +155,7 @@ function GetDesire()
             if  aveDistance < 2400
             and heroCount >= 3
             then
-                if allies ~= nil and #allies >= 2
+                if nAllyInLoc ~= nil and #nAllyInLoc >= 2
                 then
                     return BOT_ACTION_DESIRE_VERYHIGH
                 else
@@ -174,22 +165,16 @@ function GetDesire()
 
             return BOT_ACTION_DESIRE_LOW
         else
-            local enemyAncient = GetAncient(GetOpposingTeam())
-            if GetUnitToUnitDistance(bot, enemyAncient) < 3200
-            or (topFrontP > 0.9 or midFrontP > 0.9 or botFrontP > 0.9)
-            or (topFrontD > 0.9 or midFrontD > 0.9 or botFrontD > 0.9)
-            then
-                return BOT_ACTION_DESIRE_NONE
-            else
-                if allies ~= nil and #allies >= 2
-                then
-                    return BOT_ACTION_DESIRE_VERYHIGH
-                else
-                    return nModeDesire
-                end
-            end
+			if nAllyInLoc ~= nil and #nAllyInLoc >= 2
+			then
+				return BOT_ACTION_DESIRE_VERYHIGH
+			else
+				return nModeDesire
+			end
         end
 	end
+
+	canDoTormentor = false
 
 	return BOT_MODE_DESIRE_NONE
 end
@@ -214,7 +199,8 @@ function Think()
 					bot:Action_AttackUnit(c, false)
 				end
 
-				if (DotaTime() - tormentorMessageTime) > 15
+				if  (DotaTime() - tormentorMessageTime) > 15
+				and canDoTormentor
 				then
 					tormentorMessageTime = DotaTime()
 					bot:ActionImmediate_Chat("let's try tormentor?", false)

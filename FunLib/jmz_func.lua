@@ -3724,6 +3724,21 @@ function J.IsThereCoreNearby(nRadius)
     return false
 end
 
+function J.GetAliveAllyCoreCount()
+	local count = 0
+	for _, allyHero in pairs(GetUnitList(UNIT_LIST_ALLIED_HEROES))
+	do
+		if  J.IsValidHero(allyHero)
+		and J.IsCore(allyHero)
+		and not allyHero:IsIllusion()
+		then
+			count = count + 1
+		end
+	end
+
+	return count
+end
+
 function J.GetStrongestUnit(nRange, hUnit, bEnemy, bMagicImune, fTime)
 	local units = hUnit:GetNearbyHeroes(nRange, bEnemy, BOT_MODE_NONE)
 	local strongest = nil
