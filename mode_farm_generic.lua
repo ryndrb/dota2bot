@@ -234,7 +234,7 @@ function GetDesire()
 			J.Role['sayRate'] = true;
 			if RandomInt(1,6) < 3 
 			then
-				bot:ActionImmediate_Chat("我们预估获胜的概率低于百分之一,甘拜下风! Well played! ",true);
+				bot:ActionImmediate_Chat("We estimate that the probability of winning is less than 1%, so we are resigned to losing! Well played! ",true);
 			else
 				bot:ActionImmediate_Chat("We estimate the probability of winning to be below 1%.Well played!",true);
 			end
@@ -244,7 +244,7 @@ function GetDesire()
 		    J.Role['sayRate'] = true;
 			if RandomInt(1,6) < 3 
 			then
-				bot:ActionImmediate_Chat("我们预估团战获胜的概率在百分之九十以上。",true);
+				bot:ActionImmediate_Chat("We estimate that the probability of winning a team battle is over 90%",true);
 			else
 				bot:ActionImmediate_Chat("We estimate the probability of winning to above 90%.",true);
 			end
@@ -1273,7 +1273,7 @@ function X.SetPushBonus( bot )
 		bot:ActionImmediate_Chat( bonusNoticeTable[bonusType], true )
 		return
 	else
-		bot:ActionImmediate_Chat( "你好, 当前挑战的是其他高手定制倍数AI.", true )
+		bot:ActionImmediate_Chat("Hello, I am currently challenging other experts to customize multiplier AI.", true)
 		return
 	end
 	
