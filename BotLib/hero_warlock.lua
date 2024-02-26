@@ -214,7 +214,7 @@ function X.SkillsComplement()
 		bot:ActionQueue_UseAbilityOnLocation( abilityR, castRFRLocation + RandomVector( 50 ) )
 		bot:ActionQueue_UseAbility( abilityRef )
 		bot:ActionQueue_UseAbilityOnLocation( abilityR, castRFRLocation + RandomVector( 50 ) )
-		--bot:ActionImmediate_Chat( "听从吾之召唤!来自深渊的地狱火啊!出来吧!!!", true )
+		--bot:ActionImmediate_Chat( "Heed my call! Hellfire from the abyss! Come out!!!", true )
 		return
 
 	end
