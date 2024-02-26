@@ -100,6 +100,12 @@ function GetDesire()
 		return BOT_MODE_DESIRE_ABSOLUTE
 	end
 
+	if  bot.canVendettaKill
+	and bot:HasModifier('modifier_nyx_assassin_vendetta')
+	then
+		return BOT_MODE_DESIRE_ABSOLUTE * 1.1
+	end
+
 	-- Pickup Neutral Item Tokens
 	TryPickupDroppedNeutralItemTokens()
 
@@ -287,6 +293,21 @@ function Think()
 		end
 
 		return
+	end
+
+	if bot.canVendettaKill
+	then
+		if bot.vendettaTarget ~= nil
+		then
+			if GetUnitToUnitDistance(bot, bot.vendettaTarget) > bot:GetAttackRange()
+			then
+				bot:Action_MoveToLocation(bot.vendettaTarget:GetLocation())
+				return
+			else
+				bot:Action_AttackUnit(bot.vendettaTarget, true)
+				return
+			end
+		end
 	end
 
 	if shouldMoveToCreep
@@ -1684,6 +1705,7 @@ function X.IsSpecialSupport(bot)
 		["npc_dota_hero_enchantress"] = true,
 		["npc_dota_hero_grimstroke"] = true,
 		["npc_dota_hero_hoodwink"] = true,
+		["npc_dota_hero_nyx_assassin"] = true,
 	}
 	
 	return tSpecialSupportList[botName] == true

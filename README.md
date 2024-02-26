@@ -80,6 +80,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
         - ~~[1] Muerta~~
         - [1,3] Nature's Prophet
         - [3] Night Stalker
+        - [4,5] Nyx Assassin
         - [2] Storm Spirit
         - [1] Terrorblade
         - [3] Timbersaw
@@ -202,6 +203,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
             | Nature's Prophet      | -       | &check;
             | Necrophos             | &check; | -
             | Night Stalker         | &check; | -
+            | Nyx Assassin          | &check; | -
             | Ogre Magi             | &check; | &check;
             | Omniknight            | -       | -
             | Oracle                | &check; | -

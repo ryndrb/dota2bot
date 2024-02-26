@@ -897,6 +897,10 @@ X.ConsiderItemDesire["item_ancient_janggo"] = function( hItem )
 	local sCastMotive = nil
 	local nInRangeEnmyList = bot:GetNearbyHeroes( nCastRange, true, BOT_MODE_NONE )
 
+	if bot:HasModifier('modifier_nyx_assassin_vendetta')
+	then
+		return BOT_ACTION_DESIRE_NONE
+	end
 
 	if J.IsGoingOnSomeone( bot )
 	then
@@ -1141,7 +1145,11 @@ X.ConsiderItemDesire["item_blink"] = function( hItem )
 	local sCastMotive = nil
 	local nInRangeEnmyList = bot:GetNearbyHeroes( nCastRange, true, BOT_MODE_NONE )
 
-	if bot:IsRooted() then return BOT_ACTION_DESIRE_NONE end
+	if bot:IsRooted()
+	or bot:HasModifier('modifier_nyx_assassin_vendetta')
+	then
+		return BOT_ACTION_DESIRE_NONE
+	end
 
 	if J.IsStuck( bot )
 	then
@@ -1536,6 +1544,10 @@ X.ConsiderItemDesire["item_cyclone"] = function( hItem )
 	local sCastMotive = nil
 	local nInRangeEnmyList = bot:GetNearbyHeroes( nCastRange, true, BOT_MODE_NONE )
 
+	if bot:HasModifier('modifier_nyx_assassin_vendetta')
+	then
+		return BOT_ACTION_DESIRE_NONE
+	end
 
 	if J.IsValid( botTarget )
 		and J.CanCastOnNonMagicImmune( botTarget )
@@ -1617,6 +1629,10 @@ X.ConsiderItemDesire["item_dagon"] = function( hItem )
 	local nInRangeEnmyList = bot:GetNearbyHeroes( nCastRange + 100, true, BOT_MODE_NONE )
 	local nDamage = hItem:GetSpecialValueInt( "damage" )
 
+	if bot:HasModifier('modifier_nyx_assassin_vendetta')
+	then
+		return BOT_ACTION_DESIRE_NONE
+	end
 
 	--击杀
 	for _, npcEnemy in pairs( nInRangeEnmyList )
@@ -1902,6 +1918,10 @@ X.ConsiderItemDesire["item_force_staff"] = function( hItem )
 	local sCastMotive = nil
 	local nInRangeEnmyList = bot:GetNearbyHeroes( nCastRange, true, BOT_MODE_NONE )
 
+	if bot:HasModifier('modifier_nyx_assassin_vendetta')
+	then
+		return BOT_ACTION_DESIRE_NONE
+	end
 
 	local hAllyList = J.GetAlliesNearLoc( bot:GetLocation(), 600 )
 	for _, npcAlly in pairs( hAllyList )

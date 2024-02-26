@@ -378,6 +378,7 @@ local sPriestList = {
 	"npc_dota_hero_enchantress",
 	"npc_dota_hero_grimstroke",
 	-- "npc_dota_hero_hoodwink",
+	"npc_dota_hero_nyx_assassin",
 }
 
 local sMageList = {
@@ -405,6 +406,7 @@ local sMageList = {
 	"npc_dota_hero_enchantress",
 	"npc_dota_hero_grimstroke",
 	-- "npc_dota_hero_hoodwink",
+	"npc_dota_hero_nyx_assassin",
 }
 
 tSelectPoolList = {
