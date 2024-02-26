@@ -370,6 +370,7 @@ function X.GetWardSpotDeadEnemyTowerDire()
 	return wardSpot
 end
 
+local IsPinged = false
 function X.GetItemWard(bot)
 	for i = 0, 8
     do
@@ -377,7 +378,7 @@ function X.GetItemWard(bot)
 
 		if  item ~= nil
 		and (item:GetName() == 'item_ward_observer'
-			or item:GetName() == 'item_ward_sentry')
+			or (item:GetName() == 'item_ward_sentry' and IsPinged))
         then
 			return item
 		end
@@ -414,8 +415,11 @@ function X.IsPingedByHumanPlayer(bot)
                 and wardSlot == -1
 				and not ping.normal_ping
 				then
+					IsPinged = true
 					return true, ping.location
 				end
+
+				IsPinged = false
 			end
 		end
 	end

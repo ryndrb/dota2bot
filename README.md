@@ -119,8 +119,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
 - ***Plan To "Fix/Add/Improve" (if possible)***
     - ***Fix***
         - [x] Warding
-            - Observer and Sentry share the same ward spots for now.
-                - Sentries might be placed in teamfights.
+            - Sentries are planted when pinged or they're after someone.
             - Pos 4 -> Sentry
             - Pos 5 -> Observer
                 - Due to how ward slots work. No API func to tell which ward is in front.
