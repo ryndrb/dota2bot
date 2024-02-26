@@ -313,6 +313,7 @@ local sMidList = {
 	"npc_dota_hero_leshrac",
 	"npc_dota_hero_meepo",
 	"npc_dota_hero_monkey_king",
+	"npc_dota_hero_obsidian_destroyer",
 }
 
 local sTankList = {

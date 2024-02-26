@@ -2230,6 +2230,7 @@ function X.IsABAHero()
 		["npc_dota_hero_muerta"] = true,
 		["npc_dota_hero_night_stalker"] = true,
 		["npc_dota_hero_nyx_assassin"] = true,
+		["npc_dota_hero_obsidian_destroyer"] = true,
 		["npc_dota_hero_rattletrap"] = true,
 		["npc_dota_hero_shredder"] = true,
 		["npc_dota_hero_storm_spirit"] = true,

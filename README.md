@@ -81,6 +81,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
         - [1,3] Nature's Prophet
         - [3] Night Stalker
         - [4,5] Nyx Assassin
+        - [2] Outworld Destroyer
         - [2] Storm Spirit
         - [1] Terrorblade
         - [3] Timbersaw
@@ -206,6 +207,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
             | Ogre Magi             | &check; | &check;
             | Omniknight            | -       | -
             | Oracle                | &check; | -
+            | Outworld Destroyer    | -       | -
             | Phantom Assasin       | &check; | -
             | Phantom Lancer        | &check; | -
             | Pugna                 | -       | -
@@ -238,4 +240,5 @@ To anyone who've found this or is using it, if you have any feedback in improvin
         - [ ] Some heroes ability usage (too spammy, ends up not having enough mana)
         - [ ] Item usage
         - [ ] Re(factor/write) old code for consistency
+        - [ ] Blinking (especially by range heroes)
     
