@@ -93,11 +93,11 @@ sRoleItemsBuyList['pos_5'] = {
 X['sBuyList'] = sRoleItemsBuyList[sRole]
 
 Pos4SellList = {
-	"item_magic_wand",
+	
 }
 
 Pos5SellList = {
-	"item_magic_wand",
+	
 }
 
 X['sSellList'] = {}
