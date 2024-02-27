@@ -14,7 +14,7 @@ local J = require( GetScriptDirectory()..'/FunLib/jmz_func' )
 local Minion = dofile( GetScriptDirectory()..'/FunLib/aba_minion' )
 local sTalentList = J.Skill.GetTalentList( bot )
 local sAbilityList = J.Skill.GetAbilityList( bot )
-local sOutfitType = J.Item.GetOutfitType( bot )
+local sRole = J.Item.GetRoleItemsBuyList( bot )
 
 local tTalentTreeList = {
 						{--pos2
@@ -39,23 +39,23 @@ local tAllAbilityBuildList = {
 local nAbilityBuildList
 local nTalentBuildList
 
-if sOutfitType == "outfit_mid"
+if sRole == "pos_2"
 then
     nAbilityBuildList   = tAllAbilityBuildList[1]
     nTalentBuildList    = J.Skill.GetTalentBuild(tTalentTreeList[1])
-elseif sOutfitType == "outfit_tank"
+elseif sRole == "pos_3"
 then
     nAbilityBuildList   = tAllAbilityBuildList[2]
     nTalentBuildList    = J.Skill.GetTalentBuild(tTalentTreeList[2])
 end
 
-local tOutFitList = {}
+local sRoleItemsBuyList = {}
 
 local sPipeHalberd = RandomInt( 1, 2 ) == 1 and "item_heavens_halberd" or "item_pipe"
 
-tOutFitList['outfit_carry'] = tOutFitList['outfit_mid']
+sRoleItemsBuyList['pos_1'] = sRoleItemsBuyList['pos_2']
 
-tOutFitList['outfit_mid'] = {
+sRoleItemsBuyList['pos_2'] = {
 	"item_tango",
 	"item_double_branches",
 	"item_faerie_fire",
@@ -78,11 +78,11 @@ tOutFitList['outfit_mid'] = {
 	"item_moon_shard",
 }
 
-tOutFitList['outfit_priest'] = tOutFitList['outfit_mid']
+sRoleItemsBuyList['pos_4'] = sRoleItemsBuyList['pos_2']
 
-tOutFitList['outfit_mage'] = tOutFitList['outfit_mid']
+sRoleItemsBuyList['pos_5'] = sRoleItemsBuyList['pos_2']
 
-tOutFitList['outfit_tank'] = {
+sRoleItemsBuyList['pos_3'] = {
 	"item_tango",
 	"item_double_branches",
 	"item_faerie_fire",
@@ -104,7 +104,7 @@ tOutFitList['outfit_tank'] = {
 	"item_moon_shard",
 }
 
-X['sBuyList'] = tOutFitList[sOutfitType]
+X['sBuyList'] = sRoleItemsBuyList[sRole]
 
 Pos2SellList = {
 	"item_circlet",
@@ -120,10 +120,10 @@ Pos3SellList = {
 
 X['sSellList'] = {}
 
-if sOutfitType == "outfit_mid"
+if sRole == "pos_2"
 then
     X['sSellList'] = Pos2SellList
-elseif sOutfitType == "outfit_tank"
+elseif sRole == "pos_3"
 then
     X['sSellList'] = Pos3SellList
 end
