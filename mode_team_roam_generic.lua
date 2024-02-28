@@ -103,7 +103,14 @@ function GetDesire()
 	if  bot.canVendettaKill
 	and bot:HasModifier('modifier_nyx_assassin_vendetta')
 	then
-		return BOT_MODE_DESIRE_ABSOLUTE * 1.1
+		return BOT_MODE_DESIRE_ABSOLUTE
+	end
+
+	-- Pangolier
+	if  (bot.rollingThunderTeamFight or bot.rollingThunderRetreat)
+	and bot:HasModifier('modifier_pangolier_gyroshell')
+	then
+		return BOT_MODE_DESIRE_ABSOLUTE
 	end
 
 	-- Pickup Neutral Item Tokens
@@ -308,6 +315,23 @@ function Think()
 				return
 			end
 		end
+	end
+
+	-- Pangolier
+	if bot.rollingThunderTeamFight
+	then
+		local weakestTarget = J.GetVulnerableWeakestUnit(bot, true, true, 1200)
+
+        if  J.IsValidTarget(weakestTarget)
+        and not J.IsSuspiciousIllusion(weakestTarget)
+        then
+			bot:Action_MoveToLocation(weakestTarget:GetLocation())
+            return
+        end
+	elseif bot.rollingThunderRetreat
+	then
+		bot:Action_MoveToLocation(J.GetEscapeLoc())
+        return
 	end
 
 	if shouldMoveToCreep
