@@ -82,6 +82,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
         - [3] Night Stalker
         - [4,5] Nyx Assassin
         - [2] Outworld Destroyer
+        - [2,3] Pangolier
         - [2] Storm Spirit
         - [1] Terrorblade
         - [3] Timbersaw
@@ -208,6 +209,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
             | Omniknight            | -       | -
             | Oracle                | &check; | -
             | Outworld Destroyer    | -       | -
+            | Pangolier             | &check; | -
             | Phantom Assasin       | &check; | -
             | Phantom Lancer        | &check; | -
             | Pugna                 | -       | -
