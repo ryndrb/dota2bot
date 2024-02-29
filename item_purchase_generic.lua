@@ -313,6 +313,8 @@ local buyTPtime = 0
 local buyBookTime = 0
 local hasBuyClarity = false
 
+local initSmoke = false
+
 function ItemPurchaseThink()
 
 	if ( GetGameState() ~= GAME_STATE_PRE_GAME and GetGameState() ~= GAME_STATE_GAME_IN_PROGRESS )
@@ -386,6 +388,7 @@ function ItemPurchaseThink()
 		and bot:GetCourierValue() == 0
 		then
 			bot:ActionImmediate_PurchaseItem(wardType)
+			return
 		end
 	end
 
@@ -400,9 +403,47 @@ function ItemPurchaseThink()
 		and bot:GetCourierValue() == 0
 		then
 			bot:ActionImmediate_PurchaseItem(wardType)
+			return
 		end
 	end
-	
+
+	-- Smoke of Deceit
+	if  (J.GetPosition(bot) == 4 or J.GetPosition(bot) == 5)
+	and GetItemStockCount('item_smoke_of_deceit') > 1
+	and botGold >= GetItemCost('item_smoke_of_deceit')
+	and Item.GetEmptyInventoryAmount(bot) >= 3
+	and Item.GetItemCharges(bot, 'item_smoke_of_deceit') == 0
+	and bot:GetCourierValue() == 0
+	then
+		if  DotaTime() < 0
+		and not initSmoke
+		then
+			local hasSmoke = false
+			for _, allyHero in pairs(GetUnitList(UNIT_LIST_ALLIED_HEROES))
+			do
+				if  J.IsValidHero(allyHero)
+				and J.IsNotSelf(bot, allyHero)
+				and J.HasItem(allyHero, 'item_smoke_of_deceit')
+				then
+					hasSmoke = true
+					break
+				end
+			end
+
+			if not hasSmoke
+			then
+				bot:ActionImmediate_PurchaseItem('item_smoke_of_deceit')
+				return
+			end
+		else
+			if not J.IsInLaningPhase()
+			then
+				bot:ActionImmediate_PurchaseItem('item_smoke_of_deceit')
+				return
+			end
+		end
+	end
+
 	--为自己购买魔晶
 	if not hasBuyShard
 		and GetItemStockCount( "item_aghanims_shard" ) > 0
@@ -456,8 +497,6 @@ function ItemPurchaseThink()
 		bot:ActionImmediate_PurchaseItem( "item_dust" )
 		return
 	end
-
-
 
 	--交换魂泪的位置避免过早被破坏
 	if currentTime > 180

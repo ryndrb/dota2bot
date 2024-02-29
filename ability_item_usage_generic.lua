@@ -29,6 +29,9 @@ local bDeafaultAbilityHero = BotBuild['bDeafaultAbility']
 local bDeafaultItemHero = BotBuild['bDeafaultItem']
 local sAbilityLevelUpList = BotBuild['sSkillList']
 
+local roshanRadiantLoc  = Vector(7625, -7511, 1092)
+local roshanDireLoc     = Vector(-7549, 7562, 1107)
+
 local function AbilityLevelUpComplement()
 
 	if GetGameState() ~= GAME_STATE_PRE_GAME
@@ -6103,6 +6106,86 @@ X.ConsiderItemDesire['item_blood_grenade'] = function(item)
 	end
 
 	return BOT_ACTION_DESIRE_NONE, 0
+end
+
+local roshDeathTime = 0
+X.ConsiderItemDesire['item_smoke_of_deceit'] = function(item)
+	local nRadius = 1200
+	local sCastType = 'none'
+	local hEffectTarget = nil
+	local sCastMotive = 'Smoke Of Deceit'
+
+	local isThereEnemyNearby = false
+	local nInRangeAlly = J.GetAllyList(bot, nRadius)
+	local nInRangeEnemy = bot:GetNearbyHeroes(nRadius, true, BOT_MODE_NONE)
+	local nInRangeTower = bot:GetNearbyTowers(nRadius, true)
+
+	if DotaTime() < 0 and DotaTime() > -60
+	then
+		return BOT_ACTION_DESIRE_HIGH, hEffectTarget, sCastType, sCastMotive
+	end
+
+	if (nInRangeEnemy ~= nil and #nInRangeEnemy == 0)
+	or (nInRangeTower ~= nil and #nInRangeTower == 0)
+	then
+		for _, allyHero in pairs(nInRangeAlly)
+		do
+			if J.IsValidHero(allyHero)
+			then
+				local nAllyInRangeEnemy = allyHero:GetNearbyHeroes(nRadius, true, BOT_MODE_NONE)
+				local nAllyInRangeTower = allyHero:GetNearbyTowers(nRadius, true)
+
+				if (nAllyInRangeEnemy ~= nil and #nAllyInRangeEnemy >= 1)
+				or (nAllyInRangeTower ~= nil and #nAllyInRangeTower >= 1)
+				then
+					isThereEnemyNearby = true
+					break
+				end
+			end
+		end
+	end
+
+	if not isThereEnemyNearby
+	then
+		local nMode = bot:GetActiveMode()
+		local timeOfDay = J.CheckTimeOfDay()
+		hEffectTarget = bot
+
+		if  #nInRangeAlly >= 2
+		and (nMode == BOT_MODE_ROAM
+			or nMode == BOT_MODE_GANK)
+		then
+			return BOT_ACTION_DESIRE_HIGH, hEffectTarget, sCastType, sCastMotive
+		end
+		
+		if (timeOfDay == 'day' and GetUnitToLocationDistance(bot, roshanRadiantLoc) < 600)
+		or (timeOfDay == 'night' and GetUnitToLocationDistance(bot, roshanDireLoc) < 600)
+		then
+			if GetRoshanKillTime() > roshDeathTime
+			then
+				roshDeathTime = GetRoshanKillTime()
+				return BOT_ACTION_DESIRE_HIGH, hEffectTarget, sCastType, sCastMotive
+			end
+		end
+
+		if  nMode == BOT_MODE_ROSHAN
+		and nInRangeAlly ~= nil and #nInRangeAlly >= 2
+		then
+			if  timeOfDay == 'day'
+			and GetUnitToLocationDistance(bot, roshanRadiantLoc) > 3000
+			then
+				return BOT_ACTION_DESIRE_HIGH, hEffectTarget, sCastType, sCastMotive
+			end
+
+			if  timeOfDay == 'night'
+			and GetUnitToLocationDistance(bot, roshanDireLoc) > 3000
+			then
+				return BOT_ACTION_DESIRE_HIGH, hEffectTarget, sCastType, sCastMotive
+			end
+		end
+	end
+	
+	return BOT_ACTION_DESIRE_NONE
 end
 
 function X.IsTargetedByEnemy( building )

@@ -70,6 +70,8 @@ function GetDesire()
 		IsSupport = X.IsSpecialSupport(bot)
 	end
 
+	SwapSmokeSupport()
+
 	ConsiderLastHitHarassInLaningPhase()
 
 	if IsDoingTormentor()
@@ -2220,4 +2222,52 @@ function IsDoingTormentor()
 	end
 
 	return false
+end
+
+-- Swap smoke after killing Roshan
+function SwapSmokeSupport()
+	if J.IsDoingRoshan(bot)
+	then
+		local botTarget = bot:GetAttackTarget()
+
+		if  J.IsRoshan(botTarget)
+		and J.IsAttacking(bot)
+		then
+			local smokeSlot = bot:FindItemSlot('item_smoke_of_deceit')
+
+			if bot:GetItemSlotType(smokeSlot) == ITEM_SLOT_TYPE_BACKPACK
+			then
+				local leastCostItem = J.FindLeastExpensiveItemSlot()
+	
+				if leastCostItem ~= -1
+				then
+					bot:ActionImmediate_SwapItems(smokeSlot, leastCostItem)
+				end
+			end
+		end
+	end
+end
+
+function FindLeastExpensiveItemSlot()
+	local minCost = 100000
+	local idx = -1
+
+	for i = 0, 5
+	do
+		if  bot:GetItemInSlot(i) ~= nil
+		and bot:GetItemInSlot(i):GetName() ~= 'item_aegis'
+		and bot:GetItemInSlot(i):GetName() ~= 'item_rapier'
+		then
+			local item = bot:GetItemInSlot(i):GetName()
+
+			if  GetItemCost(item) < minCost
+			and not (item == 'item_ward_observer' or item == 'item_ward_sentry')
+			then
+				minCost = GetItemCost(item)
+				idx = i
+			end
+		end
+	end
+
+	return idx
 end
