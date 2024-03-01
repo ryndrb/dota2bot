@@ -38,12 +38,10 @@ local sRoleItemsBuyList = {}
 sRoleItemsBuyList['pos_1'] = {
 	"item_tango",
 	"item_double_branches",
-	"item_enchanted_mango",
-	"item_enchanted_mango",
+	"item_double_enchanted_mango",
 	"item_quelling_blade",
 
 	"item_vanguard",
-	"item_ring_of_basilius",
 	"item_arcane_boots",
 	"item_magic_wand",
 	"item_ultimate_scepter",
@@ -68,12 +66,10 @@ sRoleItemsBuyList['pos_5'] = sRoleItemsBuyList['pos_3']
 sRoleItemsBuyList['pos_3'] = {
 	"item_tango",
 	"item_double_branches",
-	"item_enchanted_mango",
-	"item_enchanted_mango",
+	"item_double_enchanted_mango",
 	"item_quelling_blade",
 
 	"item_vanguard",
-	"item_ring_of_basilius",
 	"item_arcane_boots",
 	"item_magic_wand",
 	"item_ultimate_scepter",
@@ -94,7 +90,6 @@ X['sBuyList'] = sRoleItemsBuyList[sRole]
 X['sSellList'] = {
 	"item_quelling_blade",
 	"item_vanguard",
-	"item_ring_of_basilius",
 	"item_magic_wand",
 }
 
