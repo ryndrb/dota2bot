@@ -132,7 +132,7 @@ function GetDesire()
 
 	if  bot.tormentorState
 	and aveLevel > 12.6
-    and (((bot.lastKillTime == 0 and aliveAlly >= 4)
+    and (((bot.lastKillTime == 0 and aliveAlly >= 5)
         or (bot.lastKillTime > 0 and aliveAlly >= 3)))
 	and J.GetAliveAllyCoreCount() >= 2
 	then
