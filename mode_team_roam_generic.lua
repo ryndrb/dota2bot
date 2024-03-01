@@ -52,6 +52,8 @@ local lastHitCreepTarget = nil
 local shouldMoveToCreep = false
 local moveTargetLocation
 
+local PhoenixMoveSunRay = false
+
 local TormentorLocation
 if GetTeam() == TEAM_RADIANT
 then
@@ -113,6 +115,17 @@ function GetDesire()
 	and bot:HasModifier('modifier_pangolier_gyroshell')
 	then
 		return BOT_MODE_DESIRE_ABSOLUTE
+	end
+
+	-- Phoenix
+	if  bot:GetUnitName() == 'npc_dota_hero_phoenix'
+	and bot:HasModifier('modifier_phoenix_sun_ray')
+	and not bot:HasModifier('modifier_phoenix_supernova_hiding')
+	then
+		PhoenixMoveSunRay = true
+		return BOT_ACTION_DESIRE_ABSOLUTE
+	else
+		PhoenixMoveSunRay = false
 	end
 
 	-- Pickup Neutral Item Tokens
@@ -205,6 +218,15 @@ function GetDesire()
 		if cAbility:IsTrained()
 		then
 			if cAbility:IsInAbilityPhase() or bot:IsChanneling() then
+				return BOT_MODE_DESIRE_ABSOLUTE
+			end
+		end
+	elseif botName == "npc_dota_hero_phoenix"
+	then
+		if cAbility == nil then cAbility = bot:GetAbilityByName("phoenix_supernova") end
+		if cAbility:IsTrained()
+		then
+			if bot:HasModifier('modifier_phoenix_supernova_hiding') then
 				return BOT_MODE_DESIRE_ABSOLUTE
 			end
 		end
@@ -334,6 +356,16 @@ function Think()
 	then
 		bot:Action_MoveToLocation(J.GetEscapeLoc())
         return
+	end
+
+	-- Phoenix
+	if PhoenixMoveSunRay
+	then
+		if J.IsValidHero(bot.targetSunRay)
+		then
+			bot:Action_MoveToLocation(bot.targetSunRay:GetLocation())
+			return
+		end
 	end
 
 	if shouldMoveToCreep
@@ -1732,6 +1764,7 @@ function X.IsSpecialSupport(bot)
 		["npc_dota_hero_grimstroke"] = true,
 		["npc_dota_hero_hoodwink"] = true,
 		["npc_dota_hero_nyx_assassin"] = true,
+		["npc_dota_hero_phoenix"] = true,
 	}
 	
 	return tSpecialSupportList[botName] == true

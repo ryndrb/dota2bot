@@ -462,6 +462,8 @@ function J.GetEnemiesNearLoc(vLoc, nRadius)
 		if  J.IsValidHero(enemyHero)
 		and GetUnitToLocationDistance(enemyHero, vLoc) <= nRadius
 		and not J.IsSuspiciousIllusion(enemyHero)
+		and not J.IsMeepoClone(enemyHero)
+		and not enemyHero:HasModifier('modifier_arc_warden_tempest_double')
 		then
 			table.insert(enemies, enemyHero)
 		end
@@ -4129,6 +4131,19 @@ function J.IsMeepoClone(hero)
 
 		return true
     end
+end
+
+function J.DoesSomeoneHaveModifier(nUnitList, modifierName)
+	for _, unit in pairs(nUnitList)
+	do
+		if  J.IsValid(unit)
+		and unit:HasModifier(modifierName)
+		then
+			return true
+		end
+	end
+
+	return false
 end
 
 function J.ConsolePrintActiveMode(bot)
