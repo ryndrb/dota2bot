@@ -461,6 +461,7 @@ function X.ConsiderRollingBoulder()
 	and bot:DistanceFromFountain() > 100
 	and bot:DistanceFromFountain() < 6000
 	and DotaTime() > 0
+	and not J.IsDoingTormentor(bot)
 	then
 		local nLaneFrontLocationT = GetLaneFrontLocation(GetTeam(), LANE_TOP, 0)
 		local nLaneFrontLocationM = GetLaneFrontLocation(GetTeam(), LANE_MID, 0)
