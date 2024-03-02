@@ -212,6 +212,7 @@ local sPos2List = {
 	"npc_dota_hero_obsidian_destroyer",
 	"npc_dota_hero_ogre_magi",
 	"npc_dota_hero_pangolier",
+	"npc_dota_hero_puck",
 	"npc_dota_hero_queenofpain",
 	"npc_dota_hero_razor",
 	"npc_dota_hero_sniper",

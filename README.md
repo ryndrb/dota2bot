@@ -84,6 +84,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
         - [2] Outworld Destroyer
         - [2,3] Pangolier
         - [4,5] Phoenix
+        - [2] Puck
         - [2] Storm Spirit
         - [1] Terrorblade
         - [3] Timbersaw
@@ -214,6 +215,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
             | Phantom Assasin       | &check; | -
             | Phantom Lancer        | &check; | -
             | Phoenix               | -       | -
+            | Puck                  | -       | -
             | Pugna                 | -       | -
             | Queen of Pain         | -       | -
             | Razor                 | -       | -
@@ -245,4 +247,5 @@ To anyone who've found this or is using it, if you have any feedback in improvin
         - [ ] Item usage
         - [ ] Re(factor/write) old code for consistency
         - [ ] Blinking (especially by range heroes)
+        - [ ] More skill checks (eg. stuns, projectiles, etc)
     

@@ -607,6 +607,7 @@ local tFarmHeroList = {
 	["npc_dota_hero_night_stalker"] = true,
 	["npc_dota_hero_obsidian_destroyer"] = true,
 	["npc_dota_hero_pangolier"] = true,
+	["npc_dota_hero_puck"] = true,
 	["npc_dota_hero_shredder"] = true,
 	["npc_dota_hero_storm_spirit"] = true,
 	["npc_dota_hero_terrorblade"] = true,
@@ -2272,6 +2273,18 @@ Site.ConsiderIsTimeToFarm["npc_dota_hero_obsidian_destroyer"] = function()
 end
 
 Site.ConsiderIsTimeToFarm["npc_dota_hero_pangolier"] = function()
+	local bot = GetBot()
+	local networth = bot:GetNetWorth()
+	local lastHits = bot:GetLastHits()
+
+	if lastHits < 1000 then
+		return true
+	end
+
+	return false
+end
+
+Site.ConsiderIsTimeToFarm["npc_dota_hero_puck"] = function()
 	local bot = GetBot()
 	local networth = bot:GetNetWorth()
 	local lastHits = bot:GetLastHits()

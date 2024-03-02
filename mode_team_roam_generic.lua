@@ -230,6 +230,15 @@ function GetDesire()
 				return BOT_MODE_DESIRE_ABSOLUTE
 			end
 		end
+	elseif botName == "npc_dota_hero_puck"
+	then
+		if cAbility == nil then cAbility = bot:GetAbilityByName("puck_phase_shift") end
+		if cAbility:IsTrained()
+		then
+			if bot:HasModifier('modifier_puck_phase_shift') then
+				return BOT_MODE_DESIRE_ABSOLUTE
+			end
+		end
 	end
 
 	if IsCarry

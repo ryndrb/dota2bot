@@ -2234,6 +2234,7 @@ function X.IsABAHero()
 		["npc_dota_hero_obsidian_destroyer"] = true,
 		["npc_dota_hero_pangolier"] = true,
 		["npc_dota_hero_phoenix"] = true,
+		["npc_dota_hero_puck"] = true,
 		["npc_dota_hero_rattletrap"] = true,
 		["npc_dota_hero_shredder"] = true,
 		["npc_dota_hero_storm_spirit"] = true,
