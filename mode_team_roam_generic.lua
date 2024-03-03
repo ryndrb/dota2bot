@@ -2246,7 +2246,7 @@ function SwapSmokeSupport()
 	end
 end
 
-function FindLeastExpensiveItemSlot()
+function J.FindLeastExpensiveItemSlot()
 	local minCost = 100000
 	local idx = -1
 
