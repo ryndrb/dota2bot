@@ -684,7 +684,7 @@ function X.ConsiderDreamCoil()
         and not J.IsLocationInChrono(nLocationAoE.targetloc)
         and not J.IsLocationInBlackHole(nLocationAoE.targetloc)
         then
-            return BOT_ACTION_DESIRE_HIGH, bot:GetLocation()
+            return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc
         end
 	end
 
