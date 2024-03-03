@@ -1489,6 +1489,18 @@ X["hero_roles"] = {
 		['pusher'] = 0
 	},
 
+	["npc_dota_hero_primal_beast"] = {
+		['carry'] = 0,
+		['disabler'] = 1,
+		['durable'] = 3,
+		['escape'] = 0,
+		['initiator'] = 3,
+		['jungler'] = 0,
+		['nuker'] = 1,
+		['support'] = 0,
+		['pusher'] = 0
+	},
+
 }
 
 X["bottle"] = {
@@ -1638,6 +1650,7 @@ X['off'] = {
 	'npc_dota_hero_night_stalker',
 	'npc_dota_hero_omniknight',
 	'npc_dota_hero_pangolier',
+	'npc_dota_hero_primal_beast',
 	'npc_dota_hero_pudge',
 	--'npc_dota_hero_rattletrap',
 	'npc_dota_hero_sand_king',
@@ -1678,6 +1691,7 @@ X['mid'] = {
 	'npc_dota_hero_nevermore',
 	'npc_dota_hero_obsidian_destroyer',
 	'npc_dota_hero_pangolier',
+	'npc_dota_hero_primal_beast',
 	'npc_dota_hero_puck',
 	'npc_dota_hero_pudge',
 	'npc_dota_hero_pugna',
@@ -2236,6 +2250,7 @@ function X.IsABAHero()
 		["npc_dota_hero_obsidian_destroyer"] = true,
 		["npc_dota_hero_pangolier"] = true,
 		["npc_dota_hero_phoenix"] = true,
+		["npc_dota_hero_primal_beast"] = true,
 		["npc_dota_hero_puck"] = true,
 		["npc_dota_hero_pudge"] = true,
 		["npc_dota_hero_rattletrap"] = true,

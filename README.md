@@ -84,6 +84,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
         - [2] Outworld Destroyer
         - [2,3] Pangolier
         - [4,5] Phoenix
+        - ~~[2,3] Primal Beast~~
         - [2] Puck
         - [2,3] Pudge
         - [2] Storm Spirit
@@ -109,6 +110,8 @@ To anyone who've found this or is using it, if you have any feedback in improvin
         - Marci
             - Passive.
         - Muerta
+            - Passive.
+        - Primal Beast
             - Passive.
 
 - ***"Attempted" Logic Changes (still)***
@@ -216,6 +219,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
             | Phantom Assasin       | &check; | -
             | Phantom Lancer        | &check; | -
             | Phoenix               | -       | -
+            | ~~Primal Beast~~      | -       | -
             | Puck                  | -       | -
             | Pugna                 | -       | -
             | Pudge                 | -       | &cross;
