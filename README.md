@@ -85,6 +85,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
         - [2,3] Pangolier
         - [4,5] Phoenix
         - [2] Puck
+        - [2,3] Pudge
         - [2] Storm Spirit
         - [1] Terrorblade
         - [3] Timbersaw
@@ -217,6 +218,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
             | Phoenix               | -       | -
             | Puck                  | -       | -
             | Pugna                 | -       | -
+            | Pudge                 | -       | &cross;
             | Queen of Pain         | -       | -
             | Razor                 | -       | -
             | Riki                  | -       | -
@@ -248,4 +250,5 @@ To anyone who've found this or is using it, if you have any feedback in improvin
         - [ ] Re(factor/write) old code for consistency
         - [ ] Blinking (especially by range heroes)
         - [ ] More skill checks (eg. stuns, projectiles, etc)
+        - [ ] Early added heroes to follow current standard
     
