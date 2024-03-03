@@ -431,7 +431,7 @@ function Think()
 
 	if PickedItem ~= nil
 	then
-		if GetUnitToLocationDistance(bot, PickedItem.location) > 500
+		if GetUnitToLocationDistance(bot, PickedItem.location) > 100
 		then
 			bot:Action_MoveToLocation(PickedItem.location)
 			return

@@ -3777,7 +3777,7 @@ function J.IsHeroBetweenMeAndLocation(hSource, vLoc, nRadius)
 		if allyHero ~= hSource
 		then
 			local tResult = PointToLineDistance(vStart, vEnd, allyHero:GetLocation())
-			if  tResult ~= nil and tResult.within and tResult.distance < nRadius + 25 then return true end
+			if  tResult ~= nil and tResult.within and tResult.distance < nRadius then return true end
 		end
 	end
 
@@ -3788,7 +3788,7 @@ function J.IsHeroBetweenMeAndLocation(hSource, vLoc, nRadius)
 		and not J.IsSuspiciousIllusion(enemyHero)
 		then
 			local tResult = PointToLineDistance(vStart, vEnd, enemyHero:GetLocation())
-			if  tResult ~= nil and tResult.within and tResult.distance < nRadius + 25 then return true end
+			if  tResult ~= nil and tResult.within and tResult.distance < nRadius then return true end
 		end
 	end
 
@@ -3807,7 +3807,7 @@ function J.IsEnemyBetweenMeAndLocation(hSource, vLoc, nRadius)
 		and not J.IsSuspiciousIllusion(enemyHero)
 		then
 			local tResult = PointToLineDistance(vStart, vEnd, enemyHero:GetLocation())
-			if  tResult ~= nil and tResult.within and tResult.distance < nRadius + 25 then return true end
+			if  tResult ~= nil and tResult.within and tResult.distance < nRadius then return true end
 		end
 	end
 
@@ -3817,26 +3817,24 @@ end
 function J.IsHeroBetweenMeAndTarget(hSource, hTarget, vLoc, nRadius)
 	local vStart = hSource:GetLocation()
 	local vEnd = vLoc
-	local bot = GetBot()
 
-	local nAllyHeroes = bot:GetNearbyHeroes(1600, false, BOT_MODE_NONE)
+	local nAllyHeroes = hSource:GetNearbyHeroes(1600, false, BOT_MODE_NONE)
 	for _, allyHero in pairs(nAllyHeroes)
     do
 		if allyHero ~= hTarget and allyHero ~= hSource
 		then
 			local tResult = PointToLineDistance(vStart, vEnd, allyHero:GetLocation())
-			if  tResult ~= nil and tResult.within == true and tResult.distance < nRadius + 25 then return true end
+			if  tResult ~= nil and tResult.within == true and tResult.distance < nRadius then return true end
 		end
 	end
 
-	local nEnemyHeroes = bot:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
+	local nEnemyHeroes = hSource:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
 	for _, enemyHero in pairs(nEnemyHeroes)
     do
 		if enemyHero ~= hTarget and enemyHero ~= hSource
-		and not J.IsSuspiciousIllusion(enemyHero)
 		then
-			local tResult = PointToLineDistance(vStart, vEnd, nEnemyHeroes:GetLocation())
-			if  tResult ~= nil and tResult.within and tResult.distance < nRadius + 25 then return true end
+			local tResult = PointToLineDistance(vStart, vEnd, enemyHero:GetLocation())
+			if  tResult ~= nil and tResult.within and tResult.distance < nRadius then return true end
 		end
 	end
 
@@ -3852,7 +3850,7 @@ function J.IsCreepBetweenMeAndLocation(hSource, vLoc, nRadius)
 	for _, creep in pairs(nAllyLaneCreeps)
     do
 		local tResult = PointToLineDistance(vStart, vEnd, creep:GetLocation())
-		if  tResult ~= nil and tResult.within and tResult.distance < nRadius + 25 then return true end
+		if  tResult ~= nil and tResult.within and tResult.distance < nRadius then return true end
 	end
 
 	local nEnemyLaneCreeps = bot:GetNearbyLaneCreeps(1600, false)
@@ -3860,7 +3858,36 @@ function J.IsCreepBetweenMeAndLocation(hSource, vLoc, nRadius)
     do
 		local tResult = PointToLineDistance(vStart, vEnd, creep:GetLocation())
 
-		if  tResult ~= nil and tResult.within and tResult.distance < nRadius + 25 then return true end
+		if  tResult ~= nil and tResult.within and tResult.distance < nRadius then return true end
+	end
+
+	return false
+end
+
+function J.IsNonSiegeCreepBetweenMeAndLocation(hSource, vLoc, nRadius)
+	local vStart = hSource:GetLocation()
+	local vEnd = vLoc
+
+	local nAllyLaneCreeps = hSource:GetNearbyLaneCreeps(1600, true)
+	for _, creep in pairs(nAllyLaneCreeps)
+    do
+		if  J.IsValid(creep)
+		and not J.IsKeyWordUnit('siege', creep)
+		then
+			local tResult = PointToLineDistance(vStart, vEnd, creep:GetLocation())
+			if tResult ~= nil and tResult.within and tResult.distance < nRadius then return true end
+		end
+	end
+
+	local nEnemyLaneCreeps = hSource:GetNearbyLaneCreeps(1600, false)
+	for _, creep in pairs(nEnemyLaneCreeps)
+    do
+		if  J.IsValid(creep)
+		and not J.IsKeyWordUnit('siege', creep)
+		then
+			local tResult = PointToLineDistance(vStart, vEnd, creep:GetLocation())
+			if tResult ~= nil and tResult.within and tResult.distance < nRadius then return true end
+		end
 	end
 
 	return false
@@ -3872,7 +3899,7 @@ function J.IsCreepBetweenMeAndTarget(hSource, hTarget, vLoc, nRadius)
 		return J.IsEnemyCreepBetweenMeAndTarget(hSource, hTarget, vLoc, nRadius)
 	end
 
-	return true
+	return false
 end
 
 function J.IsEnemyCreepBetweenMeAndTarget(hSource, hTarget, vLoc, nRadius)
@@ -3883,14 +3910,14 @@ function J.IsEnemyCreepBetweenMeAndTarget(hSource, hTarget, vLoc, nRadius)
 	for _, creep in pairs(nAllyLaneCreeps)
 	do
 		local tResult = PointToLineDistance(vStart, vEnd, creep:GetLocation())
-		if tResult ~= nil and tResult.within and tResult.distance <= nRadius + 50 then return true end
+		if tResult ~= nil and tResult.within and tResult.distance < nRadius then return true end
 	end
 
 	local nEnemyLaneCreeps = hSource:GetNearbyLaneCreeps(1600, true)
 	for _, creep in pairs(nEnemyLaneCreeps)
 	do
 		local tResult = PointToLineDistance(vStart, vEnd, creep:GetLocation())
-		if tResult ~= nil and tResult.within and tResult.distance <= nRadius + 50 then return true end
+		if tResult ~= nil and tResult.within and tResult.distance < nRadius then return true end
 	end
 
 	return false
@@ -3904,7 +3931,7 @@ function J.IsAllyCreepBetweenMeAndTarget(hSource, hTarget, vLoc, nRadius)
 	for _, creep in pairs(nAllyLaneCreeps)
 	do
 		local tResult = PointToLineDistance(vStart, vEnd, creep:GetLocation())
-		if tResult ~= nil and tResult.within and tResult.distance <= nRadius + 50 then
+		if tResult ~= nil and tResult.within and tResult.distance < nRadius then
 			return true
 		end
 	end
@@ -3913,7 +3940,7 @@ function J.IsAllyCreepBetweenMeAndTarget(hSource, hTarget, vLoc, nRadius)
 	for _, creep in pairs(nEnemyLaneCreeps)
 	do
 		local tResult = PointToLineDistance(vStart, vEnd, creep:GetLocation())
-		if tResult ~= nil and tResult.within and tResult.distance <= nRadius + 50 then
+		if tResult ~= nil and tResult.within and tResult.distance < nRadius then
 			return true
 		end
 	end
