@@ -23,7 +23,7 @@ function Defend.GetDefendDesire(bot, lane)
     end
 
 	if bot:GetHealth() / bot:GetMaxHealth() < 0.3
-	or (J.IsFarming(bot) and (mul[lane] < 3 or eFront < 0.9))
+	or (J.IsFarming(bot) and (mul[lane] < 1.5 or eFront < 0.9))
 	then
 		return 0.25
 	end
@@ -146,40 +146,101 @@ function Defend.TeamDefendLane()
 end
 
 function Defend.ShouldGoDefend(bot, lane)
-	local Enemies = Defend.GetEnemyCountInLane(lane, true)
+	local nLaneEnemyCount = Defend.GetEnemyCountInLane(lane, true)
 	local pos = J.GetPosition(bot)
 
-	if Enemies == 1 then
-		if pos == 2
-        or pos == 4
-        then
-			return true
-		end
-	elseif Enemies == 2 then
-		if pos == 2
-        or pos == 3
-        or pos == 5
-        then
-			return true
-		end
-	elseif Enemies == 3 then
-		if pos == 2
-        or pos == 3
-        or pos == 4
-        or pos == 5
-        then
-			return true
-		end
-	end
-
-	if Enemies == 0
-	and J.IsCore(bot)
-	and J.IsFarming(bot)
+	if nLaneEnemyCount == 1
 	then
-		return false
+		if pos == 2
+        or pos == 4
+        then
+			return true
+		end
+	elseif nLaneEnemyCount == 2
+	then
+		if pos == 2
+        or pos == 3
+        or pos == 5
+        then
+			return true
+		end
+	elseif nLaneEnemyCount == 3
+	then
+		if pos == 2
+        or pos == 3
+        or pos == 4
+        or pos == 5
+        then
+			return true
+		end
+	elseif nLaneEnemyCount >= 4
+	then
+		return true
 	end
 
-    return true
+	if nLaneEnemyCount == 0
+	then
+		for _, allyHero in pairs(GetUnitList(UNIT_LIST_ALLIED_HEROES))
+		do
+			if  J.IsValidHero(allyHero)
+			and J.IsNotSelf(bot, allyHero)
+			and not allyHero:IsIllusion()
+			then
+				local nMode = allyHero:GetActiveMode()
+
+				if pos == 1
+				then
+					if J.GetPosition(allyHero) == 2
+					or J.GetPosition(allyHero) == 3
+					then
+						if (nMode == BOT_MODE_DEFEND_TOWER_TOP
+							and lane == LANE_TOP)
+						or (nMode == BOT_MODE_DEFEND_TOWER_MID
+							and lane == LANE_MID)
+						or (nMode == BOT_MODE_DEFEND_TOWER_BOT
+							and lane == LANE_BOT)
+						then
+							return false
+						end
+					end
+				end
+
+				if pos == 2
+				then
+					if J.GetPosition(allyHero) == 1
+					or J.GetPosition(allyHero) == 3
+					then
+						if (nMode == BOT_MODE_DEFEND_TOWER_TOP
+							and lane == LANE_TOP)
+						or (nMode == BOT_MODE_DEFEND_TOWER_MID
+							and lane == LANE_MID)
+						or (nMode == BOT_MODE_DEFEND_TOWER_BOT
+							and lane == LANE_BOT)
+						then
+							return false
+						end
+					end
+				end
+
+				if pos == 3
+				then
+					if J.GetPosition(allyHero) == 1
+					or J.GetPosition(allyHero) == 2
+					then
+						if (nMode == BOT_MODE_DEFEND_TOWER_TOP
+							and lane == LANE_TOP)
+						or (nMode == BOT_MODE_DEFEND_TOWER_MID
+							and lane == LANE_MID)
+						or (nMode == BOT_MODE_DEFEND_TOWER_BOT
+							and lane == LANE_BOT)
+						then
+							return false
+						end
+					end
+				end
+			end
+		end
+	end
 end
 
 function Defend.GetFurthestBuildingOnLane(lane)

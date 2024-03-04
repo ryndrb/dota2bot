@@ -45,11 +45,29 @@ function Push.GetPushDesire(bot, lane)
     end
 
     local aliveHeroesList = {}
-    for _, h in pairs(GetUnitList(UNIT_LIST_ALLIED_HEROES))
+    for _, allyHero in pairs(GetUnitList(UNIT_LIST_ALLIED_HEROES))
     do
-        if h:IsAlive()
+        if  J.IsValidHero(allyHero)
+        and not allyHero:IsIllusion()
+        and not J.IsMeepoClone(allyHero)
+        and not allyHero:HasModifier('modifier_arc_warden_tempest_double')
         then
-            table.insert(aliveHeroesList, h)
+            table.insert(aliveHeroesList, allyHero)
+
+            if J.GetPosition(bot) == 4
+            or J.GetPosition(bot) == 5
+            then
+                if J.GetPosition(allyHero) == 1
+                or J.GetPosition(allyHero) == 2
+                or J.GetPosition(allyHero) == 3
+                then
+                    if  J.IsNotSelf(bot, allyHero)
+                    and not J.IsPushing(allyHero)
+                    then
+                        return 0.1
+                    end
+                end
+            end
         end
     end
 

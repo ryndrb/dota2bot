@@ -28,5 +28,23 @@ function GetDesire()
 		return BOT_MODE_DESIRE_HIGH
 	end
 
+	if  not isBotCore
+	and not J.IsInLaningPhase()
+	then
+		local nInRangeAlly = J.GetAlliesNearLoc(bot:GetLocation(), 1600)
+		local nInRangeEnemy = J.GetEnemiesNearLoc(bot:GetLocation(), 1600)
+		local nEnemyLaneCreeps = bot:GetNearbyLaneCreeps(700, true)
+
+		if  nInRangeAlly ~= nil and nInRangeEnemy ~= nil and nEnemyLaneCreeps ~= nil
+		and #nInRangeAlly == 0 and #nInRangeEnemy == 0 and #nEnemyLaneCreeps >= 1
+		and not J.IsPushing()
+		and not J.IsDefending()
+		and not J.IsDoingRoshan()
+		and not J.IsDoingTormentor()
+		then
+			return BOT_ACTION_DESIRE_MODERATE
+		end
+	end
+
 	return BOT_MODE_DESIRE_VERYLOW
 end

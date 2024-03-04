@@ -1138,15 +1138,9 @@ X.ConsiderItemDesire["item_blade_mail"] = function( hItem )
 
 end
 
-
 --跳刀
 X.ConsiderItemDesire["item_blink"] = function( hItem )
-
 	local nCastRange = 1200 + aetherRange
-	local sCastType = 'ground'
-	local hEffectTarget = nil
-	local sCastMotive = nil
-	local nInRangeEnmyList = bot:GetNearbyHeroes( nCastRange, true, BOT_MODE_NONE )
 
 	if bot:IsRooted()
 	or bot:HasModifier('modifier_nyx_assassin_vendetta')
@@ -1154,72 +1148,71 @@ X.ConsiderItemDesire["item_blink"] = function( hItem )
 		return BOT_ACTION_DESIRE_NONE
 	end
 
-	if J.IsStuck( bot )
+	if J.IsStuck(bot)
 	then
-		hEffectTarget = J.GetLocationTowardDistanceLocation( bot, GetAncient( GetTeam() ):GetLocation(), 1100 )
-		sCastMotive = '卡住了'
-		return BOT_ACTION_DESIRE_HIGH, hEffectTarget, sCastType, sCastMotive
+		local loc = J.GetLocationTowardDistanceLocation(bot, GetAncient(GetTeam()):GetLocation(), 1100)
+		return BOT_ACTION_DESIRE_HIGH, loc, 'ground', nil
 	end
 
-	--撤退跑路
-	if nMode == BOT_MODE_RETREAT
-		and bot:GetActiveModeDesire() > BOT_MODE_DESIRE_MODERATE
+	if  J.IsRetreating(bot)
+	and bot:GetActiveModeDesire() > BOT_MODE_DESIRE_MODERATE
 	then
-		local bLocation = J.GetLocationTowardDistanceLocation( bot, GetAncient( GetTeam() ):GetLocation(), 1199 )
-		local nAttackAllyList = bot:GetNearbyHeroes( 660, false, BOT_MODE_ATTACK )
-		if bot:DistanceFromFountain() > 800
-			and IsLocationPassable( bLocation )
-			and ( #nAttackAllyList == 0 or bot:GetActiveModeDesire() > BOT_MODE_DESIRE_VERYHIGH * 0.9 )
-			and #hNearbyEnemyHeroList >= 1
+		local bLocation = J.GetLocationTowardDistanceLocation(bot, GetAncient(GetTeam()):GetLocation(), 1199)
+		local nInRangeAlly = bot:GetNearbyHeroes(660, false, BOT_MODE_ATTACK)
+		local nInRangeEnemy = J.GetEnemiesNearLoc(bot:GetLocation(), 1200)
+
+		if  bot:DistanceFromFountain() > 900
+		and IsLocationPassable(bLocation)
+		and (#nInRangeAlly == 0
+			or bot:GetActiveModeDesire() > BOT_MODE_DESIRE_VERYHIGH * 0.9)
+		and nInRangeEnemy ~= nil and #nInRangeEnemy >= 1
 		then
-			hEffectTarget = bLocation
-			sCastMotive = "撤退"
-			return BOT_ACTION_DESIRE_HIGH, hEffectTarget, sCastType, sCastMotive
+			return BOT_ACTION_DESIRE_HIGH, bLocation, 'ground', nil
 		end
 	end
 
-	--打钱
-	local nEnemyHeroInView = bot:GetNearbyHeroes( 1600, true, BOT_MODE_NONE )
-	local nAttackAllyList = bot:GetNearbyHeroes( 1600, false, BOT_MODE_ATTACK )
-	if #nEnemyHeroInView == 0 and not bot:WasRecentlyDamagedByAnyHero( 3.0 )
-		and #nAttackAllyList == 0 and ( botTarget == nil or not botTarget:IsHero() )
-	then
-		local nAOELocation = bot:FindAoELocation( true, false, bot:GetLocation(), 1600, 400, 0, 0 )
-		local laneCreepList = bot:GetNearbyLaneCreeps( 1600, true )
-		if nAOELocation.count >= 4
-			and #laneCreepList >= 4
-		then
-			local bCenter = J.GetCenterOfUnits( laneCreepList )
-			local bDist = GetUnitToLocationDistance( bot, bCenter )
-			local vLocation = J.GetLocationTowardDistanceLocation( bot, bCenter, bDist + 550 )
-			local bLocation = J.GetLocationTowardDistanceLocation( bot, bCenter, bDist - 300 )
-			if bDist >= 1500 then bLocation = J.GetLocationTowardDistanceLocation( bot, bCenter, 1199 ) end
+	local nInRangeAlly = bot:GetNearbyHeroes(1600, false, BOT_MODE_ATTACK)
 
-			if IsLocationPassable( bLocation )
-				and GetUnitToLocationDistance( bot, bLocation ) > 600
-				and IsLocationVisible( vLocation )
+	if  nInRangeAlly ~= nil and #nInRangeAlly == 0 and (botTarget == nil or not botTarget:IsHero())
+	and not bot:WasRecentlyDamagedByAnyHero(3.1)
+	and not J.IsPushing(bot)
+	and not J.IsDefending(bot)
+	then
+		local nAOELocation = bot:FindAoELocation(true, false, bot:GetLocation(), 1600, 400, 0, 0)
+		local nEnemyLaneCreeps = bot:GetNearbyLaneCreeps(1600, true)
+		local nInRangeEnemy = J.GetEnemiesNearLoc(nAOELocation.targetloc, 1600)
+
+		if  nEnemyLaneCreeps ~= nil and #nEnemyLaneCreeps >= 4
+		and nInRangeEnemy ~= nil and #nInRangeEnemy == 0
+		and nAOELocation.count >= 4
+		then
+			local bCenter = J.GetCenterOfUnits(nEnemyLaneCreeps)
+			local bDist = GetUnitToLocationDistance(bot, bCenter)
+			local vLocation = J.GetLocationTowardDistanceLocation(bot, bCenter, bDist + 550)
+			local bLocation = J.GetLocationTowardDistanceLocation(bot, bCenter, bDist - 300)
+
+			if bDist >= 1500 then bLocation = J.GetLocationTowardDistanceLocation(bot, bCenter, 1199) end
+
+			if  IsLocationPassable(bLocation)
+			and GetUnitToLocationDistance(bot, bLocation) > 600
+			and IsLocationVisible(vLocation)
+			and not J.IsLocHaveTower(700, true, bLocation)
 			then
-				hEffectTarget = bLocation
-				sCastMotive = '去刷小兵, 数量:'..#laneCreepList
-				return BOT_ACTION_DESIRE_HIGH, hEffectTarget, sCastType, sCastMotive
+				return BOT_ACTION_DESIRE_HIGH, bLocation, 'ground', nil
 			end
 		end
 	end
 
-	--躲避技能
-	if J.IsProjectileIncoming( bot, 1400 )
-		and ( botTarget == nil
-			or not botTarget:IsHero()
-			or not J.IsInRange( bot, botTarget, bot:GetAttackRange() + 100 ) )
+	if  J.IsProjectileIncoming(bot, 1200)
+	and (botTarget == nil
+		or not botTarget:IsHero()
+		or not J.IsInRange(bot, botTarget, bot:GetAttackRange() + 100))
 	then
-		hEffectTarget = J.GetLocationTowardDistanceLocation( bot, GetAncient( GetTeam() ):GetLocation(), 1199 )
-		sCastMotive = '躲避弹道'
-		return BOT_ACTION_DESIRE_HIGH, hEffectTarget, sCastType, sCastMotive
+		local loc = J.GetLocationTowardDistanceLocation(bot, GetAncient(GetTeam()):GetLocation(), 1199)
+		return BOT_ACTION_DESIRE_HIGH, loc, 'ground', nil
 	end
 
-
-	--先手进攻
-	if J.IsGoingOnSomeone( bot )
+	if J.IsGoingOnSomeone(bot)
 	then
 		if  bot.shouldBlink
 		and (bot:GetUnitName() == 'npc_dota_hero_batrider'
@@ -1229,37 +1222,33 @@ X.ConsiderItemDesire["item_blink"] = function( hItem )
 			return BOT_ACTION_DESIRE_NONE
 		end
 
-		if J.IsValidHero( botTarget )
-			and J.IsInRange( bot, botTarget, nCastRange + 400 )
-			and J.CanCastOnMagicImmune( botTarget )
-			and not J.IsInRange( bot, botTarget, bot:GetAttackRange() + 150 )
+		if  J.IsValidHero(botTarget)
+		and J.IsInRange(bot, botTarget, nCastRange + 200)
+		and J.CanCastOnMagicImmune(botTarget)
+		and not J.IsInRange(bot, botTarget, bot:GetAttackRange() + 150)
+		and not J.IsSuspiciousIllusion(botTarget)
+		and not J.IsLocationInChrono(botTarget:GetLocation())
+		and not J.IsLocationInBlackHole(botTarget:GetLocation())
 		then
-			if bot:GetStunDuration( true ) > 0.8
-				or J.GetAllyCount( bot, 1200 ) >= J.GetEnemyCount( bot, 1600 )
+			nTargetInRangeAlly = botTarget:GetNearbyHeroes(1600, false, BOT_MODE_NONE)
+			nTargetInRangeEnemy = botTarget:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
+
+			if  nTargetInRangeAlly ~= nil and nTargetInRangeEnemy ~= nil
+			and ((#nTargetInRangeAlly >= #nTargetInRangeEnemy)
+				or (#nTargetInRangeAlly >= #nTargetInRangeEnemy and bot:GetStunDuration(true) > 0.8))
 			then
+				local nDistance = GetUnitToUnitDistance(bot, botTarget)
 
-				local nDistance = GetUnitToUnitDistance( bot, botTarget )
-				if nDistance >= 1200
-				then
-					nDistance = 1199
-				end
+				if nDistance >= 1200 then nDistance = 1199 end
 
-				hEffectTarget = J.GetUnitTowardDistanceLocation( bot, botTarget, nDistance )
-				sCastMotive = '闪烁进攻:'..J.Chat.GetNormName( botTarget )
-				return BOT_ACTION_DESIRE_HIGH, hEffectTarget, sCastType, sCastMotive
+				local loc = J.GetUnitTowardDistanceLocation(bot, botTarget, nDistance) + RandomVector(150)
+				return BOT_ACTION_DESIRE_HIGH, loc, 'ground', nil
 			end
 		end
 	end
 
-
-	--Shopping
-
-
-
 	return BOT_ACTION_DESIRE_NONE
-
 end
-
 
 --盛世闪光
 X.ConsiderItemDesire["item_overwhelming_blink"] = function( hItem )
@@ -5996,9 +5985,9 @@ end
 -- TIER 2
 
 -- Vambrace
-X.ConsiderItemDesire["item_vambrace"] = function(hItem)
-	return X.ConsiderItemDesire["item_power_treads"](hItem)
-end
+-- X.ConsiderItemDesire["item_vambrace"] = function(hItem)
+-- 	return X.ConsiderItemDesire["item_power_treads"](hItem)
+-- end
 
 -- Bullwhip
 X.ConsiderItemDesire["item_bullwhip"] = function(hItem)
