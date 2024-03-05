@@ -97,6 +97,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
     - ***Later***
         - Lone Druid
         - Morphling
+        - Rubick
     - ***Changed***
         - [2,3] Death Prophet
         - [1,2] Lina
@@ -106,8 +107,12 @@ To anyone who've found this or is using it, if you have any feedback in improvin
     - ***Bugged (Internal)***
         - Dark Willow
             - Passive.
+        - Elder Titan
+            - Passive.
         - Hoodwink
             - Hardly enters Attack mode (Valve default).
+        - IO
+            - Passive.
         - Marci
             - Passive.
         - Muerta
