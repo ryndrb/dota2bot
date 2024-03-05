@@ -87,6 +87,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
         - ~~[2,3] Primal Beast~~
         - [2] Puck
         - [2,3] Pudge
+        - [4,5] Shadow Demon
         - [2] Storm Spirit
         - [1] Terrorblade
         - [3] Timbersaw
@@ -227,6 +228,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
             | Razor                 | -       | -
             | Riki                  | -       | -
             | Sand King             | -       | -
+            | Shadow Demon          | &check; | -
             | Shadow Fiend          | &cross; | -
             | Shadow Shaman         | -       | -
             | Silencer              | -       | -
