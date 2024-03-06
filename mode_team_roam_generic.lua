@@ -29,7 +29,7 @@ local towerCreepTime = 0;
 
 local beInitDone = false
 local IsSupport = false
-local IsCarry = false
+local IsHeroCore = false
 local beTechies = false
 local beFirstStop = false
 local bePvNMode = false
@@ -62,7 +62,7 @@ function GetDesire()
 	then
 		beInitDone = true
 		bePvNMode = J.Role.IsPvNMode()
-		IsCarry = X.IsSpecialCarry(bot)
+		IsHeroCore = X.IsSpecialCore(bot)
 		IsSupport = X.IsSpecialSupport(bot)
 	end
 
@@ -253,7 +253,7 @@ function GetDesire()
 		end
 	end
 
-	if IsCarry
+	if IsHeroCore
 	then
 		local botTarget, targetDesire = X.CarryFindTarget()
 		if J.IsValidTarget(botTarget)
@@ -441,7 +441,7 @@ function Think()
 		end
 	end
 
-	if  (IsCarry or IsSupport)
+	if  (IsHeroCore or IsSupport)
 	and J.IsValidTarget(targetUnit)
 	then
 		bot:Action_AttackUnit(targetUnit, false)
@@ -1692,8 +1692,10 @@ function X.UpdateCommonCamp(creep, AvailableCamp)
 end
 
 
-function X.IsSpecialCarry(bot)
+function X.IsSpecialCore(bot)
     if J.GetPosition(bot) == 1
+	or J.GetPosition(bot) == 2
+	or J.GetPosition(bot) == 3
 	then
 		local botName = bot:GetUnitName();
 		
@@ -1701,39 +1703,82 @@ function X.IsSpecialCarry(bot)
 			["npc_dota_hero_alchemist"] = true,
 			["npc_dota_hero_antimage"] = true,
 			["npc_dota_hero_arc_warden"] = true,
+			["npc_dota_hero_axe"] = true,
+			["npc_dota_hero_batrider"] = true,
+			["npc_dota_hero_beastmaster"] = true,
+			["npc_dota_hero_brewmaster"] = true,
 			["npc_dota_hero_bloodseeker"] = true,
+			["npc_dota_hero_bounty_hunter"] = true,
 			["npc_dota_hero_bristleback"] = true,
+			["npc_dota_hero_broodmother"] = true,
+			["npc_dota_hero_centaur"] = true,
 			["npc_dota_hero_chaos_knight"] = true,
 			["npc_dota_hero_clinkz"] = true,
+			["npc_dota_hero_dark_seer"] = true,
+			["npc_dota_hero_dawnbreaker"] = true,
+			["npc_dota_hero_death_prophet"] = true,
+			["npc_dota_hero_doom_bringer"] = true,
+			["npc_dota_hero_dragon_knight"] = true,
 			["npc_dota_hero_drow_ranger"] = true,
+			["npc_dota_hero_earth_spirit"] = true,
+			["npc_dota_hero_ember_spirit"] = true,
+			["npc_dota_hero_enigma"] = true,
 			["npc_dota_hero_faceless_void"] = true,
 			["npc_dota_hero_furion"] = true,
 			["npc_dota_hero_gyrocopter"] = true,
+			["npc_dota_hero_huskar"] = true,
+			["npc_dota_hero_invoker"] = true,
 			["npc_dota_hero_juggernaut"] = true,
+			["npc_dota_hero_keeper_of_the_light"] = true,
+			["npc_dota_hero_kunkka"] = true,
+			["npc_dota_hero_legion_commander"] = true,
+			["npc_dota_hero_leshrac"] = true,
 			["npc_dota_hero_life_stealer"] = true,
 			["npc_dota_hero_lina"] = true,
 			["npc_dota_hero_luna"] = true,
+			["npc_dota_hero_lycan"] = true,
+			["npc_dota_hero_magnataur"] = true,
 			["npc_dota_hero_marci"] = true,
+			["npc_dota_hero_mars"] = true,
 			["npc_dota_hero_medusa"] = true,
 			["npc_dota_hero_meepo"] = true,
+			["npc_dota_hero_mirana"] = true,
 			["npc_dota_hero_monkey_king"] = true,
 			["npc_dota_hero_muerta"] = true,
 			["npc_dota_hero_naga_siren"] = true,
+			["npc_dota_hero_necrolyte"] = true,
 			["npc_dota_hero_nevermore"] = true,
+			["npc_dota_hero_night_stalker"] = true,
+			["npc_dota_hero_obsidian_destroyer"] = true,
+			["npc_dota_hero_ogre_magi"] = true,
+			["npc_dota_hero_omniknight"] = true,
+			["npc_dota_hero_pangolier"] = true,
 			["npc_dota_hero_phantom_assassin"] = true,
 			["npc_dota_hero_phantom_lancer"] = true,
+			["npc_dota_hero_puck"] = true,
+			["npc_dota_hero_pudge"] = true,
+			["npc_dota_hero_queenofpain"] = true,
 			["npc_dota_hero_razor"] = true,
 			["npc_dota_hero_riki"] = true,
 			["npc_dota_hero_skeleton_king"] = true,
+			["npc_dota_hero_sand_king"] = true,
+			["npc_dota_hero_shredder"] = true,
+			["npc_dota_hero_slardar"] = true,
 			["npc_dota_hero_slark"] = true,
+			["npc_dota_hero_snapfire"] = true,
 			["npc_dota_hero_sniper"] = true,
+			["npc_dota_hero_storm_spirit"] = true,
 			["npc_dota_hero_sven"] = true,
 			["npc_dota_hero_templar_assassin"] = true,
 			["npc_dota_hero_terrorblade"] = true,
+			["npc_dota_hero_tidehunter"] = true,
 			["npc_dota_hero_tiny"] = true,
 			["npc_dota_hero_ursa"] = true,
+			["npc_dota_hero_viper"] = true,
+			["npc_dota_hero_void_spirit"] = true,
+			["npc_dota_hero_zuus"] = true,
 		}
-		
+
 		return tSpecialCarryList[botName] == true
 	end
 
