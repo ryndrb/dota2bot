@@ -1208,6 +1208,7 @@ function X.IsHighFarmer(bot)
 	or botName == "npc_dota_hero_primal_beast"
 	or botName == "npc_dota_hero_puck"
 	or botName == "npc_dota_hero_pudge"
+	or botName == "npc_dota_hero_snapfire"
 	)
 end
 

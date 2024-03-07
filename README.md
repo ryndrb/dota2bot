@@ -88,6 +88,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
         - [2] Puck
         - [2,3] Pudge
         - [4,5] Shadow Demon
+        - [2] Snapfire
         - [2] Storm Spirit
         - [1] Terrorblade
         - [3] Timbersaw
@@ -240,6 +241,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
             | Skywrath Mage         | -       | -
             | Slardar               | -       | -
             | Slark                 | -       | -
+            | Snapfire              | -       | &cross;
             | Sniper                | -       | -
             | Storm Sprit           | -       | -
             | Sven                  | -       | &cross;

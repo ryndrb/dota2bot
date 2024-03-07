@@ -48,6 +48,8 @@ local harassTarget = nil
 
 local PhoenixMoveSunRay = false
 
+local ShouldMoveMortimerKisses = false
+
 local TormentorLocation
 if GetTeam() == TEAM_RADIANT
 then
@@ -126,6 +128,16 @@ function GetDesire()
 		return BOT_ACTION_DESIRE_ABSOLUTE
 	else
 		PhoenixMoveSunRay = false
+	end
+
+	-- Snapfire
+	if  bot:GetUnitName() == 'npc_dota_hero_snapfire'
+	and bot:HasModifier('modifier_snapfire_mortimer_kisses')
+	then
+		ShouldMoveMortimerKisses = true
+		return BOT_ACTION_DESIRE_ABSOLUTE
+	else
+		ShouldMoveMortimerKisses = false
 	end
 
 	-- Pickup Neutral Item Tokens
@@ -384,6 +396,19 @@ function Think()
 		if J.IsValidHero(bot.targetSunRay)
 		then
 			bot:Action_MoveToLocation(bot.targetSunRay:GetLocation())
+			return
+		end
+	end
+
+	-- Snapfire
+	if ShouldMoveMortimerKisses
+	then
+		local nKissesTarget = GetMortimerKissesTarget()
+
+		if nKissesTarget ~= nil
+		then
+			local eta = (GetUnitToUnitDistance(bot, nKissesTarget) / 1300) + 0.3
+			bot:Action_MoveToLocation(nKissesTarget:GetExtrapolatedLocation(eta))
 			return
 		end
 	end
@@ -2314,4 +2339,43 @@ function J.FindLeastExpensiveItemSlot()
 	end
 
 	return idx
+end
+
+function GetMortimerKissesTarget()
+	local nInRangeEnemy = bot:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
+
+	for _, enemyHero in pairs(nInRangeEnemy)
+	do
+		if  J.IsValidHero(enemyHero)
+		and J.CanCastOnNonMagicImmune(enemyHero)
+		and not J.IsInRange(bot, enemyHero, 600)
+		and not J.IsSuspiciousIllusion(enemyHero)
+		then
+			if J.IsLocationInChrono(enemyHero:GetLocation())
+			or J.IsLocationInBlackHole(enemyHero:GetLocation())
+			then
+				return enemyHero
+			end
+		end
+
+		if  J.IsValidHero(enemyHero)
+		and J.CanCastOnNonMagicImmune(enemyHero)
+		and not J.IsInRange(bot, enemyHero, 600)
+		and not J.IsSuspiciousIllusion(enemyHero)
+		and not enemyHero:HasModifier('modifier_abaddon_borrowed_time')
+		and not enemyHero:HasModifier('modifier_dazzle_shallow_grave')
+		and not enemyHero:HasModifier('modifier_oracle_false_promise_timer')
+		and not enemyHero:HasModifier('modifier_necrolyte_reapers_scythe')
+		then
+			return enemyHero
+		end
+	end
+
+	local nCreeps = bot:GetNearbyCreeps(1600, true)
+	if nCreeps ~= nil and #nCreeps >= 1
+	then
+		return nCreeps[1]
+	end
+
+	return nil
 end
