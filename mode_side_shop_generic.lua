@@ -17,18 +17,12 @@ else
 	loc = DireTormentorLoc
 end
 
-if bot.tormentorState == nil
-then
-	bot.tormentorState = false
-end
-
-if bot.lastKillTime == nil
-then
-	bot.lastKillTime = 0
-end
+if bot.tormentorState == nil then bot.tormentorState = false end
+if bot.lastKillTime == nil then bot.lastKillTime = 0 end
+if bot.wasAttackingTormentor == nil then bot.wasAttackingTormentor = false end
 
 function GetDesire()
-    local nAllyInLoc = J.GetAlliesNearLoc(loc, 400)
+    local nAllyInLoc = J.GetAlliesNearLoc(loc, 700)
 	local aliveAlly = J.GetNumOfAliveHeroes(false)
 	local aveDistance, heroCount = GetAveTeamDistance()
     local healthPercentage = bot:GetHealth() / bot:GetMaxHealth()
@@ -44,12 +38,15 @@ function GetDesire()
     local currTime = DotaTime()
     local startTimer = J.IsModeTurbo() and 15 * 60 or 35 * 60
     local timeForLowDesire = J.IsModeTurbo() and 20 * 60 or 45 * 60
-    local nModeDesire = RemapValClamped(currTime, startTimer, timeForLowDesire, BOT_ACTION_DESIRE_HIGH, BOT_MODE_DESIRE_VERYLOW)
+    local nModeDesire = RemapValClamped(currTime, startTimer, timeForLowDesire, BOT_ACTION_DESIRE_VERYHIGH, BOT_MODE_DESIRE_VERYLOW)
 
 	local enemyAncient = GetAncient(GetOpposingTeam())
 	if GetUnitToUnitDistance(bot, enemyAncient) < 3200
 	or (topFrontP > 0.9 or midFrontP > 0.9 or botFrontP > 0.9)
 	or (topFrontD > 0.9 or midFrontD > 0.9 or botFrontD > 0.9)
+	or J.IsPushing(bot)
+	or J.IsDefending(bot)
+	or J.IsDoingRoshan(bot)
 	then
 		return BOT_ACTION_DESIRE_NONE
 	end
@@ -133,7 +130,8 @@ function GetDesire()
 	if  bot.tormentorState
 	and aveLevel > 12.6
     and (((bot.lastKillTime == 0 and aliveAlly >= 5)
-        or (bot.lastKillTime > 0 and aliveAlly >= 3)))
+        or (bot.lastKillTime > 0 and aliveAlly >= 3)
+		or (GetAttackingCount() >= 3)))
 	and J.GetAliveAllyCoreCount() >= 2
 	then
 		canDoTormentor = true
@@ -150,28 +148,18 @@ function GetDesire()
             return BOT_ACTION_DESIRE_VERYHIGH
         end
 
-        if bot.lastKillTime > 0
-        then
-            if  aveDistance < 2400
-            and heroCount >= 3
-            then
-                if nAllyInLoc ~= nil and #nAllyInLoc >= 2
-                then
-                    return BOT_ACTION_DESIRE_VERYHIGH
-                else
-                    return nModeDesire
-                end
-            end
+		if nAllyInLoc ~= nil and #nAllyInLoc >= 2
+		or IsHumanInLoc()
+		then
+			return BOT_ACTION_DESIRE_VERYHIGH
+		else
+			return nModeDesire
+		end
+	end
 
-            return BOT_ACTION_DESIRE_LOW
-        else
-			if nAllyInLoc ~= nil and #nAllyInLoc >= 2
-			then
-				return BOT_ACTION_DESIRE_VERYHIGH
-			else
-				return nModeDesire
-			end
-        end
+	if not IsTormentorAlive()
+	then
+		bot.wasAttackingTormentor = false
 	end
 
 	canDoTormentor = false
@@ -196,6 +184,7 @@ function Think()
 				if IsEnoughAllies()
 				or J.GetHP(c) < 0.25
 				then
+					bot.wasAttackingTormentor = true
 					bot:Action_AttackUnit(c, false)
 				end
 
@@ -242,7 +231,7 @@ function IsEnoughAllies()
 		and member:IsAlive()
 		and not member:IsIllusion()
 		and not member:HasModifier("modifier_arc_warden_tempest_double")
-		and GetUnitToLocationDistance(member, loc) <= 150
+		and GetUnitToLocationDistance(member, loc) <= 700
 		then
             if J.IsCore(member)
             then
@@ -314,6 +303,44 @@ function DidSomeoneSeeTormentorAlive()
 
 		if member ~= nil
 		and member.tormentorState
+		then
+			return true
+		end
+	end
+
+	return false
+end
+
+function GetAttackingCount()
+	local count = 0
+
+	for i = 1, 5
+	do
+		local member = GetTeamMember(i)
+
+		if  member ~= nil
+		and member:IsAlive()
+		and member.wasAttackingTormentor
+		then
+			count = count + 1
+		end
+	end
+
+	return count
+end
+
+function IsHumanInLoc()
+	for i = 1, 5
+	do
+		local member = GetTeamMember(i)
+
+		if  member ~= nil
+		and member:IsAlive()
+		and not member:IsBot()
+		and not member:IsIllusion()
+		and not member:HasModifier("modifier_arc_warden_tempest_double")
+		and not J.IsMeepoClone(member)
+		and GetUnitToLocationDistance(member, loc) <= 700
 		then
 			return true
 		end
