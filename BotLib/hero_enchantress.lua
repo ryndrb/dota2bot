@@ -165,11 +165,10 @@ function X.ConsiderImpetus()
 
     if J.IsGoingOnSomeone(bot)
     then
-        local nInRangeAlly = bot:GetNearbyHeroes(nAttackRange + 100, false, BOT_MODE_NONE)
-        local nInRangeEnemy = bot:GetNearbyHeroes(nAttackRange, true, BOT_MODE_NONE)
+        local nInRangeAlly = bot:GetNearbyHeroes(1200, false, BOT_MODE_NONE)
+        local nInRangeEnemy = bot:GetNearbyHeroes(1200, true, BOT_MODE_NONE)
 
         if  J.IsValidTarget(botTarget)
-        and J.IsInRange(bot, botTarget, nAttackRange)
         and J.CanCastOnNonMagicImmune(botTarget)
         and not J.IsSuspiciousIllusion(botTarget)
         and not botTarget:HasModifier('modifier_abaddon_borrowed_time')
@@ -180,6 +179,8 @@ function X.ConsiderImpetus()
             then
                 Impetus:ToggleAutoCast()
                 return BOT_ACTION_DESIRE_HIGH
+            else
+                return BOT_ACTION_DESIRE_NONE
             end
         end
     end
@@ -196,6 +197,61 @@ function X.ConsiderImpetus()
             then
                 Impetus:ToggleAutoCast()
                 return BOT_ACTION_DESIRE_HIGH
+            else
+                if  Impetus:GetAutoCastState()
+                and J.GetMP(bot) < 0.25
+                then
+                    Impetus:ToggleAutoCast()
+                    return BOT_ACTION_DESIRE_HIGH
+                end
+
+                return BOT_ACTION_DESIRE_NONE
+            end
+        end
+    end
+
+    if J.IsDoingRoshan(bot)
+    then
+        if  J.IsRoshan(botTarget)
+        and J.IsInRange(bot, botTarget, 500)
+        and J.IsAttacking(bot)
+        then
+            if not Impetus:GetAutoCastState()
+            then
+                Impetus:ToggleAutoCast()
+                return BOT_ACTION_DESIRE_HIGH
+            else
+                if  Impetus:GetAutoCastState()
+                and J.GetMP(bot) < 0.25
+                then
+                    Impetus:ToggleAutoCast()
+                    return BOT_ACTION_DESIRE_HIGH
+                end
+
+                return BOT_ACTION_DESIRE_NONE
+            end
+        end
+    end
+
+    if J.IsDoingTormentor(bot)
+    then
+        if  J.IsTormentor(botTarget)
+        and J.IsInRange(bot, botTarget, 400)
+        and J.IsAttacking(bot)
+        then
+            if not Impetus:GetAutoCastState()
+            then
+                Impetus:ToggleAutoCast()
+                return BOT_ACTION_DESIRE_HIGH
+            else
+                if  Impetus:GetAutoCastState()
+                and J.GetMP(bot) < 0.25
+                then
+                    Impetus:ToggleAutoCast()
+                    return BOT_ACTION_DESIRE_HIGH
+                end
+
+                return BOT_ACTION_DESIRE_NONE
             end
         end
     end
@@ -203,7 +259,6 @@ function X.ConsiderImpetus()
     if Impetus:GetAutoCastState()
     then
         Impetus:ToggleAutoCast()
-        return BOT_ACTION_DESIRE_HIGH
     end
 
     return BOT_ACTION_DESIRE_NONE
