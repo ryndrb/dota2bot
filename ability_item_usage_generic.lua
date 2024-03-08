@@ -6131,7 +6131,7 @@ end
 -- Ogre Seal Totem
 X.ConsiderItemDesire["item_ogre_seal_totem"] = function(hItem)
 	local nFlopRadius = 275
-	local nInRangeEnemy = J.GetEnemiesNearLoc(bot:GetLocation(), nCastRange)
+	local nInRangeEnemy = J.GetEnemiesNearLoc(bot:GetLocation(), nFlopRadius * 2)
 
 	if J.IsGoingOnSomeone(bot)
 	then
