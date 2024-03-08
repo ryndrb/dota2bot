@@ -38,7 +38,7 @@ function GetDesire()
     local currTime = DotaTime()
     local startTimer = J.IsModeTurbo() and 15 * 60 or 35 * 60
     local timeForLowDesire = J.IsModeTurbo() and 20 * 60 or 45 * 60
-    local nModeDesire = RemapValClamped(currTime, startTimer, timeForLowDesire, BOT_ACTION_DESIRE_VERYHIGH, BOT_MODE_DESIRE_VERYLOW)
+    local nModeDesire = RemapValClamped(currTime, startTimer, timeForLowDesire, BOT_ACTION_DESIRE_HIGH, BOT_MODE_DESIRE_VERYLOW)
 
 	local enemyAncient = GetAncient(GetOpposingTeam())
 	if GetUnitToUnitDistance(bot, enemyAncient) < 3200
