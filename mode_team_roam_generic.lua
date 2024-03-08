@@ -1792,6 +1792,7 @@ function X.IsSpecialCore(bot)
 			["npc_dota_hero_slark"] = true,
 			["npc_dota_hero_snapfire"] = true,
 			["npc_dota_hero_sniper"] = true,
+			["npc_dota_hero_spectre"] = true,
 			["npc_dota_hero_storm_spirit"] = true,
 			["npc_dota_hero_sven"] = true,
 			["npc_dota_hero_templar_assassin"] = true,

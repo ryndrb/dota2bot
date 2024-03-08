@@ -4709,7 +4709,18 @@ X.ConsiderItemDesire["item_tpscroll"] = function( hItem )
 		then
 			isTravelBootsAvailable = true
 		end
-		
+
+		if bot:GetUnitName() == 'npc_dota_hero_spectre'
+		then
+			local ShadowStep = bot:GetAbilityByName('spectre_haunt_single')
+			local Haunt = bot:GetAbilityByName('spectre_haunt')
+
+			if (ShadowStep:IsFullyCastable())
+			or (Haunt:IsTrained() and Haunt:IsFullyCastable())
+			then
+				return BOT_ACTION_DESIRE_NONE
+			end
+		end
 		
 		if #nNearEnemyList == 0
 			and nTeamFightLocation ~= nil
@@ -4759,8 +4770,9 @@ X.ConsiderItemDesire["item_tpscroll"] = function( hItem )
 				local nAllEnemyCreeps = GetUnitList( UNIT_LIST_ENEMY_CREEPS )
 				for _, creep in pairs( nAllEnemyCreeps )
 				do
-					if GetUnitToUnitDistance( nAncient, creep ) <= 800
-						and ( creep:GetAttackTarget() == nAncient or botLV >= 15 )
+					if  J.IsValid(creep)
+					and GetUnitToUnitDistance( nAncient, creep ) <= 800
+					and ( creep:GetAttackTarget() == nAncient or botLV >= 15 )
 					then
 						J.Role['lastFarmTpTime'] = DotaTime()
 						sCastMotive = '保护遗迹'

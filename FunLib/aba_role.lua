@@ -2258,6 +2258,7 @@ function X.IsABAHero()
 		["npc_dota_hero_shadow_demon"] = true,
 		["npc_dota_hero_shredder"] = true,
 		["npc_dota_hero_snapfire"] = true,
+		["npc_dota_hero_spectre"] = true,
 		["npc_dota_hero_storm_spirit"] = true,
 		["npc_dota_hero_terrorblade"] = true,
 		["npc_dota_hero_tiny"] = true,
