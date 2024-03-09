@@ -1889,7 +1889,7 @@ Site.ConsiderIsTimeToFarm["npc_dota_hero_shredder"] = function()
 	local bot = GetBot()
 	local networth = bot:GetNetWorth()
 
-	if networth < 27000 then
+	if networth < 30000 then
 		return true
 	end
 
@@ -1900,7 +1900,7 @@ Site.ConsiderIsTimeToFarm["npc_dota_hero_mars"] = function()
 	local bot = GetBot()
 	local networth = bot:GetNetWorth()
 
-	if networth < 20000 then
+	if networth < 30000 then
 		return true
 	end
 
@@ -1911,7 +1911,7 @@ Site.ConsiderIsTimeToFarm["npc_dota_hero_storm_spirit"] = function()
 	local bot = GetBot()
 	local networth = bot:GetNetWorth()
 
-	if networth < 25000 then
+	if networth < 30000 then
 		return true
 	end
 
@@ -1936,9 +1936,8 @@ end
 Site.ConsiderIsTimeToFarm["npc_dota_hero_alchemist"] = function()
 	local bot = GetBot()
 	local networth = bot:GetNetWorth()
-	local lastHits = bot:GetLastHits()
 
-	if lastHits < 1000 then
+	if networth < 30000 then
 		return true
 	end
 
@@ -1948,9 +1947,8 @@ end
 Site.ConsiderIsTimeToFarm["npc_dota_hero_terrorblade"] = function()
 	local bot = GetBot()
 	local networth = bot:GetNetWorth()
-	local lastHits = bot:GetLastHits()
 
-	if lastHits < 1000 then
+	if networth < 30000 then
 		return true
 	end
 
@@ -1960,9 +1958,8 @@ end
 Site.ConsiderIsTimeToFarm["npc_dota_hero_ursa"] = function()
 	local bot = GetBot()
 	local networth = bot:GetNetWorth()
-	local lastHits = bot:GetLastHits()
 
-	if lastHits < 1000 then
+	if networth < 30000 then
 		return true
 	end
 
@@ -1980,9 +1977,8 @@ end
 Site.ConsiderIsTimeToFarm["npc_dota_hero_tiny"] = function()
 	local bot = GetBot()
 	local networth = bot:GetNetWorth()
-	local lastHits = bot:GetLastHits()
 
-	if lastHits < 1000 then
+	if networth < 30000 then
 		return true
 	end
 
@@ -1992,9 +1988,8 @@ end
 Site.ConsiderIsTimeToFarm["npc_dota_hero_batrider"] = function()
 	local bot = GetBot()
 	local networth = bot:GetNetWorth()
-	local lastHits = bot:GetLastHits()
 
-	if lastHits < 1000 then
+	if networth < 30000 then
 		return true
 	end
 
@@ -2004,9 +1999,8 @@ end
 Site.ConsiderIsTimeToFarm["npc_dota_hero_beastmaster"] = function()
 	local bot = GetBot()
 	local networth = bot:GetNetWorth()
-	local lastHits = bot:GetLastHits()
 
-	if lastHits < 1000 then
+	if networth < 30000 then
 		return true
 	end
 
@@ -2016,9 +2010,8 @@ end
 Site.ConsiderIsTimeToFarm["npc_dota_hero_brewmaster"] = function()
 	local bot = GetBot()
 	local networth = bot:GetNetWorth()
-	local lastHits = bot:GetLastHits()
 
-	if lastHits < 1000 then
+	if networth < 30000 then
 		return true
 	end
 
@@ -2028,9 +2021,8 @@ end
 Site.ConsiderIsTimeToFarm["npc_dota_hero_broodmother"] = function()
 	local bot = GetBot()
 	local networth = bot:GetNetWorth()
-	local lastHits = bot:GetLastHits()
 
-	if lastHits < 1000 then
+	if networth < 30000 then
 		return true
 	end
 
@@ -2040,9 +2032,8 @@ end
 Site.ConsiderIsTimeToFarm["npc_dota_hero_centaur"] = function()
 	local bot = GetBot()
 	local networth = bot:GetNetWorth()
-	local lastHits = bot:GetLastHits()
 
-	if lastHits < 1000 then
+	if networth < 30000 then
 		return true
 	end
 
@@ -2052,9 +2043,8 @@ end
 Site.ConsiderIsTimeToFarm["npc_dota_hero_clinkz"] = function()
 	local bot = GetBot()
 	local networth = bot:GetNetWorth()
-	local lastHits = bot:GetLastHits()
 
-	if lastHits < 1000 then
+	if networth < 30000 then
 		return true
 	end
 
@@ -2064,9 +2054,8 @@ end
 Site.ConsiderIsTimeToFarm["npc_dota_hero_dark_seer"] = function()
 	local bot = GetBot()
 	local networth = bot:GetNetWorth()
-	local lastHits = bot:GetLastHits()
 
-	if lastHits < 1000 then
+	if networth < 30000 then
 		return true
 	end
 
@@ -2076,9 +2065,8 @@ end
 Site.ConsiderIsTimeToFarm["npc_dota_hero_dawnbreaker"] = function()
 	local bot = GetBot()
 	local networth = bot:GetNetWorth()
-	local lastHits = bot:GetLastHits()
 
-	if lastHits < 1000 then
+	if networth < 30000 then
 		return true
 	end
 
@@ -2088,9 +2076,8 @@ end
 Site.ConsiderIsTimeToFarm["npc_dota_hero_doom_bringer"] = function()
 	local bot = GetBot()
 	local networth = bot:GetNetWorth()
-	local lastHits = bot:GetLastHits()
 
-	if lastHits < 1000 then
+	if networth < 30000 then
 		return true
 	end
 
@@ -2100,9 +2087,8 @@ end
 Site.ConsiderIsTimeToFarm["npc_dota_hero_enigma"] = function()
 	local bot = GetBot()
 	local networth = bot:GetNetWorth()
-	local lastHits = bot:GetLastHits()
 
-	if lastHits < 1000 then
+	if networth < 30000 then
 		return true
 	end
 
@@ -2112,9 +2098,8 @@ end
 Site.ConsiderIsTimeToFarm["npc_dota_hero_gyrocopter"] = function()
 	local bot = GetBot()
 	local networth = bot:GetNetWorth()
-	local lastHits = bot:GetLastHits()
 
-	if lastHits < 1000 then
+	if networth < 30000 then
 		return true
 	end
 
@@ -2124,9 +2109,8 @@ end
 Site.ConsiderIsTimeToFarm["npc_dota_hero_invoker"] = function()
 	local bot = GetBot()
 	local networth = bot:GetNetWorth()
-	local lastHits = bot:GetLastHits()
 
-	if lastHits < 1000 then
+	if networth < 30000 then
 		return true
 	end
 
@@ -2136,9 +2120,8 @@ end
 Site.ConsiderIsTimeToFarm["npc_dota_hero_keeper_of_the_light"] = function()
 	local bot = GetBot()
 	local networth = bot:GetNetWorth()
-	local lastHits = bot:GetLastHits()
 
-	if lastHits < 1000 then
+	if networth < 30000 then
 		return true
 	end
 
@@ -2148,9 +2131,8 @@ end
 Site.ConsiderIsTimeToFarm["npc_dota_hero_leshrac"] = function()
 	local bot = GetBot()
 	local networth = bot:GetNetWorth()
-	local lastHits = bot:GetLastHits()
 
-	if lastHits < 1000 then
+	if networth < 30000 then
 		return true
 	end
 
@@ -2160,9 +2142,8 @@ end
 Site.ConsiderIsTimeToFarm["npc_dota_hero_life_stealer"] = function()
 	local bot = GetBot()
 	local networth = bot:GetNetWorth()
-	local lastHits = bot:GetLastHits()
 
-	if lastHits < 1000 then
+	if networth < 30000 then
 		return true
 	end
 
@@ -2172,9 +2153,8 @@ end
 Site.ConsiderIsTimeToFarm["npc_dota_hero_lycan"] = function()
 	local bot = GetBot()
 	local networth = bot:GetNetWorth()
-	local lastHits = bot:GetLastHits()
 
-	if lastHits < 1000 then
+	if networth < 30000 then
 		return true
 	end
 
@@ -2184,9 +2164,8 @@ end
 Site.ConsiderIsTimeToFarm["npc_dota_hero_magnataur"] = function()
 	local bot = GetBot()
 	local networth = bot:GetNetWorth()
-	local lastHits = bot:GetLastHits()
 
-	if lastHits < 1000 then
+	if networth < 30000 then
 		return true
 	end
 
@@ -2196,9 +2175,8 @@ end
 Site.ConsiderIsTimeToFarm["npc_dota_hero_marci"] = function()
 	local bot = GetBot()
 	local networth = bot:GetNetWorth()
-	local lastHits = bot:GetLastHits()
 
-	if lastHits < 1000 then
+	if networth < 30000 then
 		return true
 	end
 
@@ -2208,9 +2186,8 @@ end
 Site.ConsiderIsTimeToFarm["npc_dota_hero_meepo"] = function()
 	local bot = GetBot()
 	local networth = bot:GetNetWorth()
-	local lastHits = bot:GetLastHits()
 
-	if lastHits < 1000 then
+	if networth < 30000 then
 		return true
 	end
 
@@ -2220,9 +2197,8 @@ end
 Site.ConsiderIsTimeToFarm["npc_dota_hero_monkey_king"] = function()
 	local bot = GetBot()
 	local networth = bot:GetNetWorth()
-	local lastHits = bot:GetLastHits()
 
-	if lastHits < 1000 then
+	if networth < 30000 then
 		return true
 	end
 
@@ -2232,9 +2208,8 @@ end
 Site.ConsiderIsTimeToFarm["npc_dota_hero_muerta"] = function()
 	local bot = GetBot()
 	local networth = bot:GetNetWorth()
-	local lastHits = bot:GetLastHits()
 
-	if lastHits < 1000 then
+	if networth < 30000 then
 		return true
 	end
 
@@ -2244,9 +2219,8 @@ end
 Site.ConsiderIsTimeToFarm["npc_dota_hero_furion"] = function()
 	local bot = GetBot()
 	local networth = bot:GetNetWorth()
-	local lastHits = bot:GetLastHits()
 
-	if lastHits < 1000 then
+	if networth < 30000 then
 		return true
 	end
 
@@ -2256,9 +2230,8 @@ end
 Site.ConsiderIsTimeToFarm["npc_dota_hero_night_stalker"] = function()
 	local bot = GetBot()
 	local networth = bot:GetNetWorth()
-	local lastHits = bot:GetLastHits()
 
-	if lastHits < 1000 then
+	if networth < 30000 then
 		return true
 	end
 
@@ -2268,9 +2241,8 @@ end
 Site.ConsiderIsTimeToFarm["npc_dota_hero_obsidian_destroyer"] = function()
 	local bot = GetBot()
 	local networth = bot:GetNetWorth()
-	local lastHits = bot:GetLastHits()
 
-	if lastHits < 1000 then
+	if networth < 30000 then
 		return true
 	end
 
@@ -2280,9 +2252,8 @@ end
 Site.ConsiderIsTimeToFarm["npc_dota_hero_pangolier"] = function()
 	local bot = GetBot()
 	local networth = bot:GetNetWorth()
-	local lastHits = bot:GetLastHits()
 
-	if lastHits < 1000 then
+	if networth < 30000 then
 		return true
 	end
 
@@ -2292,9 +2263,8 @@ end
 Site.ConsiderIsTimeToFarm["npc_dota_hero_puck"] = function()
 	local bot = GetBot()
 	local networth = bot:GetNetWorth()
-	local lastHits = bot:GetLastHits()
 
-	if lastHits < 1000 then
+	if networth < 30000 then
 		return true
 	end
 
@@ -2304,9 +2274,8 @@ end
 Site.ConsiderIsTimeToFarm["npc_dota_hero_pudge"] = function()
 	local bot = GetBot()
 	local networth = bot:GetNetWorth()
-	local lastHits = bot:GetLastHits()
 
-	if lastHits < 1000 then
+	if networth < 30000 then
 		return true
 	end
 
@@ -2316,9 +2285,8 @@ end
 Site.ConsiderIsTimeToFarm["npc_dota_hero_primal_beast"] = function()
 	local bot = GetBot()
 	local networth = bot:GetNetWorth()
-	local lastHits = bot:GetLastHits()
 
-	if lastHits < 1000 then
+	if networth < 30000 then
 		return true
 	end
 
@@ -2328,9 +2296,8 @@ end
 Site.ConsiderIsTimeToFarm["npc_dota_hero_snapfire"] = function()
 	local bot = GetBot()
 	local networth = bot:GetNetWorth()
-	local lastHits = bot:GetLastHits()
 
-	if lastHits < 1000 then
+	if networth < 30000 then
 		return true
 	end
 
@@ -2340,9 +2307,8 @@ end
 Site.ConsiderIsTimeToFarm["npc_dota_hero_spectre"] = function()
 	local bot = GetBot()
 	local networth = bot:GetNetWorth()
-	local lastHits = bot:GetLastHits()
 
-	if lastHits < 1000 then
+	if networth < 30000 then
 		return true
 	end
 

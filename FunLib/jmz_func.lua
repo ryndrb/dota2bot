@@ -4173,6 +4173,18 @@ function J.DoesSomeoneHaveModifier(nUnitList, modifierName)
 	return false
 end
 
+function J.IsHumanPlayerInTeam()
+	for _, member in pairs(GetTeamPlayers(GetTeam()))
+	do
+		if not IsPlayerBot(member)
+		then
+			return true
+		end
+	end
+
+	return false
+end
+
 function J.ConsolePrintActiveMode(bot)
 	local mode = bot:GetActiveMode()
 

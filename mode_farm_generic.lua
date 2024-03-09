@@ -300,11 +300,12 @@ function GetDesire()
 	end
 	
 	if GetGameMode() ~= GAMEMODE_MO 
-	-- and ( J.Site.IsTimeToFarm(bot) or pushTime > DotaTime() - 8.0 )
-	and J.Site.IsTimeToFarm(bot)
-	-- and ( not X.IsHumanPlayerInTeam() or enemyKills > allyKills + 16 ) 
+	and (J.Site.IsTimeToFarm(bot) or pushTime > DotaTime() - 8.0)
+	-- and J.Site.IsTimeToFarm(bot)
+	-- and (not J.IsHumanPlayerInTeam() or enemyKills > allyKills + 16)
 	-- and ( bot:GetNextItemPurchaseValue() > 0 or not bot:HasModifier("modifier_item_moon_shard_consumed") )
 	-- and ( DotaTime() > 7 * 60 or bot:GetLevel() >= 8 or ( bot:GetAttackRange() < 220 and bot:GetLevel() >= 6 ) )	   
+	and not J.IsInLaningPhase()
 	then
 		if J.GetDistanceFromEnemyFountain(bot) > 4000 
 		then
@@ -685,19 +686,6 @@ function Think()
 	bot:Action_MoveToLocation( ( RB + DB )/2 );
 	return;
 end
-
-
-function X.IsHumanPlayerInTeam()
-
-	local numPlayer =  GetTeamPlayers(GetTeam());
-	if not IsPlayerBot(numPlayer[1]) 
-	then
-		return true;
-	end
-	
-	return false;
-end
-
 
 function X.IsThereT3Detroyed()
 	
