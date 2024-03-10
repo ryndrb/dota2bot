@@ -263,6 +263,7 @@ local sPos3List = {
 	"npc_dota_hero_shredder",
 	"npc_dota_hero_skeleton_king",
 	"npc_dota_hero_slardar",
+	"npc_dota_hero_spirit_breaker",
 	"npc_dota_hero_tidehunter",
 	"npc_dota_hero_viper",
 }

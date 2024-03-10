@@ -4342,6 +4342,11 @@ X.ConsiderItemDesire["item_tpscroll"] = function( hItem )
 		then return BOT_ACTION_DESIRE_NONE end
 	end
 
+	if bot:HasModifier('modifier_spirit_breaker_charge_of_darkness')
+	then
+		return BOT_ACTION_DESIRE_NONE
+	end
+
 	local nNearbyEnemyTowers = bot:GetNearbyTowers( 888, true )
 	if #nNearbyEnemyTowers > 0 then return BOT_ACTION_DESIRE_NONE end
 

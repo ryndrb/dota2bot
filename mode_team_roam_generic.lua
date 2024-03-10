@@ -78,20 +78,9 @@ function GetDesire()
 		return nDesire
 	end
 
-	if IsDoingTormentor()
-	then
-		return BOT_ACTION_DESIRE_NONE
-	end
-
 	if not bot:IsAlive() or bot:GetCurrentActionType() == BOT_ACTION_TYPE_DELAY then
 		return BOT_MODE_DESIRE_NONE
 	end
-
-    local nMode = bot:GetActiveMode()
-	if (nMode == BOT_MODE_DEFEND_TOWER_TOP or nMode == BOT_MODE_DEFEND_TOWER_MID or nMode == BOT_MODE_DEFEND_TOWER_BOT)
-    then
-        return BOT_ACTION_DESIRE_NONE
-    end
 
 	ShouldAttackSpecialUnit = CanAttackSpecialUnit()
 	if ShouldAttackSpecialUnit
@@ -138,6 +127,13 @@ function GetDesire()
 		return BOT_ACTION_DESIRE_ABSOLUTE
 	else
 		ShouldMoveMortimerKisses = false
+	end
+
+	-- Spirit Breaker
+	if  bot:GetUnitName() == "npc_dota_hero_spirit_breaker"
+	and bot:HasModifier("modifier_spirit_breaker_charge_of_darkness")
+	then
+		return BOT_MODE_DESIRE_ABSOLUTE
 	end
 
 	-- Pickup Neutral Item Tokens
@@ -331,18 +327,22 @@ end
 
 
 function Think()
+	if J.CanNotUseAction(bot) then return end
 
-	if ( GetGameMode() == GAMEMODE_1V1MID and bot:GetAssignedLane() ~= LANE_MID )
-		or beTechies 
+	if bot:HasModifier('modifier_spirit_breaker_charge_of_darkness')
 	then
-		if bot:GetAnimActivity() ~= ACTIVITY_IDLE
-		then 
-			bot:Action_ClearActions(true) 
+		bot:Action_ClearActions(false)
+		local nInRangeEnemy = bot:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
+
+		if  bot.chargeRetreat
+		and nInRangeEnemy ~= nil and #nInRangeEnemy == 0
+		then
+			bot:Action_MoveToLocation(bot:GetLocation() + RandomVector(150))
+			bot.chargeRetreat = false
 		end
+
 		return
 	end
-
-	if J.CanNotUseAction(bot) then return end
 
 	if bot:GetUnitName() == 'npc_dota_hero_batrider'
 	then
@@ -1793,6 +1793,7 @@ function X.IsSpecialCore(bot)
 			["npc_dota_hero_snapfire"] = true,
 			["npc_dota_hero_sniper"] = true,
 			["npc_dota_hero_spectre"] = true,
+			["npc_dota_hero_spirit_breaker"] = true,
 			["npc_dota_hero_storm_spirit"] = true,
 			["npc_dota_hero_sven"] = true,
 			["npc_dota_hero_templar_assassin"] = true,

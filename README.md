@@ -90,6 +90,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
         - [4,5] Shadow Demon
         - [2] Snapfire
         - [1] Spectre
+        - [3] Spirit Breaker
         - [2] Storm Spirit
         - [1] Terrorblade
         - [3] Timbersaw
@@ -245,6 +246,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
             | Snapfire              | -       | &cross;
             | Sniper                | -       | -
             | Spectre               | -       | &check;
+            | Spirit Breaker        | &check; | -
             | Storm Sprit           | -       | -
             | Sven                  | -       | &cross;
             | Templar Assasin       | -       | &cross;
