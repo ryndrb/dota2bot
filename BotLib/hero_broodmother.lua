@@ -138,11 +138,7 @@ local SilkenBolaDesire, SilkenBolaTarget
 local SpawnSpiderlingsDesire, SpirderlingsTarget
 
 function X.SkillsComplement()
-	if J.CanNotUseAbility(bot)
-    or bot:IsInvisible()
-    then
-        return
-    end
+	if J.CanNotUseAbility(bot) then return end
 
     SpawnSpiderlingsDesire, SpirderlingsTarget = X.ConsiderSpawnSpiderlings()
     if SpawnSpiderlingsDesire > 0
@@ -182,23 +178,70 @@ function X.ConsiderInsatiableHunger()
     local nAttackRange = bot:GetAttackRange()
     local botTarget = J.GetProperTarget(bot)
 
-    if J.IsGoingOnSomeone(bot)
-    then
-		if J.IsValidTarget(botTarget)
-        and J.IsInRange(bot, botTarget, 1.5 * nAttackRange)
-		then
+    if J.IsInTeamFight(bot, 1200)
+	then
+        local nInRangeEnemy = J.GetEnemiesNearLoc(bot:GetLocation(), 1200)
+
+        if  nInRangeEnemy ~= nil and #nInRangeEnemy >= 2
+        and J.GetHP(bot) < 0.75
+        and J.IsAttacking(bot)
+        then
 			return BOT_ACTION_DESIRE_HIGH
+        end
+	end
+
+    if J.IsGoingOnSomeone(bot)
+	then
+		if  J.IsValidTarget(botTarget)
+        and J.IsInRange(bot, botTarget, nAttackRange + 150)
+        and J.IsAttacking(bot)
+        and not J.IsSuspiciousIllusion(botTarget)
+        and not J.IsDisabled(botTarget)
+        and not botTarget:HasModifier('modifier_abaddon_borrowed_time')
+        and not botTarget:HasModifier('modifier_dazzle_shallow_grave')
+        and not botTarget:HasModifier('modifier_faceless_void_chronosphere_freeze')
+        and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
+        and not botTarget:HasModifier('modifier_oracle_false_promise_timer')
+        and not botTarget:HasModifier('modifier_templar_assassin_refraction_absorb')
+		then
+            local nInRangeAlly = botTarget:GetNearbyHeroes(1200, true, BOT_MODE_NONE)
+            local nInRangeEnemy = botTarget:GetNearbyHeroes(1200, false, BOT_MODE_NONE)
+
+            if  nInRangeAlly ~= nil and nInRangeEnemy ~= nil
+            and #nInRangeAlly >= #nInRangeEnemy
+            then
+                return BOT_ACTION_DESIRE_HIGH
+            end
 		end
-    end
+	end
 
     if J.IsFarming(bot)
     then
-        local botAttackTarget = bot:GetAttackTarget()
-        local nNeutralCreeps = bot:GetNearbyNeutralCreeps(700)
+        local nCreeps = bot:GetNearbyCreeps(700, true)
 
-        if botAttackTarget ~= nil
-        and nNeutralCreeps ~= nil and #nNeutralCreeps > 0
+        if  nCreeps ~= nil and #nCreeps > 0
         and J.GetHP(bot) < 0.4
+        and J.IsAttacking(bot)
+        then
+            return BOT_ACTION_DESIRE_HIGH
+        end
+    end
+
+    if J.IsDoingRoshan(bot)
+	then
+		if  J.IsRoshan(botTarget)
+        and J.IsInRange(bot, botTarget, 500)
+        and J.IsAttacking(bot)
+		then
+			return BOT_ACTION_DESIRE_HIGH
+		end
+	end
+
+    if J.IsDoingTormentor(bot)
+    then
+        if  J.IsTormentor(botTarget)
+        and J.IsInRange(bot, botTarget, 500)
+        and J.IsAttacking(bot)
         then
             return BOT_ACTION_DESIRE_HIGH
         end
@@ -209,82 +252,131 @@ end
 
 function X.ConsiderSpinWeb()
     if not SpinWeb:IsFullyCastable()
-    or bot:IsCastingAbility()
-    or SpinWeb:IsInAbilityPhase()
     then
         return BOT_ACTION_DESIRE_NONE, 0
     end
 
+	local nCastRange = J.GetProperCastRange(false, bot, SpinWeb:GetCastRange())
     local nRadius = SpinWeb:GetSpecialValueInt('radius')
-	local nCastRange = SpinWeb:GetCastRange()
-	local nCastPoint = SpinWeb:GetCastPoint()
-    local botTarget = J.GetProperTarget(bot)
-    local nEnemyTowers = bot:GetNearbyTowers(nRadius, false)
     local nEnemyLaneCreeps = bot:GetNearbyLaneCreeps(nCastRange, true)
+    local nEnemyTowers = bot:GetNearbyTowers(nCastRange, true)
+    local botTarget = J.GetProperTarget(bot)
 
-    if J.IsStuck(bot)
+    if  J.IsStuck(bot)
+    and not DoesLocationHaveWeb(bot:GetLocation(), nRadius)
 	then
 		return BOT_ACTION_DESIRE_HIGH, bot:GetLocation()
 	end
 
-    if J.IsLaning(bot)
-    then
-		if nEnemyLaneCreeps ~= nil and #nEnemyLaneCreeps >= 4
-        and not DoesLocationHaveWeb(bot:GetLocation(), nRadius)
+    if J.IsInTeamFight(bot, 1200)
+	then
+        local nLocationAoE = bot:FindAoELocation(true, true, bot:GetLocation(), nCastRange, nRadius, 0, 0)
+        local nInRangeEnemy = J.GetEnemiesNearLoc(nLocationAoE.targetloc, nRadius / 1.7)
+
+        if  nInRangeEnemy ~= nil and #nInRangeEnemy >= 2
+        and not DoesLocationHaveWeb(botTarget:GetLocation(), nRadius)
+        and not J.IsLocationInChrono(botTarget:GetLocation())
+        and not J.IsLocationInBlackHole(botTarget:GetLocation())
         then
-			return BOT_MODE_DESIRE_HIGH, bot:GetLocation()
-		end
+			return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc
+        end
 	end
 
     if J.IsGoingOnSomeone(bot)
 	then
 		if  J.IsValidTarget(botTarget)
         and J.IsInRange(bot, botTarget, nCastRange)
-        and not DoesLocationHaveWeb(botTarget:GetExtrapolatedLocation(nCastPoint), nRadius)
+        and not J.IsSuspiciousIllusion(botTarget)
+        and not J.IsDisabled(botTarget)
+        and not botTarget:HasModifier('modifier_abaddon_borrowed_time')
+        and not botTarget:HasModifier('modifier_dazzle_shallow_grave')
+        and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
+        and not botTarget:HasModifier('modifier_oracle_false_promise_timer')
+        and not DoesLocationHaveWeb(botTarget:GetLocation(), nRadius)
+        and not J.IsLocationInChrono(botTarget:GetLocation())
+        and not J.IsLocationInBlackHole(botTarget:GetLocation())
 		then
-			return BOT_ACTION_DESIRE_MODERATE, botTarget:GetExtrapolatedLocation(nCastPoint)
+            local nInRangeAlly = botTarget:GetNearbyHeroes(1200, true, BOT_MODE_NONE)
+            local nInRangeEnemy = botTarget:GetNearbyHeroes(1200, false, BOT_MODE_NONE)
+
+            if  nInRangeAlly ~= nil and nInRangeEnemy ~= nil
+            and #nInRangeAlly >= #nInRangeEnemy
+            then
+                return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation()
+            end
 		end
 	end
 
     if J.IsRetreating(bot)
 	then
-		local nEnemyHeroes = bot:GetNearbyHeroes(nCastRange, true, BOT_MODE_NONE)
+        local nInRangeAlly = bot:GetNearbyHeroes(1200, false, BOT_MODE_NONE)
+        local nInRangeEnemy = bot:GetNearbyHeroes(1200, true, BOT_MODE_NONE)
 
-		for _, enemyHero in pairs(nEnemyHeroes)
-		do
-			if bot:WasRecentlyDamagedByHero(enemyHero, 2)
-            and not DoesLocationHaveWeb(GetTowardsFountainLocation(bot:GetLocation(), nCastRange), nRadius)
-			then
-				return BOT_ACTION_DESIRE_HIGH, GetTowardsFountainLocation(bot:GetLocation(), nCastRange)
-			end
-		end
-	end
+        if  nInRangeAlly ~= nil and nInRangeEnemy ~= nil
+        and J.IsValidHero(nInRangeEnemy[1])
+        and J.IsInRange(bot, nInRangeEnemy[1], 600)
+        and J.IsChasingTarget(nInRangeEnemy[1], bot)
+        and not J.IsSuspiciousIllusion(nInRangeEnemy[1])
+        and not J.IsDisabled(nInRangeEnemy[1])
+        and not DoesLocationHaveWeb(bot:GetLocation(), nRadius)
+        then
+            local nTargetInRangeAlly = nInRangeEnemy[1]:GetNearbyHeroes(1200, false, BOT_MODE_NONE)
+
+            if  nTargetInRangeAlly ~= nil
+            and ((#nTargetInRangeAlly > #nInRangeAlly)
+                or (bot:WasRecentlyDamagedByAnyHero(1.5)))
+            then
+		        return BOT_ACTION_DESIRE_HIGH, bot:GetLocation()
+            end
+        end
+    end
 
     if J.IsPushing(bot)
 	then
-		local nLocationAoE = bot:FindAoELocation( true, false, bot:GetLocation(), nCastRange, nRadius / 2, 0, 0)
-
-		if nLocationAoE.count >= 3 and #nEnemyLaneCreeps >= 3
-        and not DoesLocationHaveWeb(nLocationAoE.targetloc, nRadius)
+		if  nEnemyLaneCreeps ~= nil and #nEnemyLaneCreeps >= 4
+        and not DoesLocationHaveWeb(J.GetCenterOfUnits(nEnemyLaneCreeps), nRadius)
         then
-			return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc
+			return BOT_ACTION_DESIRE_HIGH, J.GetCenterOfUnits(nEnemyLaneCreeps)
 		end
 
-		if nEnemyTowers[1] ~= nil and J.CanBeAttacked(nEnemyTowers[1])
+		if  nEnemyTowers ~= nil and #nEnemyTowers >= 1
+        and J.CanBeAttacked(nEnemyTowers[1])
         and not DoesLocationHaveWeb(nEnemyTowers[1]:GetLocation(), nRadius)
 		then
 			return BOT_ACTION_DESIRE_HIGH, nEnemyTowers[1]:GetLocation()
 		end
 	end
 
-	if J.IsDefending(bot)
+    if J.IsLaning(bot)
+    then
+		if  nEnemyLaneCreeps ~= nil and #nEnemyLaneCreeps >= 4
+        and not DoesLocationHaveWeb(J.GetCenterOfUnits(nEnemyLaneCreeps), nRadius)
+        then
+			return BOT_MODE_DESIRE_HIGH, J.GetCenterOfUnits(nEnemyLaneCreeps)
+		end
+	end
+
+    if J.IsDoingRoshan(bot)
 	then
-		if nEnemyTowers[1] ~= nil and J.CanBeAttacked(nEnemyTowers[1])
-        and not DoesLocationHaveWeb(nEnemyTowers[1]:GetLocation(), nRadius)
+		if  J.IsRoshan(botTarget)
+        and J.IsInRange(bot, botTarget, 500)
+        and J.IsAttacking(bot)
+        and not DoesLocationHaveWeb(botTarget:GetLocation(), nRadius)
 		then
-			return BOT_ACTION_DESIRE_HIGH, nEnemyTowers[1]:GetLocation()
+			return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation()
 		end
 	end
+
+    if J.IsDoingTormentor(bot)
+    then
+        if  J.IsTormentor(botTarget)
+        and J.IsInRange(bot, botTarget, 500)
+        and J.IsAttacking(bot)
+        and not DoesLocationHaveWeb(botTarget:GetLocation(), nRadius)
+        then
+            return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation()
+        end
+    end
 
     return BOT_ACTION_DESIRE_NONE, 0
 end
@@ -298,40 +390,138 @@ function X.ConsiderSilkenBola()
 	local nCastRange = SilkenBola:GetCastRange()
     local nDamage = SilkenBola:GetSpecialValueInt('impact_damage')
     local botTarget = J.GetProperTarget(bot)
-    local nEnemyHeroes = bot:GetNearbyHeroes(nCastRange, true, BOT_MODE_NONE)
 
-    if J.IsValidTarget(botTarget)
-    and J.CanCastOnNonMagicImmune(botTarget)
-    and J.IsInRange(bot, botTarget, nCastRange)
-    and J.CanKillTarget(botTarget, nDamage, DAMAGE_TYPE_MAGICAL)
-    then
-        return BOT_ACTION_DESIRE_ABSOLUTE, botTarget
+    local nEnemyHeroes = bot:GetNearbyHeroes(nCastRange, true, BOT_MODE_NONE)
+    for _, enemyHero in pairs(nEnemyHeroes)
+    do
+        if  J.IsValidHero(enemyHero)
+        and J.CanCastOnNonMagicImmune(enemyHero)
+        and J.CanKillTarget(enemyHero, nDamage, DAMAGE_TYPE_MAGICAL)
+        and not J.IsSuspiciousIllusion(enemyHero)
+        and not enemyHero:HasModifier('modifier_abaddon_borrowed_time')
+        and not enemyHero:HasModifier('modifier_dazzle_shallow_grave')
+        and not enemyHero:HasModifier('modifier_necrolyte_reapers_scythe')
+        and not enemyHero:HasModifier('modifier_oracle_false_promise_timer')
+        and not enemyHero:HasModifier('modifier_templar_assassin_refraction_absorb')
+        then
+            return BOT_ACTION_DESIRE_HIGH, enemyHero
+        end
     end
 
-	if J.IsGoingOnSomeone(bot)
+    if J.IsGoingOnSomeone(bot)
 	then
-		if J.IsValidTarget(botTarget)
-        and J.CanCastOnNonMagicImmune(botTarget)
+		if  J.IsValidTarget(botTarget)
         and J.IsInRange(bot, botTarget, nCastRange)
-		and not J.IsDisabled(botTarget)
+        and not J.IsSuspiciousIllusion(botTarget)
+        and not botTarget:HasModifier('modifier_abaddon_borrowed_time')
+        and not botTarget:HasModifier('modifier_dazzle_shallow_grave')
+        and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
+        and not botTarget:HasModifier('modifier_oracle_false_promise_timer')
+		then
+            local nInRangeAlly = botTarget:GetNearbyHeroes(1200, true, BOT_MODE_NONE)
+            local nInRangeEnemy = botTarget:GetNearbyHeroes(1200, false, BOT_MODE_NONE)
+
+            if  nInRangeAlly ~= nil and nInRangeEnemy ~= nil
+            and #nInRangeAlly >= #nInRangeEnemy
+            then
+                return BOT_ACTION_DESIRE_HIGH, botTarget
+            end
+		end
+	end
+
+    if J.IsRetreating(bot)
+	then
+        local nInRangeAlly = bot:GetNearbyHeroes(1200, false, BOT_MODE_NONE)
+        local nInRangeEnemy = bot:GetNearbyHeroes(1200, true, BOT_MODE_NONE)
+
+        if  nInRangeAlly ~= nil and nInRangeEnemy ~= nil
+        and J.IsValidHero(nInRangeEnemy[1])
+        and J.IsInRange(bot, nInRangeEnemy[1], nCastRange)
+        and J.IsChasingTarget(nInRangeEnemy[1], bot)
+        and not J.IsSuspiciousIllusion(nInRangeEnemy[1])
+        and not nInRangeEnemy[1]:HasModifier('modifier_necrolyte_reapers_scythe')
+        then
+            local nTargetInRangeAlly = nInRangeEnemy[1]:GetNearbyHeroes(1200, false, BOT_MODE_NONE)
+
+            if  nTargetInRangeAlly ~= nil
+            and ((#nTargetInRangeAlly > #nInRangeAlly)
+                or (bot:WasRecentlyDamagedByAnyHero(1.5)))
+            then
+		        return BOT_ACTION_DESIRE_HIGH, nInRangeEnemy[1]
+            end
+        end
+    end
+
+    if J.IsLaning(bot)
+	then
+		local nEnemyLaneCreeps = bot:GetNearbyLaneCreeps(nCastRange, true)
+
+		for _, creep in pairs(nEnemyLaneCreeps)
+		do
+			if  J.IsValid(creep)
+			and (J.IsKeyWordUnit('ranged', creep) or J.IsKeyWordUnit('siege', creep) or J.IsKeyWordUnit('flagbearer', creep))
+			and creep:GetHealth() <= nDamage
+			then
+				local nCreepInRangeHero = creep:GetNearbyHeroes(500, false, BOT_MODE_NONE)
+
+				if  nCreepInRangeHero ~= nil and #nCreepInRangeHero >= 1
+                and J.GetMP(bot) > 0.49
+				then
+					return BOT_ACTION_DESIRE_HIGH, creep
+				end
+			end
+		end
+	end
+
+    if J.IsDoingRoshan(bot)
+	then
+		if  J.IsRoshan(botTarget)
+        and J.IsInRange(bot, botTarget, 500)
+        and J.IsAttacking(bot)
 		then
 			return BOT_ACTION_DESIRE_HIGH, botTarget
 		end
 	end
 
-	if J.IsRetreating(bot)
-	then
-		for _, enemyHero in pairs(nEnemyHeroes)
-		do
-			if bot:WasRecentlyDamagedByHero(enemyHero, 2.0)
-            and J.CanCastOnNonMagicImmune(enemyHero)
-            and J.IsInRange(bot, enemyHero, nCastRange)
-            and not J.IsDisabled(enemyHero)
-			then
-				return BOT_ACTION_DESIRE_HIGH, enemyHero
-			end
-		end
-	end
+    if J.IsDoingTormentor(bot)
+    then
+        if  J.IsTormentor(botTarget)
+        and J.IsInRange(bot, botTarget, 500)
+        and J.IsAttacking(bot)
+        then
+            return BOT_ACTION_DESIRE_HIGH, botTarget
+        end
+    end
+
+    local nAllyHeroes = bot:GetNearbyHeroes(nCastRange, false, BOT_MODE_NONE)
+    for _, allyHero in pairs(nAllyHeroes)
+    do
+        local nAllyInRangeEnemy = allyHero:GetNearbyHeroes(1200, true, BOT_MODE_NONE)
+
+        if  J.IsValidHero(allyHero)
+        and J.IsRetreating(allyHero)
+        and J.GetMP(bot) > 0.45
+        and allyHero:WasRecentlyDamagedByAnyHero(1.5)
+        and not allyHero:IsIllusion()
+        then
+            if  nAllyInRangeEnemy ~= nil and #nAllyInRangeEnemy >= 1
+            and J.IsValidHero(nAllyInRangeEnemy[1])
+            and J.CanCastOnNonMagicImmune(nAllyInRangeEnemy[1])
+            and J.CanCastOnTargetAdvanced(nAllyInRangeEnemy[1])
+            and J.IsInRange(bot, nAllyInRangeEnemy[1], nCastRange)
+            and J.IsChasingTarget(nAllyInRangeEnemy[1], allyHero)
+            and not J.IsDisabled(nAllyInRangeEnemy[1])
+            and not J.IsTaunted(nAllyInRangeEnemy[1])
+            and not J.IsSuspiciousIllusion(nAllyInRangeEnemy[1])
+            and not nAllyInRangeEnemy[1]:HasModifier('modifier_legion_commander_duel')
+            and not nAllyInRangeEnemy[1]:HasModifier('modifier_enigma_black_hole_pull')
+            and not nAllyInRangeEnemy[1]:HasModifier('modifier_faceless_void_chronosphere_freeze')
+            and not nAllyInRangeEnemy[1]:HasModifier('modifier_necrolyte_reapers_scythe')
+            then
+                return BOT_ACTION_DESIRE_HIGH, nAllyInRangeEnemy[1]
+            end
+        end
+    end
 
 	return BOT_ACTION_DESIRE_NONE, nil
 end
@@ -342,81 +532,54 @@ function X.ConsiderSpawnSpiderlings()
 		return BOT_ACTION_DESIRE_NONE, 0
 	end
 
-	local nCastRange = SpawnSpiderlings:GetCastRange()
-    local nMana = bot:GetMana() / bot:GetMaxMana()
+	local nCastRange = J.GetProperCastRange(false, bot, SpawnSpiderlings:GetCastRange())
 	local nDamage = SpawnSpiderlings:GetSpecialValueInt('damage')
-	local botTarget = J.GetProperTarget(bot)
 
-	if J.IsValidTarget(botTarget)
-    and J.CanCastOnNonMagicImmune(botTarget)
-    and J.IsInRange(bot, botTarget, nCastRange)
-    and J.CanKillTarget(botTarget, nDamage, DAMAGE_TYPE_MAGICAL)
-	then
-		return BOT_ACTION_DESIRE_ABSOLUTE, botTarget
-	end
+    local nEnemyHeroes = bot:GetNearbyHeroes(nCastRange, true, BOT_MODE_NONE)
+    for _, enemyHero in pairs(nEnemyHeroes)
+    do
+        if  J.IsValidHero(enemyHero)
+        and J.CanCastOnNonMagicImmune(enemyHero)
+        and J.CanKillTarget(enemyHero, nDamage, DAMAGE_TYPE_MAGICAL)
+        and not J.IsSuspiciousIllusion(enemyHero)
+        and not enemyHero:HasModifier('modifier_abaddon_borrowed_time')
+        and not enemyHero:HasModifier('modifier_dazzle_shallow_grave')
+        and not enemyHero:HasModifier('modifier_necrolyte_reapers_scythe')
+        and not enemyHero:HasModifier('modifier_oracle_false_promise_timer')
+        and not enemyHero:HasModifier('modifier_templar_assassin_refraction_absorb')
+        then
+            return BOT_ACTION_DESIRE_HIGH, enemyHero
+        end
+    end
 
-	if J.IsLaning(bot) or J.IsDefending(bot) or J.IsPushing(bot)
-	then
-		local nEnemyLaneCreeps = bot:GetNearbyLaneCreeps(nCastRange, true)
-		for _, creep in pairs(nEnemyLaneCreeps)
-		do
-			if J.CanKillTarget(creep, nDamage, DAMAGE_TYPE_MAGICAL)
-            and nMana > 0.5
-            then
-				return BOT_ACTION_DESIRE_HIGH, creep
-			end
-		end
-	end
-
-    if J.IsFarming(bot)
-	then
-		local nNeutralCreeps = bot:GetNearbyLaneCreeps(nCastRange, true)
-		for _, creep in pairs(nNeutralCreeps)
-		do
-			if J.CanKillTarget(creep, nDamage, DAMAGE_TYPE_MAGICAL)
-            and nMana > 0.5
-            then
-				return BOT_ACTION_DESIRE_HIGH, creep
-			end
-		end
-	end
+    local nCreeps = bot:GetNearbyLaneCreeps(nCastRange, true)
+    for _, creep in pairs(nCreeps)
+    do
+        if  J.IsValid(creep)
+        and J.CanBeAttacked(creep)
+        and J.CanKillTarget(creep, nDamage, DAMAGE_TYPE_MAGICAL)
+        and not J.IsRetreating(bot)
+        then
+            return BOT_ACTION_DESIRE_HIGH, creep
+        end
+    end
 
 	return BOT_ACTION_DESIRE_NONE, 0
 end
 
 -- Helper Funcs
-function DoesLocationHaveWeb(location, nRadius)
-	local unit = GetUnitList(UNIT_LIST_ALLIES)
-	local locSize = (1.5 * nRadius) + 150
-
-	for _, u in pairs (unit)
+function DoesLocationHaveWeb(loc, nRadius)
+	for _, u in pairs (GetUnitList(UNIT_LIST_ALLIES))
 	do
-		if u:GetUnitName() == 'npc_dota_broodmother_web'
-        and GetUnitToLocationDistance(u, location) <= locSize
+		if  J.IsValid(u)
+        and u:GetUnitName() == 'npc_dota_broodmother_web'
+        and GetUnitToLocationDistance(u, loc) < nRadius
 		then
 			return true
 		end
 	end
 
 	return false
-end
-
-function GetTowardsFountainLocation(unitLoc, distance)
-	local destination = {}
-
-	if GetTeam() == TEAM_RADIANT
-    then
-		destination[1] = unitLoc[1] - distance / math.sqrt(2)
-		destination[2] = unitLoc[2] - distance / math.sqrt(2)
-	end
-
-	if GetTeam() == TEAM_DIRE
-    then
-		destination[1] = unitLoc[1] + distance / math.sqrt(2)
-		destination[2] = unitLoc[2] + distance / math.sqrt(2)
-	end
-
-	return Vector(destination[1], destination[2])
 end
 
 return X
