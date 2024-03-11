@@ -139,6 +139,13 @@ end
 function X.SkillsComplement()
     if J.CanNotUseAbility(bot) then return end
 
+    if bot.useProphetTP
+    then
+        bot:Action_UseAbilityOnLocation(Teleportation, bot.ProphetTPLocation)
+        bot.useProphetTP = false
+        return
+    end
+
     SproutCallDesire, SproutCallTarget, SproutCallLocation = X.ConsiderSproutCall()
     if SproutCallDesire > 0
     then
@@ -153,6 +160,7 @@ function X.SkillsComplement()
     if TeleportationDesire > 0
     then
         bot:Action_UseAbilityOnLocation(Teleportation, TeleportationLocation)
+        bot.useProphetTP = false
         return
     end
 
