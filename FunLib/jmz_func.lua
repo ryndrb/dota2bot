@@ -28,8 +28,8 @@ local nEnemyTotalKill = 0
 local nEnemyAverageLevel = 1
 
 
-local RB = Vector( -7175, -6670, 385 )
-local DB = Vector( 7025, 6450, 385 )
+local RB = Vector( -6619, -6336, 384 )
+local DB = Vector( 6928, 6372, 392 )
 local fKeepManaPercent = 0.39
 
 

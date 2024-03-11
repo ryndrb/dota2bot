@@ -2159,7 +2159,8 @@ function TryPickupDroppedNeutralItemTokens()
 		end
 	end
 
-	if item ~= nil
+	if  item ~= nil
+	and J.GetLocationToLocationDistance(item.location, J.GetTeamFountain()) > 900
 	then
 		PickedItem = item
 		return BOT_ACTION_DESIRE_VERYHIGH
