@@ -6156,7 +6156,7 @@ X.ConsiderItemDesire["item_ogre_seal_totem"] = function(hItem)
 
 		if  J.IsValidTarget(botTarget)
 		and J.CanCastOnNonMagicImmune(botTarget)
-		and bot:IsFacingLocation(bot, botTarget, 5)
+		and bot:IsFacingLocation(botTarget:GetLocation(), 5)
 		and J.IsInRange(bot, botTarget, nFlopRadius * 2)
 		and not J.IsInRange(bot, botTarget, nFlopRadius - 75)
 		and not J.IsSuspiciousIllusion(botTarget)
