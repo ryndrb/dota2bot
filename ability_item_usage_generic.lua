@@ -1217,7 +1217,8 @@ X.ConsiderItemDesire["item_blink"] = function( hItem )
 		if  bot.shouldBlink
 		and (bot:GetUnitName() == 'npc_dota_hero_batrider'
 			or bot:GetUnitName() == 'npc_dota_hero_beastmaster'
-			or bot:GetUnitName() == 'npc_dota_hero_magnataur')
+			or bot:GetUnitName() == 'npc_dota_hero_magnataur'
+			or bot:GetUnitName() == 'npc_dota_hero_treant')
 		then
 			return BOT_ACTION_DESIRE_NONE
 		end
@@ -6396,8 +6397,8 @@ X.ConsiderItemDesire["item_psychic_headband"] = function(hItem)
 		and J.CanCastOnNonMagicImmune(nInRangeEnemy[1])
 		and J.IsRunning(nInRangeEnemy[1])
 		and nInRangeEnemy[1]:IsFacingLocation(bot:GetLocation(), 30)
-		and not J.IsSuspiciousIllusion(botTarget)
-		and not J.IsDisabled(botTarget)
+		and not J.IsSuspiciousIllusion(nInRangeEnemy[1])
+		and not J.IsDisabled(nInRangeEnemy[1])
 		then
 			return BOT_ACTION_DESIRE_HIGH, nInRangeEnemy[1], 'unit', nil
 		end
