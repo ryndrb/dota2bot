@@ -274,9 +274,9 @@ function X.ConsiderSpinWeb()
         local nInRangeEnemy = J.GetEnemiesNearLoc(nLocationAoE.targetloc, nRadius / 1.7)
 
         if  nInRangeEnemy ~= nil and #nInRangeEnemy >= 2
-        and not DoesLocationHaveWeb(botTarget:GetLocation(), nRadius)
-        and not J.IsLocationInChrono(botTarget:GetLocation())
-        and not J.IsLocationInBlackHole(botTarget:GetLocation())
+        and not DoesLocationHaveWeb(nLocationAoE.targetloc, nRadius)
+        and not J.IsLocationInChrono(nLocationAoE.targetloc)
+        and not J.IsLocationInBlackHole(nLocationAoE.targetloc)
         then
 			return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc
         end
