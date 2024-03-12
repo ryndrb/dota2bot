@@ -37,10 +37,10 @@ function GetDesire()
 
 		if  nInRangeAlly ~= nil and nInRangeEnemy ~= nil and nEnemyLaneCreeps ~= nil
 		and #nInRangeAlly == 0 and #nInRangeEnemy == 0 and #nEnemyLaneCreeps >= 1
-		and not J.IsPushing()
-		and not J.IsDefending()
-		and not J.IsDoingRoshan()
-		and not J.IsDoingTormentor()
+		and not J.IsPushing(bot)
+		and not J.IsDefending(bot)
+		and not J.IsDoingRoshan(bot)
+		and not J.IsDoingTormentor(bot)
 		then
 			return BOT_ACTION_DESIRE_MODERATE
 		end
