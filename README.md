@@ -95,12 +95,15 @@ To anyone who've found this or is using it, if you have any feedback in improvin
         - [1] Terrorblade
         - [3] Timbersaw
         - [1,2] Tiny
+        - [4,5] Treant
         - [1] Ursa
         - [2] Void Spirit
     - ***Later***
         - Lone Druid
         - Morphling
         - Rubick
+        - Techies
+        - Tinker
     - ***Changed***
         - [2,3] Death Prophet
         - [1,2] Lina
@@ -254,6 +257,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
             | Tidehunter            | &check; | -
             | Timbersaw             | &check; | &check;
             | Tiny                  | -       | &check;
+            | Treant                | -       | &check;
             | Ursa                  | -       | -
             | Viper                 | -       | &check;
             | Void Spirit           | -       | -
