@@ -4185,6 +4185,27 @@ function J.IsHumanPlayerInTeam()
 	return false
 end
 
+function J.GetCreepsAroundAncient(team, enemy)
+	local nCreepList = {}
+
+	local list = GetUnitList(UNIT_LIST_ALLIED_CREEPS)
+	if enemy
+	then
+		list = GetUnitList(UNIT_LIST_ENEMY_CREEPS)
+	end
+
+	for _, creep in pairs(list)
+	do
+		if  J.IsValid(creep)
+		and GetUnitToUnitDistance(creep, GetAncient(team)) < 1600
+		then
+			table.insert(nCreepList, creep)
+		end
+	end
+
+	return nCreepList
+end
+
 function J.ConsolePrintActiveMode(bot)
 	local mode = bot:GetActiveMode()
 

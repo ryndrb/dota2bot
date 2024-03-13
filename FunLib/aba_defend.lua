@@ -22,20 +22,16 @@ function Defend.GetDefendDesire(bot, lane)
         end
     end
 
-	if bot:GetHealth() / bot:GetMaxHealth() < 0.3
-	or (J.IsFarming(bot) and (mul[lane] < 1.5 or eFront < 0.9))
+	if J.GetHP(bot) < 0.3
 	then
 		return 0.25
 	end
 
 	if Defend.ShouldGoDefend(bot, lane)
 	then
-		local ancient = GetAncient(GetTeam())
 		local nDefendDesire = 0
-		local nEnemyLaneFrontLoc = GetLaneFrontLocation(GetOpposingTeam(), lane, 0)
-
-		if J.GetLocationToLocationDistance(nEnemyLaneFrontLoc, ancient:GetLocation()) < 1600
-		or eFront > 0.9
+		local nEnemyLaneCreeps = J.GetCreepsAroundAncient(GetTeam(), true)
+		if nEnemyLaneCreeps ~= nil and #nEnemyLaneCreeps >= 1
 		then
 			nDefendDesire = BOT_ACTION_DESIRE_HIGH * mul[lane]
 		else

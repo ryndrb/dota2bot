@@ -10,7 +10,7 @@ function Push.GetPushDesire(bot, lane)
         if  nInRangeEnemy ~= nil and #nInRangeEnemy == 0
         and nAllyLaneCreeps ~= nil and #nAllyLaneCreeps >= 2
         and bot:GetAssignedLane() == lane
-        and not (bot:WasRecentlyDamagedByTower(1.5) or bot:WasRecentlyDamagedByAnyHero(1.5))
+        and not (bot:WasRecentlyDamagedByTower(1) or bot:WasRecentlyDamagedByAnyHero(1))
         and not J.IsRetreating(bot)
         then
             local nEnemyTowers = bot:GetNearbyTowers(1200, true)
@@ -25,14 +25,14 @@ function Push.GetPushDesire(bot, lane)
         if bot:GetLevel() < 6 then return 0.1 end
     end
 
-    local maxDesire = 0.95
+    local maxDesire = 0.75
     local nMode = bot:GetActiveMode()
     local nModeDesire = bot:GetActiveModeDesire()
 
 	if  (nMode == BOT_MODE_DEFEND_TOWER_TOP or nMode == BOT_MODE_DEFEND_TOWER_MID or nMode == BOT_MODE_DEFEND_TOWER_BOT)
     and nModeDesire > 0.75
     then
-        maxDesire = 0.75
+        maxDesire = 0.5
     end
 
     local botTarget = bot:GetAttackTarget()
@@ -78,12 +78,13 @@ function Push.GetPushDesire(bot, lane)
     }
 
     local nEnemyHeroes = bot:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
-    local nAllyHeroes = bot:GetNearbyHeroes(1600, false, nNearByAlliesLanePush[lane])
+    -- local nAllyHeroes = bot:GetNearbyHeroes(1600, false, nNearByAlliesLanePush[lane])
+    local nAllyHeroes = bot:GetNearbyHeroes(1600, false, BOT_MODE_NONE)
 
-    if  (nEnemyHeroes ~= nil and nAllyHeroes ~= nil
+    if (nEnemyHeroes ~= nil and nAllyHeroes ~= nil
         and #nEnemyHeroes > #nAllyHeroes)
-    or  (J.IsRoshanAlive() and J.HasEnoughDPSForRoshan(aliveHeroesList))
-    or  bot:WasRecentlyDamagedByTower(2)
+    or bot:WasRecentlyDamagedByTower(1.5)
+    or J.GetHP(bot) < 0.45
     then
         return 0.1
     end
@@ -91,9 +92,44 @@ function Push.GetPushDesire(bot, lane)
     local aAliveCount = J.GetNumOfAliveHeroes(false)
     local eAliveCount = J.GetNumOfAliveHeroes(true)
 
+    local laneFrontAmount = GetLaneFrontAmount(GetTeam(), lane, true)
+    local laneFrontAmountEnemy = 1 - GetLaneFrontAmount(GetOpposingTeam(), lane, true)
+    if not J.IsInLaningPhase()
+    then
+        if  laneFrontAmount < 0.5
+        and laneFrontAmountEnemy > 0.5
+        then
+            local dist = GetUnitToLocationDistance(bot, GetLaneFrontLocation(GetTeam(), lane, 0))
+            local isCorePushing = false
+
+            for _, allyHero in pairs(GetUnitList(UNIT_LIST_ALLIED_HEROES))
+            do
+                if  J.IsValidHero(allyHero)
+                and not J.IsSuspiciousIllusion(allyHero)
+                and not J.IsMeepoClone(allyHero)
+                and J.IsCore(allyHero)
+                and J.IsNotSelf(bot, allyHero)
+                then
+                    if allyHero:GetActiveMode() == BOT_MODE_PUSH_TOWER_TOP and lane == LANE_TOP
+                    or allyHero:GetActiveMode() == BOT_MODE_PUSH_TOWER_MID and lane == LANE_MID
+                    or allyHero:GetActiveMode() == BOT_MODE_PUSH_TOWER_BOT and lane == LANE_BOT
+                    then
+                        isCorePushing = true
+                        break
+                    end
+                end
+            end
+
+            if not isCorePushing
+            then
+                return RemapValClamped(dist, 4000, 1000, 0, 0.75)
+            end
+        end
+    end
+
     if Push.WhichLaneToPush(bot) == lane
     then
-        local nPushDesire = RemapValClamped(GetPushLaneDesire(lane), 0.1, 1, 0.1, maxDesire)
+        local nPushDesire = RemapValClamped(GetPushLaneDesire(lane), 0, 1, 0, maxDesire)
 
         if J.DoesTeamHaveAegis(GetUnitList(UNIT_LIST_ALLIED_HEROES))
         then
@@ -101,10 +137,9 @@ function Push.GetPushDesire(bot, lane)
             nPushDesire = nPushDesire * aegis
         end
 
-        local tot = ((aAliveCount - eAliveCount) / (aAliveCount + eAliveCount)) * 0.3
-        nPushDesire = nPushDesire * (1 + tot)
+        local tot = ((aAliveCount - eAliveCount) / (aAliveCount + eAliveCount)) * 0.15
 
-        return Clamp(nPushDesire, 0.1, maxDesire)
+        return Clamp(nPushDesire, 0, maxDesire + tot)
     end
 
     return 0.1
