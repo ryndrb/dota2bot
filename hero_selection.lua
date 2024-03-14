@@ -185,6 +185,7 @@ local sPos1List = {
 	"npc_dota_hero_templar_assassin",
 	"npc_dota_hero_terrorblade",
 	"npc_dota_hero_tiny",
+	"npc_dota_hero_troll_warlord",
 	"npc_dota_hero_ursa",
 }
 

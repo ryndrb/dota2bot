@@ -524,6 +524,7 @@ local tFarmerList = {
 	["npc_dota_hero_spectre"] = true,
 	["npc_dota_hero_terrorblade"] = true,
 	["npc_dota_hero_tiny"] = true,
+	["npc_dota_hero_troll_warlord"] = true,
 	["npc_dota_hero_ursa"] = true,
 }
 
@@ -618,6 +619,7 @@ local tFarmHeroList = {
 	["npc_dota_hero_storm_spirit"] = true,
 	["npc_dota_hero_terrorblade"] = true,
 	["npc_dota_hero_tiny"] = true,
+	["npc_dota_hero_troll_warlord"] = true,
 	["npc_dota_hero_ursa"] = true,
 	["npc_dota_hero_void_spirit"] = true,
 }
@@ -2317,6 +2319,17 @@ Site.ConsiderIsTimeToFarm["npc_dota_hero_spectre"] = function()
 end
 
 Site.ConsiderIsTimeToFarm["npc_dota_hero_spirit_breaker"] = function()
+	local bot = GetBot()
+	local networth = bot:GetNetWorth()
+
+	if networth < 30000 then
+		return true
+	end
+
+	return false
+end
+
+Site.ConsiderIsTimeToFarm["npc_dota_hero_troll_warlord"] = function()
 	local bot = GetBot()
 	local networth = bot:GetNetWorth()
 

@@ -96,6 +96,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
         - [3] Timbersaw
         - [1,2] Tiny
         - [4,5] Treant
+        - [1] Troll Warlord
         - [1] Ursa
         - [2] Void Spirit
     - ***Later***
@@ -258,6 +259,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
             | Timbersaw             | &check; | &check;
             | Tiny                  | -       | &check;
             | Treant                | -       | &check;
+            | Troll Warlord         | -       | -
             | Ursa                  | -       | -
             | Viper                 | -       | &check;
             | Void Spirit           | -       | -

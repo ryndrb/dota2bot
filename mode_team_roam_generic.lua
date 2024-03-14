@@ -1800,6 +1800,7 @@ function X.IsSpecialCore(bot)
 			["npc_dota_hero_terrorblade"] = true,
 			["npc_dota_hero_tidehunter"] = true,
 			["npc_dota_hero_tiny"] = true,
+			["npc_dota_hero_troll_warlord"] = true,
 			["npc_dota_hero_ursa"] = true,
 			["npc_dota_hero_viper"] = true,
 			["npc_dota_hero_void_spirit"] = true,
