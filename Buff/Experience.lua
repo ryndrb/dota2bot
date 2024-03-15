@@ -38,7 +38,7 @@ local XPNeeded = {
     [30] = 0,
 }
 
--- Useful for early/mid game. Might be a bit overtuned though.
+-- Useful for early/mid game.
 function XP.UpdateXP(bot, team)
     local gameTime = Helper.DotaTime() / 60
     -- local xp = 2

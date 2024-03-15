@@ -1658,7 +1658,7 @@ X['off'] = {
 	'npc_dota_hero_slardar',
 	'npc_dota_hero_spirit_breaker',
 	'npc_dota_hero_tidehunter',
-	'npc_dota_hero_tusk',
+	-- 'npc_dota_hero_tusk',
 	'npc_dota_hero_venomancer',
 	--'npc_dota_hero_windrunner',
 
@@ -1780,6 +1780,7 @@ X['supp'] = {
 	'npc_dota_hero_skywrath_mage',
 	'npc_dota_hero_techies',
 	'npc_dota_hero_treant',
+	'npc_dota_hero_tusk',
 	'npc_dota_hero_undying',
 	'npc_dota_hero_vengefulspirit',
 	'npc_dota_hero_visage',
@@ -2265,6 +2266,7 @@ function X.IsABAHero()
 		["npc_dota_hero_tiny"] = true,
 		["npc_dota_hero_treant"] = true,
 		["npc_dota_hero_troll_warlord"] = true,
+		["npc_dota_hero_tusk"] = true,
 		["npc_dota_hero_ursa"] = true,
 		["npc_dota_hero_void_spirit"] = true,
 	}

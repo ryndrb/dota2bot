@@ -97,6 +97,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
         - [1,2] Tiny
         - [4,5] Treant
         - [1] Troll Warlord
+        - [4,5] Tusk
         - [1] Ursa
         - [2] Void Spirit
     - ***Later***
@@ -260,6 +261,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
             | Tiny                  | -       | &check;
             | Treant                | -       | &check;
             | Troll Warlord         | -       | -
+            | Tusk                  | -       | &cross;
             | Ursa                  | -       | -
             | Viper                 | -       | &check;
             | Void Spirit           | -       | -

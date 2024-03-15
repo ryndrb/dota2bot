@@ -295,6 +295,7 @@ local sPos4List = {
 	"npc_dota_hero_silencer",
 	"npc_dota_hero_skywrath_mage",
 	"npc_dota_hero_treant",
+	"npc_dota_hero_tusk",
 	"npc_dota_hero_warlock",
 	"npc_dota_hero_witch_doctor",
 }
@@ -325,6 +326,7 @@ local sPos5List = {
 	"npc_dota_hero_silencer",
 	"npc_dota_hero_skywrath_mage",
 	"npc_dota_hero_treant",
+	"npc_dota_hero_tusk",
 	"npc_dota_hero_warlock",
 	"npc_dota_hero_witch_doctor",
 }

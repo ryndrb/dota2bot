@@ -1847,6 +1847,7 @@ function X.IsSpecialSupport(bot)
 		["npc_dota_hero_phoenix"] = true,
 		["npc_dota_hero_shadow_demon"] = true,
 		["npc_dota_hero_treant"] = true,
+		["npc_dota_hero_tusk"] = true,
 	}
 	
 	return tSpecialSupportList[botName] == true
