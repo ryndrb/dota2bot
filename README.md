@@ -41,6 +41,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
 - ***Heroes (Pos: 1,2,3,4,5)***
     - All Supports are both 4 and 5 for now.
     - ^. Supports that does damage, CC, or is Ranged are just inherently 'better' for the most part in bot games compared to Melee or non-. (Since positioning and movement are Valve default.)
+    - ^. AoE spells are just too good.
     - ***Added***
         - [4,5] Abaddon
         - [1] Alchemist
@@ -127,11 +128,6 @@ To anyone who've found this or is using it, if you have any feedback in improvin
             - Passive.
         - Primal Beast
             - Passive.
-
-- ***"Attempted" Logic Changes (still)***
-    - Pushing (Roughly default still)
-    - Defending (Roughly default still)
-    - Do Roshan
 
 - ***Items***
     - Bots will sell items on the fly in Turbo Mode
