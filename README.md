@@ -132,7 +132,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
 - ***Items***
     - Bots will sell items on the fly in Turbo Mode
     - Item progressions (some need changing)
-    - Removed most Halberd and Crimson Guards (bots sucks at playing around these items)
+    - Reduced most Halberd/Crimson Guards/Aura items (bots sucks at playing around these items). They're OP; A lot of what makes the bots 'harder' in Beginner AI.
 
 - ***Plan To "Fix/Add/Improve" (if possible)***
     - ***Fix***
@@ -149,6 +149,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
         - [x] Tormentor
             - Desire decreases starting at minute (20; 35 (AP)).
             - Tricky to harmonize with others due to its nature.
+        - [x] Outpost
         - [ ] Spell usage for Tormentor and Roshan
         - [ ] Dynamic item builds
         - [ ] Clear wave faster with abilities
