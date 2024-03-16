@@ -1,6 +1,9 @@
 local Push = {}
 local J = require( GetScriptDirectory()..'/FunLib/jmz_func')
 
+local IsSupportHelpCorePush = false
+local SupportHelpCore = nil
+
 function Push.GetPushDesire(bot, lane)
     if J.IsInLaningPhase()
     then
@@ -94,7 +97,8 @@ function Push.GetPushDesire(bot, lane)
 
     local laneFrontAmount = GetLaneFrontAmount(GetTeam(), lane, true)
     local laneFrontAmountEnemy = 1 - GetLaneFrontAmount(GetOpposingTeam(), lane, true)
-    if not J.IsInLaningPhase()
+    if  not J.IsInLaningPhase()
+    and (aAliveCount <= eAliveCount + 2)
     then
         local nInRangeEnemy = J.GetEnemiesNearLoc(bot:GetLocation(), 1600)
         local nInRangeEnemyTowers = bot:GetNearbyTowers(700, true)
@@ -137,10 +141,14 @@ function Push.GetPushDesire(bot, lane)
                         local info = GetHeroLastSeenInfo(id)
                         if info ~= nil
                         then
-                            if  J.GetLocationToLocationDistance(GetLaneFrontLocation(GetTeam(), lane, 0), info.location ) < 1600
-                            and info.time_since_seen < 5
+                            local dInfo = info[1]
+                            if dInfo ~= nil
                             then
-                                nearbynum = nearbynum + 1
+                                if  J.GetDistance(GetLaneFrontLocation(GetTeam(), lane, 0), dInfo.location) < 1600
+                                and dInfo.time_since_seen < 5
+                                then
+                                    nearbynum = nearbynum + 1
+                                end
                             end
                         end
                     end
@@ -166,11 +174,14 @@ function Push.GetPushDesire(bot, lane)
             and not J.IsDoingTormentor(bot)
             and not J.IsDoingRoshan(bot)
             then
-                if allyHero:GetActiveMode() == BOT_MODE_PUSH_TOWER_TOP and lane == LANE_TOP
-                or allyHero:GetActiveMode() == BOT_MODE_PUSH_TOWER_MID and lane == LANE_MID
-                or allyHero:GetActiveMode() == BOT_MODE_PUSH_TOWER_BOT and lane == LANE_BOT
+                if (allyHero:GetActiveMode() == BOT_MODE_PUSH_TOWER_TOP and lane == LANE_TOP
+                    or allyHero:GetActiveMode() == BOT_MODE_PUSH_TOWER_MID and lane == LANE_MID
+                    or allyHero:GetActiveMode() == BOT_MODE_PUSH_TOWER_BOT and lane == LANE_BOT)
+                or GetUnitToUnitDistance(allyHero, GetAncient(GetOpposingTeam())) < 3200
                 then
-                    return RemapValClamped(GetUnitToUnitDistance(bot, allyHero), 3800, 1000, 0, 0.75)
+                    IsSupportHelpCorePush = true
+                    SupportHelpCore = allyHero
+                    return RemapValClamped(GetUnitToUnitDistance(bot, allyHero), 3800, 1000, 0.42, 0.75)
                 end
             end
         end
@@ -193,6 +204,11 @@ function Push.GetPushDesire(bot, lane)
     end
 
     return 0.1
+end
+
+function OnEnd()
+    IsSupportHelpCorePush = false
+    SupportHelpCore = nil
 end
 
 local TeamLocation = {}
@@ -283,50 +299,12 @@ function Push.TeamPushLane()
     or GetBarracks(team, BARRACKS_TOP_RANGED) ~= nil then
         return LANE_TOP;
     end
-  
-    return LANE_MID;
-  
-end
 
-function Push.ShouldPushWhenLaning(bot, lane)
-	local pos = J.GetPosition(bot)
-
-	if (J.IsModeTurbo() and DotaTime() < 8 * 60)
-	or DotaTime() < 12 * 60
-	then
-		if GetTeam() == TEAM_RADIANT then
-			if lane == LANE_TOP
-			and (pos == 3 or pos == 4) then
-				return true
-			elseif lane == LANE_MID
-			and pos == 2 then
-				return true
-			elseif lane == LANE_BOT
-			and (pos == 1 or pos == 5) then
-				return true
-			end
-		elseif GetTeam() == TEAM_DIRE then
-			if lane == LANE_TOP
-			and (pos == 1 or pos == 5) then
-				return true
-			elseif lane == LANE_MID
-			and pos == 2 then
-				return true
-			elseif lane == LANE_BOT
-			and (pos == 3 or pos == 4) then
-				return true
-			end
-		end
-
-        return false
-	end
+    return LANE_MID
 end
 
 function Push.PushThink(bot, lane)
-
-    if bot:IsChanneling() or bot:IsUsingAbility() then
-        return
-    end
+    if J.CanNotUseAction(bot) then return end
 
     local laneFrontLocation = GetLaneFrontLocation(GetTeam(), lane, 0)
     local enemyDistance = 0
@@ -409,6 +387,14 @@ function Push.PushThink(bot, lane)
             end
         end
     else
+        if  IsSupportHelpCorePush
+        and SupportHelpCore ~= nil
+        and GetUnitToUnitDistance(bot, SupportHelpCore) > 800
+        then
+            bot:Action_MoveToLocation(SupportHelpCore:GetLocation())
+            return
+        end
+
         bot:Action_MoveToLocation(targetLoc)
     end
 

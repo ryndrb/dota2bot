@@ -10,6 +10,8 @@ Worth noting that I also use a vscript to improve the bots GPM and XPM (AP only)
 
 To anyone who've found this or is using it, if you have any feedback in improving the script, kindly post them on the Steam Workshop page: https://steamcommunity.com/workshop/filedetails/discussion/3139791706/4143942846477191222/
 
+^ Or open an Issue / make a Pull Request here.
+
 - ***To Use***
     - Since Valve hasn't fixed the workshop bug yet, bot scripts (that were uploaded after the bug occured) are only playable through local host lobby.
     - To use this:
