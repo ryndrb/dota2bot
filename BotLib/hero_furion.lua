@@ -139,7 +139,8 @@ end
 function X.SkillsComplement()
     if J.CanNotUseAbility(bot) then return end
 
-    if bot.useProphetTP
+    if  bot.useProphetTP
+    and bot.ProphetTPLocation ~= nil
     then
         bot:Action_UseAbilityOnLocation(Teleportation, bot.ProphetTPLocation)
         bot.useProphetTP = false
