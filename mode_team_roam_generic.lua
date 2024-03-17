@@ -467,7 +467,9 @@ function Think()
 	end
 
 	if  (IsHeroCore or IsSupport)
-	and J.IsValidTarget(targetUnit)
+	and (J.IsValid(targetUnit)
+		or J.IsValidTarget(targetUnit)
+		or J.IsValidBuilding(targetUnit))
 	then
 		bot:Action_AttackUnit(targetUnit, false)
 		return
