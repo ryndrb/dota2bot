@@ -31,6 +31,8 @@ local sAbilityLevelUpList = BotBuild['sSkillList']
 
 local roshanRadiantLoc  = Vector(7625, -7511, 1092)
 local roshanDireLoc     = Vector(-7549, 7562, 1107)
+local RadiantFountain = Vector(-6619, -6336, 384)
+local DireFountain = Vector(6928, 6372, 392)
 
 local function AbilityLevelUpComplement()
 
@@ -6122,6 +6124,92 @@ X.ConsiderItemDesire['item_smoke_of_deceit'] = function(item)
 		end
 	end
 	
+	return BOT_ACTION_DESIRE_NONE
+end
+
+-- Dust of Appearance
+local EnemyPIDs = nil
+X.ConsiderItemDesire['item_dust'] = function(item)
+	local nRadius = 1050
+	
+	if EnemyPIDs == nil then EnemyPIDs = GetTeamPlayers(GetOpposingTeam()) end
+
+	for _, id in pairs(EnemyPIDs)
+	do
+		local info = GetHeroLastSeenInfo(id)
+
+		if  IsHeroAlive(id) 
+		and info ~= nil
+		then
+			local dInfo = info[1]
+
+			if  dInfo ~= nil 
+			and dInfo.time_since_seen > 0.2
+			and dInfo.time_since_seen < 0.5
+			and GetUnitToLocationDistance(bot, dInfo.location) + 150 <  nRadius 
+			and J.IsClosestToDustLocation(bot, dInfo.location)
+			then	
+				local loc = J.GetXUnitsTowardsLocation2(dInfo.location, DireFountain, 200)
+				if GetTeam() == TEAM_DIRE
+				then
+					loc = J.GetXUnitsTowardsLocation2(dInfo.location, RadiantFountain, 200)
+				end
+
+				if  IsLocationVisible(loc) 
+				and IsLocationPassable(loc)
+				then
+					return BOT_ACTION_DESIRE_HIGH, bot, 'none', nil
+				end
+			end
+		end	
+	end
+	
+	local nInRangeEnemy = J.GetEnemiesNearLoc(bot:GetLocation(), nRadius)
+	if nInRangeEnemy ~= nil and #nInRangeEnemy == 0
+	then
+		if bot:HasModifier('modifier_item_radiance_debuff') 
+		or bot:HasModifier('modifier_sandking_sand_storm_slow') 
+		or bot:HasModifier('modifier_sandking_sand_storm_slow_aura_thinker') 
+		then
+			return BOT_ACTION_DESIRE_HIGH, bot, 'none', nil
+		end
+
+		for _, id in pairs(EnemyPIDs)
+		do
+			if  IsHeroAlive(id)
+			and bot:WasRecentlyDamagedByPlayer(id, 0.5)
+			then
+				local info = GetHeroLastSeenInfo(id)
+
+				if info ~= nil
+				then
+					local dInfo = info[1]
+					if  dInfo ~= nil
+					and GetUnitToLocationDistance(bot, dInfo.location) < nRadius 
+					then
+						return BOT_ACTION_DESIRE_HIGH, bot, 'none', nil
+					end
+				end
+			end
+		end
+	else
+		for _, enemyHero in pairs(nInRangeEnemy)
+		do
+			if  J.IsValidTarget(enemyHero)
+			and J.IsUnitWillGoInvisible(enemyHero)
+			and J.IsClosestToDustLocation(bot, enemyHero:GetLocation())
+			and not J.HasInvisCounterBuff(enemyHero)
+			and not J.IsSuspiciousIllusion(enemyHero)
+			then
+				local nEnemyTowers = enemyHero:GetNearbyTowers(700, true)
+				if nEnemyTowers == nil or #nEnemyTowers == 0
+				then
+					return BOT_ACTION_DESIRE_HIGH, bot, 'none', nil
+				end
+			end	
+		end	
+	end
+
 	return BOT_ACTION_DESIRE_NONE
 end
 
