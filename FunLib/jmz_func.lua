@@ -30,6 +30,10 @@ local nEnemyAverageLevel = 1
 
 local RB = Vector( -6619, -6336, 384 )
 local DB = Vector( 6928, 6372, 392 )
+local roshanRadiantLoc  = Vector(7625, -7511, 1092)
+local roshanDireLoc = Vector(-7549, 7562, 1107)
+local RadiantTormentorLoc = Vector(-8075, -1148, 1000)
+local DireTormentorLoc = Vector(8132, 1102, 1000)
 local fKeepManaPercent = 0.39
 
 
@@ -2401,6 +2405,7 @@ function J.IsRealInvisible( bot )
 		and not bot:HasModifier( 'modifier_slardar_amplify_damage' )
 		and not bot:HasModifier( 'modifier_sniper_assassinate' )
 		and not bot:HasModifier( 'modifier_bounty_hunter_track' )
+		and not bot:HasModifier( 'modifier_faceless_void_chronosphere_freeze' )
 		and #enemyTowerList == 0
 	then
 		return true
@@ -4098,6 +4103,17 @@ function J.IsLocationInChrono(loc)
 		end
 	end
 
+	for _, allyHero in pairs(GetUnitList(UNIT_LIST_ALLIED_HEROES))
+	do
+		if  J.IsValidHero(allyHero)
+		and not allyHero:IsIllusion()
+		and GetUnitToLocationDistance(allyHero, loc) < 300
+		and (allyHero:HasModifier('modifier_faceless_void_chronosphere_freeze'))
+		then
+			return true
+		end
+	end
+
 	return false
 end
 
@@ -4107,7 +4123,35 @@ function J.IsLocationInBlackHole(loc)
 		if  J.IsValidHero(enemyHero)
 		and not J.IsSuspiciousIllusion(enemyHero)
 		and GetUnitToLocationDistance(enemyHero, loc) < 300
-		and enemyHero:HasModifier('modifier_enigma_black_hole_pull')
+		and (enemyHero:HasModifier('modifier_enigma_black_hole_pull')
+			or enemyHero:HasModifier('modifier_enigma_black_hole_pull_scepter'))
+		then
+			return true
+		end
+	end
+
+	return false
+end
+
+function J.IsLocationInArena(loc, radius)
+	for _, enemyHero in pairs(GetUnitList(UNIT_LIST_ENEMY_HEROES))
+	do
+		if  J.IsValidHero(enemyHero)
+		and not J.IsSuspiciousIllusion(enemyHero)
+		and GetUnitToLocationDistance(enemyHero, loc) < radius
+		and (enemyHero:HasModifier('modifier_mars_arena_of_blood_leash')
+			or enemyHero:HasModifier('modifier_mars_arena_of_blood_animation'))
+		then
+			return true
+		end
+	end
+
+	for _, allyHero in pairs(GetUnitList(UNIT_LIST_ALLIED_HEROES))
+	do
+		if  J.IsValidHero(allyHero)
+		and not allyHero:IsIllusion()
+		and GetUnitToLocationDistance(allyHero, loc) < radius
+		and (allyHero:HasModifier('modifier_mars_arena_of_blood_animation'))
 		then
 			return true
 		end
@@ -4204,6 +4248,95 @@ function J.GetCreepsAroundAncient(team, enemy)
 	end
 
 	return nCreepList
+end
+
+function J.GetCurrentRoshanLocation()
+	local timeOfDay = J.CheckTimeOfDay()
+
+	if timeOfDay == 'day'
+	then
+		return roshanRadiantLoc
+	else
+		return roshanDireLoc
+	end
+end
+
+function J.GetTormentorLocation(team)
+	if team == TEAM_RADIANT
+	then
+		return RadiantTormentorLoc
+	else
+		return DireTormentorLoc
+	end
+end
+
+local AllyPIDs = nil
+function J.IsClosestToDustLocation(bot, loc)
+	if AllyPIDs == nil then AllyPIDs = GetTeamPlayers(GetTeam()) end
+
+	local closest = nil
+	local closestDist = 100000
+
+	for _, id in pairs(AllyPIDs)
+	do
+		local member = GetTeamMember(id)
+
+		if  J.IsValidHero(member)		
+		and member:GetItemSlotType(member:FindItemSlot('item_dust')) == ITEM_SLOT_TYPE_MAIN
+		and member:GetItemInSlot(member:FindItemSlot('item_dust')):IsFullyCastable()
+		and not J.IsSuspiciousIllusion(member)
+		then
+			local dist = GetUnitToLocationDistance(member, loc)
+
+			if dist < closestDist
+			then
+				closest = member
+				closestDist = dist
+			end
+		end
+	end
+
+	if closest ~= nil
+	then
+		return closest == bot
+	end
+end
+
+function J.GetXUnitsTowardsLocation2(iLoc, tLoc, nUnits)
+    local dir = (tLoc - iLoc):Normalized()
+    return iLoc + dir * nUnits
+end
+
+function J.IsUnitWillGoInvisible(unit)
+	return unit:HasModifier('modifier_sandking_sand_storm')
+		or unit:HasModifier('modifier_bounty_hunter_wind_walk')
+		or unit:HasModifier('modifier_clinkz_wind_walk')
+		or unit:HasModifier('modifier_weaver_shukuchi')
+		or (unit:HasModifier('modifier_oracle_false_promise') and unit:HasModifier('modifier_oracle_false_promise_invis'))
+		or (unit:HasModifier('modifier_windrunner_windrun') and unit:HasModifier('modifier_windrunner_windrun_invis'))
+		or unit:HasModifier('modifier_item_invisibility_edge')
+		or unit:HasModifier('modifier_item_invisibility_edge_windwalk')
+		or unit:HasModifier('modifier_item_silver_edge')
+		or unit:HasModifier('modifier_item_silver_edge_windwalk')
+		or unit:HasModifier('modifier_item_glimmer_cape_fade')
+		or unit:HasModifier('modifier_item_glimmer_cape')
+		or unit:HasModifier('modifier_item_shadow_amulet')
+		or unit:HasModifier('modifier_item_shadow_amulet_fade')
+		or unit:HasModifier('modifier_item_trickster_cloak_invis')
+end
+
+function J.HasInvisCounterBuff(unit)
+	if unit:HasModifier('modifier_item_dustofappearance')
+	or unit:HasModifier('modifier_bounty_hunter_track')
+	or unit:HasModifier('modifier_bloodseeker_thirst_vision')
+	or unit:HasModifier('modifier_slardar_amplify_damage')
+	or unit:HasModifier('modifier_sniper_assassinate')
+	or unit:HasModifier( 'modifier_faceless_void_chronosphere_freeze' )
+	then
+		return true
+	end
+
+	return false
 end
 
 function J.ConsolePrintActiveMode(bot)
