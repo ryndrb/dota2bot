@@ -101,6 +101,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
         - [4,5] Treant
         - [1] Troll Warlord
         - [4,5] Tusk
+        - [3] Underlord
         - [1] Ursa
         - [2] Void Spirit
     - ***Later***
@@ -261,6 +262,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
             | Treant                | -       | &check; | 0 
             | Troll Warlord         | -       | -       | 0 
             | Tusk                  | -       | &cross; | 0 
+            | Underlord             | -       | -       | 0 
             | Ursa                  | -       | -       | 1 [2/5/2024]
             | Viper                 | -       | &check; | 0 
             | Void Spirit           | -       | -       | 1 [2/5/2024]

@@ -4339,6 +4339,36 @@ function J.HasInvisCounterBuff(unit)
 	return false
 end
 
+function J.GetUnderlordPortal()
+	local portal = {}
+
+	for _, u in pairs(GetUnitList(UNIT_LIST_ALLIES))
+	do
+		if u:GetUnitName() == 'npc_dota_unit_underlord_portal'
+		then
+			if  #portal == 1
+			and portal[1] ~= u
+			then
+				table.insert(portal, u)
+			end
+
+			if #portal == 2
+			then
+				break
+			end
+
+			table.insert(portal, u)
+		end
+	end
+
+	if #portal == 2
+	then
+		return portal
+	end
+
+	return nil
+end
+
 function J.ConsolePrintActiveMode(bot)
 	local mode = bot:GetActiveMode()
 

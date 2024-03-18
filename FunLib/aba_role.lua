@@ -2211,6 +2211,7 @@ function X.IsABAHero()
 		["npc_dota_hero_zuus"] = true, 		
 
 		-- NEW ADDED HEROES --
+		["npc_dota_hero_abyssal_underlord"] = true,
 		["npc_dota_hero_alchemist"] = true,
 		["npc_dota_hero_abaddon"] = true,
 		["npc_dota_hero_ancient_apparition"] = true,

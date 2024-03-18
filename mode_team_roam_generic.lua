@@ -1727,6 +1727,7 @@ function X.IsSpecialCore(bot)
 		local botName = bot:GetUnitName();
 		
 		local tSpecialCarryList = {
+			["npc_dota_hero_abyssal_underlord"] = true,
 			["npc_dota_hero_alchemist"] = true,
 			["npc_dota_hero_antimage"] = true,
 			["npc_dota_hero_arc_warden"] = true,

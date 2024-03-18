@@ -579,6 +579,7 @@ local tFarmHeroList = {
 	["npc_dota_hero_axe"] = true,
 	["npc_dota_hero_tidehunter"] = true,
 
+	["npc_dota_hero_abyssal_underlord"] = true,
 	["npc_dota_hero_alchemist"] = true,
 	["npc_dota_hero_batrider"] = true,
 	["npc_dota_hero_beastmaster"] = true,
@@ -2330,6 +2331,17 @@ Site.ConsiderIsTimeToFarm["npc_dota_hero_spirit_breaker"] = function()
 end
 
 Site.ConsiderIsTimeToFarm["npc_dota_hero_troll_warlord"] = function()
+	local bot = GetBot()
+	local networth = bot:GetNetWorth()
+
+	if networth < 30000 then
+		return true
+	end
+
+	return false
+end
+
+Site.ConsiderIsTimeToFarm["npc_dota_hero_abyssal_underlord"] = function()
 	local bot = GetBot()
 	local networth = bot:GetNetWorth()
 

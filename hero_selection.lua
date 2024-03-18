@@ -230,6 +230,7 @@ local sPos2List = {
 }
 
 local sPos3List = {
+	"npc_dota_hero_abyssal_underlord",
 	"npc_dota_hero_axe",
 	"npc_dota_hero_batrider",
 	"npc_dota_hero_beastmaster",
