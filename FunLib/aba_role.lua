@@ -2268,6 +2268,7 @@ function X.IsABAHero()
 		["npc_dota_hero_treant"] = true,
 		["npc_dota_hero_troll_warlord"] = true,
 		["npc_dota_hero_tusk"] = true,
+		["npc_dota_hero_undying"] = true,
 		["npc_dota_hero_ursa"] = true,
 		["npc_dota_hero_void_spirit"] = true,
 	}

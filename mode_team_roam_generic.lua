@@ -1851,6 +1851,7 @@ function X.IsSpecialSupport(bot)
 		["npc_dota_hero_shadow_demon"] = true,
 		["npc_dota_hero_treant"] = true,
 		["npc_dota_hero_tusk"] = true,
+		["npc_dota_hero_undying"] = true,
 	}
 	
 	return tSpecialSupportList[botName] == true
@@ -2057,7 +2058,9 @@ function CanAttackSpecialUnit()
 			or string.find(unit:GetUnitName(), 'forged_spirit')
 			or string.find(unit:GetUnitName(), 'grimstroke_ink_creature')
 			or string.find(unit:GetUnitName(), 'observer_ward')
+			or string.find(unit:GetUnitName(), 'phoenix_sun')
 			or string.find(unit:GetUnitName(), 'sentry_ward')
+			or string.find(unit:GetUnitName(), 'tombstone')
 			or string.find(unit:GetUnitName(), 'warlock_golem')
 			then
 				if  GetUnitToUnitDistance(bot, unit) <= nAttackRange

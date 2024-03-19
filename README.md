@@ -102,6 +102,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
         - [1] Troll Warlord
         - [4,5] Tusk
         - [3] Underlord
+        - [4,5] Undying
         - [1] Ursa
         - [2] Void Spirit
     - ***Later***
@@ -263,6 +264,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
             | Troll Warlord         | -       | -       | 0 
             | Tusk                  | -       | &cross; | 0 
             | Underlord             | -       | -       | 0 
+            | Undying               | &cross; | -       | 0 
             | Ursa                  | -       | -       | 1 [2/5/2024]
             | Viper                 | -       | &check; | 0 
             | Void Spirit           | -       | -       | 1 [2/5/2024]
