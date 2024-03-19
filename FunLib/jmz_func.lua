@@ -4369,6 +4369,21 @@ function J.GetUnderlordPortal()
 	return nil
 end
 
+function J.GetTotalEstimatedDamageToTarget(nUnits, target)
+	local dmg = 0
+
+	for _, unit in pairs(nUnits)
+	do
+		if  J.IsValidHero(unit)
+		and not J.IsSuspiciousIllusion(unit)
+		then
+			dmg = dmg + unit:GetEstimatedDamageToTarget(true, target, 5, DAMAGE_TYPE_ALL)
+		end
+	end
+
+	return dmg
+end
+
 function J.ConsolePrintActiveMode(bot)
 	local mode = bot:GetActiveMode()
 

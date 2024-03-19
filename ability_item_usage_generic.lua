@@ -5989,58 +5989,74 @@ X.ConsiderItemDesire['item_disperser'] = function(item)
 end
 
 X.ConsiderItemDesire['item_blood_grenade'] = function(item)
-	local nRadius = 700
-	local sCastType = 'ground'
-	local hEffectTarget = nil
-	local sCastMotive = nil
-	local nInRangeEnmyList = bot:GetNearbyHeroes( nRadius, true, BOT_MODE_NONE )
-	local nNearAllyList = bot:GetNearbyHeroes( nRadius, false, BOT_MODE_NONE )
+	local nCastRange = 900
+	local nRadius = 300
 	local nHealth = bot:GetHealth()
 	local nHealthCost = 75
-	local nDamage = 50
-	local botTarget = bot:GetTarget()
+	local nImpactDamage = 50
+	local nDPS = 15
+	local nDuration = 5
+	local nEnemyHeroes = bot:GetNearbyHeroes(nCastRange, true, BOT_MODE_NONE)
 
-	if botTarget ~= nil
-	and J.IsValidHero(botTarget)
-	and J.CanKillTarget(botTarget, nDamage, DAMAGE_TYPE_MAGICAL)
-	and J.CanCastOnNonMagicImmune( botTarget )
-	and J.IsInRange( bot, botTarget, nRadius )
-	and nHealth > nHealthCost * 2
-	then
-		hEffectTarget = botTarget:GetLocation()
-		sCastMotive = 'Blood Grenade'
-		return BOT_ACTION_DESIRE_HIGH, hEffectTarget, sCastType, sCastMotive
+	for _, enemyHero in pairs(nEnemyHeroes)
+	do
+		if  J.IsValidHero(enemyHero)
+		and J.CanCastOnNonMagicImmune(enemyHero)
+		and J.CanKillTarget(enemyHero, nImpactDamage + (nDPS * nDuration), DAMAGE_TYPE_MAGICAL)
+		and not J.IsSuspiciousIllusion(enemyHero)
+		and not enemyHero:HasModifier('modifier_abaddon_borrowed_time')
+        and not enemyHero:HasModifier('modifier_dazzle_shallow_grave')
+        and not enemyHero:HasModifier('modifier_necrolyte_reapers_scythe')
+        and not enemyHero:HasModifier('modifier_oracle_false_promise_timer')
+		and nHealth > nHealthCost * 2
+		then
+			local nInRangeEnemy = J.GetEnemiesNearLoc(enemyHero:GetLocation(), nRadius)
+
+            if nInRangeEnemy ~= nil and #nInRangeEnemy >= 1
+            then
+                return BOT_ACTION_DESIRE_HIGH, J.GetCenterOfUnits(nInRangeEnemy), 'ground', 'Blood Grenade'
+            end
+
+            return BOT_ACTION_DESIRE_HIGH, enemyHero:GetLocation(), 'ground', 'Blood Grenade'
+		end
 	end
 
-	if J.IsRetreating( bot )
-	and nHealth > nHealthCost * 2
+	if J.IsGoingOnSomeone(bot)
 	then
-		local enemyHeroList = bot:GetNearbyHeroes( nRadius, true, BOT_MODE_NONE )
-		local targetHero = enemyHeroList[1]
+		for _, enemyHero in pairs(nEnemyHeroes)
+		do
+			if  J.IsValidHero(enemyHero)
+			and J.CanCastOnNonMagicImmune(enemyHero)
+			and J.IsChasingTarget(bot, enemyHero)
+			and not J.IsSuspiciousIllusion(enemyHero)
+			and not enemyHero:HasModifier('modifier_abaddon_borrowed_time')
+			and not enemyHero:HasModifier('modifier_dazzle_shallow_grave')
+			and not enemyHero:HasModifier('modifier_necrolyte_reapers_scythe')
+			and not enemyHero:HasModifier('modifier_oracle_false_promise_timer')
+			and nHealth > nHealthCost * 2
+			then
+				local nInRangeAlly = enemyHero:GetNearbyHeroes(1200, true, BOT_MODE_NONE)
+				local nInRangeEnemy = enemyHero:GetNearbyHeroes(1200, false, BOT_MODE_NONE)
+				
+				if  nInRangeAlly ~= nil and nInRangeEnemy ~= nil
+				and #nInRangeAlly >= #nInRangeEnemy
+				and #nInRangeAlly >= 1
+					and J.IsGoingOnSomeone(nInRangeAlly[1])
+					and nInRangeAlly[1]:GetAttackTarget() == enemyHero
+					and J.IsChasingTarget(nInRangeAlly[1], enemyHero)
+					and not nInRangeAlly[1]:IsIllusion()
+				and J.GetTotalEstimatedDamageToTarget(nInRangeAlly, enemyHero) >= enemyHero:GetHealth()
+				then
+					local nTargetInRangeAlly = J.GetEnemiesNearLoc(enemyHero:GetLocation(), nRadius)
 
-		if J.IsValidHero( targetHero )
-		and J.CanCastOnNonMagicImmune( targetHero )
-		and J.IsInRange( bot, targetHero, nRadius )
-		and not targetHero:IsDisarmed()
-		then
-			hEffectTarget = targetHero:GetLocation()
-			sCastMotive = 'Blood Grenade'
-			return BOT_ACTION_DESIRE_HIGH, hEffectTarget, sCastType, sCastMotive
-		end		
-	end	
-
-	if J.IsGoingOnSomeone( bot )
-	and (nHealth * 100) > (nHealthCost * 2)
-	then
-		local targetHero = J.GetProperTarget( bot )
-
-		if J.IsValidHero( targetHero )
-		and J.IsInRange( bot, targetHero, nRadius )
-		and J.CanCastOnNonMagicImmune( targetHero )
-		then
-			hEffectTarget = targetHero:GetLocation()
-			sCastMotive = 'Blood Grenade'
-			return BOT_ACTION_DESIRE_HIGH, hEffectTarget, sCastType, sCastMotive
+					if nTargetInRangeAlly ~= nil and #nTargetInRangeAlly >= 1
+					then
+						return BOT_ACTION_DESIRE_HIGH, J.GetCenterOfUnits(nTargetInRangeAlly), 'ground', 'Blood Grenade'
+					end
+		
+					return BOT_ACTION_DESIRE_HIGH, enemyHero:GetLocation(), 'ground', 'Blood Grenade'
+				end
+			end
 		end
 	end
 
