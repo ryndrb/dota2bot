@@ -274,7 +274,7 @@ function X.ConsiderSwashbuckle()
             then
                 if J.IsInRange(bot, weakestTarget, nDashRange)
                 then
-                    if #nInRangeAlly >= nTargetInRangeAlly + 2
+                    if #nInRangeAlly >= #nTargetInRangeAlly + 2
                     then
                         return BOT_ACTION_DESIRE_HIGH, weakestTarget:GetLocation()
                     else
