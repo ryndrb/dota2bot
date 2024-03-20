@@ -636,7 +636,7 @@ Item['item_shivas_guard']	= GetItemComponents( 'item_shivas_guard' )[1]
 
 Item['item_silver_edge']	= GetItemComponents( 'item_silver_edge' )[1]
 
-Item['item_solar_crest']	= {"item_wind_lace", "item_pavise", "item_crown", "item_recipe_solar_crest"}
+Item['item_solar_crest']	= GetItemComponents( 'item_solar_crest' )[1]
 
 Item['item_soul_booster']	= GetItemComponents( 'item_soul_booster' )[1]
 
