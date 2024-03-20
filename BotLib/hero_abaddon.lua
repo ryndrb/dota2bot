@@ -227,7 +227,7 @@ function X.ConsiderMistCoil()
                 and not bot:HasModifier('modifier_abaddon_borrowed_time')))
         and J.IsValidHero(nInRangeEnemy[1])
         and not J.IsSuspiciousIllusion(nInRangeEnemy[1])
-        and not J.IsDisabled(J.IsValidHero(nInRangeEnemy[1]))
+        and not J.IsDisabled(nInRangeEnemy[1])
         then
             return BOT_ACTION_DESIRE_HIGH, bot
         end
