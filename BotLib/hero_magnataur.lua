@@ -825,6 +825,8 @@ function X.ConsiderSkewer2()
             end
         end
     end
+
+    return BOT_ACTION_DESIRE_NONE
 end
 
 function CanDoBlinkSkewer()
