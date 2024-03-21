@@ -1659,7 +1659,7 @@ X['off'] = {
 	'npc_dota_hero_spirit_breaker',
 	'npc_dota_hero_tidehunter',
 	-- 'npc_dota_hero_tusk',
-	'npc_dota_hero_venomancer',
+	-- 'npc_dota_hero_venomancer',
 	--'npc_dota_hero_windrunner',
 
 }
@@ -2271,6 +2271,7 @@ function X.IsABAHero()
 		["npc_dota_hero_undying"] = true,
 		["npc_dota_hero_ursa"] = true,
 		["npc_dota_hero_vengefulspirit"] = true,
+		["npc_dota_hero_venomancer"] = true,
 		["npc_dota_hero_void_spirit"] = true,
 	}
 

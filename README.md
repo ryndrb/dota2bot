@@ -105,6 +105,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
         - [4,5] Undying
         - [1] Ursa
         - [4,5] Vengeful Spirit
+        - [4,5] Venomancer
         - [2] Void Spirit
     - ***Later***
         - Lone Druid
@@ -268,6 +269,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
             | Undying               | &cross; | -       | 0 
             | Ursa                  | -       | -       | 1 [2/5/2024]
             | Vengeful Spirit       | -       | &check; | 0 
+            | Venomancer            | &check; | -       | 0 
             | Viper                 | -       | &check; | 0 
             | Void Spirit           | -       | -       | 1 [2/5/2024]
             | Warlock               | -       | -       | 0 

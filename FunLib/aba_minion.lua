@@ -1125,6 +1125,55 @@ function X.ConsiderBrewLinkMove(hMinionUnit)
 	return BOT_MODE_DESIRE_HIGH, loc
 end
 
+function X.AttackWardThink(hMinionUnit)
+	if hMinionUnit:GetUnitName() == 'npc_dota_venomancer_plague_ward_1'
+	or hMinionUnit:GetUnitName() == 'npc_dota_venomancer_plague_ward_2'
+	or hMinionUnit:GetUnitName() == 'npc_dota_venomancer_plague_ward_3'
+	or hMinionUnit:GetUnitName() == 'npc_dota_venomancer_plague_ward_4'
+	then
+		local nUnits = hMinionUnit:GetNearbyHeroes(bot:GetAttackRange(), true, BOT_MODE_NONE)
+
+		local target = nil
+		local hp = 100000
+		for _, enemyHero in pairs(nUnits)
+		do
+			if  J.IsValidHero(enemyHero)
+			and hp > enemyHero:GetHealth()
+			then
+				hp = enemyHero:GetHealth()
+				target = enemyHero
+			end
+		end
+
+		if target ~= nil
+		then
+			hMinionUnit:Action_AttackUnit(target, false)
+			return
+		end
+
+		nUnits = bot:GetNearbyCreeps(bot:GetAttackRange(), true)
+		for _, creep in pairs(nUnits)
+		do
+			if  J.IsValid(creep)
+			and J.CanBeAttacked(creep)
+			then
+				hMinionUnit:Action_AttackUnit(creep, false)
+				return
+			end
+		end
+
+		nUnits = bot:GetNearbyTowers(bot:GetAttackRange(), true)
+		for _, tower in pairs(nUnits)
+		do
+			if J.IsValidBuilding(tower)
+			then
+				hMinionUnit:Action_AttackUnit(tower, false)
+				return
+			end
+		end
+	end
+end
+
 -- MINION THINK
 function X.MinionThink(hMinionUnit)
 	if bot == nil
@@ -1140,7 +1189,7 @@ function X.MinionThink(hMinionUnit)
 			X.IllusionThink(hMinionUnit)
 		elseif X.IsAttackingWard(hMinionUnit:GetUnitName())
 		then
-			return
+			X.AttackWardThink(hMinionUnit)
 		elseif X.CantBeControlled(hMinionUnit:GetUnitName())
 		then
 			X.CantBeControlledThink(hMinionUnit)
