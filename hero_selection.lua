@@ -298,6 +298,7 @@ local sPos4List = {
 	"npc_dota_hero_treant",
 	"npc_dota_hero_tusk",
 	"npc_dota_hero_undying",
+	"npc_dota_hero_vengefulspirit",
 	"npc_dota_hero_warlock",
 	"npc_dota_hero_witch_doctor",
 }
@@ -330,6 +331,7 @@ local sPos5List = {
 	"npc_dota_hero_treant",
 	"npc_dota_hero_tusk",
 	"npc_dota_hero_undying",
+	"npc_dota_hero_vengefulspirit",
 	"npc_dota_hero_warlock",
 	"npc_dota_hero_witch_doctor",
 }

@@ -2270,6 +2270,7 @@ function X.IsABAHero()
 		["npc_dota_hero_tusk"] = true,
 		["npc_dota_hero_undying"] = true,
 		["npc_dota_hero_ursa"] = true,
+		["npc_dota_hero_vengefulspirit"] = true,
 		["npc_dota_hero_void_spirit"] = true,
 	}
 

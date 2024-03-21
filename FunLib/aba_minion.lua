@@ -12,6 +12,7 @@ local X = {};
 
 local bot = GetBot();
 local J = require(GetScriptDirectory()..'/FunLib/jmz_func')
+local V = require(GetScriptDirectory()..'/FunLib/aba_hero_skill')
 
 local nTeamAncient = GetAncient(GetTeam());
 local vTeamAncientLoc = nil;
@@ -365,7 +366,7 @@ function X.IllusionThink(minion)
 			minion:Action_MoveToLocation(minion.target:GetLocation())
 			return
 		else
-			minion:Action_AttackUnit(minion.target, true)
+			minion:Action_AttackUnit(minion.target, false)
 			return
 		end
 	end
@@ -554,12 +555,23 @@ function X.IsMinionWithSkill(unit_name)
 		or unit_name == "npc_dota_necronomicon_archer_2"
 		or unit_name == "npc_dota_necronomicon_archer_3"
 		or unit_name == "npc_dota_neutral_warpine_raider"
+		or unit_name == "npc_dota_hero_vengefulspirit"
 end
 
 function X.InitiateAbility(minion)
-	minion.abilities = {};
-	for i=0, 3 do
-		minion.abilities [i+1] = minion:GetAbilityInSlot(i);
+	minion.abilities = {}
+
+	if minion:GetUnitName() == 'npc_dota_hero_vengefulspirit'
+	then
+		for i = 1, 23
+		do
+			minion.abilities[i] = minion:GetAbilityInSlot(i)
+		end
+	else
+		for i = 0, 3
+		do
+			minion.abilities[i + 1] = minion:GetAbilityInSlot(i)
+		end
 	end
 end
 
@@ -718,6 +730,39 @@ function X.MinionWithSkillThink(hMinionUnit)
 		X.InitiateAbility(hMinionUnit)
 	end
 
+	if hMinionUnit:GetUnitName() == 'npc_dota_hero_vengefulspirit'
+	then
+		if hMinionUnit.abilities[1]:GetName() == 'vengefulspirit_magic_missile'
+		then
+			Desire, Target = V.ConsiderMagicMissile(hMinionUnit, hMinionUnit.abilities[1])
+			if Desire > 0
+			then
+				hMinionUnit:Action_UseAbilityOnEntity(hMinionUnit.abilities[1], target)
+				return
+			end
+		end
+
+		if hMinionUnit.abilities[2]:GetName() == 'vengefulspirit_wave_of_terror'
+		then
+			Desire, Location = V.ConsiderMagicMissile(hMinionUnit, hMinionUnit.abilities[2])
+			if Desire > 0
+			then
+				hMinionUnit:Action_UseAbilityOnEntity(hMinionUnit.abilities[2], Location)
+				return
+			end
+		end
+
+		if hMinionUnit.abilities[6]:GetName() == 'vengefulspirit_nether_swap'
+		then
+			Desire, Target = V.ConsiderMagicMissile(hMinionUnit, hMinionUnit.abilities[6])
+			if Desire > 0
+			then
+				hMinionUnit:Action_UseAbilityOnEntity(hMinionUnit.abilities[6], target)
+				return
+			end
+		end
+	end
+
 	for i = 1, #hMinionUnit.abilities
 	do
 		if X.CanCastAbility(hMinionUnit.abilities[i])
@@ -738,6 +783,7 @@ function X.MinionWithSkillThink(hMinionUnit)
 							and not nAllyList[j]:HasModifier('modifier_ogre_magi_frost_armor')
 							then
 								hMinionUnit:Action_UseAbilityOnEntity(hMinionUnit.abilities[j], nAllyList[j])
+								return
 							end
 						end
 					end
@@ -1088,7 +1134,8 @@ function X.MinionThink(hMinionUnit)
 
 	if X.IsValidUnit(hMinionUnit)
 	then
-		if hMinionUnit:IsIllusion()
+		if  hMinionUnit:IsIllusion()
+		and not hMinionUnit:GetUnitName() == 'npc_dota_hero_vengefulspirit'
 		then
 			X.IllusionThink(hMinionUnit)
 		elseif X.IsAttackingWard(hMinionUnit:GetUnitName())

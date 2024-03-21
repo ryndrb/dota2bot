@@ -1852,6 +1852,7 @@ function X.IsSpecialSupport(bot)
 		["npc_dota_hero_treant"] = true,
 		["npc_dota_hero_tusk"] = true,
 		["npc_dota_hero_undying"] = true,
+		["npc_dota_hero_vengefulspirit"] = true,
 	}
 	
 	return tSpecialSupportList[botName] == true
