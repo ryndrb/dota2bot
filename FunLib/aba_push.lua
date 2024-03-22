@@ -94,6 +94,8 @@ function Push.GetPushDesire(bot, lane)
 
     local aAliveCount = J.GetNumOfAliveHeroes(false)
     local eAliveCount = J.GetNumOfAliveHeroes(true)
+    local allyKills = J.GetNumOfTeamTotalKills(false) + 1
+    local enemyKills = J.GetNumOfTeamTotalKills(true) + 1
 
     local laneFrontAmount = GetLaneFrontAmount(GetTeam(), lane, true)
     local laneFrontAmountEnemy = 1 - GetLaneFrontAmount(GetOpposingTeam(), lane, true)
@@ -199,6 +201,11 @@ function Push.GetPushDesire(bot, lane)
         end
 
         local tot = ((aAliveCount - eAliveCount) / (aAliveCount + eAliveCount)) * 0.15
+
+        if aAliveCount >= eAliveCount
+        then
+            nPushDesire = nPushDesire * RemapValClamped(allyKills / enemyKills, 1, 2, 1, 2)
+        end
 
         return Clamp(nPushDesire, 0, maxDesire + tot)
     end

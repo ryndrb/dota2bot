@@ -454,7 +454,7 @@ function X.ConsiderPlagueWard()
         end
 
         local nEnemyTower = bot:GetNearbyTowers(600, true)
-        if  nEnemyTower ~= nil and nEnemyTower >= 1
+        if  nEnemyTower ~= nil and #nEnemyTower >= 1
         and J.IsValidBuilding(nEnemyTower[1])
         and J.IsAttacking(bot)
         and bot:GetAttackTarget() == nEnemyTower[1]

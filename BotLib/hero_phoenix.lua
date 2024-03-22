@@ -712,7 +712,7 @@ function X.ConsiderFireSpiritsLaunch()
         and J.IsAttacking(bot)
         and not botTarget:HasModifier('modifier_phoenix_fire_spirit_burn')
         then
-            local eta = GetUnitToLocationDistance(bot, botTarget) / nSpeed
+            local eta = GetUnitToUnitDistance(bot, botTarget) / nSpeed
 
             if  DotaTime() > FireSpiritsLaunchTime + eta + 0.25
             and botTarget:HasModifier('modifier_phoenix_fire_spirit_burn')
