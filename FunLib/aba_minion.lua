@@ -1,18 +1,9 @@
-----------------------------------------------------------------------------------------------------
---- Creat From: BOT EXPERIMENT Credit:FURIOUSPUPPY
---- BOT EXPERIMENT Author: Arizona Fauzie
---- Link:http://steamcommunity.com/sharedfiles/filedetails/?id=837040016
---- Refactor: 决明子 Email: dota2jmz@163.com
---- Link:http://steamcommunity.com/sharedfiles/filedetails/?id=1573671599
---- Link:http://steamcommunity.com/sharedfiles/filedetails/?id=1627071163
-----------------------------------------------------------------------------------------------------
-
-
 local X = {};
 
 local bot = GetBot();
 local J = require(GetScriptDirectory()..'/FunLib/jmz_func')
 local V = require(GetScriptDirectory()..'/FunLib/aba_hero_skill')
+local SU = require(GetScriptDirectory()..'/FunLib/aba_hero_sub_units')
 
 local nTeamAncient = GetAncient(GetTeam());
 local vTeamAncientLoc = nil;
@@ -1202,6 +1193,9 @@ function X.MinionThink(hMinionUnit)
 		elseif X.IsBrewLink(hMinionUnit:GetUnitName())
 		then
 			X.BrewLinkThink(hMinionUnit)
+		elseif X.IsFamiliar(hMinionUnit:GetUnitName())
+		then
+			SU.FamiliarThink(bot, hMinionUnit)
 		end
 	end
 end

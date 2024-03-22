@@ -268,6 +268,7 @@ local sPos3List = {
 	"npc_dota_hero_spirit_breaker",
 	"npc_dota_hero_tidehunter",
 	"npc_dota_hero_viper",
+	"npc_dota_hero_visage",
 }
 
 local sPos4List = {

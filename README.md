@@ -106,6 +106,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
         - [1] Ursa
         - [4,5] Vengeful Spirit
         - [4,5] Venomancer
+        - [3] Visage
         - [2] Void Spirit
     - ***Later***
         - Lone Druid
@@ -271,6 +272,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
             | Vengeful Spirit       | -       | &check; | 0 
             | Venomancer            | &check; | -       | 0 
             | Viper                 | -       | &check; | 0 
+            | Visage                | -       | &check; | 0 
             | Void Spirit           | -       | -       | 1 [2/5/2024]
             | Warlock               | -       | -       | 0 
             | Witch Doctor          | &check; | -       | 0 
