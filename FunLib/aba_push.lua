@@ -5,6 +5,8 @@ local IsSupportHelpCorePush = false
 local SupportHelpCore = nil
 
 function Push.GetPushDesire(bot, lane)
+    if bot.laneToPush == nil then bot.laneToPush = lane end
+
     if J.IsInLaningPhase()
     then
         local nInRangeEnemy = bot:GetNearbyHeroes(1200, true, BOT_MODE_NONE)
@@ -158,6 +160,7 @@ function Push.GetPushDesire(bot, lane)
 
                 if nearbynum == 0
                 then
+                    bot.laneToPush = lane
                     return RemapValClamped(dist, 4000, 1000, 0, 0.75)
                 end
             end
@@ -207,6 +210,7 @@ function Push.GetPushDesire(bot, lane)
             nPushDesire = nPushDesire * RemapValClamped(allyKills / enemyKills, 1, 2, 1, 2)
         end
 
+        bot.laneToPush = lane
         return Clamp(nPushDesire, 0, maxDesire + tot)
     end
 

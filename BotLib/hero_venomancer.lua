@@ -539,7 +539,7 @@ function X.ConsiderNoxiousPlague()
 
                 if  nInRangeAlly ~= nil and nTargetInRangeAlly ~= nil
                 and #nInRangeAlly >= #nTargetInRangeAlly
-                and not (#nInRangeAlly >= nTargetInRangeAlly + 2)
+                and not (#nInRangeAlly >= #nTargetInRangeAlly + 2)
                 and dmg < currDmg
                 then
                     dmg = currDmg

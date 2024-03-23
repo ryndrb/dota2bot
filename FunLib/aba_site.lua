@@ -526,6 +526,7 @@ local tFarmerList = {
 	["npc_dota_hero_tiny"] = true,
 	["npc_dota_hero_troll_warlord"] = true,
 	["npc_dota_hero_ursa"] = true,
+	["npc_dota_hero_weaver"] = true,
 }
 
 function Site.IsSpecialFarmer(bot)
@@ -624,6 +625,7 @@ local tFarmHeroList = {
 	["npc_dota_hero_ursa"] = true,
 	["npc_dota_hero_visage"] = true,
 	["npc_dota_hero_void_spirit"] = true,
+	["npc_dota_hero_weaver"] = true,
 }
 
 function Site.IsShouldFarmHero( bot )
@@ -2354,6 +2356,17 @@ Site.ConsiderIsTimeToFarm["npc_dota_hero_abyssal_underlord"] = function()
 end
 
 Site.ConsiderIsTimeToFarm["npc_dota_hero_visage"] = function()
+	local bot = GetBot()
+	local networth = bot:GetNetWorth()
+
+	if networth < 30000 then
+		return true
+	end
+
+	return false
+end
+
+Site.ConsiderIsTimeToFarm["npc_dota_hero_weaver"] = function()
 	local bot = GetBot()
 	local networth = bot:GetNetWorth()
 

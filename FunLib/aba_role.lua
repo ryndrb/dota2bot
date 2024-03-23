@@ -1706,7 +1706,7 @@ X['mid'] = {
 	'npc_dota_hero_viper',
 	'npc_dota_hero_zuus',
 	"npc_dota_hero_razor",
-	'npc_dota_hero_weaver',
+	-- 'npc_dota_hero_weaver',
 }
 
 X['safe'] = {
@@ -2275,6 +2275,7 @@ function X.IsABAHero()
 		["npc_dota_hero_venomancer"] = true,
 		["npc_dota_hero_visage"] = true,
 		["npc_dota_hero_void_spirit"] = true,
+		["npc_dota_hero_weaver"] = true,
 	}
 
 	return sABAHeroIndex[botName] == true

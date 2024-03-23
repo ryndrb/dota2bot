@@ -1,10 +1,9 @@
 # Dota 2 Bot Script
 
-This is a Dota 2 Bot Script based off of Beginner:AI by (dota2jmz@163.com). Some changes are based upon other existing bot scripts; personal use mostly; adding heroes. Trying to get use to the API and code base.
+This is a Dota 2 Bot Script based off of Beginner:AI by (dota2jmz@163.com). Some changes are based upon other existing bot scripts; personal use mostly. Trying to get use to the API and code base.
 Just trying to alleviate cheesiness and make bots movement more organic and objective base. It's a work in progress.
 
-Might want to scale Push desire with core networths so that bots farm more and increase their CS (though my vscript Buff alleviate this). Also, evasion/damage reduction/aura
-items are just too good in bots games (since itemization isn't dynamic), so it's still lineup dependent.
+Evasion/damage reduction/aura items are just too good in bots games (since itemization isn't dynamic). It's also still very lineup dependent on how well they'll perform.
 
 Worth noting that I also use a vscript to improve the bots GPM and XPM (AP only), and also have them able to get neutral items (Check Buff).
 
@@ -39,7 +38,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
     - BOT Experiment (by Furiospuppy)
     - ExtremePush (https://github.com/insraq/dota2bots)
 
-# Tinkering About
+# Tinkering ABo(u)t (ryndrb)
 - ***Heroes (Pos: 1,2,3,4,5)***
     - All Supports are both 4 and 5 for now.
     - ^. Supports that does damage, CC, or is Ranged are just inherently 'better' for the most part in bot games compared to Melee or non-. (Since positioning and movement are Valve default.)
@@ -108,6 +107,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
         - [4,5] Venomancer
         - [3] Visage
         - [2] Void Spirit
+        - [1] Weaver
     - ***Later***
         - Lone Druid
         - Morphling
@@ -275,6 +275,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
             | Visage                | -       | &check; | 0 
             | Void Spirit           | -       | -       | 1 [2/5/2024]
             | Warlock               | -       | -       | 0 
+            | Weaver                | -       | &check; | 0 
             | Witch Doctor          | &check; | -       | 0 
             | Wraith King           | -       | -       | 0 
             | Zeus                  | &check; | &check; | 0 

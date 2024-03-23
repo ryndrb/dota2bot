@@ -3,6 +3,7 @@ local J = require( GetScriptDirectory()..'/FunLib/jmz_func')
 local Defend = {}
 
 function Defend.GetDefendDesire(bot, lane)
+	if bot.laneToDefend == nil then bot.laneToDefend = lane end
 
     if (J.IsModeTurbo() and DotaTime() < 8 * 60 or DotaTime() < 12 * 60)
     then
@@ -38,6 +39,7 @@ function Defend.GetDefendDesire(bot, lane)
 			nDefendDesire = GetDefendLaneDesire(lane) * mul[lane]
 		end
 
+		bot.laneToDefend = lane
 		return Clamp(nDefendDesire, 0.1, 0.9)
 	end
 

@@ -50,6 +50,9 @@ local PhoenixMoveSunRay = false
 
 local ShouldMoveMortimerKisses = false
 
+if bot.shouldShukuchiTagCreeps == nil then bot.shouldShukuchiTagCreeps = false end
+local ShukuchiCreepList = {}
+
 local TormentorLocation
 if GetTeam() == TEAM_RADIANT
 then
@@ -88,7 +91,7 @@ function GetDesire()
 		return BOT_ACTION_DESIRE_VERYHIGH
 	end
 
-	-- Hero Roam Abilities
+	-- Batrider
 	if bot:GetUnitName() == "npc_dota_hero_batrider"
 	and bot:HasModifier("modifier_batrider_flaming_lasso_self")
 	then
@@ -134,6 +137,41 @@ function GetDesire()
 	and bot:HasModifier("modifier_spirit_breaker_charge_of_darkness")
 	then
 		return BOT_MODE_DESIRE_ABSOLUTE
+	end
+
+	-- Weaver
+	if  bot:GetUnitName() == "npc_dota_hero_weaver"
+	and bot:HasModifier("modifier_weaver_shukuchi")
+	and bot.tryShukuchiKill
+	then
+		if  J.IsValidHero(bot.ShukuchiKillTarget)
+		and J.IsInLaningPhase()
+		then
+			local nInRangeTower = bot.ShukuchiKillTarget:GetNearbyTowers(700, false)
+			if nInRangeTower ~= nil and #nInRangeTower == 0
+			then
+				return BOT_ACTION_DESIRE_ABSOLUTE
+			end
+		else
+			return BOT_ACTION_DESIRE_ABSOLUTE
+		end
+	end
+
+	if  bot:GetUnitName() == "npc_dota_hero_weaver"
+	and bot:HasModifier("modifier_weaver_shukuchi")
+	then
+		local nLocationAoE = bot:FindAoELocation(true, false, bot:GetLocation(), 1000, 175, 0, 0)
+		local nCreeps = bot:GetNearbyCreeps(bot:GetAttackRange() + 200, true)
+
+		if  J.IsFarming(bot)
+		and nCreeps ~= nil and #nCreeps >= 2
+		and J.CanBeAttacked(nCreeps[1])
+		and nLocationAoE.count >= 2
+		then
+			bot.shouldShukuchiTagCreeps = true
+			ShukuchiCreepList = nCreeps
+			return BOT_ACTION_DESIRE_ABSOLUTE
+		end
 	end
 
 	-- Pickup Neutral Item Tokens
@@ -323,6 +361,8 @@ function OnEnd()
 	towerCreepMode = false
 	bot:SetTarget(nil)
 	harassTarget = nil
+	bot.shouldShukuchiTagCreeps = false
+	ShukuchiCreepList = {}
 end
 
 
@@ -413,6 +453,23 @@ function Think()
 		end
 	end
 
+	-- Weaver
+	if bot.tryShukuchiKill
+	then
+		if J.IsValidHero(bot.ShukuchiKillTarget)
+		then
+			bot:Action_MoveToLocation(bot.ShukuchiKillTarget:GetLocation())
+			return
+		end
+	end
+
+	if  bot.shouldShukuchiTagCreeps
+	and #ShukuchiCreepList > 0
+	then
+		bot:Action_MoveToLocation(J.GetCenterOfUnits(ShukuchiCreepList))
+		return
+	end
+
 	if  shouldHarass
 	and harassTarget ~= nil
 	then
@@ -467,12 +524,19 @@ function Think()
 	end
 
 	if  (IsHeroCore or IsSupport)
+	and targetUnit ~= nil
 	and (J.IsValid(targetUnit)
 		or J.IsValidTarget(targetUnit)
 		or J.IsValidBuilding(targetUnit))
 	then
-		bot:Action_AttackUnit(targetUnit, false)
-		return
+		if GetUnitToUnitDistance(bot, targetUnit) > 600
+		then
+			bot:Action_MoveToLocation(targetUnit:GetLocation() + RandomVector(150))
+			return
+		else
+			bot:Action_AttackUnit(targetUnit, false)
+			return
+		end
 	end
 end
 
@@ -1808,6 +1872,7 @@ function X.IsSpecialCore(bot)
 			["npc_dota_hero_viper"] = true,
 			["npc_dota_hero_visage"] = true,
 			["npc_dota_hero_void_spirit"] = true,
+			["npc_dota_hero_weaver"] = true,
 			["npc_dota_hero_zuus"] = true,
 		}
 
@@ -2066,6 +2131,7 @@ function CanAttackSpecialUnit()
 			or string.find(unit:GetUnitName(), 'sentry_ward')
 			or string.find(unit:GetUnitName(), 'tombstone')
 			or string.find(unit:GetUnitName(), 'warlock_golem')
+			or string.find(unit:GetUnitName(), 'weaver_swarm')
 			then
 				if  GetUnitToUnitDistance(bot, unit) <= nAttackRange
 				and J.CanBeAttacked(unit)
