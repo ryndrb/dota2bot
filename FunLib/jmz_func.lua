@@ -4384,6 +4384,48 @@ function J.GetTotalEstimatedDamageToTarget(nUnits, target)
 	return dmg
 end
 
+function J.GetAliveCoreCount(nEnemy)
+	local team = GetTeam()
+	local count = 0
+
+	if nEnemy
+	then
+		team = GetOpposingTeam()
+	end
+
+	local heroID = GetTeamPlayers(team)
+	if IsHeroAlive(heroID[1]) then count = count + 1 end
+	if IsHeroAlive(heroID[2]) then count = count + 1 end
+	if IsHeroAlive(heroID[3]) then count = count + 1 end
+
+	return count
+end
+
+function J.GetEnemyCountInLane(lane)
+	local count = 0
+	for _, id in pairs( GetTeamPlayers( GetOpposingTeam()))
+	do
+		if IsHeroAlive(id)
+		then
+			local info = GetHeroLastSeenInfo(id)
+
+			if info ~= nil
+			then
+				local dInfo = info[1]
+
+				if  dInfo ~= nil
+				and J.GetDistance(GetLaneFrontLocation(GetTeam(), lane, 0), dInfo.location) < 1600
+				and dInfo.time_since_seen < 10
+				then
+					count = count + 1
+				end
+			end
+		end
+	end
+
+	return count
+end
+
 function J.ConsolePrintActiveMode(bot)
 	local mode = bot:GetActiveMode()
 

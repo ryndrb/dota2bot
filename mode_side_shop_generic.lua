@@ -33,7 +33,8 @@ function GetDesire()
 	local topFrontD = 1 - GetLaneFrontAmount(GetOpposingTeam(), LANE_TOP, true)
 	local midFrontD = 1 - GetLaneFrontAmount(GetOpposingTeam(), LANE_MID, true)
 	local botFrontD = 1 - GetLaneFrontAmount(GetOpposingTeam(), LANE_BOT, true)
-	local aveLevel = 0
+	local aveCoreLevel = 0
+	local aveSuppLevel = 0
 
     local currTime = DotaTime()
     local startTimer = J.IsModeTurbo() and 15 * 60 or 35 * 60
@@ -74,16 +75,21 @@ function GetDesire()
 	do
 		local member = GetTeamMember(i)
 
-		if member ~= nil
+		if  member ~= nil
 		and not member:IsIllusion()
 		and not member:HasModifier("modifier_arc_warden_tempest_double")
-		and J.IsCore(member)
 		then
-			aveLevel = aveLevel + member:GetLevel()
+			if J.IsCore(member)
+			then
+				aveCoreLevel = aveCoreLevel + member:GetLevel()
+			else
+				aveSuppLevel = aveSuppLevel + member:GetLevel()
+			end
 		end
 	end
 
-	aveLevel = aveLevel / 3
+	aveCoreLevel = aveCoreLevel / 3
+	aveSuppLevel = aveSuppLevel / 2
 
 	if DotaTime() >= spawnTime * 60
 	and (DotaTime() - bot.lastKillTime) >= (spawnTime / 2) * 60
@@ -128,7 +134,8 @@ function GetDesire()
 	end
 
 	if  bot.tormentorState
-	and aveLevel > 12.6
+	and aveCoreLevel > 12.9
+	and aveSuppLevel > 9.9
     and (((bot.lastKillTime == 0 and aliveAlly >= 5)
         or (bot.lastKillTime > 0 and aliveAlly >= 3)
 		or (GetAttackingCount() >= 3)))

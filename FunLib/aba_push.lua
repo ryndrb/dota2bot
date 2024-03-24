@@ -4,6 +4,10 @@ local J = require( GetScriptDirectory()..'/FunLib/jmz_func')
 local IsSupportHelpCorePush = false
 local SupportHelpCore = nil
 
+local ShouldNotPushLane = false
+local LanePushCooldown = 0
+local LanePush = LANE_MID
+
 function Push.GetPushDesire(bot, lane)
     if bot.laneToPush == nil then bot.laneToPush = lane end
 
@@ -30,14 +34,26 @@ function Push.GetPushDesire(bot, lane)
         if bot:GetLevel() < 6 then return 0.1 end
     end
 
-    local maxDesire = 0.75
+    if ShouldNotPushLane
+    then
+        if  DotaTime() < LanePushCooldown + 10
+        and LanePush == lane
+        then
+            return BOT_MODE_DESIRE_NONE
+        else
+            ShouldNotPushLane = false
+            LanePushCooldown = 0
+        end
+    end
+
+    local maxDesire = 0.9
     local nMode = bot:GetActiveMode()
     local nModeDesire = bot:GetActiveModeDesire()
 
 	if  (nMode == BOT_MODE_DEFEND_TOWER_TOP or nMode == BOT_MODE_DEFEND_TOWER_MID or nMode == BOT_MODE_DEFEND_TOWER_BOT)
     and nModeDesire > 0.75
     then
-        maxDesire = 0.5
+        maxDesire = 0.75
     end
 
     local botTarget = bot:GetAttackTarget()
@@ -47,6 +63,27 @@ function Push.GetPushDesire(bot, lane)
         or botTarget:HasModifier('modifier_backdoor_protection_active'))
     then
         return 0.1
+    end
+
+    if bot:WasRecentlyDamagedByTower(1.5)
+    or J.GetHP(bot) < 0.45
+    then
+        return 0.1
+    end
+
+    local enemyInLane = J.GetEnemyCountInLane(lane)
+    if enemyInLane > 0
+    then
+        local nInRangeAlly = J.GetAlliesNearLoc(GetLaneFrontLocation(GetTeam(), lane, 0), 700)
+
+        if  nInRangeAlly ~= nil
+        and enemyInLane > (GetUnitToLocationDistance(bot, GetLaneFrontLocation(GetTeam(), lane, 0)) > 700 and #nInRangeAlly + 1 or #nInRangeAlly)
+        then
+            ShouldNotPushLane = true
+            LanePushCooldown = DotaTime()
+            LanePush = lane
+            return BOT_MODE_DESIRE_NONE
+        end
     end
 
     local aliveHeroesList = {}
@@ -76,33 +113,19 @@ function Push.GetPushDesire(bot, lane)
         end
     end
 
-    local nNearByAlliesLanePush = {
-        [LANE_TOP] = BOT_MODE_PUSH_TOWER_TOP,
-        [LANE_MID] = BOT_MODE_PUSH_TOWER_MID,
-        [LANE_BOT] = BOT_MODE_PUSH_TOWER_BOT,
-    }
-
-    local nEnemyHeroes = bot:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
-    -- local nAllyHeroes = bot:GetNearbyHeroes(1600, false, nNearByAlliesLanePush[lane])
-    local nAllyHeroes = bot:GetNearbyHeroes(1600, false, BOT_MODE_NONE)
-
-    if (nEnemyHeroes ~= nil and nAllyHeroes ~= nil
-        and #nEnemyHeroes > #nAllyHeroes)
-    or bot:WasRecentlyDamagedByTower(1.5)
-    or J.GetHP(bot) < 0.45
-    then
-        return 0.1
-    end
-
     local aAliveCount = J.GetNumOfAliveHeroes(false)
     local eAliveCount = J.GetNumOfAliveHeroes(true)
     local allyKills = J.GetNumOfTeamTotalKills(false) + 1
     local enemyKills = J.GetNumOfTeamTotalKills(true) + 1
+    local aAliveCoreCount = J.GetAliveCoreCount(false)
+    local eAliveCoreCount = J.GetAliveCoreCount(true)
+    local nPushDesire = RemapValClamped(GetPushLaneDesire(lane), 0, 1, 0, maxDesire)
 
     local laneFrontAmount = GetLaneFrontAmount(GetTeam(), lane, true)
     local laneFrontAmountEnemy = 1 - GetLaneFrontAmount(GetOpposingTeam(), lane, true)
     if  not J.IsInLaningPhase()
     and (aAliveCount <= eAliveCount + 2)
+    and nPushDesire < maxDesire / 2
     then
         local nInRangeEnemy = J.GetEnemiesNearLoc(bot:GetLocation(), 1600)
         local nInRangeEnemyTowers = bot:GetNearbyTowers(700, true)
@@ -171,6 +194,7 @@ function Push.GetPushDesire(bot, lane)
         do
             if  J.IsValidHero(allyHero)
             and J.IsCore(allyHero)
+            and J.IsNotSelf(bot, allyHero)
             and not J.IsSuspiciousIllusion(allyHero)
             and not J.IsMeepoClone(allyHero)
             and not J.IsCore(bot)
@@ -193,17 +217,13 @@ function Push.GetPushDesire(bot, lane)
     end
 
     -- General Push
-    if Push.WhichLaneToPush(bot) == lane
+    if aAliveCoreCount >= eAliveCoreCount
     then
-        local nPushDesire = RemapValClamped(GetPushLaneDesire(lane), 0, 1, 0, maxDesire)
-
         if J.DoesTeamHaveAegis(GetUnitList(UNIT_LIST_ALLIED_HEROES))
         then
             local aegis = 1.3
             nPushDesire = nPushDesire * aegis
         end
-
-        local tot = ((aAliveCount - eAliveCount) / (aAliveCount + eAliveCount)) * 0.15
 
         if aAliveCount >= eAliveCount
         then
@@ -211,7 +231,7 @@ function Push.GetPushDesire(bot, lane)
         end
 
         bot.laneToPush = lane
-        return Clamp(nPushDesire, 0, maxDesire + tot)
+        return Clamp(nPushDesire, 0, maxDesire)
     end
 
     return 0.1
@@ -353,26 +373,13 @@ function Push.PushThink(bot, lane)
     end
 
     local visionRange = (bot:GetCurrentVisionRange() <= 1600 and bot:GetCurrentVisionRange()) or 1600
-    local offset = math.max(teammateDistance / enemyDistance - teammateAlive / enemyAlive, 0)
     local nEnemyTowers = bot:GetNearbyTowers(visionRange, true)
 
-    local attackRange       = bot:GetAttackRange()
-    local targetLoc         = GetLaneFrontLocation(GetTeam(), lane, offset) - J.RandomForwardVector(attackRange)
-    local distanceToTarget  = 0
-
-    if nEnemyTowers ~= nil and #nEnemyTowers > 0
-    then
-        distanceToTarget = #(targetLoc - nEnemyTowers[1]:GetLocation())
-    end
-
-    if  nEnemyTowers ~= nil and #nEnemyTowers > 0
-    and distanceToTarget > attackRange
-    then
-        targetLoc = nEnemyTowers[1]:GetLocation() + (targetLoc - nEnemyTowers[1]:GetLocation()):Normalized() * attackRange
-    end
+    local attackRange = bot:GetAttackRange()
+    local targetLoc = GetLaneFrontLocation(GetTeam(), lane, 0) - J.RandomForwardVector(attackRange)
 
     local nInRangeAlly = bot:GetNearbyHeroes(1200, false, BOT_MODE_NONE)
-    local nInRangeEnemy = bot:GetNearbyHeroes(bot:GetCurrentVisionRange(), true, BOT_MODE_NONE)
+    local nInRangeEnemy = bot:GetNearbyHeroes(visionRange, true, BOT_MODE_NONE)
 
     if  nInRangeAlly ~= nil and nInRangeEnemy ~= nil
     and #nInRangeEnemy > #nInRangeAlly
