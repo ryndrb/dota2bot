@@ -108,6 +108,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
         - [3] Visage
         - [2] Void Spirit
         - [1] Weaver
+        - [1,2,3] Windranger
     - ***Later***
         - Lone Druid
         - Morphling
@@ -276,6 +277,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
             | Void Spirit           | -       | -       | 1 [2/5/2024]
             | Warlock               | -       | -       | 0 
             | Weaver                | -       | &check; | 0 
+            | Windranger            | &check; | -       | 0 
             | Witch Doctor          | &check; | -       | 0 
             | Wraith King           | -       | -       | 0 
             | Zeus                  | &check; | &check; | 0 

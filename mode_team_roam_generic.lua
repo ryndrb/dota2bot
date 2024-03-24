@@ -297,6 +297,15 @@ function GetDesire()
 				return BOT_MODE_DESIRE_ABSOLUTE
 			end
 		end
+	elseif botName == "npc_dota_hero_windrunner"
+	then
+		if cAbility == nil then cAbility = bot:GetAbilityByName("windrunner_powershot") end
+		if cAbility:IsTrained()
+		then
+			if cAbility:IsInAbilityPhase() or bot:IsChanneling() then
+				return BOT_MODE_DESIRE_ABSOLUTE
+			end
+		end
 	end
 
 	if IsHeroCore
@@ -1873,6 +1882,7 @@ function X.IsSpecialCore(bot)
 			["npc_dota_hero_visage"] = true,
 			["npc_dota_hero_void_spirit"] = true,
 			["npc_dota_hero_weaver"] = true,
+			["npc_dota_hero_windrunner"] = true,
 			["npc_dota_hero_zuus"] = true,
 		}
 

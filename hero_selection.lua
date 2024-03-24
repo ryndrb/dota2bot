@@ -188,6 +188,7 @@ local sPos1List = {
 	"npc_dota_hero_troll_warlord",
 	"npc_dota_hero_ursa",
 	"npc_dota_hero_weaver",
+	"npc_dota_hero_windrunner",
 }
 
 local sPos2List = {
@@ -227,6 +228,7 @@ local sPos2List = {
 	"npc_dota_hero_tiny",
 	"npc_dota_hero_viper",
 	"npc_dota_hero_void_spirit",
+	"npc_dota_hero_windrunner",
 	"npc_dota_hero_zuus",
 }
 
@@ -270,6 +272,7 @@ local sPos3List = {
 	"npc_dota_hero_tidehunter",
 	"npc_dota_hero_viper",
 	"npc_dota_hero_visage",
+	"npc_dota_hero_windrunner",
 }
 
 local sPos4List = {

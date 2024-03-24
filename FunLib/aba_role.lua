@@ -1661,7 +1661,7 @@ X['off'] = {
 	'npc_dota_hero_visage',
 	-- 'npc_dota_hero_tusk',
 	-- 'npc_dota_hero_venomancer',
-	--'npc_dota_hero_windrunner',
+	'npc_dota_hero_windrunner',
 
 }
 
@@ -1707,6 +1707,7 @@ X['mid'] = {
 	'npc_dota_hero_zuus',
 	"npc_dota_hero_razor",
 	-- 'npc_dota_hero_weaver',
+	'npc_dota_hero_windrunner',
 }
 
 X['safe'] = {
@@ -1744,7 +1745,7 @@ X['safe'] = {
 	--'npc_dota_hero_ogre_magi',
 	--'npc_dota_hero_omniknight',
 	'npc_dota_hero_marci',
-
+	'npc_dota_hero_windrunner',
 }
 
 X['supp'] = {
@@ -1794,7 +1795,7 @@ X['supp'] = {
 	'npc_dota_hero_pugna',
 	--'npc_dota_hero_queenofpain',
 	-- 'npc_dota_hero_death_prophet',
-	'npc_dota_hero_windrunner',
+	-- 'npc_dota_hero_windrunner',
 	'npc_dota_hero_venomancer',
 
 }
@@ -2208,7 +2209,6 @@ function X.IsABAHero()
 		["npc_dota_hero_naga_siren"] = true, 		
 		["npc_dota_hero_mirana"] = true, 		
 		["npc_dota_hero_queenofpain"] = true, 		
-		["npc_dota_hero_windrunner"] = true, 		
 		["npc_dota_hero_zuus"] = true, 		
 
 		-- NEW ADDED HEROES --
@@ -2276,6 +2276,7 @@ function X.IsABAHero()
 		["npc_dota_hero_visage"] = true,
 		["npc_dota_hero_void_spirit"] = true,
 		["npc_dota_hero_weaver"] = true,
+		["npc_dota_hero_windrunner"] = true,
 	}
 
 	return sABAHeroIndex[botName] == true

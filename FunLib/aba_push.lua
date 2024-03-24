@@ -376,7 +376,12 @@ function Push.PushThink(bot, lane)
     local nEnemyTowers = bot:GetNearbyTowers(visionRange, true)
 
     local attackRange = bot:GetAttackRange()
-    local targetLoc = GetLaneFrontLocation(GetTeam(), lane, 0) - J.RandomForwardVector(attackRange)
+    local targetLoc = GetLaneFrontLocation(GetTeam(), lane, 0)
+
+    if nEnemyTowers ~= nil and #nEnemyTowers == 0
+    then
+        targetLoc = GetLaneFrontLocation(GetTeam(), lane, -attackRange)
+    end
 
     local nInRangeAlly = bot:GetNearbyHeroes(1200, false, BOT_MODE_NONE)
     local nInRangeEnemy = bot:GetNearbyHeroes(visionRange, true, BOT_MODE_NONE)
