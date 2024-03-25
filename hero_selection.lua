@@ -251,6 +251,7 @@ local sPos3List = {
 	"npc_dota_hero_enigma",
 	"npc_dota_hero_furion",
 	"npc_dota_hero_kunkka",
+	"npc_dota_hero_leshrac",
 	"npc_dota_hero_legion_commander",
 	"npc_dota_hero_lycan",
 	"npc_dota_hero_magnataur",

@@ -72,7 +72,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
         - ~~[4,5] Hoodwink~~
         - [2] Invoker
         - [2] Keeper of the Light
-        - [2] Leshrac
+        - [2,3] Leshrac
         - [1] Lifestealer
         - [3] Lycan
         - [3] Magnus
@@ -211,7 +211,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
             | Keeper of the Light   | &check; | &check; | 0 
             | Kunkka                | &check; | &check; | 0 
             | Legion Commander      | -       | -       | 0 
-            | Leshrac               | -       | &check; | 0 
+            | Leshrac               | -       | &check; | 1 [3/25/2024]
             | Lich                  | &check; | &check; | 0 
             | Lifestealer           | &check; | -       | 0 
             | Lina                  | -       | &check; | 0 

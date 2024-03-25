@@ -53,6 +53,9 @@ local ShouldMoveMortimerKisses = false
 if bot.shouldShukuchiTagCreeps == nil then bot.shouldShukuchiTagCreeps = false end
 local ShukuchiCreepList = {}
 
+local ShouldMoveCloseTowerForEdict = false
+local EdictTowerTarget = nil
+
 local TormentorLocation
 if GetTeam() == TEAM_RADIANT
 then
@@ -172,6 +175,13 @@ function GetDesire()
 			ShukuchiCreepList = nCreeps
 			return BOT_ACTION_DESIRE_ABSOLUTE
 		end
+	end
+
+	-- Leshrac
+	ShouldMoveCloseTowerForEdict = ConsiderLeshracEdictTower()
+	if ShouldMoveCloseTowerForEdict
+	then
+		return BOT_ACTION_DESIRE_ABSOLUTE
 	end
 
 	-- Pickup Neutral Item Tokens
@@ -477,6 +487,19 @@ function Think()
 	then
 		bot:Action_MoveToLocation(J.GetCenterOfUnits(ShukuchiCreepList))
 		return
+	end
+
+	-- Leshrac
+	if ShouldMoveCloseTowerForEdict
+	then
+		if EdictTowerTarget ~= nil
+		then
+			if GetUnitToUnitDistance(bot, EdictTowerTarget) > 350
+			then
+				bot:Action_MoveToLocation(EdictTowerTarget:GetLocation())
+				return
+			end
+		end
 	end
 
 	if  shouldHarass
@@ -2470,4 +2493,32 @@ function GetMortimerKissesTarget()
 	end
 
 	return nil
+end
+
+function ConsiderLeshracEdictTower()
+	if  bot:GetUnitName() == "npc_dota_hero_leshrac"
+	and bot:HasModifier("modifier_leshrac_diabolic_edict")
+	then
+		local DiabolicEdict = bot:GetAbilityByName('leshrac_diabolic_edict')
+		if DiabolicEdict:IsTrained()
+		then
+			local nRadius = DiabolicEdict:GetSpecialValueInt('radius')
+			if J.IsPushing(bot)
+			then
+				local nEnemyTowers = bot:GetNearbyTowers(1600, true)
+				local nEnemyLaneCreeps = bot:GetNearbyLaneCreeps(nRadius, true)
+				if  nEnemyTowers ~= nil and #nEnemyTowers >= 1
+				and J.IsValidBuilding(nEnemyTowers[1])
+				and J.CanBeAttacked(nEnemyTowers[1])
+				and not J.IsInRange(bot, nEnemyTowers[1], nRadius - 75)
+				and nEnemyLaneCreeps ~= nil and #nEnemyLaneCreeps <= 2
+				then
+					EdictTowerTarget = nEnemyTowers[1]
+					return true
+				end
+			end
+		end
+	end
+
+	return false
 end

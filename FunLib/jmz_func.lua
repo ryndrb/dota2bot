@@ -4426,6 +4426,11 @@ function J.GetEnemyCountInLane(lane)
 	return count
 end
 
+function J.GetManaAfter(manaCost)
+	local bot = GetBot()
+	return (bot:GetMana() - manaCost) / bot:GetMaxMana()
+end
+
 function J.ConsolePrintActiveMode(bot)
 	local mode = bot:GetActiveMode()
 
