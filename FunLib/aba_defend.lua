@@ -30,15 +30,16 @@ function Defend.GetDefendDesire(bot, lane)
 
 	local nDefendDesire = 0
 	local nEnemyLaneCreeps = J.GetCreepsAroundAncient(GetTeam(), true)
-	if nEnemyLaneCreeps ~= nil and #nEnemyLaneCreeps >= 1
+	if  nEnemyLaneCreeps ~= nil and #nEnemyLaneCreeps >= 1
+	and lane == LANE_MID
 	then
-		nDefendDesire = bot:GetActiveModeDesire() + 0.1
+		nDefendDesire = 1
 	else
 		nDefendDesire = GetDefendLaneDesire(lane) * mul[lane]
 	end
 
 	bot.laneToDefend = lane
-	return Clamp(nDefendDesire, 0.1, 0.95)
+	return Clamp(nDefendDesire, 0, 0.9)
 end
 
 function Defend.WhichLaneToDefend(lane)
