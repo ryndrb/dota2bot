@@ -111,6 +111,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
         - [2] Void Spirit
         - [1] Weaver
         - [1,2,3] Windranger
+        - [4,5] Winter Wyvern
     - ***Later***
         - Lone Druid
         - Morphling
@@ -280,6 +281,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
             | Warlock               | -       | -       | 0 
             | Weaver                | -       | &check; | 0 
             | Windranger            | &check; | -       | 0 
+            | Winter Wyvern         | -       | -       | 0 
             | Witch Doctor          | &check; | -       | 0 
             | Wraith King           | -       | -       | 0 
             | Zeus                  | &check; | &check; | 0 

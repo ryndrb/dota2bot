@@ -2278,6 +2278,7 @@ function X.IsABAHero()
 		["npc_dota_hero_void_spirit"] = true,
 		["npc_dota_hero_weaver"] = true,
 		["npc_dota_hero_windrunner"] = true,
+		["npc_dota_hero_winter_wyvern"] = true,
 	}
 
 	return sABAHeroIndex[botName] == true

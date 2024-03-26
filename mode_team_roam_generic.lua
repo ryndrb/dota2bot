@@ -1953,6 +1953,7 @@ function X.IsSpecialSupport(bot)
 		["npc_dota_hero_undying"] = true,
 		["npc_dota_hero_vengefulspirit"] = true,
 		["npc_dota_hero_venomancer"] = true,
+		["npc_dota_hero_winter_wyvern"] = true,
 	}
 	
 	return tSpecialSupportList[botName] == true
