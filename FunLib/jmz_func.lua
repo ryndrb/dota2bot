@@ -4232,7 +4232,7 @@ end
 function J.GetEnemiesAroundAncient()
 	local nUnitList = {}
 
-	for _, unit in pairs(GetUnitList(UNIT_LIST_ENEMY_CREEPS))
+	for _, unit in pairs(GetUnitList(UNIT_LIST_ENEMY_HEROES))
 	do
 		if  J.IsValidHero(unit)
 		and GetUnitToUnitDistance(unit, GetAncient(GetTeam())) < 1600
