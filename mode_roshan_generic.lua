@@ -22,7 +22,6 @@ function GetDesire()
     local aliveAlly = J.GetNumOfAliveHeroes(false)
     local aliveEnemy = J.GetNumOfAliveHeroes(true)
     local hasSameOrMoreHero = aliveAlly >= aliveEnemy
-    local healthPercentage = bot:GetHealth() / bot:GetMaxHealth()
     local timeOfDay = J.CheckTimeOfDay()
 
     local aliveHeroesList = {}
@@ -81,10 +80,10 @@ function GetDesire()
     and initDPSFlag
     and (hasSameOrMoreHero or (not hasSameOrMoreHero and IsEnoughAllies()))
     then
-        local mul = RemapValClamped(sinceRoshAliveTime, sinceRoshAliveTime, sinceRoshAliveTime + (5 * 60), 1, 2)
+        local mul = RemapValClamped(DotaTime(), sinceRoshAliveTime, sinceRoshAliveTime + (2.5 * 60), 1, 2)
         local nRoshanDesire = (GetRoshanDesire() * mul)
 
-        return Clamp(nRoshanDesire, 0, 0.9)
+        return Clamp(nRoshanDesire, 0, 0.91)
     end
 
     return BOT_ACTION_DESIRE_NONE

@@ -4456,23 +4456,17 @@ X.ConsiderItemDesire["item_tpscroll"] = function( hItem )
 
 	--Tormentor
 	if  bot:GetActiveMode() == BOT_MODE_SIDE_SHOP
-	and not J.IsInTeamFight(bot, 1200)
-	and not J.IsGoingOnSomeone(bot)
-	and not J.IsDefending(bot)
 	and nEnemyCount == 0
+	and (not J.IsInTeamFight(bot, 1200)
+		or not J.IsGoingOnSomeone(bot)
+		or not J.IsDefending(bot))
 	then
-		local loc = 0
-		if GetTeam() == TEAM_RADIANT
-		then
-			loc = Vector(-8075, -1148, 1000)
-		else
-			loc = Vector(8132, 1102, 1000)
-		end
+		local loc = J.GetTormentorLocation(GetTeam())
 
 		hEffectTarget = J.GetNearbyLocationToTp(loc)
 		sCastMotive = 'tormentor'
 
-		if J.GetLocationToLocationDistance(bot:GetLocation(), loc) > 2000
+		if J.GetLocationToLocationDistance(bot:GetLocation(), hEffectTarget) > 4400
 		then
 			if bot:GetUnitName() == 'npc_dota_hero_furion'
 			then
@@ -5121,13 +5115,13 @@ X.ConsiderItemDesire["item_tpscroll"] = function( hItem )
 		return BOT_ACTION_DESIRE_HIGH, tpLoc, sCastType, sCastMotive
 	end
 	
-	-- if J.Role.ShouldTpToDefend()
-	-- 	and bot:DistanceFromFountain() > 3800
-	-- then
-	-- 	tpLoc = GetAncient( GetTeam() ):GetLocation()
-	-- 	sCastMotive = '立即TP守家'
-	-- 	return BOT_ACTION_DESIRE_HIGH, tpLoc, sCastType, sCastMotive
-	-- end
+	if  J.Role.ShouldTpToDefend()
+	and bot:DistanceFromFountain() > 3800
+	then
+		tpLoc = GetAncient( GetTeam() ):GetLocation()
+		sCastMotive = '立即TP守家'
+		return BOT_ACTION_DESIRE_HIGH, tpLoc, sCastType, sCastMotive
+	end
 
 	return BOT_ACTION_DESIRE_NONE
 

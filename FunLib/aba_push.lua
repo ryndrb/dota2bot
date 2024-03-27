@@ -8,8 +8,24 @@ local ShouldNotPushLane = false
 local LanePushCooldown = 0
 local LanePush = LANE_MID
 
+local GlyphDuration = 7
+local ShoulNotPushTower = false
+local TowerPushCooldown = 0
+
+local IsPushingInLaningPhase = false
+
 function Push.GetPushDesire(bot, lane)
     if bot.laneToPush == nil then bot.laneToPush = lane end
+
+    local maxDesire = 0.9
+    local nMode = bot:GetActiveMode()
+    local nModeDesire = bot:GetActiveModeDesire()
+
+	if  (nMode == BOT_MODE_DEFEND_TOWER_TOP or nMode == BOT_MODE_DEFEND_TOWER_MID or nMode == BOT_MODE_DEFEND_TOWER_BOT)
+    and nModeDesire > 0.75
+    then
+        maxDesire = 0.75
+    end
 
     if J.IsInLaningPhase()
     then
@@ -26,12 +42,28 @@ function Push.GetPushDesire(bot, lane)
 
             if nEnemyTowers ~= nil and #nEnemyTowers >= 1
             then
+                IsPushingInLaningPhase = true
                 return bot:GetActiveModeDesire() + 0.1
             end
         end
 
+        IsPushingInLaningPhase = false
+
         if J.IsCore(bot) then return 0 end
         if bot:GetLevel() < 6 then return 0.1 end
+    end
+
+    IsPushingInLaningPhase = false
+
+    if ShoulNotPushTower
+    then
+        if DotaTime() < TowerPushCooldown + GlyphDuration
+        then
+            return BOT_ACTION_DESIRE_NONE
+        else
+            ShoulNotPushTower = false
+            TowerPushCooldown = 0
+        end
     end
 
     if ShouldNotPushLane
@@ -46,29 +78,37 @@ function Push.GetPushDesire(bot, lane)
         end
     end
 
-    local maxDesire = 0.9
-    local nMode = bot:GetActiveMode()
-    local nModeDesire = bot:GetActiveModeDesire()
-
-	if  (nMode == BOT_MODE_DEFEND_TOWER_TOP or nMode == BOT_MODE_DEFEND_TOWER_MID or nMode == BOT_MODE_DEFEND_TOWER_BOT)
-    and nModeDesire > 0.75
-    then
-        maxDesire = 0.75
-    end
+    local aAliveCount = J.GetNumOfAliveHeroes(false)
+    local eAliveCount = J.GetNumOfAliveHeroes(true)
+    local allyKills = J.GetNumOfTeamTotalKills(false) + 1
+    local enemyKills = J.GetNumOfTeamTotalKills(true) + 1
+    local aAliveCoreCount = J.GetAliveCoreCount(false)
+    local eAliveCoreCount = J.GetAliveCoreCount(true)
+    local nPushDesire = RemapValClamped(GetPushLaneDesire(lane), 0, 1, 0, maxDesire)
 
     local botTarget = bot:GetAttackTarget()
-    if  J.IsValidBuilding(botTarget)
-    and (botTarget:HasModifier('modifier_backdoor_protection')
-        or botTarget:HasModifier('modifier_backdoor_protection_in_base')
-        or botTarget:HasModifier('modifier_backdoor_protection_active'))
+    if J.IsValidBuilding(botTarget)
     then
-        return 0.1
+        if  botTarget:HasModifier('modifier_fountain_glyph')
+        and not (aAliveCount >= eAliveCount + 2)
+        then
+            ShoulNotPushTower = true
+            TowerPushCooldown = DotaTime()
+            return BOT_ACTION_DESIRE_NONE
+        end
+
+        if botTarget:HasModifier('modifier_backdoor_protection')
+        or botTarget:HasModifier('modifier_backdoor_protection_in_base')
+        or botTarget:HasModifier('modifier_backdoor_protection_active')
+        then
+            return BOT_ACTION_DESIRE_NONE
+        end
     end
 
     if bot:WasRecentlyDamagedByTower(1.5)
     or J.GetHP(bot) < 0.45
     then
-        return 0.1
+        return BOT_ACTION_DESIRE_NONE
     end
 
     local enemyInLane = J.GetEnemyCountInLane(lane)
@@ -77,7 +117,7 @@ function Push.GetPushDesire(bot, lane)
         local nInRangeAlly = J.GetAlliesNearLoc(GetLaneFrontLocation(GetTeam(), lane, 0), 700)
 
         if  nInRangeAlly ~= nil
-        and enemyInLane > (GetUnitToLocationDistance(bot, GetLaneFrontLocation(GetTeam(), lane, 0)) > 700 and #nInRangeAlly + 1 or #nInRangeAlly)
+        and enemyInLane > (GetUnitToLocationDistance(bot, GetLaneFrontLocation(GetTeam(), lane, 0)) < 700 and #nInRangeAlly + 1 or #nInRangeAlly)
         then
             ShouldNotPushLane = true
             LanePushCooldown = DotaTime()
@@ -112,14 +152,6 @@ function Push.GetPushDesire(bot, lane)
             end
         end
     end
-
-    local aAliveCount = J.GetNumOfAliveHeroes(false)
-    local eAliveCount = J.GetNumOfAliveHeroes(true)
-    local allyKills = J.GetNumOfTeamTotalKills(false) + 1
-    local enemyKills = J.GetNumOfTeamTotalKills(true) + 1
-    local aAliveCoreCount = J.GetAliveCoreCount(false)
-    local eAliveCoreCount = J.GetAliveCoreCount(true)
-    local nPushDesire = RemapValClamped(GetPushLaneDesire(lane), 0, 1, 0, maxDesire)
 
     local laneFrontAmount = GetLaneFrontAmount(GetTeam(), lane, true)
     local laneFrontAmountEnemy = 1 - GetLaneFrontAmount(GetOpposingTeam(), lane, true)
@@ -383,7 +415,7 @@ function Push.PushThink(bot, lane)
         targetLoc = GetLaneFrontLocation(GetTeam(), lane, -attackRange)
     end
 
-    local nInRangeAlly = bot:GetNearbyHeroes(1200, false, BOT_MODE_NONE)
+    local nInRangeAlly = bot:GetNearbyHeroes(1600, false, BOT_MODE_NONE)
     local nInRangeEnemy = bot:GetNearbyHeroes(visionRange, true, BOT_MODE_NONE)
 
     if  nInRangeAlly ~= nil and nInRangeEnemy ~= nil
@@ -398,6 +430,7 @@ function Push.PushThink(bot, lane)
             and enemyHero:GetAttackRange() > enemyRange
             then
                 enemyRange = enemyHero:GetAttackRange()
+                longestRangeHero = enemyHero
             end
 		end
 
@@ -438,8 +471,23 @@ function Push.PushThink(bot, lane)
         return bot:Action_AttackUnit(nInRangeEnemy[1], false)
     end
 
+    if GetTower(GetOpposingTeam(), TOWER_TOP_3) == nil and lane == LANE_TOP
+    or GetTower(GetOpposingTeam(), TOWER_MID_3) == nil and lane == LANE_MID
+    or GetTower(GetOpposingTeam(), TOWER_BOT_3) == nil and lane == LANE_BOT
+    then
+        local nBarracks = bot:GetNearbyBarracks(700 + nRange, true);
+        if nBarracks ~= nil and #nBarracks > 0
+        then
+            if J.CanBeAttacked(nBarracks[1])
+            then
+                return bot:Action_AttackUnit(nBarracks[1], false)
+            end
+        end
+    end
+
     local nEnemyLaneCreeps = bot:GetNearbyLaneCreeps(bot:GetCurrentVisionRange(), true)
-    if nEnemyLaneCreeps ~= nil and #nEnemyLaneCreeps > 0
+    if  nEnemyLaneCreeps ~= nil and #nEnemyLaneCreeps > 0
+    and not IsPushingInLaningPhase
     then
         local targetCreep = nEnemyLaneCreeps[1]
 

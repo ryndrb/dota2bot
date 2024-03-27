@@ -4229,25 +4229,28 @@ function J.IsHumanPlayerInTeam()
 	return false
 end
 
-function J.GetCreepsAroundAncient(team, enemy)
-	local nCreepList = {}
+function J.GetEnemiesAroundAncient()
+	local nUnitList = {}
 
-	local list = GetUnitList(UNIT_LIST_ALLIED_CREEPS)
-	if enemy
-	then
-		list = GetUnitList(UNIT_LIST_ENEMY_CREEPS)
-	end
-
-	for _, creep in pairs(list)
+	for _, unit in pairs(GetUnitList(UNIT_LIST_ENEMY_CREEPS))
 	do
-		if  J.IsValid(creep)
-		and GetUnitToUnitDistance(creep, GetAncient(team)) < 1600
+		if  J.IsValidHero(unit)
+		and GetUnitToUnitDistance(unit, GetAncient(GetTeam())) < 1600
 		then
-			table.insert(nCreepList, creep)
+			table.insert(nUnitList, unit)
 		end
 	end
 
-	return nCreepList
+	for _, creep in pairs(GetUnitList(UNIT_LIST_ENEMY_CREEPS))
+	do
+		if  J.IsValid(creep)
+		and GetUnitToUnitDistance(creep, GetAncient(GetTeam())) < 1600
+		then
+			table.insert(nUnitList, creep)
+		end
+	end
+
+	return nUnitList
 end
 
 function J.GetCurrentRoshanLocation()

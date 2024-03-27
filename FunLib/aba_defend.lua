@@ -29,8 +29,12 @@ function Defend.GetDefendDesire(bot, lane)
 	end
 
 	local nDefendDesire = 0
-	local nEnemyLaneCreeps = J.GetCreepsAroundAncient(GetTeam(), true)
-	if  nEnemyLaneCreeps ~= nil and #nEnemyLaneCreeps >= 1
+	local nEnemies = J.GetEnemiesAroundAncient()
+	if  nEnemies ~= nil and #nEnemies >= 1
+	and (GetTower(GetTeam(), TOWER_MID_3) == nil
+		or (GetTower(GetTeam(), TOWER_TOP_3) == nil
+			and GetTower(GetTeam(), TOWER_MID_3) == nil
+			and GetTower(GetTeam(), TOWER_BOT_3) == nil))
 	and lane == LANE_MID
 	then
 		nDefendDesire = 1
