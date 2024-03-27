@@ -2243,6 +2243,7 @@ function X.IsABAHero()
 		["npc_dota_hero_keeper_of_the_light"] = true,
 		["npc_dota_hero_leshrac"] = true,
 		["npc_dota_hero_life_stealer"] = true,
+		["npc_dota_hero_lone_druid"] = true,
 		["npc_dota_hero_lycan"] = true,
 		["npc_dota_hero_magnataur"] = true,
 		["npc_dota_hero_marci"] = true,

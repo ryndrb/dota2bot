@@ -811,6 +811,10 @@ Item['item_broken_satanic']			= { 'item_reaver', 'item_claymore' }
 
 Item['item_broken_soul_ring']		= { 'item_ring_of_protection', 'item_recipe_soul_ring' }
 
+Item['item_four_branches']		= { 'item_branches', 'item_branches', 'item_branches', 'item_branches' }
+
+Item['item_six_branches']		= { 'item_branches', 'item_branches', 'item_branches', 'item_branches', 'item_branches', 'item_branches'}
+
 ------------------------------------------------------------------------------------------------------
 ------------------------------------------------------------------------------------------------------
 

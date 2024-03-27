@@ -602,6 +602,7 @@ local tFarmHeroList = {
 	["npc_dota_hero_keeper_of_the_light"] = true,
 	["npc_dota_hero_leshrac"] = true,
 	["npc_dota_hero_life_stealer"] = true,
+	["npc_dota_hero_lone_druid"] = true,
 	["npc_dota_hero_lycan"] = true,
 	["npc_dota_hero_magnataur"] = true,
 	["npc_dota_hero_marci"] = true,
@@ -2380,6 +2381,17 @@ Site.ConsiderIsTimeToFarm["npc_dota_hero_weaver"] = function()
 end
 
 Site.ConsiderIsTimeToFarm["npc_dota_hero_windrunner"] = function()
+	local bot = GetBot()
+	local networth = bot:GetNetWorth()
+
+	if networth < 30000 then
+		return true
+	end
+
+	return false
+end
+
+Site.ConsiderIsTimeToFarm["npc_dota_hero_lone_druid"] = function()
 	local bot = GetBot()
 	local networth = bot:GetNetWorth()
 

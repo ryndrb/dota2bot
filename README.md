@@ -75,6 +75,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
         - [2] Keeper of the Light
         - [2,3] Leshrac
         - [1] Lifestealer
+        - ~~[2] Lone Druid~~
         - [3] Lycan
         - [3] Magnus
         - ~~[1,3] Marci~~
@@ -113,7 +114,6 @@ To anyone who've found this or is using it, if you have any feedback in improvin
         - [1,2,3] Windranger
         - [4,5] Winter Wyvern
     - ***Later***
-        - Lone Druid
         - Morphling
         - Rubick
         - Techies
@@ -124,7 +124,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
         - [2,3] Necrophos
         - [2] Queen Of Pain
         - [2] Zeus
-    - ***Bugged (Internal)***
+    - ***Bugged (Internal; won't be selected)***
         - Dark Willow
             - Passive.
         - Elder Titan
@@ -133,6 +133,8 @@ To anyone who've found this or is using it, if you have any feedback in improvin
             - Hardly enters Attack mode (Valve default).
         - IO
             - Passive.
+        - Lone Druid
+            - The Bear is considered a "hero", and not a unit like Visage's Familiars, etc,. Uncontrollable.
         - Marci
             - Passive.
         - Muerta
@@ -218,6 +220,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
             | Lifestealer           | &check; | -       | 0 
             | Lina                  | -       | &check; | 0 
             | Lion                  | -       | -       | 0 
+            | ~~Lone Druid~~        | -       | -       | 0 
             | Luna                  | -       | &check; | 0 
             | Lycan                 | -       | &cross; | 0 
             | Magnus                | -       | &check; | 0 

@@ -1859,6 +1859,7 @@ function X.IsSpecialCore(bot)
 			["npc_dota_hero_leshrac"] = true,
 			["npc_dota_hero_life_stealer"] = true,
 			["npc_dota_hero_lina"] = true,
+			["npc_dota_hero_lone_druid"] = true,
 			["npc_dota_hero_luna"] = true,
 			["npc_dota_hero_lycan"] = true,
 			["npc_dota_hero_magnataur"] = true,
@@ -2159,6 +2160,7 @@ function CanAttackSpecialUnit()
 			if string.find(unit:GetUnitName(), 'healing_ward')
 			or string.find(unit:GetUnitName(), 'forged_spirit')
 			or string.find(unit:GetUnitName(), 'grimstroke_ink_creature')
+			or string.find(unit:GetUnitName(), 'lone_druid_bear')
 			or string.find(unit:GetUnitName(), 'observer_ward')
 			or string.find(unit:GetUnitName(), 'phoenix_sun')
 			or string.find(unit:GetUnitName(), 'plague_ward')

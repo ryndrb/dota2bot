@@ -167,10 +167,10 @@ local sPos1List = {
 	"npc_dota_hero_life_stealer",
 	"npc_dota_hero_lina",
 	"npc_dota_hero_luna",
-	-- "npc_dota_hero_marci",
+	-- "npc_dota_hero_marci", -- DOESN'T WORK
 	"npc_dota_hero_medusa",
 	"npc_dota_hero_meepo",
-	-- "npc_dota_hero_muerta",
+	-- "npc_dota_hero_muerta", -- DOESN'T WORK
 	"npc_dota_hero_naga_siren",
 	"npc_dota_hero_nevermore",
 	"npc_dota_hero_phantom_assassin",
@@ -208,6 +208,7 @@ local sPos2List = {
 	"npc_dota_hero_kunkka",
 	"npc_dota_hero_leshrac",
 	"npc_dota_hero_lina",
+	-- "npc_dota_hero_lone_druid", -- DOESN'T WORK
 	"npc_dota_hero_meepo",
 	"npc_dota_hero_mirana",
 	"npc_dota_hero_monkey_king",
@@ -216,7 +217,7 @@ local sPos2List = {
 	"npc_dota_hero_obsidian_destroyer",
 	"npc_dota_hero_ogre_magi",
 	"npc_dota_hero_pangolier",
-	-- "npc_dota_hero_primal_beast",
+	-- "npc_dota_hero_primal_beast", -- DOESN'T WORK
 	"npc_dota_hero_puck",
 	"npc_dota_hero_pudge",
 	"npc_dota_hero_queenofpain",
@@ -255,14 +256,14 @@ local sPos3List = {
 	"npc_dota_hero_legion_commander",
 	"npc_dota_hero_lycan",
 	"npc_dota_hero_magnataur",
-	-- "npc_dota_hero_marci",
+	-- "npc_dota_hero_marci", -- DOESN'T WORK
 	"npc_dota_hero_mars",
 	"npc_dota_hero_necrolyte",
 	"npc_dota_hero_night_stalker",
 	"npc_dota_hero_ogre_magi",
 	"npc_dota_hero_omniknight",
 	"npc_dota_hero_pangolier",
-	-- "npc_dota_hero_primal_beast",
+	-- "npc_dota_hero_primal_beast", -- DOESN'T WORK
 	"npc_dota_hero_pudge",
 	"npc_dota_hero_razor",
 	"npc_dota_hero_sand_king",
@@ -282,13 +283,13 @@ local sPos4List = {
 	"npc_dota_hero_bane",
 	"npc_dota_hero_chen",
 	"npc_dota_hero_crystal_maiden",
-	-- "npc_dota_hero_dark_willow",
+	-- "npc_dota_hero_dark_willow", -- DOESN'T WORK
 	"npc_dota_hero_dazzle",
 	"npc_dota_hero_disruptor",
 	"npc_dota_hero_earthshaker",
 	"npc_dota_hero_enchantress",
 	"npc_dota_hero_grimstroke",
-	-- "npc_dota_hero_hoodwink",
+	-- "npc_dota_hero_hoodwink", -- DOESN'T WORK
 	"npc_dota_hero_jakiro",
 	"npc_dota_hero_lich",
 	"npc_dota_hero_lion",
@@ -317,13 +318,13 @@ local sPos5List = {
 	"npc_dota_hero_bane",
 	"npc_dota_hero_chen",
 	"npc_dota_hero_crystal_maiden",
-	-- "npc_dota_hero_dark_willow",
+	-- "npc_dota_hero_dark_willow", -- DOESN'T WORK
 	"npc_dota_hero_dazzle",
 	"npc_dota_hero_disruptor",
 	"npc_dota_hero_earthshaker",
 	"npc_dota_hero_enchantress",
 	"npc_dota_hero_grimstroke",
-	-- "npc_dota_hero_hoodwink",
+	-- "npc_dota_hero_hoodwink", -- DOESN'T WORK
 	"npc_dota_hero_jakiro",
 	"npc_dota_hero_lich",
 	"npc_dota_hero_lion",
