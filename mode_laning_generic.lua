@@ -13,6 +13,41 @@ function GetDesire()
 		return BOT_ACTION_DESIRE_NONE
 	end
 
+	if  J.IsGoingOnSomeone(bot)
+	and J.IsInLaningPhase()
+	then
+		local botTarget = J.GetProperTarget(bot)
+		if  J.IsValidTarget(botTarget)
+		and J.IsInRange(bot, botTarget, 1600)
+		and J.IsChasingTarget(bot, botTarget)
+		then
+			local chasingAlly = {}
+			local nInRangeAlly = J.GetEnemiesNearLoc(bot:GetLocation(), 1200)
+			for _, allyHero in pairs(nInRangeAlly)
+			do
+				if  J.IsValidHero(allyHero)
+				and J.IsChasingTarget(allyHero, botTarget)
+				and allyHero ~= bot
+				and not J.IsRetreating(allyHero)
+				and not J.IsSuspiciousIllusion(allyHero)
+				then
+					table.insert(chasingAlly, allyHero)
+				end
+			end
+
+			table.insert(chasingAlly, bot)
+
+			local nEnemyTowers = bot:GetNearbyTowers(700, true)
+			if nEnemyTowers ~= nil and #nEnemyTowers >= 1
+			then
+				if botTarget:GetHealth() > J.GetTotalEstimatedDamageToTarget(chasingAlly, botTarget)
+				then
+					return bot:GetActiveModeDesire() + 0.1
+				end
+			end
+		end
+	end
+
 	if isEarlyGame and botLV < 6
 	then
 		if isBotCore
