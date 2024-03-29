@@ -4542,6 +4542,61 @@ function J.GetItem(itemName)
 	return nil
 end
 
+function J.GetHeroCountAttackingTarget(nUnits, target)
+	local count = 0
+	for _, hero in pairs(nUnits)
+	do
+		if  J.IsValidHero(hero)
+		and J.IsInRange(hero, target, 1600)
+		and J.IsGoingOnSomeone(hero)
+		and (hero:GetAttackTarget() == hero or hero:GetTarget() == hero)
+		and not J.IsSuspiciousIllusion(hero)
+		then
+			count = count + 1
+		end
+	end
+
+	return count
+end
+
+function J.GetHighestRightClickDamageHero(nUnits)
+	local target = nil
+	local dmg = 0
+	for _, hero in pairs(nUnits)
+	do
+		if  J.IsValidHero(hero)
+		and not J.IsMeepoClone(hero)
+		and not J.IsSuspiciousIllusion(hero)
+		then
+			if dmg < hero:GetAttackDamage()
+			then
+				dmg = hero:GetAttackDamage()
+				target = hero
+			end
+		end
+	end
+
+	return target
+end
+
+function J.IsBigCamp(nUnits)
+	for _, creep in pairs(nUnits)
+	do
+		if J.IsValid(creep)
+		then
+			if creep:GetUnitName() == 'npc_dota_neutral_satyr_hellcaller'
+			or creep:GetUnitName() == 'npc_dota_neutral_polar_furbolg_ursa_warrior'
+			or creep:GetUnitName() == 'npc_dota_neutral_dark_troll_warlord'
+			or creep:GetUnitName() == 'npc_dota_neutral_centaur_khan'
+			or creep:GetUnitName() == 'npc_dota_neutral_enraged_wildkin'
+			or creep:GetUnitName() == 'npc_dota_neutral_warpine_raider'
+			then
+				return true
+			end
+		end
+	end
+end
+
 function J.ConsolePrintActiveMode(bot)
 	local mode = bot:GetActiveMode()
 
