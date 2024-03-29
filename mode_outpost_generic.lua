@@ -12,6 +12,8 @@ local ClosestOutpostDist = 10000
 
 local IsEnemyTier2Down = false
 
+local ShouldWaitInBaseToHeal = false
+
 function GetDesire()
 	if not IsEnemyTier2Down
 	then
@@ -21,6 +23,12 @@ function GetDesire()
 		then
 			IsEnemyTier2Down = true
 		end
+	end
+
+	ShouldWaitInBaseToHeal = TinkerWaitInBaseAndHeal()
+	if ShouldWaitInBaseToHeal
+	then
+		return BOT_ACTION_DESIRE_ABSOLUTE
 	end
 
 	if not IsEnemyTier2Down then return BOT_ACTION_DESIRE_NONE end
@@ -70,6 +78,15 @@ end
 
 function Think()
 	if J.CanNotUseAction(bot) then return end
+
+	if bot.healInBase
+	then
+		if J.GetHP(bot) < 0.8 or J.GetMP(bot) < 0.8
+		then
+			bot:Action_ClearActions(true)
+			return
+		end
+	end
 
 	if ClosestOutpost ~= nil
 	then
@@ -142,4 +159,15 @@ function IsSuitableToCaptureOutpost()
 	end
 
 	return true
+end
+
+function TinkerWaitInBaseAndHeal()
+	if  bot:GetUnitName() == 'npc_dota_hero_tinker'
+	and bot.healInBase
+	and GetUnitToLocationDistance(bot, J.GetTeamFountain()) < 500
+	then
+		return true
+	end
+
+	return false
 end

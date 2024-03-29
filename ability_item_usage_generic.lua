@@ -1220,6 +1220,7 @@ X.ConsiderItemDesire["item_blink"] = function( hItem )
 		and (bot:GetUnitName() == 'npc_dota_hero_batrider'
 			or bot:GetUnitName() == 'npc_dota_hero_beastmaster'
 			or bot:GetUnitName() == 'npc_dota_hero_magnataur'
+			or bot:GetUnitName() == 'npc_dota_hero_tinker'
 			or bot:GetUnitName() == 'npc_dota_hero_treant')
 		then
 			return BOT_ACTION_DESIRE_NONE
@@ -4348,6 +4349,7 @@ X.ConsiderItemDesire["item_tpscroll"] = function( hItem )
 	end
 
 	if bot:HasModifier('modifier_spirit_breaker_charge_of_darkness')
+	or bot.healInBase
 	then
 		return BOT_ACTION_DESIRE_NONE
 	end

@@ -2267,6 +2267,7 @@ function X.IsABAHero()
 		["npc_dota_hero_spirit_breaker"] = true,
 		["npc_dota_hero_storm_spirit"] = true,
 		["npc_dota_hero_terrorblade"] = true,
+		["npc_dota_hero_tinker"] = true,
 		["npc_dota_hero_tiny"] = true,
 		["npc_dota_hero_treant"] = true,
 		["npc_dota_hero_troll_warlord"] = true,

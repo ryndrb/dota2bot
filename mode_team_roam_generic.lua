@@ -64,6 +64,8 @@ else
 	TormentorLocation = Vector(8132, 1102, 1000)
 end
 
+local DontMove = false
+
 function GetDesire()
 
 	if not beInitDone
@@ -214,18 +216,21 @@ function GetDesire()
 	then
 		if cAbility == nil then cAbility = bot:GetAbilityByName( "pugna_life_drain" ) end;
 		if cAbility:IsInAbilityPhase() or bot:IsChanneling() then
+			DontMove = true
 			return BOT_MODE_DESIRE_ABSOLUTE;
 		end	
 	elseif botName == "npc_dota_hero_drow_ranger"
 		then
 			if cAbility == nil then cAbility = bot:GetAbilityByName( "drow_ranger_multishot" ) end;
 			if cAbility:IsInAbilityPhase() or bot:IsChanneling() then
+				DontMove = true
 				return BOT_MODE_DESIRE_ABSOLUTE;
 			end	
 	elseif botName == "npc_dota_hero_shadow_shaman"
 		then
 			if cAbility == nil then cAbility = bot:GetAbilityByName( "shadow_shaman_shackles" ) end;
 			if cAbility:IsInAbilityPhase() or bot:IsChanneling() then
+				DontMove = true
 				return BOT_MODE_DESIRE_ABSOLUTE;
 			end
 	elseif botName == "npc_dota_hero_clinkz"
@@ -234,6 +239,7 @@ function GetDesire()
 		if cAbility:IsTrained()
 		then
 			if cAbility:IsInAbilityPhase() or bot:IsChanneling() then
+				DontMove = true
 				return BOT_MODE_DESIRE_ABSOLUTE
 			end
 		end
@@ -243,6 +249,7 @@ function GetDesire()
 		if cAbility:IsTrained()
 		then
 			if cAbility:IsInAbilityPhase() or bot:IsChanneling() then
+				DontMove = true
 				return BOT_MODE_DESIRE_ABSOLUTE
 			end
 		end
@@ -253,6 +260,7 @@ function GetDesire()
 		then
 			if  bot:HasModifier("modifier_void_spirit_dissimilate_phase")
 			then
+				DontMove = true
 				return BOT_MODE_DESIRE_ABSOLUTE
 			end
 		end
@@ -262,6 +270,7 @@ function GetDesire()
 		if cAbility:IsTrained()
 		then
 			if cAbility:IsInAbilityPhase() or bot:IsChanneling() then
+				DontMove = true
 				return BOT_MODE_DESIRE_ABSOLUTE
 			end
 		end
@@ -269,6 +278,7 @@ function GetDesire()
 	then
 		if cAbility == nil then cAbility = bot:GetAbilityByName("keeper_of_the_light_illuminate") end
 		if cAbility:IsInAbilityPhase() or bot:IsChanneling() or bot:HasModifier('modifier_keeper_of_the_light_illuminate') then
+			DontMove = true
 			return BOT_MODE_DESIRE_ABSOLUTE
 		end
 	elseif botName == "npc_dota_hero_meepo"
@@ -277,6 +287,7 @@ function GetDesire()
 		if cAbility:IsTrained()
 		then
 			if cAbility:IsInAbilityPhase() or bot:IsChanneling() then
+				DontMove = true
 				return BOT_MODE_DESIRE_ABSOLUTE
 			end
 		end
@@ -286,6 +297,7 @@ function GetDesire()
 		if cAbility:IsTrained()
 		then
 			if cAbility:IsInAbilityPhase() or bot:IsChanneling() then
+				DontMove = true
 				return BOT_MODE_DESIRE_ABSOLUTE
 			end
 		end
@@ -295,6 +307,7 @@ function GetDesire()
 		if cAbility:IsTrained()
 		then
 			if bot:HasModifier('modifier_phoenix_supernova_hiding') then
+				DontMove = true
 				return BOT_MODE_DESIRE_ABSOLUTE
 			end
 		end
@@ -304,6 +317,7 @@ function GetDesire()
 		if cAbility:IsTrained()
 		then
 			if bot:HasModifier('modifier_puck_phase_shift') then
+				DontMove = true
 				return BOT_MODE_DESIRE_ABSOLUTE
 			end
 		end
@@ -313,7 +327,18 @@ function GetDesire()
 		if cAbility:IsTrained()
 		then
 			if cAbility:IsInAbilityPhase() or bot:IsChanneling() then
+				DontMove = true
 				return BOT_MODE_DESIRE_ABSOLUTE
+			end
+		end
+	elseif botName == "npc_dota_hero_tinker"
+	then
+		if cAbility == nil then cAbility = bot:GetAbilityByName("tinker_rearm") end
+		if cAbility:IsTrained()
+		then
+			if cAbility:IsInAbilityPhase() or bot:IsChanneling() or bot:HasModifier('modifier_tinker_rearm') then
+				DontMove = true
+				return BOT_MODE_DESIRE_ABSOLUTE * 1.6
 			end
 		end
 	end
@@ -382,11 +407,18 @@ function OnEnd()
 	harassTarget = nil
 	bot.shouldShukuchiTagCreeps = false
 	ShukuchiCreepList = {}
+	DontMove = false
 end
 
 
 function Think()
 	if J.CanNotUseAction(bot) then return end
+
+	if DontMove
+	then
+		bot:Action_ClearActions(true)
+		return
+	end
 
 	if bot:HasModifier('modifier_spirit_breaker_charge_of_darkness')
 	then
@@ -1899,6 +1931,7 @@ function X.IsSpecialCore(bot)
 			["npc_dota_hero_templar_assassin"] = true,
 			["npc_dota_hero_terrorblade"] = true,
 			["npc_dota_hero_tidehunter"] = true,
+			["npc_dota_hero_tinker"] = true,
 			["npc_dota_hero_tiny"] = true,
 			["npc_dota_hero_troll_warlord"] = true,
 			["npc_dota_hero_ursa"] = true,

@@ -148,6 +148,7 @@ function J.CanNotUseAction( bot )
 			or bot:IsNightmared()
 			or bot:HasModifier( 'modifier_item_forcestaff_active' )
 			or bot:HasModifier( 'modifier_phantom_lancer_phantom_edge_boost' )
+			or bot:HasModifier( 'modifier_tinker_rearm' )
 
 end
 
@@ -4432,6 +4433,113 @@ end
 function J.GetManaAfter(manaCost)
 	local bot = GetBot()
 	return (bot:GetMana() - manaCost) / bot:GetMaxMana()
+end
+
+function J.GetCreepListAroundTargetCanKill(target, nRadius, damage, bEnemy, bNeutral, bLaneCreep)
+	if nRadius > 1600 then nRadius = 1600 end
+	local creepList = {}
+
+	if target ~= nil
+	then
+		if bNeutral
+		then
+			for _, creep in pairs(GetUnitList(UNIT_LIST_NEUTRAL_CREEPS))
+			do
+				if  J.IsValid(creep)
+				and target ~= creep
+				and GetUnitToUnitDistance(target, creep) <= nRadius
+				and creep:GetHealth() <= damage
+				then
+					table.insert(creepList, creep)
+				end
+			end
+		elseif bLaneCreep
+		then
+			local unitList = GetUnitList(UNIT_LIST_ALLIED_CREEPS)
+			if bEnemy
+			then
+				unitList = GetUnitList(UNIT_LIST_ENEMY_CREEPS)
+			end
+
+			for _, creep in pairs(unitList)
+			do
+				if  J.IsValid(creep)
+				and target ~= creep
+				and GetUnitToUnitDistance(target, creep) <= nRadius
+				and creep:GetHealth() <= damage
+				then
+					table.insert(creepList, creep)
+				end
+			end
+		else
+			local unitList = GetUnitList(UNIT_LIST_ALLIED_CREEPS)
+			if bEnemy
+			then
+				unitList = GetUnitList(UNIT_LIST_ENEMY_CREEPS)
+			end
+
+			for _, creep in pairs(unitList)
+			do
+				if  J.IsValid(creep)
+				and target ~= creep
+				and GetUnitToUnitDistance(target, creep) <= nRadius
+				and creep:GetHealth() <= damage
+				then
+					table.insert(creepList, creep)
+				end
+			end
+
+			unitList = GetUnitList(UNIT_LIST_NEUTRAL_CREEPS)
+			for _, creep in pairs(unitList)
+			do
+				if  J.IsValid(creep)
+				and target ~= creep
+				and GetUnitToUnitDistance(target, creep) <= nRadius
+				and creep:GetHealth() <= damage
+				then
+					table.insert(creepList, creep)
+				end
+			end			
+		end
+	end
+
+	return creepList
+end
+
+function J.GetPushTPLocation(nLane)
+	local laneFront = GetLaneFrontLocation(GetTeam(), nLane, 0)
+	local bestTpLoc = J.GetNearbyLocationToTp(laneFront)
+	if J.GetLocationToLocationDistance(laneFront, bestTpLoc) < 1600
+	then
+		return bestTpLoc
+	end
+end
+
+function J.GetDefendTPLocation(nLane)
+	return GetLaneFrontLocation(GetTeam(), nLane, -950)
+end
+
+function J.GetRandomLocationWithinDist(sLoc, minDist, maxDist)
+	local randomAngle = math.random() * 2 * math.pi
+	local randomDist = math.random(minDist, maxDist)
+	local newX = sLoc.x + randomDist * math.cos(randomAngle)
+	local newY = sLoc.y + randomDist * math.sin(randomAngle)
+	return Vector(newX, newY, sLoc.z)
+end
+
+function J.GetItem(itemName)
+	for i = 0, 5
+    do
+		local item = GetBot():GetItemInSlot(i)
+
+		if  item ~= nil
+        and item:GetName() == itemName
+        then
+			return item
+		end
+	end
+
+	return nil
 end
 
 function J.ConsolePrintActiveMode(bot)
