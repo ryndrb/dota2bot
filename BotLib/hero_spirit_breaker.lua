@@ -356,7 +356,7 @@ function X.ConsiderChargeOfDarkness()
             if  J.IsValidTarget(allyTarget)
             and J.CanCastOnNonMagicImmune(allyTarget)
             and not J.IsSuspiciousIllusion(allyTarget)
-            and not J.IsLocationInChrono(allyTarget)
+            and not J.IsLocationInChrono(allyTarget:GetLocation())
             then
                 local nInRangeAlly = allyTarget:GetNearbyHeroes(1200, true, BOT_MODE_NONE)
                 local nInRangeEnemy = allyTarget:GetNearbyHeroes(1200, false, BOT_MODE_NONE)

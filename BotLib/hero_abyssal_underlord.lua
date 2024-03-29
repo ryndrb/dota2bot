@@ -401,7 +401,7 @@ function X.ConsiderFiendsGate()
 		end
 	end
 
-    local aveDist = {0}
+    local aveDist = {0,0,0}
     local pushCount = {0,0,0}
     for _, allyHero in pairs(GetUnitList(UNIT_LIST_ALLIED_HEROES))
     do

@@ -751,7 +751,7 @@ function X.ConsiderGlacier()
 	local nAttackRange = bot:GetAttackRange()
 	local nEnemyHeroes = bot:GetNearbyHeroes(nAttackRange, true, BOT_MODE_NONE)
 	local nAllyHeroes = bot:GetNearbyHeroes(nAttackRange, true, BOT_MODE_ATTACK)
-	local botTarget = bot:GetTarget()
+	botTarget = J.GetProperTarget(bot)
 
 	local alliesAroundLoc = J.GetAlliesNearLoc(bot:GetLocation(), 500)
 
@@ -774,7 +774,8 @@ function X.ConsiderGlacier()
 
 	if J.IsGoingOnSomeone(bot)
 	then
-		if (abilityE:IsFullyCastable() and J.CanCastOnNonMagicImmune(botTarget))
+		if  J.IsValidTarget(botTarget)
+		and (abilityE:IsFullyCastable() and J.CanCastOnNonMagicImmune(botTarget))
 		and J.IsInRange(bot, botTarget, abilityE:GetCastRange() + 200)
 		then
 			return BOT_ACTION_DESIRE_HIGH

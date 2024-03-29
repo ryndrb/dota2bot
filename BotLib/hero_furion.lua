@@ -382,7 +382,6 @@ function X.ConsiderTeleportation()
             if  nTargetInRangeAlly ~= nil
             and ((#nTargetInRangeAlly > #nInRangeAlly)
                 or (J.GetHP(bot) < 0.8 and bot:WasRecentlyDamagedByAnyHero(2.9)))
-            and not GetUni
             then
                 return BOT_ACTION_DESIRE_HIGH, GetAncient(GetTeam()):GetLocation()
             end
