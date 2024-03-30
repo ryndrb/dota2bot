@@ -97,8 +97,8 @@ function GetDesire()
 	end
 
 	-- Batrider
-	if bot:GetUnitName() == "npc_dota_hero_batrider"
-	and bot:HasModifier("modifier_batrider_flaming_lasso_self")
+	if  bot:GetUnitName() == 'npc_dota_hero_batrider'
+	and bot:HasModifier('modifier_batrider_flaming_lasso_self')
 	then
 		return BOT_MODE_DESIRE_ABSOLUTE
 	end
@@ -435,17 +435,10 @@ function Think()
 		return
 	end
 
-	if bot:GetUnitName() == 'npc_dota_hero_batrider'
+	if  bot:GetUnitName() == 'npc_dota_hero_batrider'
+	and bot:HasModifier('modifier_batrider_flaming_lasso_self')
 	then
-		local nAllyHeroes = bot:GetNearbyHeroes(1200, false, BOT_MODE_NONE)
-
-		if nAllyHeroes ~= nil and #nAllyHeroes >= 1
-		then
-			bot:Action_MoveToLocation(nAllyHeroes[#nAllyHeroes]:GetLocation())
-		else
-			bot:Action_MoveToLocation(J.GetTeamFountain())
-		end
-
+		bot:Action_MoveToLocation(J.GetTeamFountain())
 		return
 	end
 
@@ -593,14 +586,8 @@ function Think()
 		or J.IsValidTarget(targetUnit)
 		or J.IsValidBuilding(targetUnit))
 	then
-		if GetUnitToUnitDistance(bot, targetUnit) > 600
-		then
-			bot:Action_MoveToLocation(targetUnit:GetLocation() + RandomVector(150))
-			return
-		else
-			bot:Action_AttackUnit(targetUnit, false)
-			return
-		end
+		bot:Action_AttackUnit(targetUnit, false)
+		return
 	end
 end
 

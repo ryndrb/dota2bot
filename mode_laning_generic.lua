@@ -22,7 +22,7 @@ function GetDesire()
 		and J.IsChasingTarget(bot, botTarget)
 		then
 			local chasingAlly = {}
-			local nInRangeAlly = J.GetEnemiesNearLoc(bot:GetLocation(), 1200)
+			local nInRangeAlly = J.GetAlliesNearLoc(bot:GetLocation(), 1200)
 			for _, allyHero in pairs(nInRangeAlly)
 			do
 				if  J.IsValidHero(allyHero)
