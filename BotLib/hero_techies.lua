@@ -176,7 +176,7 @@ function X.SkillsComplement()
         then
             bot:Action_UseAbilityOnEntity(ReactiveTazer, bot)
         else
-            bot:ActionQueue_UseAbility(ReactiveTazer)
+            bot:Action_UseAbility(ReactiveTazer)
         end
 
         return
