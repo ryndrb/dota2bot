@@ -15,7 +15,6 @@ local bot = GetBot()
 if bot:IsInvulnerable()
 	or not bot:IsHero()
 	or bot:IsIllusion()
-	or bot:GetUnitName() == "npc_dota_hero_techies"
 then
 	return
 end

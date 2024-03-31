@@ -12,7 +12,7 @@ local X = {}
 local bot = GetBot()
 local bDebugMode = ( 1 == 10 )
 
-if bot:IsInvulnerable() or not bot:IsHero() or bot:IsIllusion() or bot:GetUnitName() == "npc_dota_hero_techies"
+if bot:IsInvulnerable() or not bot:IsHero() or bot:IsIllusion()
 then return end
 
 local J = require( GetScriptDirectory()..'/FunLib/jmz_func' )

@@ -4597,6 +4597,45 @@ function J.IsBigCamp(nUnits)
 	end
 end
 
+function J.GetETAWithAcceleration(dist, speed, accel)
+	return (math.sqrt(2 * accel * dist + speed * speed) - speed) / accel
+end
+
+function J.GetTechiesMines()
+	local nMinesList = {}
+
+	for _, unit in pairs(GetUnitList(UNIT_LIST_ALLIES))
+    do
+		if  unit ~= nil
+        and unit:GetUnitName() == 'npc_dota_techies_land_mine'
+        then
+			table.insert(nMinesList, unit)
+		end
+	end
+
+	return nMinesList
+end
+
+function J.GetTechiesMinesInLoc(loc, nRadius)
+	local nMinesList = {}
+
+	for _, unit in pairs(GetUnitList(UNIT_LIST_ALLIES))
+    do
+		if  unit ~= nil
+        and unit:GetUnitName() == 'npc_dota_techies_land_mine'
+		and GetUnitToLocationDistance(unit, loc) <= nRadius
+        then
+			table.insert(nMinesList, unit)
+		end
+	end
+
+	return nMinesList
+end
+
+function J.CheckBitfieldFlag(bitfield, flag)
+    return ((bitfield / flag) % 2) >= 1
+end
+
 function J.ConsolePrintActiveMode(bot)
 	local mode = bot:GetActiveMode()
 

@@ -40,7 +40,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
 
 # Tinkering ABo(u)t (ryndrb)
 - ***Heroes (Pos: 1,2,3,4,5)***
-    - <ins>Heroes Implemented Count:</ins> **113** / 124
+    - <ins>Heroes Implemented Count:</ins> **114** / 124
     - 4th column from the table below (<ins>Spell Usage Imp. Count [Latest Date]</ins>) is the count of times I tried improving a hero after their initial addition.
     - All Supports are both 4 and 5 for now.
     - ^. Supports that does damage, CC, or is Ranged are just inherently 'better' for the most part in bot games compared to Melee or non-. (Since positioning and movement are Valve default.)
@@ -97,6 +97,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
         - [1] Spectre
         - [3] Spirit Breaker
         - [2] Storm Spirit
+        - [4,5] Techies
         - [1] Terrorblade
         - [3] Timbersaw
         - [2] Tinker
@@ -117,7 +118,6 @@ To anyone who've found this or is using it, if you have any feedback in improvin
     - ***Later***
         - Morphling
         - Rubick
-        - Techies
     - ***Changed***
         - [2,3] Death Prophet
         - [1,2] Lina
@@ -265,6 +265,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
             | Spirit Breaker        | &check; | -       | 0 
             | Storm Sprit           | -       | -       | 1 [2/3/2024]
             | Sven                  | -       | &cross; | 0 
+            | Techies               | -       | -       | 0 
             | Templar Assasin       | -       | &cross; | 0 
             | Terrorblade           | &check; | &check; | 1 [2/4/2024]
             | Tidehunter            | &check; | -       | 0 

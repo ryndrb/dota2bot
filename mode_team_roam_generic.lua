@@ -30,7 +30,6 @@ local towerCreepTime = 0;
 local beInitDone = false
 local IsSupport = false
 local IsHeroCore = false
-local beTechies = false
 local beFirstStop = false
 local bePvNMode = false
 
@@ -210,7 +209,7 @@ function GetDesire()
 
 	TrySwapInvItemForRefresherShard()
 
-	if beTechies or J.Role['bStopAction'] then return 2.0 end
+	if J.Role['bStopAction'] then return 2.0 end
 
 	if botName == "npc_dota_hero_pugna" 
 	then
@@ -338,7 +337,7 @@ function GetDesire()
 		then
 			if cAbility:IsInAbilityPhase() or bot:IsChanneling() or bot:HasModifier('modifier_tinker_rearm') then
 				DontMove = true
-				return BOT_MODE_DESIRE_ABSOLUTE * 1.6
+				return BOT_MODE_DESIRE_ABSOLUTE
 			end
 		end
 	end
@@ -1969,6 +1968,7 @@ function X.IsSpecialSupport(bot)
 		["npc_dota_hero_nyx_assassin"] = true,
 		["npc_dota_hero_phoenix"] = true,
 		["npc_dota_hero_shadow_demon"] = true,
+		["npc_dota_hero_techies"] = true,
 		["npc_dota_hero_treant"] = true,
 		["npc_dota_hero_tusk"] = true,
 		["npc_dota_hero_undying"] = true,
