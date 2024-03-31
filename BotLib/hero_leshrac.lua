@@ -711,7 +711,7 @@ function X.ConsiderLightningStorm()
         and #creepList >= 2
         and J.CanBeAttacked(creepList[1])
         then
-            return BOT_ACTION_DESIRE_HIGH, J.GetCenterOfUnits(creepList)
+            return BOT_ACTION_DESIRE_HIGH, creepList[1]
         end
 	end
 
