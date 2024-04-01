@@ -4636,6 +4636,21 @@ function J.CheckBitfieldFlag(bitfield, flag)
     return ((bitfield / flag) % 2) >= 1
 end
 
+function J.GetPowerCogsCountInLoc(loc, nRadius)
+	local count = 0
+	for _, unit in pairs(GetUnitList(UNIT_LIST_ALL))
+	do
+		if  J.IsValid(unit)
+		and string.find(unit:GetUnitName(), 'rattletrap_cog')
+		and GetUnitToLocationDistance(unit, loc) <= nRadius
+		then
+			count = count + 1
+		end
+	end
+
+	return count
+end
+
 function J.ConsolePrintActiveMode(bot)
 	local mode = bot:GetActiveMode()
 

@@ -2170,6 +2170,7 @@ function X.HasHumanAlly( bot )
 end
 
 function CanAttackSpecialUnit()
+	local nInRangeEnemy = J.GetEnemiesNearLoc(bot:GetLocation(), bot:GetCurrentVisionRange())
 	local nAttackRange = bot:GetAttackRange() + 200
 	local nUnits = GetUnitList(UNIT_LIST_ENEMIES)
 
@@ -2184,11 +2185,69 @@ function CanAttackSpecialUnit()
 			or string.find(unit:GetUnitName(), 'observer_ward')
 			or string.find(unit:GetUnitName(), 'phoenix_sun')
 			or string.find(unit:GetUnitName(), 'plague_ward')
+			or string.find(unit:GetUnitName(), 'rattletrap_cog')
 			or string.find(unit:GetUnitName(), 'sentry_ward')
 			or string.find(unit:GetUnitName(), 'tombstone')
 			or string.find(unit:GetUnitName(), 'warlock_golem')
 			or string.find(unit:GetUnitName(), 'weaver_swarm')
 			then
+				if unit:GetUnitName() == 'npc_dota_rattletrap_cog'
+				then
+					local cogsCount1 = J.GetPowerCogsCountInLoc(bot:GetLocation(), 800)
+					local cogsCount2 = J.GetPowerCogsCountInLoc(bot:GetLocation(), 255)
+					local isClockwerkInTeam = false
+					for i = 1, 5
+					do
+						local allyHero = GetTeamMember(i)
+						if  J.IsValidHero(allyHero)
+						and allyHero:GetUnitName() == 'npc_dota_hero_rattletrap'
+						then
+							isClockwerkInTeam = true
+							break
+						end
+					end
+
+					if nInRangeEnemy ~= nil
+					then
+						if #nInRangeEnemy >= 1
+						then
+							local nInRangeEnemy2 = J.GetEnemiesNearLoc(bot:GetLocation(), 255)
+
+							-- Is stuck inside?
+							if cogsCount1 == 8 and cogsCount2 >= 4
+							then
+								if nInRangeEnemy2 ~= nil
+								then
+									if #nInRangeEnemy2 == 0
+									or (J.IsRetreating(bot) and #nInRangeEnemy2 >= 1)
+									then
+										SpecialUnitTarget = unit
+										return true
+									end
+								end
+							end
+						end
+
+						if #nInRangeEnemy == 0
+						then
+							if cogsCount1 == 8 and cogsCount2 >= 4
+							then
+								if isClockwerkInTeam
+								then
+									SpecialUnitTarget = unit
+									return true
+								end
+							else
+								if not isClockwerkInTeam
+								then
+									SpecialUnitTarget = unit
+									return true
+								end
+							end
+						end
+					end
+				end
+
 				if  GetUnitToUnitDistance(bot, unit) <= nAttackRange
 				and J.CanBeAttacked(unit)
 				then

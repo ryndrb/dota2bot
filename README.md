@@ -188,7 +188,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
             | Chaos Knight          | -       | -       | 0 
             | Chen                  | &cross; | &cross; | 1 [3/29/2024]
             | Clinkz                | &check; | &check; | 1 [3/29/2024]
-            | Clockwerk             | &check; | &check; | 0 
+            | Clockwerk             | &check; | &check; | 1 [3/31/2024] 
             | Crystal Maiden        | &check; | &check; | 0 
             | Dark Seer             | -       | -       | 0 
             | ~~Dark Willow~~       | &check; | -       | 0 
