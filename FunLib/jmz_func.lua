@@ -4378,7 +4378,7 @@ function J.GetTotalEstimatedDamageToTarget(nUnits, target)
 
 	for _, unit in pairs(nUnits)
 	do
-		if  J.IsValidHero(unit)
+		if  J.IsValid(unit)
 		and not J.IsSuspiciousIllusion(unit)
 		then
 			dmg = dmg + unit:GetEstimatedDamageToTarget(true, target, 5, DAMAGE_TYPE_ALL)

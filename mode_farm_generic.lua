@@ -59,12 +59,6 @@ function GetDesire()
 		end
 	end
 
-	local nMode = bot:GetActiveMode()
-	if (nMode == BOT_MODE_DEFEND_TOWER_TOP or nMode == BOT_MODE_DEFEND_TOWER_MID or nMode == BOT_MODE_DEFEND_TOWER_BOT)
-    then
-        return BOT_ACTION_DESIRE_NONE
-    end
-
 	if not bInitDone
 	then
 		bInitDone = true
@@ -73,19 +67,24 @@ function GetDesire()
 		beVeryHighFarmer = X.IsVeryHighFarmer(bot)
 	end
 
-	local loc
-	if GetTeam() == TEAM_RADIANT
-	then
-		loc = Vector(-8075, -1148, 1000)
-	else
-		loc = Vector(8132, 1102, 1000)
-	end
+	local nMode = bot:GetActiveMode()
+	local nModeDesire = bot:GetActiveModeDesire()
+	if  (nMode == BOT_MODE_DEFEND_TOWER_TOP or nMode == BOT_MODE_DEFEND_TOWER_MID or nMode == BOT_MODE_DEFEND_TOWER_BOT)
+	and nModeDesire > BOT_MODE_DESIRE_MODERATE
+    then
+        return BOT_ACTION_DESIRE_NONE
+    end
 
-	local nCreeps = bot:GetNearbyNeutralCreeps(700)
-	for _, c in pairs(nCreeps) do
-		if c:GetUnitName() == "npc_dota_miniboss" or #J.GetAlliesNearLoc(loc, 700) >= 2
+	local TormentorLocation = J.GetTormentorLocation(GetTeam())
+	local nNeutralCreeps = bot:GetNearbyNeutralCreeps(700)
+	for _, c in pairs(nNeutralCreeps)
+	do
+		local nInRangeAlly = J.GetAlliesNearLoc(TormentorLocation, 700)
+		if  c ~= nil
+		and (c:GetUnitName() == "npc_dota_miniboss"
+			or nInRangeAlly ~= nil and #nInRangeAlly >= 2)
 		then
-			return 0
+			return BOT_ACTION_DESIRE_NONE
 		end
 	end
 	

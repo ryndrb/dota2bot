@@ -304,24 +304,33 @@ end
 
 ------------ILLUSION ACT
 function X.ConsiderIllusionAttack(minion)
-	if X.CantAttack(minion) then return BOT_MODE_DESIRE_NONE, nil; end
-	local target = X.GetIllusionAttackTarget(minion);
-	if target ~= nil then
-		return BOT_MODE_DESIRE_HIGH, target;
+	if X.CantAttack(minion) then return BOT_MODE_DESIRE_NONE, nil end
+
+	local target = X.GetIllusionAttackTarget(minion)
+
+	if target ~= nil
+	then
+		return BOT_MODE_DESIRE_HIGH, target
 	end
-	return BOT_MODE_DESIRE_NONE, nil;
+
+	return BOT_MODE_DESIRE_NONE, nil
 end
 
 function X.ConsiderIllusionMove(minion)
+	if X.CantMove(minion) then return BOT_MODE_DESIRE_NONE, nil end
 
-	if X.CantMove(minion) then return BOT_MODE_DESIRE_NONE, nil; end
-
-	if not bot:IsAlive() then
-		return BOT_MODE_DESIRE_HIGH, X.GetXUnitsTowardsLocation(minion, vEnemyAncientLoc, 540);
+	if bot:IsAlive()
+	then
+		return BOT_MODE_DESIRE_HIGH, bot:GetLocation()
 	end
 
-	if bot:GetActiveMode() ~= BOT_MODE_RETREAT then
-		return BOT_MODE_DESIRE_HIGH, X.GetXUnitsTowardsLocation(bot, vEnemyAncientLoc, 240);
+	if not bot:IsAlive()
+	then
+		local nTarget = X.GetIllusionAttackTarget(minion)
+		if nTarget == nil
+		then
+			return BOT_MODE_DESIRE_HIGH, vEnemyAncientLoc
+		end
 	end
 
 	return BOT_MODE_DESIRE_NONE, nil;
