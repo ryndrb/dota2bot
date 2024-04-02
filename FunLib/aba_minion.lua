@@ -265,28 +265,20 @@ function X.GetWeakestBarracks(radius, minion)
 end
 
 function X.GetIllusionAttackTarget(minion)
-
-
-	local target = bot:GetAttackTarget();
+	local target = bot:GetAttackTarget()
 
 	if bot:HasModifier('modifier_bane_nightmare') and not bot:IsInvulnerable() then target = bot end
-
 	if target == nil then target = bot:GetTarget() end
 
-	if ( not bot:IsAlive() )
-		or ( target == nil and bot:GetLevel() >= 8 and bot:GetActiveMode() ~= BOT_MODE_LANING )
-		or ( target == nil and GetUnitToUnitDistance(minion, bot) > 2200 )
-		or ( target == nil and bot:GetActiveMode() == BOT_MODE_RETREAT )
-		or ( target ~= nil and GetUnitToUnitDistance(minion,target) > 1600 )
+	if target == nil or J.IsRetreating(bot)
 	then
-		target = X.GetWeakestHero(globRadius, minion);
+		target = X.GetWeakestHero(globRadius, minion)
 		if target == nil then target = X.GetWeakestCreep(globRadius, minion); end
 		if target == nil then target = X.GetWeakestTower(globRadius, minion); end
 		if target == nil then target = X.GetWeakestBarracks(globRadius, minion); end
 	end
 
 	return target
-
 end
 
 
@@ -319,18 +311,14 @@ end
 function X.ConsiderIllusionMove(minion)
 	if X.CantMove(minion) then return BOT_MODE_DESIRE_NONE, nil end
 
-	if bot:IsAlive()
+	if not J.IsRetreating(bot)
 	then
-		return BOT_MODE_DESIRE_HIGH, bot:GetLocation()
+		return BOT_MODE_DESIRE_HIGH, X.GetXUnitsTowardsLocation(bot, vEnemyAncientLoc, 250)
 	end
 
 	if not bot:IsAlive()
 	then
-		local nTarget = X.GetIllusionAttackTarget(minion)
-		if nTarget == nil
-		then
-			return BOT_MODE_DESIRE_HIGH, vEnemyAncientLoc
-		end
+		return BOT_MODE_DESIRE_HIGH, X.GetXUnitsTowardsLocation(minion, vEnemyAncientLoc, 500)
 	end
 
 	return BOT_MODE_DESIRE_NONE, nil;
@@ -1184,7 +1172,7 @@ function X.MinionThink(hMinionUnit)
 	if X.IsValidUnit(hMinionUnit)
 	then
 		if  hMinionUnit:IsIllusion()
-		and not hMinionUnit:GetUnitName() == 'npc_dota_hero_vengefulspirit'
+		and hMinionUnit:GetUnitName() ~= 'npc_dota_hero_vengefulspirit'
 		then
 			X.IllusionThink(hMinionUnit)
 		elseif X.IsAttackingWard(hMinionUnit:GetUnitName())
