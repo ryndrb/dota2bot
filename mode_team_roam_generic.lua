@@ -1887,6 +1887,7 @@ function X.IsSpecialCore(bot)
 			["npc_dota_hero_meepo"] = true,
 			["npc_dota_hero_mirana"] = true,
 			["npc_dota_hero_monkey_king"] = true,
+			["npc_dota_hero_morphling"] = true,
 			["npc_dota_hero_muerta"] = true,
 			["npc_dota_hero_naga_siren"] = true,
 			["npc_dota_hero_necrolyte"] = true,

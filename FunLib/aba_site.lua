@@ -520,6 +520,7 @@ local tFarmerList = {
 	["npc_dota_hero_marci"] = true,
 	["npc_dota_hero_meepo"] = true,
 	["npc_dota_hero_monkey_king"] = true,
+	["npc_dota_hero_morphling"] = true,
 	["npc_dota_hero_muerta"] = true,
 	["npc_dota_hero_spectre"] = true,
 	["npc_dota_hero_terrorblade"] = true,
@@ -609,6 +610,7 @@ local tFarmHeroList = {
 	["npc_dota_hero_mars"] = true,
 	["npc_dota_hero_meepo"] = true,
 	["npc_dota_hero_monkey_king"] = true,
+	["npc_dota_hero_morphling"] = true,
 	["npc_dota_hero_muerta"] = true,
 	["npc_dota_hero_night_stalker"] = true,
 	["npc_dota_hero_obsidian_destroyer"] = true,
@@ -2404,6 +2406,17 @@ Site.ConsiderIsTimeToFarm["npc_dota_hero_lone_druid"] = function()
 end
 
 Site.ConsiderIsTimeToFarm["npc_dota_hero_tinker"] = function()
+	local bot = GetBot()
+	local networth = bot:GetNetWorth()
+
+	if networth < 30000 then
+		return true
+	end
+
+	return false
+end
+
+Site.ConsiderIsTimeToFarm["npc_dota_hero_morphling"] = function()
 	local bot = GetBot()
 	local networth = bot:GetNetWorth()
 

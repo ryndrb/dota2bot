@@ -40,7 +40,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
 
 # Tinkering ABo(u)t (ryndrb)
 - ***Heroes (Pos: 1,2,3,4,5)***
-    - <ins>Heroes Implemented Count:</ins> **114** / 124
+    - <ins>Heroes Implemented Count:</ins> **115** / 124
     - 4th column from the table below (<ins>Spell Usage Imp. Count [Latest Date]</ins>) is the count of times I tried improving a hero after their initial addition.
     - All Supports are both 4 and 5 for now.
     - ^. Supports that does damage, CC, or is Ranged are just inherently 'better' for the most part in bot games compared to Melee or non-. (Since positioning and movement are Valve default.)
@@ -82,6 +82,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
         - [3] Mars
         - [1,2] Meepo
         - [1,2] Monkey King
+        - [1,2] Morphling
         - ~~[1] Muerta~~
         - [1,3] Nature's Prophet
         - [3] Night Stalker
@@ -116,7 +117,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
         - [1,2,3] Windranger
         - [4,5] Winter Wyvern
     - ***Later***
-        - Morphling
+        - Morphling Ult
         - Rubick
     - ***Changed***
         - [2,3] Death Prophet
@@ -230,6 +231,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
             | Meeepo                | &check; | &check; | 0 
             | Mirana                | -       | -       | 0 
             | Monkey King           | &cross; | -       | 0 
+            | Morphling             | -       | &cross; | 0 
             | ~~Muerta~~            | -       | -       | 0 
             | Naga Siren            | -       | &check; | 0 
             | Nature's Prophet      | -       | &check; | 0 

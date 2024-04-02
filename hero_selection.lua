@@ -170,6 +170,7 @@ local sPos1List = {
 	-- "npc_dota_hero_marci", -- DOESN'T WORK
 	"npc_dota_hero_medusa",
 	"npc_dota_hero_meepo",
+	"npc_dota_hero_morphling",
 	-- "npc_dota_hero_muerta", -- DOESN'T WORK
 	"npc_dota_hero_naga_siren",
 	"npc_dota_hero_nevermore",
@@ -212,6 +213,7 @@ local sPos2List = {
 	"npc_dota_hero_meepo",
 	"npc_dota_hero_mirana",
 	"npc_dota_hero_monkey_king",
+	"npc_dota_hero_morphling",
 	"npc_dota_hero_necrolyte",
 	"npc_dota_hero_nevermore",
 	"npc_dota_hero_obsidian_destroyer",
