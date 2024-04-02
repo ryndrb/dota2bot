@@ -175,7 +175,7 @@ function X.ConsiderTimeWalk()
 		and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
 		then
 			local nInRangeAlly = botTarget:GetNearbyHeroes(1200, true, BOT_MODE_NONE)
-			local nInRangeEnemy = botTarget:GetNearbyHeroes(1200, true, BOT_MODE_NONE)
+			local nInRangeEnemy = botTarget:GetNearbyHeroes(1200, false, BOT_MODE_NONE)
 			local eta = (GetUnitToUnitDistance(bot, botTarget) / nSpeed) + nCastPoint
 			local loc = J.Site.GetXUnitsTowardsLocation(bot, botTarget:GetExtrapolatedLocation(eta), nCastRange)
 
