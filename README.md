@@ -174,7 +174,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
             | Abaddon               | -       | -       | 2 [2/27/2024]
             | Alchemist             | &check; | &cross; | 2 [2/27/2024]
             | Ancient Apparition    | -       | -       | 1 [3/9/2024]
-            | Antimage              | &check; | &check; | 0 
+            | Anti-Mage             | &check; | &check; | 1 [4/3/2024]
             | Arc Warden            | -       | -       | 0 
             | Axe                   | -       | -       | 0 
             | Bane                  | -       | -       | 0 
