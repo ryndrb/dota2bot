@@ -191,7 +191,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
             | Clinkz                | &check; | &check; | 1 [3/29/2024]
             | Clockwerk             | &check; | &check; | 1 [3/31/2024] 
             | Crystal Maiden        | &check; | &check; | 0 
-            | Dark Seer             | -       | -       | 0 
+            | Dark Seer             | -       | -       | 1 [4/5/2024]
             | ~~Dark Willow~~       | &check; | -       | 0 
             | Dawnbreaker           | -       | -       | 1 [2/6/2024]
             | Dazzle                | -       | -       | 0 
