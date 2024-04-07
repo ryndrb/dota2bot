@@ -63,8 +63,6 @@ else
 	TormentorLocation = Vector(8132, 1102, 1000)
 end
 
-local DontMove = false
-
 function GetDesire()
 
 	if not beInitDone
@@ -215,21 +213,18 @@ function GetDesire()
 	then
 		if cAbility == nil then cAbility = bot:GetAbilityByName( "pugna_life_drain" ) end;
 		if cAbility:IsInAbilityPhase() or bot:IsChanneling() then
-			DontMove = true
 			return BOT_MODE_DESIRE_ABSOLUTE;
 		end	
 	elseif botName == "npc_dota_hero_drow_ranger"
 		then
 			if cAbility == nil then cAbility = bot:GetAbilityByName( "drow_ranger_multishot" ) end;
 			if cAbility:IsInAbilityPhase() or bot:IsChanneling() then
-				DontMove = true
 				return BOT_MODE_DESIRE_ABSOLUTE;
 			end	
 	elseif botName == "npc_dota_hero_shadow_shaman"
 		then
 			if cAbility == nil then cAbility = bot:GetAbilityByName( "shadow_shaman_shackles" ) end;
 			if cAbility:IsInAbilityPhase() or bot:IsChanneling() then
-				DontMove = true
 				return BOT_MODE_DESIRE_ABSOLUTE;
 			end
 	elseif botName == "npc_dota_hero_clinkz"
@@ -238,7 +233,6 @@ function GetDesire()
 		if cAbility:IsTrained()
 		then
 			if cAbility:IsInAbilityPhase() or bot:IsChanneling() then
-				DontMove = true
 				return BOT_MODE_DESIRE_ABSOLUTE
 			end
 		end
@@ -248,7 +242,6 @@ function GetDesire()
 		if cAbility:IsTrained()
 		then
 			if cAbility:IsInAbilityPhase() or bot:IsChanneling() then
-				DontMove = true
 				return BOT_MODE_DESIRE_ABSOLUTE
 			end
 		end
@@ -259,7 +252,6 @@ function GetDesire()
 		then
 			if  bot:HasModifier("modifier_void_spirit_dissimilate_phase")
 			then
-				DontMove = true
 				return BOT_MODE_DESIRE_ABSOLUTE
 			end
 		end
@@ -269,7 +261,6 @@ function GetDesire()
 		if cAbility:IsTrained()
 		then
 			if cAbility:IsInAbilityPhase() or bot:IsChanneling() then
-				DontMove = true
 				return BOT_MODE_DESIRE_ABSOLUTE
 			end
 		end
@@ -277,7 +268,6 @@ function GetDesire()
 	then
 		if cAbility == nil then cAbility = bot:GetAbilityByName("keeper_of_the_light_illuminate") end
 		if cAbility:IsInAbilityPhase() or bot:IsChanneling() or bot:HasModifier('modifier_keeper_of_the_light_illuminate') then
-			DontMove = true
 			return BOT_MODE_DESIRE_ABSOLUTE
 		end
 	elseif botName == "npc_dota_hero_meepo"
@@ -286,7 +276,6 @@ function GetDesire()
 		if cAbility:IsTrained()
 		then
 			if cAbility:IsInAbilityPhase() or bot:IsChanneling() then
-				DontMove = true
 				return BOT_MODE_DESIRE_ABSOLUTE
 			end
 		end
@@ -296,7 +285,6 @@ function GetDesire()
 		if cAbility:IsTrained()
 		then
 			if cAbility:IsInAbilityPhase() or bot:IsChanneling() then
-				DontMove = true
 				return BOT_MODE_DESIRE_ABSOLUTE
 			end
 		end
@@ -306,7 +294,6 @@ function GetDesire()
 		if cAbility:IsTrained()
 		then
 			if bot:HasModifier('modifier_phoenix_supernova_hiding') then
-				DontMove = true
 				return BOT_MODE_DESIRE_ABSOLUTE
 			end
 		end
@@ -316,7 +303,6 @@ function GetDesire()
 		if cAbility:IsTrained()
 		then
 			if bot:HasModifier('modifier_puck_phase_shift') then
-				DontMove = true
 				return BOT_MODE_DESIRE_ABSOLUTE
 			end
 		end
@@ -326,7 +312,6 @@ function GetDesire()
 		if cAbility:IsTrained()
 		then
 			if cAbility:IsInAbilityPhase() or bot:IsChanneling() then
-				DontMove = true
 				return BOT_MODE_DESIRE_ABSOLUTE
 			end
 		end
@@ -336,7 +321,6 @@ function GetDesire()
 		if cAbility:IsTrained()
 		then
 			if cAbility:IsInAbilityPhase() or bot:IsChanneling() or bot:HasModifier('modifier_tinker_rearm') then
-				DontMove = true
 				return BOT_MODE_DESIRE_ABSOLUTE
 			end
 		end
@@ -345,7 +329,7 @@ function GetDesire()
 	if IsHeroCore
 	then
 		local botTarget, targetDesire = X.CarryFindTarget()
-		if J.IsValidTarget(botTarget)
+		if botTarget ~= nil
 		then
 			targetUnit = botTarget
 			bot:SetTarget(botTarget)
@@ -356,7 +340,7 @@ function GetDesire()
 	if IsSupport
 	then
 		local botTarget, targetDesire = X.SupportFindTarget()
-		if J.IsValidTarget(botTarget)
+		if botTarget ~= nil
 		then
 			targetUnit = botTarget
 			bot:SetTarget(botTarget)
@@ -406,18 +390,11 @@ function OnEnd()
 	harassTarget = nil
 	bot.shouldShukuchiTagCreeps = false
 	ShukuchiCreepList = {}
-	DontMove = false
 end
 
 
 function Think()
 	if J.CanNotUseAction(bot) then return end
-
-	if DontMove
-	then
-		bot:Action_ClearActions(true)
-		return
-	end
 
 	if bot:HasModifier('modifier_spirit_breaker_charge_of_darkness')
 	then
@@ -563,7 +540,7 @@ function Think()
 
 	if towerCreepMode
 	then
-		bot:Action_AttackUnit(towerCreep, true)
+		bot:Action_AttackUnit(towerCreep, false)
 		return
 	end
 
@@ -580,10 +557,7 @@ function Think()
 	end
 
 	if  (IsHeroCore or IsSupport)
-	and targetUnit ~= nil
-	and (J.IsValid(targetUnit)
-		or J.IsValidTarget(targetUnit)
-		or J.IsValidBuilding(targetUnit))
+	and targetUnit ~= nil and not targetUnit:IsNull() and targetUnit:IsAlive()
 	then
 		bot:Action_AttackUnit(targetUnit, false)
 		return
@@ -704,6 +678,8 @@ function X.SupportFindTarget()
 			do	
 				if X.CanBeAttacked(nNeutrals[i])
 					and not X.IsAllysTarget(nNeutrals[i])
+					and not J.IsTormentor(nNeutrals[i])
+					and not J.IsRoshan(nNeutrals[i])
 					and X.IsLastHitCreep(nNeutrals[i],attackDamage)
 				then 
 					return nNeutrals[i],BOT_MODE_DESIRE_ABSOLUTE; 
@@ -804,8 +780,10 @@ function X.SupportFindTarget()
 				for _,creep in pairs(nDenyCreeps)
 				do
 					if X.CanBeAttacked(creep)
-						and creep:GetHealth()/creep:GetMaxHealth() < 0.5
-						and not X.IsLastHitCreep(creep,denyDamage)
+					and creep:GetHealth()/creep:GetMaxHealth() < 0.5
+					and not X.IsLastHitCreep(creep,denyDamage)
+					and not J.IsTormentor(creep)
+					and not J.IsRoshan(creep)
 					then
 						local togetherDamage = 0;
 						local togetherCount = 0;
@@ -873,10 +851,12 @@ function X.SupportFindTarget()
 			for _,creep in pairs(nTwoHitDenyCreeps)
 			do
 				if X.CanBeAttacked(creep)
-				   and creep:GetHealth()/creep:GetMaxHealth() < 0.5
-				   and X.IsLastHitCreep(creep,denyDamage *2)
-				   and ( not X.IsLastHitCreep(creep,denyDamage *1.2) or #nEnemyLaneCreep == 0 )
-				   and not X.IsOthersTarget(creep)
+				and creep:GetHealth()/creep:GetMaxHealth() < 0.5
+				and X.IsLastHitCreep(creep,denyDamage *2)
+				and ( not X.IsLastHitCreep(creep,denyDamage *1.2) or #nEnemyLaneCreep == 0 )
+				and not X.IsOthersTarget(creep)
+				and not J.IsTormentor(creep)
+				and not J.IsRoshan(creep)
 				then
 					return creep,BOT_MODE_DESIRE_ABSOLUTE;
 				end			
@@ -1122,8 +1102,10 @@ function X.CarryFindTarget()
 				for _,creep in pairs(nDenyCreeps)
 				do
 					if X.CanBeAttacked(creep)
-						and creep:GetHealth()/creep:GetMaxHealth() < 0.5
-						and not X.IsLastHitCreep(creep,denyDamage)
+					and creep:GetHealth()/creep:GetMaxHealth() < 0.5
+					and not X.IsLastHitCreep(creep,denyDamage)
+					and not J.IsTormentor(creep)
+					and not J.IsRoshan(creep)
 					then
 						local togetherDamage = 0;
 						local togetherCount = 0;
@@ -1196,10 +1178,12 @@ function X.CarryFindTarget()
 			for _,creep in pairs(nTwoHitDenyCreeps)
 			do
 				if X.CanBeAttacked(creep)
-				   and creep:GetHealth()/creep:GetMaxHealth() < 0.5
-				   and X.IsLastHitCreep(creep,denyDamage *2)
-				   and ( not X.IsLastHitCreep(creep,denyDamage *1.2) or #nEnemyLaneCreep == 0 )
-				   and not X.IsOthersTarget(creep)
+				and creep:GetHealth()/creep:GetMaxHealth() < 0.5
+				and X.IsLastHitCreep(creep,denyDamage *2)
+				and ( not X.IsLastHitCreep(creep,denyDamage *1.2) or #nEnemyLaneCreep == 0 )
+				and not X.IsOthersTarget(creep)
+				and not J.IsTormentor(creep)
+				and not J.IsRoshan(creep)
 				then
 					return creep,BOT_MODE_DESIRE_ABSOLUTE;
 				end			
@@ -1212,27 +1196,29 @@ function X.CarryFindTarget()
 		local nTeamFightLocation = J.GetTeamFightLocation(bot);
 		local nDefendLane,nDefendDesire = J.GetMostDefendLaneDesire();
 		if  X.CanBeAttacked(nEnemysCreeps[1])
-			and bot:GetHealth() > 300
-			and not X.IsAllysTarget(nEnemysCreeps[1])
-			and not J.IsRoshan(nEnemysCreeps[1])
-			and (nEnemysCreeps[1]:GetTeam() == TEAM_NEUTRAL or attackDamage > 110)
-			and ( not nEnemysCreeps[1]:IsAncientCreep() or attackDamage > 150 )
-			and ( not J.IsKeyWordUnit("warlock", nEnemysCreeps[1]) or J.GetHP(bot) > 0.58 )		
-			and ( nTeamFightLocation == nil or GetUnitToLocationDistance(bot,nTeamFightLocation) >= 3000 )
-			and ( nDefendDesire <= 0.8 )
-			and botMode ~= BOT_MODE_FARM
-			and botMode ~= BOT_MODE_RUNE
-			and botMode ~= BOT_MODE_LANING
-			and botMode ~= BOT_MODE_ASSEMBLE
-			and botMode ~= BOT_MODE_SECRET_SHOP
-			and botMode ~= BOT_MODE_SIDE_SHOP
-			and botMode ~= BOT_MODE_WARD
-			and GetRoshanDesire() < BOT_MODE_DESIRE_HIGH	
-			and not bot:WasRecentlyDamagedByAnyHero(2.0)
-			and bot:GetAttackTarget() == nil
-			and botLV >= 10
-			and #nAttackAlly == 0
-			and #nEnemyTowers == 0
+		and bot:GetHealth() > 300
+		and not X.IsAllysTarget(nEnemysCreeps[1])
+		and not J.IsRoshan(nEnemysCreeps[1])
+		and (nEnemysCreeps[1]:GetTeam() == TEAM_NEUTRAL or attackDamage > 110)
+		and ( not nEnemysCreeps[1]:IsAncientCreep() or attackDamage > 150 )
+		and ( not J.IsKeyWordUnit("warlock", nEnemysCreeps[1]) or J.GetHP(bot) > 0.58 )		
+		and ( nTeamFightLocation == nil or GetUnitToLocationDistance(bot,nTeamFightLocation) >= 3000 )
+		and ( nDefendDesire <= 0.8 )
+		and botMode ~= BOT_MODE_FARM
+		and botMode ~= BOT_MODE_RUNE
+		and botMode ~= BOT_MODE_LANING
+		and botMode ~= BOT_MODE_ASSEMBLE
+		and botMode ~= BOT_MODE_SECRET_SHOP
+		and botMode ~= BOT_MODE_SIDE_SHOP
+		and botMode ~= BOT_MODE_WARD
+		and GetRoshanDesire() < BOT_MODE_DESIRE_HIGH	
+		and not bot:WasRecentlyDamagedByAnyHero(2.0)
+		and bot:GetAttackTarget() == nil
+		and botLV >= 10
+		and #nAttackAlly == 0
+		and #nEnemyTowers == 0
+		and not J.IsTormentor(nEnemysCreeps[1])
+		and not J.IsRoshan(nEnemysCreeps[1])
 		then
 		
 			if nEnemysCreeps[1]:GetTeam() == TEAM_NEUTRAL 
@@ -1259,6 +1245,8 @@ function X.CarryFindTarget()
 				do	
 					if X.CanBeAttacked(nNeutrals[i])
 						and not X.IsAllysTarget(nNeutrals[i])
+						and not J.IsTormentor(nNeutrals[i])
+						and not J.IsRoshan(nNeutrals[i])
 						and X.IsLastHitCreep(nNeutrals[i],attackDamage * 2)
 					then 
 						return nNeutrals[i],BOT_MODE_DESIRE_ABSOLUTE; 
@@ -1759,8 +1747,10 @@ function X.IsCreepTarget(nUnit)
 	local nCreeps = bot:GetNearbyCreeps(1200,true);
 	for _,creep in pairs(nCreeps)
 	do
-		if creep ~= nil and creep:IsAlive()
-		   and creep:GetAttackTarget() == nUnit
+		if  creep ~= nil and creep:IsAlive()
+		and creep:GetAttackTarget() == nUnit
+		and not J.IsTormentor(creep)
+		and not J.IsRoshan(creep)
 		then
 			return true;
 		end
@@ -1770,7 +1760,9 @@ function X.IsCreepTarget(nUnit)
 	for _,creep in pairs(nCreeps)
 	do
 		if creep ~= nil and creep:IsAlive()
-		   and creep:GetAttackTarget() == nUnit
+		and creep:GetAttackTarget() == nUnit
+		and not J.IsTormentor(creep)
+		and not J.IsRoshan(creep)
 		then
 			return true;
 		end
@@ -2334,6 +2326,8 @@ function ConsiderHarassInLaningPhase()
 		end
 	end
 
+	shouldHarass = false
+
 	return BOT_ACTION_DESIRE_NONE
 end
 
@@ -2359,6 +2353,8 @@ function TryPickupDroppedNeutralItemTokens()
 	then
 		PickedItem = item
 		return BOT_ACTION_DESIRE_VERYHIGH
+	else
+		PickedItem = nil
 	end
 
 	return BOT_ACTION_DESIRE_NONE
@@ -2391,6 +2387,8 @@ function TryPickupRefresherShard()
 			then
 				PickedItem = refreshShard
 				return BOT_MODE_DESIRE_VERYHIGH
+			else
+				PickedItem = nil
 			end
 		end
 
@@ -2426,6 +2424,8 @@ function TryPickupCheese()
 			then
 				PickedItem = cheese
 				return BOT_MODE_DESIRE_VERYHIGH
+			else
+				PickedItem = nil
 			end
 		end
 
