@@ -326,48 +326,54 @@ function GetDesire()
 		end
 	end
 
-	if IsHeroCore
+	if  J.IsPushing(bot)
+	and bot:GetActiveModeDesire() >= BOT_MODE_DESIRE_HIGH
 	then
-		local botTarget, targetDesire = X.CarryFindTarget()
-		if botTarget ~= nil
+		return BOT_ACTION_DESIRE_NONE
+	else
+		if IsHeroCore
 		then
-			targetUnit = botTarget
-			bot:SetTarget(botTarget)
-			return targetDesire
-		end
-	end
-
-	if IsSupport
-	then
-		local botTarget, targetDesire = X.SupportFindTarget()
-		if botTarget ~= nil
-		then
-			targetUnit = botTarget
-			bot:SetTarget(botTarget)
-			return targetDesire
-		end
-	end
-	
-	if bot:IsAlive() and bot:DistanceFromFountain() > 4600
-	then
-		if towerTime ~= 0 and X.IsValid(towerCreep)
-			and DotaTime() < towerTime + towerCreepTime
-		then
-			return BOT_MODE_DESIRE_ABSOLUTE *0.9;
-		else
-			towerTime = 0;
-			towerCreepMode = false;
-		end
-		
-		towerCreepTime,towerCreep = X.ShouldAttackTowerCreep(bot);
-		if towerCreepTime ~= 0 and towerCreep ~= nil
-		then
-			if towerTime == 0 then 
-				towerTime = DotaTime(); 
-				towerCreepMode = true;
+			local botTarget, targetDesire = X.CarryFindTarget()
+			if botTarget ~= nil
+			then
+				targetUnit = botTarget
+				bot:SetTarget(botTarget)
+				return targetDesire
 			end
-			bot:SetTarget(towerCreep);
-			return BOT_MODE_DESIRE_ABSOLUTE *0.9;
+		end
+
+		if IsSupport
+		then
+			local botTarget, targetDesire = X.SupportFindTarget()
+			if botTarget ~= nil
+			then
+				targetUnit = botTarget
+				bot:SetTarget(botTarget)
+				return targetDesire
+			end
+		end
+
+		if bot:IsAlive() and bot:DistanceFromFountain() > 4600
+		then
+			if towerTime ~= 0 and X.IsValid(towerCreep)
+				and DotaTime() < towerTime + towerCreepTime
+			then
+				return BOT_MODE_DESIRE_ABSOLUTE *0.9;
+			else
+				towerTime = 0;
+				towerCreepMode = false;
+			end
+
+			towerCreepTime,towerCreep = X.ShouldAttackTowerCreep(bot);
+			if towerCreepTime ~= 0 and towerCreep ~= nil
+			then
+				if towerTime == 0 then 
+					towerTime = DotaTime(); 
+					towerCreepMode = true;
+				end
+				bot:SetTarget(towerCreep);
+				return BOT_MODE_DESIRE_ABSOLUTE *0.9;
+			end
 		end
 	end
 	

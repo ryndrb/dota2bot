@@ -4651,6 +4651,18 @@ function J.GetPowerCogsCountInLoc(loc, nRadius)
 	return count
 end
 
+function J.HasPowerTreads(bot)
+	if J.HasItem(bot, 'item_power_treads')
+	or J.HasItem(bot, 'item_power_treads_agi')
+	or J.HasItem(bot, 'item_power_treads_int')
+	or J.HasItem(bot, 'item_power_treads_str')
+	then
+		return true
+	end
+
+	return false
+end
+
 function J.ConsolePrintActiveMode(bot)
 	local mode = bot:GetActiveMode()
 

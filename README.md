@@ -167,6 +167,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
         - [ ] Spell usage for Tormentor and Roshan
         - [ ] Dynamic item builds
         - [ ] Clear wave faster with abilities
+        - [ ] Heroes to play different positions (eg. Batrider Support, Abaddon Core, etc.)
         - [x] vscript to increase bots GPM and XPM (AP only), and for them to acquire neutral items (local host only)
         - [x] Functionality for new active ablities gained through Aghs/Shard
             | Hero                  | Shard   | Scepter | Spell Usage Imp. Count [Latest Date]
@@ -282,7 +283,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
             | Ursa                  | -       | -       | 1 [2/5/2024]
             | Vengeful Spirit       | -       | &check; | 0 
             | Venomancer            | &check; | -       | 0 
-            | Viper                 | -       | &check; | 0 
+            | Viper                 | -       | &check; | 1 [4/7/2024]
             | Visage                | -       | &check; | 0 
             | Void Spirit           | -       | -       | 1 [2/5/2024]
             | Warlock               | -       | -       | 0 
