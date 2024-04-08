@@ -49,9 +49,6 @@ local PhoenixMoveSunRay = false
 
 local ShouldMoveMortimerKisses = false
 
-if bot.shouldShukuchiTagCreeps == nil then bot.shouldShukuchiTagCreeps = false end
-local ShukuchiCreepList = {}
-
 local ShouldMoveCloseTowerForEdict = false
 local EdictTowerTarget = nil
 
@@ -155,23 +152,6 @@ function GetDesire()
 				return BOT_ACTION_DESIRE_ABSOLUTE
 			end
 		else
-			return BOT_ACTION_DESIRE_ABSOLUTE
-		end
-	end
-
-	if  bot:GetUnitName() == "npc_dota_hero_weaver"
-	and bot:HasModifier("modifier_weaver_shukuchi")
-	then
-		local nLocationAoE = bot:FindAoELocation(true, false, bot:GetLocation(), 1000, 175, 0, 0)
-		local nCreeps = bot:GetNearbyCreeps(bot:GetAttackRange() + 200, true)
-
-		if  J.IsFarming(bot)
-		and nCreeps ~= nil and #nCreeps >= 2
-		and J.CanBeAttacked(nCreeps[1])
-		and nLocationAoE.count >= 2
-		then
-			bot.shouldShukuchiTagCreeps = true
-			ShukuchiCreepList = nCreeps
 			return BOT_ACTION_DESIRE_ABSOLUTE
 		end
 	end
@@ -394,8 +374,6 @@ function OnEnd()
 	towerCreepMode = false
 	bot:SetTarget(nil)
 	harassTarget = nil
-	bot.shouldShukuchiTagCreeps = false
-	ShukuchiCreepList = {}
 end
 
 
@@ -487,13 +465,6 @@ function Think()
 			bot:Action_MoveToLocation(bot.ShukuchiKillTarget:GetLocation())
 			return
 		end
-	end
-
-	if  bot.shouldShukuchiTagCreeps
-	and #ShukuchiCreepList > 0
-	then
-		bot:Action_MoveToLocation(J.GetCenterOfUnits(ShukuchiCreepList))
-		return
 	end
 
 	-- Leshrac

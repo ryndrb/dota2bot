@@ -418,13 +418,6 @@ function Think()
 	
 	if J.CanNotUseAction(bot)
 	then return end
-
-	if  bot:GetUnitName() == 'npc_dota_hero_weaver'
-	and bot:HasModifier('modifier_weaver_shukuchi')
-	and bot.shouldShukuchiTagCreeps
-	then
-		return
-	end
 	
 	if runMode 
 	then

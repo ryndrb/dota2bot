@@ -2,30 +2,23 @@ local bot = GetBot()
 local J = require( GetScriptDirectory()..'/FunLib/jmz_func' )
 
 local Tormentor = nil
+local TormentorLocation
 
 local tormentorMessageTime = DotaTime()
 local canDoTormentor = false
 
-local RadiantTormentorLoc = Vector(-8075, -1148, 1000)
-local DireTormentorLoc = Vector(8132, 1102, 1000)
-
-local loc
-if GetTeam() == TEAM_RADIANT
-then
-	loc = RadiantTormentorLoc
-else
-	loc = DireTormentorLoc
-end
+local IsTeamHealthy = false
 
 if bot.tormentorState == nil then bot.tormentorState = false end
 if bot.lastKillTime == nil then bot.lastKillTime = 0 end
 if bot.wasAttackingTormentor == nil then bot.wasAttackingTormentor = false end
 
 function GetDesire()
-    local nAllyInLoc = J.GetAlliesNearLoc(loc, 700)
+	TormentorLocation = J.GetTormentorLocation(GetTeam())
+
+    local nAllyInLoc = J.GetAlliesNearLoc(TormentorLocation, 700)
 	local aliveAlly = J.GetNumOfAliveHeroes(false)
 	local aveDistance, heroCount = GetAveTeamDistance()
-    local healthPercentage = bot:GetHealth() / bot:GetMaxHealth()
 	local spawnTime = J.IsModeTurbo() and 10 or 20
 	local topFrontP = GetLaneFrontAmount(GetOpposingTeam(), LANE_TOP, true)
 	local midFrontP = GetLaneFrontAmount(GetOpposingTeam(), LANE_MID, true)
@@ -78,6 +71,7 @@ function GetDesire()
 		if  member ~= nil
 		and not member:IsIllusion()
 		and not member:HasModifier("modifier_arc_warden_tempest_double")
+		and not J.IsMeepoClone(member)
 		then
 			if J.IsCore(member)
 			then
@@ -111,10 +105,10 @@ function GetDesire()
                     and not allyHero:IsIllusion()
                     and not J.IsCore(allyHero)
                     then
-                        if GetUnitToLocationDistance(allyHero, loc) < dist
+                        if GetUnitToLocationDistance(allyHero, TormentorLocation) < dist
                         then
                             closestAlly = allyHero
-                            dist = GetUnitToLocationDistance(allyHero, loc)
+                            dist = GetUnitToLocationDistance(allyHero, TormentorLocation)
                         end
                     end
                 end
@@ -133,6 +127,14 @@ function GetDesire()
 		bot.tormentorState = false
 	end
 
+	if not IsTeamHealthy
+	then
+		if WasHealthy()
+		then
+			IsTeamHealthy = true
+		end
+	end
+
 	if  bot.tormentorState
 	and aveCoreLevel > 12.9
 	and aveSuppLevel > 9.9
@@ -141,10 +143,15 @@ function GetDesire()
 		or (GetAttackingCount() >= 3)))
 	and J.GetAliveAllyCoreCount() >= 2
 	then
+		if not IsTeamHealthy
+		then
+			return BOT_ACTION_DESIRE_NONE
+		end
+
 		canDoTormentor = true
 
-        if  healthPercentage < 0.3
-        and J.IsValid(Tormentor)
+        if  J.GetHP(bot) < 0.3
+        and J.IsTormentor(Tormentor)
 		and J.GetHP(Tormentor) > 0.2
         then
             return BOT_ACTION_DESIRE_NONE
@@ -166,6 +173,7 @@ function GetDesire()
 
 	if not IsTormentorAlive()
 	then
+		IsTeamHealthy = false
 		bot.wasAttackingTormentor = false
 	end
 
@@ -175,9 +183,9 @@ function GetDesire()
 end
 
 function Think()
-	if GetUnitToLocationDistance(bot, loc) > 100
+	if GetUnitToLocationDistance(bot, TormentorLocation) > 100
 	then
-		bot:Action_MoveToLocation(loc)
+		bot:Action_MoveToLocation(TormentorLocation)
 		return
 	else
 		local nCreeps = bot:GetNearbyNeutralCreeps(700)
@@ -208,8 +216,8 @@ function Think()
 end
 
 function IsTormentorAlive()
-	if IsLocationVisible(loc)
-	and GetUnitToLocationDistance(bot, loc) <= 100
+	if IsLocationVisible(TormentorLocation)
+	and GetUnitToLocationDistance(bot, TormentorLocation) <= 100
 	then
 		local nCreeps = bot:GetNearbyNeutralCreeps(700)
 		for _, c in pairs(nCreeps)
@@ -238,7 +246,7 @@ function IsEnoughAllies()
 		and member:IsAlive()
 		and not member:IsIllusion()
 		and not member:HasModifier("modifier_arc_warden_tempest_double")
-		and GetUnitToLocationDistance(member, loc) <= 700
+		and GetUnitToLocationDistance(member, TormentorLocation) <= 700
 		then
             if J.IsCore(member)
             then
@@ -282,10 +290,10 @@ function GetAveTeamDistance()
 		and member:IsAlive()
 		and not member:IsIllusion()
 		and not member:HasModifier("modifier_arc_warden_tempest_double")
-		and GetUnitToLocationDistance(member, loc) <= 2400
+		and GetUnitToLocationDistance(member, TormentorLocation) <= 2400
 		then
 			heroCount = heroCount + 1
-			aveDistance = aveDistance + GetUnitToLocationDistance(member, loc)
+			aveDistance = aveDistance + GetUnitToLocationDistance(member, TormentorLocation)
 
             if J.IsCore(member)
             then
@@ -347,11 +355,29 @@ function IsHumanInLoc()
 		and not member:IsIllusion()
 		and not member:HasModifier("modifier_arc_warden_tempest_double")
 		and not J.IsMeepoClone(member)
-		and GetUnitToLocationDistance(member, loc) <= 700
+		and GetUnitToLocationDistance(member, TormentorLocation) <= 700
 		then
 			return true
 		end
 	end
 
 	return false
+end
+
+function WasHealthy()
+	local count = 0
+
+	for i = 1, 5
+	do
+		local member = GetTeamMember(i)
+
+		if  member ~= nil
+		and member:IsAlive()
+		and J.GetHP(member) > 0.5
+		then
+			count = count + 1
+		end
+	end
+
+	return count == J.GetNumOfAliveHeroes(false)
 end
