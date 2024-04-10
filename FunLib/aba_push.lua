@@ -485,7 +485,7 @@ function Push.PushThink(bot, lane)
         end
     end
 
-    local nEnemyLaneCreeps = bot:GetNearbyLaneCreeps(bot:GetCurrentVisionRange(), true)
+    local nEnemyLaneCreeps = bot:GetNearbyLaneCreeps(visionRange, true)
     if  nEnemyLaneCreeps ~= nil and #nEnemyLaneCreeps > 0
     and not IsPushingInLaningPhase
     then
@@ -493,6 +493,12 @@ function Push.PushThink(bot, lane)
 
         for _, c in pairs(nEnemyLaneCreeps)
         do
+            if c:GetHealth() <= bot:GetAttackDamage()
+            then
+                targetCreep = c
+                break
+            end
+
             if targetCreep:GetAttackDamage() < c:GetAttackDamage()
             then
                 targetCreep = c
