@@ -1932,6 +1932,7 @@ function X.IsSpecialSupport(bot)
 		["npc_dota_hero_dark_willow"] = true,
 		["npc_dota_hero_disruptor"] = true,
 		["npc_dota_hero_earthshaker"] = true,
+		["npc_dota_hero_elder_titan"] = true,
 		["npc_dota_hero_enchantress"] = true,
 		["npc_dota_hero_grimstroke"] = true,
 		["npc_dota_hero_hoodwink"] = true,

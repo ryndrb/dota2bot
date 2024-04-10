@@ -64,6 +64,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
         - [3] Doom
         - [2] Earth Spirit
         - [4,5] Earthshaker
+        - ~~[4,5] Elder Titan~~
         - [2] Ember Spirit
         - [4,5] Enchantress
         - [3] Enigma
@@ -129,7 +130,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
         - Dark Willow
             - Passive.
         - Elder Titan
-            - Passive.
+            - Does not listen to lane assignments. Forces Mid.
         - Hoodwink
             - Hardly enters Attack mode (Valve default).
         - IO
@@ -203,6 +204,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
             | Drow Ranger           | &check; | -       | 0 
             | Earth Spirit          | &check; | &cross; | 1 [2/2/2024]
             | Earthshaker           | -       | -       | 0 
+            | ~~Elder Titan~~       | -       | -       | 0 
             | Ember Spirit          | -       | -       | 1 [2/2/2024]
             | Enchantress           | &check; | &check; | 0 
             | Enigma                | -       | -       | 0 

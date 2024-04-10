@@ -290,6 +290,7 @@ local sPos4List = {
 	"npc_dota_hero_dazzle",
 	"npc_dota_hero_disruptor",
 	"npc_dota_hero_earthshaker",
+	-- "npc_dota_hero_elder_titan", -- DOESN'T WORK
 	"npc_dota_hero_enchantress",
 	"npc_dota_hero_grimstroke",
 	-- "npc_dota_hero_hoodwink", -- DOESN'T WORK
@@ -326,6 +327,7 @@ local sPos5List = {
 	"npc_dota_hero_dazzle",
 	"npc_dota_hero_disruptor",
 	"npc_dota_hero_earthshaker",
+	-- "npc_dota_hero_elder_titan", -- DOESN'T WORK
 	"npc_dota_hero_enchantress",
 	"npc_dota_hero_grimstroke",
 	-- "npc_dota_hero_hoodwink", -- DOESN'T WORK
