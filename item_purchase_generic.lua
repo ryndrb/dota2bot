@@ -1,11 +1,3 @@
-----------------------------------------------------------------------------------------------------
---- The Creation Come From: BOT EXPERIMENT Credit:FURIOUSPUPPY
---- BOT EXPERIMENT Author: Arizona Fauzie
---- Link:http://steamcommunity.com/sharedfiles/filedetails/?id=837040016
---- Refactor: 决明子 Email: dota2jmz@163.com 微博@Dota2_决明子
---- Link:http://steamcommunity.com/sharedfiles/filedetails/?id=1573671599
---- Link:http://steamcommunity.com/sharedfiles/filedetails/?id=1627071163
-----------------------------------------------------------------------------------------------------
 local Item = require( GetScriptDirectory()..'/FunLib/aba_item' )
 local Role = require( GetScriptDirectory()..'/FunLib/aba_role' )
 local J = require( GetScriptDirectory()..'/FunLib/jmz_func')
@@ -375,6 +367,89 @@ function ItemPurchaseThink()
 		end
 	end
 
+	-- Init Healing Items in Lane; works for now
+	if J.IsInLaningPhase()
+	then
+		if  botLevel < 6
+		and bot:IsAlive()
+		and bot:FindItemSlot('item_flask') < 0
+		and bot:FindItemSlot('item_tango') < 0
+		and bot:DistanceFromFountain() > 3800
+		and bot:GetStashValue() > 0
+		and not bot:HasModifier('modifier_elixer_healing')
+		and not bot:HasModifier('modifier_filler_heal')
+		and not bot:HasModifier('modifier_flask_healing')
+		and not bot:HasModifier('modifier_fountain_aura_buff')
+		and not bot:HasModifier('modifier_juggernaut_healing_ward_heal')
+		and not bot:HasModifier('modifier_warlock_shadow_word')
+		and not IsThereHealingInStash(bot)
+		and Item.GetEmptyInventoryAmount(bot) >= 1
+		and J.GetHP(bot) < 0.35
+		then
+			local partner = J.GetLanePartner(bot)
+
+			if bot:GetHealthRegen() <= 5
+			then
+				if J.IsCore(bot)
+				then
+					if partner ~= nil
+					then
+						if  partner:FindItemSlot('item_flask') < 0
+						and partner:FindItemSlot('item_tango') < 0
+						and Item.GetItemCharges(bot, 'item_flask') <= 0
+						then
+							bot:ActionImmediate_PurchaseItem('item_flask')
+							return
+						end
+					else
+						if  Item.GetItemCharges(bot, 'item_flask') <= 0
+						and (not J.HasItem(bot, 'item_bottle')
+							or (J.HasItem(bot, 'item_bottle') and Item.GetItemCharges(bot, 'item_bottle') <= 0))
+						then
+							bot:ActionImmediate_PurchaseItem('item_flask')
+							return
+						end
+					end
+				else
+					if Item.GetItemCharges(bot, 'item_flask') <= 0
+					then
+						bot:ActionImmediate_PurchaseItem('item_flask')
+						return
+					end
+				end
+			else
+				if J.IsCore(bot)
+				then
+					if partner ~= nil
+					then
+						if  partner:FindItemSlot('item_flask') < 0
+						and partner:FindItemSlot('item_tango') < 0
+						and partner ~= nil
+						and Item.GetItemCharges(bot, 'item_tango') <= 0
+						then
+							bot:ActionImmediate_PurchaseItem('item_tango')
+							return
+						end
+					else
+						if  Item.GetItemCharges(bot, 'item_flask') <= 0
+						and (not J.HasItem(bot, 'item_bottle')
+							or (J.HasItem(bot, 'item_bottle') and Item.GetItemCharges(bot, 'item_bottle') <= 0))
+						then
+							bot:ActionImmediate_PurchaseItem('item_flask')
+							return
+						end
+					end
+				else
+					if Item.GetItemCharges(bot, 'item_tango') <= 0
+					then
+						bot:ActionImmediate_PurchaseItem('item_tango')
+						return
+					end
+				end
+			end
+		end
+	end
+
 	-- Observer and Sentry Wards
 	if (J.GetPosition(bot) == 4)
 	then
@@ -441,6 +516,20 @@ function ItemPurchaseThink()
 				return
 			end
 		end
+	end
+
+	-- Blood Grenade
+	if  J.IsInLaningPhase()
+	and (J.GetPosition(bot) == 4 or J.GetPosition(bot) == 5)
+	and GetItemStockCount('item_blood_grenade') > 0
+	and botLevel < 6
+	and botGold >= GetItemCost('item_blood_grenade')
+	and Item.GetEmptyInventoryAmount(bot) >= 3
+	and Item.GetItemCharges(bot, 'item_blood_grenade') == 0
+	and bot:GetStashValue() > 0
+	then
+		bot:ActionImmediate_PurchaseItem('item_blood_grenade')
+		return
 	end
 
 	--为自己购买魔晶
@@ -718,4 +807,23 @@ function ItemPurchaseThink()
 	end
 
 end
--- dota2jmz@163.com QQ:2462331592..
+
+function IsThereHealingInStash(unit)
+	local amount = 0
+
+	for i = 9, 14
+	do
+		local item = unit:GetItemInSlot(i)
+		if item ~= nil
+		then
+			if string.find(item:GetName(), 'item_flask')
+			or string.find(item:GetName(), 'item_tango')
+			or string.find(item:GetName(), 'item_bottle')
+			then
+				amount = amount + 1
+			end
+		end
+	end
+
+	return amount > 0
+end

@@ -4663,6 +4663,28 @@ function J.HasPowerTreads(bot)
 	return false
 end
 
+function J.GetLanePartner(bot)
+	if bot:GetAssignedLane() == LANE_MID
+	then
+		return nil
+	end
+
+	for i = 1, 5
+	do
+		local member = GetTeamMember(i)
+
+		if  member ~= nil
+		and member:IsAlive()
+		and member ~= bot
+		and member:GetAssignedLane() == bot:GetAssignedLane()
+		then
+			return member
+		end
+	end
+
+	return nil
+end
+
 function J.ConsolePrintActiveMode(bot)
 	local mode = bot:GetActiveMode()
 

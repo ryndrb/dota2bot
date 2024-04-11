@@ -3959,7 +3959,8 @@ X.ConsiderItemDesire["item_tango"] = function( hItem )
 						and npcAlly:GetMaxHealth() - npcAlly:GetHealth() > 200
 						and not npcAlly:HasModifier( "modifier_tango_heal" )
 						and not npcAlly:HasModifier( "modifier_arc_warden_tempest_double" )
-						and J.IsMeepoClone(bot)
+						and not J.IsMeepoClone(bot)
+						and not J.IsMeepoClone(npcAlly)
 						and J.Item.GetItemCount( npcAlly, "item_tango_single" ) == 0
 						and J.Item.GetEmptyInventoryAmount( npcAlly ) >= 4
 					then
