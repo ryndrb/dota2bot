@@ -672,10 +672,11 @@ function J.IsSuspiciousIllusion( npcTarget )
 	then
 
 		if npcTarget:HasModifier( 'modifier_illusion' )
-			or npcTarget:HasModifier( 'modifier_phantom_lancer_doppelwalk_illusion' )
-			or npcTarget:HasModifier( 'modifier_phantom_lancer_juxtapose_illusion' )
-			or npcTarget:HasModifier( 'modifier_darkseer_wallofreplica_illusion' )
-			or npcTarget:HasModifier( 'modifier_terrorblade_conjureimage' )
+		or npcTarget:HasModifier( 'modifier_darkseer_wallofreplica_illusion' )
+		or npcTarget:HasModifier( 'modifier_phantom_lancer_doppelwalk_illusion' )
+		or npcTarget:HasModifier( 'modifier_phantom_lancer_juxtapose_illusion' )
+		or npcTarget:HasModifier( 'modifier_skeleton_king_reincarnation_scepter_active' )
+		or npcTarget:HasModifier( 'modifier_terrorblade_conjureimage' )
 		then
 			return true
 		end

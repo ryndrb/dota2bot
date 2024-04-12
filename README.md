@@ -198,7 +198,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
             | Dawnbreaker           | -       | -       | 1 [2/6/2024]
             | Dazzle                | -       | -       | 0 
             | Death Prophet         | -       | -       | 0 
-            | Disruptor             | -       | -       | 0 
+            | Disruptor             | -       | -       | 1 [4/12/2024]
             | Doom                  | -       | -       | 0 
             | Dragon Knight         | -       | -       | 0 
             | Drow Ranger           | &check; | -       | 0 
