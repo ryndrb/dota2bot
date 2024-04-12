@@ -199,7 +199,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
             | Dazzle                | -       | -       | 0 
             | Death Prophet         | -       | -       | 0 
             | Disruptor             | -       | -       | 1 [4/12/2024]
-            | Doom                  | -       | -       | 0 
+            | Doom                  | -       | -       | 1 [4/12/2024]
             | Dragon Knight         | -       | -       | 0 
             | Drow Ranger           | &check; | -       | 0 
             | Earth Spirit          | &check; | &cross; | 1 [2/2/2024]
