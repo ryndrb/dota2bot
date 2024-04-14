@@ -7069,6 +7069,9 @@ local function UseGlyph()
 		TOWER_TOP_1,
 		TOWER_MID_1,
 		TOWER_BOT_1,
+		TOWER_TOP_2,
+		TOWER_MID_2,
+		TOWER_BOT_2,
 		TOWER_TOP_3,
 		TOWER_MID_3,
 		TOWER_BOT_3,
@@ -7082,7 +7085,7 @@ local function UseGlyph()
 		if tower ~= nil and tower:GetHealth() > 0
 			and tower:GetHealth() / tower:GetMaxHealth() < 0.36
 			and tower:CanBeSeen()
-			and tower:GetAttackTarget() ~= nil
+			and X.IsTargetedByEnemy(tower)
 		then
 			bot:ActionImmediate_Glyph( )
 			return

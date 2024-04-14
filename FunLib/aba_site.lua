@@ -1067,7 +1067,7 @@ end
 
 function Site.IsTimeToFarm( bot )
 
-	if DotaTime() < 5 * 60 or DotaTime() > 90 * 60 then return false end
+	if Site.IsInLaningPhase() or DotaTime() > 90 * 60 then return false end
 
 	local botName = bot:GetUnitName()
 	local botNetWorth = bot:GetNetWorth()
@@ -2583,6 +2583,26 @@ function Site.GetPosition(bot)
 	end
 
 	return pos
+end
+
+function Site.IsInLaningPhase()
+	return (Site.IsModeTurbo() and DotaTime() < 8 * 60) or DotaTime() < 12 * 60
+end
+
+function Site.IsModeTurbo()
+	for _, u in pairs(GetUnitList(UNIT_LIST_ALLIES))
+	do
+		if  u ~= nil
+		and u:GetUnitName() == 'npc_dota_courier'
+		then
+			if u:GetCurrentMovementSpeed() == 1100
+			then
+				return true
+			end
+		end
+	end
+
+    return false
 end
 
 return Site

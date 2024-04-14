@@ -5,22 +5,10 @@ local Defend = {}
 function Defend.GetDefendDesire(bot, lane)
 	if bot.laneToDefend == nil then bot.laneToDefend = lane end
 
-    if (J.IsModeTurbo() and DotaTime() < 8 * 60 or DotaTime() < 12 * 60)
+    if J.IsInLaningPhase()
     then
         if J.IsCore(bot) then return 0 end
         if bot:GetLevel() < 6 then return 0.1 end
-    end
-
-	local mul = Defend.GetEnemyAmountMul(lane)
-	local tFront = RemapValClamped(GetLaneFrontAmount(GetTeam(), lane, true), 0, 1, 0.75, 0)
-	local eFront = 1 - GetLaneFrontAmount(GetOpposingTeam(), lane, true)
-
-    local aliveHeroesList = {}
-    for _, h in pairs(GetUnitList(UNIT_LIST_ALLIED_HEROES)) do
-        if h:IsAlive()
-        then
-            table.insert(aliveHeroesList, h)
-        end
     end
 
 	if J.GetHP(bot) < 0.3
@@ -29,7 +17,9 @@ function Defend.GetDefendDesire(bot, lane)
 	end
 
 	local nDefendDesire = 0
+	local mul = Defend.GetEnemyAmountMul(lane)
 	local nEnemies = J.GetEnemiesAroundAncient()
+
 	if  nEnemies ~= nil and #nEnemies >= 1
 	and (GetTower(GetTeam(), TOWER_MID_3) == nil
 		or (GetTower(GetTeam(), TOWER_TOP_3) == nil
