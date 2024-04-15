@@ -698,6 +698,12 @@ function ItemPurchaseThink()
 			end
 		end
 
+		if  Item.HasItem(bot, 'item_mask_of_madness')
+		and Item.HasItem(bot, 'item_satanic')
+		then
+			bot:ActionImmediate_SellItem(bot:GetItemInSlot(bot:FindItemSlot('item_mask_of_madness')))
+			return
+		end
 	end
 
 

@@ -2162,7 +2162,7 @@ end
 
 function J.SetQueuePtToINT( bot, bSoulRingUsed )
 
-	bot:Action_ClearActions( true )
+	bot:Action_ClearActions(false)
 
 	if bSoulRingUsed then J.SetQueueUseSoulRing( bot ) end
 

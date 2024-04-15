@@ -225,7 +225,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
             | Lina                  | -       | &check; | 0 
             | Lion                  | -       | -       | 0 
             | ~~Lone Druid~~        | -       | -       | 0 
-            | Luna                  | -       | &check; | 0 
+            | Luna                  | -       | &check; | 1 [4/15/2024]
             | Lycan                 | -       | &cross; | 0 
             | Magnus                | -       | &check; | 0 
             | Mars                  | -       | -       | 2 [3/17/2024]
