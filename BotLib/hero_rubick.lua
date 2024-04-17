@@ -710,23 +710,23 @@ function HaveGoodSpells(ability1, ability2)
         return true
     end
 
-    -- if ability1:GetName() == 'chaos_knight_chaos_bolt'
-    -- or ability2:GetName() == 'chaos_knight_chaos_bolt'
-    -- then
-    --     return true
-    -- end
+    if ability1:GetName() == 'chaos_knight_chaos_bolt'
+    or ability2:GetName() == 'chaos_knight_chaos_bolt'
+    then
+        return true
+    end
 
-    -- if ability1:GetName() == 'rattletrap_hookshot'
-    -- or ability2:GetName() == 'rattletrap_hookshot'
-    -- then
-    --     return true
-    -- end
+    if ability1:GetName() == 'crystal_maiden_frostbite'
+    or ability2:GetName() == 'crystal_maiden_frostbite'
+    then
+        return true
+    end
 
-    -- if ability1:GetName() == 'crystal_maiden_frostbite'
-    -- or ability2:GetName() == 'crystal_maiden_frostbite'
-    -- then
-    --     return true
-    -- end
+    if ability1:GetName() == 'crystal_maiden_freezing_field'
+    or ability2:GetName() == 'crystal_maiden_freezing_field'
+    then
+        return true
+    end
 
     -- if ability1:GetName() == 'dragon_knight_dragon_tail'
     -- or ability2:GetName() == 'dragon_knight_dragon_tail'
@@ -935,10 +935,10 @@ function X.ShouldStealSpellFrom(hero)
         ['npc_dota_hero_bristleback'] = false,
         ['npc_dota_hero_broodmother'] = false,
         ['npc_dota_hero_centaur'] = true,
-        -- ['npc_dota_hero_chaos_knight'] = ,
-        -- ['npc_dota_hero_chen'] = ,
-        -- ['npc_dota_hero_clinkz'] = ,
-        -- ['npc_dota_hero_crystal_maiden'] = ,
+        ['npc_dota_hero_chaos_knight'] = true,
+        ['npc_dota_hero_chen'] = false,
+        ['npc_dota_hero_clinkz'] = false,
+        ['npc_dota_hero_crystal_maiden'] = true,
         -- ['npc_dota_hero_dark_seer'] = ,
         -- ['npc_dota_hero_dark_willow'] = ,
         -- ['npc_dota_hero_dawnbreaker'] = ,
