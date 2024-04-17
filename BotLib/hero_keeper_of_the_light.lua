@@ -453,7 +453,7 @@ function X.ConsiderBlindingLight()
         then
             if J.IsInRange(bot, nInRangeEnemy[1], 400)
             then
-                return BOT_ACTION_DESIRE_HIGH, bot
+                return BOT_ACTION_DESIRE_HIGH, bot:GetLocation()
             end
 
 			return BOT_ACTION_DESIRE_HIGH, nInRangeEnemy[1]:GetExtrapolatedLocation(nCastPoint)

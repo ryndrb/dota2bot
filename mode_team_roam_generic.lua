@@ -90,9 +90,8 @@ function GetDesire()
 		return BOT_ACTION_DESIRE_VERYHIGH
 	end
 
-	-- Batrider
-	if  bot:GetUnitName() == 'npc_dota_hero_batrider'
-	and bot:HasModifier('modifier_batrider_flaming_lasso_self')
+	-- Batrider, Rubick
+	if bot:HasModifier('modifier_batrider_flaming_lasso_self')
 	then
 		return BOT_MODE_DESIRE_ABSOLUTE
 	end
@@ -395,8 +394,7 @@ function Think()
 		return
 	end
 
-	if  bot:GetUnitName() == 'npc_dota_hero_batrider'
-	and bot:HasModifier('modifier_batrider_flaming_lasso_self')
+	if bot:HasModifier('modifier_batrider_flaming_lasso_self')
 	then
 		bot:Action_MoveToLocation(J.GetTeamFountain())
 		return
@@ -1938,6 +1936,7 @@ function X.IsSpecialSupport(bot)
 		["npc_dota_hero_hoodwink"] = true,
 		["npc_dota_hero_nyx_assassin"] = true,
 		["npc_dota_hero_phoenix"] = true,
+		["npc_dota_hero_rubick"] = true,
 		["npc_dota_hero_shadow_demon"] = true,
 		["npc_dota_hero_techies"] = true,
 		["npc_dota_hero_treant"] = true,

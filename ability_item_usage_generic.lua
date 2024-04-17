@@ -1221,6 +1221,7 @@ X.ConsiderItemDesire["item_blink"] = function( hItem )
 			or bot:GetUnitName() == 'npc_dota_hero_beastmaster'
 			or bot:GetUnitName() == 'npc_dota_hero_dark_seer'
 			or bot:GetUnitName() == 'npc_dota_hero_magnataur'
+			or bot:GetUnitName() == 'npc_dota_hero_rubick'
 			or bot:GetUnitName() == 'npc_dota_hero_tinker'
 			or bot:GetUnitName() == 'npc_dota_hero_treant')
 		then

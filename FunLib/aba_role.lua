@@ -2263,6 +2263,7 @@ function X.IsABAHero()
 		["npc_dota_hero_puck"] = true,
 		["npc_dota_hero_pudge"] = true,
 		["npc_dota_hero_rattletrap"] = true,
+		["npc_dota_hero_rubick"] = true,
 		["npc_dota_hero_shadow_demon"] = true,
 		["npc_dota_hero_shredder"] = true,
 		["npc_dota_hero_snapfire"] = true,

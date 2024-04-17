@@ -4686,6 +4686,16 @@ function J.GetLanePartner(bot)
 	return nil
 end
 
+function J.IsEnemyHero(hero)
+	if  hero ~= nil
+	and hero:GetTeam() ~= GetBot():GetTeam()
+	then
+		return true
+	else
+		return false
+	end
+end
+
 function J.ConsolePrintActiveMode(bot)
 	local mode = bot:GetActiveMode()
 

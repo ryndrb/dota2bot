@@ -40,7 +40,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
 
 # Tinkering ABo(u)t (ryndrb)
 - ***Heroes (Pos: 1,2,3,4,5)***
-    - <ins>Heroes Implemented Count:</ins> **115** / 124
+    - <ins>Heroes Implemented Count:</ins> **116** / 124
     - 4th column from the table below (<ins>Spell Usage Imp. Count [Latest Date]</ins>) is the count of times I tried improving a hero after their initial addition.
     - All Supports are both 4 and 5 for now.
     - ^. Supports that does damage, CC, or is Ranged are just inherently 'better' for the most part in bot games compared to Melee or non-. (Since positioning and movement are Valve default.)
@@ -94,6 +94,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
         - ~~[2,3] Primal Beast~~
         - [2] Puck
         - [2,3] Pudge
+        - [4,5] Rubick
         - [4,5] Shadow Demon
         - [2] Snapfire
         - [1] Spectre
@@ -119,7 +120,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
         - [4,5] Winter Wyvern
     - ***Later***
         - Morphling Ult
-        - Rubick
+        - More Rubick Spell Steal support
     - ***Changed***
         - [2,3] Death Prophet
         - [1,2] Lina
@@ -256,6 +257,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
             | Queen of Pain         | -       | -       | 0 
             | Razor                 | -       | -       | 0 
             | Riki                  | -       | -       | 0 
+            | Rubick                | -       | -       | 0 
             | Sand King             | -       | -       | 0 
             | Shadow Demon          | &check; | -       | 0 
             | Shadow Fiend          | &cross; | -       | 0 
