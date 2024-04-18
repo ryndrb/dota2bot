@@ -1216,10 +1216,12 @@ X.ConsiderItemDesire["item_blink"] = function( hItem )
 
 	if J.IsGoingOnSomeone(bot)
 	then
-		if  bot.shouldBlink
+		if  bot.shouldBlink ~= nil
+		and bot.shouldBlink
 		and (bot:GetUnitName() == 'npc_dota_hero_batrider'
 			or bot:GetUnitName() == 'npc_dota_hero_beastmaster'
 			or bot:GetUnitName() == 'npc_dota_hero_dark_seer'
+			or bot:GetUnitName() == 'npc_dota_hero_earthshaker'
 			or bot:GetUnitName() == 'npc_dota_hero_magnataur'
 			or bot:GetUnitName() == 'npc_dota_hero_rubick'
 			or bot:GetUnitName() == 'npc_dota_hero_tinker'

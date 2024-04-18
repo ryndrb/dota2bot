@@ -204,7 +204,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
             | Dragon Knight         | -       | -       | 0 
             | Drow Ranger           | &check; | -       | 0 
             | Earth Spirit          | &check; | &cross; | 1 [2/2/2024]
-            | Earthshaker           | -       | -       | 0 
+            | Earthshaker           | -       | &check; | 1 [4/18/2024]
             | ~~Elder Titan~~       | -       | -       | 0 
             | Ember Spirit          | -       | -       | 1 [2/2/2024]
             | Enchantress           | &check; | &check; | 0 

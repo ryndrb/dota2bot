@@ -477,6 +477,22 @@ function J.GetEnemiesNearLoc(vLoc, nRadius)
 	return enemies
 end
 
+function J.GetIllusionsNearLoc(vLoc, nRadius)
+	local illusions = {}
+	for _, enemyHero in pairs(GetUnitList(UNIT_LIST_ENEMY_HEROES))
+	do
+		if  J.IsValidHero(enemyHero)
+		and GetUnitToLocationDistance(enemyHero, vLoc) <= nRadius
+		and J.IsSuspiciousIllusion(enemyHero)
+		and not J.IsMeepoClone(enemyHero)
+		then
+			table.insert(illusions, enemyHero)
+		end
+	end
+
+	return illusions
+end
+
 
 function J.IsAllyHeroBetweenAllyAndEnemy( hAlly, hEnemy, vLoc, nRadius )
 
