@@ -33,6 +33,14 @@ To anyone who've found this or is using it, if you have any feedback in improvin
                 -  4th is for Position 5 (Support Safe Lane)
                 -  5th is for Position 4 (Support Off Lane)
         - (For non-Git) Everytime there is an update, you have to re-download the files and replaced the ones on the `bots` folder.
+    - How I test:
+        - Bots v Bots
+        - (Turbo, only if I'm testing spell and item usage/synergy; All Pick otherwise)
+        - `Enable Cheats`
+        - Type: `sv_cheats 1` in console.
+        - Type: `host_timescale 2` or `host_timescale 4` in console.
+        - Type: `script_reload_code bots/Buff/buff` in console (once the map has loaded).
+        - Type: `host_timescale 0` in console to pause.
 
 - ***Key Scripts***
     - BOT Experiment (by Furiospuppy)

@@ -227,7 +227,7 @@ function X.ConsiderDevour()
     end
 
 	local nMaxLevel = Devour:GetSpecialValueInt('creep_level')
-    local nNeutralCreeps = bot:GetNearbyNeutralCreeps(800)
+    local nCreeps = bot:GetNearbyCreeps(1200, true)
 
     -- local nGoodCreep = {
     --     'npc_dota_neutral_ghost',
@@ -240,9 +240,7 @@ function X.ConsiderDevour()
     --     'npc_dota_neutral_polar_furbolg_ursa_warrior',
     -- }
 
-    local nInRangeEnemy = J.GetEnemiesNearLoc(bot:GetLocation(), 1600)
-    if  nInRangeEnemy ~= nil and #nInRangeEnemy == 0
-    and not J.IsRetreating(bot)
+    if not J.IsRetreating(bot)
     then
         -- if nMaxLevel < 5
         -- then
@@ -279,16 +277,61 @@ function X.ConsiderDevour()
         --     end
         -- end
 
-        for _, creep in pairs(nNeutralCreeps)
+        local nEnemyTowers = bot:GetNearbyTowers(1600, true)
+        local nCreepTarget = X.GetRangedOrSiegeCreep(nCreeps, nMaxLevel)
+
+        if nCreepTarget ~= nil
+        then
+            if  J.IsLaning(bot)
+            and nEnemyTowers ~= nil
+            and (#nEnemyTowers == 0
+                or #nEnemyTowers >= 1
+                    and J.IsValidBuilding(nEnemyTowers[1])
+                    and GetUnitToUnitDistance(nCreepTarget, nEnemyTowers[1]) > 700)
+            then
+                return BOT_ACTION_DESIRE_HIGH, nCreepTarget
+            end
+        end
+
+        for _, creep in pairs(nCreeps)
         do
             if  J.IsValid(creep)
             and J.CanBeAttacked(creep)
             and creep:GetLevel() <= nMaxLevel
+            and not J.IsRoshan(creep)
+            and not J.IsTormentor(creep)
             then
-                if  creep:IsAncientCreep()
-                and DevourAncientTalent:IsTrained()
+                if  J.IsInLaningPhase()
+                and creep:GetTeam() ~= bot:GetTeam()
+                and creep:GetTeam() ~= TEAM_NEUTRAL
+                and nEnemyTowers ~= nil
+                and (#nEnemyTowers == 0
+                    or #nEnemyTowers >= 1
+                        and J.IsValidBuilding(nEnemyTowers[1])
+                        and GetUnitToUnitDistance(creep, nEnemyTowers[1]) > 700)
                 then
                     return BOT_ACTION_DESIRE_HIGH, creep
+                end
+
+                nCreepTarget = nil
+                if  creep
+                and creep:GetTeam() == TEAM_NEUTRAL
+                then
+                    nCreepTarget = J.GetMostHpUnit(nCreeps)
+                end
+
+                if nCreepTarget ~= nil
+                then
+                    if  nCreepTarget:IsAncientCreep()
+                    and DevourAncientTalent:IsTrained()
+                    then
+                        return BOT_ACTION_DESIRE_HIGH, nCreepTarget
+                    end
+
+                    if not nCreepTarget:IsAncientCreep()
+                    then
+                        return BOT_ACTION_DESIRE_HIGH, nCreepTarget
+                    end
                 end
 
                 if not creep:IsAncientCreep()
@@ -1160,6 +1203,23 @@ function X.ConsiderDevourAbility(DevouredAbility)
     -- if DevouredAbility:GetName() == 'satyr_hellcaller_shockwave'
 
     return BOT_ACTION_DESIRE_HIGH, nil, ''
+end
+
+function X.GetRangedOrSiegeCreep(nCreeps, lvl)
+	for _, creep in pairs(nCreeps)
+	do
+		if  J.IsValid(creep)
+        and J.CanBeAttacked(creep)
+        and creep:GetLevel() <= lvl
+        and (J.IsKeyWordUnit('siege', creep) or J.IsKeyWordUnit('ranged', creep))
+        and not J.IsRoshan(creep)
+        and not J.IsTormentor(creep)
+		then
+			return creep
+		end
+	end
+
+	return nil
 end
 
 return X

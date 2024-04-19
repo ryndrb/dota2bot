@@ -1210,7 +1210,10 @@ function J.GetMostHpUnit( unitList )
 	for _, unit in pairs( unitList )
 	do
 		local uHp = unit:GetHealth()
-		if uHp > maxHP
+		if  unit ~= nil
+		and not J.IsRoshan(unit)
+		and not J.IsTormentor(unit)
+		and uHp > maxHP
 		then
 			mostHpUnit = unit
 			maxHP = uHp
