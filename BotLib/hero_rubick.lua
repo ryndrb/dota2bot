@@ -728,11 +728,29 @@ function HaveGoodSpells(ability1, ability2)
         return true
     end
 
-    -- if ability1:GetName() == 'dragon_knight_dragon_tail'
-    -- or ability2:GetName() == 'dragon_knight_dragon_tail'
-    -- then
-    --     return true
-    -- end
+    if ability1:GetName() == 'dark_seer_wall_of_replica'
+    or ability2:GetName() == 'dark_seer_wall_of_replica'
+    then
+        return true
+    end
+
+    if ability1:GetName() == 'disruptor_kinetic_field'
+    or ability2:GetName() == 'disruptor_kinetic_field'
+    then
+        return true
+    end
+
+    if ability1:GetName() == 'disruptor_static_storm'
+    or ability2:GetName() == 'disruptor_static_storm'
+    then
+        return true
+    end
+
+    if ability1:GetName() == 'dragon_knight_dragon_tail'
+    or ability2:GetName() == 'dragon_knight_dragon_tail'
+    then
+        return true
+    end
 
     -- if ability1:GetName() == 'earthshaker_fissure'
     -- or ability2:GetName() == 'earthshaker_fissure'
@@ -939,14 +957,14 @@ function X.ShouldStealSpellFrom(hero)
         ['npc_dota_hero_chen'] = false,
         ['npc_dota_hero_clinkz'] = false,
         ['npc_dota_hero_crystal_maiden'] = true,
-        -- ['npc_dota_hero_dark_seer'] = ,
-        -- ['npc_dota_hero_dark_willow'] = ,
-        -- ['npc_dota_hero_dawnbreaker'] = ,
-        -- ['npc_dota_hero_dazzle'] = ,
-        -- ['npc_dota_hero_disruptor'] = ,
-        -- ['npc_dota_hero_death_prophet'] = ,
-        -- ['npc_dota_hero_doom_bringer'] = ,
-        -- ['npc_dota_hero_dragon_knight'] = ,
+        ['npc_dota_hero_dark_seer'] = true,
+        ['npc_dota_hero_dark_willow'] = false,
+        ['npc_dota_hero_dawnbreaker'] = false,
+        ['npc_dota_hero_dazzle'] = false,
+        ['npc_dota_hero_disruptor'] = true,
+        ['npc_dota_hero_death_prophet'] = false,
+        ['npc_dota_hero_doom_bringer'] = false,
+        ['npc_dota_hero_dragon_knight'] = true,
         -- ['npc_dota_hero_drow_ranger'] = ,
         -- ['npc_dota_hero_earth_spirit'] = ,
         -- ['npc_dota_hero_earthshaker'] = ,
