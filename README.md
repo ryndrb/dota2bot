@@ -222,7 +222,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
             | Gyrocopter            | -       | -       | 0 
             | ~~Hoodwink~~          | &check; | &check; | 0 
             | Huskar                | -       | -       | 0 
-            | Invoker               | -       | &check; | 0 
+            | Invoker               | -       | &check; | 1 [4/24/2024]
             | Jakiro                | &check; | -       | 0 
             | Juggernaut            | -       | &check; | 0 
             | Keeper of the Light   | &check; | &check; | 0 
