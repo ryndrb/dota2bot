@@ -1,146 +1,83 @@
+local bot
 local X = {}
-local bDebugMode = ( 1 == 10 )
-local bot = GetBot()
+local J = require(GetScriptDirectory()..'/FunLib/jmz_func')
 
-local J = require( GetScriptDirectory()..'/FunLib/jmz_func' )
-local Minion = dofile( GetScriptDirectory()..'/FunLib/aba_minion' )
-local sTalentList = J.Skill.GetTalentList( bot )
-local sAbilityList = J.Skill.GetAbilityList( bot )
-local sRole = J.Item.GetRoleItemsBuyList( bot )
+local botTarget
 
-local tTalentTreeList = {
-						['t25'] = {0, 10},
-						['t20'] = {0, 10},
-						['t15'] = {10, 0},
-						['t10'] = {10, 0},
-}
-
-local tAllAbilityBuildList = {
-						{2,1,1,2,1,6,1,2,2,3,6,3,3,3,6},--pos1
-}
-
-local nAbilityBuildList = J.Skill.GetRandomBuild( tAllAbilityBuildList )
-
-local nTalentBuildList = J.Skill.GetTalentBuild( tTalentTreeList )
-
-local sRoleItemsBuyList = {}
-
-sRoleItemsBuyList['pos_1'] = {
-	"item_tango",
-    "item_double_branches",
-	"item_quelling_blade",
-	"item_double_gauntlets",
-
-    "item_magic_wand",
-	"item_power_treads",
-	"item_soul_ring",
-    "item_radiance",--
-    "item_blink",
-    "item_black_king_bar",--
-    "item_assault",--
-	"item_basher",
-    "item_swift_blink",--
-    "item_aghanims_shard",
-    "item_abyssal_blade",--
-    "item_travel_boots",
-    "item_moon_shard",
-    "item_travel_boots_2",--
-    "item_ultimate_scepter_2",
-}
-
-sRoleItemsBuyList['pos_2'] = sRoleItemsBuyList['pos_1']
-
-sRoleItemsBuyList['pos_4'] = sRoleItemsBuyList['pos_1']
-
-sRoleItemsBuyList['pos_5'] = sRoleItemsBuyList['pos_1']
-
-sRoleItemsBuyList['pos_3'] = sRoleItemsBuyList['pos_1']
-
-X['sBuyList'] = sRoleItemsBuyList[sRole]
-
-X['sSellList'] = {
-	"item_quelling_blade",
-    "item_magic_wand",
-	"item_power_treads",
-	"item_soul_ring",
-}
-
-if J.Role.IsPvNMode() or J.Role.IsAllShadow() then X['sBuyList'], X['sSellList'] = { 'PvN_antimage' }, {} end
-
-nAbilityBuildList, nTalentBuildList, X['sBuyList'], X['sSellList'] = J.SetUserHeroInit( nAbilityBuildList, nTalentBuildList, X['sBuyList'], X['sSellList'] )
-
-X['sSkillList'] = J.Skill.GetSkillList( sAbilityList, nAbilityBuildList, sTalentList, nTalentBuildList )
-
-X['bDeafaultAbility'] = false
-X['bDeafaultItem'] = false
-
-function X.MinionThink( hMinionUnit )
-
-	if Minion.IsValidUnit( hMinionUnit )
-	then
-		if hMinionUnit:IsIllusion()
-		then
-			Minion.IllusionThink( hMinionUnit )
-		end
-	end
-
-end
-
-local AcidSpray                 = bot:GetAbilityByName( "alchemist_acid_spray" )
-local UnstableConcoction        = bot:GetAbilityByName( "alchemist_unstable_concoction" )
-local UnstableConcoctionThrow   = bot:GetAbilityByName( "alchemist_unstable_concoction_throw" )
-local ChemicalRage              = bot:GetAbilityByName( "alchemist_chemical_rage" )
-local BerserkPotion             = bot:GetAbilityByName( "alchemist_berserk_potion" )
-
-local AcidSprayDesire, AcidSprayLocation
-local UnstableConcoctionDesire
-local UnstableConcoctionThrowDesire, UnstableConcoctionThrowTarget
-local BerserkPotionDesire, BerserkPotionTarget
-local ChemicalRageDesire
+local AcidSpray
+local UnstableConcoction
+local UnstableConcoctionThrow
+local ChemicalRage
+local BerserkPotion
 
 local defDuration = 2
 local offDuration = 4.25
 local ConcoctionThrowTime = 0
 
-function X.SkillsComplement()
+function X.ConsiderStolenSpell(ability)
+    bot = GetBot()
+
     if J.CanNotUseAbility(bot) then return end
 
-	ChemicalRageDesire = X.ConsiderChemicalRage()
-	if ChemicalRageDesire > 0
-	then
-		bot:Action_UseAbility(ChemicalRage)
-		return
-	end
+    botTarget = J.GetProperTarget(bot)
+    local abilityName = ability:GetName()
 
-	UnstableConcoctionThrowDesire, UnstableConcoctionThrowTarget = X.ConsiderUnstableConcoctionThrow()
-	if UnstableConcoctionThrowDesire > 0
-	then
-		bot:Action_UseAbilityOnEntity(UnstableConcoctionThrow, UnstableConcoctionThrowTarget)
-		return
-	end
+    if abilityName == 'alchemist_chemical_rage'
+    then
+        ChemicalRage = ability
+        ChemicalRageDesire = X.ConsiderChemicalRage()
+        if ChemicalRageDesire > 0
+        then
+            bot:Action_UseAbility(ChemicalRage)
+            return
+        end
+    end
 
-	UnstableConcoctionDesire = X.ConsiderUnstableConcoction()
-	if UnstableConcoctionDesire > 0
-	then
-		bot:Action_UseAbility(UnstableConcoction)
-		ConcoctionThrowTime = DotaTime()
-		return
-	end
+    if abilityName == 'alchemist_unstable_concoction_throw'
+    then
+        UnstableConcoctionThrow = ability
+        UnstableConcoctionThrowDesire, UnstableConcoctionThrowTarget = X.ConsiderUnstableConcoctionThrow()
+        if UnstableConcoctionThrowDesire > 0
+        then
+            bot:Action_UseAbilityOnEntity(UnstableConcoctionThrow, UnstableConcoctionThrowTarget)
+            return
+        end
+    end
 
-	AcidSprayDesire, AcidSprayLocation = X.ConsiderAcidSpray()
-	if AcidSprayDesire > 0
-	then
-		J.SetQueuePtToINT(bot, false)
-		bot:Action_UseAbilityOnLocation(AcidSpray, AcidSprayLocation)
-		return
-	end
+    if abilityName == 'alchemist_unstable_concoction'
+    then
+        UnstableConcoction = ability
+        UnstableConcoctionDesire = X.ConsiderUnstableConcoction()
+        if UnstableConcoctionDesire > 0
+        then
+            bot:Action_UseAbility(UnstableConcoction)
+            ConcoctionThrowTime = DotaTime()
+            return
+        end
+    end
 
-	BerserkPotionDesire, BerserkPotionTarget = X.ConsiderBerserkPotion()
-	if BerserkPotionDesire > 0
-	then
-		bot:Action_UseAbilityOnEntity(BerserkPotion, BerserkPotionTarget)
-		return
-	end
+    if abilityName == 'alchemist_acid_spray'
+    then
+        AcidSpray = ability
+        AcidSprayDesire, AcidSprayLocation = X.ConsiderAcidSpray()
+        if AcidSprayDesire > 0
+        then
+            J.SetQueuePtToINT(bot, false)
+            bot:Action_UseAbilityOnLocation(AcidSpray, AcidSprayLocation)
+            return
+        end
+    end
+
+    if abilityName == 'alchemist_berserk_potion'
+    then
+        BerserkPotion = ability
+        BerserkPotionDesire, BerserkPotionTarget = X.ConsiderBerserkPotion()
+        if BerserkPotionDesire > 0
+        then
+            bot:Action_UseAbilityOnEntity(BerserkPotion, BerserkPotionTarget)
+            return
+        end
+    end
 end
 
 function X.ConsiderAcidSpray()
@@ -149,10 +86,9 @@ function X.ConsiderAcidSpray()
 		return BOT_ACTION_DESIRE_NONE, 0
 	end
 
-	local nCastRange = AcidSpray:GetCastRange()
+	local nCastRange = J.GetProperCastRange(false, bot, AcidSpray:GetCastRange())
 	local nCastPoint = AcidSpray:GetCastPoint()
 	local nRadius = AcidSpray:GetSpecialValueInt('radius')
-	local botTarget = J.GetProperTarget(bot)
 
 	if J.IsInTeamFight(bot, 1200)
 	then
@@ -302,7 +238,7 @@ function X.ConsiderUnstableConcoction()
 		return BOT_ACTION_DESIRE_NONE
 	end
 
-	local nCastRange = UnstableConcoction:GetCastRange()
+	local nCastRange = J.GetProperCastRange(false, bot, UnstableConcoction:GetCastRange())
 	local nDamage = UnstableConcoction:GetSpecialValueInt('max_damage')
 
 	local nEnemyHeroes = bot:GetNearbyHeroes(nCastRange, true, BOT_MODE_NONE)
@@ -397,7 +333,7 @@ function X.ConsiderUnstableConcoctionThrow()
 		return BOT_ACTION_DESIRE_NONE, nil
 	end
 
-	local nCastRange = UnstableConcoctionThrow:GetCastRange()
+	local nCastRange = J.GetProperCastRange(false, bot, UnstableConcoctionThrow:GetCastRange())
 	local nDamage = UnstableConcoction:GetSpecialValueInt("max_damage")
 
 	local nEnemyHeroes = bot:GetNearbyHeroes(nCastRange, true, BOT_MODE_NONE)
@@ -495,8 +431,6 @@ function X.ConsiderChemicalRage()
 	then
 		return BOT_ACTION_DESIRE_NONE
 	end
-
-	local botTarget = J.GetProperTarget(bot)
 
 	if J.IsInTeamFight(bot, 1200)
 	then
@@ -597,7 +531,7 @@ function X.ConsiderBerserkPotion()
 		return BOT_ACTION_DESIRE_NONE, nil
 	end
 
-	local nCastRange = BerserkPotion:GetCastRange()
+	local nCastRange = J.GetProperCastRange(false, bot, BerserkPotion:GetCastRange())
 
 	local nAllyHeroes = bot:GetNearbyHeroes(nCastRange, false, BOT_MODE_NONE)
 	for _, allyHero in pairs(nAllyHeroes)

@@ -3,6 +3,7 @@ local bot           = GetBot()
 
 local J             = require( GetScriptDirectory()..'/FunLib/jmz_func' )
 local R             = dofile( GetScriptDirectory()..'/FunLib/rubick_utility' )
+local SPL           = dofile( GetScriptDirectory()..'/FunLib/spell_prob_list' )
 local Minion        = dofile( GetScriptDirectory()..'/FunLib/aba_minion' )
 local sTalentList   = J.Skill.GetTalentList( bot )
 local sAbilityList  = J.Skill.GetAbilityList( bot )
@@ -128,6 +129,8 @@ local FadeBoltDesire, FadeBoltTarget
 local SpellStealDesire, SpellStealTarget
 
 local botTarget
+
+if bot.shouldBlink == nil then bot.shouldBlink = false end
 
 function X.SkillsComplement()
 	if J.CanNotUseAbility(bot) then return end
@@ -648,7 +651,6 @@ end
 
 function X.ConsiderSpellSteal()
     if not SpellSteal:IsFullyCastable()
-    or HaveGoodSpells(StolenSpell1, StolenSpell2)
     then
         return BOT_ACTION_DESIRE_NONE, nil
     end
@@ -668,7 +670,24 @@ function X.ConsiderSpellSteal()
             or enemyHero:IsCastingAbility()
             or J.IsCastingUltimateAbility(enemyHero)
             then
-                return BOT_ACTION_DESIRE_HIGH, enemyHero
+                if bot:HasScepter()
+                then
+                    if  SPL.GetSpellReplaceWeight(StolenSpell1) * 100 >= RandomInt(1, 100)
+                    and SPL.GetSpellReplaceWeight(StolenSpell2) * 100 >= RandomInt(1, 100)
+                    then
+                        return BOT_ACTION_DESIRE_HIGH, enemyHero
+                    end
+
+                    if SPL.GetSpellReplaceWeight(StolenSpell2) * 100 >= RandomInt(1, 100)
+                    then
+                        return BOT_ACTION_DESIRE_HIGH, enemyHero
+                    end
+                else
+                    if SPL.GetSpellReplaceWeight(StolenSpell1) * 100 >= RandomInt(1, 100)
+                    then
+                        return BOT_ACTION_DESIRE_HIGH, enemyHero
+                    end
+                end
             end
         end
     end
@@ -676,295 +695,36 @@ function X.ConsiderSpellSteal()
     return BOT_ACTION_DESIRE_NONE, nil
 end
 
--- Direct Stun Spells
--- Huge Ults
--- etc
-function HaveGoodSpells(ability1, ability2)
-    if ability1:GetName() == 'bane_nightmare'
-    or ability2:GetName() == 'bane_nightmare'
-    then
-        return true
-    end
-
-    if ability1:GetName() == 'bane_fiends_grip'
-    or ability2:GetName() == 'bane_fiends_grip'
-    then
-        return true
-    end
-
-    if ability1:GetName() == 'batrider_flaming_lasso'
-    or ability2:GetName() == 'batrider_flaming_lasso'
-    then
-        return true
-    end
-
-    if ability1:GetName() == 'beastmaster_primal_roar'
-    or ability2:GetName() == 'beastmaster_primal_roar'
-    then
-        return true
-    end
-
-    if ability1:GetName() == 'centaur_hoof_stomp'
-    or ability2:GetName() == 'centaur_hoof_stomp'
-    then
-        return true
-    end
-
-    if ability1:GetName() == 'chaos_knight_chaos_bolt'
-    or ability2:GetName() == 'chaos_knight_chaos_bolt'
-    then
-        return true
-    end
-
-    if ability1:GetName() == 'crystal_maiden_frostbite'
-    or ability2:GetName() == 'crystal_maiden_frostbite'
-    then
-        return true
-    end
-
-    if ability1:GetName() == 'crystal_maiden_freezing_field'
-    or ability2:GetName() == 'crystal_maiden_freezing_field'
-    then
-        return true
-    end
-
-    if ability1:GetName() == 'dark_seer_wall_of_replica'
-    or ability2:GetName() == 'dark_seer_wall_of_replica'
-    then
-        return true
-    end
-
-    if ability1:GetName() == 'disruptor_kinetic_field'
-    or ability2:GetName() == 'disruptor_kinetic_field'
-    then
-        return true
-    end
-
-    if ability1:GetName() == 'disruptor_static_storm'
-    or ability2:GetName() == 'disruptor_static_storm'
-    then
-        return true
-    end
-
-    if ability1:GetName() == 'dragon_knight_dragon_tail'
-    or ability2:GetName() == 'dragon_knight_dragon_tail'
-    then
-        return true
-    end
-
-    -- if ability1:GetName() == 'earthshaker_fissure'
-    -- or ability2:GetName() == 'earthshaker_fissure'
-    -- then
-    --     return true
-    -- end
-
-    -- if ability1:GetName() == 'earthshaker_echo_slam'
-    -- or ability2:GetName() == 'earthshaker_echo_slam'
-    -- then
-    --     return true
-    -- end
-
-    -- if ability1:GetName() == 'enigma_black_hole'
-    -- or ability2:GetName() == 'enigma_black_hole'
-    -- then
-    --     return true
-    -- end
-
-    -- if ability1:GetName() == 'faceless_void_chronosphere'
-    -- or ability2:GetName() == 'faceless_void_chronosphere'
-    -- then
-    --     return true
-    -- end
-
-    -- if ability1:GetName() == 'jakiro_ice_path'
-    -- or ability2:GetName() == 'jakiro_ice_path'
-    -- then
-    --     return true
-    -- end
-
-    -- if ability1:GetName() == 'legion_commander_duel'
-    -- or ability2:GetName() == 'legion_commander_duel'
-    -- then
-    --     return true
-    -- end
-
-    -- if ability1:GetName() == 'lion_impale'
-    -- or ability2:GetName() == 'lion_impale'
-    -- then
-    --     return true
-    -- end
-
-    -- if ability1:GetName() == 'magnataur_reverse_polarity'
-    -- or ability2:GetName() == 'magnataur_reverse_polarity'
-    -- then
-    --     return true
-    -- end
-
-    -- if ability1:GetName() == 'mars_arena_of_blood'
-    -- or ability2:GetName() == 'mars_arena_of_blood'
-    -- then
-    --     return true
-    -- end
-
-    -- if ability1:GetName() == 'monkey_king_wukongs_command'
-    -- or ability2:GetName() == 'monkey_king_wukongs_command'
-    -- then
-    --     return true
-    -- end
-
-    -- if ability1:GetName() == 'naga_siren_song_of_the_siren'
-    -- or ability2:GetName() == 'naga_siren_song_of_the_siren'
-    -- then
-    --     return true
-    -- end
-
-    -- if ability1:GetName() == 'nyx_assassin_impale'
-    -- or ability2:GetName() == 'nyx_assassin_impale'
-    -- then
-    --     return true
-    -- end
-
-    -- if ability1:GetName() == 'ogre_magi_fireblast'
-    -- or ability2:GetName() == 'ogre_magi_fireblast'
-    -- then
-    --     return true
-    -- end
-
-    -- if ability1:GetName() == 'oracle_false_promise'
-    -- or ability2:GetName() == 'oracle_false_promise'
-    -- then
-    --     return true
-    -- end
-
-    -- if ability1:GetName() == 'obsidian_destroyer_astral_imprisonment'
-    -- or ability2:GetName() == 'obsidian_destroyer_astral_imprisonment'
-    -- then
-    --     return true
-    -- end
-
-    -- if ability1:GetName() == 'pangolier_gyroshell'
-    -- or ability2:GetName() == 'pangolier_gyroshell'
-    -- then
-    --     return true
-    -- end
-
-    -- if ability1:GetName() == 'phoenix_supernova'
-    -- or ability2:GetName() == 'phoenix_supernova'
-    -- then
-    --     return true
-    -- end
-
-    -- if ability1:GetName() == 'puck_dream_coil'
-    -- or ability2:GetName() == 'puck_dream_coil'
-    -- then
-    --     return true
-    -- end
-
-    -- if ability1:GetName() == 'pudge_meat_hook'
-    -- or ability2:GetName() == 'pudge_meat_hook'
-    -- then
-    --     return true
-    -- end
-
-    -- if ability1:GetName() == 'shadow_demon_disruption'
-    -- or ability2:GetName() == 'shadow_demon_disruption'
-    -- then
-    --     return true
-    -- end
-
-    -- if ability1:GetName() == 'shadow_shaman_voodoo'
-    -- or ability2:GetName() == 'shadow_shaman_voodoo'
-    -- then
-    --     return true
-    -- end
-
-    -- if ability1:GetName() == 'shadow_shaman_shackles'
-    -- or ability2:GetName() == 'shadow_shaman_shackles'
-    -- then
-    --     return true
-    -- end
-
-    -- if ability1:GetName() == 'silencer_global_silence'
-    -- or ability2:GetName() == 'silencer_global_silence'
-    -- then
-    --     return true
-    -- end
-
-    -- if ability1:GetName() == 'sven_storm_bolt'
-    -- or ability2:GetName() == 'sven_storm_bolt'
-    -- then
-    --     return true
-    -- end
-
-    -- if ability1:GetName() == 'tidehunter_ravage'
-    -- or ability2:GetName() == 'tidehunter_ravage'
-    -- then
-    --     return true
-    -- end
-
-    -- if ability1:GetName() == 'treant_overgrowth'
-    -- or ability2:GetName() == 'treant_overgrowth'
-    -- then
-    --     return true
-    -- end
-
-    -- if ability1:GetName() == 'vengefulspirit_magic_missile'
-    -- or ability2:GetName() == 'vengefulspirit_magic_missile'
-    -- then
-    --     return true
-    -- end
-
-    -- if ability1:GetName() == 'warlock_rain_of_chaos'
-    -- or ability2:GetName() == 'warlock_rain_of_chaos'
-    -- then
-    --     return true
-    -- end
-
-    -- if ability1:GetName() == 'winter_wyvern_winters_curse'
-    -- or ability2:GetName() == 'winter_wyvern_winters_curse'
-    -- then
-    --     return true
-    -- end
-
-    -- if ability1:GetName() == 'winter_wyvern_winters_curse'
-    -- or ability2:GetName() == 'winter_wyvern_winters_curse'
-    -- then
-    --     return true
-    -- end
-
-    return false
-end
-
 function X.ShouldStealSpellFrom(hero)
     local HeroNames = {
-        ['npc_dota_hero_abaddon'] = false,
-        ['npc_dota_hero_abyssal_underlord'] = false,
-        ['npc_dota_hero_alchemist'] = false,
-        ['npc_dota_hero_ancient_apparition'] = false,
-        ['npc_dota_hero_antimage'] = false,
-        ['npc_dota_hero_arc_warden'] = false,
-        ['npc_dota_hero_axe'] = false,
+        ['npc_dota_hero_abaddon'] = true,
+        ['npc_dota_hero_abyssal_underlord'] = true,
+        ['npc_dota_hero_alchemist'] = true,
+        ['npc_dota_hero_ancient_apparition'] = true,
+        ['npc_dota_hero_antimage'] = true,
+        ['npc_dota_hero_arc_warden'] = true,
+        ['npc_dota_hero_axe'] = true,
         ['npc_dota_hero_bane'] = true,
         ['npc_dota_hero_batrider'] = true,
         ['npc_dota_hero_beastmaster'] = true,
-        ['npc_dota_hero_bloodseeker'] = false,
-        ['npc_dota_hero_bounty_hunter'] = false,
-        ['npc_dota_hero_brewmaster'] = false,
-        ['npc_dota_hero_bristleback'] = false,
-        ['npc_dota_hero_broodmother'] = false,
-        ['npc_dota_hero_centaur'] = true,
-        ['npc_dota_hero_chaos_knight'] = true,
-        ['npc_dota_hero_chen'] = false,
-        ['npc_dota_hero_clinkz'] = false,
-        ['npc_dota_hero_crystal_maiden'] = true,
-        ['npc_dota_hero_dark_seer'] = true,
-        ['npc_dota_hero_dark_willow'] = false,
-        ['npc_dota_hero_dawnbreaker'] = false,
-        ['npc_dota_hero_dazzle'] = false,
-        ['npc_dota_hero_disruptor'] = true,
-        ['npc_dota_hero_death_prophet'] = false,
-        ['npc_dota_hero_doom_bringer'] = false,
-        ['npc_dota_hero_dragon_knight'] = true,
+        ['npc_dota_hero_bloodseeker'] = true,
+        ['npc_dota_hero_bounty_hunter'] = true,
+        ['npc_dota_hero_brewmaster'] = true,
+        ['npc_dota_hero_bristleback'] = true,
+        ['npc_dota_hero_broodmother'] = true,
+        -- ['npc_dota_hero_centaur'] = true,
+        -- ['npc_dota_hero_chaos_knight'] = true,
+        -- ['npc_dota_hero_chen'] = false,
+        -- ['npc_dota_hero_clinkz'] = false,
+        -- ['npc_dota_hero_crystal_maiden'] = true,
+        -- ['npc_dota_hero_dark_seer'] = true,
+        -- ['npc_dota_hero_dark_willow'] = false,
+        -- ['npc_dota_hero_dawnbreaker'] = false,
+        -- ['npc_dota_hero_dazzle'] = false,
+        -- ['npc_dota_hero_disruptor'] = true,
+        -- ['npc_dota_hero_death_prophet'] = false,
+        -- ['npc_dota_hero_doom_bringer'] = false,
+        -- ['npc_dota_hero_dragon_knight'] = true,
         -- ['npc_dota_hero_drow_ranger'] = ,
         -- ['npc_dota_hero_earth_spirit'] = ,
         -- ['npc_dota_hero_earthshaker'] = ,
