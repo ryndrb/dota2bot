@@ -15,6 +15,12 @@ local BountyHunter = require(GetScriptDirectory()..'/FunLib/rubick_hero/bounty_h
 local Brewmaster = require(GetScriptDirectory()..'/FunLib/rubick_hero/brewmaster')
 local Bristleback = require(GetScriptDirectory()..'/FunLib/rubick_hero/bristleback')
 local Broodmother = require(GetScriptDirectory()..'/FunLib/rubick_hero/broodmother')
+local Centaur = require(GetScriptDirectory()..'/FunLib/rubick_hero/centaur')
+local ChaosKnight = require(GetScriptDirectory()..'/FunLib/rubick_hero/chaos_knight')
+local Chen = require(GetScriptDirectory()..'/FunLib/rubick_hero/chen')
+local Clinkz = require(GetScriptDirectory()..'/FunLib/rubick_hero/clinkz')
+local CrystalMaiden = require(GetScriptDirectory()..'/FunLib/rubick_hero/crystal_maiden')
+local Clockwerk = require(GetScriptDirectory()..'/FunLib/rubick_hero/rattletrap')
 
 function X.ConsiderStolenSpell(ability)
     Abaddon.ConsiderStolenSpell(ability)
@@ -32,7 +38,13 @@ function X.ConsiderStolenSpell(ability)
     Brewmaster.ConsiderStolenSpell(ability)
     Bristleback.ConsiderStolenSpell(ability)
     Broodmother.ConsiderStolenSpell(ability)
-    --C's next
+    Centaur.ConsiderStolenSpell(ability)
+    ChaosKnight.ConsiderStolenSpell(ability)
+    Chen.ConsiderStolenSpell(ability)
+    Clinkz.ConsiderStolenSpell(ability)
+    CrystalMaiden.ConsiderStolenSpell(ability)
+    Clockwerk.ConsiderStolenSpell(ability)
+    --D's next
 end
 
 return X

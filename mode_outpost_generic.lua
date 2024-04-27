@@ -118,6 +118,13 @@ function GetDesire()
 		return BOT_ACTION_DESIRE_ABSOLUTE
 	end
 
+	if botName == "npc_dota_hero_rubick"
+	then
+		if bot:IsChanneling() then
+			return BOT_MODE_DESIRE_ABSOLUTE
+		end
+	end
+
 	if botName == "npc_dota_hero_pugna" 
 	then
 		if cAbility == nil then cAbility = bot:GetAbilityByName( "pugna_life_drain" ) end;

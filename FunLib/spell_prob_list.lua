@@ -77,6 +77,40 @@ function X.GetSpellReplaceWeight(ability)
         ['broodmother_sticky_snare'] = 1,
         ['broodmother_spawn_spiderlings'] = 1,
 
+        ['centaur_hoof_stomp'] = 0.7,
+        ['centaur_double_edge'] = 1,
+        ['centaur_work_horse'] = 0.2,
+        ['centaur_mount'] = 1,
+        ['centaur_stampede'] = 0.1,
+
+        ['chaos_knight_chaos_bolt'] = 0.4,
+        ['chaos_knight_reality_rift'] = 0.8,
+        ['chaos_knight_phantasm'] = 1,
+
+        ['chen_penitence'] = 0.1,
+        ['chen_holy_persuasion'] = 1,
+        ['chen_divine_favor'] = 0.1,
+        ['chen_hand_of_god'] = 0.2,
+
+        ['clinkz_strafe'] = 0.8,
+        ['clinkz_tar_bomb'] = 0.9,
+        ['clinkz_death_pact'] = 0.9,
+        ['clinkz_burning_barrage'] = 0.9,
+        ['clinkz_burning_army'] = 0.9,
+        ['clinkz_wind_walk'] = 0.7,
+
+        ['rattletrap_battery_assault'] = 0.9,
+        ['rattletrap_power_cogs'] = 0.9,
+        ['rattletrap_rocket_flare'] = 0.8,
+        ['rattletrap_jetpack'] = 0.4,
+        ['rattletrap_overclocking'] = 0.8,
+        ['rattletrap_hookshot'] = 0.4,
+
+        ['crystal_maiden_crystal_nova'] = 0.6,
+        ['crystal_maiden_frostbite'] = 0.5,
+        ['crystal_maiden_crystal_clone'] = 1,
+        ['crystal_maiden_freezing_field'] = 0.1,
+
         ['rubick_empty1'] = 1,
         ['rubick_empty2'] = 1,
     }
