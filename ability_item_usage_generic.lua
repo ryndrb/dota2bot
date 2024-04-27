@@ -1176,6 +1176,7 @@ X.ConsiderItemDesire["item_blink"] = function( hItem )
 	local nInRangeAlly = bot:GetNearbyHeroes(1600, false, BOT_MODE_ATTACK)
 
 	if  nInRangeAlly ~= nil and #nInRangeAlly == 0 and (botTarget == nil or not botTarget:IsHero())
+	and J.IsFarming(bot)
 	and not bot:WasRecentlyDamagedByAnyHero(3.1)
 	and not J.IsPushing(bot)
 	and not J.IsDefending(bot)
@@ -1230,27 +1231,32 @@ X.ConsiderItemDesire["item_blink"] = function( hItem )
 			return BOT_ACTION_DESIRE_NONE
 		end
 
-		if  J.IsValidHero(botTarget)
-		and J.IsInRange(bot, botTarget, nCastRange + 200)
+		if  J.IsValidTarget(botTarget)
+		and J.IsInRange(bot, botTarget, 1600)
 		and J.CanCastOnMagicImmune(botTarget)
-		and not J.IsInRange(bot, botTarget, bot:GetAttackRange() + 150)
+		and not J.IsInRange(bot, botTarget, 500)
 		and not J.IsSuspiciousIllusion(botTarget)
 		and not J.IsLocationInChrono(botTarget:GetLocation())
 		and not J.IsLocationInBlackHole(botTarget:GetLocation())
+		and not botTarget:IsAttackImmune()
+		and not botTarget:IsInvulnerable()
 		then
-			nTargetInRangeAlly = botTarget:GetNearbyHeroes(1600, false, BOT_MODE_NONE)
-			nTargetInRangeEnemy = botTarget:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
+			local nInRangeAlly = botTarget:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
+			local nInRangeEnemy = botTarget:GetNearbyHeroes(1600, false, BOT_MODE_NONE)
 
-			if  nTargetInRangeAlly ~= nil and nTargetInRangeEnemy ~= nil
-			and ((#nTargetInRangeAlly >= #nTargetInRangeEnemy)
-				or (#nTargetInRangeAlly >= #nTargetInRangeEnemy and bot:GetStunDuration(true) > 0.8))
+			if  nInRangeAlly ~= nil and nInRangeEnemy ~= nil
+			and ((#nInRangeAlly >= #nInRangeEnemy)
+				or (#nInRangeAlly >= #nInRangeEnemy and bot:GetStunDuration(true) > 0.8))
 			then
 				local nDistance = GetUnitToUnitDistance(bot, botTarget)
 
 				if nDistance >= 1200 then nDistance = 1199 end
 
 				local loc = J.GetUnitTowardDistanceLocation(bot, botTarget, nDistance) + RandomVector(150)
-				return BOT_ACTION_DESIRE_HIGH, loc, 'ground', nil
+				if IsLocationPassable(loc)
+				then
+					return BOT_ACTION_DESIRE_HIGH, loc, 'ground', nil
+				end
 			end
 		end
 	end
