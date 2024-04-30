@@ -259,7 +259,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
             | Phantom Lancer        | &check; | -       | 0 
             | Phoenix               | -       | -       | 0 
             | ~~Primal Beast~~      | -       | -       | 0 
-            | Puck                  | -       | -       | 0 
+            | Puck                  | -       | -       | 1 [4/29/2024]
             | Pugna                 | -       | -       | 0 
             | Pudge                 | -       | &cross; | 0 
             | Queen of Pain         | -       | -       | 0 
