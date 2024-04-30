@@ -218,7 +218,7 @@ function GetDesire()
 		if cAbility == nil then cAbility = bot:GetAbilityByName("puck_phase_shift") end
 		if cAbility:IsTrained()
 		then
-			if bot:HasModifier('modifier_puck_phase_shift') then
+			if cAbility:IsInAbilityPhase() or bot:HasModifier('modifier_puck_phase_shift') then
 				return BOT_MODE_DESIRE_ABSOLUTE
 			end
 		end
