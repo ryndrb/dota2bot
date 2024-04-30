@@ -1226,6 +1226,7 @@ X.ConsiderItemDesire["item_blink"] = function( hItem )
 			or bot:GetUnitName() == 'npc_dota_hero_magnataur'
 			or bot:GetUnitName() == 'npc_dota_hero_rubick'
 			or bot:GetUnitName() == 'npc_dota_hero_tinker'
+			or bot:GetUnitName() == 'npc_dota_hero_tiny'
 			or bot:GetUnitName() == 'npc_dota_hero_treant')
 		then
 			return BOT_ACTION_DESIRE_NONE

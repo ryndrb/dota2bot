@@ -112,7 +112,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
         - [1] Terrorblade
         - [3] Timbersaw
         - [2] Tinker
-        - [1,2] Tiny
+        - [1,2,3] Tiny
         - [4,5] Treant
         - [1] Troll Warlord
         - [4,5] Tusk
@@ -286,7 +286,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
             | Tidehunter            | &check; | -       | 0 
             | Timbersaw             | &check; | &check; | 1 [2/4/2024]
             | Tinker                | &check; | -       | 0 
-            | Tiny                  | -       | &check; | 1 [2/5/2024] 
+            | Tiny                  | -       | &check; | 2 [4/29/2024] 
             | Treant                | -       | &check; | 0 
             | Troll Warlord         | -       | -       | 0 
             | Tusk                  | -       | &cross; | 0 
