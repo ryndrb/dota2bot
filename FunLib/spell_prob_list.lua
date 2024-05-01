@@ -111,6 +111,40 @@ function X.GetSpellReplaceWeight(ability)
         ['crystal_maiden_crystal_clone'] = 1,
         ['crystal_maiden_freezing_field'] = 0.1,
 
+        ['dark_seer_vacuum'] = 0.3,
+        ['dark_seer_ion_shell'] = 0.8,
+        ['dark_seer_surge'] = 0.5,
+        ['dark_seer_wall_of_replica'] = 0.1,
+
+        ['dazzle_poison_touch'] = 0.7,
+        ['dazzle_shallow_grave'] = 0.4,
+        ['dazzle_shadow_wave'] = 0.8,
+
+        ['disruptor_thunder_strike'] = 0.6,
+        ['disruptor_glimpse'] = 0.3,
+        ['disruptor_kinetic_field'] = 0.3,
+        ['disruptor_static_storm'] = 0.2,
+
+        ['death_prophet_carrion_swarm'] = 0.7,
+        ['death_prophet_silence'] = 0.2,
+        ['death_prophet_spirit_siphon'] = 0.8,
+        ['death_prophet_exorcism'] = 0.4,
+
+        ['doom_bringer_devour'] = 0.9,
+        ['doom_bringer_scorched_earth'] = 0.8,
+        ['doom_bringer_infernal_blade'] = 0.8,
+        ['doom_bringer_doom'] = 0.2,
+
+        ['dragon_knight_breathe_fire'] = 0.7,
+        ['dragon_knight_dragon_tail'] = 0.5,
+        ['ragon_knight_fireball'] = 0.7,
+        ['dragon_knight_elder_dragon_form'] = 0.5,
+
+        ['drow_ranger_frost_arrows'] = 1,
+        ['drow_ranger_wave_of_silence'] = 0.3,
+        ['drow_ranger_trueshot'] = 0.9,
+        ['drow_ranger_glacier'] = 0.7,
+
         ['rubick_empty1'] = 1,
         ['rubick_empty2'] = 1,
     }
