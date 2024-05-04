@@ -50,8 +50,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
 - ***Heroes (Pos: 1,2,3,4,5)***
     - <ins>Heroes Implemented Count:</ins> **116** / 124
     - 4th column from the table below (<ins>Spell Usage Imp. Count [Latest Date]</ins>) is the count of times I tried improving a hero after their initial addition.
-    - All Supports are both 4 and 5 for now.
-    - ^. Supports that does damage, CC, or is Ranged are just inherently 'better' for the most part in bot games compared to Melee or non-. (Since positioning and movement are Valve default.)
+    - Supports that does damage, CC, or is Ranged are somewhat 'better' for the most part in bot games compared to Melee or non-. (Since positioning and movement are Valve default.)
     - ^. AoE spells are just too good.
     - ***Added***
         - [4,5] Abaddon
