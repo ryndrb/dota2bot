@@ -17,7 +17,7 @@ local sAbilityList = J.Skill.GetAbilityList( bot )
 local sRole = J.Item.GetRoleItemsBuyList( bot )
 
 local tTalentTreeList = {
-						{--pos1
+						{--pos1,2
 							['t25'] = {0, 10},
 							['t20'] = {0, 10},
 							['t15'] = {0, 10},
@@ -32,22 +32,22 @@ local tTalentTreeList = {
 }
 
 local tAllAbilityBuildList = {
-						{3,2,3,1,3,6,1,1,1,3,6,2,2,2,6},--pos1
+						{3,2,3,1,3,6,1,1,1,3,6,2,2,2,6},--pos1,2
 						{2,3,3,1,3,6,3,1,1,1,6,2,2,2,6},--pos3
 }
 
 local nAbilityBuildList
-local nTalentBuildList
+if sRole == 'pos_1' then nAbilityBuildList = tAllAbilityBuildList[1] end
+if sRole == 'pos_2' then nAbilityBuildList = tAllAbilityBuildList[1] end
+if sRole == 'pos_3' then nAbilityBuildList = tAllAbilityBuildList[2] end
 
-if sRole == "pos_1"
-then
-    nAbilityBuildList   = tAllAbilityBuildList[1]
-    nTalentBuildList    = J.Skill.GetTalentBuild(tTalentTreeList[1])
-elseif sRole == "pos_3"
-then
-    nAbilityBuildList   = tAllAbilityBuildList[2]
-    nTalentBuildList    = J.Skill.GetTalentBuild(tTalentTreeList[2])
-end
+local nTalentBuildList
+if sRole == 'pos_1' then nTalentBuildList = J.Skill.GetTalentBuild(tTalentTreeList[1]) end
+if sRole == 'pos_2' then nTalentBuildList = J.Skill.GetTalentBuild(tTalentTreeList[1]) end
+if sRole == 'pos_3' then nTalentBuildList = J.Skill.GetTalentBuild(tTalentTreeList[2]) end
+
+local sUtility = {"item_crimson_guard", "item_pipe"}
+local nUtility = sUtility[RandomInt(1, #sUtility)]
 
 local sRoleItemsBuyList = {}
 
@@ -71,46 +71,89 @@ sRoleItemsBuyList['pos_1'] = {
 	"item_skadi",--
 	"item_monkey_king_bar",--
 	"item_moon_shard",
-	"item_ultimate_scepter",
 	"item_ultimate_scepter_2",
-
 }
 
-sRoleItemsBuyList['pos_2'] = sRoleItemsBuyList['pos_1']
+sRoleItemsBuyList['pos_2'] = {
+	"item_tango",
+	"item_double_branches",
+	"item_quelling_blade",
+	"item_slippers",
+	"item_circlet",
 
-sRoleItemsBuyList['pos_4'] = sRoleItemsBuyList['pos_1']
-
-sRoleItemsBuyList['pos_5'] = sRoleItemsBuyList['pos_1']
+	"item_wraith_band",
+	"item_bottle",
+	"item_phase_boots",
+	"item_maelstrom",
+	"item_magic_wand",
+	"item_black_king_bar",--
+	"item_mjollnir",--
+	"item_basher",
+	"item_aghanims_shard",
+	"item_butterfly",--
+	"item_sheepstick",--
+	"item_travel_boots",
+	"item_abyssal_blade",--
+	"item_travel_boots_2",--
+	"item_moon_shard",
+	"item_ultimate_scepter_2",
+}
 
 sRoleItemsBuyList['pos_3'] = {
 	"item_tango",
 	"item_double_branches",
 	"item_quelling_blade",
 
-	"item_phase_boots",
+	"item_double_wraith_band",
+	"item_boots",
 	"item_magic_wand",
+	"item_phase_boots",
 	"item_maelstrom",
-	"item_manta",--
 	"item_black_king_bar",--
-	"item_mjollnir",--
-	"item_basher",
+	"item_gungir",--
 	"item_heavens_halberd",--
-	"item_aghanims_shard",
-	"item_skadi",--
+	nUtility,--
+	"item_basher",
+	"item_travel_boots",
 	"item_abyssal_blade",--
+	"item_travel_boots_2",--
+	"item_aghanims_shard",
 	"item_moon_shard",
-	"item_ultimate_scepter",
 	"item_ultimate_scepter_2",
 }
 
+sRoleItemsBuyList['pos_4'] = sRoleItemsBuyList['pos_4']
+
+sRoleItemsBuyList['pos_5'] = sRoleItemsBuyList['pos_5']
+
 X['sBuyList'] = sRoleItemsBuyList[sRole]
 
-X['sSellList'] = {
+Pos1SellList = {
 	"item_quelling_blade",
 	"item_wraith_band",
 	"item_phase_boots",
 	"item_magic_wand",
 }
+
+Pos2SellList = {
+	"item_bottle",
+	"item_quelling_blade",
+	"item_wraith_band",
+	"item_phase_boots",
+	"item_magic_wand",
+}
+
+Pos3SellList = {
+    "item_quelling_blade",
+	"item_wraith_band",
+	"item_magic_wand",
+}
+
+X['sSellList'] = {}
+
+if sRole == "pos_1" then X['sSellList'] = Pos1SellList end
+if sRole == "pos_2" then X['sSellList'] = Pos2SellList end
+if sRole == "pos_3" then X['sSellList'] = Pos3SellList end
 
 if J.Role.IsPvNMode() or J.Role.IsAllShadow() then X['sBuyList'], X['sSellList'] = { 'PvN_melee_carry' }, {"item_power_treads", 'item_quelling_blade'} end
 
@@ -129,35 +172,6 @@ function X.MinionThink( hMinionUnit )
 	end
 
 end
-
---[[
-
-npc_dota_hero_bloodseeker
-
-"Ability1"		"bloodseeker_bloodrage"
-"Ability2"		"bloodseeker_blood_bath"
-"Ability3"		"bloodseeker_thirst"
-"Ability4"		"bloodseeker_blood_mist"
-"Ability5"		"generic_hidden"
-"Ability6"		"bloodseeker_rupture"
-"Ability10"		"special_bonus_unique_bloodseeker_5"
-"Ability11"		"special_bonus_unique_bloodseeker_6"
-"Ability12"		"special_bonus_unique_bloodseeker_7"
-"Ability13"		"special_bonus_unique_bloodseeker_2"
-"Ability14"		"special_bonus_unique_bloodseeker_3"
-"Ability15"		"special_bonus_spell_lifesteal_15"
-"Ability16"		"special_bonus_unique_bloodseeker_rupture_charges"
-"Ability17"		"special_bonus_unique_bloodseeker_4"
-
-modifier_bloodseeker_bloodrage
-modifier_bloodseeker_bloodbath_thinker
-modifier_bloodseeker_thirst
-modifier_bloodseeker_thirst_vision
-modifier_bloodseeker_thirst_speed
-modifier_bloodseeker_rupture_charge_counter
-modifier_bloodseeker_rupture
-
---]]
 
 local abilityQ = bot:GetAbilityByName( sAbilityList[1] )
 local abilityW = bot:GetAbilityByName( sAbilityList[2] )

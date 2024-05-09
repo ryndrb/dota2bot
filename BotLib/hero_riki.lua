@@ -57,23 +57,58 @@ sRoleItemsBuyList['pos_1'] = {
 	"item_aghanims_shard",
 }
 
-sRoleItemsBuyList['pos_2'] = sRoleItemsBuyList['pos_1']
+sRoleItemsBuyList['pos_2'] = {
+	"item_tango",
+	"item_double_branches",
+	"item_quelling_blade",
+	"item_slippers",
+	"item_circlet",
 
-sRoleItemsBuyList['pos_4'] = sRoleItemsBuyList['pos_1']
+	"item_bottle",
+	"item_wraith_band",
+	"item_power_treads",
+	"item_magic_wand",
+	"item_diffusal_blade",
+	"item_manta",--
+	"item_ultimate_scepter",
+	"item_greater_crit",--
+	"item_basher",
+	"item_sphere",--
+	"item_disperser",--
+	"item_nullifier",--
+	"item_ultimate_scepter_2",
+	"item_abyssal_blade",--
+	"item_moon_shard",
+	"item_aghanims_shard",
+}
 
-sRoleItemsBuyList['pos_5'] = sRoleItemsBuyList['pos_1']
+sRoleItemsBuyList['pos_3'] = sRoleItemsBuyList['pos_3']
 
-sRoleItemsBuyList['pos_3'] = sRoleItemsBuyList['pos_1']
+sRoleItemsBuyList['pos_4'] = sRoleItemsBuyList['pos_4']
 
+sRoleItemsBuyList['pos_5'] = sRoleItemsBuyList['pos_5']
 
 X['sBuyList'] = sRoleItemsBuyList[sRole]
 
-X['sSellList'] = {
+Pos1SellList = {
 	"item_quelling_blade",
 	"item_wraith_band",
 	"item_power_treads",
 	"item_magic_wand",
 }
+
+Pos2SellList = {
+	"item_bottle",
+	"item_quelling_blade",
+	"item_wraith_band",
+	"item_power_treads",
+	"item_magic_wand",
+}
+
+X['sSellList'] = {}
+
+if sRole == "pos_1" then X['sSellList'] = Pos1SellList end
+if sRole == "pos_2" then X['sSellList'] = Pos2SellList end
 
 if J.Role.IsPvNMode() then X['sBuyList'], X['sSellList'] = { 'PvN_BH' }, {{"item_power_treads", 'item_quelling_blade'}, 'item_quelling_blade'} end
 

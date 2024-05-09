@@ -8,34 +8,69 @@ local sAbilityList  = J.Skill.GetAbilityList( bot )
 local sRole   = J.Item.GetRoleItemsBuyList( bot )
 
 local tTalentTreeList = {
-						['t25'] = {10, 0},
-						['t20'] = {0, 10},
-						['t15'] = {0, 10},
-						['t10'] = {10, 0},
+						{--pos2
+                            ['t25'] = {10, 0},
+                            ['t20'] = {10, 0},
+                            ['t15'] = {0, 10},
+                            ['t10'] = {0, 10},
+                        },
+                        {--pos4,5
+                            ['t25'] = {10, 0},
+                            ['t20'] = {0, 10},
+                            ['t15'] = {0, 10},
+                            ['t10'] = {10, 0},
+                        }
 }
 
 local tAllAbilityBuildList = {
+                        {3,1,3,2,3,6,3,2,2,2,6,1,1,1,6},--pos2
 						{3,1,2,2,2,6,2,1,1,1,6,3,3,3,6},--pos4,5
 }
 
-local nAbilityBuildList = J.Skill.GetRandomBuild( tAllAbilityBuildList )
+local nAbilityBuildList
+if sRole == 'pos_2' then nAbilityBuildList = tAllAbilityBuildList[1] end
+if sRole == 'pos_4' then nAbilityBuildList = tAllAbilityBuildList[2] end
+if sRole == 'pos_5' then nAbilityBuildList = tAllAbilityBuildList[2] end
 
-local nTalentBuildList = J.Skill.GetTalentBuild( tTalentTreeList )
+local nTalentBuildList
+if sRole == 'pos_2' then nTalentBuildList = J.Skill.GetTalentBuild(tTalentTreeList[1]) end
+if sRole == 'pos_4' then nTalentBuildList = J.Skill.GetTalentBuild(tTalentTreeList[2]) end
+if sRole == 'pos_5' then nTalentBuildList = J.Skill.GetTalentBuild(tTalentTreeList[2]) end
 
 local sRoleItemsBuyList = {}
 
 sRoleItemsBuyList['pos_1'] = sRoleItemsBuyList['pos_1']
 
-sRoleItemsBuyList['pos_2'] = sRoleItemsBuyList['pos_1']
+sRoleItemsBuyList['pos_2'] = {
+    "item_double_branches",
+    "item_tango",
+    "item_double_circlet",
 
-sRoleItemsBuyList['pos_3'] = sRoleItemsBuyList['pos_1']
+    "item_bottle",
+    "item_double_null_talisman",
+    "item_magic_stick",
+    "item_power_treads",
+    "item_magic_wand",
+    "item_hand_of_midas",
+    "item_witch_blade",
+    "item_hurricane_pike",--
+    "item_ultimate_scepter",
+    "item_black_king_bar",--
+    "item_devastator",--
+    "item_satanic",--
+    "item_monkey_king_bar",--
+    "item_travel_boots",
+    "item_travel_boots_2",--
+    "item_moon_shard",
+    "item_ultimate_scepter_2",
+}
+
+sRoleItemsBuyList['pos_3'] = sRoleItemsBuyList['pos_3']
 
 sRoleItemsBuyList['pos_4'] = {
-    "item_tango",
-    "item_tango",
+    "item_double_tango",
     "item_double_branches",
-    "item_enchanted_mango",
-    "item_enchanted_mango",
+    "item_double_enchanted_mango",
     "item_faerie_fire",
     "item_blood_grenade",
 
@@ -54,11 +89,9 @@ sRoleItemsBuyList['pos_4'] = {
 }
 
 sRoleItemsBuyList['pos_5'] = {
-    "item_tango",
-    "item_tango",
+    "item_double_tango",
     "item_double_branches",
-    "item_enchanted_mango",
-    "item_enchanted_mango",
+    "item_double_enchanted_mango",
     "item_faerie_fire",
     "item_blood_grenade",
 
@@ -77,6 +110,13 @@ sRoleItemsBuyList['pos_5'] = {
 
 X['sBuyList'] = sRoleItemsBuyList[sRole]
 
+Pos2SellList = {
+    "item_bottle",
+    "item_null_talisman",
+    "item_magic_wand",
+    "item_hand_of_midas",
+}
+
 Pos4SellList = {
 	"item_magic_wand",
 }
@@ -87,13 +127,9 @@ Pos5SellList = {
 
 X['sSellList'] = {}
 
-if sRole == "pos_4"
-then
-    X['sSellList'] = Pos4SellList
-elseif sRole == "pos_5"
-then
-    X['sSellList'] = Pos5SellList
-end
+if sRole == "pos_2" then X['sSellList'] = Pos2SellList end
+if sRole == "pos_4" then X['sSellList'] = Pos4SellList end
+if sRole == "pos_5" then X['sSellList'] = Pos5SellList end
 
 if J.Role.IsPvNMode() or J.Role.IsAllShadow() then X['sBuyList'], X['sSellList'] = { 'PvN_antimage' }, {} end
 
@@ -132,6 +168,22 @@ local IceBlastReleaseLocation
 
 function X.SkillsComplement()
 	if J.CanNotUseAbility(bot) then return end
+
+    if  bot:HasScepter()
+    and ChillingTouch:IsTrained()
+    then
+        if  J.GetMP(bot) > 0.3
+        and ChillingTouch:GetAutoCastState() == false
+        then
+            ChillingTouch:ToggleAutoCast()
+        end
+
+        if  J.GetMP(bot) < 0.3
+        and ChillingTouch:GetAutoCastState() == true
+        then
+            ChillingTouch:ToggleAutoCast()
+        end
+    end
 
     IceBlastReleaseDesire = X.ConsiderIceBlastRelease()
     if IceBlastReleaseDesire > 0
@@ -365,7 +417,7 @@ function X.ConsiderIceVortex()
     end
 
     if  (J.IsDefending(bot) or J.IsPushing(bot))
-    and not J.IsThereCoreNearby(1000)
+    and (J.IsCore(bot) or not J.IsCore(bot) and not J.IsThereCoreNearby(1000))
 	then
 		local nEnemyLanecreeps = bot:GetNearbyLaneCreeps(nCastRange, true)
 		local nLocationAoE = bot:FindAoELocation(true, false, bot:GetLocation(), nCastRange, nRadius, nCastPoint, 0)
@@ -373,7 +425,7 @@ function X.ConsiderIceVortex()
 		if  nEnemyLanecreeps ~= nil and #nEnemyLanecreeps >= 4
         and nLocationAoE.count >= 4
 		then
-			return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc
+			return BOT_ACTION_DESIRE_HIGH, J.GetCenterOfUnits(nEnemyLanecreeps)
 		end
 
         nLocationAoE = bot:FindAoELocation(true, true, bot:GetLocation(), nCastRange, nRadius, nCastPoint, 0)
@@ -382,6 +434,16 @@ function X.ConsiderIceVortex()
             return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc
         end
 	end
+
+    if J.IsFarming(bot)
+    then
+        local nCreeps = bot:GetNearbyLaneCreeps(1000, true)
+        if  nCreeps ~= nil
+        and (#nCreeps >= 3 or #nCreeps >= 2 and nCreeps[1]:IsAncientCreep())
+        then
+            return BOT_ACTION_DESIRE_HIGH, J.GetCenterOfUnits(nCreeps)
+        end
+    end
 
     if J.IsDoingRoshan(bot)
     then
@@ -409,6 +471,7 @@ end
 
 function X.ConsiderChillingTouch()
     if not ChillingTouch:IsFullyCastable()
+    or bot:HasScepter()
     then
         return BOT_ACTION_DESIRE_NONE, nil
     end
@@ -510,6 +573,31 @@ function X.ConsiderChillingTouch()
             end
         end
     end
+
+    if  J.IsLaning(bot)
+    and J.IsCore(bot)
+	then
+		local nEnemyLaneCreeps = bot:GetNearbyLaneCreeps(nCastRange + 300, true)
+        local nInRangeEnemy = bot:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
+
+		for _, creep in pairs(nEnemyLaneCreeps)
+		do
+			if  J.IsValid(creep)
+            and J.CanBeAttacked(creep)
+			and (J.IsKeyWordUnit('ranged', creep) or J.IsKeyWordUnit('siege', creep) or J.IsKeyWordUnit('flagbearer', creep))
+			and creep:GetHealth() <= nDamage
+			then
+				if  nInRangeEnemy ~= nil and #nInRangeEnemy >= 1
+                and J.IsValidHero(nInRangeEnemy[1])
+                and GetUnitToUnitDistance(creep, nInRangeEnemy[1])
+                and not J.IsSuspiciousIllusion(nInRangeEnemy[1])
+                and botTarget ~= creep
+				then
+					return BOT_ACTION_DESIRE_HIGH, creep
+				end
+			end
+		end
+	end
 
     if J.IsDoingRoshan(bot)
     then

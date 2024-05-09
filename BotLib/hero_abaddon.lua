@@ -8,27 +8,118 @@ local sAbilityList = J.Skill.GetAbilityList( bot )
 local sRole = J.Item.GetRoleItemsBuyList( bot )
 
 local tTalentTreeList = {
-						['t25'] = {10, 0},
-						['t20'] = {0, 10},
-						['t15'] = {10, 0},
-						['t10'] = {10, 0},
+						{--pos1,2,3
+                            ['t25'] = {0, 10},
+                            ['t20'] = {10, 0},
+                            ['t15'] = {0, 10},
+                            ['t10'] = {0, 10},
+                        },
+                        {--pos4,5
+                            ['t25'] = {10, 0},
+                            ['t20'] = {0, 10},
+                            ['t15'] = {10, 0},
+                            ['t10'] = {10, 0},
+                        }
 }
 
 local tAllAbilityBuildList = {
+                        {2,3,2,3,2,6,2,3,3,1,6,1,1,1,6},--pos1,2,3
 						{2,3,2,1,2,6,2,1,1,1,6,3,3,3,6},--pos4,5
 }
 
-local nAbilityBuildList = J.Skill.GetRandomBuild( tAllAbilityBuildList )
+local nAbilityBuildList
+if sRole == 'pos_1' then nAbilityBuildList = tAllAbilityBuildList[1] end
+if sRole == 'pos_2' then nAbilityBuildList = tAllAbilityBuildList[1] end
+if sRole == 'pos_3' then nAbilityBuildList = tAllAbilityBuildList[1] end
+if sRole == 'pos_4' then nAbilityBuildList = tAllAbilityBuildList[2] end
+if sRole == 'pos_5' then nAbilityBuildList = tAllAbilityBuildList[2] end
 
-local nTalentBuildList = J.Skill.GetTalentBuild( tTalentTreeList )
+local nTalentBuildList
+if sRole == 'pos_1' then nTalentBuildList = J.Skill.GetTalentBuild(tTalentTreeList[1]) end
+if sRole == 'pos_2' then nTalentBuildList = J.Skill.GetTalentBuild(tTalentTreeList[1]) end
+if sRole == 'pos_3' then nTalentBuildList = J.Skill.GetTalentBuild(tTalentTreeList[1]) end
+if sRole == 'pos_4' then nTalentBuildList = J.Skill.GetTalentBuild(tTalentTreeList[2]) end
+if sRole == 'pos_5' then nTalentBuildList = J.Skill.GetTalentBuild(tTalentTreeList[2]) end
+
+local sUtility = {"item_crimson_guard", "item_pipe", "item_lotus_orb", "item_heavens_halberd"}
+local nUtility = sUtility[RandomInt(1, #sUtility)]
 
 local sRoleItemsBuyList = {}
 
-sRoleItemsBuyList['pos_1'] = sRoleItemsBuyList['pos_1']
+sRoleItemsBuyList['pos_1'] = {
+    "item_tango",
+    "item_double_branches",
+    "item_orb_of_venom",
+    "item_circlet",
 
-sRoleItemsBuyList['pos_2'] = sRoleItemsBuyList['pos_1']
+    "item_wraith_band",
+    "item_orb_of_corrosion",
+    "item_magic_wand",
+    "item_power_treads",
+    "item_echo_sabre",
+    "item_manta",--
+    "item_harpoon",--
+    "item_black_king_bar",--
+    "item_skadi",--
+    "item_aghanims_shard",
+    "item_bloodthorn",--
+    "item_travel_boots_2",--
+    "item_moon_shard",
+    "item_ultimate_scepter_2",
+}
 
-sRoleItemsBuyList['pos_3'] = sRoleItemsBuyList['pos_1']
+sRoleItemsBuyList['pos_2'] = {
+    "item_tango",
+    "item_double_branches",
+    "item_orb_of_venom",
+    "item_circlet",
+
+    "item_bottle",
+    "item_wraith_band",
+    "item_boots",
+    "item_magic_wand",
+    "item_orb_of_corrosion",
+    "item_phase_boots",
+    "item_echo_sabre",
+    "item_yasha",
+    "item_harpoon",--
+    "item_manta",--
+    "item_ultimate_scepter_2",
+    "item_assault",--
+    "item_black_king_bar",--
+    "item_basher",
+    "item_aghanims_shard",
+    "item_travel_boots",
+    "item_abyssal_blade",--
+    "item_travel_boots_2",--
+    "item_ultimate_scepter_2",
+    "item_moon_shard",
+}
+
+sRoleItemsBuyList['pos_3'] = {
+    "item_tango",
+    "item_double_branches",
+    "item_quelling_blade",
+
+    "item_wraith_band",
+    "item_orb_of_venom",
+    "item_boots",
+    "item_magic_wand",
+    "item_orb_of_corrosion",
+    "item_phase_boots",
+    "item_echo_sabre",
+    "item_manta",--
+    "item_harpoon",--
+    "item_blink",
+    nUtility,--
+    "item_skadi",--
+    "item_aghanims_shard",
+    "item_travel_boots",
+    "item_overwhelming_blink",--
+    "item_travel_boots_2",--
+    "item_ultimate_scepter_2",
+    "item_moon_shard",
+}
 
 sRoleItemsBuyList['pos_4'] = {
     "item_double_tango",
@@ -72,8 +163,27 @@ sRoleItemsBuyList['pos_5'] = {
     "item_moon_shard"
 }
 
-
 X['sBuyList'] = sRoleItemsBuyList[sRole]
+
+Pos1SellList = {
+    "item_wraith_band",
+    "item_magic_wand",
+    "item_orb_of_corrosion",
+}
+
+Pos2SellList = {
+    "item_bottle",
+    "item_wraith_band",
+    "item_magic_wand",
+    "item_orb_of_corrosion",
+}
+
+Pos3SellList = {
+	"item_quelling_blade",
+    "item_wraith_band",
+    "item_magic_wand",
+    "item_orb_of_corrosion",
+}
 
 Pos4SellList = {
 	"item_magic_wand",
@@ -85,13 +195,11 @@ Pos5SellList = {
 
 X['sSellList'] = {}
 
-if sRole == "pos_4"
-then
-    X['sSellList'] = Pos4SellList
-elseif sRole == "pos_5"
-then
-    X['sSellList'] = Pos5SellList
-end
+if sRole == "pos_1" then X['sSellList'] = Pos1SellList end
+if sRole == "pos_2" then X['sSellList'] = Pos2SellList end
+if sRole == "pos_3" then X['sSellList'] = Pos3SellList end
+if sRole == "pos_4" then X['sSellList'] = Pos4SellList end
+if sRole == "pos_5" then X['sSellList'] = Pos5SellList end
 
 if J.Role.IsPvNMode() or J.Role.IsAllShadow() then X['sBuyList'], X['sSellList'] = { 'PvN_antimage' }, {} end
 
@@ -102,14 +210,8 @@ X['sSkillList'] = J.Skill.GetSkillList( sAbilityList, nAbilityBuildList, sTalent
 X['bDeafaultAbility'] = false
 X['bDeafaultItem'] = false
 
-function X.MinionThink( hMinionUnit )
-	if Minion.IsValidUnit( hMinionUnit )
-	then
-		if hMinionUnit:IsIllusion()
-		then
-			Minion.IllusionThink( hMinionUnit )
-		end
-	end
+function X.MinionThink(hMinionUnit)
+    Minion.MinionThink(hMinionUnit)
 end
 
 local MistCoil          = bot:GetAbilityByName( 'abaddon_death_coil' )
@@ -120,8 +222,12 @@ local AphoticShield     = bot:GetAbilityByName( 'abaddon_aphotic_shield' )
 local MistCoilDesire, MistCoilTarget
 local AphoticShieldDesire, AphoticShieldTarget
 
+local botTarget
+
 function X.SkillsComplement()
 	if J.CanNotUseAbility(bot) then return end
+
+    botTarget = J.GetProperTarget(bot)
 
     AphoticShieldDesire, AphoticShieldTarget = X.ConsiderAphoticShield()
     if AphoticShieldDesire > 0
@@ -144,26 +250,20 @@ function X.ConsiderMistCoil()
 		return BOT_ACTION_DESIRE_NONE, nil
 	end
 
-	local nCastRange = MistCoil:GetCastRange()
+	local nCastRange = J.GetProperCastRange(false, bot, MistCoil:GetCastRange())
 	local nDamage = MistCoil:GetSpecialValueInt('target_damage')
-	local nSelfDamage = MistCoil:GetSpecialValueInt('self_damage')
     local nDamageType = DAMAGE_TYPE_MAGICAL
-    local botTarget = J.GetProperTarget(bot)
 
-    if J.HasAghanimsShard(bot)
-    then
-        nDamage = bot:GetAttackDamage()
-        nDamageType = DAMAGE_TYPE_PURE
-    end
-
-    local nEnemyHeroes = bot:GetNearbyHeroes(nCastRange, true, BOT_MODE_NONE)
+    local nEnemyHeroes = bot:GetNearbyHeroes(nCastRange + 300, true, BOT_MODE_NONE)
     for _, enemyHero in pairs(nEnemyHeroes)
     do
         if  J.IsValidHero(enemyHero)
         and J.CanCastOnMagicImmune(enemyHero)
+        and J.CanCastOnTargetAdvanced(enemyHero)
         and J.CanKillTarget(enemyHero, nDamage, nDamageType)
         and not J.IsSuspiciousIllusion(enemyHero)
         and not enemyHero:HasModifier('modifier_dazzle_shallow_grave')
+        and not enemyHero:HasModifier('modifier_necrolyte_reapers_scythe')
         and not enemyHero:HasModifier('modifier_oracle_false_promise_timer')
         and not enemyHero:HasModifier('modifier_templar_assassin_refraction_absorb')
         then
@@ -171,7 +271,7 @@ function X.ConsiderMistCoil()
         end
     end
 
-    local nAllyHeroes = bot:GetNearbyHeroes(nCastRange, false, BOT_MODE_NONE)
+    local nAllyHeroes = bot:GetNearbyHeroes(nCastRange + 300, false, BOT_MODE_NONE)
 	for _, allyHero in pairs(nAllyHeroes)
 	do
         if  J.IsValidHero(allyHero)
@@ -213,24 +313,55 @@ function X.ConsiderMistCoil()
 		end
 	end
 
-    if  J.IsRetreating(bot)
-    and J.IsInRange(bot, botTarget, nCastRange)
-	then
-        local nInRangeAlly = bot:GetNearbyHeroes(nCastRange + 200, false, BOT_MODE_NONE)
-        local nInRangeEnemy = bot:GetNearbyHeroes(nCastRange, true, BOT_MODE_NONE)
+    if J.IsRetreating(bot)
+    then
+        local nInRangeEnemy = bot:GetNearbyHeroes(1200, false, BOT_MODE_NONE)
 
-        if  nInRangeAlly ~= nil and nInRangeEnemy ~= nil
-        and ((#nInRangeAlly == 0 and #nInRangeEnemy >= 1)
-            or (#nInRangeAlly >= 1
-                and J.GetHP(bot) < 0.25
-                and bot:WasRecentlyDamagedByAnyHero(1)
-                and not bot:HasModifier('modifier_abaddon_borrowed_time')))
+        if  nInRangeEnemy ~= nil and #nInRangeEnemy >= 1
         and J.IsValidHero(nInRangeEnemy[1])
+        and J.IsInRange(bot, nInRangeEnemy[1], 600)
         and not J.IsSuspiciousIllusion(nInRangeEnemy[1])
         and not J.IsDisabled(nInRangeEnemy[1])
         then
-            return BOT_ACTION_DESIRE_HIGH, bot
+            local nInRangeAlly = nInRangeEnemy[1]:GetNearbyHeroes(1200, true, BOT_MODE_NONE)
+            local nTargetInRangeAlly = nInRangeEnemy[1]:GetNearbyHeroes(1200, false, BOT_MODE_NONE)
+
+            if  nInRangeAlly ~= nil and #nTargetInRangeAlly ~= nil
+            and ((#nInRangeAlly == 0 and #nTargetInRangeAlly >= 1)
+                or (#nInRangeAlly >= 1
+                    and J.GetHP(bot) < 0.3
+                    and bot:WasRecentlyDamagedByAnyHero(1)
+                    and not bot:HasModifier('modifier_abaddon_borrowed_time')))
+            then
+                return BOT_ACTION_DESIRE_HIGH, bot
+            end
         end
+    end
+
+    if  J.IsLaning(bot)
+    and J.IsCore(bot)
+	then
+		local nEnemyLaneCreeps = bot:GetNearbyLaneCreeps(nCastRange + 300, true)
+        local nInRangeEnemy = bot:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
+
+		for _, creep in pairs(nEnemyLaneCreeps)
+		do
+			if  J.IsValid(creep)
+            and J.CanBeAttacked(creep)
+			and (J.IsKeyWordUnit('ranged', creep) or J.IsKeyWordUnit('siege', creep) or J.IsKeyWordUnit('flagbearer', creep))
+			and creep:GetHealth() <= nDamage
+			then
+				if  nInRangeEnemy ~= nil and #nInRangeEnemy >= 1
+                and J.IsValidHero(nInRangeEnemy[1])
+                and GetUnitToUnitDistance(creep, nInRangeEnemy[1])
+                and not J.IsSuspiciousIllusion(nInRangeEnemy[1])
+                and botTarget ~= creep
+                and J.GetHP(bot) >= 0.5
+				then
+					return BOT_ACTION_DESIRE_HIGH, creep
+				end
+			end
+		end
 	end
 
     if J.IsDoingRoshan(bot)
@@ -263,8 +394,7 @@ function X.ConsiderAphoticShield()
 		return BOT_ACTION_DESIRE_NONE, nil
 	end
 
-	local nCastRange  = AphoticShield:GetCastRange()
-    local botTarget = J.GetProperTarget(bot)
+	local nCastRange  = J.GetProperCastRange(false, bot, AphoticShield:GetCastRange())
 
     local nAllyHeroes = bot:GetNearbyHeroes(nCastRange, false, BOT_MODE_NONE)
     for _, allyHero in pairs(nAllyHeroes)
@@ -395,10 +525,9 @@ function X.ConsiderAphoticShield()
 
     if J.IsRetreating(bot)
     then
-        local nInRangeAlly = bot:GetNearbyHeroes(800, false, BOT_MODE_NONE)
-        local nInRangeEnemy = bot:GetNearbyHeroes(800, true, BOT_MODE_NONE)
+        local nInRangeEnemy = bot:GetNearbyHeroes(1200, true, BOT_MODE_NONE)
 
-        if  nInRangeAlly ~= nil and nInRangeEnemy
+        if  nInRangeEnemy ~= nil
         and J.IsValidHero(nInRangeEnemy[1])
         and J.CanCastOnNonMagicImmune(nInRangeEnemy[1])
         and J.IsInRange(bot, nInRangeEnemy[1], nCastRange)
@@ -410,14 +539,28 @@ function X.ConsiderAphoticShield()
         and not nInRangeEnemy[1]:HasModifier('modifier_faceless_void_chronosphere_freeze')
         and not nInRangeEnemy[1]:HasModifier('modifier_necrolyte_reapers_scythe')
         then
-            local nTargetInRangeAlly = nInRangeEnemy[1]:GetNearbyHeroes(800, false, BOT_MODE_NONE)
+            local nInRangeAlly = nInRangeEnemy[1]:GetNearbyHeroes(1200, true, BOT_MODE_NONE)
+            local nTargetInRangeAlly = nInRangeEnemy[1]:GetNearbyHeroes(1200, false, BOT_MODE_NONE)
 
-            if  nTargetInRangeAlly ~= nil
+            if  nInRangeAlly ~= nil and nTargetInRangeAlly ~= nil
             and ((#nTargetInRangeAlly > #nInRangeAlly)
-                or (J.GetHP(bot) < 0.55 and bot:WasRecentlyDamagedByAnyHero(2)))
+                or bot:WasRecentlyDamagedByAnyHero(2))
             then
                 return BOT_ACTION_DESIRE_HIGH, bot
             end
+        end
+    end
+
+    if J.IsFarming(bot)
+    then
+        local nCreeps = bot:GetNearbyCreeps(1200, true)
+        if  nCreeps ~= nil and #nCreeps >= 1
+        and J.GetHP(bot) < 0.5
+        and J.IsAttacking(bot)
+        and not bot:HasModifier('modifier_abaddon_aphotic_shield')
+        and not bot:HasModifier('modifier_abaddon_borrowed_time')
+        then
+            return BOT_ACTION_DESIRE_HIGH, bot
         end
     end
 

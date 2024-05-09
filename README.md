@@ -53,38 +53,38 @@ To anyone who've found this or is using it, if you have any feedback in improvin
     - Supports that does damage, CC, or is Ranged are somewhat 'better' for the most part in bot games compared to Melee or non-. (Since positioning and movement are Valve default.)
     - ^. AoE spells are just too good.
     - ***Added***
-        - [4,5] Abaddon
-        - [1] Alchemist
-        - [4,5] Ancient Apparition
-        - [2,3] Batrider
+        - [1,2,3,4,5] Abaddon
+        - [1,2,3] Alchemist
+        - [2,4,5] Ancient Apparition
+        - [2,3,4,5] Batrider
         - [3] Beastmaster
         - [3] Brewmaster
         - [2,3] Broodmother
         - [3] Centaur
         - [4,5] Chen
-        - [1,2] Clinkz
+        - [1,2,4,5] Clinkz
         - [4,5] Clockwerk
         - [3] Dark Seer
         - ~~[4,5] Dark Willow~~
-        - [3] Dawnbreaker
+        - [2,3,4,5] Dawnbreaker
         - [4,5] Disruptor
         - [3] Doom
-        - [2] Earth Spirit
-        - [4,5] Earthshaker
+        - [2,3,4,5] Earth Spirit
+        - [2,3,4,5] Earthshaker
         - ~~[4,5] Elder Titan~~
         - [2] Ember Spirit
-        - [4,5] Enchantress
-        - [3] Enigma
+        - [3,4,5] Enchantress
+        - [3,4,5] Enigma
         - [1] Faceless Void
         - [4,5] Grimstroke
-        - [1] Gyrocopter
+        - [1,4,5] Gyrocopter
         - ~~[4,5] Hoodwink~~
         - [2] Invoker
-        - [2] Keeper of the Light
+        - [2,4,5] Keeper of the Light
         - [2,3] Leshrac
         - [1] Lifestealer
         - ~~[2] Lone Druid~~
-        - [3] Lycan
+        - [1,2,3] Lycan
         - [3] Magnus
         - ~~[1,3] Marci~~
         - [3] Mars
@@ -92,7 +92,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
         - [1,2] Monkey King
         - [1,2] Morphling
         - ~~[1] Muerta~~
-        - [1,3] Nature's Prophet
+        - [3,4,5] Nature's Prophet
         - [3] Night Stalker
         - [4,5] Nyx Assassin
         - [2] Outworld Destroyer
@@ -100,40 +100,34 @@ To anyone who've found this or is using it, if you have any feedback in improvin
         - [4,5] Phoenix
         - ~~[2,3] Primal Beast~~
         - [2] Puck
-        - [2,3] Pudge
+        - [2,3,4,5] Pudge
         - [4,5] Rubick
         - [4,5] Shadow Demon
-        - [2] Snapfire
+        - [2,4,5] Snapfire
         - [1] Spectre
-        - [3] Spirit Breaker
+        - [2,3,4,5] Spirit Breaker
         - [2] Storm Spirit
         - [4,5] Techies
         - [1] Terrorblade
-        - [3] Timbersaw
+        - [2,3] Timbersaw
         - [2] Tinker
-        - [1,2,3] Tiny
+        - [2,3,4,5] Tiny
         - [4,5] Treant
         - [1] Troll Warlord
-        - [4,5] Tusk
+        - [2,3,4,5] Tusk
         - [3] Underlord
         - [4,5] Undying
         - [1] Ursa
         - [4,5] Vengeful Spirit
         - [4,5] Venomancer
-        - [3] Visage
+        - [2,3] Visage
         - [2] Void Spirit
-        - [1] Weaver
-        - [1,2,3] Windranger
-        - [4,5] Winter Wyvern
+        - [1,3,4,5] Weaver
+        - [1,2,3,4,5] Windranger
+        - [2,3,4,5] Winter Wyvern
     - ***Later***
         - Morphling Ult
         - More Rubick Spell Steal support
-    - ***Changed***
-        - [2,3] Death Prophet
-        - [1,2] Lina
-        - [2,3] Necrophos
-        - [2] Queen Of Pain
-        - [2] Zeus
     - ***Bugged (Internal; won't be selected)***
         - Dark Willow
             - Passive.
@@ -176,7 +170,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
         - [ ] Spell usage for Tormentor and Roshan
         - [ ] Dynamic item builds
         - [ ] Clear wave faster with abilities
-        - [ ] Heroes to play different positions (eg. Batrider Support, Abaddon Core, etc.)
+        - [x] Heroes to play different positions (eg. Batrider Support, Abaddon Core, etc.)
         - [x] vscript to increase bots GPM and XPM (AP only), and for them to acquire neutral items (local host only)
         - [x] Functionality for new active ablities gained through Aghs/Shard
             | Hero                  | Shard   | Scepter | Spell Usage Imp. Count [Latest Date]

@@ -1,11 +1,3 @@
-----------------------------------------------------------------------------------------------------
---- The Creation Come From: BOT EXPERIMENT Credit:FURIOUSPUPPY
---- BOT EXPERIMENT Author: Arizona Fauzie 2018.11.21
---- Link:http://steamcommunity.com/sharedfiles/filedetails/?id=837040016
---- Refactor: 决明子 Email: dota2jmz@163.com 微博@Dota2_决明子
---- Link:http://steamcommunity.com/sharedfiles/filedetails/?id=1573671599
---- Link:http://steamcommunity.com/sharedfiles/filedetails/?id=1627071163
-----------------------------------------------------------------------------------------------------
 local X = {}
 local bDebugMode = ( 1 == 10 )
 local bot = GetBot()
@@ -17,27 +9,61 @@ local sAbilityList = J.Skill.GetAbilityList( bot )
 local sRole = J.Item.GetRoleItemsBuyList( bot )
 
 local tTalentTreeList = {
-						['t25'] = {10, 0},
-						['t20'] = {0, 10},
-						['t15'] = {0, 10},
-						['t10'] = {0, 10},
+						{--pos2
+							['t25'] = {10, 0},
+							['t20'] = {10, 0},
+							['t15'] = {10, 0},
+							['t10'] = {0, 10},
+						},
+						{--pos4,5
+							['t25'] = {10, 0},
+							['t20'] = {0, 10},
+							['t15'] = {0, 10},
+							['t10'] = {0, 10},
+						},
 }
 
 local tAllAbilityBuildList = {
-						{1,3,1,2,1,6,1,3,3,3,6,2,2,2,6},
+						{3,1,1,3,1,6,1,3,3,2,6,2,2,2,6},--pos2
+						{1,3,1,2,1,6,1,3,3,3,6,2,2,2,6},--pos4,5
 }
 
-local nAbilityBuildList = J.Skill.GetRandomBuild( tAllAbilityBuildList )
+local nAbilityBuildList
+if sRole == 'pos_2' then nAbilityBuildList = tAllAbilityBuildList[1] end
+if sRole == 'pos_4' then nAbilityBuildList = tAllAbilityBuildList[2] end
+if sRole == 'pos_5' then nAbilityBuildList = tAllAbilityBuildList[2] end
 
-local nTalentBuildList = J.Skill.GetTalentBuild( tTalentTreeList )
+local nTalentBuildList
+if sRole == 'pos_2' then nTalentBuildList = J.Skill.GetTalentBuild(tTalentTreeList[1]) end
+if sRole == 'pos_4' then nTalentBuildList = J.Skill.GetTalentBuild(tTalentTreeList[2]) end
+if sRole == 'pos_5' then nTalentBuildList = J.Skill.GetTalentBuild(tTalentTreeList[2]) end
 
 local sRoleItemsBuyList = {}
 
 sRoleItemsBuyList['pos_1'] = sRoleItemsBuyList['pos_1']
 
-sRoleItemsBuyList['pos_2'] = sRoleItemsBuyList['pos_1']
+sRoleItemsBuyList['pos_2'] = {
+	"item_tango",
+	"item_double_branches",
+	"item_double_circlet",
 
-sRoleItemsBuyList['pos_3'] = sRoleItemsBuyList['pos_1']
+	"item_bottle",
+	"item_magic_wand",
+	"item_arcane_boots",
+	"item_ultimate_scepter",
+	"item_octarine_core",--
+	"item_manta",--
+	"item_black_king_bar",--
+	"item_aghanims_shard",
+	"item_kaya_and_sange",--
+	"item_travel_boots",
+	"item_wind_waker",--
+	"item_travel_boots_2",
+	"item_ultimate_scepter_2",
+	"item_moon_shard",
+}
+
+sRoleItemsBuyList['pos_3'] = sRoleItemsBuyList['pos_3']
 
 sRoleItemsBuyList['pos_4'] = {
 	"item_tango",
@@ -77,6 +103,12 @@ sRoleItemsBuyList['pos_5'] = {
 
 X['sBuyList'] = sRoleItemsBuyList[sRole]
 
+Pos2SellList = {
+	"item_circlet",
+	"item_bottle",
+	"item_magic_wand",
+}
+
 Pos4SellList = {
 	"item_magic_wand",
 }
@@ -87,13 +119,9 @@ Pos5SellList = {
 
 X['sSellList'] = {}
 
-if sRole == "pos_4"
-then
-    X['sSellList'] = Pos4SellList
-elseif sRole == "pos_5"
-then
-    X['sSellList'] = Pos5SellList
-end
+if sRole == "pos_2" then X['sSellList'] = Pos2SellList end
+if sRole == "pos_4" then X['sSellList'] = Pos4SellList end
+if sRole == "pos_5" then X['sSellList'] = Pos5SellList end
 
 if J.Role.IsPvNMode() or J.Role.IsAllShadow() then X['sBuyList'], X['sSellList'] = { 'PvN_priest' }, {} end
 
@@ -112,33 +140,6 @@ function X.MinionThink( hMinionUnit )
 	end
 
 end
-
---[[
-
-npc_dota_hero_dazzle
-
-"Ability1"		"dazzle_poison_touch"
-"Ability2"		"dazzle_shallow_grave"
-"Ability3"		"dazzle_shadow_wave"
-"Ability4"		"generic_hidden"
-"Ability5"		"dazzle_good_juju"
-"Ability6"		"dazzle_bad_juju"
-"Ability10"		"special_bonus_attack_damage_50"
-"Ability11"		"special_bonus_mp_regen_175"
-"Ability12"		"special_bonus_unique_dazzle_2"
-"Ability13"		"special_bonus_attack_speed_60"
-"Ability14"		"special_bonus_unique_dazzle_5"
-"Ability15"		"special_bonus_unique_dazzle_3"
-"Ability16"		"special_bonus_unique_dazzle_1"
-"Ability17"		"special_bonus_unique_dazzle_4"
-
-modifier_dazzle_poison_touch
-modifier_dazzle_shallow_grave
-modifier_dazzle_weave_armor
-modifier_dazzle_bad_juju
-modifier_dazzle_bad_juju_armor
-
---]]
 
 local abilityQ = bot:GetAbilityByName( sAbilityList[1] )
 local abilityW = bot:GetAbilityByName( sAbilityList[2] )
@@ -750,4 +751,3 @@ end
 
 
 return X
--- dota2jmz@163.com QQ:2462331592..

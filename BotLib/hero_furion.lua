@@ -8,13 +8,19 @@ local sAbilityList = J.Skill.GetAbilityList( bot )
 local sRole = J.Item.GetRoleItemsBuyList( bot )
 
 local tTalentTreeList = {
-						{--pos1
+						-- {--pos1
+                        --     ['t25'] = {0, 10},
+                        --     ['t20'] = {0, 10},
+                        --     ['t15'] = {10, 0},
+                        --     ['t10'] = {10, 0},
+                        -- },
+                        {--pos3
                             ['t25'] = {0, 10},
-                            ['t20'] = {0, 10},
+                            ['t20'] = {10, 0},
                             ['t15'] = {10, 0},
                             ['t10'] = {10, 0},
                         },
-                        {--pos3
+                        {--pos4,5
                             ['t25'] = {0, 10},
                             ['t20'] = {10, 0},
                             ['t15'] = {10, 0},
@@ -23,22 +29,20 @@ local tTalentTreeList = {
 }
 
 local tAllAbilityBuildList = {
-						{2,1,1,2,1,6,1,2,2,3,6,3,3,3,6},--pos1
+						-- {2,1,1,2,1,6,1,2,2,3,6,3,3,3,6},--pos1
                         {3,2,3,1,3,6,3,2,2,2,6,1,1,1,6},--pos3
+                        {2,1,1,2,1,6,1,2,2,3,6,3,3,3,6},--pos4,5
 }
 
 local nAbilityBuildList
-local nTalentBuildList
+if sRole == 'pos_3' then nAbilityBuildList = tAllAbilityBuildList[1] end
+if sRole == 'pos_4' then nAbilityBuildList = tAllAbilityBuildList[2] end
+if sRole == 'pos_5' then nAbilityBuildList = tAllAbilityBuildList[2] end
 
-if sRole == "pos_1"
-then
-    nAbilityBuildList   = tAllAbilityBuildList[1]
-    nTalentBuildList    = J.Skill.GetTalentBuild(tTalentTreeList[1])
-elseif sRole == "pos_3"
-then
-    nAbilityBuildList   = tAllAbilityBuildList[2]
-    nTalentBuildList    = J.Skill.GetTalentBuild(tTalentTreeList[2])
-end
+local nTalentBuildList
+if sRole == 'pos_3' then nTalentBuildList = J.Skill.GetTalentBuild(tTalentTreeList[1]) end
+if sRole == 'pos_4' then nTalentBuildList = J.Skill.GetTalentBuild(tTalentTreeList[2]) end
+if sRole == 'pos_5' then nTalentBuildList = J.Skill.GetTalentBuild(tTalentTreeList[2]) end
 
 local sUtility = {"item_pipe", "item_heavens_halberd", "item_crimson_guard"}
 local nUtility = sUtility[RandomInt(1, #sUtility)]
@@ -86,17 +90,73 @@ sRoleItemsBuyList['pos_3'] = {
     "item_ultimate_scepter_2",
 }
 
-sRoleItemsBuyList['pos_4'] = sRoleItemsBuyList['pos_1']
+sRoleItemsBuyList['pos_4'] = {
+    "item_tango",
+    "item_double_branches",
+    "item_blood_grenade",
+    "item_double_circlet",
 
-sRoleItemsBuyList['pos_5'] = sRoleItemsBuyList['pos_1']
+    "item_urn_of_shadows",
+    "item_magic_wand",
+    "item_spirit_vessel",--
+    "item_boots",
+    "item_aghanims_shard",
+    "item_ultimate_scepter",
+    "item_orchid",
+    "item_boots_of_bearing",--
+    "item_heavens_halberd",--
+    "item_bloodthorn",--
+    "item_black_king_bar",--
+    "item_sheepstick",--
+    "item_ultimate_scepter_2",
+    "item_moon_shard",
+}
+
+sRoleItemsBuyList['pos_5'] = {
+    "item_tango",
+    "item_double_branches",
+    "item_blood_grenade",
+    "item_double_circlet",
+
+    "item_urn_of_shadows",
+    "item_magic_wand",
+    "item_spirit_vessel",--
+    "item_boots",
+    "item_aghanims_shard",
+    "item_ultimate_scepter",
+    "item_orchid",
+    "item_guardian_greaves",--
+    "item_heavens_halberd",--
+    "item_bloodthorn",--
+    "item_black_king_bar",--
+    "item_sheepstick",--
+    "item_ultimate_scepter_2",
+    "item_moon_shard",
+}
 
 X['sBuyList'] = sRoleItemsBuyList[sRole]
 
-X['sSellList'] = {
+Pos3SellList = {
     "item_blight_stone",
     "item_power_treads",
     "item_magic_wand",
 }
+
+Pos4SellList = {
+    "item_circlet",
+    "item_magic_wand",
+}
+
+Pos5SellList = {
+    "item_circlet",
+    "item_magic_wand",
+}
+
+X['sSellList'] = {}
+
+if sRole == "pos_3" then X['sSellList'] = Pos3SellList end
+if sRole == "pos_4" then X['sSellList'] = Pos4SellList end
+if sRole == "pos_5" then X['sSellList'] = Pos5SellList end
 
 if J.Role.IsPvNMode() or J.Role.IsAllShadow() then X['sBuyList'], X['sSellList'] = { 'PvN_mid' }, {} end
 
@@ -469,6 +529,7 @@ function X.ConsiderNaturesCall()
 
         if  J.IsLaning(bot)
         and J.GetMP(bot) > 0.55
+        and (J.IsCore(bot) or not J.IsCore(bot) and not J.IsThereCoreNearby(1200))
         then
             if J.IsAttacking(bot)
             then
@@ -647,6 +708,7 @@ function X.ConsiderSproutCall()
 
             if  J.IsLaning(bot)
             and J.GetMP(bot) > 0.65
+            and (J.IsCore(bot) or not J.IsCore(bot) and not J.IsThereCoreNearby(1200))
             then
                 if J.IsAttacking(bot)
                 then

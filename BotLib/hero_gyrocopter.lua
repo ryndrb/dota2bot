@@ -8,19 +8,34 @@ local sAbilityList = J.Skill.GetAbilityList( bot )
 local sRole = J.Item.GetRoleItemsBuyList( bot )
 
 local tTalentTreeList = {
-						['t25'] = {0, 10},
-						['t20'] = {0, 10},
-						['t15'] = {10, 0},
-						['t10'] = {10, 0},
+						{--pos1
+                            ['t25'] = {0, 10},
+                            ['t20'] = {0, 10},
+                            ['t15'] = {10, 0},
+                            ['t10'] = {10, 0},
+                        },
+                        {--pos4,5
+                            ['t25'] = {10, 0},
+                            ['t20'] = {10, 0},
+                            ['t15'] = {0, 10},
+                            ['t10'] = {10, 0},
+                        }
 }
 
 local tAllAbilityBuildList = {
 						{2,3,3,2,3,6,3,2,2,1,6,1,1,1,6},--pos1
+                        {1,2,1,2,1,6,1,2,2,3,6,3,3,3,6},--pos4,5
 }
 
-local nAbilityBuildList = J.Skill.GetRandomBuild( tAllAbilityBuildList )
+local nAbilityBuildList
+if sRole == 'pos_1' then nAbilityBuildList = tAllAbilityBuildList[1] end
+if sRole == 'pos_4' then nAbilityBuildList = tAllAbilityBuildList[2] end
+if sRole == 'pos_5' then nAbilityBuildList = tAllAbilityBuildList[2] end
 
-local nTalentBuildList = J.Skill.GetTalentBuild( tTalentTreeList )
+local nTalentBuildList
+if sRole == 'pos_1' then nTalentBuildList = J.Skill.GetTalentBuild(tTalentTreeList[1]) end
+if sRole == 'pos_4' then nTalentBuildList = J.Skill.GetTalentBuild(tTalentTreeList[2]) end
+if sRole == 'pos_5' then nTalentBuildList = J.Skill.GetTalentBuild(tTalentTreeList[2]) end
 
 local sRoleItemsBuyList = {}
 
@@ -46,21 +61,72 @@ sRoleItemsBuyList['pos_1'] = {
     "item_aghanims_shard",
 }
 
-sRoleItemsBuyList['pos_2'] = sRoleItemsBuyList['pos_1']
+sRoleItemsBuyList['pos_2'] = sRoleItemsBuyList['pos_2']
 
-sRoleItemsBuyList['pos_4'] = sRoleItemsBuyList['pos_1']
+sRoleItemsBuyList['pos_3'] = sRoleItemsBuyList['pos_3']
 
-sRoleItemsBuyList['pos_5'] = sRoleItemsBuyList['pos_1']
+sRoleItemsBuyList['pos_4'] = {
+    "item_double_tango",
+    "item_double_branches",
+    "item_blood_grenade",
 
-sRoleItemsBuyList['pos_3'] = sRoleItemsBuyList['pos_1']
+    "item_boots",
+    "item_ring_of_basilius",
+    "item_magic_wand",
+    "item_tranquil_boots",
+    "item_aghanims_shard",
+    "item_glimmer_cape",--
+    "item_boots_of_bearing",--
+    "item_force_staff",--
+    "item_lotus_orb",--
+    "item_octarine_core",--
+    "item_shivas_guard",--
+    "item_ultimate_scepter_2",
+    "item_moon_shard",
+}
+
+sRoleItemsBuyList['pos_5'] = {
+    "item_double_tango",
+    "item_double_branches",
+    "item_blood_grenade",
+
+    "item_boots",
+    "item_ring_of_basilius",
+    "item_magic_wand",
+    "item_arcane_boots",
+    "item_aghanims_shard",
+    "item_glimmer_cape",--
+    "item_guardian_greaves",--
+    "item_force_staff",--
+    "item_lotus_orb",--
+    "item_octarine_core",--
+    "item_shivas_guard",--
+    "item_ultimate_scepter_2",
+    "item_moon_shard",
+}
 
 X['sBuyList'] = sRoleItemsBuyList[sRole]
 
-X['sSellList'] = {
+Pos1SellList = {
     "item_quelling_blade",
     "item_magic_wand",
     "item_falcon_blade",
 }
+
+Pos4SellList = {
+    "item_ring_of_basilius",
+    "item_magic_wand",
+}
+
+Pos5SellList = {
+    "item_magic_wand",
+}
+
+X['sSellList'] = {}
+
+if sRole == "pos_1" then X['sSellList'] = Pos1SellList end
+if sRole == "pos_4" then X['sSellList'] = Pos4SellList end
+if sRole == "pos_5" then X['sSellList'] = Pos5SellList end
 
 if J.Role.IsPvNMode() or J.Role.IsAllShadow() then X['sBuyList'], X['sSellList'] = { 'PvN_antimage' }, {} end
 
@@ -310,6 +376,7 @@ function X.ConsiderHomingMissile()
 	end
 
     if  J.IsLaning(bot)
+    and J.IsCore(bot)
     and nMana > 0.45
 	then
 		local nEnemyLaneCreeps = bot:GetNearbyLaneCreeps(nCastRange, true)

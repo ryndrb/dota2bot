@@ -8,23 +8,43 @@ local sAbilityList = J.Skill.GetAbilityList( bot )
 local sRole = J.Item.GetRoleItemsBuyList( bot )
 
 local tTalentTreeList = {
-						['t25'] = {0, 10},
-						['t20'] = {0, 10},
-						['t15'] = {0, 10},
-						['t10'] = {0, 10},
+						{
+							['t25'] = {0, 10},
+							['t20'] = {0, 10},
+							['t15'] = {0, 10},
+							['t10'] = {0, 10},
+						},
+						{
+							['t25'] = {0, 10},
+							['t20'] = {0, 10},
+							['t15'] = {0, 10},
+							['t10'] = {0, 10},
+						}
 }
 
 local tAllAbilityBuildList = {
-						{1,2,1,2,1,6,1,2,2,3,6,3,3,3,6},--pos2
+						{1,2,1,2,1,6,1,2,2,3,6,3,3,3,6},--pos2,3
+						{1,2,1,3,2,6,2,2,3,3,6,3,1,1,6},--pos4,5
 }
 
-local nAbilityBuildList = J.Skill.GetRandomBuild( tAllAbilityBuildList )
+local nAbilityBuildList
+if sRole == 'pos_2' then nAbilityBuildList = tAllAbilityBuildList[1] end
+if sRole == 'pos_3' then nAbilityBuildList = tAllAbilityBuildList[1] end
+if sRole == 'pos_4' then nAbilityBuildList = tAllAbilityBuildList[2] end
+if sRole == 'pos_5' then nAbilityBuildList = tAllAbilityBuildList[2] end
 
-local nTalentBuildList = J.Skill.GetTalentBuild( tTalentTreeList )
+local nTalentBuildList
+if sRole == 'pos_2' then nTalentBuildList = J.Skill.GetTalentBuild(tTalentTreeList[1]) end
+if sRole == 'pos_3' then nTalentBuildList = J.Skill.GetTalentBuild(tTalentTreeList[1]) end
+if sRole == 'pos_4' then nTalentBuildList = J.Skill.GetTalentBuild(tTalentTreeList[2]) end
+if sRole == 'pos_5' then nTalentBuildList = J.Skill.GetTalentBuild(tTalentTreeList[2]) end
 
 local sRoleItemsBuyList = {}
 
-sRoleItemsBuyList['pos_1'] = sRoleItemsBuyList['pos_2']
+local sUtility = {"item_heavens_halberd", "item_lotus_orb", "item_crimson_guard", "item_pipe"}
+local nUtility = sUtility[RandomInt(1, #sUtility)]
+
+sRoleItemsBuyList['pos_1'] = sRoleItemsBuyList['pos_1']
 
 sRoleItemsBuyList['pos_2'] = {
     "item_tango",
@@ -51,21 +71,103 @@ sRoleItemsBuyList['pos_2'] = {
     "item_ultimate_scepter_2",
 }
 
-sRoleItemsBuyList['pos_4'] = sRoleItemsBuyList['pos_1']
+sRoleItemsBuyList['pos_3'] = {
+	"item_tango",
+    "item_double_branches",
+    "item_faerie_fire",
+    "item_quelling_blade",
 
-sRoleItemsBuyList['pos_5'] = sRoleItemsBuyList['pos_1']
+	"item_bracer",
+    "item_magic_wand",
+    "item_boots",
+	"item_veil_of_discord",
+    "item_blade_mail",
+    "item_heart",--
+	nUtility,--
+    "item_black_king_bar",--
+    "item_travel_boots",
+    "item_shivas_guard",--
+    "item_octarine_core",--
+    "item_travel_boots_2",--
+    "item_wind_waker",--
+    "item_aghanims_shard",
+    "item_ultimate_scepter_2",
+    "item_moon_shard",
+}
 
-sRoleItemsBuyList['pos_3'] = sRoleItemsBuyList['pos_1']
+sRoleItemsBuyList['pos_4'] = {
+	"item_tango",
+	"item_double_branches",
+	"item_blood_grenade",
+	"item_circlet",
+
+	"item_urn_of_shadows",
+	"item_boots",
+	"item_magic_wand",
+	"item_spirit_vessel",--
+	"item_force_staff",--
+	"item_boots_of_bearing",--
+	"item_black_king_bar",--
+	"item_lotus_orb",--
+	"item_shivas_guard",--
+	"item_aghanims_shard",
+	"item_ultimate_scepter_2",
+	"item_moon_shard",
+}
+
+sRoleItemsBuyList['pos_5'] = {
+	"item_tango",
+	"item_double_branches",
+	"item_blood_grenade",
+	"item_circlet",
+
+	"item_urn_of_shadows",
+	"item_boots",
+	"item_magic_wand",
+	"item_spirit_vessel",--
+	"item_force_staff",--
+	"item_guardian_greaves",--
+	"item_black_king_bar",--
+	"item_lotus_orb",--
+	"item_shivas_guard",--
+	"item_aghanims_shard",
+	"item_ultimate_scepter_2",
+	"item_moon_shard",
+}
 
 X['sBuyList'] = sRoleItemsBuyList[sRole]
 
-X['sSellList'] = {
-    "item_quelling_blade",
+Pos2SellList = {
+	"item_quelling_blade",
     "item_bottle",
     "item_magic_wand",
     "item_spirit_vessel",
     "item_blade_mail",
 }
+
+Pos3SellList = {
+	"item_quelling_blade",
+	"item_bracer",
+    "item_magic_wand",
+    "item_blade_mail",
+}
+
+Pos4SellList = {
+	"item_circlet",
+	"item_magic_wand",
+}
+
+Pos5SellList = {
+	"item_circlet",
+	"item_magic_wand",
+}
+
+X['sSellList'] = {}
+
+if sRole == "pos_2" then X['sSellList'] = Pos2SellList end
+if sRole == "pos_3" then X['sSellList'] = Pos3SellList end
+if sRole == "pos_4" then X['sSellList'] = Pos4SellList end
+if sRole == "pos_5" then X['sSellList'] = Pos5SellList end
 
 if J.Role.IsPvNMode() or J.Role.IsAllShadow() then X['sBuyList'], X['sSellList'] = { 'PvN_antimage' }, {} end
 
@@ -295,7 +397,8 @@ function X.ConsiderBoulderSmash()
 		end
 	end
 
-	if J.IsLaning(bot)
+	if  J.IsLaning(bot)
+	and (J.IsCore(bot) or not J.IsCore(bot) and not J.IsThereCoreNearby(1200))
 	then
 		if  nStone >= 1
 		and nMana > 0.33

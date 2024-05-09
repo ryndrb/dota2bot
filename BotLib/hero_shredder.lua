@@ -9,7 +9,7 @@ local sTalentList = J.Skill.GetTalentList( bot )
 local sAbilityList = J.Skill.GetAbilityList( bot )
 local sRole = J.Item.GetRoleItemsBuyList( bot )
 
-local tTalentTreeList = {
+local tTalentTreeList = {--pos2,3
 						['t25'] = {0, 10},
 						['t20'] = {0, 10},
 						['t15'] = {0, 10},
@@ -17,7 +17,7 @@ local tTalentTreeList = {
 }
 
 local tAllAbilityBuildList = {
-						{1,3,2,2,2,6,2,1,1,1,6,3,3,3,6},--pos3
+						{1,3,2,2,2,6,2,1,1,1,6,3,3,3,6},--pos2,3
 }
 
 local nAbilityBuildList = J.Skill.GetRandomBuild( tAllAbilityBuildList )
@@ -29,13 +29,31 @@ local nUtility = sUtility[RandomInt(1, #sUtility)]
 
 local sRoleItemsBuyList = {}
 
-sRoleItemsBuyList['pos_1'] = sRoleItemsBuyList['pos_3'] 
+sRoleItemsBuyList['pos_1'] = sRoleItemsBuyList['pos_1']
 
-sRoleItemsBuyList['pos_2'] = sRoleItemsBuyList['pos_3']
+sRoleItemsBuyList['pos_2'] = {
+	"item_tango",
+    "item_double_branches",
+	"item_circlet",
+	"item_mantle",
 
-sRoleItemsBuyList['pos_4'] = sRoleItemsBuyList['pos_3']
-
-sRoleItemsBuyList['pos_5'] = sRoleItemsBuyList['pos_3']
+	"item_bottle",
+	"item_null_talisman",
+    "item_magic_wand",
+    "item_arcane_boots",
+	"item_blink",
+    "item_kaya_and_sange",--
+    "item_eternal_shroud",--
+	"item_shivas_guard",--
+    "item_aghanims_shard",
+	"item_cyclone",
+	"item_travel_boots",
+	"item_wind_waker",--
+    "item_arcane_blink",--
+	"item_travel_boots_2",--
+    "item_ultimate_scepter_2",
+    "item_moon_shard"
+}
 
 sRoleItemsBuyList['pos_3'] = {
     "item_tango",
@@ -62,12 +80,28 @@ sRoleItemsBuyList['pos_3'] = {
     "item_moon_shard"
 }
 
+sRoleItemsBuyList['pos_4'] = sRoleItemsBuyList['pos_4']
+
+sRoleItemsBuyList['pos_5'] = sRoleItemsBuyList['pos_5']
+
 X['sBuyList'] = sRoleItemsBuyList[sRole]
 
-X['sSellList'] = {
+Pos2SellList = {
+	"item_bottle",
+	"item_null_talisman",
+    "item_magic_wand",
+}
+
+Pos3SellList = {
 	"item_magic_wand",
 	"item_bracer",
 }
+
+X['sSellList'] = {}
+
+if sRole == "pos_2" then X['sSellList'] = Pos2SellList end
+if sRole == "pos_4" then X['sSellList'] = Pos4SellList end
+if sRole == "pos_5" then X['sSellList'] = Pos5SellList end
 
 if J.Role.IsPvNMode() or J.Role.IsAllShadow() then X['sBuyList'], X['sSellList'] = { 'PvN_mid' }, {} end
 

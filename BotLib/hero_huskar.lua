@@ -17,31 +17,46 @@ local sAbilityList = J.Skill.GetAbilityList( bot )
 local sRole = J.Item.GetRoleItemsBuyList( bot )
 
 local tTalentTreeList = {
-						['t25'] = {10, 0},
-						['t20'] = {10, 0},
-						['t15'] = {0, 10},
-						['t10'] = {0, 10},
+						{
+							['t25'] = {10, 0},
+							['t20'] = {10, 0},
+							['t15'] = {0, 10},
+							['t10'] = {0, 10},
+						},
+						{
+							['t25'] = {10, 0},
+							['t20'] = {0, 10},
+							['t15'] = {0, 10},
+							['t10'] = {0, 10},
+						}
 }
 
 local tAllAbilityBuildList = {
-						{1,3,2,2,3,6,3,3,2,2,1,6,1,1,6},--pos2
+						{1,3,2,2,3,6,3,3,2,2,1,6,1,1,6},--pos2,3
+						{2,3,2,3,3,2,3,6,2,1,1,1,1,6,6},--pos2,3
 }
 
-local nAbilityBuildList = J.Skill.GetRandomBuild( tAllAbilityBuildList )
+local nAbilityBuildList
+if sRole == 'pos_2' then nAbilityBuildList = J.Skill.GetRandomBuild(tAllAbilityBuildList) end
+if sRole == 'pos_3' then nAbilityBuildList = J.Skill.GetRandomBuild(tAllAbilityBuildList) end
 
-local nTalentBuildList = J.Skill.GetTalentBuild( tTalentTreeList )
+local nTalentBuildList
+if sRole == 'pos_2' then nTalentBuildList = J.Skill.GetTalentBuild(J.Skill.GetRandomBuild(tTalentTreeList)) end
+if sRole == 'pos_3' then nTalentBuildList = J.Skill.GetTalentBuild(J.Skill.GetRandomBuild(tTalentTreeList)) end
+
+local sUtility = {"item_pipe", "item_crimson_guard"}
+local nUtility = sUtility[RandomInt(1, #sUtility)]
 
 local sRoleItemsBuyList = {}
 
-sRoleItemsBuyList['pos_1'] = sRoleItemsBuyList['pos_2']
+sRoleItemsBuyList['pos_1'] = sRoleItemsBuyList['pos_1']
 
 sRoleItemsBuyList['pos_2'] = {
 	"item_tango",
 	"item_faerie_fire",
-	"item_gauntlets",
-	"item_gauntlets",
-	"item_gauntlets",
+	"item_double_gauntlets",
 
+	"item_bottle",
 	"item_boots",
 	"item_armlet",
 	"item_black_king_bar",--
@@ -58,18 +73,47 @@ sRoleItemsBuyList['pos_2'] = {
 	"item_moon_shard",
 }
 
-sRoleItemsBuyList['pos_4'] = sRoleItemsBuyList['pos_1']
+sRoleItemsBuyList['pos_3'] = {
+	"item_tango",
+	"item_faerie_fire",
+	"item_double_gauntlets",
 
-sRoleItemsBuyList['pos_5'] = sRoleItemsBuyList['pos_1']
+	"item_bracer",
+	"item_armlet",
+	"item_heavens_halberd",--
+	"item_ultimate_scepter",
+	"item_black_king_bar",--
+	nUtility,--
+	"item_satanic",--
+	"item_travel_boots",
+	"item_nullifier",--
+	"item_travel_boots_2",--
+	"item_aghanims_shard",
+	"item_ultimate_scepter_2",
+	"item_moon_shard",
+}
 
-sRoleItemsBuyList['pos_3'] = sRoleItemsBuyList['pos_1']
+sRoleItemsBuyList['pos_4'] = sRoleItemsBuyList['pos_4']
+
+sRoleItemsBuyList['pos_5'] = sRoleItemsBuyList['pos_5']
+
 
 X['sBuyList'] = sRoleItemsBuyList[sRole]
 
-X['sSellList'] = {
+Pos2SellList = {
 	"item_gauntlets",
 	"item_armlet",
 }
+
+Pos3SellList = {
+	"item_gauntlets",
+	"item_armlet",
+}
+
+X['sSellList'] = {}
+
+if sRole == "pos_2" then X['sSellList'] = Pos2SellList end
+if sRole == "pos_3" then X['sSellList'] = Pos3SellList end
 
 if J.Role.IsPvNMode() or J.Role.IsAllShadow() then X['sBuyList'], X['sSellList'] = { 'PvN_huskar' }, {} end
 
@@ -88,38 +132,6 @@ function X.MinionThink( hMinionUnit )
 	end
 
 end
-
---[[
-
-npc_dota_hero_huskar
-
-"Ability1"		"huskar_inner_fire"
-"Ability2"		"huskar_burning_spear"
-"Ability3"		"huskar_berserkers_blood"
-"Ability4"		"generic_hidden"
-"Ability5"		"generic_hidden"
-"Ability6"		"huskar_life_break"
-"Ability10"		"special_bonus_hp_225"
-"Ability11"		"special_bonus_attack_damage_15"
-"Ability12"		"special_bonus_unique_huskar_2"
-"Ability13"		"special_bonus_lifesteal_20"
-"Ability14"		"special_bonus_strength_20"
-"Ability15"		"special_bonus_unique_huskar"
-"Ability16"		"special_bonus_attack_range_175"
-"Ability17"		"special_bonus_unique_huskar_5"
-
-modifier_huskar_inner_fire_knockback
-modifier_huskar_inner_fire_disarm
-modifier_huskar_inner_vitality
-modifier_huskar_burning_spear_self
-modifier_huskar_burning_spear_counter
-modifier_huskar_burning_spear_debuff
-modifier_huskar_berserkers_blood
-modifier_huskar_life_break_charge
-modifier_huskar_life_break_slow
-
---]]
-
 
 local abilityQ = bot:GetAbilityByName( sAbilityList[1] )
 local abilityW = bot:GetAbilityByName( sAbilityList[2] )

@@ -7,28 +7,90 @@ local sTalentList   = J.Skill.GetTalentList( bot )
 local sAbilityList  = J.Skill.GetAbilityList( bot )
 local sRole   = J.Item.GetRoleItemsBuyList( bot )
 
-local tTalentTreeList = {--pos4,5
-                        ['t25'] = {10, 0},
-                        ['t20'] = {0, 10},
-                        ['t15'] = {10, 0},
-                        ['t10'] = {10, 0},
+local tTalentTreeList = {
+                        {--pos2,3
+                            ['t25'] = {0, 10},
+                            ['t20'] = {10, 0},
+                            ['t15'] = {10, 0},
+                            ['t10'] = {10, 0},
+                        },
+                        {--pos4,5
+                            ['t25'] = {10, 0},
+                            ['t20'] = {0, 10},
+                            ['t15'] = {10, 0},
+                            ['t10'] = {10, 0},
+                        }
 }
 
 local tAllAbilityBuildList = {
+                        {1,2,1,2,1,6,1,2,2,3,6,3,3,3,6},--pos2,3
 						{3,1,2,3,3,6,3,2,2,2,6,1,1,1,6},--pos4,5
 }
 
-local nAbilityBuildList = J.Skill.GetRandomBuild(tAllAbilityBuildList)
+local nAbilityBuildList
+if sRole == 'pos_2' then nAbilityBuildList = tAllAbilityBuildList[1] end
+if sRole == 'pos_3' then nAbilityBuildList = tAllAbilityBuildList[1] end
+if sRole == 'pos_4' then nAbilityBuildList = tAllAbilityBuildList[2] end
+if sRole == 'pos_5' then nAbilityBuildList = tAllAbilityBuildList[2] end
 
-local nTalentBuildList = J.Skill.GetTalentBuild(tTalentTreeList)
+local nTalentBuildList
+if sRole == 'pos_2' then nTalentBuildList = J.Skill.GetTalentBuild(tTalentTreeList[1]) end
+if sRole == 'pos_3' then nTalentBuildList = J.Skill.GetTalentBuild(tTalentTreeList[1]) end
+if sRole == 'pos_4' then nTalentBuildList = J.Skill.GetTalentBuild(tTalentTreeList[2]) end
+if sRole == 'pos_5' then nTalentBuildList = J.Skill.GetTalentBuild(tTalentTreeList[2]) end
+
+local sUtility = {"item_heavens_halberd", "item_crimson_guard", "item_pipe", "item_nullifier"}
+local nUtility = sUtility[RandomInt(1, #sUtility)]
 
 local sRoleItemsBuyList = {}
 
 sRoleItemsBuyList['pos_1'] = sRoleItemsBuyList['pos_1']
 
-sRoleItemsBuyList['pos_2'] = sRoleItemsBuyList['pos_2']
+sRoleItemsBuyList['pos_2'] = {
+    "item_quelling_blade",
+    "item_tango",
+    "item_double_branches",
+    "item_faerie_fire",
 
-sRoleItemsBuyList['pos_3'] = sRoleItemsBuyList['pos_3']
+    "item_bottle",
+    "item_magic_wand",
+    "item_phase_boots",
+    "item_blink",
+    "item_desolator",--
+    "item_black_king_bar",--
+    "item_cyclone",
+    "item_greater_crit",--
+    "item_wind_waker",--
+    "item_travel_boots",
+    "item_arcane_blink",--
+    "item_travel_boots_2",--
+    "item_aghanims_shard",
+    "item_moon_shard",
+    -- "item_ultimate_scepter_2",
+}
+
+sRoleItemsBuyList['pos_3'] = {
+    "item_quelling_blade",
+    "item_tango",
+    "item_double_branches",
+    "item_faerie_fire",
+
+    "item_bottle",
+    "item_magic_wand",
+    "item_phase_boots",
+    "item_blink",
+    "item_cyclone",
+    "item_black_king_bar",--
+    nUtility,--
+    "item_wind_waker",--
+    "item_sheepstick",--
+    "item_travel_boots",
+    "item_arcane_blink",--
+    "item_travel_boots_2",--
+    "item_aghanims_shard",
+    "item_moon_shard",
+    -- "item_ultimate_scepter_2",
+}
 
 sRoleItemsBuyList['pos_4'] = {
     "item_double_tango",
@@ -78,6 +140,17 @@ sRoleItemsBuyList['pos_5'] = {
 
 X['sBuyList'] = sRoleItemsBuyList[sRole]
 
+Pos2SellList = {
+    "item_quelling_blade",
+    "item_bottle",
+    "item_magic_wand",
+}
+
+Pos3SellList = {
+    "item_quelling_blade",
+    "item_magic_wand",
+}
+
 Pos4SellList = {
 	"item_magic_wand",
 }
@@ -88,13 +161,10 @@ Pos5SellList = {
 
 X['sSellList'] = {}
 
-if sRole == "pos_4"
-then
-    X['sSellList'] = Pos4SellList
-elseif sRole == "pos_5"
-then
-    X['sSellList'] = Pos5SellList
-end
+if sRole == "pos_2" then X['sSellList'] = Pos2SellList end
+if sRole == "pos_3" then X['sSellList'] = Pos3SellList end
+if sRole == "pos_4" then X['sSellList'] = Pos4SellList end
+if sRole == "pos_5" then X['sSellList'] = Pos5SellList end
 
 if J.Role.IsPvNMode() or J.Role.IsAllShadow() then X['sBuyList'], X['sSellList'] = { 'PvN_antimage' }, {} end
 
@@ -279,6 +349,22 @@ function X.ConsiderIceShards()
             end
         end
 	end
+
+    if  J.IsFarming(bot)
+    and J.GetManaAfter(IceShards:GetManaCost()) > 0.45
+    then
+        local nNeutralCreeps = bot:GetNearbyNeutralCreeps(800)
+        if nNeutralCreeps ~= nil and #nNeutralCreeps >= 2
+        then
+            return BOT_ACTION_DESIRE_HIGH, J.GetCenterOfUnits(nNeutralCreeps)
+        end
+
+        local nEnemyLaneCreeps = bot:GetNearbyLaneCreeps(nCastRange, true)
+        if nEnemyLaneCreeps ~= nil and #nEnemyLaneCreeps >= 3
+        then
+            return BOT_ACTION_DESIRE_HIGH, J.GetCenterOfUnits(nEnemyLaneCreeps)
+        end
+    end
 
     return BOT_ACTION_DESIRE_NONE, 0
 end
@@ -467,6 +553,13 @@ function X.ConsiderTagTeam()
             end
 		end
 	end
+
+    if  J.IsFarming(bot)
+    and J.IsAttacking(bot)
+    and J.GetMP(bot) > 0.45
+    then
+        return BOT_ACTION_DESIRE_HIGH
+    end
 
     if J.IsDoingRoshan(bot)
     then

@@ -1930,6 +1930,12 @@ X.ConsiderItemDesire["item_force_staff"] = function( hItem )
 		return BOT_ACTION_DESIRE_NONE
 	end
 
+	if  bot:HasModifier('modifier_batrider_flaming_lasso_self')
+	and bot:IsFacingLocation(J.GetTeamFountain(), 30)
+	then
+		return BOT_ACTION_DESIRE_HIGH, bot, 'unit', nil
+	end
+
 	local hAllyList = J.GetAlliesNearLoc( bot:GetLocation(), 600 )
 	for _, npcAlly in pairs( hAllyList )
 	do

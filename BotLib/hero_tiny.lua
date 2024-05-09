@@ -20,25 +20,33 @@ local tTalentTreeList = {
                         ['t15'] = {10, 0},
                         ['t10'] = {10, 0},
                     },
+					{--pos4,5
+						['t25'] = {10, 0},
+                        ['t20'] = {10, 0},
+                        ['t15'] = {10, 0},
+                        ['t10'] = {0, 10},
+					}
 }
 
 local tAllAbilityBuildList = {
 						{3,1,3,2,3,6,3,1,1,1,6,2,2,2,6},--pos1
                         {3,1,1,2,1,6,1,2,2,2,6,3,3,3,6},--pos2,3
+						{3,1,2,1,1,6,1,2,2,2,6,3,3,3,6},--pos4,5
 }
 
 local nAbilityBuildList
-local nTalentBuildList
+if sRole == 'pos_1' then nAbilityBuildList = tAllAbilityBuildList[1] end
+if sRole == 'pos_2' then nAbilityBuildList = tAllAbilityBuildList[2] end
+if sRole == 'pos_3' then nAbilityBuildList = tAllAbilityBuildList[2] end
+if sRole == 'pos_4' then nAbilityBuildList = tAllAbilityBuildList[3] end
+if sRole == 'pos_5' then nAbilityBuildList = tAllAbilityBuildList[3] end
 
-if sRole == "pos_1"
-then
-    nAbilityBuildList   = tAllAbilityBuildList[1]
-    nTalentBuildList    = J.Skill.GetTalentBuild(tTalentTreeList[1])
-elseif sRole == "pos_2" or sRole == "pos_3"
-then
-    nAbilityBuildList   = tAllAbilityBuildList[2]
-    nTalentBuildList    = J.Skill.GetTalentBuild(tTalentTreeList[2])
-end
+local nTalentBuildList
+if sRole == 'pos_1' then nTalentBuildList = J.Skill.GetTalentBuild(tTalentTreeList[1]) end
+if sRole == 'pos_2' then nTalentBuildList = J.Skill.GetTalentBuild(tTalentTreeList[2]) end
+if sRole == 'pos_3' then nTalentBuildList = J.Skill.GetTalentBuild(tTalentTreeList[2]) end
+if sRole == 'pos_4' then nTalentBuildList = J.Skill.GetTalentBuild(tTalentTreeList[3]) end
+if sRole == 'pos_5' then nTalentBuildList = J.Skill.GetTalentBuild(tTalentTreeList[3]) end
 
 local sUtility = {"item_heavens_halberd", "item_crimson_guard", "item_pipe", "item_nullifier"}
 local nUtility = sUtility[RandomInt(1, #sUtility)]
@@ -120,9 +128,53 @@ sRoleItemsBuyList['pos_3'] = {
     "item_ultimate_scepter_2",
 }
 
-sRoleItemsBuyList['pos_4'] = sRoleItemsBuyList['pos_4']
+sRoleItemsBuyList['pos_4'] = {
+	"item_tango",
+	"item_double_branches",
+	"item_blood_grenade",
+	"item_wind_lace",
 
-sRoleItemsBuyList['pos_5'] = sRoleItemsBuyList['pos_5']
+	"item_boots",
+	"item_ring_of_basilius",
+	"item_blink",
+	"item_tranquil_boots",
+	"item_magic_wand",
+	"item_cyclone",
+	"item_force_staff",--
+	"item_phylactery",
+	"item_boots_of_bearing",--
+	"item_wind_waker",--
+	"item_angels_demise",--
+	"item_octarine_core",--
+	"item_overwhelming_blink",--
+	"item_aghanims_shard",
+	"item_ultimate_scepter_2",
+	"item_moon_shard",
+}
+
+sRoleItemsBuyList['pos_5'] = {
+	"item_tango",
+	"item_double_branches",
+	"item_blood_grenade",
+	"item_wind_lace",
+
+	"item_boots",
+	"item_ring_of_basilius",
+	"item_blink",
+	"item_arcane_boots",
+	"item_magic_wand",
+	"item_cyclone",
+	"item_force_staff",--
+	"item_phylactery",
+	"item_guardian_greaves",--
+	"item_wind_waker",--
+	"item_angels_demise",--
+	"item_octarine_core",--
+	"item_overwhelming_blink",--
+	"item_aghanims_shard",
+	"item_ultimate_scepter_2",
+	"item_moon_shard",
+}
 
 X['sBuyList'] = sRoleItemsBuyList[sRole]
 
@@ -147,18 +199,22 @@ Pos3SellList = {
 	"item_echo_sabre",
 }
 
+Pos4SellList = {
+	"item_ring_of_basilius",
+	"item_magic_wand",
+}
+
+Pos5SellList = {
+	"item_magic_wand",
+}
+
 X['sSellList'] = {}
 
-if sRole == "pos_1"
-then
-    X['sSellList'] = Pos1SellList
-elseif sRole == "pos_2"
-then
-    X['sSellList'] = Pos2SellList
-elseif sRole == "pos_3"
-then
-    X['sSellList'] = Pos3SellList
-end
+if sRole == "pos_1" then X['sSellList'] = Pos1SellList end
+if sRole == "pos_2" then X['sSellList'] = Pos2SellList end
+if sRole == "pos_3" then X['sSellList'] = Pos3SellList end
+if sRole == "pos_4" then X['sSellList'] = Pos4SellList end
+if sRole == "pos_5" then X['sSellList'] = Pos5SellList end
 
 if J.Role.IsPvNMode() or J.Role.IsAllShadow() then X['sBuyList'], X['sSellList'] = { 'PvN_antimage' }, {} end
 
@@ -379,7 +435,8 @@ function X.ConsiderAvalanche()
 		end
 	end
 
-	if J.IsLaning(bot)
+	if  J.IsLaning(bot)
+	and (J.IsCore(bot) or not J.IsCore(bot) and not J.IsThereCoreNearby(1200))
 	then
 		local creepList = {}
 		local nEnemyLaneCreeps = bot:GetNearbyLaneCreeps(nCastRange + 300, true)
@@ -719,7 +776,8 @@ function X.ConsiderTreeThrow()
         end
 	end
 
-	if J.IsLaning(bot)
+	if  J.IsLaning(bot)
+	and (J.IsCore(bot) or not J.IsCore(bot) and not J.IsThereCoreNearby(1200))
 	then
 		local nEnemyLaneCreeps = bot:GetNearbyLaneCreeps(nCastRange, true)
 

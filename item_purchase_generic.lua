@@ -328,11 +328,6 @@ function ItemPurchaseThink()
 	local botHP	= bot:GetHealth() / bot:GetMaxHealth()
 	--------*******----------------*******----------------*******--------
 
-
-
-	--更新队伍里是否有辅助的定位
-	if Role['supportExist'] == nil then Role.UpdateSupportStatus( bot ) end
-
 	--更新敌方是否有隐身英雄或道具的状态
 	if Role['invisEnemyExist'] == false then Role.UpdateInvisEnemyStatus( bot ) end
 
@@ -345,7 +340,7 @@ function ItemPurchaseThink()
 	end
 
 	--辅助定位英雄购买辅助物品
-	if bot.theRole == 'support'
+	if not J.IsCore(bot)
 	then
 		if currentTime > 30 and not hasBuyClarity
 			and botGold >= GetItemCost( "item_clarity" )
@@ -548,7 +543,7 @@ function ItemPurchaseThink()
 	--防止非辅助购买魂泪
 	if buyRD == false
 		and currentTime < 0
-		and bot.theRole ~= 'support'
+		and not J.IsCore(bot)
 	then
 		buyRD = true
 	end
@@ -576,7 +571,7 @@ function ItemPurchaseThink()
 		and bot:IsAlive()
 		and GetGameMode() ~= 23
 		and botLevel > 6
-		and bot.theRole == 'support'
+		and not J.IsCore(bot)
 		and botGold < ( GetItemCost( "item_dust" )  + botWorth / 40 )
 		and botHP < 0.06
 		and bot:WasRecentlyDamagedByAnyHero( 3.1 )

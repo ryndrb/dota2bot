@@ -23,10 +23,16 @@ local tTalentTreeList = {
 							['t15'] = {0, 10},
 							['t10'] = {10, 0},
 						},
-						{--po3
+						{--pos3
 							['t25'] = {10, 0},
 							['t20'] = {10, 0},
 							['t15'] = {10, 0},
+							['t10'] = {10, 0},
+						},
+						{--pos4,5
+							['t25'] = {10, 0},
+							['t20'] = {0, 10},
+							['t15'] = {0, 10},
 							['t10'] = {10, 0},
 						}
 }
@@ -34,26 +40,27 @@ local tTalentTreeList = {
 local tAllAbilityBuildList = {
 						{2,3,2,1,2,6,2,1,1,1,6,3,3,3,6},--pos2
 						{2,3,2,1,2,6,2,3,3,3,6,1,1,1,6},--pos3
+						{3,2,1,1,1,6,1,2,2,2,6,3,3,3,6},--pos4,5
 }
 
 local nAbilityBuildList
+if sRole == 'pos_2' then nAbilityBuildList = tAllAbilityBuildList[1] end
+if sRole == 'pos_3' then nAbilityBuildList = tAllAbilityBuildList[2] end
+if sRole == 'pos_4' then nAbilityBuildList = tAllAbilityBuildList[3] end
+if sRole == 'pos_5' then nAbilityBuildList = tAllAbilityBuildList[3] end
+
 local nTalentBuildList
+if sRole == 'pos_2' then nTalentBuildList = J.Skill.GetTalentBuild(tTalentTreeList[1]) end
+if sRole == 'pos_3' then nTalentBuildList = J.Skill.GetTalentBuild(tTalentTreeList[2]) end
+if sRole == 'pos_4' then nTalentBuildList = J.Skill.GetTalentBuild(tTalentTreeList[3]) end
+if sRole == 'pos_5' then nTalentBuildList = J.Skill.GetTalentBuild(tTalentTreeList[3]) end
 
-if sRole == "pos_2"
-then
-    nAbilityBuildList   = tAllAbilityBuildList[1]
-    nTalentBuildList    = J.Skill.GetTalentBuild(tTalentTreeList[1])
-elseif sRole == "pos_3"
-then
-    nAbilityBuildList   = tAllAbilityBuildList[2]
-    nTalentBuildList    = J.Skill.GetTalentBuild(tTalentTreeList[2])
-end
-
-local sCrimsonPipe = RandomInt( 1, 2 ) == 1 and "item_crimson_guard" or "item_pipe"
+local sUtility = {"item_crimson_guard", "item_pipe", "item_heavens_halberd"}
+local nUtility = sUtility[RandomInt(1, #sUtility)]
 
 local sRoleItemsBuyList = {}
 
-sRoleItemsBuyList['pos_1'] = sRoleItemsBuyList['pos_3']
+sRoleItemsBuyList['pos_1'] = sRoleItemsBuyList['pos_1']
 
 sRoleItemsBuyList['pos_2'] = {
 	"item_double_branches",
@@ -78,10 +85,6 @@ sRoleItemsBuyList['pos_2'] = {
 	"item_aghanims_shard",
 }
 
-sRoleItemsBuyList['pos_4'] = sRoleItemsBuyList['pos_1']
-
-sRoleItemsBuyList['pos_5'] = sRoleItemsBuyList['pos_1']
-
 sRoleItemsBuyList['pos_3'] = {
 	"item_tango",
 	"item_quelling_blade",
@@ -89,7 +92,7 @@ sRoleItemsBuyList['pos_3'] = {
 
 	"item_boots",
 	"item_magic_wand",
-	sCrimsonPipe,--
+	nUtility,--
 	"item_guardian_greaves",--
 	"item_ultimate_scepter",
 	"item_sphere",--
@@ -101,15 +104,77 @@ sRoleItemsBuyList['pos_3'] = {
 	"item_aghanims_shard",
 }
 
+sRoleItemsBuyList['pos_4'] = {
+	"item_tango",
+	"item_double_branches",
+	"item_blood_grenade",
+	"item_orb_of_venom",
+
+	"item_boots",
+	"item_magic_wand",
+	"item_tranquil_boots",
+	"item_ancient_janggo",
+	"item_solar_crest",--
+	"item_force_staff",--
+	"item_boots_of_bearing",--
+	"item_heavens_halberd",--
+	"item_sheepstick",--
+	"item_angels_demise",--
+	"item_aghanims_shard",
+	"item_ultimate_scepter_2",
+	"item_moon_shard",
+}
+
+sRoleItemsBuyList['pos_5'] = {
+	"item_tango",
+	"item_double_branches",
+	"item_blood_grenade",
+	"item_orb_of_venom",
+
+	"item_boots",
+	"item_magic_wand",
+	"item_arcane_boots",
+	"item_ancient_janggo",
+	"item_solar_crest",--
+	"item_force_staff",--
+	"item_guardian_greaves",--
+	"item_heavens_halberd",--
+	"item_sheepstick",--
+	"item_angels_demise",--
+	"item_aghanims_shard",
+	"item_ultimate_scepter_2",
+	"item_moon_shard",
+}
 
 X['sBuyList'] = sRoleItemsBuyList[sRole]
 
-
-X['sSellList'] = {
+Pos2SellList = {
 	"item_quelling_blade",
 	"item_magic_wand",
 	"item_bottle",
 }
+
+Pos3SellList = {
+	"item_quelling_blade",
+	"item_magic_wand",
+}
+
+Pos4SellList = {
+	"item_orb_of_venom",
+	"item_magic_wand",
+}
+
+Pos5SellList = {
+	"item_orb_of_venom",
+	"item_magic_wand",
+}
+
+X['sSellList'] = {}
+
+if sRole == "pos_2" then X['sSellList'] = Pos2SellList end
+if sRole == "pos_3" then X['sSellList'] = Pos3SellList end
+if sRole == "pos_4" then X['sSellList'] = Pos4SellList end
+if sRole == "pos_5" then X['sSellList'] = Pos5SellList end
 
 if J.Role.IsPvNMode() then X['sBuyList'], X['sSellList'] = { 'PvN_BH' }, {"item_power_treads", 'item_quelling_blade'} end
 
@@ -128,32 +193,6 @@ function X.MinionThink( hMinionUnit )
 	end
 
 end
-
---[[
-
-npc_dota_hero_bounty_hunter
-
-"Ability1"		"bounty_hunter_shuriken_toss"
-"Ability2"		"bounty_hunter_jinada"
-"Ability3"		"bounty_hunter_wind_walk"
-"Ability4"		"generic_hidden"
-"Ability5"		"generic_hidden"
-"Ability6"		"bounty_hunter_track"
-"Ability10"		"special_bonus_movement_speed_15"
-"Ability11"		"special_bonus_attack_damage_20"
-"Ability12"		"special_bonus_unique_bounty_hunter_2"
-"Ability13"		"special_bonus_hp_275"
-"Ability14"		"special_bonus_attack_speed_50"
-"Ability15"		"special_bonus_unique_bounty_hunter"
-"Ability16"		"special_bonus_evasion_40"
-"Ability17"		"special_bonus_unique_bounty_hunter_3"
-
-modifier_bounty_hunter_jinada
-modifier_bounty_hunter_wind_walk
-modifier_bounty_hunter_wind_walk_slow
-modifier_bounty_hunter_track
-
---]]
 
 local abilityQ = bot:GetAbilityByName( sAbilityList[1] )
 local abilityW = bot:GetAbilityByName( sAbilityList[2] )
@@ -401,6 +440,7 @@ function X.ConsiderQ()
 	--对线期间补刀远程兵
 	if ( bot:GetActiveMode() == BOT_MODE_LANING or ( nLV <= 7 and #hAllyList <= 2 ) )
 		and bot:GetMana() >= 150
+	and J.IsCore(bot)
 	then
 		local nLaneCreeps = bot:GetNearbyLaneCreeps( nCastRange + 300, true )
 		local keyWord = "ranged"

@@ -1,11 +1,3 @@
-----------------------------------------------------------------------------------------------------
---- The Creation Come From: BOT EXPERIMENT Credit:FURIOUSPUPPY
---- BOT EXPERIMENT Author: Arizona Fauzie 2018.11.21
---- Link:http://steamcommunity.com/sharedfiles/filedetails/?id=837040016
---- Refactor: 决明子 Email: dota2jmz@163.com 微博@Dota2_决明子
---- Link:http://steamcommunity.com/sharedfiles/filedetails/?id=1573671599
---- Link:http://steamcommunity.com/sharedfiles/filedetails/?id=1627071163
-----------------------------------------------------------------------------------------------------
 local X = {}
 local bDebugMode = ( 1 == 10 )
 local bot = GetBot()
@@ -28,26 +20,32 @@ local tTalentTreeList = {
 							['t20'] = {0, 10},
 							['t15'] = {10, 0},
 							['t10'] = {10, 0},
+						},
+						{--pos4,5
+							['t25'] = {10, 0},
+							['t20'] = {10, 0},
+							['t15'] = {10, 0},
+							['t10'] = {10, 0},
 						}
 }
 
 local tAllAbilityBuildList = {
 						{2,3,3,1,3,6,3,2,2,2,6,1,1,1,6},--pos1
 						{1,3,1,2,1,6,1,2,2,2,6,3,3,3,6},--pos2
+						{2,3,1,1,1,6,1,2,2,2,6,3,3,3,6},--pos4,5
 }
 
 local nAbilityBuildList
-local nTalentBuildList
+if sRole == 'pos_1' then nAbilityBuildList = tAllAbilityBuildList[1] end
+if sRole == 'pos_2' then nAbilityBuildList = tAllAbilityBuildList[2] end
+if sRole == 'pos_4' then nAbilityBuildList = tAllAbilityBuildList[3] end
+if sRole == 'pos_5' then nAbilityBuildList = tAllAbilityBuildList[3] end
 
-if sRole == "pos_1"
-then
-    nAbilityBuildList   = tAllAbilityBuildList[1]
-    nTalentBuildList    = J.Skill.GetTalentBuild(tTalentTreeList[1])
-elseif sRole == "pos_2"
-then
-    nAbilityBuildList   = tAllAbilityBuildList[2]
-    nTalentBuildList    = J.Skill.GetTalentBuild(tTalentTreeList[2])
-end
+local nTalentBuildList
+if sRole == 'pos_1' then nTalentBuildList = J.Skill.GetTalentBuild(tTalentTreeList[1]) end
+if sRole == 'pos_2' then nTalentBuildList = J.Skill.GetTalentBuild(tTalentTreeList[2]) end
+if sRole == 'pos_4' then nTalentBuildList = J.Skill.GetTalentBuild(tTalentTreeList[3]) end
+if sRole == 'pos_5' then nTalentBuildList = J.Skill.GetTalentBuild(tTalentTreeList[3]) end
 
 local sRoleItemsBuyList = {}
 
@@ -95,11 +93,55 @@ sRoleItemsBuyList['pos_2'] = {
 	"item_moon_shard",
 }
 
-sRoleItemsBuyList['pos_3'] = sRoleItemsBuyList['pos_1']
+sRoleItemsBuyList['pos_3'] = sRoleItemsBuyList['pos_3']
 
-sRoleItemsBuyList['pos_4'] = sRoleItemsBuyList['pos_1']
+sRoleItemsBuyList['pos_4'] = {
+	"item_tango",
+	"item_blood_grenade",
+	"item_double_circlet",
+	"item_double_branches",
 
-sRoleItemsBuyList['pos_5'] = sRoleItemsBuyList['pos_1']
+	"item_tranquil_boots",
+	"item_magic_wand",
+	"item_aether_lens",
+	"item_cyclone",
+	"item_aghanims_shard",
+	"item_ultimate_scepter",
+	"item_boots_of_bearing",--
+	"item_ghost",
+	"item_maelstrom",
+	"item_ethereal_blade",--
+	"item_wind_waker",--
+	"item_gungir",--
+	"item_sheepstick",--
+	"item_hurricane_pike",--
+	"item_ultimate_scepter_2",
+	"item_moon_shard",
+}
+
+sRoleItemsBuyList['pos_5'] = {
+	"item_tango",
+	"item_blood_grenade",
+	"item_double_circlet",
+	"item_double_branches",
+
+	"item_arcane_boots",
+	"item_magic_wand",
+	"item_aether_lens",
+	"item_cyclone",
+	"item_aghanims_shard",
+	"item_ultimate_scepter",
+	"item_guardian_greaves",--
+	"item_ghost",
+	"item_maelstrom",
+	"item_ethereal_blade",--
+	"item_wind_waker",--
+	"item_gungir",--
+	"item_sheepstick",--
+	"item_hurricane_pike",--
+	"item_ultimate_scepter_2",
+	"item_moon_shard",
+}
 
 X['sBuyList'] = sRoleItemsBuyList[sRole]
 
@@ -114,15 +156,22 @@ Pos2SellList = {
 	"item_magic_wand",
 }
 
+Pos4SellList = {
+	"item_circlet",
+	"item_magic_wand",
+}
+
+Pos5SellList = {
+	"item_circlet",
+	"item_magic_wand",
+}
+
 X['sSellList'] = {}
 
-if sRole == "pos_1"
-then
-    X['sSellList'] = Pos1SellList
-elseif sRole == "pos_2"
-then
-    X['sSellList'] = Pos2SellList
-end
+if sRole == "pos_1" then X['sSellList'] = Pos1SellList end
+if sRole == "pos_2" then X['sSellList'] = Pos2SellList end
+if sRole == "pos_4" then X['sSellList'] = Pos4SellList end
+if sRole == "pos_5" then X['sSellList'] = Pos5SellList end
 
 if J.Role.IsPvNMode() or J.Role.IsAllShadow() then X['sBuyList'], X['sSellList'] = { 'PvN_mage' }, {} end
 
@@ -142,35 +191,6 @@ function X.MinionThink( hMinionUnit )
 	end
 
 end
-
---[[
-
-
-npc_dota_hero_lina
-
-
-"Ability1"		"lina_dragon_slave"
-"Ability2"		"lina_light_strike_array"
-"Ability3"		"lina_fiery_soul"
-"Ability4"		"generic_hidden"
-"Ability5"		"generic_hidden"
-"Ability6"		"lina_laguna_blade"
-"Ability10"		"special_bonus_attack_damage_30"
-"Ability11"		"special_bonus_cast_range_125"
-"Ability12"		"special_bonus_hp_350"
-"Ability13"		"special_bonus_unique_lina_3"
-"Ability14"		"special_bonus_spell_amplify_14"
-"Ability15"		"special_bonus_unique_lina_2"
-"Ability16"		"special_bonus_unique_lina_1"
-"Ability17"		"special_bonus_attack_range_175"
-
-
-modifier_lina_light_strike_array
-modifier_lina_fiery_soul
-modifier_lina_laguna_blade
-
-
---]]
 
 local abilityQ = bot:GetAbilityByName( sAbilityList[1] )
 local abilityW = bot:GetAbilityByName( sAbilityList[2] )
@@ -795,5 +815,3 @@ function X.ConsiderFlameCloak()
 end
 
 return X
--- dota2jmz@163.com QQ:2462331592..
-

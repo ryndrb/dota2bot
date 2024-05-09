@@ -15,7 +15,7 @@ local tTalentTreeList = {
 }
 
 local tAllAbilityBuildList = {
-						{2,1,1,3,1,6,1,3,3,3,6,2,2,2,6},--pos3
+						{2,1,1,3,1,6,1,3,3,3,6,2,2,2,6},--pos2,3
 }
 
 local nAbilityBuildList = J.Skill.GetRandomBuild( tAllAbilityBuildList )
@@ -29,7 +29,29 @@ local nUtility = sUtility[RandomInt(1, #sUtility)]
 
 sRoleItemsBuyList['pos_1'] = sRoleItemsBuyList['pos_1']
 
-sRoleItemsBuyList['pos_2'] = sRoleItemsBuyList['pos_1']
+sRoleItemsBuyList['pos_2'] = {
+    "item_tango",
+    "item_double_branches",
+    "item_double_circlet",
+    "item_enchanted_mango",
+
+    "item_bottle",
+    "item_double_bracer",
+    "item_magic_wand",
+    "item_boots",
+    "item_vladmir",--
+    "item_orchid",
+    "item_ancient_janggo",
+    "item_ultimate_scepter",
+    "item_bloodthorn",--
+    "item_boots_of_bearing",--
+    "item_assault",--
+    "item_black_king_bar",--
+    "item_sheepstick",--
+    "item_ultimate_scepter_2",
+    "item_aghanims_shard",
+    "item_moon_shard",
+}
 
 sRoleItemsBuyList['pos_3'] = {
     "item_tango",
@@ -60,10 +82,21 @@ sRoleItemsBuyList['pos_5'] = sRoleItemsBuyList['pos_1']
 
 X['sBuyList'] = sRoleItemsBuyList[sRole]
 
-X['sSellList'] = {
-    "item_magic_wand",
+Pos2SellList = {
+    "item_bottle",
     "item_bracer",
+    "item_magic_wand",
 }
+
+Pos3SellList = {
+    "item_bracer",
+    "item_magic_wand",
+}
+
+X['sSellList'] = {}
+
+if sRole == "pos_2" then X['sSellList'] = Pos2SellList end
+if sRole == "pos_3" then X['sSellList'] = Pos3SellList end
 
 if J.Role.IsPvNMode() or J.Role.IsAllShadow() then X['sBuyList'], X['sSellList'] = { 'PvN_antimage' }, {} end
 

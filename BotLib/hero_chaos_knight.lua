@@ -16,7 +16,7 @@ local sTalentList = J.Skill.GetTalentList( bot )
 local sAbilityList = J.Skill.GetAbilityList( bot )
 local sRole = J.Item.GetRoleItemsBuyList( bot )
 
-local tTalentTreeList = {
+local tTalentTreeList = {--pos1,3
 						['t25'] = {0, 10},
 						['t20'] = {10, 0},
 						['t15'] = {10, 0},
@@ -31,14 +31,15 @@ local nAbilityBuildList = J.Skill.GetRandomBuild( tAllAbilityBuildList )
 
 local nTalentBuildList = J.Skill.GetTalentBuild( tTalentTreeList )
 
+local sUtility = {"item_heavens_halberd", "item_crimson_guard", "item_pipe"}
+local nUtility = sUtility[RandomInt(1, #sUtility)]
+
 local sRoleItemsBuyList = {}
 
 sRoleItemsBuyList['pos_1'] = {
 	"item_tango",
 	"item_double_branches",
 	"item_quelling_blade",
-	"item_gauntlets",
-	"item_circlet",
 
 	"item_bracer",
 	"item_boots",
@@ -46,35 +47,71 @@ sRoleItemsBuyList['pos_1'] = {
 	"item_power_treads",
 	"item_armlet",
 	"item_echo_sabre",
+	"item_blink",
 	"item_black_king_bar",--
+	"item_orchid",
 	"item_heart",--
-	"item_aghanims_shard",
 	"item_bloodthorn",--
-	"item_assault",--
-	"item_travel_boots",
-	"item_nullifier",--
+	"item_harpoon",--
+	"item_aghanims_shard",
+	"item_swift_blink",--
 	"item_travel_boots_2",--
 	"item_moon_shard",
 	"item_ultimate_scepter_2",
 }
 
-sRoleItemsBuyList['pos_2'] = sRoleItemsBuyList['pos_1']
+sRoleItemsBuyList['pos_2'] = sRoleItemsBuyList['pos_2']
 
-sRoleItemsBuyList['pos_4'] = sRoleItemsBuyList['pos_1']
+sRoleItemsBuyList['pos_3'] = {
+	"item_tango",
+	"item_double_branches",
+	"item_quelling_blade",
 
-sRoleItemsBuyList['pos_5'] = sRoleItemsBuyList['pos_1']
+	"item_bracer",
+	"item_boots",
+	"item_magic_wand",
+	"item_power_treads",
+	"item_armlet",
+	"item_echo_sabre",
+	"item_blink",
+	"item_black_king_bar",--
+	"item_orchid",
+	nUtility,--
+	"item_heart",--
+	"item_bloodthorn",--
+	"item_aghanims_shard",
+	"item_swift_blink",--
+	"item_travel_boots_2",--
+	"item_moon_shard",
+	"item_ultimate_scepter_2",
+}
 
-sRoleItemsBuyList['pos_3'] = sRoleItemsBuyList['pos_1']
+sRoleItemsBuyList['pos_4'] = sRoleItemsBuyList['pos_4']
+
+sRoleItemsBuyList['pos_5'] = sRoleItemsBuyList['pos_5']
+
 
 X['sBuyList'] = sRoleItemsBuyList[sRole]
 
-X['sSellList'] = {
+Pos1SellList = {
+	"item_quelling_blade",
+	"item_bracer",
+	"item_magic_wand",
+	"item_armlet",
+}
+
+Pos3SellList = {
 	"item_quelling_blade",
 	"item_bracer",
 	"item_magic_wand",
 	"item_armlet",
 	"item_echo_sabre",
 }
+
+X['sSellList'] = {}
+
+if sRole == "pos_1" then X['sSellList'] = Pos1SellList end
+if sRole == "pos_3" then X['sSellList'] = Pos3SellList end
 
 if J.Role.IsPvNMode() or J.Role.IsAllShadow() then X['sBuyList'], X['sSellList'] = { 'PvN_tank' }, {"item_power_treads", 'item_quelling_blade'} end
 
@@ -94,35 +131,6 @@ function X.MinionThink( hMinionUnit )
 	end
 
 end
-
---[[
-
-npc_dota_hero_chaos_knight
-
-"Ability1"		"chaos_knight_chaos_bolt"
-"Ability2"		"chaos_knight_reality_rift"
-"Ability3"		"chaos_knight_chaos_strike"
-"Ability4"		"generic_hidden"
-"Ability5"		"generic_hidden"
-"Ability6"		"chaos_knight_phantasm"
-"Ability10"		"special_bonus_all_stats_5"
-"Ability11"		"special_bonus_movement_speed_20"
-"Ability12"		"special_bonus_strength_15"
-"Ability13"		"special_bonus_cooldown_reduction_12"
-"Ability14"		"special_bonus_gold_income_25"
-"Ability15"		"special_bonus_unique_chaos_knight"
-"Ability16"		"special_bonus_unique_chaos_knight_2"
-"Ability17"		"special_bonus_unique_chaos_knight_3"
-
-modifier_chaos_knight_reality_rift_debuff
-modifier_chaos_knight_reality_rift_buff
-modifier_chaos_knight_reality_rift
-modifier_chaos_knight_chaos_strike
-modifier_chaos_knight_chaos_strike_debuff
-modifier_chaos_knight_phantasm
-modifier_chaos_knight_phantasm_illusion
-
---]]
 
 local abilityQ = bot:GetAbilityByName( sAbilityList[1] )
 local abilityW = bot:GetAbilityByName( sAbilityList[2] )

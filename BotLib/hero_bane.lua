@@ -17,31 +17,69 @@ local sAbilityList = J.Skill.GetAbilityList( bot )
 local sRole = J.Item.GetRoleItemsBuyList( bot )
 
 local tTalentTreeList = {
-						['t25'] = {10, 0},
-						['t20'] = {0, 10},
-						['t15'] = {10, 0},
-						['t10'] = {10, 0},
+						{--pos2
+							['t25'] = {10, 0},
+							['t20'] = {10, 0},
+							['t15'] = {0, 10},
+							['t10'] = {0, 10},
+						},
+						{--pos4,5
+							['t25'] = {10, 0},
+							['t20'] = {0, 10},
+							['t15'] = {10, 0},
+							['t10'] = {10, 0},
+						}
 }
 
 local tAllAbilityBuildList = {
-						{2,3,2,3,2,6,2,3,3,1,1,6,1,1,6},
+						{1,2,2,1,2,6,2,1,1,3,6,3,3,3,6},--pos2
+						{2,3,2,3,2,6,2,3,3,1,1,6,1,1,6},--pos4,5
 }
 
-local nAbilityBuildList = J.Skill.GetRandomBuild( tAllAbilityBuildList )
+local nAbilityBuildList
+if sRole == 'pos_2' then nAbilityBuildList = tAllAbilityBuildList[1] end
+if sRole == 'pos_4' then nAbilityBuildList = tAllAbilityBuildList[2] end
+if sRole == 'pos_5' then nAbilityBuildList = tAllAbilityBuildList[2] end
 
-local nTalentBuildList = J.Skill.GetTalentBuild( tTalentTreeList )
+local nTalentBuildList
+if sRole == 'pos_2' then nTalentBuildList = J.Skill.GetTalentBuild(tTalentTreeList[1]) end
+if sRole == 'pos_4' then nTalentBuildList = J.Skill.GetTalentBuild(tTalentTreeList[2]) end
+if sRole == 'pos_5' then nTalentBuildList = J.Skill.GetTalentBuild(tTalentTreeList[2]) end
 
 local sRoleItemsBuyList = {}
 
 sRoleItemsBuyList['pos_1'] = sRoleItemsBuyList['pos_1']
 
-sRoleItemsBuyList['pos_2'] = sRoleItemsBuyList['pos_1']
+sRoleItemsBuyList['pos_2'] = {
+	"item_tango",
+	"item_double_branches",
+	"item_double_circlet",
+	"item_enchanted_mango",
 
-sRoleItemsBuyList['pos_3'] = sRoleItemsBuyList['pos_1']
+	"item_bottle",
+	"item_magic_wand",
+	"item_arcane_boots",
+	"item_urn_of_shadows",
+	"item_phylactery",
+	"item_hand_of_midas",
+	"item_spirit_vessel",
+	"item_aghanims_shard",
+	"item_ultimate_scepter",
+	"item_kaya_and_sange",--
+	"item_angels_demise",--
+	"item_black_king_bar",--
+	"item_hurricane_pike",--
+	"item_travel_boots",
+	"item_octarine_core",--
+	"item_travel_boots_2",--
+	"item_ultimate_scepter_2",
+	"item_moon_shard",
+}
+
+sRoleItemsBuyList['pos_3'] = sRoleItemsBuyList['pos_3']
 
 sRoleItemsBuyList['pos_4'] = {
-	"item_tango",
-	"item_tango",
+	"item_double_tango",
 	"item_double_branches",
 	"item_blood_grenade",
 
@@ -62,8 +100,7 @@ sRoleItemsBuyList['pos_4'] = {
 }
 
 sRoleItemsBuyList['pos_5'] = {
-	"item_tango",
-	"item_tango",
+	"item_double_tango",
 	"item_double_branches",
 	"item_blood_grenade",
 
@@ -85,6 +122,14 @@ sRoleItemsBuyList['pos_5'] = {
 
 X['sBuyList'] = sRoleItemsBuyList[sRole]
 
+Pos2SellList = {
+	"item_circlet",
+	"item_bottle",
+	"item_magic_wand",
+	"item_hand_of_midas",
+	"item_spirit_vessel",
+}
+
 Pos4SellList = {
 	"item_circlet",
 	"item_magic_wand",
@@ -97,13 +142,9 @@ Pos5SellList = {
 
 X['sSellList'] = {}
 
-if sRole == "pos_4"
-then
-    X['sSellList'] = Pos4SellList
-elseif sRole == "pos_5"
-then
-    X['sSellList'] = Pos5SellList
-end
+if sRole == "pos_2" then X['sSellList'] = Pos2SellList end
+if sRole == "pos_4" then X['sSellList'] = Pos4SellList end
+if sRole == "pos_5" then X['sSellList'] = Pos5SellList end
 
 if J.Role.IsPvNMode() or J.Role.IsAllShadow() then X['sBuyList'], X['sSellList'] = { 'PvN_priest' }, {} end
 
@@ -122,38 +163,6 @@ function X.MinionThink( hMinionUnit )
 	end
 
 end
-
---[[
-
-
-npc_dota_hero_bane
-
-
-"Ability1"		"bane_nightmare"
-"Ability2"		"bane_brain_sap"
-"Ability3"		"bane_enfeeble"
-"Ability4"		"generic_hidden"
-"Ability5"		"generic_hidden"
-"Ability6"		"bane_fiends_grip"
-"Ability7"		"bane_nightmare_end"
-"Ability10"		"special_bonus_armor_6"
-"Ability11"		"special_bonus_magic_resistance_15"
-"Ability12"		"special_bonus_spell_amplify_7"
-"Ability13"		"special_bonus_cast_range_125"
-"Ability14"		"special_bonus_unique_bane_5"
-"Ability15"		"special_bonus_movement_speed_40"
-"Ability16"		"special_bonus_unique_bane_2"
-"Ability17"		"special_bonus_unique_bane_3"
-
-
-modifier_bane_enfeeble
-modifier_bane_nightmare
-modifier_bane_nightmare_invulnerable
-modifier_bane_fiends_grip
-modifier_bane_fiends_grip_self
-
-
---]]
 
 local abilityQ = bot:GetAbilityByName( sAbilityList[1] )
 local abilityW = bot:GetAbilityByName( sAbilityList[2] )
