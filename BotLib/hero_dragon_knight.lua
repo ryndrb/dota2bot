@@ -23,14 +23,14 @@ local tAllAbilityBuildList = {
 }
 
 local nAbilityBuildList
-if sRole == 'pos_1' then nAbilityBuildList = tAllAbilityBuildList[1] end
-if sRole == 'pos_2' then nAbilityBuildList = tAllAbilityBuildList[1] end
-if sRole == 'pos_3' then nAbilityBuildList = tAllAbilityBuildList[1] end
+if sRole == 'pos_1' then nAbilityBuildList = J.Skill.GetRandomBuild(tAllAbilityBuildList) end
+if sRole == 'pos_2' then nAbilityBuildList = J.Skill.GetRandomBuild(tAllAbilityBuildList) end
+if sRole == 'pos_3' then nAbilityBuildList = J.Skill.GetRandomBuild(tAllAbilityBuildList) end
 
 local nTalentBuildList
-if sRole == 'pos_1' then nTalentBuildList = J.Skill.GetTalentBuild(tTalentTreeList[1]) end
-if sRole == 'pos_2' then nTalentBuildList = J.Skill.GetTalentBuild(tTalentTreeList[1]) end
-if sRole == 'pos_3' then nTalentBuildList = J.Skill.GetTalentBuild(tTalentTreeList[1]) end
+if sRole == 'pos_1' then nTalentBuildList = J.Skill.GetTalentBuild(tTalentTreeList) end
+if sRole == 'pos_2' then nTalentBuildList = J.Skill.GetTalentBuild(tTalentTreeList) end
+if sRole == 'pos_3' then nTalentBuildList = J.Skill.GetTalentBuild(tTalentTreeList) end
 
 local sRoleItemsBuyList = {}
 
