@@ -37,7 +37,7 @@ function GetDesire()
 
 			table.insert(chasingAlly, bot)
 
-			local nEnemyTowers = bot:GetNearbyTowers(700, true)
+			local nEnemyTowers = bot:GetNearbyTowers(888, true)
 			if nEnemyTowers ~= nil and #nEnemyTowers >= 1
 			then
 				if botTarget:GetHealth() > J.GetTotalEstimatedDamageToTarget(chasingAlly, botTarget)
@@ -48,38 +48,22 @@ function GetDesire()
 		end
 	end
 
-	if isEarlyGame and botLV < 6
+	if  currentTime <= 9 * 60
+	and botLV <= 7
 	then
-		if isBotCore
-		then
-			return BOT_MODE_DESIRE_HIGH
-		end
-
-		return BOT_MODE_DESIRE_MODERATE
+		return 0.444
 	end
 
-	if isBotCore and networth < 4500
+	if  currentTime <= 12 * 60
+	and botLV <= 11
 	then
-		return BOT_MODE_DESIRE_HIGH
+		return 0.333
 	end
 
-	if  not isBotCore
-	and not J.IsInLaningPhase()
+	if botLV <= 17
 	then
-		local nInRangeAlly = J.GetAlliesNearLoc(bot:GetLocation(), 1600)
-		local nInRangeEnemy = J.GetEnemiesNearLoc(bot:GetLocation(), 1600)
-		local nEnemyLaneCreeps = bot:GetNearbyLaneCreeps(700, true)
-
-		if  nInRangeAlly ~= nil and nInRangeEnemy ~= nil and nEnemyLaneCreeps ~= nil
-		and #nInRangeAlly == 0 and #nInRangeEnemy == 0 and #nEnemyLaneCreeps >= 1
-		and not J.IsPushing(bot)
-		and not J.IsDefending(bot)
-		and not J.IsDoingRoshan(bot)
-		and not J.IsDoingTormentor(bot)
-		then
-			return BOT_ACTION_DESIRE_MODERATE
-		end
+		return 0.222
 	end
 
-	return BOT_MODE_DESIRE_VERYLOW
+	return BOT_MODE_DESIRE_NONE
 end

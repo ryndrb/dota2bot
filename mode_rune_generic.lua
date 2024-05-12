@@ -1,12 +1,3 @@
-----------------------------------------------------------------------------------------------------
---- The Creation Come From: BOT EXPERIMENT Credit:FURIOUSPUPPY
---- BOT EXPERIMENT Author: Arizona Fauzie 2018.11.21
---- Link:http://steamcommunity.com/sharedfiles/filedetails/?id=837040016
---- Refactor: 决明子 Email: dota2jmz@163.com 微博@Dota2_决明子
---- Link:http://steamcommunity.com/sharedfiles/filedetails/?id=1573671599
---- Link:http://steamcommunity.com/sharedfiles/filedetails/?id=1627071163
-----------------------------------------------------------------------------------------------------
-
 if GetBot():IsInvulnerable() or not GetBot():IsHero() or not string.find(GetBot():GetUnitName(), "hero") or GetBot():IsIllusion() then
 	return
 end
@@ -14,6 +5,7 @@ end
 
 
 local X = {}
+local J = require(GetScriptDirectory()..'/FunLib/jmz_func')
 local Role = require( GetScriptDirectory()..'/FunLib/aba_role')
 local Chat = require( GetScriptDirectory()..'/FunLib/aba_chat' )
 local bot = GetBot()
@@ -41,16 +33,13 @@ end
 local runeLocation = nil
 local nStopWaitTime = Role.GetRuneActionTime()
 
-local bMidHumanHere = false
-
-
 local nRuneList = {
-	RUNE_BOUNTY_1,  --天辉野区
-	RUNE_BOUNTY_2,	--夜魇野区
+	RUNE_BOUNTY_1,
+	RUNE_BOUNTY_2,
 --	RUNE_BOUNTY_3,
 --	RUNE_BOUNTY_4,
-	RUNE_POWERUP_1,  --上路
-	RUNE_POWERUP_2,  --下路	
+	RUNE_POWERUP_1,
+	RUNE_POWERUP_2,
 }
 
 if bFWQ then
@@ -64,10 +53,10 @@ end
 
 local vWaitRuneLocList = {
 
-	[1] = Vector(-4450, 1952, 0), --天辉中
-	[2] = Vector(-6285, 4911, 0), --夜魇上
-	[3] = Vector(4606, -1803, 0), --夜魇中
-	[4] = Vector(6503, -4506, 0), --天辉下
+	[1] = Vector(-4450, 1952, 0),
+	[2] = Vector(-6285, 4911, 0),
+	[3] = Vector(4606, -1803, 0),
+	[4] = Vector(6503, -4506, 0),
 	
 }
 
@@ -147,24 +136,7 @@ function GetDesire()
 		then
 			return BOT_MODE_DESIRE_MODERATE
 		end
-	end	
-	
-	
-	if DotaTime() < 5 * 60 and DotaTime() > 30
-		and not bMidHumanHere
-		and bot:GetAssignedLane() == LANE_MID
-	then
-		local enemyHeroList = bot:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
-		for i = 1, #enemyHeroList
-		do 
-			if enemyHeroList[i] ~= nil
-			   and not enemyHeroList[i]:IsBot()
-			then
-				bMidHumanHere = true
-			end		
-		end
-	end
-	
+	end		
 	
 	if DotaTime() > 26 * 60 
 		and X.IsUnitAroundLocation(GetAncient(GetTeam()):GetLocation(), 2800) 
@@ -209,15 +181,6 @@ function GetDesire()
 					return X.CountDesire(BOT_MODE_DESIRE_MODERATE, closestDist, 5000)
 			end
 		else
-			
-			if bMidHumanHere 
-				and bot:GetAssignedLane() == LANE_MID
-				and DotaTime() < 7 * 60
-			then
-				return BOT_MODE_DESIRE_NONE
-			end
-			
-			
 			runeStatus = GetRuneStatus( closestRune )
 			
 			if runeStatus == RUNE_STATUS_AVAILABLE then
@@ -290,7 +253,6 @@ function Think()
 		then
 			if bot:GetAssignedLane() == LANE_BOT 
 			then 
-				-- bot:Action_MoveToLocation( GetTower( TEAM_RADIANT, TOWER_BOT_2 ):GetLocation() + RandomVector( 20 ) )
 				bot:Action_MoveToLocation( GetRuneSpawnLocation(RUNE_BOUNTY_2) + RandomVector( 50 ) )  --B2
 				return
 			else
@@ -300,7 +262,6 @@ function Think()
 		else
 			if bot:GetAssignedLane() == LANE_TOP 
 			then 
-				-- bot:Action_MoveToLocation( GetTower( TEAM_DIRE, TOWER_TOP_2 ):GetLocation() + RandomVector( 20 ))
 				bot:Action_MoveToLocation( GetRuneSpawnLocation(RUNE_BOUNTY_1) + RandomVector( 50 ) )   --B1
 				return
 			else
@@ -309,8 +270,6 @@ function Think()
 			end
 		end
 	end	
-	
-	
 	
 	if runeStatus == RUNE_STATUS_AVAILABLE 
 	then
@@ -767,4 +726,3 @@ function X.GetGoOutLocation()
 	return vLocation
 
 end
--- dota2jmz@163.com QQ:2462331592..

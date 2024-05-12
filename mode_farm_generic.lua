@@ -305,8 +305,7 @@ function GetDesire()
 	-- and J.Site.IsTimeToFarm(bot)
 	-- and (not J.IsHumanPlayerInTeam() or enemyKills > allyKills + 16)
 	-- and ( bot:GetNextItemPurchaseValue() > 0 or not bot:HasModifier("modifier_item_moon_shard_consumed") )
-	-- and ( DotaTime() > 7 * 60 or bot:GetLevel() >= 8 or ( bot:GetAttackRange() < 220 and bot:GetLevel() >= 6 ) )	   
-	and not J.IsInLaningPhase()
+	and (DotaTime() > 8 * 60 or bot:GetLevel() >= 8 or ( bot:GetAttackRange() < 220 and bot:GetLevel() >= 6 ))
 	then
 		if J.GetDistanceFromEnemyFountain(bot) > 4000 
 		then

@@ -404,19 +404,13 @@ function Push.PushThink(bot, lane)
         end
     end
 
-    local visionRange = (bot:GetCurrentVisionRange() <= 1600 and bot:GetCurrentVisionRange()) or 1600
-    local nEnemyTowers = bot:GetNearbyTowers(visionRange, true)
+    local offset = -math.max(teammateDistance / teammateAlive - enemyDistance / enemyAlive, 0)
+    local nEnemyTowers = bot:GetNearbyTowers(1600, true)
 
-    local attackRange = bot:GetAttackRange()
-    local targetLoc = GetLaneFrontLocation(GetTeam(), lane, 0)
-
-    if nEnemyTowers ~= nil and #nEnemyTowers == 0
-    then
-        targetLoc = GetLaneFrontLocation(GetTeam(), lane, -attackRange)
-    end
+    local targetLoc = GetLaneFrontLocation(GetTeam(), lane, offset)
 
     local nInRangeAlly = bot:GetNearbyHeroes(1600, false, BOT_MODE_NONE)
-    local nInRangeEnemy = bot:GetNearbyHeroes(visionRange, true, BOT_MODE_NONE)
+    local nInRangeEnemy = bot:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
 
     if  nInRangeAlly ~= nil and nInRangeEnemy ~= nil
     and #nInRangeEnemy > #nInRangeAlly
@@ -450,42 +444,34 @@ function Push.PushThink(bot, lane)
             bot:Action_MoveToLocation(SupportHelpCore:GetLocation())
             return
         end
-
-        bot:Action_MoveToLocation(targetLoc)
     end
 
-
-    local ancient = GetAncient(GetOpposingTeam())
-    if GetUnitToUnitDistance(bot, ancient) < 1600
+    local nEnemyAncient = GetAncient(GetOpposingTeam())
+    if GetUnitToUnitDistance(bot, nEnemyAncient) < 1600
     then
-        if J.CanBeAttacked(ancient)
+        if J.CanBeAttacked(nEnemyAncient)
         then
-            return bot:Action_AttackUnit(ancient, false)
+            bot:Action_AttackUnit(nEnemyAncient, false)
+            return
         end
-    end
-
-    if  nInRangeAlly ~= nil and nInRangeEnemy
-    and #nInRangeAlly >= #nInRangeEnemy
-    and #nInRangeEnemy >= 1
-    then
-        return bot:Action_AttackUnit(nInRangeEnemy[1], false)
     end
 
     if GetTower(GetOpposingTeam(), TOWER_TOP_3) == nil and lane == LANE_TOP
     or GetTower(GetOpposingTeam(), TOWER_MID_3) == nil and lane == LANE_MID
     or GetTower(GetOpposingTeam(), TOWER_BOT_3) == nil and lane == LANE_BOT
     then
-        local nBarracks = bot:GetNearbyBarracks(700 + nRange, true);
+        local nBarracks = bot:GetNearbyBarracks(700 + nRange, true)
         if nBarracks ~= nil and #nBarracks > 0
         then
             if J.CanBeAttacked(nBarracks[1])
             then
-                return bot:Action_AttackUnit(nBarracks[1], false)
+                bot:Action_AttackUnit(nBarracks[1], false)
+                return
             end
         end
     end
 
-    local nEnemyLaneCreeps = bot:GetNearbyLaneCreeps(visionRange, true)
+    local nEnemyLaneCreeps = bot:GetNearbyLaneCreeps(700 + nRange, true)
     if  nEnemyLaneCreeps ~= nil and #nEnemyLaneCreeps > 0
     and not IsPushingInLaningPhase
     then
@@ -505,15 +491,17 @@ function Push.PushThink(bot, lane)
             end
         end
 
-        return bot:Action_AttackUnit(targetCreep, false)
+        bot:Action_AttackUnit(targetCreep, false)
+        return
     end
 
-    local nBarracks = bot:GetNearbyBarracks(700 + nRange, true);
+    local nBarracks = bot:GetNearbyBarracks(700 + nRange, true)
     if nBarracks ~= nil and #nBarracks > 0
     then
         if J.CanBeAttacked(nBarracks[1])
         then
-            return bot:Action_AttackUnit(nBarracks[1], false)
+            bot:Action_AttackUnit(nBarracks[1], false)
+            return
         end
     end
 
@@ -521,9 +509,22 @@ function Push.PushThink(bot, lane)
     then
         if J.CanBeAttacked(nEnemyTowers[1])
         then
-            return bot:Action_AttackUnit(nEnemyTowers[1], false)
+            bot:Action_AttackUnit(nEnemyTowers[1], false)
+            return
         end
     end
+
+    local sEnemyTowers = bot:GetNearbyFillers(700 + nRange, true)
+    if sEnemyTowers ~= nil and #sEnemyTowers > 0
+    then
+        if J.CanBeAttacked(sEnemyTowers[1])
+        then
+            bot:Action_AttackUnit(sEnemyTowers[1], false)
+            return
+        end
+    end
+
+    bot:Action_MoveToLocation(targetLoc)
 end
 
 return Push

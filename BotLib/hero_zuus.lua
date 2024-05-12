@@ -26,9 +26,9 @@ if sRole == 'pos_4' then nAbilityBuildList = tAllAbilityBuildList[2] end
 if sRole == 'pos_5' then nAbilityBuildList = tAllAbilityBuildList[2] end
 
 local nTalentBuildList
-if sRole == 'pos_2' then nTalentBuildList = J.Skill.GetTalentBuild(tTalentTreeList[1]) end
-if sRole == 'pos_4' then nTalentBuildList = J.Skill.GetTalentBuild(tTalentTreeList[2]) end
-if sRole == 'pos_5' then nTalentBuildList = J.Skill.GetTalentBuild(tTalentTreeList[2]) end
+if sRole == 'pos_2' then nTalentBuildList = J.Skill.GetTalentBuild(tTalentTreeList) end
+if sRole == 'pos_4' then nTalentBuildList = J.Skill.GetTalentBuild(tTalentTreeList) end
+if sRole == 'pos_5' then nTalentBuildList = J.Skill.GetTalentBuild(tTalentTreeList) end
 
 local sRoleItemsBuyList = {}
 
