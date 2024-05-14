@@ -179,7 +179,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
             | Alchemist             | &check; | &cross; | 2 [2/27/2024]
             | Ancient Apparition    | -       | -       | 1 [3/9/2024]
             | Anti-Mage             | &check; | &check; | 1 [4/3/2024]
-            | Arc Warden            | -       | -       | 0 
+            | Arc Warden            | -       | -       | 1 [5/14/2024]
             | Axe                   | -       | -       | 0 
             | Bane                  | -       | -       | 0 
             | Batrider              | -       | -       | 1 [2/21/2024]
