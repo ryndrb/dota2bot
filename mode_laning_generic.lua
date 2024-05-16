@@ -40,7 +40,13 @@ function GetDesire()
 			local nEnemyTowers = bot:GetNearbyTowers(888, true)
 			if nEnemyTowers ~= nil and #nEnemyTowers >= 1
 			then
-				if botTarget:GetHealth() > J.GetTotalEstimatedDamageToTarget(chasingAlly, botTarget)
+				local nHealth = botTarget:GetHealth()
+				if botTarget:GetUnitName() == 'npc_dota_hero_medusa'
+				then
+					nHealth = nHealth + botTarget:GetMana()
+				end
+
+				if nHealth > J.GetTotalEstimatedDamageToTarget(chasingAlly, botTarget)
 				then
 					return bot:GetActiveModeDesire() + 0.1
 				end

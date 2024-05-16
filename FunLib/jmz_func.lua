@@ -1720,8 +1720,9 @@ function J.IsStuck( bot )
 		local Et = bot:GetNearbyTowers( 450, true )
 		local At = bot:GetNearbyTowers( 450, false )
 		if bot:GetCurrentActionType() == BOT_ACTION_TYPE_MOVE_TO
-			and attackTarget == nil and EAd > 2200 and TAd > 2200 and #Et == 0 and #At == 0
-			and DotaTime() > bot.stuckTime + 5.0
+			-- and attackTarget == nil
+			and EAd > 2200 and TAd > 2200 and #Et == 0 and #At == 0
+			and DotaTime() > bot.stuckTime + 2.5
 			and GetUnitToLocationDistance( bot, bot.stuckLoc ) < 25
 		then
 			print( bot:GetUnitName().." is stuck" )
@@ -4453,6 +4454,11 @@ end
 function J.GetManaAfter(manaCost)
 	local bot = GetBot()
 	return (bot:GetMana() - manaCost) / bot:GetMaxMana()
+end
+
+function J.GetHealthAfter(hpCost)
+	local bot = GetBot()
+	return (bot:GetHealth() - hpCost) / bot:GetMaxHealth()
 end
 
 function J.GetCreepListAroundTargetCanKill(target, nRadius, damage, bEnemy, bNeutral, bLaneCreep)

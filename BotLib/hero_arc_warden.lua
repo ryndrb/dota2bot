@@ -449,7 +449,7 @@ function X.ConsiderMagneticField()
 	end
 
 	if  J.IsFarming(bot)
-	and J.GetManaAfter(MagneticField:GetManaCost()) > MagneticField:GetManaCost() * 1.5
+	and J.GetManaAfter(MagneticField:GetManaCost()) * bot:GetMana() > MagneticField:GetManaCost() * 1.5
 	and not bot:HasModifier('modifier_arc_warden_magnetic_field')
 	then
 		local nEnemyLaneCreeps = bot:GetNearbyLaneCreeps(888, true)
@@ -551,7 +551,7 @@ function X.ConsiderSparkWraith()
 		local nInRangeEnemy = J.GetEnemiesNearLoc(nLocationAoE.targetloc, nRadius)
 
 		if  nInRangeEnemy ~= nil and #nInRangeEnemy >= 1
-		and J.GetManaAfter(SparkWraith:GetManaCost()) > Flux:GetManaCost() + MagneticField:GetManaCost() + SparkWraith:GetManaCost()
+		and J.GetManaAfter(SparkWraith:GetManaCost()) * bot:GetMana() > Flux:GetManaCost() + MagneticField:GetManaCost() + SparkWraith:GetManaCost()
 		and not bot:HasModifier('modifier_silencer_curse_of_the_silent')
 		then
 			local nCreep = J.GetVulnerableUnitNearLoc( bot, false, true, 1600, nRadius, nLocationAoE.targetloc )
@@ -628,7 +628,7 @@ function X.ConsiderSparkWraith()
 	end
 
 	if  SparkWraith:GetLevel() >= 3
-	and J.GetManaAfter(SparkWraith:GetManaCost()) > Flux:GetManaCost() + MagneticField:GetManaCost() + SparkWraith:GetManaCost()
+	and J.GetManaAfter(SparkWraith:GetManaCost()) * bot:GetMana() > Flux:GetManaCost() + MagneticField:GetManaCost() + SparkWraith:GetManaCost()
 	and not J.IsLaning(bot)
 	then
 		local nLocationAoE = bot:FindAoELocation( true, true, bot:GetLocation(), 1400, nRadius, 2, 0)
@@ -640,7 +640,7 @@ function X.ConsiderSparkWraith()
 	end
 
 	if  bot:GetLevel() >= 10
-	and ((J.GetManaAfter(SparkWraith:GetManaCost()) > Flux:GetManaCost() + MagneticField:GetManaCost() + SparkWraith:GetManaCost())
+	and ((J.GetManaAfter(SparkWraith:GetManaCost()) * bot:GetMana() > Flux:GetManaCost() + MagneticField:GetManaCost() + SparkWraith:GetManaCost())
 		or bot:HasModifier('modifier_arc_warden_tempest_double'))
 	and DotaTime() > 8 * 60
 	then

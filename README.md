@@ -49,7 +49,6 @@ To anyone who've found this or is using it, if you have any feedback in improvin
 # Tinkering ABo(u)t (ryndrb)
 - ***Heroes (Pos: 1,2,3,4,5)***
     - <ins>Heroes Implemented Count:</ins> **116** / 124
-    - 4th column from the table below (<ins>Spell Usage Imp. Count [Latest Date]</ins>) is the count of times I tried improving a hero after their initial addition.
     - Supports that does damage, CC, or is Ranged are somewhat 'better' for the most part in bot games compared to Melee or non-. (Since positioning and movement are Valve default.)
     - ^. AoE spells are just too good.
     - ***Added***
@@ -209,7 +208,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
             | ~~Elder Titan~~       | -       | -       | 0 
             | Ember Spirit          | -       | -       | 1 [2/2/2024]
             | Enchantress           | &check; | &check; | 0 
-            | Enigma                | -       | -       | 0 
+            | Enigma                | -       | -       | 1 [5/16/2024]
             | Faceless Void         | &check; | -       | 3 [3/17/2024]
             | Grimstroke            | -       | &check; | 0 
             | Gyrocopter            | -       | -       | 0 
