@@ -13,16 +13,17 @@ function GetDesire()
 		return BOT_ACTION_DESIRE_NONE
 	end
 
-	if  J.IsGoingOnSomeone(bot)
+    if  J.IsGoingOnSomeone(bot)
 	and J.IsInLaningPhase()
+	and bot:GetLevel() < 8
 	then
 		local botTarget = J.GetProperTarget(bot)
 		if  J.IsValidTarget(botTarget)
 		and J.IsInRange(bot, botTarget, 1600)
 		and J.IsChasingTarget(bot, botTarget)
 		then
-			local chasingAlly = {}
-			local nInRangeAlly = J.GetAlliesNearLoc(bot:GetLocation(), 1200)
+			local nChasingAlly = {}
+			local nInRangeAlly = J.GetAlliesNearLoc(bot:GetLocation(), 1600)
 			for _, allyHero in pairs(nInRangeAlly)
 			do
 				if  J.IsValidHero(allyHero)
@@ -31,22 +32,26 @@ function GetDesire()
 				and not J.IsRetreating(allyHero)
 				and not J.IsSuspiciousIllusion(allyHero)
 				then
-					table.insert(chasingAlly, allyHero)
+					table.insert(nChasingAlly, allyHero)
 				end
 			end
 
-			table.insert(chasingAlly, bot)
+			table.insert(nChasingAlly, bot)
 
-			local nEnemyTowers = bot:GetNearbyTowers(888, true)
-			if nEnemyTowers ~= nil and #nEnemyTowers >= 1
+			-- Consider stop chasing if can't kill and need to CS
+			local nHealth = botTarget:GetHealth()
+			if botTarget:GetUnitName() == 'npc_dota_hero_medusa'
 			then
-				local nHealth = botTarget:GetHealth()
-				if botTarget:GetUnitName() == 'npc_dota_hero_medusa'
-				then
-					nHealth = nHealth + botTarget:GetMana()
-				end
+				nHealth = nHealth + botTarget:GetMana()
+			end
 
-				if nHealth > J.GetTotalEstimatedDamageToTarget(chasingAlly, botTarget)
+			if nHealth > J.GetTotalEstimatedDamageToTarget(nChasingAlly, botTarget)
+			then
+				local nEnemyTowers = botTarget:GetNearbyTowers(888, true)
+				local nEnemyLaneFrontAmount = 1 - GetLaneFrontAmount(GetOpposingTeam(), bot:GetAssignedLane(), true)
+
+				if nEnemyTowers ~= nil and #nEnemyTowers >= 1
+				or nEnemyLaneFrontAmount > 0
 				then
 					return bot:GetActiveModeDesire() + 0.1
 				end

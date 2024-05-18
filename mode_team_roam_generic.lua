@@ -44,6 +44,8 @@ local SpecialUnitTarget = nil
 local shouldHarass = false
 local harassTarget = nil
 
+local ShouldTryDispersingFromSpells = false
+
 local TormentorLocation
 if GetTeam() == TEAM_RADIANT
 then
@@ -66,6 +68,17 @@ function GetDesire()
 
 	SwapSmokeSupport()
 
+	-- Should not retreat if under Wraith King's scepter
+	if bot:HasModifier('modifier_skeleton_king_reincarnation_scepter_active')
+	then
+		targetUnit = X.WeakestUnitCanBeAttacked(true, true, bot:GetCurrentVisionRange(), bot)
+		if targetUnit ~= nil
+		then
+			bot:SetTarget(targetUnit)
+			return BOT_ACTION_DESIRE_ABSOLUTE * 1.5
+		end
+	end
+
 	nDesire = ConsiderHarassInLaningPhase()
 	if nDesire > 0
 	then
@@ -83,8 +96,8 @@ function GetDesire()
 	end
 
 	-- Disperse from Lich, Jakiro Ultimate
-	if bot:HasModifier('modifier_lich_chainfrost_slow')
-	or bot:HasModifier('modifier_jakiro_macropyre_burn')
+	ShouldTryDispersingFromSpells = X.ConsiderDispersingFromSpells()
+	if ShouldTryDispersingFromSpells
 	then
 		return BOT_MODE_DESIRE_ABSOLUTE * 0.98
 	end
@@ -204,8 +217,7 @@ function Think()
 	end
 
 	-- Disperse from Lich, Jakiro Ultimate
-	if bot:HasModifier('modifier_lich_chainfrost_slow')
-	or bot:HasModifier('modifier_jakiro_macropyre_burn')
+	if ShouldTryDispersingFromSpells
 	then
 		bot:Action_MoveToLocation(J.GetTeamFountain() + RandomVector(1000))
 		return
@@ -1595,62 +1607,70 @@ function X.ShouldAttackTowerCreep(bot)
 end
 
 function X.ShouldNotRetreat(bot)
-	
-	if bot:HasModifier("modifier_item_satanic_unholy")
-	   or bot:HasModifier("modifier_abaddon_borrowed_time")
-	   or ( bot:GetCurrentMovementSpeed() < 240 and not bot:HasModifier("modifier_arc_warden_spark_wraith_purge") )
-	then 
-		return true; 
-	end
-	
-	local nAttackAlly = bot:GetNearbyHeroes(1000,false,BOT_MODE_ATTACK);
-	if  ( bot:HasModifier("modifier_item_mask_of_madness_berserk")
-			or bot:HasModifier("modifier_oracle_false_promise_timer") )
-		and ( #nAttackAlly >= 1 or J.GetHP(bot) > 0.6 )
+	if bot:HasModifier('modifier_item_satanic_unholy')
+	or bot:HasModifier('modifier_skeleton_king_reincarnation_scepter_active')
+	or (bot:HasModifier('modifier_abaddon_borrowed_time') and J.WeAreStronger(bot, 1000))
+	or (bot:GetCurrentMovementSpeed() < 240 and not bot:HasModifier('modifier_arc_warden_spark_wraith_purge'))
 	then
-		return true;
-	end		
-	
-	local nAllies = J.GetAllyList(bot,800);
-    if #nAllies <= 1 
-	then 
-	    return false;
+		return true
 	end
-	
-	if ( botName == "npc_dota_hero_medusa" 
-	     or bot:FindItemSlot("item_abyssal_blade") >= 0 )
-		and #nAllies >= 3 and #nAttackAlly >= 1
+
+	local nInRangeAllyAttack = bot:GetNearbyHeroes(1200, false, BOT_MODE_ATTACK)
+
+    if nInRangeAllyAttack ~= nil
+    then
+        if  (bot:HasModifier('modifier_item_mask_of_madness_berserk') or bot:HasModifier('modifier_oracle_false_promise_timer'))
+        and (#nInRangeAllyAttack >= 1 or J.GetHP(bot) > 0.6)
+        then
+            return true
+        end
+
+        if  bot:HasModifier('modifier_abaddon_borrowed_time')
+        and #nInRangeAllyAttack >= 1
+        then
+            return true
+        end
+    end
+
+	local nInRangeAlly = J.GetAllyList(bot, 800)
+    if nInRangeAlly ~= nil and #nInRangeAlly <= 1
 	then
-		return true;
+	    return false
 	end
-	
-	if botName == "npc_dota_hero_skeleton_king"
-		and bot:GetLevel() >= 6 and #nAttackAlly >= 1 
+
+	if (bot:GetUnitName() == 'npc_dota_hero_medusa' or bot:FindItemSlot('item_abyssal_blade') >= 0)
+    and nInRangeAlly ~= nil and nInRangeAllyAttack ~= nil
+    and #nInRangeAlly >= 3 and #nInRangeAllyAttack >= 1
 	then
-		local abilityR = bot:GetAbilityByName( "skeleton_king_reincarnation" );
-		if abilityR:GetCooldownTimeRemaining() <= 1.0 and bot:GetMana() >= 160
+		return true
+	end
+
+	if  bot:GetUnitName() == 'npc_dota_hero_skeleton_king'
+	and bot:GetLevel() >= 6 and #nInRangeAllyAttack >= 1
+	then
+		local Reincarnation = bot:GetAbilityByName('skeleton_king_reincarnation')
+		if  Reincarnation:GetCooldownTimeRemaining() <= 1.0
+        and bot:GetMana() >= 180
 		then
-			return true;
+			return true
 		end
 	end
-	
-	for _,ally in pairs(nAllies)
+
+	for _, allyHero in pairs(nInRangeAlly)
 	do
-		if J.IsValid(ally) 
+		if  J.IsValidHero(allyHero)
+        and allyHero ~= bot
 		then
-			if  ( J.GetHP(ally) > 0.88 and ally:GetLevel() >= 12 and ally:GetActiveMode() ~= BOT_MODE_RETREAT)
-			    or ( ally:HasModifier("modifier_black_king_bar_immune") or ally:IsMagicImmune() )
-				or ( ally:HasModifier("modifier_item_mask_of_madness_berserk") and ally:GetAttackTarget() ~= nil )
-				or ally:HasModifier("modifier_abaddon_borrowed_time")
-				or ally:HasModifier("modifier_item_satanic_unholy")
-				or ally:HasModifier("modifier_oracle_false_promise_timer")
+			if (J.GetHP(allyHero) > 0.88 and allyHero:GetLevel() >= 10 and not J.IsRetreating(allyHero))
+            or (allyHero:HasModifier('modifier_black_king_bar_immune') or allyHero:IsMagicImmune())
+            or (allyHero:HasModifier('modifier_item_mask_of_madness_berserk') and allyHero:GetAttackTarget() ~= nil)
+            or allyHero:HasModifier('modifier_item_satanic_unholy')
+            or allyHero:HasModifier('modifier_oracle_false_promise_timer')
 			then
-				return true;
+				return true
 			end
 		end
 	end
-	
-	return false;
 end
 
 local bHumanAlly = nil
@@ -1694,9 +1714,11 @@ function CanAttackSpecialUnit()
 	do
 		if J.IsValid(unit)
 		then
-			if string.find(unit:GetUnitName(), 'healing_ward')
+			if string.find(unit:GetUnitName(), 'clinkz_skeleton_archer')
+			or string.find(unit:GetUnitName(), 'healing_ward')
 			or string.find(unit:GetUnitName(), 'forged_spirit')
 			or string.find(unit:GetUnitName(), 'grimstroke_ink_creature')
+			or string.find(unit:GetUnitName(), 'ignis_fatuus')
 			or string.find(unit:GetUnitName(), 'lone_druid_bear')
 			or string.find(unit:GetUnitName(), 'observer_ward')
 			or string.find(unit:GetUnitName(), 'phoenix_sun')
@@ -1706,6 +1728,7 @@ function CanAttackSpecialUnit()
 			or string.find(unit:GetUnitName(), 'tombstone')
 			or string.find(unit:GetUnitName(), 'warlock_golem')
 			or string.find(unit:GetUnitName(), 'weaver_swarm')
+			or string.find(unit:GetUnitName(), 'zeus_cloud')
 			then
 				if unit:GetUnitName() == 'npc_dota_rattletrap_cog'
 				then
@@ -2060,4 +2083,32 @@ function J.FindLeastExpensiveItemSlot()
 	end
 
 	return idx
+end
+
+function X.ConsiderDispersingFromSpells()
+	local isMagicImmune = false
+
+	if bot:IsMagicImmune()
+	or bot:HasModifier('modifier_black_king_bar_immune')
+	or bot:HasModifier('modifier_life_stealer_rage')
+	then
+		isMagicImmune = true
+	end
+
+	if  not isMagicImmune 
+	and (  bot:HasModifier('modifier_crystal_maiden_freezing_field_slow')
+		or bot:HasModifier('modifier_disruptor_static_storm')
+		or bot:HasModifier('modifier_jakiro_macropyre_burn')
+		or bot:HasModifier('modifier_lich_chainfrost_slow')
+		or bot:HasModifier('modifier_sandking_sand_storm_slow')
+		or bot:HasModifier('modifier_sand_king_epicenter_slow')
+		or bot:HasModifier('modifier_shredder_chakram_debuff ')
+		or bot:HasModifier('modifier_skywrath_mystic_flare_aura_effect')
+		or bot:HasModifier('modifier_warlock_upheaval')
+		or bot:HasModifier('modifier_windrunner_gale_force'))
+	then
+		return true
+	end
+
+	return false
 end

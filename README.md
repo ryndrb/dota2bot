@@ -160,14 +160,16 @@ To anyone who've found this or is using it, if you have any feedback in improvin
             - Use Danger Ping (Crtl + Alt + Left Click) to tell bots to Ward the ping location if they're suitable to do so.
                 - Must be within 1200 units to the pinged bot (for now).
         - [ ] Rune behaviour
-        - [ ] Doom apparently not able to Devour abilities (might just be Valve bug tho)
     - ***Add***
         - [x] Tormentor
             - Desire decreases starting at minute (20; 35 (AP)).
             - Tricky to harmonize with others due to its nature.
+            - [ ] Force? go when Pinged by a human.
         - [x] Outpost
         - [ ] Spell usage for Tormentor and Roshan
-        - [ ] Dynamic item builds
+            - [ ] Former Beginner AI
+            - [x] Own
+        - [ ] "Dynamic" item builds
         - [ ] Clear wave faster with abilities
         - [x] Heroes to play different positions (eg. Batrider Support, Abaddon Core, etc.)
         - [x] vscript to increase bots GPM and XPM (AP only), and for them to acquire neutral items (local host only)

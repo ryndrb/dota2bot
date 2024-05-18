@@ -2429,7 +2429,7 @@ function Site.GetAroundAllyCount( bot, nRadius )
 end
 
 function Site.GetPosition(bot)
-	local heroID = GetTeamPlayers(GetTeam())
+	local heroID = GetTeamPlayers(bot:GetTeam())
 	local pos = 1
 
 	if GetSelectedHeroName(heroID[1]) == bot:GetUnitName() then

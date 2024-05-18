@@ -321,7 +321,7 @@ function GetDesire()
 		if #hLaneCreepList > 0 
 		then
 			bot.farmLocation = J.GetCenterOfUnits(hLaneCreepList)
-			return BOT_MODE_DESIRE_HIGH;
+			return BOT_MODE_DESIRE_ABSOLUTE
 		else
 			if preferedCamp == nil then preferedCamp = J.Site.GetClosestNeutralSpwan(bot, availableCamp);end
 			
@@ -338,7 +338,7 @@ function GetDesire()
 				elseif farmState == 1
 				    then 
 						bot.farmLocation = preferedCamp.cattr.location
-					    return BOT_MODE_DESIRE_ABSOLUTE *0.89;
+					    return BOT_MODE_DESIRE_ABSOLUTE
 				else
 					
 					if aliveEnemyCount >= 3
@@ -387,7 +387,7 @@ function GetDesire()
 					
 					if botName == 'npc_dota_hero_medusa' and farmDistance < 133 then return 0.33 end 
 					bot.farmLocation = preferedCamp.cattr.location
-					return math.floor((RemapValClamped(farmDistance, 6000, 0, BOT_MODE_DESIRE_MODERATE, BOT_MODE_DESIRE_VERYHIGH))*10)/10;
+					return math.floor((RemapValClamped(farmDistance, 6000, 0, BOT_MODE_DESIRE_MODERATE, BOT_MODE_DESIRE_ABSOLUTE))*10)/10;
 				end
 			end
 		end
@@ -545,7 +545,7 @@ function Think()
 	if preferedCamp ~= nil then
 		local targetFarmLoc = preferedCamp.cattr.location;
 		local cDist = GetUnitToLocationDistance(bot, targetFarmLoc);
-		local nNeutrals = bot:GetNearbyNeutralCreeps(888);
+		local nNeutrals = bot:GetNearbyNeutralCreeps(1600);
 		if #nNeutrals >= 3 and cDist <= 600 and cDist > 240
 		   and ( bot:GetLevel() >= 10 or not nNeutrals[1]:IsAncientCreep())
 		then farmState = 1 end;
@@ -638,7 +638,7 @@ function Think()
 				bot:Action_MoveToLocation(targetFarmLoc);
 				return;
 		else
-			local neutralCreeps = bot:GetNearbyNeutralCreeps(1000); 
+			local neutralCreeps = bot:GetNearbyNeutralCreeps(1600); 
 			
 			if #neutralCreeps >= 2 then
 				

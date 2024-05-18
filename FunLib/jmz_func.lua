@@ -1720,7 +1720,7 @@ function J.IsStuck( bot )
 		local Et = bot:GetNearbyTowers( 450, true )
 		local At = bot:GetNearbyTowers( 450, false )
 		if bot:GetCurrentActionType() == BOT_ACTION_TYPE_MOVE_TO
-			-- and attackTarget == nil
+			and attackTarget == nil
 			and EAd > 2200 and TAd > 2200 and #Et == 0 and #At == 0
 			and DotaTime() > bot.stuckTime + 2.5
 			and GetUnitToLocationDistance( bot, bot.stuckLoc ) < 25
@@ -2759,9 +2759,16 @@ end
 
 
 function J.GetHP( bot )
+	local nCurHealth = bot:GetHealth()
+    local nMaxHealth = bot:GetMaxHealth()
 
-	return bot:GetHealth() / bot:GetMaxHealth()
+	if bot:GetUnitName() == 'npc_dota_hero_medusa'
+    then
+        nCurHealth = nCurHealth + bot:GetMana()
+        nMaxHealth = nMaxHealth + bot:GetMaxMana()
+    end
 
+	return nCurHealth / nCurHealth
 end
 
 
@@ -3462,7 +3469,7 @@ end
 
 function J.IsCore(bot)
 
-	local heroID = GetTeamPlayers(GetTeam())
+	local heroID = GetTeamPlayers(bot:GetTeam())
 
 	if GetSelectedHeroName(heroID[1]) == bot:GetUnitName()
 	or GetSelectedHeroName(heroID[2]) == bot:GetUnitName()
@@ -3482,8 +3489,8 @@ function J.GetCoresTotalNetworth()
 end
 
 function J.GetPosition(bot)
-	local heroID = GetTeamPlayers(GetTeam())
-	local pos
+	local heroID = GetTeamPlayers(bot:GetTeam())
+	local pos = -1
 
 	if GetSelectedHeroName(heroID[1]) == bot:GetUnitName() then
 		pos = 2
@@ -4399,8 +4406,7 @@ function J.GetTotalEstimatedDamageToTarget(nUnits, target)
 
 	for _, unit in pairs(nUnits)
 	do
-		if  J.IsValid(unit)
-		and not J.IsSuspiciousIllusion(unit)
+		if J.IsValid(unit)
 		then
 			dmg = dmg + unit:GetEstimatedDamageToTarget(true, target, 5, DAMAGE_TYPE_ALL)
 		end
