@@ -68,12 +68,12 @@ end
 -- Override this func for the script to use
 local orig_GetTeamPlayers = GetTeamPlayers
 
-function GetTeamPlayers()
-	local nIDs = orig_GetTeamPlayers(GetTeam())
-	if GetTeam() == TEAM_DIRE
+function GetTeamPlayers(nTeam)
+	local nIDs = orig_GetTeamPlayers(nTeam)
+	if nTeam == TEAM_DIRE
 	then
 		local sHuman = {}
-		for _, id in pairs(orig_GetTeamPlayers(GetTeam()))
+		for _, id in pairs(orig_GetTeamPlayers(nTeam))
 		do
 			if not IsPlayerBot(id)
 			then
@@ -121,10 +121,10 @@ function GetTeamPlayers()
 
 			return nIDs
 		else
-			return orig_GetTeamPlayers(GetTeam())
+			return orig_GetTeamPlayers(nTeam)
 		end
 	else
-		return orig_GetTeamPlayers(GetTeam())
+		return orig_GetTeamPlayers(nTeam)
 	end
 end
 
@@ -1782,9 +1782,8 @@ function J.IsStuck( bot )
 		local Et = bot:GetNearbyTowers( 450, true )
 		local At = bot:GetNearbyTowers( 450, false )
 		if bot:GetCurrentActionType() == BOT_ACTION_TYPE_MOVE_TO
-			and attackTarget == nil
-			and EAd > 2200 and TAd > 2200 and #Et == 0 and #At == 0
-			and DotaTime() > bot.stuckTime + 2.5
+			and attackTarget == nil and EAd > 2200 and TAd > 2200 and #Et == 0 and #At == 0
+			and DotaTime() > bot.stuckTime + 5.0
 			and GetUnitToLocationDistance( bot, bot.stuckLoc ) < 25
 		then
 			print( bot:GetUnitName().." is stuck" )
