@@ -815,10 +815,84 @@ function Think()
 		if GetGameMode() ~= 23 then return end
 	end
 
+	-- init IDs for Dire
+	local nIDs = GetTeamPlayers(GetTeam())
+	if GetTeam() == TEAM_DIRE
+	then
+		local sHuman = {}
+		for _, id in pairs(GetTeamPlayers(GetTeam()))
+		do
+			if not IsPlayerBot(id)
+			then
+				table.insert(sHuman, id)
+			end
+		end
+
+		if #sHuman > 0
+		then
+			local nBotIDs = {5, 6, 7, 8, 9}
+			nIDs = {}
+
+			for i = 1, #nBotIDs do table.insert(nIDs, nBotIDs[i]) end
+
+			-- Map it directly
+			for i = 1, #sHuman
+			do
+				for j = 1, 5
+				do
+					if sHuman[i] + 5 == nBotIDs[j]
+					then
+						nIDs[j] = sHuman[i]
+					end
+				end
+			end
+
+			-- "Shift" > 4 to the right
+			for i = #nIDs, 1, -1
+			do
+				local hCount = 0
+				if nIDs[i] > 4
+				then
+					for j = 1, #nIDs
+					do
+						if  nIDs[j + i] ~= nil
+						and nIDs[j + i] < 5
+						then
+							hCount = hCount + 1
+						end
+					end
+
+					nIDs[i] = nIDs[i] + hCount
+				end
+			end
+
+			-- Update Lane Roles
+			local pRoles = {
+				[nIDs[1]] = LANE_MID,
+				[nIDs[2]] = LANE_BOT,
+				[nIDs[3]] = LANE_TOP,
+				[nIDs[4]] = LANE_TOP,
+				[nIDs[5]] = LANE_BOT,
+			}
+
+			local temp = {}
+			for i, v in ipairs(nIDs) do temp[i] = v end
+
+			table.sort(temp)
+
+			tLaneAssignList = {
+				[1] = pRoles[temp[1]],
+				[2] = pRoles[temp[2]],
+				[3] = pRoles[temp[3]],
+				[4] = pRoles[temp[4]],
+				[5] = pRoles[temp[5]],
+			}
+		end
+	end
+
 	if nDelayTime == nil then nDelayTime = GameTime() fLastRand = RandomInt( 12, 34 )/10 end
 	if nDelayTime ~= nil and nDelayTime > GameTime() - fLastRand then return end
 
-	local nIDs = GetTeamPlayers( GetTeam() )
 	for i, id in pairs( nIDs )
 	do
 		if IsPlayerBot( id ) and GetSelectedHeroName( id ) == ""

@@ -65,6 +65,68 @@ then
 	print( GetTeam()..': Function Init Successful!' )
 end
 
+-- Override this func for the script to use
+local orig_GetTeamPlayers = GetTeamPlayers
+
+function GetTeamPlayers()
+	local nIDs = orig_GetTeamPlayers(GetTeam())
+	if GetTeam() == TEAM_DIRE
+	then
+		local sHuman = {}
+		for _, id in pairs(orig_GetTeamPlayers(GetTeam()))
+		do
+			if not IsPlayerBot(id)
+			then
+				table.insert(sHuman, id)
+			end
+		end
+
+		if #sHuman > 0
+		then
+			local nBotIDs = {5, 6, 7, 8, 9}
+			nIDs = {}
+
+			for i = 1, #nBotIDs do table.insert(nIDs, nBotIDs[i]) end
+
+			-- Map it directly
+			for i = 1, #sHuman
+			do
+				for j = 1, 5
+				do
+					if sHuman[i] + 5 == nBotIDs[j]
+					then
+						nIDs[j] = sHuman[i]
+					end
+				end
+			end
+
+			-- "Shift" > 4
+			for i = #nIDs, 1, -1
+			do
+				local hCount = 0
+				if nIDs[i] > 4
+				then
+					for j = 1, #nIDs
+					do
+						if  nIDs[j + i] ~= nil
+						and nIDs[j + i] < 5
+						then
+							hCount = hCount + 1
+						end
+					end
+
+					nIDs[i] = nIDs[i] + hCount
+				end
+			end
+
+			return nIDs
+		else
+			return orig_GetTeamPlayers(GetTeam())
+		end
+	else
+		return orig_GetTeamPlayers(GetTeam())
+	end
+end
 
 
 function J.SetUserHeroInit( nAbilityBuildList, nTalentBuildList, sBuyList, sSellList )
