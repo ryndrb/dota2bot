@@ -46,6 +46,9 @@ local harassTarget = nil
 
 local ShouldTryDispersingFromSpells = false
 
+local ShouldRetreatWhenTowerTargeted = false
+local RetreatWhenTowerTargetedTime = 0
+
 local TormentorLocation
 if GetTeam() == TEAM_RADIANT
 then
@@ -67,6 +70,13 @@ function GetDesire()
 	local nDesire = 0
 
 	SwapSmokeSupport()
+
+	ShouldRetreatWhenTowerTargeted = X.ConsiderRetreatWhenTowerTargeted()
+	if  ShouldRetreatWhenTowerTargeted
+	and DotaTime() < RetreatWhenTowerTargetedTime + 3.5
+	then
+		return BOT_ACTION_DESIRE_ABSOLUTE * 1.5
+	end
 
 	-- Should not retreat if under Wraith King's scepter
 	if bot:HasModifier('modifier_skeleton_king_reincarnation_scepter_active')
@@ -128,54 +138,48 @@ function GetDesire()
 
 	if J.Role['bStopAction'] then return 2.0 end
 
-	if  J.IsPushing(bot)
-	and bot:GetActiveModeDesire() >= BOT_MODE_DESIRE_HIGH
+	if IsHeroCore
 	then
-		return BOT_ACTION_DESIRE_NONE
-	else
-		if IsHeroCore
+		local botTarget, targetDesire = X.CarryFindTarget()
+		if botTarget ~= nil
 		then
-			local botTarget, targetDesire = X.CarryFindTarget()
-			if botTarget ~= nil
-			then
-				targetUnit = botTarget
-				bot:SetTarget(botTarget)
-				return targetDesire
-			end
+			targetUnit = botTarget
+			bot:SetTarget(botTarget)
+			return targetDesire
+		end
+	end
+
+	if IsSupport
+	then
+		local botTarget, targetDesire = X.SupportFindTarget()
+		if botTarget ~= nil
+		then
+			targetUnit = botTarget
+			bot:SetTarget(botTarget)
+			return targetDesire
+		end
+	end
+
+	if bot:IsAlive() and bot:DistanceFromFountain() > 4600
+	then
+		if towerTime ~= 0 and X.IsValid(towerCreep)
+			and DotaTime() < towerTime + towerCreepTime
+		then
+			return BOT_MODE_DESIRE_ABSOLUTE *0.9;
+		else
+			towerTime = 0;
+			towerCreepMode = false;
 		end
 
-		if IsSupport
+		towerCreepTime,towerCreep = X.ShouldAttackTowerCreep(bot);
+		if towerCreepTime ~= 0 and towerCreep ~= nil
 		then
-			local botTarget, targetDesire = X.SupportFindTarget()
-			if botTarget ~= nil
-			then
-				targetUnit = botTarget
-				bot:SetTarget(botTarget)
-				return targetDesire
+			if towerTime == 0 then 
+				towerTime = DotaTime(); 
+				towerCreepMode = true;
 			end
-		end
-
-		if bot:IsAlive() and bot:DistanceFromFountain() > 4600
-		then
-			if towerTime ~= 0 and X.IsValid(towerCreep)
-				and DotaTime() < towerTime + towerCreepTime
-			then
-				return BOT_MODE_DESIRE_ABSOLUTE *0.9;
-			else
-				towerTime = 0;
-				towerCreepMode = false;
-			end
-
-			towerCreepTime,towerCreep = X.ShouldAttackTowerCreep(bot);
-			if towerCreepTime ~= 0 and towerCreep ~= nil
-			then
-				if towerTime == 0 then 
-					towerTime = DotaTime(); 
-					towerCreepMode = true;
-				end
-				bot:SetTarget(towerCreep);
-				return BOT_MODE_DESIRE_ABSOLUTE *0.9;
-			end
+			bot:SetTarget(towerCreep);
+			return BOT_MODE_DESIRE_ABSOLUTE *0.9;
 		end
 	end
 	
@@ -220,6 +224,12 @@ function Think()
 	if ShouldTryDispersingFromSpells
 	then
 		bot:Action_MoveToLocation(J.GetTeamFountain() + RandomVector(1000))
+		return
+	end
+
+	if ShouldRetreatWhenTowerTargeted
+	then
+		bot:ActionPush_MoveToLocation(J.GetTeamFountain() + RandomVector(300))
 		return
 	end
 
@@ -2109,6 +2119,74 @@ function X.ConsiderDispersingFromSpells()
 		or bot:HasModifier('modifier_windrunner_gale_force'))
 	then
 		return true
+	end
+
+	return false
+end
+
+function X.ConsiderRetreatWhenTowerTargeted()
+	local nInRangeTowers = bot:GetNearbyTowers(1000, true)
+	if  nInRangeTowers ~= nil and #nInRangeTowers >= 1
+	and DotaTime() > RetreatWhenTowerTargetedTime + 3.5
+	then
+		local nTower = nInRangeTowers[1]
+		if  J.IsValidBuilding(nTower)
+		and (J.IsTier1(nTower) or J.IsTier2(nTower))
+		then
+			local nTowerTarget = nTower:GetAttackTarget()
+			if nTowerTarget == bot
+			or X.IsChasingSomeoneToKill()
+			then
+				RetreatWhenTowerTargetedTime = DotaTime()
+				return true
+			end
+		end
+	end
+
+	return false
+end
+
+function X.IsChasingSomeoneToKill()
+	local botTarget = J.GetProperTarget(bot)
+
+	if J.IsGoingOnSomeone(bot)
+	then
+		if  J.IsValidTarget(botTarget)
+		and J.IsInRange(bot, botTarget, 1600)
+		and J.IsChasingTarget(bot, botTarget)
+		then
+			local nChasingAlly = {}
+			local nInRangeAlly = J.GetAlliesNearLoc(bot:GetLocation(), 1600)
+			for _, allyHero in pairs(nInRangeAlly)
+			do
+				if  J.IsValidHero(allyHero)
+				and J.IsChasingTarget(allyHero, botTarget)
+				and allyHero ~= bot
+				and not J.IsRetreating(allyHero)
+				and not J.IsSuspiciousIllusion(allyHero)
+				then
+					table.insert(nChasingAlly, allyHero)
+				end
+			end
+
+			table.insert(nChasingAlly, bot)
+
+			local nHealth = botTarget:GetHealth()
+			if botTarget:GetUnitName() == 'npc_dota_hero_medusa'
+			then
+				nHealth = nHealth + botTarget:GetMana()
+			end
+
+			if nHealth > J.GetTotalEstimatedDamageToTarget(nChasingAlly, botTarget)
+			then
+				local nEnemyTowers = botTarget:GetNearbyTowers(888, true)
+
+				if nEnemyTowers ~= nil and #nEnemyTowers >= 1
+				then
+					return true
+				end
+			end
+		end
 	end
 
 	return false

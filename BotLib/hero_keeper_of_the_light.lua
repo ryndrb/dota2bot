@@ -587,7 +587,8 @@ function X.ConsiderChakraMagic()
 end
 
 function X.ConsiderSolarBind()
-    if not SolarBind:IsFullyCastable()
+    if SolarBind:IsHidden()
+    or not SolarBind:IsFullyCastable()
     then
         return BOT_ACTION_DESIRE_NONE, nil
     end

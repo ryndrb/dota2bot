@@ -17,6 +17,11 @@ function GetDesire()
 	and J.IsInLaningPhase()
 	and bot:GetLevel() < 8
 	then
+		if bot:WasRecentlyDamagedByTower(1)
+		then
+			return BOT_MODE_DESIRE_VERYHIGH
+		end
+
 		local botTarget = J.GetProperTarget(bot)
 		if  J.IsValidTarget(botTarget)
 		and J.IsInRange(bot, botTarget, 1600)
@@ -53,7 +58,7 @@ function GetDesire()
 				if nEnemyTowers ~= nil and #nEnemyTowers >= 1
 				or nEnemyLaneFrontAmount > 0
 				then
-					return bot:GetActiveModeDesire() + 0.1
+					return BOT_MODE_DESIRE_VERYHIGH
 				end
 			end
 		end

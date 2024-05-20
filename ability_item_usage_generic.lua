@@ -4190,7 +4190,7 @@ function X.GetLaningTPLocation( bot, nMinTPDistance, botLocation )
 		tp = true
 	end
 
-	return GetLaneFrontLocation(GetTeam(), laneToTP, 100), tp
+	return GetLaneFrontLocation(GetTeam(), laneToTP, -650), tp
 end
 
 function X.GetDefendTPLocation( nLane )
@@ -4507,7 +4507,7 @@ X.ConsiderItemDesire["item_tpscroll"] = function( hItem )
 	--守塔
 	if J.IsDefending( bot )
 		and nModeDesire > BOT_MODE_DESIRE_MODERATE
-		and nEnemyCount == 0
+		-- and nEnemyCount == 0
 	then
 		local nDefendLane, sLane = LANE_MID, 'tower_mid'
 		if nMode == BOT_MODE_DEFEND_TOWER_TOP then nDefendLane, sLane = LANE_TOP, 'tower_top' end

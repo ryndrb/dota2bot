@@ -4788,6 +4788,30 @@ function J.IsEnemyHero(hero)
 	end
 end
 
+function J.IsTier1(tower)
+	local nTower = {
+		TOWER_TOP_1,
+		TOWER_MID_1,
+		TOWER_BOT_1,
+	}
+
+	for i = 1, #nTower do if nTower[i] == tower then return true end end
+
+	return false
+end
+
+function J.IsTier2(tower)
+	local nTower = {
+		TOWER_TOP_2,
+		TOWER_MID_2,
+		TOWER_BOT_2,
+	}
+
+	for i = 1, #nTower do if nTower[i] == tower then return true end end
+
+	return false
+end
+
 function J.ConsolePrintActiveMode(bot)
 	local mode = bot:GetActiveMode()
 
