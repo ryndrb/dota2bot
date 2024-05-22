@@ -359,6 +359,7 @@ Item['sCanNotSwitchItems'] = {
 		'item_cheese',
 		'item_bloodstone',
 		'item_gem',
+		'item_rapier',
 }
 local tCanNotSwitchItemList = {}
 for _, sItem in pairs( Item['sCanNotSwitchItems'] )

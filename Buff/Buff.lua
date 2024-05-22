@@ -43,20 +43,12 @@ function Buff:Init()
         if not Helper.IsTurboMode()
         then
             for _, h in pairs(TeamRadiant) do
-                if Helper.IsCore(h, TeamRadiant)
-                then
-                    GPM.UpdateBotGold(h)
-                end
-
+                GPM.UpdateBotGold(h, TeamRadiant)
                 XP.UpdateXP(h, TeamRadiant)
             end
 
             for _, h in pairs(TeamDire) do
-                if Helper.IsCore(h, TeamDire)
-                then
-                    GPM.UpdateBotGold(h)
-                end
-
+                GPM.UpdateBotGold(h, TeamDire)
                 XP.UpdateXP(h, TeamDire)
             end
         end

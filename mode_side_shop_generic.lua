@@ -45,6 +45,19 @@ function GetDesire()
 		return BOT_ACTION_DESIRE_NONE
 	end
 
+	local nAliveHeroesList = {}
+    for _, h in pairs(GetUnitList(UNIT_LIST_ALLIED_HEROES)) do
+        if  h ~= nil
+		and h:IsAlive()
+		and not J.IsSuspiciousIllusion(h)
+		and not J.IsMeepoClone(h)
+        then
+            table.insert(nAliveHeroesList, h)
+        end
+    end
+
+	local initDPS = J.HasEnoughDPSForTormentor(nAliveHeroesList)
+
 	if DidSomeoneSeeTormentorAlive()
 	then
 		bot.tormentorState = true
@@ -138,7 +151,7 @@ function GetDesire()
 	if  bot.tormentorState
 	and aveCoreLevel > 12.9
 	and aveSuppLevel > 9.9
-    and (((bot.lastKillTime == 0 and aliveAlly >= 5)
+    and (( (bot.lastKillTime == 0 and (aliveAlly >= 5 or initDPS))
         or (bot.lastKillTime > 0 and aliveAlly >= 3)
 		or (GetAttackingCount() >= 3)))
 	and J.GetAliveAllyCoreCount() >= 2
@@ -159,7 +172,7 @@ function GetDesire()
 
         if IsEnoughAllies()
         then
-            return BOT_ACTION_DESIRE_VERYHIGH
+            return BOT_ACTION_DESIRE_ABSOLUTE
         end
 
 		if nAllyInLoc ~= nil and #nAllyInLoc >= 2
@@ -201,6 +214,7 @@ function Think()
 				then
 					bot.wasAttackingTormentor = true
 					bot:Action_AttackUnit(c, false)
+					return
 				end
 
 				if  (DotaTime() - tormentorMessageTime) > 15
@@ -209,6 +223,7 @@ function Think()
 					tormentorMessageTime = DotaTime()
 					bot:ActionImmediate_Chat("let's try tormentor?", false)
 					bot:ActionImmediate_Ping(c:GetLocation().x, c:GetLocation().y, true)
+					return
 				end
 			end
 		end
@@ -257,7 +272,8 @@ function IsEnoughAllies()
 		end
 	end
 
-	return (((bot.lastKillTime == 0 and heroCount >= 5) or (bot.lastKillTime > 0 and heroCount >= 3))) and coreCount >= 2
+	return ((((bot.lastKillTime == 0 and heroCount >= 5) or (bot.lastKillTime > 0 and heroCount >= 3))) and coreCount >= 2)
+		or J.HasEnoughDPSForTormentor(J.GetAlliesNearLoc(TormentorLocation, 700))
 end
 
 function DoesAllHaveShard()

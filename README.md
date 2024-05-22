@@ -5,7 +5,7 @@ Just trying to alleviate cheesiness and make bots movement more organic and obje
 
 Evasion/damage reduction/aura items are just too good in bots games (since itemization isn't dynamic). It's also still very lineup dependent on how well they'll perform.
 
-Worth noting that I also use a vscript to improve the bots GPM and XPM (AP only), and also have them able to get neutral items (Check Buff).
+Worth noting that I also use a vscript to improve the bots GPM and XPM (AP only), and also have them able to get neutral items (Check Buff; Recommended to use).
 
 To anyone who've found this or is using it, if you have any feedback in improving the script, kindly post them on the Steam Workshop page: https://steamcommunity.com/workshop/filedetails/discussion/3139791706/4143942846477191222/
 
@@ -26,7 +26,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
         - Under the `Lobby Settings` at the bottom, select `Edit`. Then, in the drop down `Radiant Bots` and `Dire Bots` menus, select `Local Dev Script`.
         - The `Server Location` must be `Local Host`.
         - Click OK, and it should be good to go.
-            - The lobby has 5 slots (This is for Radiant only for now):
+            - The lobby has 5 slots
                 -  1st is for Position 2 (Mid Lane)
                 -  2nd is for Position 3 (Off Lane)
                 -  3rd is for Position 1 (Safe Lane)

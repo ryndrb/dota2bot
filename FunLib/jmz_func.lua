@@ -3799,6 +3799,71 @@ function J.HasEnoughDPSForRoshan(heroes)
     return DPS >= DPSThreshold
 end
 
+function J.HasEnoughDPSForTormentor(heroes)
+	local nDefaultSpawnTimes = {20, 30, 40, 50, 60, 70, 80, 90, 100}
+	local aDPS = 0
+	local DPS = 0
+	local DPSThreshold = 0
+	local plannedTimeToKill = 20
+
+	if J.IsModeTurbo() then for i = 1, #nDefaultSpawnTimes do nDefaultSpawnTimes[i] = nDefaultSpawnTimes[i] - 10 end end
+
+	local nMul = 1
+	for i = 1, #nDefaultSpawnTimes
+	do
+		if nDefaultSpawnTimes[i + 1] == nil
+		then
+			nMul = 8
+			break
+		end
+
+		if  nDefaultSpawnTimes[i + 1] ~= nil
+		and DotaTime() > nDefaultSpawnTimes[i] * 60 and DotaTime() < nDefaultSpawnTimes[i + 1] * 60
+		then
+			nMul = i
+			break
+		end
+	end
+
+	-- Tormentor Stats
+	local baseHealth = 2500
+	local baseArmor = 20
+	-- local baseRegen = 100
+	local healthIncreasePerDeath = 200
+	-- local regenIncreasePerDeath = 100
+
+	local dmgReflected = 90
+	local reflectedDmgIncreasePerDeath = 20
+
+	local totalHealth = 0
+	local totalArmor = 0
+	for _, h in pairs(heroes)
+	do
+		totalArmor = totalArmor + h:GetArmor()
+		totalHealth = totalHealth + h:GetHealth()
+	end
+
+	local tormentorHealth = baseHealth * (healthIncreasePerDeath * nMul)
+	-- local tormentorRegen = baseRegen * (regenIncreasePerDeath * nMul)
+	local tormentorDmgReflected = dmgReflected * (reflectedDmgIncreasePerDeath * nMul)
+
+	for _, h in pairs(heroes)
+	do	
+		local tormentorArmor = baseArmor - J.GetArmorReducers(h)
+		local attackDamage = h:GetAttackDamage()
+		local attackSpeed = h:GetAttackSpeed()
+		local dps = attackDamage * attackSpeed * (1 - tormentorArmor / (tormentorArmor + 20))
+		
+		DPS = DPS + dps
+		aDPS = aDPS + attackDamage * attackSpeed * (1 - totalArmor / (totalArmor + h:GetArmor()))
+	end
+
+	aDPS = (aDPS / #heroes) * (tormentorDmgReflected / 100)
+	DPS = DPS / #heroes
+	DPSThreshold = tormentorHealth / plannedTimeToKill
+	return DPS >= DPSThreshold and aDPS < totalHealth
+end
+
 function J.IsNotSelf(bot, ally)
 	if bot:GetUnitName() ~= ally:GetUnitName()
 	then
@@ -4778,6 +4843,25 @@ function J.GetLanePartner(bot)
 	return nil
 end
 
+function J.GetClosestCore(bot, nRadius)
+	for i = 1, 5
+	do
+		local member = GetTeamMember(i)
+
+		if  member ~= nil
+		and member:IsAlive()
+		and member ~= bot
+		and J.IsCore(bot)
+		and GetUnitToUnitDistance(bot, member) <= nRadius
+		and not J.IsSuspiciousIllusion(member)
+		then
+			return member
+		end
+	end
+
+	return nil
+end
+
 function J.IsEnemyHero(hero)
 	if  hero ~= nil
 	and hero:GetTeam() ~= GetBot():GetTeam()
@@ -4810,6 +4894,22 @@ function J.IsTier2(tower)
 	for i = 1, #nTower do if nTower[i] == tower then return true end end
 
 	return false
+end
+
+function J.GetItem2(bot, sItemName)
+	for i = 0, 16
+	do
+		local item = bot:GetItemInSlot(i)
+		if item ~= nil
+		then
+			if string.find(item:GetName(), sItemName)
+			then
+				return item
+			end
+		end
+	end
+
+	return nil
 end
 
 function J.ConsolePrintActiveMode(bot)

@@ -18,19 +18,30 @@ function GPM.TargetGPM(time)
     end
 end
 
-function GPM.UpdateBotGold(bot)
+function GPM.UpdateBotGold(bot, nTeam)
+    local isCore = Helper.IsCore(bot, nTeam)
     local gameTime = Helper.DotaTime() / 60
     local targetGPM = GPM.TargetGPM(gameTime)
 
     local currentGPM = PlayerResource:GetGoldPerMin(bot:GetPlayerID())
-    local goldPerTick = targetGPM / currentGPM
+    local expected = targetGPM * (gameTime / 60)
+    local actual = currentGPM * (gameTime / 60)
+    local missing = expected - actual
+    local goldPerTick = math.max(1, missing / (60 * 2))
 
-    if goldPerTick < 1 then goldPerTick = 1 end
+    -- Give Supports "passive" Philosopher's stone
+    -- Juice up cores more
+    local nAdd = 2.5
+    if not isCore
+    then
+        nAdd = 75 / 60
+        goldPerTick = 0
+    end
 
     if  bot:IsAlive()
     and gameTime > 0
     then
-        bot:ModifyGold(1 + math.ceil(goldPerTick), true, 0)
+        bot:ModifyGold(nAdd + math.ceil(goldPerTick), true, 0)
     end
 end
 

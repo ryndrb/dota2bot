@@ -1,11 +1,3 @@
-----------------------------------------------------------------------------------------------------
---- The Creation Come From: BOT EXPERIMENT Credit:FURIOUSPUPPY
---- BOT EXPERIMENT Author: Arizona Fauzie 2018.11.21
---- Link:http://steamcommunity.com/sharedfiles/filedetails/?id=837040016
---- Refactor: 决明子 Email: dota2jmz@163.com 微博@Dota2_决明子
---- Link:http://steamcommunity.com/sharedfiles/filedetails/?id=1573671599
---- Link:http://steamcommunity.com/sharedfiles/filedetails/?id=1627071163
-----------------------------------------------------------------------------------------------------
 if GetBot():IsInvulnerable() or not GetBot():IsHero() or not string.find(GetBot():GetUnitName(), "hero") or  GetBot():IsIllusion() then
 	return;
 end
@@ -49,6 +41,8 @@ local ShouldTryDispersingFromSpells = false
 local ShouldRetreatWhenTowerTargeted = false
 local RetreatWhenTowerTargetedTime = 0
 
+local ShouldHelpWhenCoreIsTargeted = false
+
 local TormentorLocation
 if GetTeam() == TEAM_RADIANT
 then
@@ -69,15 +63,6 @@ function GetDesire()
 
 	local nDesire = 0
 
-	SwapSmokeSupport()
-
-	ShouldRetreatWhenTowerTargeted = X.ConsiderRetreatWhenTowerTargeted()
-	if  ShouldRetreatWhenTowerTargeted
-	and DotaTime() < RetreatWhenTowerTargetedTime + 3.5
-	then
-		return BOT_ACTION_DESIRE_ABSOLUTE * 1.5
-	end
-
 	-- Should not retreat if under Wraith King's scepter
 	if bot:HasModifier('modifier_skeleton_king_reincarnation_scepter_active')
 	then
@@ -87,6 +72,21 @@ function GetDesire()
 			bot:SetTarget(targetUnit)
 			return BOT_ACTION_DESIRE_ABSOLUTE * 1.5
 		end
+	end
+
+	ShouldRetreatWhenTowerTargeted = X.ConsiderRetreatWhenTowerTargeted()
+	if  ShouldRetreatWhenTowerTargeted
+	and DotaTime() < RetreatWhenTowerTargetedTime + 3.5
+	then
+		return BOT_ACTION_DESIRE_ABSOLUTE * 1.5
+	end
+
+	-- Consider help nearby core that's being targeted
+	targetUnit, ShouldHelpWhenCoreIsTargeted = X.ConsiderHelpWhenCoreIsTargeted()
+	if ShouldHelpWhenCoreIsTargeted
+	then
+		bot:SetTarget(targetUnit)
+		return BOT_ACTION_DESIRE_ABSOLUTE
 	end
 
 	nDesire = ConsiderHarassInLaningPhase()
@@ -131,6 +131,8 @@ function GetDesire()
 	then
 		return nDesire
 	end
+
+	SwapSmokeSupport()
 
 	TrySwapInvItemForCheese()
 
@@ -2061,7 +2063,7 @@ function SwapSmokeSupport()
 
 			if bot:GetItemSlotType(smokeSlot) == ITEM_SLOT_TYPE_BACKPACK
 			then
-				local leastCostItem = J.FindLeastExpensiveItemSlot()
+				local leastCostItem = X.FindLeastExpensiveItemSlot()
 	
 				if leastCostItem ~= -1
 				then
@@ -2072,7 +2074,7 @@ function SwapSmokeSupport()
 	end
 end
 
-function J.FindLeastExpensiveItemSlot()
+function X.FindLeastExpensiveItemSlot()
 	local minCost = 100000
 	local idx = -1
 
@@ -2190,4 +2192,37 @@ function X.IsChasingSomeoneToKill()
 	end
 
 	return false
+end
+
+function X.ConsiderHelpWhenCoreIsTargeted()
+	local nRadius = 3500
+	local nModeDesire = bot:GetActiveModeDesire()
+	local nClosestCore = J.GetClosestCore(bot, nRadius)
+	local botTarget = J.GetProperTarget(bot)
+
+	if  nClosestCore ~= nil
+	and not (J.IsGoingOnSomeone(bot) and J.IsValidTarget(botTarget) and J.IsInRange(bot, botTarget, 1000))
+	and not J.IsCore(bot)
+	and not (J.IsRetreating(bot) and nModeDesire > 0.7)
+	then
+		local nInRangeAlly = J.GetAlliesNearLoc(nClosestCore:GetLocation(), nClosestCore:GetCurrentVisionRange())
+		local nInRangeEnemy = J.GetEnemiesNearLoc(nClosestCore:GetLocation(), nClosestCore:GetCurrentVisionRange())
+
+		for _, enemyHero in pairs(nInRangeEnemy)
+		do
+			if  J.IsValidHero(enemyHero)
+			and GetUnitToUnitDistance(bot, nClosestCore) <= nRadius
+			and nInRangeAlly ~= nil and nInRangeEnemy ~= nil
+			and (#nInRangeAlly + 1 >= #nInRangeEnemy)
+			then
+				if (enemyHero:GetTarget() == nClosestCore or enemyHero:GetAttackTarget() == nClosestCore)
+				or nClosestCore:WasRecentlyDamagedByHero(enemyHero, 1)
+				then
+					return enemyHero, true
+				end
+			end
+		end
+	end
+
+	return nil, false
 end
