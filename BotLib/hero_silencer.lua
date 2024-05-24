@@ -210,23 +210,23 @@ function X.SkillsComplement()
 		return
 	end
 
-	castEDesire, castETarget = X.ConsiderE()
-	if ( castEDesire > 0 )
-	then
+	-- castEDesire, castETarget = X.ConsiderE()
+	-- if ( castEDesire > 0 )
+	-- then
 
-		J.SetQueuePtToINT( bot, false )
+	-- 	J.SetQueuePtToINT( bot, false )
 
-		-- bot:ActionQueue_UseAbilityOnEntity( abilityE, castETarget )
-		if bot:HasScepter()
-		and castETarget ~= nil
-		then
-			bot:ActionQueue_UseAbilityOnLocation( abilityE, castETarget:GetLocation() )
-		else
-			bot:ActionQueue_UseAbilityOnEntity( abilityE, castETarget )
-		end
+	-- 	-- bot:ActionQueue_UseAbilityOnEntity( abilityE, castETarget )
+	-- 	if bot:HasScepter()
+	-- 	and castETarget ~= nil
+	-- 	then
+	-- 		bot:ActionQueue_UseAbilityOnLocation( abilityE, castETarget:GetLocation() )
+	-- 	else
+	-- 		bot:ActionQueue_UseAbilityOnEntity( abilityE, castETarget )
+	-- 	end
 
-		return
-	end
+	-- 	return
+	-- end
 
 	castWDesire, castWTarget = X.ConsiderW()
 	if ( castWDesire > 0 )

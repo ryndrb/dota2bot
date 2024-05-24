@@ -107,16 +107,16 @@ local ForgeSpiritDesire
 local IceWallDesire
 local DeafeningBlastDesire, DeafeningBlastLocation
 
-local ColdSnapCooldownTime          = 20
-local GhostWalkCooldownTime         = 35
-local TornadoCooldownTime           = 30
-local EMPCooldownTime               = 30
-local AlacrityCooldownTime          = 17
-local ChaosMeteorCooldownTime       = 55
-local SunstrikeCooldownTime         = 25
-local ForgeSpiritCooldownTime       = 30
-local IceWallCooldownTime           = 25
-local DeafeningBlastCooldownTime    = 40
+local ColdSnapCooldownTime          = 18
+local GhostWalkCooldownTime         = 32
+local TornadoCooldownTime           = 27
+local EMPCooldownTime               = 27
+local AlacrityCooldownTime          = 15
+local ChaosMeteorCooldownTime       = 50
+local SunstrikeCooldownTime         = 23
+local ForgeSpiritCooldownTime       = 27
+local IceWallCooldownTime           = 23
+local DeafeningBlastCooldownTime    = 36
 
 local ColdSnapCastedTime          = -100
 local GhostWalkCastedTime         = -100
@@ -1659,16 +1659,16 @@ function CheckForCooldownReductions()
 
     if not J.HasItem(bot, 'item_octarine_core')
     then
-        ColdSnapCooldownTime          = 20
-        GhostWalkCooldownTime         = 35
-        TornadoCooldownTime           = 30
-        EMPCooldownTime               = 30
-        AlacrityCooldownTime          = 17
-        ChaosMeteorCooldownTime       = 55
-        SunstrikeCooldownTime         = 25
-        ForgeSpiritCooldownTime       = 30
-        IceWallCooldownTime           = 25
-        DeafeningBlastCooldownTime    = 40
+        ColdSnapCooldownTime          = 18
+        GhostWalkCooldownTime         = 32
+        TornadoCooldownTime           = 27
+        EMPCooldownTime               = 27
+        AlacrityCooldownTime          = 15
+        ChaosMeteorCooldownTime       = 50
+        SunstrikeCooldownTime         = 23
+        ForgeSpiritCooldownTime       = 27
+        IceWallCooldownTime           = 23
+        DeafeningBlastCooldownTime    = 36
         flag1 = false
     end
 end

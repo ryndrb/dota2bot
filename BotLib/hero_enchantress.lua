@@ -314,17 +314,17 @@ function X.ConsiderEnchant()
 	local nNeutralCreeps = bot:GetNearbyNeutralCreeps(nCastRange)
     local botTarget = J.GetProperTarget(bot)
 
-    local nEnemyHeroes = bot:GetNearbyHeroes(nCastRange, true, BOT_MODE_NONE)
-    for _, enemyHero in pairs(nEnemyHeroes)
-    do
-        if  J.IsValidHero(enemyHero)
-        and J.CanCastOnNonMagicImmune(enemyHero)
-        and J.CanKillTarget(enemyHero, nDamage * nDuration, DAMAGE_TYPE_ALL)
-        and not J.IsSuspiciousIllusion(enemyHero)
-        then
-            return BOT_ACTION_DESIRE_HIGH, enemyHero
-        end
-    end
+    -- local nEnemyHeroes = bot:GetNearbyHeroes(nCastRange, true, BOT_MODE_NONE)
+    -- for _, enemyHero in pairs(nEnemyHeroes)
+    -- do
+    --     if  J.IsValidHero(enemyHero)
+    --     and J.CanCastOnNonMagicImmune(enemyHero)
+    --     and J.CanKillTarget(enemyHero, nDamage * nDuration, DAMAGE_TYPE_ALL)
+    --     and not J.IsSuspiciousIllusion(enemyHero)
+    --     then
+    --         return BOT_ACTION_DESIRE_HIGH, enemyHero
+    --     end
+    -- end
 
     local nAllyHeroes = bot:GetNearbyHeroes(nCastRange, false, BOT_MODE_NONE)
     for _, allyHero in pairs(nAllyHeroes)

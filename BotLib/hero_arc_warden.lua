@@ -191,7 +191,7 @@ local SparkWraith 	= bot:GetAbilityByName('arc_warden_spark_wraith')
 local TempestDouble = bot:GetAbilityByName('arc_warden_tempest_double')
 
 local FluxDesire, FluxTarget
-local MagneticFieldDesire, MagneticFieldLocation
+local MagneticFieldDesire
 local SparkWraithDesire, SparkWraithLocation
 local TempestDoubleDesire, TempestDoubleLocation
 
@@ -211,11 +211,11 @@ function X.SkillsComplement()
 		return
 	end
 
-	MagneticFieldDesire, MagneticFieldLocation = X.ConsiderMagneticField()
+	MagneticFieldDesire = X.ConsiderMagneticField()
 	if MagneticFieldDesire > 0
 	then
 		J.SetQueuePtToINT(bot, false)
-		bot:ActionQueue_UseAbilityOnLocation(MagneticField, MagneticFieldLocation)
+		bot:ActionQueue_UseAbility(MagneticField)
 		return
 	end
 
@@ -370,23 +370,12 @@ function X.ConsiderMagneticField()
 	local nCastRange = J.GetProperCastRange(false, bot, MagneticField:GetCastRange())
 	local nRadius = MagneticField:GetSpecialValueInt('radius')
 
-	local nEnemyHeroes = bot:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
-	for _, enemyHero in pairs(nEnemyHeroes)
-	do
-		if  J.IsValidHero(enemyHero)
-		and enemyHero:GetAttackTarget() == GetAncient(GetTeam())
-		and not J.IsSuspiciousIllusion(enemyHero)
-		and not J.IsDisabled(enemyHero)
-		then
-			return BOT_ACTION_DESIRE_HIGH, GetAncient(GetTeam()):GetLocation()
-		end
-	end
-
 	if J.IsInTeamFight(bot, 1200)
 	then
 		local nLocationAoE = bot:FindAoELocation(false, true, bot:GetLocation(), nCastRange, nRadius, 0, 0)
 
-		if nLocationAoE.count >= 2
+		if  nLocationAoE.count >= 2
+		and GetUnitToLocationDistance(bot, nLocationAoE.targetloc) <= bot:GetAttackRange()
 		then
 			local nInRangeAlly = J.GetAlliesNearLoc(nLocationAoE.targetloc, nRadius)
 			if  J.IsValidHero(nInRangeAlly[1])
@@ -394,7 +383,7 @@ function X.ConsiderMagneticField()
 			and GetUnitToUnitDistance(nInRangeAlly[1], nInRangeAlly[1]:GetAttackTarget()) <= nInRangeAlly[1]:GetAttackRange() + 50
 			and not nInRangeAlly[1]:HasModifier('modifier_arc_warden_magnetic_field')
 			then
-				return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc
+				return BOT_ACTION_DESIRE_HIGH
 			end
 		end
 	end
@@ -409,7 +398,7 @@ function X.ConsiderMagneticField()
 			do
 				local allyTarget = allyHero:GetAttackTarget()
 				if  J.IsValidHero(allyHero)
-				and (J.IsInRange(bot, allyHero, nCastRange) and not allyHero:HasModifier('modifier_arc_warden_magnetic_field'))
+				and (J.IsInRange(bot, allyHero, nRadius) and not allyHero:HasModifier('modifier_arc_warden_magnetic_field'))
 				and (J.IsValidTarget(allyTarget) and GetUnitToUnitDistance(allyHero, allyTarget) <= allyHero:GetAttackRange())
 				and not J.IsSuspiciousIllusion(allyHero)
 				and not J.IsSuspiciousIllusion(allyTarget)
@@ -421,7 +410,7 @@ function X.ConsiderMagneticField()
 					if  nInRangeAlly ~= nil and nInRangeEnemy ~= nil
 					and #nInRangeAlly >= #nInRangeEnemy
 					then
-						return BOT_ACTION_DESIRE_HIGH, allyHero:GetLocation()
+						return BOT_ACTION_DESIRE_HIGH
 					end
 				end
 			end
@@ -443,7 +432,7 @@ function X.ConsiderMagneticField()
 			or (nEnemyBarracks ~= nil and #nEnemyBarracks >= 1)
 			or (sEnemyTowers ~= nil and #sEnemyTowers >= 1)
 			then
-				return BOT_ACTION_DESIRE_HIGH, bot:GetLocation()
+				return BOT_ACTION_DESIRE_HIGH
 			end
 		end
 	end
@@ -458,14 +447,14 @@ function X.ConsiderMagneticField()
 		then
 			if nEnemyLaneCreeps ~= nil and #nEnemyLaneCreeps >= 3
 			then
-				return BOT_ACTION_DESIRE_HIGH, bot:GetLocation()
+				return BOT_ACTION_DESIRE_HIGH
 			end
 
 			local nNeutralCreeps = bot:GetNearbyNeutralCreeps(888)
 			if  nNeutralCreeps ~= nil
 			and (#nNeutralCreeps >= 3 or (#nNeutralCreeps >= 2 and nNeutralCreeps[1]:IsAncientCreep()))
 			then
-				return BOT_ACTION_DESIRE_HIGH, bot:GetLocation()
+				return BOT_ACTION_DESIRE_HIGH
 			end
 		end
 	end
@@ -477,7 +466,7 @@ function X.ConsiderMagneticField()
 		and J.IsInRange(bot, botTarget, bot:GetAttackRange())
 		and J.IsAttacking(bot)
 		then
-			return BOT_ACTION_DESIRE_HIGH, bot:GetLocation()
+			return BOT_ACTION_DESIRE_HIGH
 		end
 	end
 
@@ -488,7 +477,7 @@ function X.ConsiderMagneticField()
 		and J.IsInRange(bot, botTarget, bot:GetAttackRange())
 		and J.IsAttacking(bot)
 		then
-			return BOT_ACTION_DESIRE_HIGH, bot:GetLocation()
+			return BOT_ACTION_DESIRE_HIGH
 		end
 	end
 

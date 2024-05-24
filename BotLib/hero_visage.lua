@@ -158,12 +158,13 @@ function X.SkillsComplement()
         return
     end
 
-    SummonFamiliarsDesire = X.ConsiderSummonFamiliars()
-    if SummonFamiliarsDesire > 0
-    then
-        bot:Action_UseAbility(SummonFamiliars)
-        return
-    end
+    -- Bugged...
+    -- SummonFamiliarsDesire = X.ConsiderSummonFamiliars()
+    -- if SummonFamiliarsDesire > 0
+    -- then
+    --     bot:Action_UseAbility(SummonFamiliars)
+    --     return
+    -- end
 end
 
 function X.ConsiderGraveChill()
@@ -381,7 +382,7 @@ function X.ConsiderSummonFamiliars()
         return BOT_ACTION_DESIRE_NONE
     end
 
-    local nFamiliarCount = SummonFamiliars:GetSpecialValueInt('tooltip_familiar_count')
+    local nFamiliarCount = SummonFamiliars:GetSpecialValueInt('familiar_count')
     local nCurrFamiliar = 0
 
 	for _, unit in pairs(GetUnitList(UNIT_LIST_ALLIES))

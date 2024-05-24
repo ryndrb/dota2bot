@@ -185,15 +185,15 @@ function X.MinionThink(hMinionUnit)
     Minion.MinionThink(hMinionUnit)
 end
 
-local MeatHook  = bot:GetAbilityByName('pudge_meat_hook')
-local Rot       = bot:GetAbilityByName('pudge_rot')
-local FleshHeap = bot:GetAbilityByName('pudge_flesh_heap')
+local MeatHook   = bot:GetAbilityByName('pudge_meat_hook')
+local Rot        = bot:GetAbilityByName('pudge_rot')
+local MeatShield = bot:GetAbilityByName('pudge_flesh_heap')
 -- local Eject     = bot:GetAbilityByName('')
-local Dismember = bot:GetAbilityByName('pudge_dismember')
+local Dismember  = bot:GetAbilityByName('pudge_dismember')
 
 local MeatHookDesire, MeatHookLocation
 local RotDesire
-local FleshHeapDesire
+local MeatShieldDesire
 -- local EjectDesire
 local DismemberDesire, DismemberTarget
 
@@ -214,10 +214,10 @@ function X.SkillsComplement()
         return
     end
 
-    FleshHeapDesire = X.ConsiderFleshHeap()
-    if FleshHeapDesire > 0
+    MeatShieldDesire = X.ConsiderMeatShield()
+    if MeatShieldDesire > 0
     then
-        bot:Action_UseAbility(FleshHeap)
+        bot:Action_UseAbility(MeatShield)
         return
     end
 
@@ -230,10 +230,10 @@ function X.SkillsComplement()
             bot:Action_UseAbility(Rot)
         end
 
-        if  FleshHeap:IsTrained()
-        and FleshHeap:IsFullyCastable()
+        if  MeatShield:IsTrained()
+        and MeatShield:IsFullyCastable()
         then
-            bot:Action_UseAbility(FleshHeap)
+            bot:Action_UseAbility(MeatShield)
         end
 
         bot:Action_UseAbilityOnEntity(Dismember, DismemberTarget)
@@ -694,8 +694,8 @@ function X.ConsiderRot()
     return BOT_ACTION_DESIRE_NONE
 end
 
-function X.ConsiderFleshHeap()
-    if not FleshHeap:IsFullyCastable()
+function X.ConsiderMeatShield()
+    if not MeatShield:IsFullyCastable()
     then
         return BOT_ACTION_DESIRE_NONE
     end
