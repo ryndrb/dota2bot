@@ -153,7 +153,7 @@ local IlluminateEnd = bot:GetAbilityByName('keeper_of_the_light_illuminate_end')
 local BlindingLight = bot:GetAbilityByName('keeper_of_the_light_blinding_light')
 local ChakraMagic   = bot:GetAbilityByName('keeper_of_the_light_chakra_magic')
 local SolarBind     = bot:GetAbilityByName('keeper_of_the_light_radiant_bind')
-local Recall        = bot:GetAbilityByName('keeper_of_the_light_recall')
+-- local Recall        = bot:GetAbilityByName('keeper_of_the_light_recall')
 local WillOWisp     = bot:GetAbilityByName('keeper_of_the_light_will_o_wisp')
 local SpiritForm    = bot:GetAbilityByName('keeper_of_the_light_spirit_form')
 
@@ -165,7 +165,7 @@ local IlluminateEndDesire
 local BlindingLightDesire, BlindingLightLocation
 local ChakraMagicDesire, ChakraMagicTarget
 local SolarBindDesire, SolarBindTarget
-local RecallDesire, RecallTarget
+-- local RecallDesire, RecallTarget
 local WillOWispDesire, WillOWispLocation
 local SpiritFormDesire
 
@@ -236,12 +236,12 @@ function X.SkillsComplement()
         return
     end
 
-    RecallDesire, RecallTarget = X.ConsiderRecall()
-    if RecallDesire > 0
-    then
-        bot:Action_UseAbilityOnEntity(Recall, RecallTarget)
-        return
-    end
+    -- RecallDesire, RecallTarget = X.ConsiderRecall()
+    -- if RecallDesire > 0
+    -- then
+    --     bot:Action_UseAbilityOnEntity(Recall, RecallTarget)
+    --     return
+    -- end
 end
 
 function X.ConsiderIlluminate()
@@ -726,45 +726,45 @@ function X.ConsiderSpiritForm()
     return BOT_ACTION_DESIRE_NONE
 end
 
-function X.ConsiderRecall()
-    if Recall:IsHidden()
-    or not Recall:IsTrained()
-    or not Recall:IsFullyCastable()
-    then
-        return BOT_ACTION_DESIRE_NONE, nil
-    end
+-- function X.ConsiderRecall()
+--     if Recall:IsHidden()
+--     or not Recall:IsTrained()
+--     or not Recall:IsFullyCastable()
+--     then
+--         return BOT_ACTION_DESIRE_NONE, nil
+--     end
 
-    for _, allyHero in pairs(GetUnitList(UNIT_LIST_ALLIED_HEROES))
-    do
-        if  J.IsValidHero(allyHero)
-        and not allyHero:IsIllusion()
-        and not allyHero:WasRecentlyDamagedByAnyHero(2.5)
-        then
-            if  J.IsRetreating(allyHero)
-            and J.IsRunning(allyHero)
-            and J.GetHP(allyHero) < 0.5
-            and allyHero:DistanceFromFountain() > 2000
-            and bot:DistanceFromFountain() < 1600
-            then
-                return BOT_ACTION_DESIRE_HIGH, allyHero
-            end
-        end
+--     for _, allyHero in pairs(GetUnitList(UNIT_LIST_ALLIED_HEROES))
+--     do
+--         if  J.IsValidHero(allyHero)
+--         and not allyHero:IsIllusion()
+--         and not allyHero:WasRecentlyDamagedByAnyHero(2.5)
+--         then
+--             if  J.IsRetreating(allyHero)
+--             and J.IsRunning(allyHero)
+--             and J.GetHP(allyHero) < 0.5
+--             and allyHero:DistanceFromFountain() > 2000
+--             and bot:DistanceFromFountain() < 1600
+--             then
+--                 return BOT_ACTION_DESIRE_HIGH, allyHero
+--             end
+--         end
 
-        if J.IsPushing(bot)
-        then
-            local nInRangeAlly = bot:GetNearbyHeroes(1200, false, BOT_MODE_NONE)
+--         if J.IsPushing(bot)
+--         then
+--             local nInRangeAlly = bot:GetNearbyHeroes(1200, false, BOT_MODE_NONE)
 
-            if  nInRangeAlly ~= nil and #nInRangeAlly >= 2
-            and GetUnitToUnitDistance(bot, allyHero) > 3200
-            and not J.IsFarming(allyHero)
-            then
-                return BOT_ACTION_DESIRE_HIGH, allyHero
-            end
-        end
-    end
+--             if  nInRangeAlly ~= nil and #nInRangeAlly >= 2
+--             and GetUnitToUnitDistance(bot, allyHero) > 3200
+--             and not J.IsFarming(allyHero)
+--             then
+--                 return BOT_ACTION_DESIRE_HIGH, allyHero
+--             end
+--         end
+--     end
 
-    return BOT_ACTION_DESIRE_NONE, nil
-end
+--     return BOT_ACTION_DESIRE_NONE, nil
+-- end
 
 function X.ConsiderWillOWisp()
     if WillOWisp:IsHidden()

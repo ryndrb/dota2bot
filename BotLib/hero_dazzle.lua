@@ -237,15 +237,10 @@ function X.ConsiderR()
 
 	if not abilityR:IsFullyCastable() then return 0 end	
 	
-	if not abilityQ:IsFullyCastable()
-		and not abilityW:IsFullyCastable()
-		and not abilityE:IsFullyCastable()
+	if (not abilityQ:IsFullyCastable() and not abilityW:IsFullyCastable() and not abilityE:IsFullyCastable())
+	or (abilityW:GetCooldownTimeRemaining() > 3)
 	then
-		local enemyList = bot:GetNearbyHeroes( 900, true, BOT_MODE_NONE )
-		if #enemyList >= 1
-		then
-			return BOT_ACTION_DESIRE_HIGH, 'none', "R-refresh"
-		end	
+		return BOT_ACTION_DESIRE_HIGH, 'none', "R-refresh"
 	end
 
 
@@ -470,7 +465,6 @@ function X.ConsiderW()
 			and J.IsInRange( bot, npcAlly, nCastRange + 600 )
 			and not npcAlly:HasModifier( 'modifier_dazzle_shallow_grave' )
 			and J.GetHP( npcAlly ) < 0.4
-			and npcAlly:WasRecentlyDamagedByAnyHero( 3.5 )
 		then
 			local nCastDelay = X.GetCastAbilityWDelay( npcAlly, nCastRange ) * 1.1
 			if X.GetEnemyFacingAllyDamage( npcAlly, 1100, nCastDelay ) > npcAlly:GetHealth()
