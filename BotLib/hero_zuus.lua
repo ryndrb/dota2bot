@@ -216,7 +216,7 @@ function X.SkillsComplement()
 		
 		if talent7:IsTrained() 
 		then
-			bot:ActionQueue_UseAbilityOnEntity( abilityW, castWTarget:GetLocation() )
+			bot:ActionQueue_UseAbilityOnLocation( abilityW, castWTarget:GetLocation() )
 		else
 			bot:ActionQueue_UseAbilityOnEntity( abilityW, castWTarget )
 		end
