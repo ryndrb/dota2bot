@@ -2829,7 +2829,7 @@ function J.GetHP( bot )
         nMaxHealth = nMaxHealth + bot:GetMaxMana()
     end
 
-	return nCurHealth / nCurHealth
+	return nCurHealth / nMaxHealth
 end
 
 
