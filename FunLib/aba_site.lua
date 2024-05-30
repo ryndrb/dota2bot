@@ -951,14 +951,15 @@ function Site.IsTimeToFarm( bot )
 		end
 	end
 
-	if Site.GetPosition(bot) == 1
-	or Site.GetPosition(bot) == 2
-	or Site.GetPosition(bot) == 3
+	local carry = Site.GetCarry()
+
+	if  carry ~= nil
+	and (Site.GetPosition(bot) == 1 and bot:GetNetWorth() < 30000
+		or Site.GetPosition(bot) == 2 and carry:GetNetWorth() < 30000
+		or Site.GetPosition(bot) == 3 and carry:GetNetWorth() < 30000
+		)
 	then
-		if bot:GetNetWorth() < 30000
-		then
-			return true
-		end
+		return true
 	end
 
 	if  Site.ConsiderIsTimeToFarm[botName] ~= nil
@@ -2445,6 +2446,19 @@ function Site.GetPosition(bot)
 	end
 
 	return pos
+end
+
+function Site.GetCarry()
+	for _, h in pairs(GetUnitList(UNIT_LIST_ALLIED_HEROES))
+	do
+		if  h ~= nil
+		and Site.GetPosition(h) == 1
+		then
+			return h
+		end
+	end
+
+	return nil
 end
 
 function Site.IsInLaningPhase()

@@ -340,8 +340,8 @@ Item['tEarlyItem'] = {
 	 'item_soul_ring',
 	 -- 'item_magic_wand',
 	 -- 'item_ancient_janggo',
-	 'item_refresher_shard',
-	 'item_cheese',
+	--  'item_refresher_shard',
+	--  'item_cheese',
 	 'item_blood_grenade',
 }
 

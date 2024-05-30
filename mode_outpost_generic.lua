@@ -27,6 +27,8 @@ local ShouldMoveMortimerKisses = false
 local ShouldMoveCloseTowerForEdict = false
 local EdictTowerTarget = nil
 
+local ShouldHuskarMoveOutsideFountain = false
+
 function GetDesire()
 	if not IsEnemyTier2Down
 	then
@@ -50,6 +52,12 @@ function GetDesire()
 	if TinkerShouldWaitInBaseToHeal
 	then
 		return BOT_ACTION_DESIRE_ABSOLUTE
+	end
+
+	ShouldHuskarMoveOutsideFountain = ConsiderHuskarMoveOutsideFountain()
+	if ShouldHuskarMoveOutsideFountain
+	then
+		return bot:GetActiveModeDesire() + 0.1
 	end
 
 	------------------------------
@@ -305,6 +313,13 @@ end
 
 function Think()
 	if J.CanNotUseAction(bot) then return end
+
+	-- Huskar
+	if ShouldHuskarMoveOutsideFountain
+	then
+		bot:Action_MoveToLocation(J.GetEnemyFountain())
+		return
+	end
 
 	-- Heal in Base
 	-- Just for TP. Too much back and forth when "forcing" them try to walk to fountain; <- not reliable and misses farm.
@@ -675,6 +690,19 @@ function ConsiderWaitInBaseToHeal()
 			and not (J.IsPushing(bot) and #J.GetAlliesNearLoc(bot:GetLocation(), 900) >= 3))
 		then
 			ShouldWaitInBaseToHeal = true
+			return true
+		end
+	end
+
+	return false
+end
+
+function ConsiderHuskarMoveOutsideFountain()
+	if bot:GetUnitName() == 'npc_dota_hero_huskar'
+	then
+		if  bot:HasModifier('modifier_fountain_aura_buff')
+		and J.GetHP(bot) > 0.95
+		then
 			return true
 		end
 	end
