@@ -212,7 +212,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
             | Enchantress           | &check; | &check; | 0 
             | Enigma                | -       | -       | 1 [5/16/2024]
             | Faceless Void         | &check; | -       | 3 [3/17/2024]
-            | Grimstroke            | -       | &check; | 0 
+            | Grimstroke            | -       | &check; | 1 [5/31/2024]
             | Gyrocopter            | -       | -       | 0 
             | ~~Hoodwink~~          | &check; | &check; | 0 
             | Huskar                | -       | -       | 0 

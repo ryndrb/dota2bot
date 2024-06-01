@@ -513,7 +513,7 @@ function X.ConsiderRollingBoulder()
 			local nAllyHeroes = bot:GetNearbyHeroes(nDistance * 2, false, BOT_MODE_NONE)
 
 			if  nEnemyHeroes ~= nil and nAllyHeroes ~= nil
-			and ((#nAllyHeroes >= #nEnemyHeroes) or (#nEnemyHeroes > #nAllyHeroes and J.WeAreStronger(bot)))
+			and ((#nAllyHeroes >= #nEnemyHeroes) or (#nEnemyHeroes > #nAllyHeroes and J.WeAreStronger(bot, 1600)))
 			then
 				local loc = J.GetCorrectLoc(botTarget, GetUnitToUnitDistance(bot, botTarget) / nSpeed)
 
