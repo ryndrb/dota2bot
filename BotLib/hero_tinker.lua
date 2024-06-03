@@ -33,17 +33,18 @@ sRoleItemsBuyList['pos_2'] = {
     "item_double_circlet",
 
     "item_bottle",
-    "item_soul_ring",
+    "item_double_null_talisman",
     "item_magic_wand",
-    "item_blink",
+    "item_arcane_blink",--
+    "item_ultimate_scepter",
     "item_shivas_guard",--
-    "item_ethereal_blade",--
-    "item_black_king_bar",--
-    "item_overwhelming_blink",--
-    "item_sheepstick",--
     "item_sphere",--
-    "item_aghanims_shard",
+    "item_octarine_core",--
+    "item_cyclone",
+    "item_sheepstick",--
+    "item_wind_waker",--
     "item_ultimate_scepter_2",
+    "item_aghanims_shard",
     "item_moon_shard",
 }
 
@@ -56,10 +57,9 @@ sRoleItemsBuyList['pos_5'] = sRoleItemsBuyList['pos_5']
 X['sBuyList'] = sRoleItemsBuyList[sRole]
 
 X['sSellList'] = {
-    "item_circlet",
     "item_magic_wand",
     "item_bottle",
-    "item_soul_ring",
+    "item_null_talisman",
 }
 
 if J.Role.IsPvNMode() or J.Role.IsAllShadow() then X['sBuyList'], X['sSellList'] = { 'PvN_mid' }, {} end
@@ -108,6 +108,12 @@ if bot.healInBase == nil then bot.healInBase = false end
 if bot.shouldBlink == nil then bot.shouldBlink = false end
 
 function X.SkillsComplement()
+    if J.GetMP(bot) > 0.8
+    or bot:HasModifier('modifier_fountain_invulnerability')
+    then
+        bot.healInBase = false
+    end
+
     if J.CanNotUseAbility(bot)
     or Rearm:IsInAbilityPhase()
     or KeenConveyance:IsInAbilityPhase()
@@ -134,15 +140,10 @@ function X.SkillsComplement()
                 end
             else
                 if J.GetMP(bot) < 0.3
-                or J.GetHP(bot) < 0.35
+                or (J.GetHP(bot) < 0.35 and J.GetMP(bot) < 0.5)
                 then
                     bot.healInBase = true
                 end
-            end
-        else
-            if J.GetMP(bot) > 0.8
-            then
-                bot.healInBase = false
             end
         end
     end

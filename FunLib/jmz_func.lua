@@ -529,7 +529,6 @@ function J.GetEnemiesNearLoc(vLoc, nRadius)
 		if  J.IsValidHero(enemyHero)
 		and GetUnitToLocationDistance(enemyHero, vLoc) <= nRadius
 		and not J.IsSuspiciousIllusion(enemyHero)
-		and not J.IsMeepoClone(enemyHero)
 		and not enemyHero:HasModifier('modifier_arc_warden_tempest_double')
 		then
 			table.insert(enemies, enemyHero)
@@ -810,7 +809,7 @@ end
 function J.CanCastOnNonMagicImmune( npcTarget )
 
 	return npcTarget:CanBeSeen()
-			and (not npcTarget:IsMagicImmune() or (not npcTarget:IsMagicImmune() and J.IsInEtherealForm( npcTarget )))
+			and not npcTarget:IsMagicImmune()
 			and not npcTarget:IsInvulnerable()
 			and not J.IsSuspiciousIllusion( npcTarget )
 			and not J.HasForbiddenModifier( npcTarget )
@@ -4913,52 +4912,42 @@ function J.GetItem2(bot, sItemName)
 end
 
 function J.ConsolePrintActiveMode(bot)
-	local mode = bot:GetActiveMode()
-
-	if mode == BOT_MODE_NONE then
-		print(string.gsub( bot:GetUnitName(), "npc_dota_", "" ).."'s current mode is: NONE")
-	elseif mode == BOT_MODE_LANING then
-		print(string.gsub( bot:GetUnitName(), "npc_dota_", "" ).."'s current mode is: LANING")
-	elseif mode == BOT_MODE_ATTACK then
-		print(string.gsub( bot:GetUnitName(), "npc_dota_", "" ).."'s current mode is: ATTACK")
-	elseif mode == BOT_MODE_ROAM then
-		print(string.gsub( bot:GetUnitName(), "npc_dota_", "" ).."'s current mode is: ROAM")
-	elseif mode == BOT_MODE_RETREAT then
-		print(string.gsub( bot:GetUnitName(), "npc_dota_", "" ).."'s current mode is: RETREAT")
-	elseif mode == BOT_MODE_SECRET_SHOP then
-		print(string.gsub( bot:GetUnitName(), "npc_dota_", "" ).."'s current mode is: SECRET SHOP")
-	elseif mode == BOT_MODE_SIDE_SHOP then
-		print(string.gsub( bot:GetUnitName(), "npc_dota_", "" ).."'s current mode is: SIDE SHOP")
-	elseif mode == BOT_MODE_PUSH_TOWER_TOP then
-		print(string.gsub( bot:GetUnitName(), "npc_dota_", "" ).."'s current mode is: PUSH TOWER TOP")
-	elseif mode == BOT_MODE_PUSH_TOWER_MID then
-		print(string.gsub( bot:GetUnitName(), "npc_dota_", "" ).."'s current mode is: PUSH TOWER MID")
-	elseif mode == BOT_MODE_PUSH_TOWER_BOT then
-		print(string.gsub( bot:GetUnitName(), "npc_dota_", "" ).."'s current mode is: PUSH TOWER BOT")
-	elseif mode == BOT_MODE_DEFEND_TOWER_TOP then
-		print(string.gsub( bot:GetUnitName(), "npc_dota_", "" ).."'s current mode is: DEFEND TOWER TOP")
-	elseif mode == BOT_MODE_DEFEND_TOWER_MID then
-		print(string.gsub( bot:GetUnitName(), "npc_dota_", "" ).."'s current mode is: DEFEND TOWER MID")
-	elseif mode == BOT_MODE_DEFEND_TOWER_BOT then
-		print(string.gsub( bot:GetUnitName(), "npc_dota_", "" ).."'s current mode is: DEFEND TOWER BOT")
-	elseif mode == BOT_MODE_ASSEMBLE then
-		print(string.gsub( bot:GetUnitName(), "npc_dota_", "" ).."'s current mode is: ASSEMBLE")
-	elseif mode == BOT_MODE_TEAM_ROAM then
-		print(string.gsub( bot:GetUnitName(), "npc_dota_", "" ).."'s current mode is: TEAM ROAM")
-	elseif mode == BOT_MODE_FARM then
-		print(string.gsub( bot:GetUnitName(), "npc_dota_", "" ).."'s current mode is: FARM")
-	elseif mode == BOT_MODE_DEFEND_ALLY then
-		print(string.gsub( bot:GetUnitName(), "npc_dota_", "" ).."'s current mode is: DEFEND ALLY")
-	elseif mode == BOT_MODE_EVASIVE_MANEUVERS then
-		print(string.gsub( bot:GetUnitName(), "npc_dota_", "" ).."'s current mode is: EVASIVE MANEUVERS")
-	elseif mode == BOT_MODE_ROSHAN then
-		print(string.gsub( bot:GetUnitName(), "npc_dota_", "" ).."'s current mode is: ROSHAN")
-	elseif mode == BOT_MODE_ITEM then
-		print(string.gsub( bot:GetUnitName(), "npc_dota_", "" ).."'s current mode is: ITEM")
-	elseif mode == BOT_MODE_WARD then
-		print(string.gsub( bot:GetUnitName(), "npc_dota_", "" ).."'s current mode is: WARD")
-	end
+    local mode = bot:GetActiveMode()
+    local botName = string.gsub(bot:GetUnitName(), "npc_dota_", "")
+    
+    local modeNames = {
+        [BOT_MODE_NONE] = "NONE",
+        [BOT_MODE_LANING] = "LANING",
+        [BOT_MODE_ATTACK] = "ATTACK",
+        [BOT_MODE_ROAM] = "ROAM",
+        [BOT_MODE_RETREAT] = "RETREAT",
+        [BOT_MODE_SECRET_SHOP] = "SECRET SHOP",
+        [BOT_MODE_SIDE_SHOP] = "SIDE SHOP",
+        [BOT_MODE_PUSH_TOWER_TOP] = "PUSH TOWER TOP",
+        [BOT_MODE_PUSH_TOWER_MID] = "PUSH TOWER MID",
+        [BOT_MODE_PUSH_TOWER_BOT] = "PUSH TOWER BOT",
+        [BOT_MODE_DEFEND_TOWER_TOP] = "DEFEND TOWER TOP",
+        [BOT_MODE_DEFEND_TOWER_MID] = "DEFEND TOWER MID",
+        [BOT_MODE_DEFEND_TOWER_BOT] = "DEFEND TOWER BOT",
+        [BOT_MODE_ASSEMBLE] = "ASSEMBLE",
+        [BOT_MODE_TEAM_ROAM] = "TEAM ROAM",
+        [BOT_MODE_FARM] = "FARM",
+        [BOT_MODE_DEFEND_ALLY] = "DEFEND ALLY",
+        [BOT_MODE_EVASIVE_MANEUVERS] = "EVASIVE MANEUVERS",
+        [BOT_MODE_ROSHAN] = "ROSHAN",
+        [BOT_MODE_ITEM] = "ITEM",
+        [BOT_MODE_WARD] = "WARD",
+        [BOT_MODE_OUTPOST] = "OUTPOST"
+    }
+    
+    if modeNames[mode]
+	then
+        print(botName.."'s current mode is: "..modeNames[mode])
+    else
+        print("Active Mode ...")
+    end
 end
+
 
 return J
 

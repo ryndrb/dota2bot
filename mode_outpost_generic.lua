@@ -368,7 +368,7 @@ function Think()
 	end
 
 	-- Tinker
-	if bot.healInBase
+	if TinkerShouldWaitInBaseToHeal
 	then
 		if J.GetHP(bot) < 0.8 or J.GetMP(bot) < 0.8
 		then
