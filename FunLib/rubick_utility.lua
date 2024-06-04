@@ -29,6 +29,12 @@ local Disruptor = require(GetScriptDirectory()..'/FunLib/rubick_hero/disruptor')
 local Doom = require(GetScriptDirectory()..'/FunLib/rubick_hero/doom')
 local DragonKnight = require(GetScriptDirectory()..'/FunLib/rubick_hero/dragon_knight')
 local DrowRanger = require(GetScriptDirectory()..'/FunLib/rubick_hero/drow_ranger')
+local EarthSpirit = require(GetScriptDirectory()..'/FunLib/rubick_hero/earth_spirit')
+local Earthshaker = require(GetScriptDirectory()..'/FunLib/rubick_hero/earthshaker')
+-- local ElderTitan = require(GetScriptDirectory()..'/FunLib/rubick_hero/elder_titan')
+local EmberSpirit = require(GetScriptDirectory()..'/FunLib/rubick_hero/ember_spirit')
+local Enchantress = require(GetScriptDirectory()..'/FunLib/rubick_hero/enchantress')
+local Enigma = require(GetScriptDirectory()..'/FunLib/rubick_hero/enigma')
 
 function X.ConsiderStolenSpell(ability)
     Abaddon.ConsiderStolenSpell(ability)
@@ -61,6 +67,12 @@ function X.ConsiderStolenSpell(ability)
     DragonKnight.ConsiderStolenSpell(ability)
     DrowRanger.ConsiderStolenSpell(ability)
     --E's next
+    EarthSpirit.ConsiderStolenSpell(ability)
+    Earthshaker.ConsiderStolenSpell(ability)
+    -- ElderTitan.ConsiderStolenSpell(ability)
+    EmberSpirit.ConsiderStolenSpell(ability)
+    Enchantress.ConsiderStolenSpell(ability)
+    Enigma.ConsiderStolenSpell(ability)
 end
 
 return X

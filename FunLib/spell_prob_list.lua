@@ -145,6 +145,34 @@ function X.GetSpellReplaceWeight(ability)
         ['drow_ranger_trueshot'] = 0.9,
         ['drow_ranger_glacier'] = 0.7,
 
+        ['earth_spirit_boulder_smash'] = 0.6,
+        ['earth_spirit_rolling_boulder'] = 0.3,
+        ['earth_spirit_geomagnetic_grip'] = 1,
+        ['earth_spirit_stone_caller'] = 0.9,
+        ['earth_spirit_magnetize'] = 0.2,
+        ['earth_spirit_petrify'] = 1,
+
+        ['earthshaker_fissure'] = 0,
+        ['earthshaker_enchant_totem'] = 1,
+        ['earthshaker_echo_slam'] = 0.1,
+
+        ['ember_spirit_searing_chains'] = 0.7,
+        ['ember_spirit_sleight_of_fist'] = 0.8,
+        ['ember_spirit_flame_guard'] = 0.8,
+        ['ember_spirit_activate_fire_remnant'] = 1,
+        ['ember_spirit_fire_remnant'] = 1,
+
+        ['enchantress_impetus'] = 1,
+        ['enchantress_enchant'] = 1,
+        ['enchantress_natures_attendants'] = 0.5,
+        ['enchantress_bunny_hop'] = 0.9,
+        ['enchantress_little_friends'] = 1,
+
+        ['enigma_malefice'] = 0.8,
+        ['enigma_demonic_conversion'] = 1,
+        ['enigma_midnight_pulse'] = 0.6,
+        ['enigma_black_hole'] = 0,
+
         ['rubick_empty1'] = 1,
         ['rubick_empty2'] = 1,
     }

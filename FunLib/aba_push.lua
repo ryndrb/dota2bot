@@ -81,7 +81,7 @@ function Push.GetPushDesire(bot, lane)
         end
     end
 
-    if bot:WasRecentlyDamagedByTower(1.5)
+    if bot:WasRecentlyDamagedByTower(1)
     or J.GetHP(bot) < 0.45
     then
         return BOT_ACTION_DESIRE_NONE

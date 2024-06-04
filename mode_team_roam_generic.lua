@@ -1909,10 +1909,10 @@ function TryPickupDroppedNeutralItemTokens()
 	end
 
 	if  item ~= nil
-	and GetLocationToLocationDistance(item.location, J.GetTeamFountain()) > 900
+	and J.GetLocationToLocationDistance(item.location, J.GetTeamFountain()) > 900
 	and Item.GetEmptyInventoryAmount(bot) > 0
 	then
-		PickedItem = item.item
+		PickedItem = item
 		return BOT_ACTION_DESIRE_VERYHIGH
 	else
 		PickedItem = nil

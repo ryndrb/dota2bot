@@ -6251,10 +6251,7 @@ end
 
 -- Trusty Shovel
 X.ConsiderItemDesire["item_trusty_shovel"] = function(hItem)
-	if GetTeamMember(1):IsBot() then return BOT_ACTION_DESIRE_NONE end
-
-	local nInRangeEnemy = J.GetEnemiesNearLoc(bot:GetLocation(), 1000)
-
+	local nInRangeEnemy = J.GetEnemiesNearLoc(bot:GetLocation(), 1600)
 	if nInRangeEnemy ~= nil and #nInRangeEnemy == 0
 	then
 		return BOT_ACTION_DESIRE_HIGH, bot:GetLocation(), 'ground', nil

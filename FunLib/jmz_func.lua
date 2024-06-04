@@ -4911,6 +4911,37 @@ function J.GetItem2(bot, sItemName)
 	return nil
 end
 
+function J.GetHumanPing()
+	local ping = nil
+
+	for i = 1, 5
+	do
+		local member = GetTeamMember(i)
+		if  member ~= nil
+		and member:IsAlive()
+		and not member:IsBot()
+		then
+			return member, member:GetMostRecentPing()
+		end
+	end
+
+	return nil, ping
+end
+
+function J.HasAbility(bot, abilityName)
+	for i = 0, 23
+	do
+		local ability = bot:GetAbilityInSlot(i)
+		if  ability ~= nil
+		and ability:GetName() == abilityName
+		then
+			return true, ability
+		end
+	end
+
+	return false, nil
+end
+
 function J.ConsolePrintActiveMode(bot)
     local mode = bot:GetActiveMode()
     local botName = string.gsub(bot:GetUnitName(), "npc_dota_", "")
