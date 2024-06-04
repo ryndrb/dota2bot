@@ -15,7 +15,7 @@ local TowerPushCooldown = 0
 function Push.GetPushDesire(bot, lane)
     if bot.laneToPush == nil then bot.laneToPush = lane end
 
-    local maxDesire = 0.9
+    local maxDesire = 1
     local nMode = bot:GetActiveMode()
     local nModeDesire = bot:GetActiveModeDesire()
 

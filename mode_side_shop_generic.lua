@@ -35,12 +35,13 @@ function GetDesire()
     local nModeDesire = RemapValClamped(currTime, startTimer, timeForLowDesire, BOT_ACTION_DESIRE_HIGH, BOT_MODE_DESIRE_VERYLOW)
 
 	local enemyAncient = GetAncient(GetOpposingTeam())
-	if GetUnitToUnitDistance(bot, enemyAncient) < 3200
+	if nAllyInLoc ~= nil and #nAllyInLoc <= 1
+	and (GetUnitToUnitDistance(bot, enemyAncient) < 3200
 	or (topFrontP > 0.9 or midFrontP > 0.9 or botFrontP > 0.9)
 	or (topFrontD > 0.9 or midFrontD > 0.9 or botFrontD > 0.9)
 	or J.IsPushing(bot)
 	or J.IsDefending(bot)
-	or J.IsDoingRoshan(bot)
+	or J.IsDoingRoshan(bot))
 	then
 		return BOT_ACTION_DESIRE_NONE
 	end

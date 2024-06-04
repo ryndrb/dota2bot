@@ -11,14 +11,17 @@ function Defend.GetDefendDesire(bot, lane)
         if bot:GetLevel() < 6 then return 0.1 end
     end
 
-	if J.GetHP(bot) < 0.3
-	then
-		return 0.25
-	end
-
 	local nDefendDesire = 0
 	local mul = Defend.GetEnemyAmountMul(lane)
 	local nEnemies = J.GetEnemiesAroundAncient()
+	local nInRangeEnemy = bot:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
+
+	if  GetUnitToUnitDistance(bot, GetAncient(GetTeam())) < 2000
+	and nInRangeEnemy ~= nil and #nInRangeEnemy >= 1
+	and not bot:HasModifier('modifier_fountain_aura_buff')
+	then
+		return BOT_MODE_DESIRE_NONE
+	end
 
 	if  nEnemies ~= nil and #nEnemies >= 1
 	and (GetTower(GetTeam(), TOWER_MID_3) == nil

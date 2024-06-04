@@ -4914,6 +4914,7 @@ end
 function J.ConsolePrintActiveMode(bot)
     local mode = bot:GetActiveMode()
     local botName = string.gsub(bot:GetUnitName(), "npc_dota_", "")
+	local team = GetTeam() == TEAM_RADIANT and "RADIANT" or "DIRE"
     
     local modeNames = {
         [BOT_MODE_NONE] = "NONE",
@@ -4942,7 +4943,7 @@ function J.ConsolePrintActiveMode(bot)
     
     if modeNames[mode]
 	then
-        print(botName.."'s current mode is: "..modeNames[mode])
+        print(botName.."'s current mode is: "..modeNames[mode].." "..team)
     else
         print("Active Mode ...")
     end
