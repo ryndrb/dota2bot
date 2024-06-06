@@ -3403,7 +3403,7 @@ function J.GetProperCastRange(bIgnore, hUnit, abilityCR)
 end
 
 function J.IsValidTarget(npcTarget)
-	return npcTarget ~= nil and npcTarget:IsAlive() and npcTarget:IsHero(); 
+	return J.IsValidHero(npcTarget) -- supposed to be the same.. 🙄
 end
 
 function J.GetLowestHPUnit(tUnits, bIgnoreImmune)
