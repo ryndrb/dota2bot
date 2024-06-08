@@ -306,4 +306,5 @@ To anyone who've found this or is using it, if you have any feedback in improvin
         - [ ] Blinking (especially by range heroes)
         - [ ] More skill checks (eg. stuns, projectiles, etc)
         - [ ] Early added heroes to follow current standard
+        - [ ] Sanitize. Clean up redundant function calls (ie. illusion checks etc. <- are already called prior etc.)
     
