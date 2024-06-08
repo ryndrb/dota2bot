@@ -1050,7 +1050,15 @@ function J.IsDisabled( npcTarget )
 				or npcTarget:IsHexed()
 				or npcTarget:IsNightmared()
 				or J.IsTaunted( npcTarget )
+				or npcTarget:HasModifier('modifier_enigma_black_hole_pull')
+				or npcTarget:HasModifier('modifier_faceless_void_chronosphere_freeze')
 	else
+
+		if npcTarget:HasModifier('modifier_enigma_black_hole_pull')
+		or npcTarget:HasModifier('modifier_faceless_void_chronosphere_freeze')
+		then
+			return true
+		end
 
 		if npcTarget:IsStunned() and J.GetRemainStunTime( npcTarget ) > 0.8
 		then
@@ -4230,7 +4238,9 @@ function J.AdjustLocationWithOffset(vLoc, offset, target)
 end
 
 function J.IsInLaningPhase()
-	return (J.IsModeTurbo() and DotaTime() < 8 * 60) or DotaTime() < 12 * 60
+	if GetBot().isInLanePhase ~= nil and GetBot().isInLanePhase then return true end
+	return false
+	-- return (J.IsModeTurbo() and DotaTime() < 8 * 60) or DotaTime() < 12 * 60
 end
 
 function J.IsTormentor(nTarget)

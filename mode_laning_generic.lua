@@ -1,6 +1,7 @@
 local bot = GetBot()
 local J = require( GetScriptDirectory()..'/FunLib/jmz_func')
 
+if bot.isInLanePhase == nil then bot.isInLanePhase = false end
 function GetDesire()
 
 	local currentTime = DotaTime()
@@ -67,12 +68,16 @@ function GetDesire()
 	if  currentTime <= 9 * 60
 	and botLV <= 7
 	then
+		bot.isInLanePhase = true
 		return 0.444
 	end
+
+	bot.isInLanePhase = false
 
 	if  currentTime <= 12 * 60
 	and botLV <= 11
 	then
+		if botLV <= 7 then bot.isInLanePhase = true end
 		return 0.333
 	end
 

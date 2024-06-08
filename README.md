@@ -213,7 +213,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
             | Enigma                | -       | -       | 1 [5/16/2024]
             | Faceless Void         | &check; | -       | 3 [3/17/2024]
             | Grimstroke            | -       | &check; | 1 [5/31/2024]
-            | Gyrocopter            | -       | -       | 0 
+            | Gyrocopter            | -       | -       | 1 [6/8/2024]
             | ~~Hoodwink~~          | &check; | &check; | 0 
             | Huskar                | -       | -       | 0 
             | Invoker               | -       | &check; | 1 [4/24/2024]
