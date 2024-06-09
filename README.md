@@ -146,9 +146,10 @@ To anyone who've found this or is using it, if you have any feedback in improvin
             - Passive.
 
 - ***Items***
-    - Bots will sell items on the fly in Turbo Mode
-    - Item progressions (some need changing)
+    - Item progressions
+        - [ ] Update / Restructure to ease different builds for novelty; includes spell build.
     - Reduced most Halberd/Crimson Guards/Aura items (bots sucks at playing around these items). They're OP; A lot of what makes the bots 'harder' in Beginner AI.
+        - [ ] Consider team comp instead of (current) random.
 
 - ***Plan To "Fix/Add/Improve" (if possible)***
     - ***Fix***
@@ -302,6 +303,8 @@ To anyone who've found this or is using it, if you have any feedback in improvin
     - ***Improve***
         - [ ] Some heroes ability usage (too spammy, ends up not having enough mana)
         - [ ] Item usage
+            - [x] Neutral Items
+            - [ ] Consider spell effects from heroes (ie. NPs Sprout, Troll Ult (<- OP with BFury), etc.)
         - [ ] Re(factor/write) old code for consistency
         - [ ] Blinking (especially by range heroes)
         - [ ] More skill checks (eg. stuns, projectiles, etc)
