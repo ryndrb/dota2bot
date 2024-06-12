@@ -1,176 +1,19 @@
 local X = {}
 local bot = GetBot()
 
+local Hero = require(GetScriptDirectory()..'/FunLib/bot_builds/'..string.gsub(bot:GetUnitName(), 'npc_dota_hero_', ''))
 local J = require( GetScriptDirectory()..'/FunLib/jmz_func' )
 local Minion = dofile( GetScriptDirectory()..'/FunLib/aba_minion' )
 local sTalentList = J.Skill.GetTalentList( bot )
 local sAbilityList = J.Skill.GetAbilityList( bot )
 local sRole = J.Item.GetRoleItemsBuyList( bot )
 
-local sTempList = {}
-local flag1 = RandomInt(1, 2) == 1 and 'Physical' or 'Magical'
+local nTalentBuildList = J.Skill.GetTalentBuild(Hero.TalentBuild[sRole][RandomInt(1, #Hero.TalentBuild[sRole])])
+local nAbilityBuildList = Hero.AbilityBuild[sRole][RandomInt(1, #Hero.AbilityBuild[sRole])]
 
-local tTalentTreeList = {
-						{--pos1
-							['t25'] = {10, 0},
-							['t20'] = {10, 0},
-							['t15'] = {10, 0},
-							['t10'] = {10, 0},
-						},
-						{--pos2M
-							['t25'] = {10, 0},
-							['t20'] = {0, 10},
-							['t15'] = {0, 10},
-							['t10'] = {0, 10},
-						},
-						{--pos2P
-							['t25'] = {10, 0},
-							['t20'] = {10, 0},
-							['t15'] = {10, 0},
-							['t10'] = {0, 10},
-						}
-}
-
-local tAllAbilityBuildList = {
-						{3,1,3,1,3,6,3,1,1,2,6,2,2,2,6},--pos1
-						{3,1,1,3,1,6,1,3,3,2,6,2,2,2,6},--pos2M
-						{3,1,3,1,3,6,3,1,1,2,6,2,2,2,6},--pos2P
-}
-
-local nAbilityBuildList
-if sRole == 'pos_1' then nAbilityBuildList = tAllAbilityBuildList[1] end
-if sRole == 'pos_2'
-then
-	if flag1 == 'Magical'  then nAbilityBuildList = tAllAbilityBuildList[2] end
-	if flag1 == 'Physical' then nAbilityBuildList = tAllAbilityBuildList[3] end
-end
-
-local nTalentBuildList
-if sRole == 'pos_1' then nTalentBuildList = J.Skill.GetTalentBuild(tTalentTreeList[1]) end
-if sRole == 'pos_2'
-then
-	if flag1 == 'Magical'  then nTalentBuildList = J.Skill.GetTalentBuild(tTalentTreeList[2]) end
-	if flag1 == 'Physical' then nTalentBuildList = J.Skill.GetTalentBuild(tTalentTreeList[3]) end
-end
-
-local sRoleItemsBuyList = {}
-
-sRoleItemsBuyList['pos_1'] = {
-	"item_tango",
-	"item_double_branches",
-	"item_faerie_fire",
-	"item_slippers",
-	"item_circlet",
-
-	"item_wraith_band",
-	"item_boots",
-	"item_magic_wand",
-	"item_hand_of_midas",
-	"item_maelstrom",
-	"item_gungir",--
-	"item_travel_boots",
-	"item_manta",--
-	"item_sheepstick",--
-	"item_bloodthorn",--
-	"item_skadi",--
-	"item_travel_boots_2",--
-	"item_moon_shard",
-	"item_aghanims_shard",
-	"item_ultimate_scepter_2",
-}
-
-if flag1 == 'Magical'
-then
-	sTempList = {
-		"item_tango",
-		"item_double_branches",
-		"item_circlet",
-		"item_faerie_fire",
-
-		"item_bottle",
-		"item_magic_wand",
-		"item_spirit_vessel",
-		"item_boots",
-		"item_hand_of_midas",
-		"item_gungir",--
-		"item_travel_boots",
-		"item_blink",
-		"item_octarine_core",--
-		"item_ultimate_scepter",
-		"item_orchid",
-		"item_sheepstick",--
-		"item_overwhelming_blink",--
-		"item_bloodthorn",--
-		"item_travel_boots_2",--
-		"item_ultimate_scepter_2",
-		"item_moon_shard",
-		"item_aghanims_shard",
-	}
-else
-	sTempList = {
-		"item_tango",
-		"item_double_branches",
-		"item_faerie_fire",
-
-		"item_bottle",
-		"item_spirit_vessel",
-		"item_magic_wand",
-		"item_boots",
-		"item_hand_of_midas",
-		"item_gungir",--
-		"item_travel_boots",
-		"item_orchid",
-		"item_manta",--
-		"item_greater_crit",--
-		"item_skadi",--
-		"item_bloodthorn",--
-		"item_travel_boots_2",--
-		"item_moon_shard",
-		"item_aghanims_shard",
-		"item_ultimate_scepter_2",
-	}
-end
-
-sRoleItemsBuyList['pos_2'] = sTempList
-
-sRoleItemsBuyList['pos_3'] = sRoleItemsBuyList['pos_3']
-
-sRoleItemsBuyList['pos_4'] = sRoleItemsBuyList['pos_4']
-
-sRoleItemsBuyList['pos_5'] = sRoleItemsBuyList['pos_5']
-
-X['sBuyList'] = sRoleItemsBuyList[sRole]
-
-Pos1SellList = {
-	"item_wraith_band",
-	"item_magic_wand",
-	"item_hand_of_midas",
-}
-
-if flag1 == 'Magical'
-then
-	sTempList = {
-		"item_circlet",
-		"item_bottle",
-		"item_magic_wand",
-		"item_spirit_vessel",
-		"item_hand_of_midas",
-	}
-else
-	sTempList = {
-		"item_circlet",
-		"item_spirit_vessel",
-		"item_magic_wand",
-		"item_hand_of_midas",
-	}
-end
-
-Pos2SellList = sTempList
-
-X['sSellList'] = {}
-
-if sRole == "pos_1" then X['sSellList'] = Pos1SellList end
-if sRole == "pos_2" then X['sSellList'] = Pos2SellList end
+local sRand = RandomInt(1, #Hero.BuyList[sRole])
+X['sBuyList'] = Hero.BuyList[sRole][sRand]
+X['sSellList'] = Hero.SellList[sRole][sRand]
 
 if J.Role.IsPvNMode() or J.Role.IsAllShadow() then X['sBuyList'], X['sSellList'] = { 'PvN_ranged_carry' }, {} end
 
