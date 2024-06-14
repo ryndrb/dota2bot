@@ -1,135 +1,19 @@
 local X = {}
-local bDebugMode = ( 1 == 10 )
 local bot = GetBot()
 
+local Hero = require(GetScriptDirectory()..'/FunLib/bot_builds/'..string.gsub(bot:GetUnitName(), 'npc_dota_hero_', ''))
 local J = require( GetScriptDirectory()..'/FunLib/jmz_func' )
 local Minion = dofile( GetScriptDirectory()..'/FunLib/aba_minion' )
 local sTalentList = J.Skill.GetTalentList( bot )
 local sAbilityList = J.Skill.GetAbilityList( bot )
 local sRole = J.Item.GetRoleItemsBuyList( bot )
 
-local tTalentTreeList = {
-						{--pos2
-							['t25'] = {0, 10},
-							['t20'] = {10, 0},
-							['t15'] = {0, 10},
-							['t10'] = {10, 0},
-						},
-						{--pos4,5
-							['t25'] = {0, 10},
-							['t20'] = {0, 10},
-							['t15'] = {10, 0},
-							['t10'] = {10, 0},
-						}
-}
+local nTalentBuildList = J.Skill.GetTalentBuild(Hero.TalentBuild[sRole][RandomInt(1, #Hero.TalentBuild[sRole])])
+local nAbilityBuildList = Hero.AbilityBuild[sRole][RandomInt(1, #Hero.AbilityBuild[sRole])]
 
-local tAllAbilityBuildList = {
-						{2,1,1,2,1,6,1,2,2,3,6,3,3,3,6},--pos2
-						{1,3,1,2,1,6,1,2,2,2,3,6,3,3,6},--pos4,5
-}
-
-local nAbilityBuildList
-if sRole == 'pos_2' then nAbilityBuildList = tAllAbilityBuildList[1] end
-if sRole == 'pos_4' then nAbilityBuildList = tAllAbilityBuildList[2] end
-if sRole == 'pos_5' then nAbilityBuildList = tAllAbilityBuildList[2] end
-
-local nTalentBuildList
-if sRole == 'pos_2' then nTalentBuildList = J.Skill.GetTalentBuild(tTalentTreeList[1]) end
-if sRole == 'pos_4' then nTalentBuildList = J.Skill.GetTalentBuild(tTalentTreeList[2]) end
-if sRole == 'pos_5' then nTalentBuildList = J.Skill.GetTalentBuild(tTalentTreeList[2]) end
-
-local sRoleItemsBuyList = {}
-
-sRoleItemsBuyList['pos_1'] = sRoleItemsBuyList['pos_1']
-
-sRoleItemsBuyList['pos_2'] = {
-	"item_double_branches",
-	"item_faerie_fire",
-	"item_tango",
-
-	"item_bottle",
-	"item_arcane_boots",
-	"item_magic_wand",
-	"item_aether_lens",
-	"item_dagon_2",
-	"item_octarine_core",--
-	"item_black_king_bar",--
-	"item_dagon_5",--
-	"item_kaya_and_sange",--
-	"item_travel_boots",
-	"item_ethereal_blade",--
-	"item_travel_boots_2",--
-	"item_ultimate_scepter_2",
-	"item_aghanims_shard",
-	"item_moon_shard",
-}
-
-sRoleItemsBuyList['pos_3'] = sRoleItemsBuyList['pos_3']
-
-sRoleItemsBuyList['pos_4'] = {
-	"item_tango",
-	"item_tango",
-	"item_double_branches",
-	"item_enchanted_mango",
-	"item_blood_grenade",
-
-	"item_boots",
-	"item_tranquil_boots",
-	"item_magic_wand",
-	"item_glimmer_cape",--
-	"item_aether_lens",--
-	"item_aghanims_shard",
-	"item_force_staff",--
-	"item_boots_of_bearing",--
-	"item_cyclone",
-	"item_lotus_orb",--
-	"item_wind_waker",--
-	"item_ultimate_scepter_2",
-	"item_moon_shard",
-}
-
-sRoleItemsBuyList['pos_5'] = {
-	"item_tango",
-	"item_tango",
-	"item_double_branches",
-	"item_enchanted_mango",
-	"item_blood_grenade",
-
-	"item_boots",
-	"item_arcane_boots",
-	"item_magic_wand",
-	"item_glimmer_cape",--
-	"item_aether_lens",--
-	"item_aghanims_shard",
-	"item_force_staff",--
-	"item_guardian_greaves",--
-	"item_cyclone",
-	"item_lotus_orb",--
-	"item_wind_waker",--
-	"item_ultimate_scepter_2",
-	"item_moon_shard",
-}
-
-X['sBuyList'] = sRoleItemsBuyList[sRole]
-
-Pos2SellList = {
-	"item_bottle",
-	"item_magic_wand",
-}
-
-Pos4SellList = {
-	"item_magic_wand",
-}
-
-Pos5SellList = {
-	"item_magic_wand",
-}
-
-X['sSellList'] = {}
-
-if sRole == "pos_2" then X['sSellList'] = Pos2SellList end
-if sRole == "pos_4" then X['sSellList'] = Pos4SellList end
-if sRole == "pos_5" then X['sSellList'] = Pos5SellList end
+local sRand = RandomInt(1, #Hero.BuyList[sRole])
+X['sBuyList'] = Hero.BuyList[sRole][sRand]
+X['sSellList'] = Hero.SellList[sRole][sRand]
 
 if J.Role.IsPvNMode() or J.Role.IsAllShadow() then X['sBuyList'], X['sSellList'] = { 'PvN_mage' }, {} end
 
@@ -196,7 +80,6 @@ function X.SkillsComplement()
 	castQDesire, castQLocation, sMotive = X.ConsiderQ()
 	if ( castQDesire > 0 )
 	then
-		J.SetReportMotive( bDebugMode, sMotive )
 
 		J.SetQueuePtToINT( bot, true )
 
@@ -207,7 +90,6 @@ function X.SkillsComplement()
 	castWDesire, castWTarget, sMotive = X.ConsiderW()
 	if ( castWDesire > 0 )
 	then
-		J.SetReportMotive( bDebugMode, sMotive )
 
 		J.SetQueuePtToINT( bot, true )
 
@@ -218,7 +100,6 @@ function X.SkillsComplement()
 	castEDesire, castELocation, sMotive = X.ConsiderE()
 	if ( castEDesire > 0 )
 	then
-		J.SetReportMotive( bDebugMode, sMotive )
 
 		J.SetQueuePtToINT( bot, true )
 
@@ -229,7 +110,6 @@ function X.SkillsComplement()
 	castRDesire, castRTarget, sMotive = X.ConsiderR()
 	if ( castRDesire > 0 )
 	then
-		J.SetReportMotive( bDebugMode, sMotive )
 
 		J.SetQueuePtToINT( bot, true )
 

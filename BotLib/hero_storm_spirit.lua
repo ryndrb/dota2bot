@@ -1,69 +1,19 @@
--- Credit goes to Furious Puppy for Bot Experiment
-
 local X = {}
 local bot = GetBot()
 
+local Hero = require(GetScriptDirectory()..'/FunLib/bot_builds/'..string.gsub(bot:GetUnitName(), 'npc_dota_hero_', ''))
 local J = require( GetScriptDirectory()..'/FunLib/jmz_func' )
 local Minion = dofile( GetScriptDirectory()..'/FunLib/aba_minion' )
 local sTalentList = J.Skill.GetTalentList( bot )
 local sAbilityList = J.Skill.GetAbilityList( bot )
 local sRole = J.Item.GetRoleItemsBuyList( bot )
 
-local tTalentTreeList = {
-						['t25'] = {0, 10},
-						['t20'] = {0, 10},
-						['t15'] = {0, 10},
-						['t10'] = {10, 0},
-}
+local nTalentBuildList = J.Skill.GetTalentBuild(Hero.TalentBuild[sRole][RandomInt(1, #Hero.TalentBuild[sRole])])
+local nAbilityBuildList = Hero.AbilityBuild[sRole][RandomInt(1, #Hero.AbilityBuild[sRole])]
 
-local tAllAbilityBuildList = {
-						{1,3,2,1,1,6,1,3,3,3,6,2,2,2,6},--pos2
-}
-
-local nAbilityBuildList = J.Skill.GetRandomBuild( tAllAbilityBuildList )
-
-local nTalentBuildList = J.Skill.GetTalentBuild( tTalentTreeList )
-
-local sRoleItemsBuyList = {}
-
-sRoleItemsBuyList['pos_2'] = {
-    "item_tango",
-	"item_double_branches",
-	"item_faerie_fire",
-
-	"item_bottle",
-	"item_boots",
-    "item_magic_wand",
-	"item_falcon_blade",
-    "item_power_treads",
-    "item_witch_blade",
-    "item_kaya_and_sange",--
-	"item_devastator",--
-    "item_black_king_bar",--
-    "item_ultimate_scepter",
-    "item_shivas_guard",--
-    "item_aghanims_shard",
-    "item_sheepstick",--
-    "item_ultimate_scepter_2",
-    "item_travel_boots_2",--
-    "item_moon_shard",
-}
-
-sRoleItemsBuyList['pos_3'] = sRoleItemsBuyList['pos_2']
-
-sRoleItemsBuyList['pos_1'] = sRoleItemsBuyList['pos_2'] 
-
-sRoleItemsBuyList['pos_4'] = sRoleItemsBuyList['pos_2']
-
-sRoleItemsBuyList['pos_5'] = sRoleItemsBuyList['pos_2']
-
-X['sBuyList'] = sRoleItemsBuyList[sRole]
-
-X['sSellList'] = {
-    "item_bottle",
-	"item_falcon_blade",
-    "item_magic_wand",
-}
+local sRand = RandomInt(1, #Hero.BuyList[sRole])
+X['sBuyList'] = Hero.BuyList[sRole][sRand]
+X['sSellList'] = Hero.SellList[sRole][sRand]
 
 if J.Role.IsPvNMode() or J.Role.IsAllShadow() then X['sBuyList'], X['sSellList'] = { 'PvN_mid' }, {} end
 

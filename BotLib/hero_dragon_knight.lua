@@ -1,147 +1,19 @@
 local X = {}
-local bDebugMode = ( 1 == 10 )
 local bot = GetBot()
 
-
+local Hero = require(GetScriptDirectory()..'/FunLib/bot_builds/'..string.gsub(bot:GetUnitName(), 'npc_dota_hero_', ''))
 local J = require( GetScriptDirectory()..'/FunLib/jmz_func' )
 local Minion = dofile( GetScriptDirectory()..'/FunLib/aba_minion' )
 local sTalentList = J.Skill.GetTalentList( bot )
 local sAbilityList = J.Skill.GetAbilityList( bot )
 local sRole = J.Item.GetRoleItemsBuyList( bot )
 
-local tTalentTreeList = {
-						['t25'] = {10, 0},
-						['t20'] = {0, 10},
-						['t15'] = {10, 0},
-						['t10'] = {0, 10},
-}
+local nTalentBuildList = J.Skill.GetTalentBuild(Hero.TalentBuild[sRole][RandomInt(1, #Hero.TalentBuild[sRole])])
+local nAbilityBuildList = Hero.AbilityBuild[sRole][RandomInt(1, #Hero.AbilityBuild[sRole])]
 
-local tAllAbilityBuildList = {
-						{1,3,3,2,3,6,1,1,1,2,6,2,2,3,6},--pos1,2,3
-						{2,3,3,1,1,6,1,1,2,2,2,6,3,3,6},--pos1,2,3
-						{1,3,3,2,1,6,1,1,3,3,6,2,2,2,6},--pos1,2,3
-}
-
-local nAbilityBuildList
-if sRole == 'pos_1' then nAbilityBuildList = J.Skill.GetRandomBuild(tAllAbilityBuildList) end
-if sRole == 'pos_2' then nAbilityBuildList = J.Skill.GetRandomBuild(tAllAbilityBuildList) end
-if sRole == 'pos_3' then nAbilityBuildList = J.Skill.GetRandomBuild(tAllAbilityBuildList) end
-
-local nTalentBuildList
-if sRole == 'pos_1' then nTalentBuildList = J.Skill.GetTalentBuild(tTalentTreeList) end
-if sRole == 'pos_2' then nTalentBuildList = J.Skill.GetTalentBuild(tTalentTreeList) end
-if sRole == 'pos_3' then nTalentBuildList = J.Skill.GetTalentBuild(tTalentTreeList) end
-
-local sRoleItemsBuyList = {}
-
-sRoleItemsBuyList['pos_1'] = {
-	"item_quelling_blade",
-	"item_double_branches",
-	"item_tango",
-
-	"item_bracer",
-	"item_power_treads",
-	"item_magic_wand",
-	"item_mage_slayer",--
-	"item_manta",--
-	"item_ultimate_scepter",
-	"item_orchid",
-	"item_black_king_bar",--
-	"item_bloodthorn",--
-	"item_greater_crit",--
-	"item_travel_boots_2",--
-	"item_moon_shard",
-	"item_aghanims_shard",
-	"item_ultimate_scepter_2",
-}
-
-sRoleItemsBuyList['pos_2'] = {
-	"item_tango",
-	"item_double_branches",
-	"item_quelling_blade",
-	"item_double_gauntlets",
-
-	"item_bottle",
-	"item_double_bracer",
-	"item_boots",
-	"item_magic_wand",
-	"item_power_treads",
-	"item_hand_of_midas",
-	"item_blink",
-	"item_manta",--
-	"item_ultimate_scepter",
-	"item_black_king_bar",--
-	"item_octarine_core",--
-	"item_assault",--
-	"item_travel_boots",
-	"item_ultimate_scepter_2",
-	"item_overwhelming_blink",--
-	"item_travel_boots_2",--
-	"item_moon_shard",
-	"item_aghanims_shard",
-}
-
-sRoleItemsBuyList['pos_3'] = {
-	"item_tango",
-	"item_double_branches",
-	"item_quelling_blade",
-	"item_gauntlets",
-	"item_circlet",
-
-	"item_bracer",
-	"item_boots",
-	"item_magic_wand",
-	"item_power_treads",
-	"item_hand_of_midas",
-	"item_blink",
-	"item_ultimate_scepter",
-	"item_black_king_bar",--
-	"item_assault",--
-	"item_octarine_core",--
-	"item_bloodthorn",--
-	"item_ultimate_scepter_2",
-	"item_travel_boots",
-	"item_overwhelming_blink",--
-	"item_travel_boots_2",--
-
-	"item_moon_shard",
-	"item_aghanims_shard",
-}
-
-sRoleItemsBuyList['pos_4'] = sRoleItemsBuyList['pos_2']
-
-sRoleItemsBuyList['pos_5'] = sRoleItemsBuyList['pos_2']
-
-X['sBuyList'] = sRoleItemsBuyList[sRole]
-
-X['sSellList'] = {}
-
-Pos1SellList = {
-	"item_quelling_blade",
-	"item_bracer",
-	"item_magic_wand",
-}
-
-Pos2SellList = {
-	"item_quelling_blade",
-	"item_bottle",
-	"item_bracer",
-	"item_magic_wand",
-	"item_hand_of_midas",
-}
-
-Pos3SellList = {
-	"item_quelling_blade",
-	"item_bracer",
-	"item_magic_wand",
-	"item_hand_of_midas",
-}
-
-X['sSellList'] = {}
-
-if sRole == "pos_1" then X['sSellList'] = Pos1SellList end
-if sRole == "pos_2" then X['sSellList'] = Pos2SellList end
-if sRole == "pos_3" then X['sSellList'] = Pos3SellList end
+local sRand = RandomInt(1, #Hero.BuyList[sRole])
+X['sBuyList'] = Hero.BuyList[sRole][sRand]
+X['sSellList'] = Hero.SellList[sRole][sRand]
 
 if J.Role.IsPvNMode() or J.Role.IsAllShadow() then X['sBuyList'], X['sSellList'] = { 'PvN_tank' }, {"item_power_treads", 'item_quelling_blade'} end
 

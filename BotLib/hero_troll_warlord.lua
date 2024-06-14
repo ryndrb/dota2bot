@@ -1,64 +1,19 @@
 local X = {}
-local bDebugMode = ( 1 == 10 )
 local bot = GetBot()
 
+local Hero = require(GetScriptDirectory()..'/FunLib/bot_builds/'..string.gsub(bot:GetUnitName(), 'npc_dota_hero_', ''))
 local J = require( GetScriptDirectory()..'/FunLib/jmz_func' )
 local Minion = dofile( GetScriptDirectory()..'/FunLib/aba_minion' )
 local sTalentList = J.Skill.GetTalentList( bot )
 local sAbilityList = J.Skill.GetAbilityList( bot )
 local sRole = J.Item.GetRoleItemsBuyList( bot )
 
-local tTalentTreeList = {
-						['t25'] = {10, 0},
-						['t20'] = {10, 0},
-						['t15'] = {0, 10},
-						['t10'] = {10, 0},
-}
+local nTalentBuildList = J.Skill.GetTalentBuild(Hero.TalentBuild[sRole][RandomInt(1, #Hero.TalentBuild[sRole])])
+local nAbilityBuildList = Hero.AbilityBuild[sRole][RandomInt(1, #Hero.AbilityBuild[sRole])]
 
-local tAllAbilityBuildList = {
-						{2,1,4,2,2,6,2,1,1,1,6,4,4,4,6},--pos1
-}
-
-local nAbilityBuildList = J.Skill.GetRandomBuild( tAllAbilityBuildList )
-
-local nTalentBuildList = J.Skill.GetTalentBuild( tTalentTreeList )
-
-local sRoleItemsBuyList = {}
-
-sRoleItemsBuyList['pos_1'] = {
-    "item_tango",
-    "item_double_branches",
-    "item_quelling_blade",
-
-    "item_wraith_band",
-    "item_phase_boots",
-    "item_magic_wand",
-    "item_bfury",--
-    "item_yasha",
-    "item_black_king_bar",--
-    "item_sange_and_yasha",--
-    "item_aghanims_shard",
-    "item_satanic",--
-    "item_abyssal_blade",--
-    "item_travel_boots_2",--
-    "item_moon_shard",
-    "item_ultimate_scepter_2",
-}
-
-sRoleItemsBuyList['pos_2'] = sRoleItemsBuyList['pos_2']
-
-sRoleItemsBuyList['pos_4'] = sRoleItemsBuyList['pos_3']
-
-sRoleItemsBuyList['pos_5'] = sRoleItemsBuyList['pos_4']
-
-sRoleItemsBuyList['pos_3'] = sRoleItemsBuyList['pos_5']
-
-X['sBuyList'] = sRoleItemsBuyList[sRole]
-
-X['sSellList'] = {
-    "item_wraith_band",
-    "item_magic_wand",
-}
+local sRand = RandomInt(1, #Hero.BuyList[sRole])
+X['sBuyList'] = Hero.BuyList[sRole][sRand]
+X['sSellList'] = Hero.SellList[sRole][sRand]
 
 if J.Role.IsPvNMode() or J.Role.IsAllShadow() then X['sBuyList'], X['sSellList'] = { 'PvN_antimage' }, {} end
 

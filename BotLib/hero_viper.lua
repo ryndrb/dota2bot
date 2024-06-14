@@ -1,134 +1,19 @@
-----------------------------------------------------------------------------------------------------
---- The Creation Come From: BOT EXPERIMENT Credit:FURIOUSPUPPY
---- BOT EXPERIMENT Author: Arizona Fauzie 2018.11.21
---- Link:http://steamcommunity.com/sharedfiles/filedetails/?id=837040016
---- Refactor: 决明子 Email: dota2jmz@163.com 微博@Dota2_决明子
---- Link:http://steamcommunity.com/sharedfiles/filedetails/?id=1573671599
---- Link:http://steamcommunity.com/sharedfiles/filedetails/?id=1627071163
-----------------------------------------------------------------------------------------------------
 local X = {}
-local bDebugMode = ( 1 == 10 )
 local bot = GetBot()
 
+local Hero = require(GetScriptDirectory()..'/FunLib/bot_builds/'..string.gsub(bot:GetUnitName(), 'npc_dota_hero_', ''))
 local J = require( GetScriptDirectory()..'/FunLib/jmz_func' )
 local Minion = dofile( GetScriptDirectory()..'/FunLib/aba_minion' )
 local sTalentList = J.Skill.GetTalentList( bot )
 local sAbilityList = J.Skill.GetAbilityList( bot )
 local sRole = J.Item.GetRoleItemsBuyList( bot )
 
-local tTalentTreeList = {
-						{--pos2
-							['t25'] = {0, 10},
-							['t20'] = {10, 0},
-							['t15'] = {10, 0},
-							['t10'] = {0, 10},
-						},
-						{--pos3
-							['t25'] = {0, 10},
-							['t20'] = {10, 0},
-							['t15'] = {10, 0},
-							['t10'] = {10, 0},
-						}
-}
+local nTalentBuildList = J.Skill.GetTalentBuild(Hero.TalentBuild[sRole][RandomInt(1, #Hero.TalentBuild[sRole])])
+local nAbilityBuildList = Hero.AbilityBuild[sRole][RandomInt(1, #Hero.AbilityBuild[sRole])]
 
-local tAllAbilityBuildList = {
-						{1,3,1,2,1,6,1,3,2,3,6,2,3,2,6},--pos2
-						{1,3,1,3,1,6,1,2,3,3,6,2,2,2,6},--pos3
-}
-
-local nAbilityBuildList
-local nTalentBuildList
-
-if sRole == "pos_2"
-then 
-	nAbilityBuildList = tAllAbilityBuildList[1]
-	nTalentBuildList = J.Skill.GetTalentBuild( tTalentTreeList[1] )
-elseif sRole == "pos_3" 
-then 
-	nAbilityBuildList = tAllAbilityBuildList[2]
-	nTalentBuildList = J.Skill.GetTalentBuild( tTalentTreeList[2] )
-end
-
-local sUtility = {"item_heavens_halberd", "item_lotus_orb", "item_pipe"}
-local nUtility = sUtility[RandomInt(1, #sUtility)]
-
-local sRoleItemsBuyList = {}
-
-sRoleItemsBuyList['pos_1'] = sRoleItemsBuyList['pos_1']
-
-sRoleItemsBuyList['pos_2'] = {
-	"item_tango",
-	"item_faerie_fire",
-	"item_clarity",
-	"item_double_branches",
-	"item_circlet",
-	"item_slippers",
-
-	"item_bottle",
-	"item_wraith_band",
-	"item_magic_wand",
-	"item_power_treads",
-	"item_mage_slayer",--
-	"item_dragon_lance",
-	"item_manta",--
-	"item_hurricane_pike",--
-	"item_aghanims_shard",
-	"item_kaya_and_sange",--
-	"item_travel_boots",
-	"item_shivas_guard",--
-	"item_travel_boots_2",--
-	"item_ultimate_scepter_2",
-	"item_moon_shard",
-}
-
-sRoleItemsBuyList['pos_3'] = {
-	"item_tango",
-	"item_double_branches",
-	"item_enchanted_mango",
-	"item_double_circlet",
-
-	"item_double_wraith_band",
-	"item_boots",
-	"item_magic_wand",
-	"item_power_treads",
-	"item_mage_slayer",--
-	"item_dragon_lance",
-	nUtility,--
-	"item_black_king_bar",--
-	"item_aghanims_shard",
-	"item_hurricane_pike",--
-	"item_sheepstick",--
-	"item_travel_boots_2",--
-	"item_ultimate_scepter_2",
-	"item_moon_shard",
-}
-
-sRoleItemsBuyList['pos_4'] = sRoleItemsBuyList['pos_4']
-
-sRoleItemsBuyList['pos_5'] = sRoleItemsBuyList['pos_5']
-
-X['sBuyList'] = sRoleItemsBuyList[sRole]
-
-Pos2SellList = {
-    "item_bottle",
-    "item_wraith_band",
-    "item_magic_wand",
-}
-
-Pos3SellList = {
-    "item_wraith_band",
-    "item_magic_wand",
-}
-
-X['sSellList'] = {}
-
-if sRole == "pos_2"
-then
-    X['sSellList'] = Pos2SellList
-elseif sRole == "pos_3"
-then
-    X['sSellList'] = Pos3SellList
-end
+local sRand = RandomInt(1, #Hero.BuyList[sRole])
+X['sBuyList'] = Hero.BuyList[sRole][sRand]
+X['sSellList'] = Hero.SellList[sRole][sRand]
 
 if J.Role.IsPvNMode() or J.Role.IsAllShadow() then X['sBuyList'], X['sSellList'] = { 'PvN_mid' }, {} end
 

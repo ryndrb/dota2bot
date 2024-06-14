@@ -89,6 +89,21 @@ Item['item_lotus_orb'] = {
 	['npc_dota_hero_venomancer'] = true,
 }
 
+Item['item_nullifier'] = {
+	['npc_dota_hero_necrolyte'] = true,
+	['npc_dota_hero_pugna'] = true,
+	['npc_dota_hero_omniknight'] = true,
+	['npc_dota_hero_windrunner'] = true,
+}
+
+Item['item_radiance'] = {
+	['npc_dota_hero_chaos_knight'] = true,
+	['npc_dota_hero_meepo'] = true,
+	['npc_dota_hero_naga_siren'] = true,
+	['npc_dota_hero_phantom_lancer'] = true,
+	['npc_dota_hero_terrorblade'] = true,
+}
+
 function X.GetBestUtilityItem(itemTable)
 	local nItemList = {}
 	for i = 1, #itemTable
@@ -121,6 +136,11 @@ function X.GetBestUtilityItem(itemTable)
 			then
 				nItemList['item_lotus_orb'] = nItemList['item_lotus_orb'] + 1
 			end
+
+			if Item['item_nullifier'][hName] and nItemList['item_nullifier']
+			then
+				nItemList['item_nullifier'] = nItemList['item_nullifier'] + 1
+			end
 		end
 	end
 
@@ -137,6 +157,23 @@ function X.GetBestUtilityItem(itemTable)
 
 	if sBestItem == '' then return itemTable[1] end
 	return sBestItem
+end
+
+function X.GetAltItem(hItemName1, hItemName2)
+	local sChosenItem = hItemName1
+
+	for _, id in pairs(GetTeamPlayers(GetOpposingTeam()))
+	do
+		local hName = GetSelectedHeroName(id)
+
+		if Item[hItemName2][hName]
+		then
+			sChosenItem = hItemName1
+			break
+		end
+	end
+
+	return sChosenItem
 end
 
 return X

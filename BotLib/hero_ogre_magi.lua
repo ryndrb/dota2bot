@@ -1,178 +1,19 @@
 local X = {}
-local bDebugMode = ( 1 == 10 )
 local bot = GetBot()
 
+local Hero = require(GetScriptDirectory()..'/FunLib/bot_builds/'..string.gsub(bot:GetUnitName(), 'npc_dota_hero_', ''))
 local J = require( GetScriptDirectory()..'/FunLib/jmz_func' )
 local Minion = dofile( GetScriptDirectory()..'/FunLib/aba_minion' )
 local sTalentList = J.Skill.GetTalentList( bot )
 local sAbilityList = J.Skill.GetAbilityList( bot )
 local sRole = J.Item.GetRoleItemsBuyList( bot )
 
-local tTalentTreeList = {
-						{--pos2
-							['t25'] = {10, 0},
-							['t20'] = {0, 10},
-							['t15'] = {0, 10},
-							['t10'] = {0, 10},
-						},
-						{--pos3
-							['t25'] = {10, 0},
-							['t20'] = {10, 0},
-							['t15'] = {0, 10},
-							['t10'] = {0, 10},
-						},
-						{--pos4,5
-							['t25'] = {10, 0},
-							['t20'] = {10, 0},
-							['t15'] = {0, 10},
-							['t10'] = {0, 10},
-						}
-}
+local nTalentBuildList = J.Skill.GetTalentBuild(Hero.TalentBuild[sRole][RandomInt(1, #Hero.TalentBuild[sRole])])
+local nAbilityBuildList = Hero.AbilityBuild[sRole][RandomInt(1, #Hero.AbilityBuild[sRole])]
 
-local tAllAbilityBuildList = {
-						{3,2,2,1,2,7,2,1,1,1,7,3,3,3,7},--pos2
-						{2,1,2,3,2,7,3,1,1,1,7,3,3,2,7},--pos3
-						{2,1,2,3,2,7,2,1,1,1,7,3,3,3,7},--pos4,5
-}
-
-local nAbilityBuildList
-if sRole == 'pos_2' then nAbilityBuildList = tAllAbilityBuildList[1] end
-if sRole == 'pos_3' then nAbilityBuildList = tAllAbilityBuildList[2] end
-if sRole == 'pos_4' then nAbilityBuildList = tAllAbilityBuildList[3] end
-if sRole == 'pos_5' then nAbilityBuildList = tAllAbilityBuildList[3] end
-
-local nTalentBuildList
-if sRole == 'pos_2' then nTalentBuildList = J.Skill.GetTalentBuild(tTalentTreeList[1]) end
-if sRole == 'pos_3' then nTalentBuildList = J.Skill.GetTalentBuild(tTalentTreeList[2]) end
-if sRole == 'pos_4' then nTalentBuildList = J.Skill.GetTalentBuild(tTalentTreeList[3]) end
-if sRole == 'pos_5' then nTalentBuildList = J.Skill.GetTalentBuild(tTalentTreeList[3]) end
-
-local sRoleItemsBuyList = {}
-
-sRoleItemsBuyList['pos_1'] = sRoleItemsBuyList['pos_1']
-
-sRoleItemsBuyList['pos_2'] = {
-	"item_tango",
-	"item_double_branches",
-	"item_gauntlets",
-	"item_gauntlets",
-
-	"item_bottle",
-	"item_phase_boots",
-	"item_soul_ring",
-	"item_magic_wand",
-	"item_hand_of_midas",
-	"item_blade_mail",
-	"item_heart",--
-	"item_black_king_bar",--
-	"item_shivas_guard",--
-	"item_ultimate_scepter",
-	"item_octarine_core",--
-	"item_travel_boots",
-	"item_ultimate_scepter_2",
-	"item_sheepstick",--
-	"item_travel_boots_2",
-	"item_moon_shard",
-	"item_aghanims_shard",
-}
-
-sRoleItemsBuyList['pos_3'] = {
-	"item_tango",
-	"item_double_branches",
-	"item_gauntlets",
-	"item_gauntlets",
-
-	"item_boots",
-	"item_hand_of_midas",
-	"item_magic_wand",
-	"item_aether_lens",--
-	"item_ultimate_scepter",
-	"item_crimson_guard",--
-	"item_lotus_orb",--
-	"item_travel_boots",
-	"item_shivas_guard",--
-	"item_ultimate_scepter_2",
-	"item_heart",--
-	"item_travel_boots_2",--
-	"item_moon_shard",
-	"item_aghanims_shard",
-}
-
-sRoleItemsBuyList['pos_4'] = {
-	"item_double_tango",
-	"item_double_enchanted_mango",
-	"item_faerie_fire",
-	"item_double_branches",
-	"item_blood_grenade",
-
-	"item_tranquil_boots",
-	"item_magic_wand",
-	"item_hand_of_midas",
-	"item_aether_lens",--
-	"item_boots_of_bearing",--
-	"item_pipe",--
-	"item_sheepstick",--
-	"item_assault",--
-	"item_heart",--
-	"item_aghanims_shard",
-	"item_ultimate_scepter_2",
-	"item_moon_shard",
-}
-
-sRoleItemsBuyList['pos_5'] = {
-	"item_double_tango",
-	"item_double_enchanted_mango",
-	"item_faerie_fire",
-	"item_double_branches",
-	"item_blood_grenade",
-
-	"item_arcane_boots",
-	"item_magic_wand",
-	"item_hand_of_midas",
-	"item_aether_lens",--
-	"item_guardian_greaves",--
-	"item_pipe",--
-	"item_sheepstick",--
-	"item_assault",--
-	"item_heart",--
-	"item_aghanims_shard",
-	"item_ultimate_scepter_2",
-	"item_moon_shard",
-}
-
-X['sBuyList'] = sRoleItemsBuyList[sRole]
-
-Pos2SellList = {
-	"item_gauntlets",
-	"item_bottle",
-	"item_soul_ring",
-	"item_magic_wand",
-	"item_hand_of_midas",
-	"item_blade_mail",
-}
-
-Pos3SellList = {
-	"item_gauntlets",
-	"item_hand_of_midas",
-	"item_magic_wand",
-}
-
-Pos4SellList = {
-	"item_magic_wand",
-	"item_hand_of_midas",
-}
-
-Pos5SellList = {
-	"item_magic_wand",
-	"item_hand_of_midas",
-}
-
-X['sSellList'] = {}
-
-if sRole == "pos_2" then X['sSellList'] = Pos2SellList end
-if sRole == "pos_3" then X['sSellList'] = Pos3SellList end
-if sRole == "pos_4" then X['sSellList'] = Pos4SellList end
-if sRole == "pos_5" then X['sSellList'] = Pos5SellList end
+local sRand = RandomInt(1, #Hero.BuyList[sRole])
+X['sBuyList'] = Hero.BuyList[sRole][sRand]
+X['sSellList'] = Hero.SellList[sRole][sRand]
 
 if J.Role.IsPvNMode() or J.Role.IsAllShadow() then X['sBuyList'], X['sSellList'] = { 'PvN_OM' }, {"item_power_treads", 'item_quelling_blade'} end
 
@@ -238,7 +79,6 @@ function X.SkillsComplement()
 	castQDesire, castQTarget, sMotive = X.ConsiderQ()
 	if ( castQDesire > 0 )
 	then
-		J.SetReportMotive( bDebugMode, sMotive )
 
 		J.SetQueuePtToINT( bot, true )
 
@@ -249,7 +89,6 @@ function X.SkillsComplement()
 	castWDesire, castWTarget, sMotive = X.ConsiderW()
 	if ( castWDesire > 0 )
 	then
-		J.SetReportMotive( bDebugMode, sMotive )
 
 		J.SetQueuePtToINT( bot, true )
 
@@ -260,7 +99,6 @@ function X.SkillsComplement()
 	castEDesire, castETarget, sMotive = X.ConsiderE()
 	if ( castEDesire > 0 )
 	then
-		J.SetReportMotive( bDebugMode, sMotive )
 
 		J.SetQueuePtToINT( bot, true )
 
@@ -271,7 +109,6 @@ function X.SkillsComplement()
 	castDDesire, castDTarget, sMotive = X.ConsiderD()
 	if ( castDDesire > 0 )
 	then
-		J.SetReportMotive( bDebugMode, sMotive )
 
 		J.SetQueuePtToINT( bot, false )
 
@@ -282,7 +119,6 @@ function X.SkillsComplement()
 	FireShieldDesire, FireShieldTarget, sMotive = X.ConsiderFireShield()
 	if ( FireShieldDesire > 0 )
 	then
-		J.SetReportMotive( bDebugMode, sMotive )
 
 		J.SetQueuePtToINT( bot, true )
 
