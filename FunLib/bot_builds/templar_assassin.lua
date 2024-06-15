@@ -70,7 +70,7 @@ X.BuyList = {
             "item_circlet",
             "item_quelling_blade",
         
-            "item-bottle",
+            "item_bottle",
             "item_power_treads",
             "item_null_talisman",
             "item_magic_wand",
@@ -104,7 +104,7 @@ X.SellList = {
     ['pos_2'] = {
         [1] = {
             "item_quelling_blade",
-            "item-bottle",
+            "item_bottle",
             "item_power_treads",
             "item_null_talisman",
             "item_magic_wand",
