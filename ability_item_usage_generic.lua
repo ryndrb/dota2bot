@@ -3653,7 +3653,7 @@ X.ConsiderItemDesire["item_shadow_amulet"] = function( hItem )
 		local nEnemyList = bot:GetNearbyHeroes( 1600, true, BOT_MODE_NONE )
 		for _, enemy in pairs( nEnemyList )
 		do
-			if enemy:IsAlive()
+			if J.IsValidHero(enemy)
 				and ( enemy:GetAttackTarget() == bot or enemy:IsFacingLocation( bot:GetLocation(), 16 ) )
 			then
 				local nNearbyEnemyTowers = bot:GetNearbyTowers( 888, true )
@@ -4257,11 +4257,14 @@ function X.CanJuke()
 	local nEnemies = bot:GetNearbyHeroes( 1200, true, BOT_MODE_NONE )
 	for _, enemy in pairs( nEnemies )
 	do
-		local enemyDamage = enemy:GetEstimatedDamageToTarget( true, bot, 4.0, DAMAGE_TYPE_ALL )
-		totalDamage = totalDamage + enemyDamage
-		if bot:GetHealth() <= totalDamage
+		if J.IsValidHero(enemy)
 		then
-			return false
+			local enemyDamage = enemy:GetEstimatedDamageToTarget( true, bot, 4.0, DAMAGE_TYPE_ALL )
+			totalDamage = totalDamage + enemyDamage
+			if bot:GetHealth() <= totalDamage
+			then
+				return false
+			end
 		end
 	end
 

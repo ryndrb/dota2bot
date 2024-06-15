@@ -272,10 +272,12 @@ function X.ConsiderSwashbuckle()
 			and (J.IsKeyWordUnit('ranged', creep) or J.IsKeyWordUnit('siege', creep) or J.IsKeyWordUnit('flagbearer', creep))
 			and creep:GetHealth() <= nDamage * nStrikeCount
             and bot:IsFacingLocation(creep:GetLocation(), 10)
+            and J.CanBeAttacked(creep)
 			then
-				local nCreepInRangeHero = creep:GetNearbyHeroes(500, false, BOT_MODE_NONE)
+				local nCreepInRangeHero = bot:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
 
-				if nCreepInRangeHero ~= nil and #nCreepInRangeHero >= 1
+				if  J.IsValid(nCreepInRangeHero[1])
+                and GetUnitToUnitDistance(nCreepInRangeHero[1], creep) < 500
 				then
                     if J.IsInRange(bot, creep, nDashRange)
                     then
@@ -289,8 +291,8 @@ function X.ConsiderSwashbuckle()
                     end
 				end
 
-                nCreepInRangeHero = creep:GetNearbyHeroes(nRadius, false, BOT_MODE_NONE)
-                if nCreepInRangeHero ~= nil and #nCreepInRangeHero == 1
+				if  J.IsValid(nCreepInRangeHero[1])
+                and GetUnitToUnitDistance(nCreepInRangeHero[1], creep) < nRadius
                 then
                     if J.IsInRange(bot, creep, nDashRange)
                     then
@@ -494,9 +496,11 @@ function X.ConsiderShieldCrash()
 			and (J.IsKeyWordUnit('ranged', creep) or J.IsKeyWordUnit('siege', creep) or J.IsKeyWordUnit('flagbearer', creep))
 			and creep:GetHealth() <= nDamage
 			then
-				local nCreepInRangeHero = creep:GetNearbyHeroes(500, false, BOT_MODE_NONE)
+				local nCreepInRangeHero = bot:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
 
-				if  nCreepInRangeHero ~= nil and #nCreepInRangeHero >= 1
+				if  J.IsValid(nCreepInRangeHero[1])
+                and GetUnitToUnitDistance(nCreepInRangeHero[1], creep) < 500
+                and botTarget ~= creep
                 and J.GetMP(bot) > 0.33
                 and bot:IsFacingLocation(creep:GetLocation(), 15)
 				then

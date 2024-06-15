@@ -207,8 +207,8 @@ function X.ConsiderTimeWalk()
 			and (J.IsKeyWordUnit('ranged', creep) or J.IsKeyWordUnit('siege', creep) or J.IsKeyWordUnit('flagbearer', creep))
 			and GetUnitToUnitDistance(creep, bot) > 500
 			then
-				local nCreepInRangeHero = creep:GetNearbyHeroes(creep:GetCurrentVisionRange(), false, BOT_MODE_NONE)
-				local nCreepInRangeTower = creep:GetNearbyTowers(700, false)
+				local nCreepInRangeHero = bot:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
+				local nCreepInRangeTower = bot:GetNearbyTowers(700, true)
 				local nTime = (GetUnitToUnitDistance(bot, creep) / nSpeed) + nCastPoint
 				local nDamage = bot:GetAttackDamage()
 

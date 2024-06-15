@@ -138,61 +138,64 @@ function X.ConsiderQ()
 	--击杀和打断
 	for _, npcEnemy in pairs( hEnemyList )
 	do
-		--计算出视野内被标记的
-		if npcEnemy:HasModifier( "modifier_bounty_hunter_track" )
+		if J.IsValidHero(npcEnemy)
 		then
-			nTrackEnemyList[#nTrackEnemyList + 1] = npcEnemy
-		end
-
-		--打断施法
-		if npcEnemy:IsChanneling()
-			and not npcEnemy:IsMagicImmune()
-		then
+			--计算出视野内被标记的
 			if npcEnemy:HasModifier( "modifier_bounty_hunter_track" )
 			then
-				for _, nUnit in pairs( nEnemyUnitList )
-				do
-					if J.IsValid( nUnit )
-						and J.CanCastOnTargetAdvanced( nUnit )
-						and not nUnit:IsMagicImmune()
-					then
-						nCastTarget = nUnit
-						return BOT_ACTION_DESIRE_HIGH, nCastTarget, "Q-通过弹射打断施法:"..J.Chat.GetNormName( npcEnemy )
+				nTrackEnemyList[#nTrackEnemyList + 1] = npcEnemy
+			end
+
+			--打断施法
+			if npcEnemy:IsChanneling()
+				and not npcEnemy:IsMagicImmune()
+			then
+				if npcEnemy:HasModifier( "modifier_bounty_hunter_track" )
+				then
+					for _, nUnit in pairs( nEnemyUnitList )
+					do
+						if J.IsValid( nUnit )
+							and J.CanCastOnTargetAdvanced( nUnit )
+							and not nUnit:IsMagicImmune()
+						then
+							nCastTarget = nUnit
+							return BOT_ACTION_DESIRE_HIGH, nCastTarget, "Q-通过弹射打断施法:"..J.Chat.GetNormName( npcEnemy )
+						end
 					end
+				end
+
+				if J.IsInRange( bot, npcEnemy, nCastRange + 200 )
+					and J.CanCastOnTargetAdvanced( npcEnemy )
+				then
+					nCastTarget = npcEnemy
+					return BOT_ACTION_DESIRE_HIGH, nCastTarget, "Q-直接打断施法:"..J.Chat.GetNormName( nCastTarget )
 				end
 			end
 
-			if J.IsInRange( bot, npcEnemy, nCastRange + 200 )
-				and J.CanCastOnTargetAdvanced( npcEnemy )
+			--击杀
+			if J.CanCastOnNonMagicImmune( npcEnemy )
+				and J.WillMagicKillTarget( bot, npcEnemy, nDamage, nCastPoint + GetUnitToUnitDistance( bot, npcEnemy )/1000 )
 			then
-				nCastTarget = npcEnemy
-				return BOT_ACTION_DESIRE_HIGH, nCastTarget, "Q-直接打断施法:"..J.Chat.GetNormName( nCastTarget )
-			end
-		end
-
-		--击杀
-		if J.CanCastOnNonMagicImmune( npcEnemy )
-			and J.WillMagicKillTarget( bot, npcEnemy, nDamage, nCastPoint + GetUnitToUnitDistance( bot, npcEnemy )/1000 )
-		then
-			if npcEnemy:HasModifier( "modifier_bounty_hunter_track" )
-			then
-				for _, nUnit in pairs( nEnemyUnitList )
-				do
-					if J.IsValid( nUnit )
-						and J.CanCastOnTargetAdvanced( nUnit )
-						and not nUnit:IsMagicImmune()
-					then
-						nCastTarget = nUnit
-						return BOT_ACTION_DESIRE_HIGH, nCastTarget, "Q-通过弹射击杀:"..J.Chat.GetNormName( npcEnemy )
+				if npcEnemy:HasModifier( "modifier_bounty_hunter_track" )
+				then
+					for _, nUnit in pairs( nEnemyUnitList )
+					do
+						if J.IsValid( nUnit )
+							and J.CanCastOnTargetAdvanced( nUnit )
+							and not nUnit:IsMagicImmune()
+						then
+							nCastTarget = nUnit
+							return BOT_ACTION_DESIRE_HIGH, nCastTarget, "Q-通过弹射击杀:"..J.Chat.GetNormName( npcEnemy )
+						end
 					end
 				end
-			end
 
-			if J.IsInRange( bot, npcEnemy, nCastRange + 200 )
-				and J.CanCastOnTargetAdvanced( npcEnemy )
-			then
-				nCastTarget = npcEnemy
-				return BOT_ACTION_DESIRE_HIGH, nCastTarget, "Q-直接击杀:"..J.Chat.GetNormName( nCastTarget )
+				if J.IsInRange( bot, npcEnemy, nCastRange + 200 )
+					and J.CanCastOnTargetAdvanced( npcEnemy )
+				then
+					nCastTarget = npcEnemy
+					return BOT_ACTION_DESIRE_HIGH, nCastTarget, "Q-直接击杀:"..J.Chat.GetNormName( nCastTarget )
+				end
 			end
 		end
 	end

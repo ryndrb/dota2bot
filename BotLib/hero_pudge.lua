@@ -222,10 +222,11 @@ function X.ConsiderMeatHook()
 			and J.IsKeyWordUnit('siege', creep)
 			and creep:GetHealth() <= nDamage
 			then
-				local nCreepInRangeHero = creep:GetNearbyHeroes(500, false, BOT_MODE_NONE)
+				local nCreepInRangeHero = bot:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
 
-				if  ((nCreepInRangeHero ~= nil and #nCreepInRangeHero >= 1)
-                    or not J.IsInRange(bot, creep, bot:GetAttackRange() + 25))
+				if  ((J.IsValid(nCreepInRangeHero[1])
+                    and GetUnitToUnitDistance(nCreepInRangeHero[1], creep) < 500)
+                        or not J.IsInRange(bot, creep, bot:GetAttackRange() + 25))
                 and not J.IsHeroBetweenMeAndTarget(bot, creep, creep:GetLocation(), nRadius)
                 and not J.IsNonSiegeCreepBetweenMeAndLocation(bot, creep:GetLocation(), nRadius)
                 and (J.IsCore(bot) or not J.IsCore(bot) and not J.IsThereCoreNearby(1200))

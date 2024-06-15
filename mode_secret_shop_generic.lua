@@ -10,6 +10,7 @@ if GetBot():IsInvulnerable() or not GetBot():IsHero() or not string.find(GetBot(
 	return;
 end
 
+local J = require( GetScriptDirectory()..'/FunLib/jmz_func')
 local bot = GetBot();
 local X = {}
 local preferedShop = nil;
@@ -145,7 +146,7 @@ function X.IsSuitableToBuy()
 		or mode == BOT_MODE_ATTACK
 		or mode == BOT_MODE_DEFEND_ALLY
 		or ( Enemies ~= nil and #Enemies >= 2 )
-		or ( Enemies[1] ~= nil and X.IsStronger(bot, Enemies[1]) )
+		or ( J.IsValid(Enemies[1]) and X.IsStronger(bot, Enemies[1]) )
 		or GetUnitToUnitDistance(bot, GetAncient(GetTeam())) < 2300 
 		or GetUnitToUnitDistance(bot, GetAncient(GetOpposingTeam())) < 3500  
 	then
@@ -159,4 +160,3 @@ function X.IsStronger(bot, enemy)
 	local EPower = enemy:GetEstimatedDamageToTarget(true, bot, 4.0, DAMAGE_TYPE_ALL);
 	return EPower > BPower;
 end
--- dota2jmz@163.com QQ:2462331592..

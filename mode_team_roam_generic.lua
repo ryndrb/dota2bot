@@ -1121,9 +1121,10 @@ function X.WeakestUnitExceptRangeCanBeAttacked(bHero, bEnemy, nRange, nRadius, b
 	end
 	
 	for _,u in pairs(units) do
-		if GetUnitToUnitDistance(bot,u) > nRange 
-		   and X.CanBeAttacked(u)
-		   and not u:HasModifier("modifier_crystal_maiden_frostbite")
+		if  X.IsValid(u)
+		and GetUnitToUnitDistance(bot,u) > nRange 
+		and X.CanBeAttacked(u)
+		and not u:HasModifier("modifier_crystal_maiden_frostbite")
 		then
 			realHP = u:GetHealth() / 1;
 			
@@ -1214,7 +1215,7 @@ function X.GetExceptRangeLastHitCreep(bEnemy,nDamage,nRange,nRadius,bot)
 	local nCreep = X.WeakestUnitExceptRangeCanBeAttacked(false, bEnemy, nRange, nRadius, bot);
 	local nDamageType = DAMAGE_TYPE_PHYSICAL;
 
-	if nCreep ~= nil and nCreep:IsAlive()
+	if X.IsValid(nCreep)
 	then
 		if not bEnemy and nCreep:GetHealth()/nCreep:GetMaxHealth() >= 0.5
 		then return nil end	
@@ -1400,38 +1401,41 @@ end
 function X.IsOthersTarget(nUnit)
 	local bot = GetBot();
 
-	if X.IsAllysTarget(nUnit)
+	if X.IsValid(nUnit)
 	then
-		return true;
-	end
-	
-	if X.IsEnemysTarget(nUnit)
-	then
-		return true;
-	end
-	
-	if X.IsCreepTarget(nUnit)
-	then
-		return true
-	end
-	
-	local nTowers = bot:GetNearbyTowers(1600,true);
-	for _,tower in pairs(nTowers)
-	do
-		if tower ~= nil and tower:IsAlive()
-		   and tower:GetAttackTarget() == nUnit
+		if X.IsAllysTarget(nUnit)
 		then
 			return true;
 		end
-	end
-	
-	local nTowers = bot:GetNearbyTowers(1600,false);
-	for _,tower in pairs(nTowers)
-	do
-		if tower ~= nil and tower:IsAlive()
-		   and tower:GetAttackTarget() == nUnit
+		
+		if X.IsEnemysTarget(nUnit)
 		then
 			return true;
+		end
+		
+		if X.IsCreepTarget(nUnit)
+		then
+			return true
+		end
+		
+		local nTowers = bot:GetNearbyTowers(1600,true);
+		for _,tower in pairs(nTowers)
+		do
+			if J.IsValidBuilding(tower)
+			   and tower:GetAttackTarget() == nUnit
+			then
+				return true;
+			end
+		end
+		
+		local nTowers = bot:GetNearbyTowers(1600,false);
+		for _,tower in pairs(nTowers)
+		do
+			if J.IsValidBuilding(tower)
+			   and tower:GetAttackTarget() == nUnit
+			then
+				return true;
+			end
 		end
 	end
 	
@@ -1445,7 +1449,7 @@ function X.IsCreepTarget(nUnit)
 	local nCreeps = bot:GetNearbyCreeps(1200,true);
 	for _,creep in pairs(nCreeps)
 	do
-		if  creep ~= nil and creep:IsAlive()
+		if  X.IsValid(creep)
 		and creep:GetAttackTarget() == nUnit
 		and not J.IsTormentor(creep)
 		and not J.IsRoshan(creep)
@@ -1457,7 +1461,7 @@ function X.IsCreepTarget(nUnit)
 	local nCreeps = bot:GetNearbyCreeps(1200,false);
 	for _,creep in pairs(nCreeps)
 	do
-		if creep ~= nil and creep:IsAlive()
+		if X.IsValid(creep)
 		and creep:GetAttackTarget() == nUnit
 		and not J.IsTormentor(creep)
 		and not J.IsRoshan(creep)

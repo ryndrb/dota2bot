@@ -252,9 +252,9 @@ function X.ConsiderChargeOfDarkness()
             if  J.IsValid(creep)
             and J.GetHP(creep) <= 0.33
             then
-                local nEnemyTowers = creep:GetNearbyTowers(700, false)
+                local nNearbyTower = bot:GetNearbyTowers(1600, true)
 
-                if nEnemyTowers ~= nil and #nEnemyTowers == 0
+                if nNearbyTower ~= nil and (#nNearbyTower == 0 or J.IsValidBuilding(nNearbyTower[1]) and GetUnitToUnitDistance(nNearbyTower[1], creep) > 700)
                 then
                     canKill = canKill + 1
                     table.insert(creepList, creep)

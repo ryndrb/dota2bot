@@ -1361,7 +1361,7 @@ function J.IsWillBeCastUnitTargetSpell( bot, nRadius )
 	local enemyList = bot:GetNearbyHeroes( nRadius, true, BOT_MODE_NONE )
 	for _, npcEnemy in pairs( enemyList )
 	do
-		if npcEnemy ~= nil and npcEnemy:IsAlive()
+		if J.IsValidHero(npcEnemy)
 			and ( npcEnemy:IsCastingAbility() or npcEnemy:IsUsingAbility() )
 			and npcEnemy:IsFacingLocation( bot:GetLocation(), 20 )
 		then
@@ -2934,7 +2934,7 @@ function J.GetEnemyList( bot, nRadius )
 
 	for _, enemy in pairs( nCandidate )
 	do
-		if enemy ~= nil and enemy:IsAlive()
+		if J.IsValidHero(enemy)
 			and not J.IsSuspiciousIllusion( enemy )
 		then
 			table.insert( nRealEnemyList, enemy )

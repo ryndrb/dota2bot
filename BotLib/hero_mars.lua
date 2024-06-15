@@ -239,11 +239,12 @@ function X.ConsiderSpearOfMars()
 			if  J.IsValid(creep)
 			and (J.IsKeyWordUnit('ranged', creep) or J.IsKeyWordUnit('siege', creep) or J.IsKeyWordUnit('flagbearer', creep))
 			and creep:GetHealth() <= nDamage
+			and J.CanBeAttacked(creep)
 			then
-				local nCreepInRangeHero = creep:GetNearbyHeroes(creep:GetCurrentVisionRange(), true, BOT_MODE_NONE)
+				local nCreepInRangeHero = bot:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
 
-				if  nCreepInRangeHero ~= nil and #nCreepInRangeHero >= 1
-				and GetUnitToUnitDistance(creep, nCreepInRangeHero[1]) <= 400
+				if  J.IsValid(nCreepInRangeHero[1])
+                and GetUnitToUnitDistance(nCreepInRangeHero[1], creep) < 400
 				and J.GetMP(bot) > 0.75
 				and J.GetHP(nCreepInRangeHero[1]) > 0.65
 				then

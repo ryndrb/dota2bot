@@ -116,9 +116,11 @@ function X.ConsiderArcaneOrb()
 			if  J.IsValid(creep)
 			and J.CanKillTarget(creep, nDamage, DAMAGE_TYPE_PURE)
 			then
-				local nCreepInRangeHero = creep:GetNearbyHeroes(500, false, BOT_MODE_NONE)
+				local nCreepInRangeHero = bot:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
 
-				if nCreepInRangeHero ~= nil and #nCreepInRangeHero >= 1
+				if  J.IsValid(nCreepInRangeHero[1])
+                and GetUnitToUnitDistance(nCreepInRangeHero[1], creep) < 500
+                and J.CanBeAttacked(creep)
 				then
 					return BOT_ACTION_DESIRE_HIGH, creep
 				end

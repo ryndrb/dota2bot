@@ -215,8 +215,8 @@ function X.ConsiderBlink()
 			and (J.IsKeyWordUnit('ranged', creep) or J.IsKeyWordUnit('siege', creep) or J.IsKeyWordUnit('flagbearer', creep))
 			and GetUnitToUnitDistance(bot, creep) > 500
 			then
-				local nCreepInRangeHero = creep:GetNearbyHeroes(creep:GetCurrentVisionRange(), false, BOT_MODE_NONE)
-				local nCreepInRangeTower = creep:GetNearbyTowers(700, false)
+				local nCreepInRangeHero = bot:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
+				local nCreepInRangeTower = bot:GetNearbyTowers(700, true)
 				local nDamage = bot:GetAttackDamage()
 
 				if  J.WillKillTarget(creep, nDamage, DAMAGE_TYPE_PHYSICAL, nCastPoint + nAttackPoint + 0.53)

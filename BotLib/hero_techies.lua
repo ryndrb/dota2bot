@@ -753,6 +753,8 @@ function IsIBecameTheTarget(nUnits)
 	for _, u in pairs(nUnits)
 	do
 		if  u ~= nil
+		and u:IsAlive()
+		and u:CanBeSeen()
         and u:GetAttackTarget() == bot
 		then
 			return true

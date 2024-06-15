@@ -848,7 +848,7 @@ function X.ShouldRun(bot)
 	end
 	
 
-	if nEnemyTowers[1] ~= nil and botLevel < 20
+	if J.IsValidBuilding(nEnemyTowers[1]) and botLevel < 20
 	then
 		if nEnemyTowers[1]:HasModifier("modifier_invulnerable") and aliveEnemyCount > 1
 		then

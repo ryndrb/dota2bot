@@ -147,7 +147,7 @@ function X.ConsiderBoulderSmash()
 		return BOT_ACTION_DESIRE_NONE, 0, false, false
 	end
 
-	local nCastRange = BoulderSmash:GetCastRange()
+	local nCastRange = J.GetProperCastRange(false, bot, BoulderSmash:GetCastRange())
 	local nAttackRange = bot:GetAttackRange()
 	local nSpeed = BoulderSmash:GetSpecialValueInt('speed')
 	local nDamage = BoulderSmash:GetSpecialValueInt('rock_damage')
@@ -285,12 +285,15 @@ function X.ConsiderRollingBoulder()
 	local nSpeed = RollingBoulder:GetSpecialValueInt('rock_speed')
 	local nDamage = RollingBoulder:GetSpecialValueInt('damage')
 	local nMana = bot:GetMana() bot:GetMaxMana()
+	local nDistTwice = nDistance * 2 > 1600 and 1600 or nDistance * 2
 
 	local nNearbyEnemySearchRange = nDistance
 	if nStone >= 1
 	then
 		nNearbyEnemySearchRange = nNearbyEnemySearchRange * 2
 	end
+
+	if nNearbyEnemySearchRange > 1600 then nNearbyEnemySearchRange = 1600 end
 
 	local nEnemyHeroes = bot:GetNearbyHeroes(nNearbyEnemySearchRange, true, BOT_MODE_NONE)
 	for _, enemyHero in pairs(nEnemyHeroes)
@@ -352,11 +355,11 @@ function X.ConsiderRollingBoulder()
 		if  nStone >= 1
 		and J.IsValidTarget(botTarget)
 		and J.CanCastOnNonMagicImmune(botTarget)
-		and J.IsInRange(bot, botTarget, nDistance * 2)
+		and J.IsInRange(bot, botTarget, nDistTwice)
 		and not J.IsSuspiciousIllusion(botTarget)
 		and not botTarget:HasModifier('modifier_faceless_void_chronosphere')
 		then
-			local nAllyHeroes = bot:GetNearbyHeroes(nDistance * 2, false, BOT_MODE_NONE)
+			local nAllyHeroes = bot:GetNearbyHeroes(nDistTwice, false, BOT_MODE_NONE)
 
 			if  nEnemyHeroes ~= nil and nAllyHeroes ~= nil
 			and ((#nAllyHeroes >= #nEnemyHeroes) or (#nEnemyHeroes > #nAllyHeroes and J.WeAreStronger(bot, 1600)))
@@ -382,11 +385,11 @@ function X.ConsiderRollingBoulder()
 		end
 	end
 
-	local nInRangeAlly  = bot:GetNearbyHeroes(nDistance * 2, false, BOT_MODE_NONE)
+	local nInRangeAlly  = bot:GetNearbyHeroes(nDistTwice, false, BOT_MODE_NONE)
 	if J.IsRetreating(bot)
 	or J.IsRetreating(bot) and (nInRangeAlly ~= nil and nEnemyHeroes ~= nil and #nEnemyHeroes > #nInRangeAlly)
 	then
-		local nAllyHeroes  = bot:GetNearbyHeroes(nDistance * 2, false, BOT_MODE_NONE)
+		local nAllyHeroes  = bot:GetNearbyHeroes(nDistTwice, false, BOT_MODE_NONE)
 		local location = J.GetEscapeLoc()
 		local loc = J.Site.GetXUnitsTowardsLocation(bot, location, nDistance)
 

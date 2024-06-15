@@ -588,10 +588,10 @@ function X.ConsiderLightningStorm()
 			and creep:GetHealth() <= nDamage
             and J.GetMP(bot) > 0.3
 			then
-				nInRangeEnemy = creep:GetNearbyHeroes(800, false, BOT_MODE_NONE)
+				local nCreepInRangeHero = bot:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
 
-				if  nInRangeEnemy ~= nil and #nInRangeEnemy >= 1
-				and GetUnitToUnitDistance(creep, nInRangeEnemy[1]) < nInRangeEnemy[1]:GetAttackRange()
+				if  J.IsValid(nCreepInRangeHero[1])
+                and GetUnitToUnitDistance(nCreepInRangeHero[1], creep) < 800
 				then
 					return BOT_ACTION_DESIRE_HIGH, creep
 				end

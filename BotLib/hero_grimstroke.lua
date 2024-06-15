@@ -409,6 +409,7 @@ function X.ConsiderInkSwell()
     for _, allyHero in pairs(nAllyHeroes)
     do
         if  J.IsValidHero(allyHero)
+        and J.IsValidHero(botTarget)
         and not J.IsSuspiciousIllusion(allyHero)
         and GetUnitToUnitDistance(allyHero, botTarget) < dist
         then

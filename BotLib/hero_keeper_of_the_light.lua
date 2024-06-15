@@ -222,12 +222,12 @@ function X.ConsiderIlluminate()
 			and (J.IsKeyWordUnit('ranged', creep) or J.IsKeyWordUnit('siege', creep))
 			and creep:GetHealth() <= nMaxDamage
 			then
-                local nNearbyTower = creep:GetNearbyTowers(700, true)
+                local nNearbyTower = bot:GetNearbyTowers(1600, true)
 				local nInRangeEnemy = bot:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
 
 				if  nInRangeEnemy ~= nil and #nInRangeEnemy >= 1
 				and GetUnitToUnitDistance(creep, nInRangeEnemy[1]) <= 500
-                and nNearbyTower ~= nil and #nNearbyTower == 0
+                and nNearbyTower ~= nil and (#nNearbyTower == 0 or J.IsValidBuilding(nNearbyTower[1]) and GetUnitToUnitDistance(nNearbyTower[1], creep) > 700)
 				then
 					return BOT_ACTION_DESIRE_HIGH, creep:GetLocation()
 				end

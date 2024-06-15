@@ -269,8 +269,11 @@ function X.ConsiderW()
 
 	for _, enemy in pairs( enemies )
 	do
-		if enemy:IsChanneling() then
-			return BOT_ACTION_DESIRE_HIGH, enemy:GetLocation()
+		if J.IsValidHero(enemy)
+		then
+			if enemy:IsChanneling() then
+				return BOT_ACTION_DESIRE_HIGH, enemy:GetLocation()
+			end
 		end
 	end
 
