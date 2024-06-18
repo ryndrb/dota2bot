@@ -53,9 +53,8 @@ function XP.UpdateXP(bot, nTeam)
     end
 
     local timeMul = math.max(1, 1 - (gameTime / 60))
-    local nMul = Helper.IsCore(bot, nTeam) and 1.5 or 1.25
 
-    xp = xp * timeMul * nMul
+    xp = xp * timeMul
 
     if  bot:IsAlive()
     and gameTime > 0
