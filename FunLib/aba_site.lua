@@ -2462,7 +2462,8 @@ function Site.GetCarry()
 end
 
 function Site.IsInLaningPhase()
-	return (Site.IsModeTurbo() and DotaTime() < 8 * 60) or DotaTime() < 12 * 60
+	if GetBot().isInLanePhase ~= nil and GetBot().isInLanePhase then return true end
+	return false
 end
 
 function Site.IsModeTurbo()
