@@ -1,9 +1,9 @@
 local X = {}
 local bot = GetBot()
 
+local SU = dofile( GetScriptDirectory()..'/Spells/spell_usage' )
 local Hero = require(GetScriptDirectory()..'/FunLib/bot_builds/'..string.gsub(bot:GetUnitName(), 'npc_dota_hero_', ''))
 local J = require( GetScriptDirectory()..'/FunLib/jmz_func' )
-local R = dofile( GetScriptDirectory()..'/FunLib/rubick_utility' )
 local SPL = dofile( GetScriptDirectory()..'/FunLib/spell_prob_list' )
 local Minion = dofile( GetScriptDirectory()..'/FunLib/aba_minion' )
 local sTalentList = J.Skill.GetTalentList( bot )
@@ -61,8 +61,8 @@ function X.SkillsComplement()
         return
     end
 
-    X.ConsiderStolenSpell1()
-    X.ConsiderStolenSpell2()
+    local sOrder = {'D','F'}
+    SU.AbilityUsage(sOrder)
 
     TelekinesisDesire, TelekinesisTarget = X.ConsiderTelekinesis()
     if TelekinesisDesire > 0
@@ -540,29 +540,29 @@ function X.ConsiderFadeBolt()
     return BOT_ACTION_DESIRE_NONE, nil
 end
 
-function X.ConsiderStolenSpell1()
-    if StolenSpell1:GetName() == 'rubick_empty1'
-    or not StolenSpell1:IsFullyCastable()
-    then
-        return BOT_ACTION_DESIRE_HIGH, 0, ''
-    end
+-- function X.ConsiderStolenSpell1()
+--     if StolenSpell1:GetName() == 'rubick_empty1'
+--     or not StolenSpell1:IsFullyCastable()
+--     then
+--         return BOT_ACTION_DESIRE_HIGH, 0, ''
+--     end
 
-    R.ConsiderStolenSpell(StolenSpell1)
+--     R.ConsiderStolenSpell(StolenSpell1)
 
-    return BOT_ACTION_DESIRE_HIGH, 0, ''
-end
+--     return BOT_ACTION_DESIRE_HIGH, 0, ''
+-- end
 
-function X.ConsiderStolenSpell2()
-    if StolenSpell2:GetName() == 'rubick_empty2'
-    or not StolenSpell2:IsFullyCastable()
-    then
-        return BOT_ACTION_DESIRE_HIGH, 0, ''
-    end
+-- function X.ConsiderStolenSpell2()
+--     if StolenSpell2:GetName() == 'rubick_empty2'
+--     or not StolenSpell2:IsFullyCastable()
+--     then
+--         return BOT_ACTION_DESIRE_HIGH, 0, ''
+--     end
 
-    R.ConsiderStolenSpell(StolenSpell2)
+--     R.ConsiderStolenSpell(StolenSpell2)
 
-    return BOT_ACTION_DESIRE_HIGH, 0, ''
-end
+--     return BOT_ACTION_DESIRE_HIGH, 0, ''
+-- end
 
 function X.ConsiderSpellSteal()
     if not SpellSteal:IsFullyCastable()
@@ -620,33 +620,33 @@ function X.ShouldStealSpellFrom(hero)
         ['npc_dota_hero_arc_warden'] = true,
         ['npc_dota_hero_axe'] = true,
         ['npc_dota_hero_bane'] = true,
-        ['npc_dota_hero_batrider'] = true,
-        ['npc_dota_hero_beastmaster'] = true,
-        ['npc_dota_hero_bloodseeker'] = true,
-        ['npc_dota_hero_bounty_hunter'] = true,
-        ['npc_dota_hero_brewmaster'] = true,
-        ['npc_dota_hero_bristleback'] = true,
-        ['npc_dota_hero_broodmother'] = true,
-        ['npc_dota_hero_centaur'] = true,
-        ['npc_dota_hero_chaos_knight'] = true,
-        ['npc_dota_hero_chen'] = true,
-        ['npc_dota_hero_clinkz'] = true,
-        ['npc_dota_hero_crystal_maiden'] = true,
-        ['npc_dota_hero_dark_seer'] = true,
-        ['npc_dota_hero_dark_willow'] = false,
-        ['npc_dota_hero_dawnbreaker'] = true,
-        ['npc_dota_hero_dazzle'] = true,
-        ['npc_dota_hero_death_prophet'] = true,
-        ['npc_dota_hero_disruptor'] = true,
-        ['npc_dota_hero_doom_bringer'] = true,
-        ['npc_dota_hero_dragon_knight'] = true,
-        ['npc_dota_hero_drow_ranger'] = true,
-        ['npc_dota_hero_earth_spirit'] = true,
-        ['npc_dota_hero_earthshaker'] = true,
-        ['npc_dota_hero_elder_titan'] = false,
-        ['npc_dota_hero_ember_spirit'] = true,
-        ['npc_dota_hero_enchantress'] = true,
-        ['npc_dota_hero_enigma'] = true,
+        -- ['npc_dota_hero_batrider'] = true,
+        -- ['npc_dota_hero_beastmaster'] = true,
+        -- ['npc_dota_hero_bloodseeker'] = true,
+        -- ['npc_dota_hero_bounty_hunter'] = true,
+        -- ['npc_dota_hero_brewmaster'] = true,
+        -- ['npc_dota_hero_bristleback'] = true,
+        -- ['npc_dota_hero_broodmother'] = true,
+        -- ['npc_dota_hero_centaur'] = true,
+        -- ['npc_dota_hero_chaos_knight'] = true,
+        -- ['npc_dota_hero_chen'] = true,
+        -- ['npc_dota_hero_clinkz'] = true,
+        -- ['npc_dota_hero_crystal_maiden'] = true,
+        -- ['npc_dota_hero_dark_seer'] = true,
+        -- ['npc_dota_hero_dark_willow'] = false,
+        -- ['npc_dota_hero_dawnbreaker'] = true,
+        -- ['npc_dota_hero_dazzle'] = true,
+        -- ['npc_dota_hero_death_prophet'] = true,
+        -- ['npc_dota_hero_disruptor'] = true,
+        -- ['npc_dota_hero_doom_bringer'] = true,
+        -- ['npc_dota_hero_dragon_knight'] = true,
+        -- ['npc_dota_hero_drow_ranger'] = true,
+        -- ['npc_dota_hero_earth_spirit'] = true,
+        -- ['npc_dota_hero_earthshaker'] = true,
+        -- ['npc_dota_hero_elder_titan'] = false,
+        -- ['npc_dota_hero_ember_spirit'] = true,
+        -- ['npc_dota_hero_enchantress'] = true,
+        -- ['npc_dota_hero_enigma'] = true,
         -- ['npc_dota_hero_faceless_void'] = ,
         -- ['npc_dota_hero_furion'] = ,
         -- ['npc_dota_hero_grimstroke'] = ,
