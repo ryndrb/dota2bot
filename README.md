@@ -188,7 +188,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
             | Beastmaster           | -       | -       | 1 [2/21/2024]
             | Bloodseeker           | -       | &check; | 0 
             | Bounty Hunter         | -       | &check; | 0 
-            | Brewmaster            | -       | &cross; | 1 [3/9/2024]
+            | Brewmaster            | -       | &check; | 1 [3/9/2024]
             | Bristleback           | &check; | &check; | 0 
             | Broodmother           | -       | &cross; | 1 [3/9/2024]
             | Centaur               | -       | &check; | 1 [3/11/2024]

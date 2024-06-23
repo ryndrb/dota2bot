@@ -142,9 +142,9 @@ function X.Consider()
 	if J.IsDoingRoshan(bot)
 	then
 		if  J.IsRoshan(botTarget)
+        and not J.IsDisabled(botTarget)
         and J.IsInRange(bot, botTarget, nCastRange)
         and J.IsAttacking(bot)
-        and not J.IsDisabled(botTarget)
         and not botTarget:HasModifier('modifier_axe_battle_hunger_self')
 		then
 			return BOT_ACTION_DESIRE_HIGH, botTarget
@@ -154,9 +154,9 @@ function X.Consider()
     if J.IsDoingTormentor(bot)
 	then
 		if  J.IsTormentor(botTarget)
+        and not J.IsDisabled(botTarget)
         and J.IsInRange(bot, botTarget, nCastRange)
         and J.IsAttacking(bot)
-        and not J.IsDisabled(botTarget)
         and not botTarget:HasModifier('modifier_axe_battle_hunger_self')
 		then
 			return BOT_ACTION_DESIRE_HIGH, botTarget

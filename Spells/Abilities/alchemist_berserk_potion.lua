@@ -24,9 +24,10 @@ function X.Consider()
 		return BOT_ACTION_DESIRE_NONE, nil
 	end
 
-	local nCastRange = BerserkPotion:GetCastRange()
+	local nCastRange = J.GetProperCastRange(false, bot, BerserkPotion:GetCastRange())
 
-	local nAllyHeroes = bot:GetNearbyHeroes(nCastRange, false, BOT_MODE_NONE)
+	local nAllyHeroes = bot:GetNearbyHeroes(1600, false, BOT_MODE_NONE)
+
 	for _, allyHero in pairs(nAllyHeroes)
 	do
 		if  J.IsValidHero(allyHero)
@@ -36,7 +37,6 @@ function X.Consider()
 		and not allyHero:IsMagicImmune()
 		and not allyHero:IsInvulnerable()
 		and not allyHero:IsIllusion()
-		and allyHero:CanBeSeen()
 		then
 			if J.IsDisabled(allyHero)
 			then
@@ -47,7 +47,6 @@ function X.Consider()
 			and J.IsRunning(allyHero)
 			and J.GetHP(allyHero) < 0.6
 			and allyHero:WasRecentlyDamagedByAnyHero(2.5)
-			and allyHero:IsFacingLocation(GetAncient(GetTeam()):GetLocation(), 45)
 			then
 				return BOT_ACTION_DESIRE_HIGH, allyHero
 			end
@@ -57,8 +56,8 @@ function X.Consider()
 				local allyTarget = J.GetProperTarget(allyHero)
 
 				if  J.IsValidHero(allyTarget)
-				and allyHero:IsFacingLocation( allyTarget:GetLocation(), 20)
-				and J.IsInRange(allyHero, allyTarget, allyHero:GetAttackRange() + 100)
+				and allyHero:IsFacingLocation(allyTarget:GetLocation(), 20)
+				and J.IsInRange(allyHero, allyTarget, allyHero:GetAttackRange() + 150)
 				then
 					return BOT_ACTION_DESIRE_HIGH, allyHero
 				end

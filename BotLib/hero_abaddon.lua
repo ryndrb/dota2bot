@@ -29,14 +29,6 @@ function X.MinionThink(hMinionUnit)
     Minion.MinionThink(hMinionUnit)
 end
 
-local MistCoil          = bot:GetAbilityByName( 'abaddon_death_coil' )
-local AphoticShield     = bot:GetAbilityByName( 'abaddon_aphotic_shield' )
--- local CurseOfAvernus    = bot:GetAbilityByName( 'abaddon_frostmourne' )
--- local BorrowedTimelocal = bot:GetAbilityByName( 'abaddon_borrowed_time' )
-
-local MistCoilDesire, MistCoilTarget
-local AphoticShieldDesire, AphoticShieldTarget
-
 function X.SkillsComplement()
 	if J.CanNotUseAbility(bot) then return end
 

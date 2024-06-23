@@ -230,7 +230,8 @@ function Push.GetPushDesire(bot, lane)
 
         if aAliveCount >= eAliveCount
         then
-            nPushDesire = nPushDesire * RemapValClamped(allyKills / enemyKills, 1, 2, 1, 2)
+            -- nPushDesire = nPushDesire * RemapValClamped(allyKills / enemyKills, 1, 2, 1, 2)
+            nPushDesire = nPushDesire + RemapValClamped(allyKills / enemyKills, 1, 2, 0.0, 1)
         end
 
         bot.laneToPush = lane

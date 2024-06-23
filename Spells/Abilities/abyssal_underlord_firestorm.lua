@@ -28,6 +28,9 @@ function X.Consider()
     local nCastPoint = Firestorm:GetCastPoint()
     local botTarget = J.GetProperTarget(bot)
 
+    local nEnemyHeroes = bot:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
+    local nEnemyLaneCreeps = bot:GetNearbyLaneCreeps(800, true)
+
     if J.IsInTeamFight(bot, 1200)
     then
         local nLocationAoE = bot:FindAoELocation(true, true, bot:GetLocation(), nCastRange + nRadius, nRadius, nCastPoint, 0)
@@ -35,7 +38,7 @@ function X.Consider()
 
         if nInRangeEnemy ~= nil and #nInRangeEnemy >= 2
         then
-            return BOT_ACTION_DESIRE_HIGH, J.Site.GetXUnitsTowardsLocation(bot, nLocationAoE.targetloc, nCastRange)
+            return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc
         end
     end
 
@@ -49,28 +52,31 @@ function X.Consider()
         and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
         and not botTarget:HasModifier('modifier_oracle_false_promise_timer')
 		then
-            local nInRangeAlly = botTarget:GetNearbyHeroes(1200, true, BOT_MODE_NONE)
-            local nInRangeEnemy = botTarget:GetNearbyHeroes(1200, false, BOT_MODE_NONE)
-
-            if  nInRangeAlly ~= nil and nInRangeEnemy ~= nil
-            and #nInRangeAlly >= #nInRangeEnemy
+            local nInRangeEnemy = J.GetEnemiesNearLoc(botTarget:GetLocation(), nCastRange + nRadius)
+            if nInRangeEnemy ~= nil and #nInRangeEnemy >= 1
             then
-                nInRangeEnemy = J.GetEnemiesNearLoc(botTarget:GetLocation(), nCastRange + nRadius)
-
-                if nInRangeEnemy ~= nil and #nInRangeEnemy >= 1
+                if GetUnitToLocationDistance(bot, J.GetCenterOfUnits(nInRangeEnemy)) > nCastRange
                 then
                     return BOT_ACTION_DESIRE_HIGH, J.Site.GetXUnitsTowardsLocation(bot, J.GetCenterOfUnits(nInRangeEnemy), nCastRange)
+                else
+                    return BOT_ACTION_DESIRE_HIGH, J.GetCenterOfUnits(nInRangeEnemy)
                 end
+            end
 
+            if not J.IsInRange(bot, botTarget, nCastRange)
+            then
                 return BOT_ACTION_DESIRE_HIGH, J.Site.GetXUnitsTowardsLocation(bot, botTarget:GetLocation(), nCastRange)
+            else
+                return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation()
             end
 		end
 	end
 
     if J.IsPushing(bot)
 	then
-        local nEnemyLaneCreeps = bot:GetNearbyLaneCreeps(nCastRange + nRadius, true)
         if nEnemyLaneCreeps ~= nil and #nEnemyLaneCreeps >= 4
+        and J.CanBeAttacked(nEnemyLaneCreeps[1])
+        and not J.IsRunning(nEnemyLaneCreeps[1])
         then
             return BOT_ACTION_DESIRE_HIGH, J.GetCenterOfUnits(nEnemyLaneCreeps)
         end
@@ -79,17 +85,18 @@ function X.Consider()
     if J.IsFarming(bot)
     then
         if J.IsAttacking(bot)
+        and J.GetMP(bot) > 0.3
         then
-            local nNeutralCreeps = bot:GetNearbyNeutralCreeps(nCastRange + nRadius)
-            if  nNeutralCreeps ~= nil and #nNeutralCreeps >= 3
-            and J.GetMP(bot) > 0.3
+            local nNeutralCreeps = bot:GetNearbyNeutralCreeps(800)
+            if nNeutralCreeps ~= nil and #nNeutralCreeps >= 3
+            and J.IsValid(nNeutralCreeps[1])
             then
                 return BOT_ACTION_DESIRE_HIGH, J.GetCenterOfUnits(nNeutralCreeps)
             end
 
-            local nEnemyLaneCreeps = bot:GetNearbyLaneCreeps(nCastRange + nRadius, true)
             if  nEnemyLaneCreeps ~= nil and #nEnemyLaneCreeps >= 3
-            and J.GetMP(bot) > 0.3
+            and J.CanBeAttacked(nEnemyLaneCreeps[1])
+            and not J.IsRunning(nEnemyLaneCreeps[1])
             then
                 return BOT_ACTION_DESIRE_HIGH, J.GetCenterOfUnits(nEnemyLaneCreeps)
             end
@@ -98,11 +105,10 @@ function X.Consider()
 
     if J.IsLaning(bot)
 	then
-        local nInRangeEnemy = bot:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
-        local nEnemyLaneCreeps = bot:GetNearbyLaneCreeps(nCastRange + nRadius, true)
-
-        if  nInRangeEnemy ~= nil and #nInRangeEnemy == 0
+        if  nEnemyHeroes ~= nil and #nEnemyHeroes == 0
         and nEnemyLaneCreeps ~= nil and #nEnemyLaneCreeps >= 4
+        and J.CanBeAttacked(nEnemyLaneCreeps[1])
+        and not J.IsRunning(nEnemyLaneCreeps[1])
         and J.IsAttacking(bot)
         and J.GetMP(bot) > 0.5
         then

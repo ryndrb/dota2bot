@@ -20,16 +20,18 @@ end
 function X.Consider()
     if not Flux:IsFullyCastable() then return BOT_ACTION_DESIRE_NONE, nil end
 
-	local nCastRange = J.GetProperCastRange(false, bot, Flux:GetCastRange() + 75)
+	local nCastRange = J.GetProperCastRange(false, bot, Flux:GetCastRange())
 	local nDot = Flux:GetSpecialValueInt('damage_per_second')
 	local nDuration = Flux:GetSpecialValueInt('duration')
 	local nDamage = nDot * nDuration
     local botTarget = J.GetProperTarget(bot)
 
-	local nEnemyHeroes = bot:GetNearbyHeroes(nCastRange, true, BOT_MODE_NONE)
+	local nEnemyHeroes = bot:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
+
 	for _, enemyHero in pairs(nEnemyHeroes)
 	do
 		if  J.IsValidHero(enemyHero)
+		and J.IsInRange(bot, enemyHero, nCastRange)
 		and J.CanCastOnNonMagicImmune(enemyHero)
 		and J.CanCastOnTargetAdvanced(enemyHero)
 		and J.CanKillTarget(enemyHero, nDamage, DAMAGE_TYPE_MAGICAL)
@@ -48,10 +50,10 @@ function X.Consider()
 		local npcMostDangerousEnemy = nil
 		local nMostDangerousDamage = 0
 
-		local nInRangeEnemy = bot:GetNearbyHeroes(nCastRange + 150, true, BOT_MODE_NONE)
-		for _, enemyHero in pairs(nInRangeEnemy)
+		for _, enemyHero in pairs(nEnemyHeroes)
 		do
 			if  J.IsValid(enemyHero)
+			and J.IsInRange(bot, enemyHero, nCastRange + 150)
 			and J.CanCastOnNonMagicImmune(enemyHero)
 			and J.CanCastOnTargetAdvanced(enemyHero)
 			and not J.IsDisabled(enemyHero)
@@ -82,34 +84,24 @@ function X.Consider()
 		and not botTarget:HasModifier('modifier_abaddon_borrowed_time')
 		and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
 		then
-			local nInRangeAlly = botTarget:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
-			local nInRangeEnemy = botTarget:GetNearbyHeroes(1600, false, BOT_MODE_NONE)
-
-			if  nInRangeAlly ~= nil and nInRangeEnemy ~= nil
-			and #nInRangeAlly >= #nInRangeEnemy
-			then
-				return BOT_ACTION_DESIRE_HIGH, botTarget
-			end
+			return BOT_ACTION_DESIRE_HIGH, botTarget
 		end
 	end
 
 	if J.IsRetreating(bot)
+	and not J.IsRealInvisible(bot)
 	then
-        local nInRangeEnemy = bot:GetNearbyHeroes(nCastRange, true, BOT_MODE_NONE)
-		if  J.IsValidHero(nInRangeEnemy[1])
-		and J.CanCastOnNonMagicImmune(nInRangeEnemy[1])
-		and J.CanCastOnTargetAdvanced(nInRangeEnemy[1])
-		and J.IsChasingTarget(nInRangeEnemy[1], bot)
-		and not J.IsDisabled(nInRangeEnemy[1])
-		then
-			local nInRangeAlly = nInRangeEnemy[1]:GetNearbyHeroes(1200, true, BOT_MODE_NONE)
-			local nTargetInRangeAlly = nInRangeEnemy[1]:GetNearbyHeroes(1200, false, BOT_MODE_NONE)
-
-			if  nInRangeAlly ~= nil and nTargetInRangeAlly ~= nil
-			and ((#nTargetInRangeAlly > #nInRangeAlly)
-				or bot:WasRecentlyDamagedByAnyHero(2))
+		for _, enemyHero in pairs(nEnemyHeroes)
+		do
+			if  J.IsValidHero(enemyHero)
+			and (bot:GetActiveModeDesire() > 0.7 and bot:WasRecentlyDamagedByHero(enemyHero, 1.5))
+			and J.IsInRange(bot, enemyHero, nCastRange)
+			and J.CanCastOnNonMagicImmune(enemyHero)
+			and J.CanCastOnTargetAdvanced(enemyHero)
+			and J.IsChasingTarget(enemyHero, bot)
+			and not J.IsDisabled(enemyHero)
 			then
-				return BOT_ACTION_DESIRE_HIGH, nInRangeEnemy[1]
+				return BOT_ACTION_DESIRE_HIGH, enemyHero
 			end
 		end
 	end
@@ -117,6 +109,7 @@ function X.Consider()
 	if J.IsDoingRoshan(bot)
 	then
 		if  J.IsRoshan(botTarget)
+		and not J.IsDisabled(botTarget)
 		and J.CanCastOnMagicImmune(botTarget)
 		and J.IsInRange(bot, botTarget, nCastRange)
 		and J.IsAttacking(bot)

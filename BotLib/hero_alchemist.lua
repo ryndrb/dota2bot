@@ -37,22 +37,6 @@ function X.MinionThink( hMinionUnit )
 
 end
 
-local AcidSpray                 = bot:GetAbilityByName( "alchemist_acid_spray" )
-local UnstableConcoction        = bot:GetAbilityByName( "alchemist_unstable_concoction" )
-local UnstableConcoctionThrow   = bot:GetAbilityByName( "alchemist_unstable_concoction_throw" )
-local ChemicalRage              = bot:GetAbilityByName( "alchemist_chemical_rage" )
-local BerserkPotion             = bot:GetAbilityByName( "alchemist_berserk_potion" )
-
-local AcidSprayDesire, AcidSprayLocation
-local UnstableConcoctionDesire
-local UnstableConcoctionThrowDesire, UnstableConcoctionThrowTarget
-local BerserkPotionDesire, BerserkPotionTarget
-local ChemicalRageDesire
-
-local defDuration = 2
-local offDuration = 4.25
-local ConcoctionThrowTime = 0
-
 function X.SkillsComplement()
     if J.CanNotUseAbility(bot) then return end
 

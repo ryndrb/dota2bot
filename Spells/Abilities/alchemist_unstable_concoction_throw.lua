@@ -28,17 +28,19 @@ function X.Consider()
 	end
 
     local _, UnstableConcoction = J.HasAbility(bot, 'alchemist_unstable_concoction')
-	local nCastRange = UnstableConcoctionThrow:GetCastRange()
+	local nCastRange = J.GetProperCastRange(false, bot, UnstableConcoctionThrow:GetCastRange())
 	local nDamage = 150
     if UnstableConcoction ~= nil
     then
         nDamage = UnstableConcoction:GetSpecialValueInt("max_damage")
     end
 
-	local nEnemyHeroes = bot:GetNearbyHeroes(nCastRange, true, BOT_MODE_NONE)
+	local nEnemyHeroes = bot:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
+
 	for _, enemyHero in pairs(nEnemyHeroes)
 	do
 		if  J.IsValidHero(enemyHero)
+		and J.IsInRange(bot, enemyHero, nCastRange)
 		and J.CanCastOnNonMagicImmune(enemyHero)
         and J.CanCastOnTargetAdvanced(enemyHero)
 		and DotaTime() >= bot.ConcoctionThrowTime + offDuration
@@ -50,7 +52,6 @@ function X.Consider()
 
 			if  J.CanKillTarget(enemyHero, nDamage, DAMAGE_TYPE_PHYSICAL)
 			and not enemyHero:HasModifier('modifier_abaddon_borrowed_time')
-			and not enemyHero:HasModifier('modifier_abaddon_aphotic_shield')
 			and not enemyHero:HasModifier('modifier_dazzle_shallow_grave')
 			and not enemyHero:HasModifier('modifier_enigma_black_hole_pull')
 			and not enemyHero:HasModifier('modifier_faceless_void_chronosphere_freeze')
@@ -64,14 +65,12 @@ function X.Consider()
 
 	if J.IsGoingOnSomeone(bot)
 	then
-		local nInRangeAlly = bot:GetNearbyHeroes(1000, false, BOT_MODE_NONE)
-		local nInRangeEnemy = bot:GetNearbyHeroes(nCastRange - 175, true, BOT_MODE_NONE)
-
-		for _, enemyHero in pairs(nInRangeEnemy)
+		for _, enemyHero in pairs(nEnemyHeroes)
 		do
 			if  J.IsValidTarget(enemyHero)
+			and J.IsInRange(bot, enemyHero, nCastRange - 150)
 			and J.CanCastOnNonMagicImmune(enemyHero)
-            and J.CanCastOnTargetAdvanced(enemyHero)
+			and J.CanCastOnTargetAdvanced(enemyHero)
 			and not J.IsDisabled(enemyHero)
 			and not enemyHero:HasModifier('modifier_enigma_black_hole_pull')
 			and not enemyHero:HasModifier('modifier_faceless_void_chronosphere_freeze')
@@ -79,11 +78,13 @@ function X.Consider()
 			and not enemyHero:HasModifier('modifier_necrolyte_reapers_scythe')
 			and DotaTime() >= bot.ConcoctionThrowTime + offDuration
 			then
-				local nTargetInRangeAlly = enemyHero:GetNearbyHeroes(1000, false, BOT_MODE_NONE)
-
-				if  nInRangeAlly ~= nil and nTargetInRangeAlly ~= nil
-				and #nInRangeAlly >= #nTargetInRangeAlly
+				if bot:GetLevel() < 6
 				then
+					if enemyHero:GetHealth() <= bot:GetEstimatedDamageToTarget(true, enemyHero, 3.5, DAMAGE_TYPE_ALL)
+					then
+						return BOT_ACTION_DESIRE_HIGH, enemyHero
+					end
+				else
 					return BOT_ACTION_DESIRE_HIGH, enemyHero
 				end
 			end
@@ -91,32 +92,29 @@ function X.Consider()
 	end
 
 	if J.IsRetreating(bot)
+	and not J.IsRealInvisible(bot)
 	then
-		local nInRangeAlly = bot:GetNearbyHeroes(800, false, BOT_MODE_NONE)
-		local nInRangeEnemy = bot:GetNearbyHeroes(1000, true, BOT_MODE_NONE)
-
-		if  nInRangeAlly ~= nil and nInRangeEnemy ~= nil
-		and J.IsValidHero(nInRangeEnemy[1])
-		and J.CanCastOnNonMagicImmune(nInRangeEnemy[1])
-        and J.CanCastOnTargetAdvanced(nInRangeEnemy[1])
-		and J.IsInRange(bot, nInRangeEnemy[1], nCastRange)
-		and not nInRangeEnemy[1]:HasModifier('modifier_enigma_black_hole_pull')
-		and not nInRangeEnemy[1]:HasModifier('modifier_faceless_void_chronosphere_freeze')
-		and not nInRangeEnemy[1]:HasModifier('modifier_necrolyte_reapers_scythe')
-		and DotaTime() >= bot.ConcoctionThrowTime + defDuration
-		then
-			local nTargetInRangeAlly = nInRangeEnemy[1]:GetNearbyHeroes(800, false, BOT_MODE_NONE)
-
-            if  nTargetInRangeAlly ~= nil
-            and ((#nTargetInRangeAlly > #nInRangeAlly)
-                or (J.GetHP(bot) < 0.6 and bot:WasRecentlyDamagedByAnyHero(2.2)))
-            then
-                return BOT_ACTION_DESIRE_HIGH, nInRangeEnemy[1]
-            end
+		for _, enemyHero in pairs(nEnemyHeroes)
+		do
+			if J.IsValidHero(enemyHero)
+			and (bot:GetActiveModeDesire() > 0.7 and bot:WasRecentlyDamagedByHero(enemyHero, 1.5))
+			and J.IsInRange(bot, enemyHero, nCastRange - 175)
+			and J.CanCastOnNonMagicImmune(enemyHero)
+			and J.CanCastOnTargetAdvanced(enemyHero)
+			and J.IsChasingTarget(enemyHero, bot)
+			and not J.IsDisabled(enemyHero)
+			and not enemyHero:HasModifier('modifier_enigma_black_hole_pull')
+			and not enemyHero:HasModifier('modifier_faceless_void_chronosphere_freeze')
+			and not enemyHero:HasModifier('modifier_necrolyte_reapers_scythe')
+			and DotaTime() >= bot.ConcoctionThrowTime + defDuration
+			then
+				return BOT_ACTION_DESIRE_HIGH
+			end
 		end
 	end
 
 	if  nEnemyHeroes ~= nil and #nEnemyHeroes >= 1
+	and J.IsValidHero(nEnemyHeroes[1])
 	and DotaTime() >= bot.ConcoctionThrowTime + defDuration
 	then
 		return BOT_ACTION_DESIRE_HIGH, nEnemyHeroes[1]

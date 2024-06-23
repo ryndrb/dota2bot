@@ -26,6 +26,9 @@ function X.Consider()
 	local nCastRange  = J.GetProperCastRange(false, bot, AphoticShield:GetCastRange())
     local botTarget = J.GetProperTarget(bot)
 
+    local nInRangeAlly = bot:GetNearbyHeroes(1600, false, BOT_MODE_NONE)
+    local nInRangeEnemy = bot:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
+
     local nAllyHeroes = bot:GetNearbyHeroes(nCastRange, false, BOT_MODE_NONE)
     for _, allyHero in pairs(nAllyHeroes)
 	do
@@ -56,18 +59,16 @@ function X.Consider()
         and not allyHero:IsIllusion()
         and J.IsNotSelf(bot, allyHero)
 		then
-            local nAllyInRangeEnemy = allyHero:GetNearbyHeroes(800, true, BOT_MODE_NONE)
-
             if  J.IsRetreating(allyHero)
             and allyHero:WasRecentlyDamagedByAnyHero(1.6)
             and not allyHero:IsIllusion()
             then
-                if  nAllyInRangeEnemy ~= nil and #nAllyInRangeEnemy >= 1
-                and J.IsValidHero(nAllyInRangeEnemy[1])
+                local nAllyInRangeEnemy = allyHero:GetNearbyHeroes(800, true, BOT_MODE_NONE)
+
+                if  J.IsValidHero(nAllyInRangeEnemy[1])
                 and J.IsInRange(allyHero, nAllyInRangeEnemy[1], 400)
                 and J.IsInRange(bot, nAllyInRangeEnemy[1], nCastRange)
-                and J.IsRunning(allyHero)
-                and nAllyInRangeEnemy[1]:IsFacingLocation(allyHero:GetLocation(), 30)
+                and J.IsChasingTarget(nAllyInRangeEnemy[1], allyHero)
                 and not J.IsDisabled(nAllyInRangeEnemy[1])
                 and not nAllyInRangeEnemy[1]:HasModifier('modifier_legion_commander_duel')
                 and not nAllyInRangeEnemy[1]:HasModifier('modifier_enigma_black_hole_pull')
@@ -88,14 +89,7 @@ function X.Consider()
                 and not allyTarget:HasModifier('modifier_enigma_black_hole_pull')
                 and not allyTarget:HasModifier('modifier_necrolyte_reapers_scythe')
 				then
-                    local nAllInRangeAlly = allyHero:GetNearbyHeroes(800, false, BOT_MODE_NONE)
-                    local nTargetInRangeAlly = allyTarget:GetNearbyHeroes(800, false, BOT_MODE_NONE)
-
-                    if  nAllInRangeAlly ~= nil and  nTargetInRangeAlly ~= nil
-                    and #nAllInRangeAlly >= #nTargetInRangeAlly
-                    then
-                        return BOT_ACTION_DESIRE_HIGH, allyHero
-                    end
+                    return BOT_ACTION_DESIRE_HIGH, allyHero
 				end
 			end
 		end
@@ -103,36 +97,27 @@ function X.Consider()
 
 	if J.IsGoingOnSomeone(bot)
     then
-		local nInRangeAlly = bot:GetNearbyHeroes(1000, false, BOT_MODE_NONE)
-        local nInRangeEnemy = bot:GetNearbyHeroes(1000, true, BOT_MODE_NONE)
-
 		if  J.IsValidTarget(botTarget)
         and J.IsInRange(bot, botTarget, nCastRange)
         and not J.IsDisabled(botTarget)
         and not botTarget:HasModifier('modifier_faceless_void_chronosphere_freeze')
         and not botTarget:HasModifier('modifier_enigma_black_hole_pull')
         then
-            local nTargetInRangeAlly = botTarget:GetNearbyHeroes(800, false, BOT_MODE_NONE)
-
-            if  nInRangeAlly ~= nil and nTargetInRangeAlly ~= nil
-            and #nInRangeAlly >= #nTargetInRangeAlly
+            if  J.IsValidHero(nInRangeAlly[1])
+            and J.IsInRange(bot, nInRangeAlly[1], nCastRange)
+            and J.IsCore(nInRangeAlly[1])
+            and not nInRangeAlly[1]:HasModifier('modifier_abaddon_aphotic_shield')
+            and not nInRangeAlly[1]:IsMagicImmune()
+            and not nInRangeAlly[1]:IsInvulnerable()
+            and not nInRangeAlly[1]:IsIllusion()
             then
-                if  J.IsValidHero(nInRangeAlly[1])
-                and J.IsInRange(bot, nInRangeAlly[1], nCastRange)
-                and J.IsCore(nInRangeAlly[1])
-                and not nInRangeAlly[1]:HasModifier('modifier_abaddon_aphotic_shield')
-                and not nInRangeAlly[1]:IsMagicImmune()
-                and not nInRangeAlly[1]:IsInvulnerable()
-                and not nInRangeAlly[1]:IsIllusion()
-                then
-                    return BOT_ACTION_DESIRE_HIGH, nInRangeAlly[1]
-                end
+                return BOT_ACTION_DESIRE_HIGH, nInRangeAlly[1]
+            end
 
-                if  not bot:HasModifier('modifier_abaddon_aphotic_shield')
-                and not bot:HasModifier("modifier_abaddon_borrowed_time")
-                then
-                    return BOT_ACTION_DESIRE_MODERATE, bot
-                end
+            if  not bot:HasModifier('modifier_abaddon_aphotic_shield')
+            and not bot:HasModifier("modifier_abaddon_borrowed_time")
+            then
+                return BOT_ACTION_DESIRE_MODERATE, bot
             end
 	    end
 
@@ -149,27 +134,18 @@ function X.Consider()
         end
     end
 
-    if J.IsRetreating(bot)
+    if  J.IsRetreating(bot)
+    and not J.IsRealInvisible(bot)
     then
-        local nInRangeEnemy = bot:GetNearbyHeroes(1200, true, BOT_MODE_NONE)
-
-        if  nInRangeEnemy ~= nil
-        and J.IsValidHero(nInRangeEnemy[1])
-        and J.CanCastOnNonMagicImmune(nInRangeEnemy[1])
-        and J.IsInRange(bot, nInRangeEnemy[1], nCastRange)
-        and J.IsRunning(nInRangeEnemy[1])
-        and nInRangeEnemy[1]:IsFacingLocation(bot:GetLocation(), 30)
-        and not J.IsDisabled(nInRangeEnemy[1])
-        and not nInRangeEnemy[1]:HasModifier('modifier_enigma_black_hole_pull')
-        and not nInRangeEnemy[1]:HasModifier('modifier_faceless_void_chronosphere_freeze')
-        and not nInRangeEnemy[1]:HasModifier('modifier_necrolyte_reapers_scythe')
-        then
-            local nInRangeAlly = nInRangeEnemy[1]:GetNearbyHeroes(1200, true, BOT_MODE_NONE)
-            local nTargetInRangeAlly = nInRangeEnemy[1]:GetNearbyHeroes(1200, false, BOT_MODE_NONE)
-
-            if  nInRangeAlly ~= nil and nTargetInRangeAlly ~= nil
-            and ((#nTargetInRangeAlly > #nInRangeAlly)
-                or bot:WasRecentlyDamagedByAnyHero(2))
+        for _, enemyHero in pairs(nInRangeEnemy)
+        do
+            if J.IsValidHero(enemyHero)
+            and (bot:GetActiveModeDesire() > 0.65 or bot:WasRecentlyDamagedByHero(enemyHero, 1.5))
+            and J.IsInRange(bot, enemyHero, 600)
+            and not J.IsDisabled(enemyHero)
+            and not enemyHero:HasModifier('modifier_enigma_black_hole_pull')
+            and not enemyHero:HasModifier('modifier_faceless_void_chronosphere_freeze')
+            and not enemyHero:HasModifier('modifier_necrolyte_reapers_scythe')
             then
                 return BOT_ACTION_DESIRE_HIGH, bot
             end
@@ -178,8 +154,9 @@ function X.Consider()
 
     if J.IsFarming(bot)
     then
-        local nCreeps = bot:GetNearbyCreeps(1200, true)
-        if  nCreeps ~= nil and #nCreeps >= 1
+        local nCreeps = bot:GetNearbyCreeps(1600, true)
+        if  J.IsValid(nCreeps[1])
+        and J.CanBeAttacked(nCreeps[1])
         and J.GetHP(bot) < 0.5
         and J.IsAttacking(bot)
         and not bot:HasModifier('modifier_abaddon_aphotic_shield')

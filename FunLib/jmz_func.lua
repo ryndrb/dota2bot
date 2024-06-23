@@ -281,7 +281,7 @@ function J.GetNearbyAroundLocationUnitCount( bEnemy, bHero, nRadius, vLoc )
 
 	for _, u in pairs( unitList )
 	do
-		if u:IsAlive()
+		if J.IsValid(u)
 			and GetUnitToLocationDistance( u, vLoc ) <= nRadius
 		then
 			nCount = nCount + 1
@@ -300,8 +300,7 @@ function J.GetAttackEnemysAllyCreepCount( target, nRadius )
 	local nAttackEnemyCount = 0
 	for _, creep in pairs( nAllyCreeps )
 	do
-		if creep:IsAlive()
-			and creep:CanBeSeen()
+		if J.IsValid(creep)
 			and creep:GetAttackTarget() == target
 		then
 			nAttackEnemyCount = nAttackEnemyCount + 1
@@ -444,7 +443,7 @@ function J.IsAllyCanKill( target )
 	for i = 1, #nTeamMember
 	do
 		local ally = GetTeamMember( i )
-		if ally ~= nil and ally:IsAlive() and ally:CanBeSeen()
+		if J.IsValidHero(ally)
 			and ( ally:GetAttackTarget() == target )
 			and GetUnitToUnitDistance( ally, target ) <= ally:GetAttackRange() + 50
 		then
@@ -478,9 +477,8 @@ function J.IsOtherAllyCanKillTarget( bot, target )
 	for i = 1, #nTeamMember
 	do
 		local ally = GetTeamMember( i )
-		if ally ~= nil
+		if J.IsValidHero(ally)
 			and ally ~= bot
-			and ally:IsAlive()
 			and not J.IsDisabled( ally )
 			and ally:GetHealth() / ally:GetMaxHealth() > 0.15
 			and ally:IsFacingLocation( target:GetLocation(), 20 )
@@ -510,8 +508,7 @@ function J.GetAlliesNearLoc( vLoc, nRadius )
 	for i = 1, 5
 	do
 		local member = GetTeamMember( i )
-		if member ~= nil
-			and member:IsAlive()
+		if J.IsValidHero(member)
 			and GetUnitToLocationDistance( member, vLoc ) <= nRadius
 		then
 			table.insert( allies, member )
@@ -638,7 +635,7 @@ function J.GetMostUltimateCDUnit()
 		if IsHeroAlive( id )
 		then
 			local member = GetTeamMember( i )
-			if member ~= nil and member:IsAlive()
+			if J.IsValidHero(member)
 				and member:GetUnitName() ~= "npc_dota_hero_nevermore"
 				and member:GetUnitName() ~= "npc_dota_hero_arc_warden"
 			then
@@ -672,7 +669,7 @@ function J.GetPickUltimateScepterUnit()
 		if IsHeroAlive( id )
 		then
 			local member = GetTeamMember( i )
-			if member ~= nil and member:IsAlive()
+			if J.IsValidHero(member)
 				and not member:HasScepter()
 				and ( member:GetPrimaryAttribute() == ATTRIBUTE_INTELLECT
 					 or not member:IsBot() )
@@ -742,40 +739,43 @@ function J.IsSuspiciousIllusion( npcTarget )
 
 	local bot = GetBot()
 
-	if npcTarget:GetTeam() == bot:GetTeam()
+	if npcTarget:IsHero()
 	then
-		return npcTarget:IsIllusion() or npcTarget:HasModifier( "modifier_arc_warden_tempest_double" )
-	elseif npcTarget:GetTeam() == GetOpposingTeam()
-	then
-
-		if npcTarget:HasModifier( 'modifier_illusion' )
-		or npcTarget:HasModifier( 'modifier_darkseer_wallofreplica_illusion' )
-		or npcTarget:HasModifier( 'modifier_phantom_lancer_doppelwalk_illusion' )
-		or npcTarget:HasModifier( 'modifier_phantom_lancer_juxtapose_illusion' )
-		or npcTarget:HasModifier( 'modifier_skeleton_king_reincarnation_scepter_active' )
-		or npcTarget:HasModifier( 'modifier_terrorblade_conjureimage' )
+		if npcTarget:GetTeam() == bot:GetTeam()
 		then
-			return true
-		end
-
-		local tID = npcTarget:GetPlayerID()
-
-		if not IsHeroAlive( tID )
+			return npcTarget:IsIllusion() or npcTarget:HasModifier( "modifier_arc_warden_tempest_double" )
+		elseif npcTarget:GetTeam() == GetOpposingTeam()
 		then
-			return true
+	
+			if npcTarget:HasModifier( 'modifier_illusion' )
+			or npcTarget:HasModifier( 'modifier_darkseer_wallofreplica_illusion' )
+			or npcTarget:HasModifier( 'modifier_phantom_lancer_doppelwalk_illusion' )
+			or npcTarget:HasModifier( 'modifier_phantom_lancer_juxtapose_illusion' )
+			or npcTarget:HasModifier( 'modifier_skeleton_king_reincarnation_scepter_active' )
+			or npcTarget:HasModifier( 'modifier_terrorblade_conjureimage' )
+			then
+				return true
+			end
+	
+			local tID = npcTarget:GetPlayerID()
+	
+			if not IsHeroAlive( tID )
+			then
+				return true
+			end
+	
+			if GetHeroLevel( tID ) > npcTarget:GetLevel()
+			then
+				return true
+			end
+			--[[
+			if GetSelectedHeroName( tID ) ~= "npc_dota_hero_morphling"
+				and GetSelectedHeroName( tID ) ~= npcTarget:GetUnitName()
+			then
+				return true
+			end
+			--]]
 		end
-
-		if GetHeroLevel( tID ) > npcTarget:GetLevel()
-		then
-			return true
-		end
-		--[[
-		if GetSelectedHeroName( tID ) ~= "npc_dota_hero_morphling"
-			and GetSelectedHeroName( tID ) ~= npcTarget:GetUnitName()
-		then
-			return true
-		end
-		--]]
 	end
 
 	return false
@@ -1190,8 +1190,7 @@ function J.IsFarming( bot )
 	local nTarget = J.GetProperTarget( bot )
 
 	return mode == BOT_MODE_FARM
-			or ( nTarget ~= nil
-					and nTarget:IsAlive()
+			or ( J.IsValid(nTarget)
 					and nTarget:GetTeam() == TEAM_NEUTRAL
 					and not J.IsRoshan( nTarget ) )
 end
@@ -1403,7 +1402,7 @@ function J.IsWillBeCastPointSpell( bot, nRadius )
 
 	for _, npcEnemy in pairs( enemyList )
 	do
-		if npcEnemy ~= nil and npcEnemy:IsAlive()
+		if J.IsValidHero(npcEnemy)
 			and ( npcEnemy:IsCastingAbility() or npcEnemy:IsUsingAbility() )
 			and npcEnemy:IsFacingLocation( bot:GetLocation(), 50 )
 		then
@@ -1951,8 +1950,7 @@ function J.GetAllyCreepNearLoc( bot, vLoc, nRadius )
 
 	for _, creep in pairs( AllyCreepsAll )
 	do
-		if creep ~= nil
-			and creep:IsAlive()
+		if J.IsValid(creep)
 			and GetUnitToLocationDistance( creep, vLoc ) <= nRadius
 		then
 			table.insert( allyCreepList, creep )
@@ -2569,7 +2567,7 @@ function J.IsTeamActivityCount( bot, nCount )
 	for i = 1, #numPlayer
 	do
 		local member = GetTeamMember( i )
-		if member ~= nil and member:IsAlive()
+		if J.IsValidHero(member)
 		then
 			if J.GetAllyCount( member, 1600 ) >= nCount
 			then
@@ -2590,7 +2588,7 @@ function J.GetSpecialModeAllies( bot, nDistance, nMode )
 	for i = 1, #numPlayer
 	do
 		local member = GetTeamMember( i )
-		if member ~= nil and member:IsAlive()
+		if J.IsValidHero(member)
 		then
 			if member:GetActiveMode() == nMode
 				and GetUnitToUnitDistance( member, bot ) <= nDistance
@@ -2622,7 +2620,7 @@ function J.GetTeamFightLocation( bot )
 	for i = 1, #numPlayer
 	do
 		local member = GetTeamMember( i )
-		if member ~= nil and member:IsAlive()
+		if J.IsValidHero(member)
 			and J.IsInTeamFight( member, 1500 )
 			and J.GetEnemyCount( member, 1400 ) >= 2
 		then
@@ -2644,7 +2642,7 @@ function J.GetTeamFightAlliesCount( bot )
 	for i = 1, #numPlayer
 	do
 		local member = GetTeamMember( i )
-		if member ~= nil and member:IsAlive()
+		if J.IsValidHero(member)
 			and J.IsInTeamFight( member, 1200 )
 			and J.GetEnemyCount( member, 1400 ) >= 2
 		then
@@ -2670,8 +2668,7 @@ function J.GetCenterOfUnits( nUnits )
 
 	for _, unit in pairs( nUnits )
 	do
-		if unit ~= nil
-			and unit:IsAlive()
+		if J.IsValid(unit)
 		then
 			sum = sum + unit:GetLocation()
 			num = num + 1
@@ -2811,9 +2808,9 @@ end
 
 function J.CanBeAttacked( unit )
 	return  unit ~= nil
-			and not J.HasForbiddenModifier( unit )
-			and unit:IsAlive()
 			and unit:CanBeSeen()
+			and unit:IsAlive()
+			and not J.HasForbiddenModifier( unit )
 			and not unit:IsNull()
 			and not unit:IsAttackImmune()
 			and not unit:IsInvulnerable()
@@ -2857,7 +2854,7 @@ function J.GetAllyList( bot, nRadius )
 
 	for _, ally in pairs( nCandidate )
 	do
-		if ally ~= nil and ally:IsAlive()
+		if J.IsValidHero(ally)
 			and not ally:IsIllusion()
 		then
 			table.insert( nRealAllyList, ally )
@@ -3182,8 +3179,7 @@ function J.IsAllyHeroAroundLocation( vLoc, nRadius )
 	for i = 1, 5
 	do
 		local npcAlly = GetTeamMember( i )
-		if npcAlly ~= nil
-			and npcAlly:IsAlive()
+		if J.IsValidHero(npcAlly)
 			and GetUnitToLocationDistance( npcAlly, vLoc ) <= nRadius
 		then
 			return true
@@ -4172,7 +4168,7 @@ function J.DidEnemyCastAbility()
 
 	for _, npcEnemy in pairs(nEnemyHeroes)
 	do
-		if  npcEnemy ~= nil and npcEnemy:IsAlive()
+		if  J.IsValidHero(npcEnemy)
 		and npcEnemy:IsFacingLocation(bot:GetLocation(), 30)
 		and (npcEnemy:IsCastingAbility() or npcEnemy:IsUsingAbility())
 		then
@@ -4210,7 +4206,7 @@ function J.GetWeakestUnit(nEnemyUnits)
 
 	for _, unit in pairs(nEnemyUnits)
 	do
-		if 	unit:IsAlive()
+		if 	J.IsValidHero(unit)
         and J.CanCastOnNonMagicImmune(unit)
         and J.CanCastOnTargetAdvanced(unit)
 		then

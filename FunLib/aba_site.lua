@@ -472,6 +472,7 @@ function Site.IsVaildCreep( nUnit )
 	return nUnit ~= nil
 		   and not nUnit:IsNull()
 		   and nUnit:IsAlive()
+		   and nUnit:CanBeSeen()
 		   and nUnit:GetHealth() < 5000
 		   and ( GetBot():GetLevel() > 9 or not nUnit:IsAncientCreep() )		  
 		  
@@ -661,17 +662,19 @@ function Site.GetMaxHPCreep( creepList )
 	local targetCreep = nil
 	for _, creep in pairs( creepList )
 	do
-		if not creep:IsNull()
-		   and Site.HasArmorReduction( creep )
+		if Site.IsVaildCreep(creep)
 		then
-			return creep
-		end
-
-		if Site.IsVaildCreep( creep )
-		   and creep:GetHealth() > nHPMax
-		then
-			nHPMax = creep:GetHealth()
-			targetCreep = creep
+			if not creep:IsNull()
+			and Site.HasArmorReduction( creep )
+			then
+				return creep
+			end
+	
+			if creep:GetHealth() > nHPMax
+			then
+				nHPMax = creep:GetHealth()
+				targetCreep = creep
+			end
 		end
 	end
 
@@ -688,17 +691,18 @@ function Site.GetMinHPCreep( creepList )
 
 	for _, creep in pairs( creepList )
 	do
-		if not creep:IsNull()
-		   and Site.HasArmorReduction( creep )
+		if Site.IsVaildCreep(creep)
 		then
-			return creep
-		end
-
-		if Site.IsVaildCreep( creep )
-		   and creep:GetHealth() < nHPMin
-		then
-			nHPMin = creep:GetHealth()
-			targetCreep = creep
+			if Site.HasArmorReduction( creep )
+			then
+				return creep
+			end
+	
+			if creep:GetHealth() < nHPMin
+			then
+				nHPMin = creep:GetHealth()
+				targetCreep = creep
+			end
 		end
 	end
 

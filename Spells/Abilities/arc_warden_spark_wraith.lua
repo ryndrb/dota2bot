@@ -27,10 +27,13 @@ function X.Consider()
 	local nDelay = SparkWraith:GetSpecialValueInt('activation_delay') + nCastPoint
     local botTarget = J.GetProperTarget(bot)
 
-	local nEnemyHeroes = bot:GetNearbyHeroes(nCastRange, true, BOT_MODE_NONE)
+	local nEnemyHeroes = bot:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
+	local nEnemyLaneCreeps = bot:GetNearbyLaneCreeps(1600, true)
+
 	for _, enemyHero in pairs(nEnemyHeroes)
 	do
 		if  J.IsValidHero(enemyHero)
+		and J.IsInRange(bot, enemyHero, nCastRange)
 		and J.CanCastOnNonMagicImmune(enemyHero)
 		and J.CanKillTarget(enemyHero, nDamage, DAMAGE_TYPE_MAGICAL)
 		and not enemyHero:HasModifier('modifier_abaddon_borrowed_time')
@@ -54,17 +57,11 @@ function X.Consider()
 		and not botTarget:HasModifier('modifier_templar_assassin_refraction_absorb')
 		and not botTarget:HasModifier('modifier_item_aeon_disk_buff')
 		then
-			local nInRangeAlly = botTarget:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
-			local nInRangeEnemy = botTarget:GetNearbyHeroes(1600, false, BOT_MODE_NONE)
-
-			if nInRangeAlly ~= nil and nInRangeEnemy ~= nil
+			if J.IsRunning(botTarget)
 			then
-				if J.IsRunning(botTarget)
-				then
-					return BOT_ACTION_DESIRE_MODERATE, botTarget:GetExtrapolatedLocation(nDelay)
-				else
-					return BOT_ACTION_DESIRE_MODERATE, botTarget:GetLocation()
-				end
+				return BOT_ACTION_DESIRE_MODERATE, botTarget:GetExtrapolatedLocation(nDelay)
+			else
+				return BOT_ACTION_DESIRE_MODERATE, botTarget:GetLocation()
 			end
 		end
 
@@ -86,12 +83,13 @@ function X.Consider()
 
 	if  J.IsRetreating(bot)
 	and bot:GetActiveModeDesire() > BOT_ACTION_DESIRE_HIGH
+	and not J.IsRealInvisible(bot)
 	and not bot:HasModifier('modifier_silencer_curse_of_the_silent')
 	then
-		local nInRangeEnemy = bot:GetNearbyHeroes(800, true, BOT_MODE_NONE)
-		for _, enemyHero in pairs(nInRangeEnemy)
+		for _, enemyHero in pairs(nEnemyHeroes)
 		do
 			if  J.IsValid(enemyHero)
+			and J.IsInRange(bot, enemyHero, 800)
 			and bot:WasRecentlyDamagedByHero(enemyHero, 1)
 			and J.CanCastOnNonMagicImmune(enemyHero)
 			then
@@ -104,27 +102,19 @@ function X.Consider()
 	or J.IsPushing(bot)
 	or J.IsDefending(bot)
 	then
-		local nLocationAoE = bot:FindAoELocation(true, false, bot:GetLocation(), 1400, nRadius, 2, 0)
-		if  nLocationAoE.count > 2
+		if nEnemyLaneCreeps ~= nil and #nEnemyLaneCreeps >= 2
+		and J.CanBeAttacked(nEnemyLaneCreeps[1])
+		and not J.IsRunning(nEnemyLaneCreeps[1])
 		and not bot:HasModifier('modifier_silencer_curse_of_the_silent')
 		then
 			if bot:HasModifier('modifier_arc_warden_tempest_double')
 			then
-				return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc
+				return BOT_ACTION_DESIRE_HIGH, J.GetCenterOfUnits(nEnemyLaneCreeps)
 			end
 
-			local nEnemyLaneCreeps = bot:GetNearbyLaneCreeps(1400, true)
-			if nEnemyLaneCreeps ~= nil and #nEnemyLaneCreeps >= 2
+			if J.GetMP(bot) > 0.62
 			then
-				if J.GetMP(bot) > 0.62
-				then
-					return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc
-				end
-			else
-				if J.GetMP(bot) > 0.75
-				then
-					return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc
-				end
+				return BOT_ACTION_DESIRE_HIGH, J.GetCenterOfUnits(nEnemyLaneCreeps)
 			end
 		end
 	end
@@ -133,7 +123,6 @@ function X.Consider()
 	and J.IsInLaningPhase()
     and bot:GetLevel() < 7
 	then
-		local nEnemyLaneCreeps = bot:GetNearbyLaneCreeps(1600, true)
 		for _, creep in pairs(nEnemyLaneCreeps)
 		do
 			if  J.IsValid(creep)
@@ -191,22 +180,21 @@ function X.Consider()
 			end
 		end
 
-		local nEnemyLaneCreeps = bot:GetNearbyLaneCreeps(1600, true)
 		if nEnemyLaneCreeps ~= nil and #nEnemyLaneCreeps >= 3
 		then
 			local targetCreep = nEnemyLaneCreeps[#nEnemyLaneCreeps]
 			if  J.IsValid(targetCreep)
 			and J.CanBeAttacked(targetCreep)
+			and not J.IsRunning(targetCreep)
 			then
 				local nCastLocation = J.GetFaceTowardDistanceLocation(targetCreep, 375)
 				return BOT_ACTION_DESIRE_HIGH, nCastLocation
 			end
 		end
 
-		local nEnemyHeroesInView = bot:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
 		local nEnemyLaneFront = J.GetNearestLaneFrontLocation(bot:GetLocation(), true, nRadius / 2)
 
-		if  nEnemyHeroesInView ~= nil and #nEnemyHeroesInView == 0 and nEnemyLaneFront ~= nil
+		if  nEnemyHeroes ~= nil and #nEnemyHeroes == 0 and nEnemyLaneFront ~= nil
 		and GetUnitToLocationDistance(bot, nEnemyLaneFront) <= nCastRange + nRadius
 		and GetUnitToLocationDistance(bot, nEnemyLaneFront) >= 800
 		then

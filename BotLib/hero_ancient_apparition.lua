@@ -35,22 +35,6 @@ function X.MinionThink( hMinionUnit )
 	end
 end
 
-local ColdFeet          = bot:GetAbilityByName('ancient_apparition_cold_feet')
-local IceVortex         = bot:GetAbilityByName('ancient_apparition_ice_vortex')
-local ChillingTouch     = bot:GetAbilityByName('ancient_apparition_chilling_touch')
-local IceBlast          = bot:GetAbilityByName('ancient_apparition_ice_blast')
-local IceBlastRelease   = bot:GetAbilityByName('ancient_apparition_ice_blast_release')
-
-local ColdFeetAoETalent = bot:GetAbilityByName('special_bonus_unique_ancient_apparition_7')
-
-local ColdFeetDesire, ColdFeetTarget
-local IceVortexDesire, IceVortextLocation
-local ChillingTouchDesire, ChillingTouchTarget
-local IceBlastDesire, IceBlastLocation
-local IceBlastReleaseDesire
-
-local IceBlastReleaseLocation
-
 function X.SkillsComplement()
 	if J.CanNotUseAbility(bot) then return end
 

@@ -51,6 +51,7 @@ function X.Consider()
     local nTeamFightLocation = J.GetTeamFightLocation(bot)
 
     if nTeamFightLocation ~= nil
+    and GetUnitToLocationDistance(bot, nTeamFightLocation) > 1600
     then
         local dist = GetUnitToLocationDistance(bot, nTeamFightLocation)
         local nRadius = math.min(nMinRadius + (dist * nGrowSpeed), nMaxRadius)

@@ -28,6 +28,8 @@ function X.Consider()
 	local nCastRange = J.GetProperCastRange(false, bot, TempestDouble:GetCastRange())
     local botTarget = J.GetProperTarget(bot)
 
+	local nEnemyHeroes = bot:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
+
 	if J.IsDefending(bot) or J.IsPushing(bot) or J.IsFarming(bot)
 	then
 		local nEnemyLaneCreeps = bot:GetNearbyLaneCreeps( 800, true )
@@ -36,9 +38,9 @@ function X.Consider()
 
 		if J.IsAttacking(bot)
 		then
-			if (nEnemyLaneCreeps ~= nil and #nEnemyLaneCreeps >= 2)
-			or (nEnemyTowers ~= nil and #nEnemyTowers >= 1)
-			or (nCreeps ~= nil and #nCreeps >= 2)
+			if (nEnemyLaneCreeps ~= nil and #nEnemyLaneCreeps >= 2 and J.CanBeAttacked(nEnemyLaneCreeps[1]))
+			or (nEnemyTowers ~= nil and #nEnemyTowers >= 1 and J.CanBeAttacked(nEnemyTowers[1]))
+			or (nCreeps ~= nil and #nCreeps >= 2 and J.CanBeAttacked(nCreeps[1]))
 			then
 				return BOT_ACTION_DESIRE_HIGH, bot:GetLocation()
 			end
@@ -49,8 +51,7 @@ function X.Consider()
 	then
 		local target = nil
 		local hp = 0
-		local nInRangeEnemy = bot:GetNearbyHeroes(1200, true, BOT_MODE_NONE)
-		for _, enemyHero in pairs(nInRangeEnemy)
+		for _, enemyHero in pairs(nEnemyHeroes)
 		do
 			if  J.IsValidHero(enemyHero)
 			and J.IsInRange(bot, enemyHero, nCastRange)
@@ -70,9 +71,19 @@ function X.Consider()
 		then
 			if J.IsRunning(target)
 			then
-				return BOT_ACTION_DESIRE_HIGH, target:GetLocation()
+				if not J.IsInRange(bot, target, nCastRange)
+				then
+					return BOT_ACTION_DESIRE_HIGH, J.Site.GetXUnitsTowardsLocation(bot, target:GetLocation(), nCastRange)
+				else
+					return BOT_ACTION_DESIRE_HIGH, target:GetLocation()
+				end
 			else
-				return BOT_ACTION_DESIRE_HIGH, bot:GetLocation()
+				if not J.IsInRange(bot, target, nCastRange)
+				then
+					return BOT_ACTION_DESIRE_HIGH, J.Site.GetXUnitsTowardsLocation(bot, bot:GetLocation(), nCastRange)
+				else
+					return BOT_ACTION_DESIRE_HIGH, bot:GetLocation()
+				end
 			end
 		end
 	end
@@ -85,31 +96,25 @@ function X.Consider()
 		and not botTarget:HasModifier('modifier_abaddon_borrowed_time')
 		and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
 		then
-			local nInRangeAlly = botTarget:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
-			local nInRangeEnemy = botTarget:GetNearbyHeroes(1600, false, BOT_MODE_NONE)
-
-			if  nInRangeAlly ~= nil and nInRangeEnemy ~= nil
-			and #nInRangeAlly + 1 >= #nInRangeEnemy
+			if botTarget:HasModifier('modifier_faceless_void_chronosphere_freeze')
+			or botTarget:HasModifier('modifier_enigma_black_hole_pull')
 			then
-				if botTarget:HasModifier('modifier_faceless_void_chronosphere_freeze')
+				return BOT_ACTION_DESIRE_HIGH, bot:GetLocation()
+			end
+
+			if J.IsInRange(bot, botTarget, bot:GetAttackRange())
+			then
+				if J.IsRunning(botTarget)
 				then
+					return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation()
+				else
 					return BOT_ACTION_DESIRE_HIGH, bot:GetLocation()
 				end
+			end
 
-				if J.IsInRange(bot, botTarget, bot:GetAttackRange())
-				then
-					if J.IsRunning(botTarget)
-					then
-						return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation()
-					else
-						return BOT_ACTION_DESIRE_HIGH, bot:GetLocation()
-					end
-				end
-
-				if not J.IsInRange(bot, botTarget, bot:GetAttackRange())
-				then
-					return BOT_ACTION_DESIRE_HIGH, J.Site.GetXUnitsTowardsLocation(bot, botTarget:GetLocation(), nCastRange)
-				end
+			if not J.IsInRange(bot, botTarget, bot:GetAttackRange())
+			then
+				return BOT_ACTION_DESIRE_HIGH, J.Site.GetXUnitsTowardsLocation(bot, botTarget:GetLocation(), nCastRange)
 			end
 		end
 	end

@@ -37,7 +37,7 @@ function X.Consider()
 		then
 			local nInRangeAlly = J.GetAlliesNearLoc(nLocationAoE.targetloc, nRadius)
 			if  J.IsValidHero(nInRangeAlly[1])
-			and nInRangeAlly[1]:GetAttackTarget() ~= nil
+			and J.IsValidTarget(nInRangeAlly[1]:GetAttackTarget())
 			and GetUnitToUnitDistance(nInRangeAlly[1], nInRangeAlly[1]:GetAttackTarget()) <= nInRangeAlly[1]:GetAttackRange() + 50
 			and not nInRangeAlly[1]:HasModifier('modifier_arc_warden_magnetic_field')
 			then
@@ -51,7 +51,7 @@ function X.Consider()
 		if  J.IsValidTarget(botTarget)
 		and J.IsInRange(bot, botTarget, nCastRange)
 		then
-			local nInRangeAllyAttack = bot:GetNearbyHeroes(nCastRange, false, BOT_MODE_ATTACK)
+			local nInRangeAllyAttack = bot:GetNearbyHeroes(nRadius, false, BOT_MODE_ATTACK)
 			for _, allyHero in pairs(nInRangeAllyAttack)
 			do
 				local allyTarget = allyHero:GetAttackTarget()
@@ -62,14 +62,7 @@ function X.Consider()
 				and not J.IsSuspiciousIllusion(allyTarget)
 				and not allyTarget:HasModifier('modifier_abaddon_borrowed_time')
 				then
-					local nInRangeAlly = botTarget:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
-					local nInRangeEnemy = botTarget:GetNearbyHeroes(1600, false, BOT_MODE_NONE)
-
-					if  nInRangeAlly ~= nil and nInRangeEnemy ~= nil
-					and #nInRangeAlly >= #nInRangeEnemy
-					then
-						return BOT_ACTION_DESIRE_HIGH
-					end
+					return BOT_ACTION_DESIRE_HIGH
 				end
 			end
 		end
@@ -85,10 +78,10 @@ function X.Consider()
 
 		if J.IsAttacking(bot)
 		then
-			if (nEnemyLaneCreeps ~= nil and #nEnemyLaneCreeps >= 3)
-			or (nEnemyTowers ~= nil and #nEnemyTowers >= 1)
-			or (nEnemyBarracks ~= nil and #nEnemyBarracks >= 1)
-			or (sEnemyTowers ~= nil and #sEnemyTowers >= 1)
+			if (nEnemyLaneCreeps ~= nil and #nEnemyLaneCreeps >= 3 and J.CanBeAttacked(nEnemyLaneCreeps[1]))
+			or (nEnemyTowers ~= nil and #nEnemyTowers >= 1 and J.CanBeAttacked(nEnemyTowers[1]))
+			or (nEnemyBarracks ~= nil and #nEnemyBarracks >= 1 and J.CanBeAttacked(nEnemyBarracks[1]))
+			or (sEnemyTowers ~= nil and #sEnemyTowers >= 1 and J.CanBeAttacked(sEnemyTowers[1]))
 			then
 				return BOT_ACTION_DESIRE_HIGH
 			end
@@ -100,10 +93,10 @@ function X.Consider()
 	and not bot:HasModifier('modifier_arc_warden_magnetic_field')
 	then
 		local nEnemyLaneCreeps = bot:GetNearbyLaneCreeps(888, true)
-
 		if J.IsAttacking(bot)
 		then
 			if nEnemyLaneCreeps ~= nil and #nEnemyLaneCreeps >= 3
+			and J.CanBeAttacked(nEnemyLaneCreeps[1])
 			then
 				return BOT_ACTION_DESIRE_HIGH
 			end

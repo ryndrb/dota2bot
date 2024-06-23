@@ -25,7 +25,8 @@ function X.Consider()
 		return BOT_ACTION_DESIRE_NONE, 0
 	end
 
-	local nCastRange = BlinkFragment:GetCastRange()
+	local nCastRange = J.GetProperCastRange(false, bot, BlinkFragment:GetCastRange())
+	local nEnemyHeroes = bot:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
 
 	if J.IsGoingOnSomeone(bot)
 	then
@@ -42,12 +43,7 @@ function X.Consider()
 			and not enemyHero:HasModifier('modifier_faceless_void_chronosphere_freeze')
 			and not enemyHero:HasModifier('modifier_necrolyte_reapers_scythe')
 			then
-				local nInRangeAlly = enemyHero:GetNearbyHeroes(1200, true, BOT_MODE_NONE)
-				local nTargetInRangeAlly = enemyHero:GetNearbyHeroes(1200, false, BOT_MODE_NONE)
-
-				if  nInRangeAlly ~= nil and nTargetInRangeAlly ~= nil
-				and #nInRangeAlly >= #nTargetInRangeAlly
-				and hp < enemyHero:GetHealth()
+				if hp < enemyHero:GetHealth()
 				then
 					hp = enemyHero:GetHealth()
 					target = enemyHero
@@ -62,25 +58,16 @@ function X.Consider()
 	end
 
 	if J.IsRetreating(bot)
+	and not J.IsRealInvisible(bot)
 	then
-        local nInRangeEnemy = bot:GetNearbyHeroes(1200, true, BOT_MODE_NONE)
-		for _, enemyHero in pairs(nInRangeEnemy)
+		for _, enemyHero in pairs(nEnemyHeroes)
         do
 			if  J.IsValidHero(enemyHero)
 			and J.IsChasingTarget(enemyHero, bot)
 			and not J.IsSuspiciousIllusion(enemyHero)
 			and not J.IsDisabled(enemyHero)
-			and not J.IsRealInvisible(bot)
 			then
-				local nInRangeAlly = enemyHero:GetNearbyHeroes(1200, true, BOT_MODE_NONE)
-				local nTargetInRangeAlly = enemyHero:GetNearbyHeroes(1200, false, BOT_MODE_NONE)
-
-				if  nInRangeAlly ~= nil and nTargetInRangeAlly ~= nil
-				and ((#nTargetInRangeAlly > #nInRangeAlly)
-					or bot:WasRecentlyDamagedByAnyHero(1.2))
-				then
-					return BOT_ACTION_DESIRE_HIGH, enemyHero:GetLocation()
-				end
+				return BOT_ACTION_DESIRE_HIGH, enemyHero:GetLocation()
 			end
         end
 	end

@@ -29,15 +29,6 @@ function X.MinionThink( hMinionUnit )
 	Minion.MinionThink(hMinionUnit)
 end
 
-local Firestorm     = bot:GetAbilityByName('abyssal_underlord_firestorm')
-local PitOfMalice   = bot:GetAbilityByName('abyssal_underlord_pit_of_malice')
--- local AtrophyAura   = bot:GetAbilityByName('abyssal_underlord_atrophy_aura')
-local FiendsGate    = bot:GetAbilityByName('abyssal_underlord_dark_portal')
-
-local FirestormDesire, FirestormLocation
-local PitOfMaliceDesire, PitOfMaliceLocation
-local FiendsGateDesire, FiendsGateLocation
-
 function X.SkillsComplement()
 	if J.CanNotUseAbility(bot) then return end
 

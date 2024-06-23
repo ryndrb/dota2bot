@@ -284,15 +284,15 @@ end
 
 
 function X.IsBusy(unit)
-	return unit:IsUsingAbility() or unit:IsCastingAbility() or unit:IsChanneling();
+	return X.IsValidUnit(unit) and (unit:IsUsingAbility() or unit:IsCastingAbility() or unit:IsChanneling())
 end
 
 function X.CantMove(unit)
-	return unit:IsStunned() or unit:IsRooted() or unit:IsNightmared() or unit:IsInvulnerable();
+	return X.IsValidUnit(unit) and (unit:IsStunned() or unit:IsRooted() or unit:IsNightmared() or unit:IsInvulnerable())
 end
 
 function X.CantAttack(unit)
-	return unit:IsStunned() or unit:IsRooted() or unit:IsNightmared() or unit:IsDisarmed() or unit:IsInvulnerable() or unit:GetAttackDamage() <= 0;
+	return X.IsValidUnit(unit) and (unit:IsStunned() or unit:IsRooted() or unit:IsNightmared() or unit:IsDisarmed() or unit:IsInvulnerable() or unit:GetAttackDamage() <= 0)
 end
 
 ------------ILLUSION ACT
@@ -1173,7 +1173,7 @@ function X.MinionThink(hMinionUnit)
 
 	if X.IsValidUnit(hMinionUnit)
 	then
-		if  hMinionUnit:IsIllusion()
+		if  (hMinionUnit:IsHero() and hMinionUnit:IsIllusion())
 		and hMinionUnit:GetUnitName() ~= 'npc_dota_hero_vengefulspirit'
 		then
 			X.IllusionThink(hMinionUnit)

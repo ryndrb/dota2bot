@@ -27,7 +27,6 @@ function X.Consider()
 	local nCastRange = J.GetProperCastRange(false, bot, FiendsGrip:GetCastRange())
 	local nDamage = FiendsGrip:GetSpecialValueInt( 'fiend_grip_damage' ) * 6
 	local nDamageType = DAMAGE_TYPE_PURE
-    local nAllyHeroes = bot:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
     local nEnemyHeroes = bot:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
     local botTarget = J.GetProperTarget(bot)
 
@@ -45,6 +44,8 @@ function X.Consider()
 
 			if  J.IsInRange(bot, enemyHero, nCastRange + 75)
             and J.CanKillTarget(enemyHero, nDamage, nDamageType)
+			and not J.IsHaveAegis(enemyHero)
+			and not enemyHero:HasModifier('modifier_necrolyte_reapers_scythe')
 			then
 				return BOT_ACTION_DESIRE_HIGH, enemyHero
 			end
@@ -61,10 +62,12 @@ function X.Consider()
 
 		for _, enemyHero in pairs(nEnemyHeroes)
 		do
-			if  J.IsValid(enemyHero)
+			if  J.IsValidHero(enemyHero)
             and J.CanCastOnNonMagicImmune(enemyHero)
             and J.CanCastOnTargetAdvanced(enemyHero)
             and not J.IsDisabled(enemyHero)
+			and not J.IsHaveAegis(enemyHero)
+			and not enemyHero:HasModifier('modifier_necrolyte_reapers_scythe')
 			then
 				local npcEnemyPower = enemyHero:GetEstimatedDamageToTarget(true, bot, 6.0, DAMAGE_TYPE_ALL)
 				if npcEnemyPower > nStrongestPower
@@ -88,6 +91,9 @@ function X.Consider()
         and J.IsInRange(botTarget, bot, nCastRange + 75)
         and J.CanCastOnNonMagicImmune(botTarget)
         and J.CanCastOnTargetAdvanced(botTarget)
+		and not J.IsDisabled(botTarget)
+		and not J.IsHaveAegis(botTarget)
+		and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
 		then
 			return BOT_ACTION_DESIRE_HIGH, botTarget
 		end

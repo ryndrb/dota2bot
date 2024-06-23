@@ -25,19 +25,10 @@ function X.Consider()
 
 	local botTarget = J.GetProperTarget(bot)
 
-	if J.IsInTeamFight(bot, 1200)
-	then
-		local nRealInRangeEnemy = J.GetEnemiesNearLoc(bot:GetLocation(), 700)
-		if nRealInRangeEnemy ~= nil and #nRealInRangeEnemy >= 2
-		then
-			return BOT_ACTION_DESIRE_HIGH
-		end
-	end
+	local nEnemyHeroes = bot:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
 
 	if J.IsGoingOnSomeone(bot)
 	then
-		local nInRangeAlly = bot:GetNearbyHeroes(1000, false, BOT_MODE_NONE)
-
 		if  J.IsValidTarget(botTarget)
 		and J.IsInRange(bot, botTarget, 800)
 		and not J.IsSuspiciousIllusion(botTarget)
@@ -45,39 +36,25 @@ function X.Consider()
 		and not botTarget:HasModifier('modifier_faceless_void_chronosphere_freeze')
 		and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
 		then
-            local nTargetInRangeAlly = botTarget:GetNearbyHeroes(1000, false, BOT_MODE_NONE)
-
-            if  nInRangeAlly ~= nil and nTargetInRangeAlly ~= nil
-            and #nInRangeAlly >= #nTargetInRangeAlly
-            then
-                return BOT_ACTION_DESIRE_HIGH
-            end
+			return BOT_ACTION_DESIRE_HIGH
 		end
 	end
 
 	if J.IsRetreating(bot)
+	and not J.IsRealInvisible(bot)
 	then
-		local nInRangeAlly = bot:GetNearbyHeroes(800, false, BOT_MODE_NONE)
-		local nInRangeEnemy = bot:GetNearbyHeroes(800, true, BOT_MODE_NONE)
-
-		if  nInRangeAlly ~= nil and nInRangeEnemy ~= nil
-		and J.IsValidHero(nInRangeEnemy[1])
-		and J.IsRunning(nInRangeEnemy[1])
-        and nInRangeEnemy[1]:IsFacingLocation(bot:GetLocation(), 30)
-		and not J.IsSuspiciousIllusion(nInRangeEnemy[1])
-		and not J.IsDisabled(nInRangeEnemy[1])
-		and not nInRangeEnemy[1]:HasModifier('modifier_enigma_black_hole_pull')
-		and not nInRangeEnemy[1]:HasModifier('modifier_faceless_void_chronosphere_freeze')
-		and not nInRangeEnemy[1]:HasModifier('modifier_necrolyte_reapers_scythe')
-		then
-			local nTargetInRangeAlly = nInRangeEnemy[1]:GetNearbyHeroes(800, false, BOT_MODE_NONE)
-
-            if  nTargetInRangeAlly ~= nil
-            and ((#nTargetInRangeAlly > #nInRangeAlly)
-                or (J.GetHP(bot) < 0.35 and bot:WasRecentlyDamagedByAnyHero(1.5)))
-            then
-                return BOT_ACTION_DESIRE_HIGH
-            end
+		for _, enemyHero in pairs(nEnemyHeroes)
+		do
+			if (bot:GetActiveModeDesire() > 0.5 and J.GetHP(bot) < 0.35)
+			and J.IsValidHero(enemyHero)
+			and not J.IsSuspiciousIllusion(enemyHero)
+			and not J.IsDisabled(enemyHero)
+			and not enemyHero:HasModifier('modifier_enigma_black_hole_pull')
+			and not enemyHero:HasModifier('modifier_faceless_void_chronosphere_freeze')
+			and not enemyHero:HasModifier('modifier_necrolyte_reapers_scythe')
+			then
+				return BOT_ACTION_DESIRE_HIGH
+			end
 		end
 	end
 

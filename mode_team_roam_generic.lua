@@ -45,14 +45,9 @@ local RetreatWhenTowerTargetedTime = 0
 local ShouldHelpWhenCoreIsTargeted = false
 
 local TormentorLocation
-if GetTeam() == TEAM_RADIANT
-then
-	TormentorLocation = Vector(-8075, -1148, 1000)
-else
-	TormentorLocation = Vector(8132, 1102, 1000)
-end
 
 function GetDesire()
+	TormentorLocation = J.GetTormentorLocation(GetTeam())
 
 	if not beInitDone
 	then
@@ -2103,10 +2098,16 @@ function X.ConsiderDispersingFromSpells()
 		isMagicImmune = true
 	end
 
+	-- Pierces Spell Immunity / Urgent
+	if bot:HasModifier('modifier_dark_seer_wall_slow')
+	or bot:HasModifier('modifier_jakiro_macropyre_burn')
+	then
+		return true
+	end
+
 	if  not isMagicImmune 
 	and (  bot:HasModifier('modifier_crystal_maiden_freezing_field_slow')
 		or bot:HasModifier('modifier_disruptor_static_storm')
-		or bot:HasModifier('modifier_jakiro_macropyre_burn')
 		or bot:HasModifier('modifier_lich_chainfrost_slow')
 		or bot:HasModifier('modifier_sandking_sand_storm_slow')
 		or bot:HasModifier('modifier_sand_king_epicenter_slow')

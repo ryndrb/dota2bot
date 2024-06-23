@@ -29,20 +29,6 @@ function X.MinionThink(hMinionUnit)
 	Minion.MinionThink(hMinionUnit)
 end
 
-local Flux 			= bot:GetAbilityByName('arc_warden_flux')
-local MagneticField = bot:GetAbilityByName('arc_warden_magnetic_field')
-local SparkWraith 	= bot:GetAbilityByName('arc_warden_spark_wraith')
-local TempestDouble = bot:GetAbilityByName('arc_warden_tempest_double')
-
-local FluxDesire, FluxTarget
-local MagneticFieldDesire
-local SparkWraithDesire, SparkWraithLocation
-local TempestDoubleDesire, TempestDoubleLocation
-
-local npcDouble = nil
-
-local botTarget
-
 function X.SkillsComplement()
 	if J.CanNotUseAbility( bot ) or J.IsRealInvisible(bot) then return end
 

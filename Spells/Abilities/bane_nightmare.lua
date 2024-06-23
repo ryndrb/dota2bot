@@ -22,7 +22,6 @@ function X.Consider()
 
 	local nCastRange = Nightmare:GetCastRange()
 	local nInRangeEnemyList = J.GetAroundEnemyHeroList(nCastRange)
-    local nAllyHeroes = bot:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
     local nEnemyHeroes = bot:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
     local botTarget = J.GetProperTarget(bot)
 

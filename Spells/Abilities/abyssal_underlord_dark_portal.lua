@@ -55,9 +55,9 @@ function X.Consider()
 	if J.IsGoingOnSomeone(bot)
 	then
 		if  J.IsValidTarget(botTarget)
-        and GetUnitToUnitDistance(bot, botTarget) > 2500
         and not J.IsSuspiciousIllusion(botTarget)
         and not J.IsInLaningPhase()
+        and GetUnitToUnitDistance(bot, botTarget) > 2500
 		then
 			local nInRangeAlly = botTarget:GetNearbyHeroes(1200, true, BOT_MODE_NONE)
             local nTargetInRangeAlly = botTarget:GetNearbyHeroes(1200, false, BOT_MODE_NONE)

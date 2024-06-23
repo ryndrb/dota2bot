@@ -27,14 +27,22 @@ function X.Consider()
 	local nRadius = PitOfMalice:GetSpecialValueInt('radius')
     local botTarget = J.GetProperTarget(bot)
 
-    local nEnemyHeroes = bot:GetNearbyHeroes(nCastRange + nRadius, true, BOT_MODE_NONE)
+    local nAllyHeroes = bot:GetNearbyHeroes(1600, false, BOT_MODE_NONE)
+    local nEnemyHeroes = bot:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
+
     for _, enemyHero in pairs(nEnemyHeroes)
     do
         if  J.IsValidHero(enemyHero)
+        and J.IsInRange(bot, enemyHero, nCastRange + nRadius)
         and J.CanCastOnNonMagicImmune(enemyHero)
         and enemyHero:IsChanneling()
         then
-            return BOT_ACTION_DESIRE_HIGH, J.Site.GetXUnitsTowardsLocation(bot, enemyHero:GetLocation(), nCastRange)
+            if not J.IsInRange(bot, enemyHero, nCastRange)
+            then
+                return BOT_ACTION_DESIRE_HIGH, J.Site.GetXUnitsTowardsLocation(bot, enemyHero:GetLocation(), nCastRange)
+            else
+                return BOT_ACTION_DESIRE_HIGH, enemyHero:GetLocation()
+            end
         end
     end
 
@@ -45,43 +53,42 @@ function X.Consider()
         and J.IsInRange(bot, botTarget, nCastRange + nRadius)
         and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
 		then
-            local nInRangeAlly = botTarget:GetNearbyHeroes(1200, true, BOT_MODE_NONE)
-            local nInRangeEnemy = botTarget:GetNearbyHeroes(1200, false, BOT_MODE_NONE)
-
-            if  nInRangeAlly ~= nil and nInRangeEnemy ~= nil
-            and #nInRangeAlly >= #nInRangeEnemy
+            local nInRangeEnemy = J.GetEnemiesNearLoc(botTarget:GetLocation(), nCastRange + nRadius)
+            if nInRangeEnemy ~= nil and #nInRangeEnemy >= 1
             then
-                nInRangeEnemy = J.GetEnemiesNearLoc(botTarget:GetLocation(), nCastRange + nRadius)
-
-                if nInRangeEnemy ~= nil and #nInRangeEnemy >= 1
+                if GetUnitToLocationDistance(bot, J.GetCenterOfUnits(nInRangeEnemy)) > nCastRange
                 then
                     return BOT_ACTION_DESIRE_HIGH, J.Site.GetXUnitsTowardsLocation(bot, J.GetCenterOfUnits(nInRangeEnemy), nCastRange)
+                else
+                    return BOT_ACTION_DESIRE_HIGH, J.GetCenterOfUnits(nInRangeEnemy)
                 end
+            end
 
+            if not J.IsInRange(bot, botTarget, nCastRange)
+            then
                 return BOT_ACTION_DESIRE_HIGH, J.Site.GetXUnitsTowardsLocation(bot, botTarget:GetLocation(), nCastRange)
+            else
+                return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation()
             end
 		end
 	end
 
 	if J.IsRetreating(bot)
+    and not J.IsRealInvisible(bot)
 	then
         local nInRangeEnemy = bot:GetNearbyHeroes(1200, true, BOT_MODE_NONE)
         for _, enemyHero in pairs(nInRangeEnemy)
         do
-            if  J.IsValidHero(enemyHero)
+            if J.IsValidHero(enemyHero)
+            and (bot:GetActiveModeDesire() > 0.7 or bot:WasRecentlyDamagedByHero(enemyHero, 2))
             and J.CanCastOnNonMagicImmune(enemyHero)
-            and J.IsChasingTarget(enemyHero, bot)
             and not J.IsDisabled(enemyHero)
             then
-                local nInRangeAlly = enemyHero:GetNearbyHeroes(1200, true, BOT_MODE_NONE)
-                local nTargetInRangeAlly = enemyHero:GetNearbyHeroes(1200, false, BOT_MODE_NONE)
-
-                if  nInRangeAlly ~= nil and nTargetInRangeAlly ~= nil
-                and ((#nTargetInRangeAlly > #nInRangeAlly)
-                    or bot:WasRecentlyDamagedByAnyHero(2.5))
-                and GetUnitToUnitDistance(bot, enemyHero) < nRadius + 100
+                if J.IsInRange(bot, enemyHero, nRadius)
                 then
                     return BOT_ACTION_DESIRE_HIGH, bot:GetLocation()
+                else
+                    return BOT_ACTION_DESIRE_HIGH, (bot:GetLocation() + enemyHero:GetLocation()) / 2
                 end
             end
         end
@@ -90,12 +97,11 @@ function X.Consider()
 	if J.IsPushing(bot) or J.IsDefending(bot)
 	then
 		local nLocationAoE = bot:FindAoELocation(true, true, bot:GetLocation(), nCastRange + nRadius, nRadius, 0, 0)
-        local nInRangeAlly = bot:GetNearbyHeroes(1200, false, BOT_MODE_NONE)
         local nInRangeEnemy = J.GetEnemiesNearLoc(nLocationAoE.targetloc, nRadius)
 
-		if  nInRangeAlly ~= nil and nInRangeEnemy ~= nil
+		if  nAllyHeroes ~= nil
         and #nInRangeEnemy >= 1
-        and not (#nInRangeAlly > #nInRangeEnemy + 1)
+        and not (#nAllyHeroes > #nInRangeEnemy + 1)
 		then
 			return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc
 		end
@@ -104,6 +110,7 @@ function X.Consider()
     if J.IsDoingRoshan(bot)
     then
         if  J.IsRoshan(botTarget)
+        and not J.IsDisabled(botTarget)
         and J.CanCastOnNonMagicImmune(botTarget)
         and J.IsInRange(bot, botTarget, 500)
         and J.IsAttacking(bot)
@@ -115,4 +122,4 @@ function X.Consider()
     return BOT_ACTION_DESIRE_NONE, 0
 end
 
-    return X
+return X

@@ -24,12 +24,13 @@ function X.Consider()
 		return BOT_ACTION_DESIRE_NONE, nil
 	end
 
-	local nCastRange = CounterSpellAlly:GetCastRange()
-	local nInRangeAlly = bot:GetNearbyHeroes(nCastRange, false, BOT_MODE_NONE)
+	local nCastRange = J.GetProperCastRange(false, bot, CounterSpellAlly:GetCastRange())
+	local nInRangeAlly = bot:GetNearbyHeroes(1600, false, BOT_MODE_NONE)
 
 	for _, allyHero in pairs(nInRangeAlly)
 	do
 		if  J.IsValidHero(allyHero)
+		and J.IsInRange(bot, allyHero, nCastRange)
 		and not J.IsSuspiciousIllusion(allyHero)
 		and not allyHero:HasModifier('modifier_necrolyte_reapers_scythe')
 		then

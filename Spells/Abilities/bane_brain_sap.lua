@@ -36,12 +36,12 @@ function X.Consider()
 	local nManaCost = BrainSap:GetManaCost()
 	local nDamage = BrainSap:GetSpecialValueInt('brain_sap_damage')
 	local nDamageType = DAMAGE_TYPE_MAGICAL
-	local nInRangeEnemyList = J.GetAroundEnemyHeroList(nCastRange)
-	local nInBonusEnemyList = J.GetAroundEnemyHeroList(nCastRange + 200)
 	local nLostHealth = bot:GetMaxHealth() - bot:GetHealth()
     local botTarget = J.GetProperTarget(bot)
+
     local nAllyHeroes = bot:GetNearbyHeroes(1600, false, BOT_MODE_NONE)
     local nEnemyHeroes = bot:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
+	local nEnemyLaneCreeps = bot:GetNearbyLaneCreeps(1600, true)
 
     if bot:GetUnitName() == 'npc_dota_hero_bane'
     then
@@ -49,9 +49,10 @@ function X.Consider()
         if Talent8 ~= nil then nDamage = nDamage + Talent8:GetSpecialValueInt('value') end
     end
 
-	for _, enemyHero in pairs(nInBonusEnemyList)
+	for _, enemyHero in pairs(nEnemyHeroes)
 	do
 		if  J.IsValidHero(enemyHero)
+		and J.IsInRange(bot, enemyHero, nCastRange + 150)
         and J.CanCastOnNonMagicImmune(enemyHero)
         and J.CanCastOnTargetAdvanced(enemyHero)
         and not enemyHero:HasModifier('modifier_necrolyte_reapers_scythe')
@@ -73,9 +74,10 @@ function X.Consider()
 		local nWeakestEnemy = nil
 		local nWeakestEnemyHealth = 99999
 
-		for _, enemyHero in pairs(nInRangeEnemyList)
+		for _, enemyHero in pairs(nEnemyHeroes)
 		do
 			if  J.IsValidHero(enemyHero)
+			and J.IsInRange(bot, enemyHero, nCastRange)
             and J.CanCastOnNonMagicImmune(enemyHero)
             and J.CanCastOnTargetAdvanced(enemyHero)
             and not enemyHero:HasModifier('modifier_necrolyte_reapers_scythe')
@@ -113,12 +115,12 @@ function X.Consider()
 	if  bot:WasRecentlyDamagedByAnyHero(3)
     and bot:GetLevel() >= 10
     and nLostHealth >= nDamage
-    and #nInRangeEnemyList >= 1
     and not J.IsRetreating(bot)
 	then
-		for _, enemyHero in pairs(nInRangeEnemyList)
+		for _, enemyHero in pairs(nEnemyHeroes)
 		do
 			if  J.IsValidHero(enemyHero)
+			and J.IsInRange(bot, enemyHero, nCastRange)
             and J.CanCastOnNonMagicImmune(enemyHero)
             and not J.IsDisabled(enemyHero)
             and not enemyHero:IsDisarmed()
@@ -130,10 +132,12 @@ function X.Consider()
 	end
 
 	if J.IsRetreating(bot) and nLostHealth > nDamage
+	and not J.IsRealInvisible(bot)
 	then
-		for _, enemyHero in pairs(nInRangeEnemyList)
+		for _, enemyHero in pairs(nEnemyHeroes)
 		do
 			if  J.IsValid(enemyHero)
+			and J.IsInRange(bot, enemyHero, nCastRange)
             and J.CanCastOnNonMagicImmune(enemyHero)
             and J.CanCastOnTargetAdvanced(enemyHero)
             and (bot:WasRecentlyDamagedByHero(enemyHero, 5.0) or nLostHealth > nDamage * 2)
@@ -147,10 +151,11 @@ function X.Consider()
         and nLostHealth > nDamage * 1.5
         and not bot:WasRecentlyDamagedByAnyHero(3)
 		then
-			local nCreepList = bot:GetNearbyCreeps(1000, true)
+			local nCreepList = bot:GetNearbyCreeps(1600, true)
 			for _, creep in pairs(nCreepList)
 			do
 				if  J.IsValid(creep)
+				and J.IsInRange(bot, creep, nCastRange)
                 and J.CanCastOnNonMagicImmune(creep)
                 and J.CanBeAttacked(creep)
 				then
@@ -184,7 +189,6 @@ function X.Consider()
     and (J.IsCore(bot) or (not J.IsCore(bot) and nAllyHeroes ~= nil and #nAllyHeroes <= 2))
     and nEnemyHeroes ~= nil and #nEnemyHeroes == 0
 	then
-		local nEnemyLaneCreeps = bot:GetNearbyLaneCreeps(1200, true)
 		local keyWord = "ranged"
 		for _, creep in pairs(nEnemyLaneCreeps)
 		do
@@ -202,8 +206,6 @@ function X.Consider()
     if  J.IsLaning(bot)
     and (J.IsCore(bot) or (not J.IsCore(bot) and not J.IsThereCoreNearby(1000)))
 	then
-		local nEnemyLaneCreeps = bot:GetNearbyLaneCreeps(nCastRange + 300, true)
-
 		for _, creep in pairs(nEnemyLaneCreeps)
 		do
 			if  J.IsValid(creep)
@@ -225,6 +227,7 @@ function X.Consider()
 	if J.IsDoingRoshan(bot)
 	then
 		if  J.IsRoshan(botTarget)
+		and not J.IsDisabled(botTarget)
         and J.IsInRange(bot, botTarget, nCastRange)
         and J.IsAttacking(bot)
 		then
@@ -244,13 +247,13 @@ function X.Consider()
 
 	if  (nEnemyHeroes ~= nil and #nEnemyHeroes > 0 or bot:WasRecentlyDamagedByAnyHero(3))
     and (not J.IsRetreating(bot) or #nAllyHeroes ~= nil and #nAllyHeroes >= 2)
-    and #nInRangeEnemyList >= 1
     and bot:GetLevel() >= 12
     and nLostHealth > nDamage
 	then
-		for _, enemyHero in pairs(nInRangeEnemyList)
+		for _, enemyHero in pairs(nEnemyHeroes)
 		do
 			if  J.IsValidHero(enemyHero)
+			and J.IsInRange(bot, enemyHero, nCastRange)
             and J.CanCastOnNonMagicImmune(enemyHero)
             and J.CanCastOnTargetAdvanced(enemyHero)
             and not enemyHero:HasModifier('modifier_necrolyte_reapers_scythe')

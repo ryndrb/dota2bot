@@ -31,26 +31,28 @@ function X.Consider()
 	if J.IsInTeamFight(bot, 1200)
 	then
 		local nCastTarget = nil
-		local nInRangeEnemy = bot:GetNearbyHeroes(nCastRange + 200, true, BOT_MODE_NONE)
+		local nInRangeEnemy = bot:GetNearbyHeroes(nCastRange + 300, true, BOT_MODE_NONE)
 		for _, enemyHero in pairs(nInRangeEnemy)
 		do
-			local nDamage = nDamagaPerHealth * (enemyHero:GetMaxMana() - enemyHero:GetMana())
 			if J.IsValidHero(enemyHero)
-				and J.CanCastOnTargetAdvanced(enemyHero)
-				and J.CanCastOnNonMagicImmune(enemyHero)
-				and J.CanKillTarget(enemyHero, nDamage, DAMAGE_TYPE_MAGICAL)
-				and not J.IsHaveAegis(enemyHero)
-				and not enemyHero:HasModifier('modifier_arc_warden_tempest_double')
-				and not enemyHero:HasModifier('modifier_dazzle_shallow_grave')
-				and not enemyHero:HasModifier('modifier_necrolyte_reapers_scythe')
-				and not enemyHero:HasModifier('modifier_oracle_false_promise_timer')
+			and J.CanCastOnTargetAdvanced(enemyHero)
+			and J.CanCastOnNonMagicImmune(enemyHero)
+			and not J.IsHaveAegis(enemyHero)
+			and not enemyHero:HasModifier('modifier_arc_warden_tempest_double')
+			and not enemyHero:HasModifier('modifier_dazzle_shallow_grave')
+			and not enemyHero:HasModifier('modifier_necrolyte_reapers_scythe')
+			and not enemyHero:HasModifier('modifier_oracle_false_promise_timer')
 			then
-				if J.IsCore(enemyHero)
+				local nDamage = nDamagaPerHealth * (enemyHero:GetMaxMana() - enemyHero:GetMana())
+				if J.CanKillTarget(enemyHero, nDamage, DAMAGE_TYPE_MAGICAL)
 				then
-					nCastTarget = enemyHero
-					break
-				else
-					nCastTarget = enemyHero
+					if J.IsCore(enemyHero)
+					then
+						nCastTarget = enemyHero
+						break
+					else
+						nCastTarget = enemyHero
+					end
 				end
 			end
 		end
@@ -74,17 +76,10 @@ function X.Consider()
 		and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
 		and not botTarget:HasModifier('modifier_oracle_false_promise_timer')
 		then
-			local nInRangeAlly = botTarget:GetNearbyHeroes(1200, true, BOT_MODE_NONE)
-			local nTargetInRangeAlly = botTarget:GetNearbyHeroes(1200, false, BOT_MODE_NONE)
 			local nDamage = nDamagaPerHealth * (botTarget:GetMaxMana() - botTarget:GetMana())
-
-			if  nInRangeAlly ~= nil and nTargetInRangeAlly ~= nil
-			and #nInRangeAlly >= #nTargetInRangeAlly
+			if J.CanKillTarget(botTarget, nDamage, DAMAGE_TYPE_MAGICAL)
 			then
-				if J.CanKillTarget(botTarget, nDamage, DAMAGE_TYPE_MAGICAL)
-				then
-					return BOT_ACTION_DESIRE_HIGH, botTarget
-				end
+				return BOT_ACTION_DESIRE_HIGH, botTarget
 			end
 		end
 	end
