@@ -77,6 +77,74 @@ X['spells'] = {
     ['broodmother_sticky_snare'] = true,
     ['broodmother_spawn_spiderlings'] = true,
 
+    ['centaur_hoof_stomp'] = true,
+    ['centaur_double_edge'] = true,
+    ['centaur_mount'] = true,
+    ['centaur_work_horse'] = true,
+    ['centaur_stampede'] = true,
+
+    ['chaos_knight_chaos_bolt'] = true,
+    ['chaos_knight_reality_rift'] = true,
+    ['chaos_knight_phantasm'] = true,
+
+    ['chen_penitence'] = true,
+    ['chen_holy_persuasion'] = true,
+    ['chen_divine_favor'] = true,
+    ['chen_summon_convert'] = true,
+    ['chen_hand_of_god'] = true,
+
+    ['clinkz_strafe'] = true,
+    ['clinkz_tar_bomb'] = true,
+    ['clinkz_death_pact'] = true,
+    ['clinkz_burning_barrage'] = true,
+    ['clinkz_burning_army'] = true,
+    ['clinkz_wind_walk'] = true,
+
+    ['crystal_maiden_crystal_nova'] = true,
+    ['crystal_maiden_frostbite'] = true,
+    ['crystal_maiden_crystal_clone'] = true,
+    ['crystal_maiden_freezing_field'] = true,
+
+    ['dark_seer_vacuum'] = true,
+    ['dark_seer_ion_shell'] = true,
+    ['dark_seer_surge'] = true,
+    ['dark_seer_wall_of_replica'] = true,
+
+    ['dawnbreaker_fire_wreath'] = true,
+    ['dawnbreaker_celestial_hammer'] = true,
+    ['dawnbreaker_converge'] = true,
+    ['dawnbreaker_solar_guardian'] = true,
+
+    ['dazzle_poison_touch'] = true,
+    ['dazzle_shallow_grave'] = true,
+    ['dazzle_shadow_wave'] = true,
+    ['dazzle_bad_juju'] = true,
+
+    ['death_prophet_carrion_swarm'] = true,
+    ['death_prophet_silence'] = true,
+    ['death_prophet_spirit_siphon'] = true,
+    ['death_prophet_exorcism'] = true,
+
+    ['disruptor_thunder_strike'] = true,
+    ['disruptor_glimpse'] = true,
+    ['disruptor_kinetic_field'] = true,
+    ['disruptor_static_storm'] = true,
+
+    ['doom_bringer_devour'] = true,
+    ['doom_bringer_scorched_earth'] = true,
+    ['doom_bringer_infernal_blade'] = true,
+    ['doom_bringer_doom'] = true,
+
+    ['dragon_knight_breathe_fire'] = true,
+    ['dragon_knight_dragon_tail'] = true,
+    ['dragon_knight_fireball'] = true,
+    ['dragon_knight_elder_dragon_form'] = true,
+
+    ['drow_ranger_frost_arrows'] = true,
+    ['drow_ranger_wave_of_silence'] = true,
+    ['drow_ranger_multishot'] = true,
+    ['drow_ranger_glacier'] = true,
+
     ['earthshaker_fissure'] = true,
     ['earthshaker_enchant_totem'] = true,
     ['earthshaker_echo_slam'] = true,

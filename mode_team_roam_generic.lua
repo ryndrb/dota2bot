@@ -59,6 +59,13 @@ function GetDesire()
 
 	local nDesire = 0
 
+	-- -- Print Skills Pos
+	-- if J.GetPosition(bot) == 5 and GetTeam() == TEAM_RADIANT
+	-- then
+	-- 	local a = J.Skill.GetAbilityList(GetTeamMember(1))
+	-- 	for i = 1, #a do print(i, a[i]) end
+	-- end
+
 	-- Should not retreat if under Wraith King's scepter
 	if bot:HasModifier('modifier_skeleton_king_reincarnation_scepter_active')
 	then

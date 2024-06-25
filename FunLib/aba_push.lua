@@ -25,6 +25,8 @@ function Push.GetPushDesire(bot, lane)
         maxDesire = 0.75
     end
 
+    if J.IsGoingOnSomeone(bot) and J.IsValidHero(J.GetProperTarget(bot)) and J.IsInRange(bot, J.GetProperTarget(bot), 1600) then return BOT_ACTION_DESIRE_NONE end
+
     if  J.IsInLaningPhase()
     and bot:GetLevel() < 8
     then

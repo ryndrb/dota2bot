@@ -23,13 +23,12 @@ function X.Consider()
 		return BOT_ACTION_DESIRE_NONE, nil
 	end
 
-	local nRadius = NasalGoo:GetSpecialValueInt( 'radius_scepter' )
 	local nCastRange = J.GetProperCastRange(false, bot, NasalGoo:GetCastRange())
 	local nManaCost = NasalGoo:GetManaCost()
 
     local botTarget = J.GetProperTarget(bot)
 
-	local nInRangeEnemy = bot:GetNearbyHeroes( nRadius, true, BOT_MODE_NONE )
+	local nInRangeEnemy = bot:GetNearbyHeroes( nCastRange, true, BOT_MODE_NONE )
     local nEnemyHeroes = bot:GetNearbyHeroes(800, true, BOT_MODE_NONE)
 
 	if J.IsRetreating( bot )
@@ -66,7 +65,7 @@ function X.Consider()
 	if J.IsGoingOnSomeone( bot )
 	then
 		if J.IsValidHero( botTarget )
-        and J.IsInRange( botTarget, bot, nRadius )
+        and J.IsInRange( botTarget, bot, nCastRange )
         and J.CanCastOnNonMagicImmune( botTarget )
         and J.CanCastOnTargetAdvanced( botTarget )
 		then
@@ -75,7 +74,7 @@ function X.Consider()
 
 		if J.IsValid( botTarget )
 		and nEnemyHeroes ~= nil and #nEnemyHeroes == 0
-        and J.IsInRange( botTarget, bot, nRadius )
+        and J.IsInRange( botTarget, bot, nCastRange )
         and J.IsAllowedToSpam( bot, nManaCost )
         and J.CanCastOnNonMagicImmune( botTarget )
         and J.CanCastOnTargetAdvanced( botTarget )

@@ -11,6 +11,8 @@ function Defend.GetDefendDesire(bot, lane)
         if bot:GetLevel() < 6 then return 0.1 end
     end
 
+	if J.IsGoingOnSomeone(bot) and J.IsValidHero(J.GetProperTarget(bot)) and J.IsInRange(bot, J.GetProperTarget(bot), 1600) then return BOT_ACTION_DESIRE_NONE end
+
 	local nDefendDesire = 0
 	local mul = Defend.GetEnemyAmountMul(lane)
 	local nEnemies = J.GetEnemiesAroundAncient()
@@ -453,19 +455,22 @@ function Defend.GetEnemyCountInLane(lane, isHero)
 
 	for _, enemy in pairs(unitList)
 	do
-		local distance = GetUnitToLocationDistance(enemy, laneFrontLoc)
-
-		if isHero
+		if J.IsValid(enemy)
 		then
-			if  distance < 1600
-			and not J.IsSuspiciousIllusion(enemy)
+			local distance = GetUnitToLocationDistance(enemy, laneFrontLoc)
+
+			if isHero
 			then
-				table.insert(units, enemy)
-			end
-		else
-			if distance < 1300
-			then
-				table.insert(units, enemy)
+				if  distance < 1600
+				and not J.IsSuspiciousIllusion(enemy)
+				then
+					table.insert(units, enemy)
+				end
+			else
+				if distance < 1300
+				then
+					table.insert(units, enemy)
+				end
 			end
 		end
 	end

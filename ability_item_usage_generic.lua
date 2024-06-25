@@ -1556,7 +1556,7 @@ X.ConsiderItemDesire["item_cyclone"] = function( hItem )
 		return BOT_ACTION_DESIRE_NONE
 	end
 
-	if J.IsValid( botTarget )
+	if J.IsValidHero( botTarget )
 		and J.CanCastOnNonMagicImmune( botTarget )
 		and X.IsWithoutSpellShield( botTarget )
 		and J.IsInRange( bot, botTarget, nCastRange + 200 )

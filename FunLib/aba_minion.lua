@@ -349,7 +349,9 @@ function X.IllusionThink(minion)
 		end
 	end
 
-	if minion.attackDesire > 0 then
+	if minion.attackDesire > 0
+	and minion.target:CanBeSeen()
+	then
 		if minion.target:IsAttackImmune() or minion.target:IsInvulnerable()
 		then
 			minion:Action_MoveToLocation(minion.target:GetLocation())

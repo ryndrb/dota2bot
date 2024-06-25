@@ -28,7 +28,7 @@ function X.Cast()
 
             if nLocationAoE.count >= 2
             then
-                bot:ActionQueue_UseAbilityOnLocation(ColdFeet, nLocationAoE.targetLoc)
+                bot:ActionQueue_UseAbilityOnLocation(ColdFeet, nLocationAoE.targetloc)
             else
                 bot:ActionQueue_UseAbilityOnEntity(ColdFeet, Target)
             end

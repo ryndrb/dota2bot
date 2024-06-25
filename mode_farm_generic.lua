@@ -497,7 +497,7 @@ function Think()
 				local allyTower = bot:GetNearbyTowers(1000,true)[1];
 				if bot:GetAttackTarget() == farmTarget
 				   and ( J.GetAttackEnemysAllyCreepCount(farmTarget, 800) > 0
-						   or ( allyTower ~= nil and allyTower:GetAttackTarget() == farmTarget ) )
+						   or ( J.IsValidBuilding(allyTower) and allyTower:GetAttackTarget() == farmTarget ) )
 				then
 					local botDamage = bot:GetAttackDamage();
 					local nDamageReduce = 1

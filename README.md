@@ -21,6 +21,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
             - Alternatively, if you have Git installed (ignore 2-3 from above):
                 - Open Command Prompt inside the folder (Right Click on Windows 11). Type: `git clone https://github.com/ryndrb/dota2bot.git`.
                 - The contents of this repository will then be downloaded. And everytime this repository is updated, open Command Prompt inside the `bots` folder. Type: `git pull` to update the files inside the folder.
+                - ^ Or delete the contents of `bots`, then run `git clone` again, if no tinkered changes were made.
         - Then, launch DotA 2.
         - Click `Play Dota`. Under `Custom Lobbies`, select `Create`.
         - Under the `Lobby Settings` at the bottom, select `Edit`. Then, in the drop down `Radiant Bots` and `Dire Bots` menus, select `Local Dev Script`.
@@ -147,9 +148,9 @@ To anyone who've found this or is using it, if you have any feedback in improvin
 
 - ***Items***
     - Item progressions
-        - [ ] Update / Restructure to ease different builds for novelty; includes spell build.
+        - [x] Update / Restructure to ease different builds for novelty; includes spell build.
     - Reduced most Halberd/Crimson Guards/Aura items (bots sucks at playing around these items). They're OP; A lot of what makes the bots 'harder' in Beginner AI.
-        - [ ] Consider team comp instead of (current) random.
+        - [x] Consider team comp instead of (current) random.
 
 - ***Plan To "Fix/Add/Improve" (if possible)***
     - ***Fix***
@@ -308,6 +309,6 @@ To anyone who've found this or is using it, if you have any feedback in improvin
         - [ ] Re(factor/write) old code for consistency
         - [ ] Blinking (especially by range heroes)
         - [ ] More skill checks (eg. stuns, projectiles, etc)
-        - [ ] Early added heroes to follow current standard
-        - [ ] Sanitize. Clean up redundant function calls (ie. illusion checks etc. <- are already called prior etc.)
+        - [x] Early added heroes to follow current standard
+        - [ ] Clean up redundant function calls (ie. illusion checks etc. <- are already called prior, unit retrieval, etc,.)
     
