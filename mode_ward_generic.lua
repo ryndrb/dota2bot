@@ -47,27 +47,11 @@ function GetDesire()
 		return BOT_MODE_DESIRE_NONE
 	end
 
-	-- if DotaTime() < 0
-	-- then
-	-- 	local nEnemyHeroes = bot:GetNearbyHeroes(700, true, BOT_MODE_NONE)
-
-	-- 	if  not (J.GetPosition(bot) == 1)
-	-- 	and bot:GetAssignedLane() ~= LANE_MID
-	-- 	and ((GetTeam() == TEAM_RADIANT and bot:GetAssignedLane() == LANE_TOP)
-	-- 	    or (GetTeam() == TEAM_DIRE and bot:GetAssignedLane() == LANE_BOT)
-	-- 		or not J.IsCore(bot)
-	-- 		or (bot:GetUnitName() == 'npc_dota_hero_elder_titan' and DotaTime() > -59 )
-	-- 		or (bot:GetUnitName() == 'npc_dota_hero_wisp' and DotaTime() > -59 ))
-	-- 	and nEnemyHeroes ~= nil and #nEnemyHeroes == 0
-	-- 	then
-	-- 		bot.steal = true
-	-- 		return BOT_MODE_DESIRE_ABSOLUTE
-	-- 	end
-	-- else
-	-- 	bot.steal = false
-	-- end
-
 	ItemWard = Ward.GetItemWard(bot)
+
+	if bot.WardTable == nil then bot.WardTable = {} end
+
+	-- UpdateWardTable()
 
 	if  ItemWard ~= nil
 	and ItemWard:GetCooldownTimeRemaining() == 0
@@ -164,7 +148,17 @@ function Think()
 		or Pinged
 		then
 			if DotaTime() > ItemSwapTime + 7.0
+			and ItemWard ~= nil and not ItemWard:IsNull()
 			then
+				-- ^gives object [none]?
+				local wardName = ItemWard:GetName()
+				table.insert(bot.WardTable, {
+					type= string.find(wardName, 'observer') and 'observer' or 'sentry',
+					timePlanted= DotaTime(),
+					loc= WardTargetLocation,
+					duration= string.find(wardName, 'observer') and 360 or 420,
+				})
+
 				bot:Action_UseAbilityOnLocation(ItemWard, WardTargetLocation)
 				WardCastTime = DotaTime()
 				return
@@ -186,75 +180,6 @@ function Think()
 			else
 				bot:Action_MoveToLocation(WardTargetLocation)
 				return
-			end
-		end
-	end
-
-	if bot.steal == true
-	then
-		local stealCount = CountStealingUnit()
-		local loc = nil
-
-		SmokeOfDeceit = GetItem("item_smoke_of_deceit")
-
-		if  SmokeOfDeceit ~= nil
-		and not hasChatted
-		then
-			hasChatted = true
-			bot:ActionImmediate_Chat("Let's steal the bounty rune!", false)
-			return
-		end
-
-		if  SmokeOfDeceit ~= nil
-		and SmokeOfDeceit:IsFullyCastable()
-		and not bot:HasModifier('modifier_smoke_of_deceit')
-		then
-			bot:Action_UseAbility(SmokeOfDeceit);
-			return
-		end
-
-		if GetTeam() == TEAM_RADIANT
-		then
-			for _, r in pairs(Route1)
-			do
-				if r ~= nil
-				then
-					loc = r
-					break
-				end
-			end
-		else
-			for _, r in pairs(Route2)
-			do
-				if r ~= nil
-				then
-					loc = r
-					break
-				end
-			end
-		end
-
-		local allies = CountStealUnitNearLoc(loc, 300)
-
-		if (GetTeam() == TEAM_RADIANT and #Route1 == 1)
-		or (GetTeam() == TEAM_DIRE and #Route2 == 1)
-		then
-			bot:Action_MoveToLocation(loc)
-			return
-		elseif GetUnitToLocationDistance(bot, loc) <= 300 and allies < stealCount
-		then
-			bot:Action_MoveToLocation(loc)
-			return
-		elseif GetUnitToLocationDistance(bot, loc) > 300
-		then
-			bot:Action_MoveToLocation(loc)
-			return
-		else
-			if GetTeam() == TEAM_RADIANT
-			then
-				table.remove(Route1, 1)
-			else
-				table.remove(Route2, 1)
 			end
 		end
 	end
@@ -416,3 +341,33 @@ function GetItem(item_name)
 
 	return nil
 end
+
+-- function UpdateWardTable()
+-- 	if bot.WardTable ~= nil
+-- 	then
+-- 		for _, ward in pairs(GetUnitList(UNIT_LIST_ALLIED_WARDS))
+-- 		do
+-- 			if ward ~= nil and not IsInWardTable(ward)
+-- 			then
+-- 				-- DotaTime() - ward:GetModifierRemainingDuration(ward:GetModifierByName(string.find(ward:GetUnitName(), 'observer') and 'modifier_item_buff_ward' or 'modifier_item_ward_true_sight'))
+
+-- 				table.insert(bot.WardTable, {
+-- 					ward= ward,
+-- 					type= string.find(ward:GetUnitName(), 'observer') and 'observer' or 'sentry',
+-- 					timePlanted= DotaTime(),
+-- 					loc= ward:GetLocation(),
+-- 					duration= string.find(ward:GetUnitName(), 'observer') and 360 or 420,
+-- 				})
+-- 			end
+-- 		end
+-- 	end
+-- end
+
+-- function IsInWardTable(ward)
+-- 	for _, w in pairs(bot.WardTable)
+-- 	do
+-- 		if w ~= nil and w.ward == ward then return true end
+-- 	end
+
+-- 	return false
+-- end

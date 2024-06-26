@@ -1,6 +1,7 @@
 local X = {}
 
 local J = require(GetScriptDirectory()..'/FunLib/jmz_func')
+local U = require(GetScriptDirectory()..'/FunLib/lua_util')
 
 local nVisionRadius = 1600
 
@@ -446,7 +447,8 @@ function X.GetAvailableSpot(bot)
 	if (J.IsModeTurbo() and DotaTime() < 8 * 60)
 	or DotaTime() < 12 * 60
 	then
-		for _, spot in pairs(X.GetLaningPhaseWardSpots())
+		local nSpots = X.CheckSpots(X.GetLaningPhaseWardSpots())
+		for _, spot in pairs(nSpots)
 		do
 			if not X.IsOtherWardClose(spot)
 			then
@@ -455,7 +457,8 @@ function X.GetAvailableSpot(bot)
 		end
 	end
 
-	for _, spot in pairs(X.GetWardSpotBeforeTowerFall())
+	local nSpots = X.CheckSpots(X.GetWardSpotBeforeTowerFall())
+	for _, spot in pairs(nSpots)
     do
 		if not X.IsOtherWardClose(spot)
         then
@@ -463,7 +466,8 @@ function X.GetAvailableSpot(bot)
 		end
 	end
 
-	for _, spot in pairs(X.GetWardSpotDeadEnemyTowerDire())
+	nSpots = X.CheckSpots(X.GetWardSpotDeadEnemyTowerDire())
+	for _, spot in pairs(nSpots)
     do
 		if not X.IsOtherWardClose(spot)
         then
@@ -534,6 +538,54 @@ function X.GetHumanPing()
 	end
 
 	return nil
+end
+
+function X.IsThereSentry(loc)
+	local nWardList = GetUnitList(UNIT_LIST_ALLIED_WARDS)
+
+	for _, ward in pairs(nWardList)
+    do
+		if ward ~= nil
+		and ward:GetUnitName() == "npc_dota_sentry_wards"
+        and GetUnitToLocationDistance(ward, loc) <= 600
+        then
+			return true
+		end
+	end
+
+	return false
+end
+
+function X.GetWardType()
+	if J.HasItem(GetBot(), 'item_ward_sentry') then return 'sentry' end
+	return 'observer'
+end
+
+-- Can't refer to the actual (invalid) objects (wards) once garbage collected.
+-- So affected spot will just be on cooldown according to the duration of the wards.
+function X.CheckSpots(bSpots)
+	local bot = GetBot()
+	local sSpots = U.deepCopy(bSpots)
+
+	for i = 1, #bot.WardTable
+	do
+		if bot.WardTable[i] ~= nil
+		and X.GetWardType() == bot.WardTable[i].type
+		and DotaTime() < bot.WardTable[i].timePlanted + bot.WardTable[i].duration
+		then
+			for j = #sSpots, 1, -1
+			do
+				if J.GetDistance(sSpots[j], bot.WardTable[i].loc) < 50
+				and not X.IsThereSentry(sSpots[j])
+				then
+					-- print('Ward Spot: '..tostring(sSpots[j])..' on cooldown!')
+					table.remove(sSpots, j)
+				end
+			end
+		end
+	end
+
+	return sSpots
 end
 
 return X
