@@ -22,6 +22,12 @@ X.TalentBuild = {
             ['t20'] = {0, 10},
             ['t15'] = {0, 10},
             ['t10'] = {10, 0},
+        },
+        [2] = {
+            ['t25'] = {0, 10},
+            ['t20'] = {10, 0},
+            ['t15'] = {0, 10},
+            ['t10'] = {0, 10},
         }
     },
     ['pos_5'] = {
@@ -30,6 +36,12 @@ X.TalentBuild = {
             ['t20'] = {0, 10},
             ['t15'] = {0, 10},
             ['t10'] = {10, 0},
+        },
+        [2] = {
+            ['t25'] = {0, 10},
+            ['t20'] = {10, 0},
+            ['t15'] = {0, 10},
+            ['t10'] = {0, 10},
         }
     },
 }
@@ -60,15 +72,16 @@ X.BuyList = {
             "item_arcane_boots",
             "item_phylactery",
             "item_magic_wand",
-            "item_aghanims_shard",
-            "item_manta",--
-            "item_octarine_core",--
+            "item_kaya",
             "item_ultimate_scepter",
             "item_kaya_and_sange",--
             "item_black_king_bar",--
+            "item_octarine_core",--
+            "item_aghanims_shard",
             "item_travel_boots",
             "item_angels_demise",--
             "item_travel_boots_2",--
+            "item_wind_waker",--
             "item_ultimate_scepter_2",
             "item_moon_shard",
         }
@@ -88,12 +101,12 @@ X.BuyList = {
             "item_magic_wand",
             "item_aether_lens",
             "item_force_staff",--
-            "item_octarine_core",--
             "item_boots_of_bearing",--
+            "item_octarine_core",--
             "item_aghanims_shard",
             "item_ultimate_scepter",
-            "item_manta",--
             "item_ethereal_blade",--
+            "item_sheepstick",--
             "item_angels_demise",--
             "item_ultimate_scepter_2",
             "item_moon_shard",
@@ -113,12 +126,12 @@ X.BuyList = {
             "item_magic_wand",
             "item_aether_lens",
             "item_force_staff",--
-            "item_octarine_core",--
             "item_guardian_greaves",--
+            "item_octarine_core",--
             "item_aghanims_shard",
             "item_ultimate_scepter",
-            "item_manta",--
             "item_ethereal_blade",--
+            "item_sheepstick",--
             "item_angels_demise",--
             "item_ultimate_scepter_2",
             "item_moon_shard",
@@ -137,13 +150,11 @@ X.SellList = {
     ['pos_3'] = {},
     ['pos_4'] = {
         [1] = {
-            "item_wind_lace",
             "item_magic_wand",
         }
     },
     ['pos_5'] = {
         [1] = {
-            "item_wind_lace",
             "item_magic_wand",
         }
     },

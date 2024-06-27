@@ -39,22 +39,23 @@ X.BuyList = {
             "item_double_branches",
             "item_double_circlet",
         
-            "item_null_talisman",
+            "item_bracer",
             "item_urn_of_shadows",
             "item_boots",
             "item_magic_wand",
             "item_spirit_vessel",
             "item_hand_of_midas",
+            "item_orchid",
             "item_travel_boots",
             "item_black_king_bar",--
             "item_aghanims_shard",
             "item_octarine_core",--
-            "item_sheepstick",--
+            "item_bloodthorn",--
             "item_ultimate_scepter",
-            "item_shivas_guard",--
-            "item_wind_waker",--
-            "item_travel_boots_2",--
+            "item_refresher",--
             "item_ultimate_scepter_2",
+            "item_sheepstick",--
+            "item_travel_boots_2",--
             "item_moon_shard",
         }
     },
@@ -68,7 +69,7 @@ X.SellList = {
     ['pos_2'] = {
         [1] = {
             "item_circlet",
-            "item_null_talisman",
+            "item_bracer",
             "item_magic_wand",
             "item_spirit_vessel",
             "item_hand_of_midas",

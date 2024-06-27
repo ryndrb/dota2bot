@@ -1872,8 +1872,12 @@ function X.ConsiderHarassInLaningPhase()
 					shouldHarass = true
 					harassTarget = nInRangeEnemy[1]
 
-					if (J.IsHumanPlayer(nInRangeEnemy[1]) or J.IsCore(nInRangeEnemy[1])) then return nModeDesire + 0.1 end
-					return BOT_MODE_DESIRE_MODERATE * 1.1
+					if (J.IsHumanPlayer(nInRangeEnemy[1]) or J.IsCore(nInRangeEnemy[1]))
+					then
+						return RemapValClamped(J.GetPosition(bot), 1, 5, 0.5, nModeDesire + 0.1)
+					else
+						return RemapValClamped(J.GetPosition(bot), 1, 5, 0.45, 0.6)
+					end
 				else
 					shouldHarass = false
 				end

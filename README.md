@@ -92,7 +92,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
         - [1,2] Monkey King
         - [1,2] Morphling
         - ~~[1] Muerta~~
-        - [3,4,5] Nature's Prophet
+        - [1,3,4,5] Nature's Prophet
         - [3] Night Stalker
         - [4,5] Nyx Assassin
         - [2] Outworld Destroyer
@@ -111,7 +111,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
         - [1] Terrorblade
         - [2,3] Timbersaw
         - [2] Tinker
-        - [2,3,4,5] Tiny
+        - [1,2,3,4,5] Tiny
         - [4,5] Treant
         - [1] Troll Warlord
         - [2,3,4,5] Tusk
@@ -122,7 +122,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
         - [4,5] Venomancer
         - [2,3] Visage
         - [2] Void Spirit
-        - [1,3,4,5] Weaver
+        - [1,4,5] Weaver
         - [1,2,3,4,5] Windranger
         - [2,3,4,5] Winter Wyvern
     - ***Later***

@@ -370,6 +370,7 @@ function ItemPurchaseThink()
 		and bot:IsAlive()
 		and bot:FindItemSlot('item_flask') < 0
 		and bot:FindItemSlot('item_tango') < 0
+		and botGold > GetItemCost( "item_flask" )
 		and bot:DistanceFromFountain() > 3800
 		and bot:GetStashValue() > 0
 		and not bot:HasModifier('modifier_elixer_healing')
