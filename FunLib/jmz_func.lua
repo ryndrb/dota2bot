@@ -4950,6 +4950,23 @@ function J.HasAbility(bot, abilityName)
 	return false, nil
 end
 
+function J.IsHumanInLoc(vLoc, nRadius)
+	for i = 1, 5
+	do
+		local member = GetTeamMember(i)
+
+		if  member ~= nil and member:IsAlive() and not member:IsBot() and not member:IsIllusion()
+		and not member:HasModifier("modifier_arc_warden_tempest_double")
+		and not J.IsMeepoClone(member)
+		and GetUnitToLocationDistance(member, vLoc) <= nRadius
+		then
+			return true
+		end
+	end
+
+	return false
+end
+
 function J.ConsolePrintActiveMode(bot)
     local mode = bot:GetActiveMode()
     local botName = string.gsub(bot:GetUnitName(), "npc_dota_", "")

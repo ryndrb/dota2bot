@@ -401,7 +401,7 @@ function Site.IsLocationHaveTrueSight( vLocation )
 	local tNearbyTowerList = GetBot():GetNearbyTowers( 1600, false )
 	for _, tower in pairs( tNearbyTowerList )
 	do
-		if GetUnitToLocationDistance( tower, vLocation ) < trueSightRad
+		if GetUnitToLocationDistance( tower, vLocation ) < trueSightRad - 300
 		then
 			return true
 		end

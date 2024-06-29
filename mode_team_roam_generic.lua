@@ -1842,7 +1842,7 @@ function X.ConsiderHarassInLaningPhase()
 			end
 		end
 
-		if  J.GetHP(bot) > 0.41
+		if  J.GetHP(bot) > 0.61
 		and ((J.IsCore(bot) and canLastHitCount <= 1)
 			or (not J.IsCore(bot)))
 		then

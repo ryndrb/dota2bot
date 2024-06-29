@@ -1536,6 +1536,20 @@ X.ConsiderItemDesire["item_crimson_guard"] = function( hItem )
 		end
 	end
 
+	if J.IsDoingRoshan(bot)
+	and J.IsRoshan(botTarget)
+	and J.GetHP(botTarget) > 0.25
+	and J.IsAttacking(bot)
+	then
+		return BOT_ACTION_DESIRE_HIGH, bot, 'none', nil
+	end
+
+	if J.IsDoingTormentor(bot)
+	and J.IsTormentor(botTarget)
+	and J.IsAttacking(bot)
+	then
+		return BOT_ACTION_DESIRE_HIGH, bot, 'none', nil
+	end
 
 	return BOT_ACTION_DESIRE_NONE
 
@@ -1563,6 +1577,7 @@ X.ConsiderItemDesire["item_cyclone"] = function( hItem )
 	then
 		if botTarget:HasModifier( 'modifier_teleporting' )
 			 or botTarget:HasModifier( 'modifier_abaddon_borrowed_time' )
+			 or botTarget:HasModifier( "modifier_troll_warlord_battle_trance" )
 			 or botTarget:HasModifier( "modifier_ursa_enrage" )
 			 or botTarget:HasModifier( "modifier_item_satanic_unholy" )
 			 or botTarget:IsChanneling()
@@ -1639,6 +1654,20 @@ X.ConsiderItemDesire["item_dagon"] = function( hItem )
 	if bot:HasModifier('modifier_nyx_assassin_vendetta')
 	then
 		return BOT_ACTION_DESIRE_NONE
+	end
+
+	for _, npcEnemy in pairs( nInRangeEnmyList )
+	do
+		if J.IsValidHero( npcEnemy )
+		and J.IsInEtherealForm(npcEnemy)
+		and J.CanCastOnTargetAdvanced(npcEnemy)
+		and X.IsWithoutSpellShield( npcEnemy )
+		and J.CanKillTarget( npcEnemy, nDamage, DAMAGE_TYPE_MAGICAL )
+		then
+			hEffectTarget = npcEnemy
+			sCastMotive = "击杀:"..J.Chat.GetNormName( hEffectTarget )
+			return BOT_ACTION_DESIRE_HIGH, hEffectTarget, sCastType, sCastMotive
+		end
 	end
 
 	--击杀
@@ -2389,7 +2418,7 @@ X.ConsiderItemDesire["item_helm_of_the_dominator"] = function( hItem )
 				if nCreepHP > maxHP
 					and ( creep:GetHealth() / creep:GetMaxHealth() ) > 0.75
 					and ( not creep:IsAncientCreep() or hItem:GetName() == "item_helm_of_the_overlord" )
-					and not J.IsKeyWordUnit( "siege", creep )
+					and not (J.IsKeyWordUnit( "siege", creep ) or J.IsKeyWordUnit( "range", creep ) or J.IsKeyWordUnit( "melee", creep ) or J.IsKeyWordUnit( "flagbearer", creep ))
 				then
 					hCreep = creep
 					maxHP = nCreepHP
@@ -2816,6 +2845,21 @@ X.ConsiderItemDesire["item_manta"] = function( hItem )
 		hEffectTarget = bot
 		sCastMotive = '撤退了'
 		return BOT_ACTION_DESIRE_HIGH, hEffectTarget, sCastType, sCastMotive
+	end
+
+	if J.IsDoingRoshan(bot)
+	and J.IsRoshan(botTarget)
+	and J.GetHP(botTarget) > 0.25
+	and J.IsAttacking(bot)
+	then
+		return BOT_ACTION_DESIRE_HIGH, bot, 'none', nil
+	end
+
+	if J.IsDoingTormentor(bot)
+	and J.IsTormentor(botTarget)
+	and J.IsAttacking(bot)
+	then
+		return BOT_ACTION_DESIRE_HIGH, bot, 'none', nil
 	end
 
 	if #nNearbyEnemyCreeps >= 8
@@ -5225,11 +5269,10 @@ X.ConsiderItemDesire["item_veil_of_discord"] = function( hItem )
 	local sCastType = 'none'
 	local hEffectTarget = nil
 	local sCastMotive = nil
-	local nInRangeEnmyList = bot:GetNearbyHeroes( nCastRange + 50, true, BOT_MODE_NONE )
+	local nInRangeEnmyList = J.GetEnemiesNearLoc(bot:GetLocation(), nCastRange )
 
-	local hNearbyCreepList = bot:GetNearbyCreeps( nCastRange, true )
-	if #hNearbyCreepList >= 6
-		or #nInRangeEnmyList >= 1
+	if J.IsGoingOnSomeone(bot)
+	and #nInRangeEnmyList >= 1
 	then
 		hEffectTarget = bot
 		sCastMotive = '启动希瓦'
@@ -5955,22 +5998,15 @@ X.ConsiderItemDesire['item_disperser'] = function(item)
 		if J.IsValidTarget(botTarget)
 		and J.CanCastOnNonMagicImmune(botTarget)
 		and J.IsInRange(bot, botTarget, nCastRange)
-		and not J.IsSuspiciousIllusion(botTarget)
 		and not J.IsDisabled(botTarget)
 		then
 			if botTarget:GetCurrentMovementSpeed() > bot:GetCurrentMovementSpeed()
 			and bot:IsFacingLocation(botTarget:GetLocation(), 30)
 			and not botTarget:IsFacingLocation(bot:GetLocation(), 30)
 			then
-				hEffectTarget = RandomInt(1, 100) > 20 and botTarget or bot -- 20% ourself, more fun
+				hEffectTarget = RandomInt(1, 100) > 20 and botTarget or bot
 				sCastMotive = 'Disperser'
-
-				if J.WeAreStronger(bot, nCastRange + nAttackRange)
-				then
-					return BOT_ACTION_DESIRE_HIGH, hEffectTarget, sCastType, sCastMotive
-				else
-					return BOT_ACTION_DESIRE_MODERATE, hEffectTarget, sCastType, sCastMotive
-				end
+				return BOT_ACTION_DESIRE_HIGH, hEffectTarget, sCastType, sCastMotive
 			end
 		end
 	end
@@ -5995,7 +6031,7 @@ X.ConsiderItemDesire['item_disperser'] = function(item)
 			if not J.WeAreStronger(bot, nCastRange + nAttackRange)
 			or J.GetHP(bot) < 0.33
 			then
-				hEffectTarget = RandomInt(1, 100) > 10 and bot or botTarget -- 90% ourself, more fun
+				hEffectTarget = RandomInt(1, 100) > 10 and bot or botTarget
 				sCastMotive = 'Disperser'
 				return BOT_ACTION_DESIRE_HIGH, hEffectTarget, sCastType, sCastMotive
 			end

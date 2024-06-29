@@ -83,7 +83,7 @@ function Push.GetPushDesire(bot, lane)
         end
     end
 
-    if bot:WasRecentlyDamagedByTower(1)
+    if bot:WasRecentlyDamagedByTower(3) and DotaTime() < 10 * 60
     or J.GetHP(bot) < 0.45
     then
         return BOT_ACTION_DESIRE_NONE
@@ -231,6 +231,7 @@ function Push.GetPushDesire(bot, lane)
         end
 
         if aAliveCount >= eAliveCount
+        and J.GetAverageLevel(GetTeam()) >= 12
         then
             -- nPushDesire = nPushDesire * RemapValClamped(allyKills / enemyKills, 1, 2, 1, 2)
             nPushDesire = nPushDesire + RemapValClamped(allyKills / enemyKills, 1, 2, 0.0, 1)

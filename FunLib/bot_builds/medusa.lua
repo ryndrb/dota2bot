@@ -37,11 +37,11 @@ X.BuyList = {
 
             "item_ring_of_basilius",
             "item_power_treads",
-            "item_manta",
+            "item_manta",--
             "item_butterfly",--
             "item_greater_crit",--
             "item_skadi",--
-            "item_monkey_king_bar",--
+            "item_diffusal_blade",
             "item_travel_boots",
             "item_disperser",--
             "item_aghanims_shard",
@@ -61,7 +61,6 @@ X.SellList = {
         [1] = {
             "item_magic_wand",
             "item_ring_of_basilius",
-            "item_manta",
         }
     },
     ['pos_2'] = {},
