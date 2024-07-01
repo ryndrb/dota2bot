@@ -47,13 +47,14 @@ function GetDesire()
 	end
 
 	local nAliveHeroesList = {}
-    for _, h in pairs(GetUnitList(UNIT_LIST_ALLIED_HEROES)) do
-        if  h ~= nil
-		and h:IsAlive()
-		and not J.IsSuspiciousIllusion(h)
-		and not J.IsMeepoClone(h)
+    for i = 1, 5
+    do
+        local member = GetTeamMember(i)
+        if member:IsAlive()
+		and not J.IsSuspiciousIllusion(member)
+		and not J.IsMeepoClone(member)
         then
-            table.insert(nAliveHeroesList, h)
+            table.insert(nAliveHeroesList, member)
         end
     end
 
@@ -112,20 +113,22 @@ function GetDesire()
 			then
                 local closestAlly = nil
                 local dist = 100000
-                for _, allyHero in pairs(GetUnitList(UNIT_LIST_ALLIED_HEROES))
-                do
-                    if  J.IsValidHero(allyHero)
-                    and allyHero:IsAlive()
-                    and not allyHero:IsIllusion()
-                    and not J.IsCore(allyHero)
-                    then
-                        if GetUnitToLocationDistance(allyHero, TormentorLocation) < dist
+
+				for i = 1, 5
+				do
+					local member = GetTeamMember(i)
+					if J.IsValidHero(member)
+					and not J.IsSuspiciousIllusion(member)
+					and not J.IsMeepoClone(member)
+					and not J.IsCore(member)
+					then
+                        if GetUnitToLocationDistance(member, TormentorLocation) < dist
                         then
-                            closestAlly = allyHero
-                            dist = GetUnitToLocationDistance(allyHero, TormentorLocation)
+                            closestAlly = member
+                            dist = GetUnitToLocationDistance(member, TormentorLocation)
                         end
-                    end
-                end
+					end
+				end
 
                 if  closestAlly ~= nil
                 and bot == closestAlly
@@ -214,7 +217,7 @@ function Think()
 				or J.GetHP(c) < 0.25
 				then
 					bot.wasAttackingTormentor = true
-					bot:Action_AttackUnit(c, false)
+					bot:Action_AttackUnit(c, true)
 					return
 				end
 

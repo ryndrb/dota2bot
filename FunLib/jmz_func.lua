@@ -228,6 +228,7 @@ function J.CanNotUseAbility( bot )
 			or bot:IsNightmared()
 			or bot:HasModifier( "modifier_doom_bringer_doom" )
 			or bot:HasModifier( 'modifier_item_forcestaff_active' )
+			or bot:HasModifier( 'modifier_tinker_rearm' )
 
 end
 
@@ -2986,10 +2987,11 @@ function J.IsHaveAegis( bot )
 
 end
 
-function J.DoesTeamHaveAegis( units )
-	for _, allies in pairs(units)
+function J.DoesTeamHaveAegis()
+	for i = 1, 5
 	do
-		if allies:FindItemSlot("item_aegis") >= 0
+		local member = GetTeamMember(i)
+		if J.IsValidHero(member) and member:FindItemSlot('item_aegis') >= 0
 		then
 			return true
 		end

@@ -1,7 +1,6 @@
 local X = {}
 local bot = GetBot()
 
-local SU = dofile( GetScriptDirectory()..'/Spells/spell_usage' )
 local Hero = require(GetScriptDirectory()..'/FunLib/bot_builds/'..string.gsub(bot:GetUnitName(), 'npc_dota_hero_', ''))
 local J = require( GetScriptDirectory()..'/FunLib/jmz_func' )
 local Minion = dofile( GetScriptDirectory()..'/FunLib/aba_minion' )
@@ -32,16 +31,6 @@ function X.MinionThink( hMinionUnit )
 		Minion.IllusionThink( hMinionUnit )
 	end
 
-end
-
-function X.SkillsComplement()
-
-	-- J.ConsiderForMkbDisassembleMask( bot )
-
-	if J.CanNotUseAbility( bot ) then return end
-
-	local sOrder = {'D','E','W','Q'}
-    SU.AbilityUsage(sOrder)
 end
 
 return X

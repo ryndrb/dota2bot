@@ -8,6 +8,9 @@ function X.Cast()
     bot = GetBot()
     Glimpse = bot:GetAbilityByName('disruptor_glimpse')
 
+    if bot.KineticFieldTimeLast == nil then bot.KineticFieldTimeLast = -1 end
+    if bot.KineticFieldLocation == nil then bot.KineticFieldLocation = bot:GetLocation() end
+
     Desire, Target = X.Consider()
     if Desire > 0
     then

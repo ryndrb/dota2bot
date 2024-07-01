@@ -105,19 +105,19 @@ function Push.GetPushDesire(bot, lane)
     end
 
     local aliveHeroesList = {}
-    for _, allyHero in pairs(GetUnitList(UNIT_LIST_ALLIED_HEROES))
+    for i = 1, 5
     do
-        if  J.IsValidHero(allyHero)
-        and not allyHero:IsIllusion()
-        and not J.IsMeepoClone(allyHero)
-        and not allyHero:HasModifier('modifier_arc_warden_tempest_double')
+        local member = GetTeamMember(i)
+        if  J.IsValidHero(member)
+        and not J.IsSuspiciousIllusion(member)
+        and not J.IsMeepoClone(member)
         then
-            table.insert(aliveHeroesList, allyHero)
+            table.insert(aliveHeroesList, member)
 
-            if  J.IsNotSelf(bot, allyHero)
-            and J.IsCore(allyHero)
+            if  J.IsNotSelf(bot, member)
+            and J.IsCore(member)
             and not J.IsCore(bot)
-            and not J.IsPushing(allyHero)
+            and not J.IsPushing(member)
             then
                 return BOT_MODE_DESIRE_LOW
             end
@@ -143,17 +143,18 @@ function Push.GetPushDesire(bot, lane)
             local dist = GetUnitToLocationDistance(bot, GetLaneFrontLocation(GetTeam(), lane, 0))
             local isCorePushing = false
 
-            for _, allyHero in pairs(GetUnitList(UNIT_LIST_ALLIED_HEROES))
+            for i = 1, 5
             do
-                if  J.IsValidHero(allyHero)
-                and not J.IsSuspiciousIllusion(allyHero)
-                and not J.IsMeepoClone(allyHero)
-                and J.IsCore(allyHero)
-                and J.IsNotSelf(bot, allyHero)
+                local member = GetTeamMember(i)
+                if  J.IsValidHero(member)
+                and not J.IsSuspiciousIllusion(member)
+                and not J.IsMeepoClone(member)
+                and J.IsCore(member)
+                and J.IsNotSelf(bot, member)
                 then
-                    if allyHero:GetActiveMode() == BOT_MODE_PUSH_TOWER_TOP and lane == LANE_TOP
-                    or allyHero:GetActiveMode() == BOT_MODE_PUSH_TOWER_MID and lane == LANE_MID
-                    or allyHero:GetActiveMode() == BOT_MODE_PUSH_TOWER_BOT and lane == LANE_BOT
+                    if member:GetActiveMode() == BOT_MODE_PUSH_TOWER_TOP and lane == LANE_TOP
+                    or member:GetActiveMode() == BOT_MODE_PUSH_TOWER_MID and lane == LANE_MID
+                    or member:GetActiveMode() == BOT_MODE_PUSH_TOWER_BOT and lane == LANE_BOT
                     then
                         isCorePushing = true
                         break
@@ -193,27 +194,28 @@ function Push.GetPushDesire(bot, lane)
         end
 
         -- Help Core Push
-        for _, allyHero in pairs(GetUnitList(UNIT_LIST_ALLIED_HEROES))
+        for i = 1, 5
         do
-            if  J.IsValidHero(allyHero)
-            and J.IsCore(allyHero)
-            and J.IsNotSelf(bot, allyHero)
-            and not J.IsSuspiciousIllusion(allyHero)
-            and not J.IsMeepoClone(allyHero)
+            local member = GetTeamMember(i)
+            if  J.IsValidHero(member)
+            and J.IsCore(member)
+            and J.IsNotSelf(bot, member)
+            and not J.IsSuspiciousIllusion(member)
+            and not J.IsMeepoClone(member)
             and not J.IsCore(bot)
             and not J.IsRetreating(bot)
             and not J.IsGoingOnSomeone(bot)
             and not J.IsDoingTormentor(bot)
             and not J.IsDoingRoshan(bot)
             then
-                if (allyHero:GetActiveMode() == BOT_MODE_PUSH_TOWER_TOP and lane == LANE_TOP
-                    or allyHero:GetActiveMode() == BOT_MODE_PUSH_TOWER_MID and lane == LANE_MID
-                    or allyHero:GetActiveMode() == BOT_MODE_PUSH_TOWER_BOT and lane == LANE_BOT)
-                or GetUnitToUnitDistance(allyHero, GetAncient(GetOpposingTeam())) < 3200
+                if (member:GetActiveMode() == BOT_MODE_PUSH_TOWER_TOP and lane == LANE_TOP
+                    or member:GetActiveMode() == BOT_MODE_PUSH_TOWER_MID and lane == LANE_MID
+                    or member:GetActiveMode() == BOT_MODE_PUSH_TOWER_BOT and lane == LANE_BOT)
+                or GetUnitToUnitDistance(member, GetAncient(GetOpposingTeam())) < 3200
                 then
                     IsSupportHelpCorePush = true
-                    SupportHelpCore = allyHero
-                    return RemapValClamped(GetUnitToUnitDistance(bot, allyHero), 3800, 1000, 0.42, 0.75)
+                    SupportHelpCore = member
+                    return RemapValClamped(GetUnitToUnitDistance(bot, member), 3800, 1000, 0.42, 0.75)
                 end
             end
         end
@@ -224,7 +226,7 @@ function Push.GetPushDesire(bot, lane)
     or aAliveCoreCount >= eAliveCoreCount
     or (aAliveCoreCount >= 1 and aAliveCount >= eAliveCount + 2)
     then
-        if J.DoesTeamHaveAegis(GetUnitList(UNIT_LIST_ALLIED_HEROES))
+        if J.DoesTeamHaveAegis()
         then
             local aegis = 1.3
             nPushDesire = nPushDesire * aegis
@@ -425,7 +427,7 @@ function Push.PushThink(bot, lane)
     if  GetUnitToUnitDistance(bot, nEnemyAncient) < 1600
     and J.CanBeAttacked(nEnemyAncient)
     then
-        bot:Action_AttackUnit(nEnemyAncient, false)
+        bot:Action_AttackUnit(nEnemyAncient, true)
         return
     end
 
@@ -439,7 +441,7 @@ function Push.PushThink(bot, lane)
     if  nCreeps ~= nil and #nCreeps > 0
     and J.CanBeAttacked(nCreeps[1])
     then
-        bot:Action_AttackUnit(nCreeps[1], false)
+        bot:Action_AttackUnit(nCreeps[1], true)
         return
     end
 
@@ -447,14 +449,14 @@ function Push.PushThink(bot, lane)
     if  nBarracks ~= nil and #nBarracks > 0
     and Push.CanBeAttacked(nBarracks[1])
     then
-        bot:Action_AttackUnit(nBarracks[1], false)
+        bot:Action_AttackUnit(nBarracks[1], true)
         return
     end
 
     if  nEnemyTowers ~= nil and #nEnemyTowers > 0
     and Push.CanBeAttacked(nEnemyTowers[1])
     then
-        bot:Action_AttackUnit(nEnemyTowers[1], false)
+        bot:Action_AttackUnit(nEnemyTowers[1], true)
         return
     end
 
@@ -462,7 +464,7 @@ function Push.PushThink(bot, lane)
     if  sEnemyTowers ~= nil and #sEnemyTowers > 0
     and Push.CanBeAttacked(sEnemyTowers[1])
     then
-        bot:Action_AttackUnit(sEnemyTowers[1], false)
+        bot:Action_AttackUnit(sEnemyTowers[1], true)
         return
     end
 

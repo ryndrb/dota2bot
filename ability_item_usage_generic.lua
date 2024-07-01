@@ -16,6 +16,8 @@ if bot:IsInvulnerable() or not bot:IsHero() or bot:IsIllusion()
 then return end
 
 local J = require( GetScriptDirectory()..'/FunLib/jmz_func' )
+local U = require( GetScriptDirectory()..'/Spells/spell_util' )
+local S = dofile( GetScriptDirectory()..'/Spells/spell_usage' )
 local BotBuild = dofile( GetScriptDirectory().."/BotLib/"..string.gsub( bot:GetUnitName(), "npc_dota_", "" ) )
 
 if BotBuild == nil then return end
@@ -7181,7 +7183,12 @@ function ItemUsageThink()
 end
 
 function AbilityUsageThink()
-	BotBuild.SkillsComplement()
+	if U['spell_order'] ~= nil and U['spell_order'][bot:GetUnitName()] ~= nil
+	then
+		S.AbilityUsage(U['spell_order'][bot:GetUnitName()])
+	else
+		BotBuild.SkillsComplement()
+	end
 end
 
 function BuybackUsageThink()

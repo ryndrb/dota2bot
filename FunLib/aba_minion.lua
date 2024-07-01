@@ -357,7 +357,7 @@ function X.IllusionThink(minion)
 			minion:Action_MoveToLocation(minion.target:GetLocation())
 			return
 		else
-			minion:Action_AttackUnit(minion.target, false)
+			minion:Action_AttackUnit(minion.target, true)
 			return
 		end
 	end
@@ -812,7 +812,7 @@ function X.MinionWithSkillThink(hMinionUnit)
 
 	if hMinionUnit.attackDesire > 0
 	then
-		hMinionUnit:Action_AttackUnit(hMinionUnit.attackTarget, false)
+		hMinionUnit:Action_AttackUnit(hMinionUnit.attackTarget, true)
 		return
 	end
 
@@ -870,7 +870,7 @@ function X.BrewLinkThink(hMinionUnit)
 	end
 	if hMinionUnit.attackDesire > 0
 	then
-		hMinionUnit:Action_AttackUnit(hMinionUnit.attackTarget, false)
+		hMinionUnit:Action_AttackUnit(hMinionUnit.attackTarget, true)
 		return
 	end
 	if hMinionUnit.moveDesire > 0
@@ -1139,7 +1139,7 @@ function X.AttackWardThink(hMinionUnit)
 
 		if target ~= nil
 		then
-			hMinionUnit:Action_AttackUnit(target, false)
+			hMinionUnit:Action_AttackUnit(target, true)
 			return
 		end
 
@@ -1149,7 +1149,7 @@ function X.AttackWardThink(hMinionUnit)
 			if  J.IsValid(creep)
 			and J.CanBeAttacked(creep)
 			then
-				hMinionUnit:Action_AttackUnit(creep, false)
+				hMinionUnit:Action_AttackUnit(creep, true)
 				return
 			end
 		end
@@ -1159,7 +1159,7 @@ function X.AttackWardThink(hMinionUnit)
 		do
 			if J.IsValidBuilding(tower)
 			then
-				hMinionUnit:Action_AttackUnit(tower, false)
+				hMinionUnit:Action_AttackUnit(tower, true)
 				return
 			end
 		end

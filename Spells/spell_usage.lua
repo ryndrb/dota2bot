@@ -1,5 +1,6 @@
 local J = require(GetScriptDirectory()..'/FunLib/jmz_func')
 local S = require(GetScriptDirectory()..'/Spells/spell_list')
+local C = require(GetScriptDirectory()..'/Spells/spell_combos')
 
 local X = {}
 local ConsiderAbility = {}
@@ -64,9 +65,16 @@ InitConsiderAbility()
 function X.AbilityUsage(SpellOrder)
     UpdateRubickAbilities()
 
+    if J.CanNotUseAbility(GetBot()) then return end
+
     for _, key in pairs(SpellOrder)
     do
-        if ConsiderAbility[key] ~= nil then ConsiderAbility[key].Cast() end
+        if string.find(key, 'Combo')
+        then
+            C.SpellCombos()
+        else
+            if ConsiderAbility[key] ~= nil then ConsiderAbility[key].Cast() end
+        end
     end
 end
 

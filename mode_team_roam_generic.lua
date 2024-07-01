@@ -81,7 +81,7 @@ function GetDesire()
 	if  ShouldRetreatWhenTowerTargeted
 	and DotaTime() < RetreatWhenTowerTargetedTime + 3.5
 	then
-		return BOT_ACTION_DESIRE_ABSOLUTE * 1.5
+		return BOT_ACTION_DESIRE_VERYHIGH
 	end
 
 	-- Consider help nearby core that's being targeted
@@ -214,14 +214,14 @@ function Think()
 	if  shouldHarass
 	and harassTarget ~= nil
 	then
-		bot:Action_AttackUnit(harassTarget, false)
+		bot:Action_AttackUnit(harassTarget, true)
 		return
 	end
 
 	if  ShouldAttackSpecialUnit
 	and SpecialUnitTarget ~= nil
 	then
-		bot:Action_AttackUnit(SpecialUnitTarget, false)
+		bot:Action_AttackUnit(SpecialUnitTarget, true)
 		return
 	end
 
@@ -240,7 +240,7 @@ function Think()
 
 	if towerCreepMode
 	then
-		bot:Action_AttackUnit(towerCreep, false)
+		bot:Action_AttackUnit(towerCreep, true)
 		return
 	end
 
@@ -259,7 +259,7 @@ function Think()
 	if  (IsHeroCore or IsSupport)
 	and targetUnit ~= nil and not targetUnit:IsNull() and targetUnit:IsAlive()
 	then
-		bot:Action_AttackUnit(targetUnit, false)
+		bot:Action_AttackUnit(targetUnit, true)
 		return
 	end
 end
@@ -2137,6 +2137,7 @@ function X.ConsiderRetreatWhenTowerTargeted()
 	local nInRangeTowers = bot:GetNearbyTowers(1000, true)
 	if  nInRangeTowers ~= nil and #nInRangeTowers >= 1
 	and DotaTime() > RetreatWhenTowerTargetedTime + 3.5
+	and not J.IsPushing(bot)
 	then
 		local nTower = nInRangeTowers[1]
 		if  J.IsValidBuilding(nTower)

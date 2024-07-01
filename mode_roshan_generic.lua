@@ -25,10 +25,12 @@ function GetDesire()
     local timeOfDay = J.CheckTimeOfDay()
 
     local aliveHeroesList = {}
-    for _, h in pairs(GetUnitList(UNIT_LIST_ALLIED_HEROES)) do
-        if h:IsAlive()
+    for i = 1, 5
+    do
+        local member = GetTeamMember(i)
+        if J.IsValidHero(member)
         then
-            table.insert(aliveHeroesList, h)
+            table.insert(aliveHeroesList, member)
         end
     end
 
@@ -157,24 +159,7 @@ end
 -- end
 
 function IsEnoughAllies()
-    local timeOfDay = J.CheckTimeOfDay()
-    local roshLoc = nil
-
-    if timeOfDay == "day" then
-        roshLoc = roshanRadiantLoc
-    else
-        roshLoc = roshanDireLoc
-    end
-
-    local allyList = {}
-    for _, h in pairs(GetUnitList(UNIT_LIST_ALLIED_HEROES)) do
-        if GetUnitToLocationDistance(h, roshLoc) < 1600
-        then
-            table.insert(allyList, h)
-        end
-    end
-
-    return J.HasEnoughDPSForRoshan(allyList)
+    return J.HasEnoughDPSForRoshan(J.GetAlliesNearLoc(J.GetCurrentRoshanLocation(), 1600))
 end
 
 -- No functionality yet from API

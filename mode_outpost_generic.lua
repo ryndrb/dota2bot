@@ -60,6 +60,13 @@ function GetDesire()
 		return bot:GetActiveModeDesire() + 0.1
 	end
 
+	-- If in item mode
+	ShouldHeroMoveOutsideFountain = ConsiderHeroMoveOutsideFountain()
+	if ShouldHeroMoveOutsideFountain
+	then
+		return bot:GetActiveModeDesire() + 0.1
+	end
+
 	------------------------------
 	-- Hero Channel/Kill/CC abilities
 	------------------------------
@@ -321,6 +328,13 @@ function Think()
 		return
 	end
 
+	-- Get out of fountain if in item mode
+	if ShouldHeroMoveOutsideFountain
+	then
+		bot:Action_MoveToLocation(J.GetEnemyFountain())
+		return
+	end
+
 	-- Heal in Base
 	-- Just for TP. Too much back and forth when "forcing" them try to walk to fountain; <- not reliable and misses farm.
 	if ShouldWaitInBaseToHeal
@@ -508,7 +522,7 @@ function Think()
 			bot:Action_MoveToLocation(ClosestOutpost:GetLocation())
 			return
 		else
-			bot:Action_AttackUnit(ClosestOutpost, false)
+			bot:Action_AttackUnit(ClosestOutpost, true)
 			return
 		end
 	end
@@ -705,6 +719,18 @@ function ConsiderHuskarMoveOutsideFountain()
 		then
 			return true
 		end
+	end
+
+	return false
+end
+
+function ConsiderHeroMoveOutsideFountain()
+	if bot:GetActiveMode() == BOT_MODE_ITEM
+	and bot:HasModifier('modifier_fountain_aura_buff')
+	and J.GetHP(bot) > 0.95
+	and J.GetMP(bot) > 0.95
+	then
+		return true
 	end
 
 	return false

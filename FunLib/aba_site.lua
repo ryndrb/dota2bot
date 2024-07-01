@@ -2453,13 +2453,10 @@ function Site.GetPosition(bot)
 end
 
 function Site.GetCarry()
-	for _, h in pairs(GetUnitList(UNIT_LIST_ALLIED_HEROES))
+	for i = 1, 5
 	do
-		if  h ~= nil
-		and Site.GetPosition(h) == 1
-		then
-			return h
-		end
+		local member = GetTeamMember(i)
+		if Site.GetPosition(member) == 1 then return member end
 	end
 
 	return nil
