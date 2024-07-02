@@ -49,8 +49,8 @@ function X.Consider()
         and not botTarget:HasModifier('modifier_item_aeon_disk_buff')
         and not botTarget:IsInvulnerable()
 		then
-            local nInRangeAlly = botTarget:GetNearbyHeroes(1200, true, BOT_MODE_NONE)
-            local nInRangeEnemy = botTarget:GetNearbyHeroes(1200, false, BOT_MODE_NONE)
+            local nInRangeAlly = botTarget:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
+            local nInRangeEnemy = botTarget:GetNearbyHeroes(1600, false, BOT_MODE_NONE)
 
             if nInRangeAlly ~= nil and nInRangeEnemy ~= nil
             then

@@ -300,6 +300,409 @@ X.Combos['npc_dota_hero_disruptor'] = function ()
     end
 end
 
+X.Combos['npc_dota_hero_earthshaker'] = function ()
+    local EnchantTotem = bot:GetAbilityByName(sAbilityList[2])
+    local EchoSlam = bot:GetAbilityByName(sAbilityList[6])
+
+    local function CanDoBlinkSlam()
+        if X.CanBlink() and EchoSlam ~= nil and EchoSlam:IsFullyCastable()
+        then
+            local nManaCost = EchoSlam:GetManaCost()
+
+            if bot:GetMana() >= nManaCost
+            then
+                bot.shouldBlink = true
+                return true
+            end
+        end
+
+        bot.shouldBlink = false
+        return false
+    end
+
+    local function ConsiderBlinkSlam()
+        if CanDoBlinkSlam()
+        then
+            local nCastRange = 1199
+            local nRadius = EchoSlam:GetSpecialValueInt('echo_slam_echo_range')
+
+            if J.IsGoingOnSomeone(bot)
+            then
+                local nLocationAoE = bot:FindAoELocation(true, true, bot:GetLocation(), nCastRange, nRadius, 0, 0)
+                local nInRangeEnemy = J.GetEnemiesNearLoc(nLocationAoE.targetloc, nRadius / 2)
+
+                if nInRangeEnemy ~= nil and #nInRangeEnemy >= 2
+                then
+                    return BOT_ACTION_DESIRE_HIGH, J.GetCenterOfUnits(nInRangeEnemy)
+                end
+            end
+        end
+
+        return BOT_ACTION_DESIRE_NONE, 0
+    end
+
+    local function CanDoTotemSlam()
+        if  bot:HasScepter()
+        and EnchantTotem:IsFullyCastable()
+        and EchoSlam:IsFullyCastable()
+        then
+            local nManaCost = EnchantTotem:GetManaCost() + EchoSlam:GetManaCost()
+
+            if  bot:GetMana() >= nManaCost
+            then
+                return true
+            end
+        end
+
+        return false
+    end
+
+    -- Blink Slam
+    local function ConsiderTotemSlam()
+        if CanDoTotemSlam()
+        then
+            local nETCastRange = EnchantTotem:GetSpecialValueInt('distance_scepter')
+            local nETLeapDuration = EnchantTotem:GetSpecialValueFloat('scepter_leap_duration')
+            local nRadius = EchoSlam:GetSpecialValueInt('echo_slam_echo_range')
+
+            if J.IsInTeamFight(bot, 1200)
+            then
+                local nLocationAoE = bot:FindAoELocation(true, true, bot:GetLocation(), nETCastRange, nRadius, nETLeapDuration, 0)
+                local nInRangeEnemy = J.GetEnemiesNearLoc(nLocationAoE.targetloc, nRadius / 2)
+
+                if nInRangeEnemy ~= nil and #nInRangeEnemy >= 2
+                then
+                    return BOT_ACTION_DESIRE_HIGH, J.GetCenterOfUnits(nInRangeEnemy)
+                end
+            end
+        end
+
+        return BOT_ACTION_DESIRE_NONE, 0
+    end
+
+    BlinkSlamDesire, BlinkSlamLocation = ConsiderBlinkSlam()
+    if BlinkSlamDesire > 0
+    then
+        J.SetQueuePtToINT(bot, false)
+        bot:ActionQueue_UseAbilityOnLocation(bot.Blink, BlinkSlamLocation)
+        bot:ActionQueue_Delay(0.1)
+        bot:ActionQueue_UseAbility(EchoSlam)
+        return
+    end
+
+    -- Totem Slam
+    TotemSlamDesire, TotemSlamLocation = ConsiderTotemSlam()
+    if TotemSlamDesire > 0
+    then
+        local nLeapDuration = EnchantTotem:GetSpecialValueFloat('scepter_leap_duration')
+
+        J.SetQueuePtToINT(bot, false)
+        bot:ActionQueue_UseAbilityOnLocation(EnchantTotem, TotemSlamLocation)
+        bot:ActionQueue_Delay(nLeapDuration + 0.5 + 0.48)
+        bot:ActionQueue_UseAbility(EchoSlam)
+        return
+    end
+end
+
+X.Combos['npc_dota_hero_ember_spirit'] = function ()
+    local SearingChains = bot:GetAbilityByName(sAbilityList[1])
+    local SleightOfFist = bot:GetAbilityByName(sAbilityList[2])
+
+    local nEnemyHeroes = bot:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
+
+    local function CanDoSleightChains()
+        if SleightOfFist:IsFullyCastable()
+        and SearingChains:IsFullyCastable()
+        then
+            local manaCost = SleightOfFist:GetManaCost() + SearingChains:GetManaCost()
+
+            if  bot:GetMana() >= manaCost
+            then
+                return true
+            end
+        end
+
+        return false
+    end
+
+    local function ConsiderSleightChains()
+        if CanDoSleightChains()
+        then
+            local nCastRange = J.GetProperCastRange(false, bot, SleightOfFist:GetCastRange())
+            local botTarget = J.GetProperTarget(bot)
+
+            if J.IsGoingOnSomeone(bot)
+            then
+                if  J.IsValidTarget(botTarget)
+                and J.CanCastOnMagicImmune(botTarget)
+                and not botTarget:IsAttackImmune()
+                and J.IsInRange(bot, botTarget, nCastRange)
+                and not botTarget:HasModifier('modifier_abaddon_borrowed_time')
+                and not botTarget:HasModifier('modifier_faceless_void_chronosphere_freeze')
+                and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
+                then
+                    return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation()
+                end
+            end
+
+            if J.IsRetreating(bot)
+            and not J.IsRealInvisible(bot)
+            and bot:GetActiveModeDesire() > 0.7
+            and bot:WasRecentlyDamagedByAnyHero(4)
+            then
+                if J.IsValidHero(nEnemyHeroes[1])
+                and J.CanCastOnMagicImmune(nEnemyHeroes[1])
+                and J.IsChasingTarget(nEnemyHeroes[1], bot)
+                and not J.IsDisabled(nEnemyHeroes[1])
+                and not nEnemyHeroes[1]:IsDisarmed()
+                then
+                    return BOT_ACTION_DESIRE_HIGH, nEnemyHeroes[1]:GetLocation()
+                end
+            end
+        end
+
+        return BOT_ACTION_DESIRE_NONE, 0
+    end
+
+    -- Sleight Chains
+    SleightChainsDesire, SCLocation = ConsiderSleightChains()
+	if SleightChainsDesire > 0
+	then
+		J.SetQueuePtToINT(bot, false)
+		bot:ActionQueue_UseAbilityOnLocation(SleightOfFist, SCLocation)
+        bot:ActionQueue_Delay(0.7)
+		bot:ActionQueue_UseAbility(SearingChains)
+		return
+	end
+end
+
+X.Combos['npc_dota_hero_enigma'] = function ()
+    local MidnightPulse = bot:GetAbilityByName(sAbilityList[3])
+    local BlackHole = bot:GetAbilityByName(sAbilityList[6])
+
+    local function CanDoBlinkPulseHole()
+        if  BlackHole:IsFullyCastable()
+        and MidnightPulse:IsFullyCastable()
+        and X.CanBlink()
+        then
+            local nManaCost = BlackHole:GetManaCost() + MidnightPulse:GetManaCost()
+    
+            if bot:GetMana() >= nManaCost
+            then
+                return true
+            end
+        end
+    
+        return false
+    end
+
+    local function ConsiderBlinkPulseHole()
+        if CanDoBlinkPulseHole()
+        then
+            local nRadius = BlackHole:GetSpecialValueInt('radius')
+    
+            if J.IsInTeamFight(bot, 1200)
+            then
+                local nLocationAoE = bot:FindAoELocation(true, true, bot:GetLocation(), 1199, nRadius, 0, 0)
+                local nInRangeEnemy = J.GetEnemiesNearLoc(nLocationAoE.targetloc, nRadius)
+    
+                if nInRangeEnemy ~= nil and #nInRangeEnemy >= 2
+                then
+                    return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc
+                end
+            end
+        end
+
+        return BOT_ACTION_DESIRE_NONE, 0
+    end
+
+    local function CanDoBlinkHole()
+        if  BlackHole:IsFullyCastable()
+        and X.CanBlink()
+        then
+            local nManaCost = BlackHole:GetManaCost()
+
+            if bot:GetMana() >= nManaCost
+            then
+                return true
+            end
+        end
+
+        return false
+    end
+
+    local function ConsiderBlinkHole()
+        if CanDoBlinkHole()
+        then
+            local nRadius = BlackHole:GetSpecialValueInt('radius')
+
+            if J.IsInTeamFight(bot, 1200)
+            then
+                local nLocationAoE = bot:FindAoELocation(true, true, bot:GetLocation(), 1199, nRadius, 0, 0)
+                local nInRangeEnemy = J.GetEnemiesNearLoc(nLocationAoE.targetloc, nRadius)
+
+                if nInRangeEnemy ~= nil and #nInRangeEnemy >= 2
+                then
+                    return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc
+                end
+            end
+        end
+
+        return BOT_ACTION_DESIRE_NONE, 0
+    end
+
+    -- Blink Pulse Hole
+    BlinkPulseHoleDesire, BlinkPulseHoleLocation = ConsiderBlinkPulseHole()
+    if BlinkPulseHoleDesire > 0
+    then
+        J.SetQueuePtToINT(bot, false)
+
+        if  X.CanBKB()
+        and not bot:IsMagicImmune()
+        then
+            bot:ActionQueue_UseAbility(BlackKingBar)
+            bot:ActionQueue_Delay(0.1)
+        end
+
+        bot:ActionQueue_UseAbilityOnLocation(bot.Blink, BlinkPulseHoleLocation)
+        bot:ActionQueue_Delay(0.1)
+        bot:ActionQueue_UseAbilityOnLocation(MidnightPulse, BlinkPulseHoleLocation)
+        bot:ActionQueue_Delay(0.1)
+        bot:ActionQueue_UseAbilityOnLocation(BlackHole, BlinkPulseHoleLocation)
+        return
+    end
+
+    -- Blink Hole
+    BlinkHoleDesire, BlinkHoleLocation = ConsiderBlinkHole()
+    if BlinkHoleDesire > 0
+    then
+        J.SetQueuePtToINT(bot, false)
+
+        if  X.CanBKB()
+        and not bot:IsMagicImmune()
+        then
+            bot:ActionQueue_UseAbility(BlackKingBar)
+            bot:ActionQueue_Delay(0.1)
+        end
+
+        bot:ActionQueue_UseAbilityOnLocation(bot.Blink, BlinkHoleLocation)
+        bot:ActionQueue_Delay(0.1)
+        bot:ActionQueue_UseAbilityOnLocation(BlackHole, BlinkHoleLocation)
+        return
+    end
+end
+
+X.Combos['npc_dota_hero_furion'] = function ()
+    local Sprout = bot:GetAbilityByName(sAbilityList[1])
+    local NaturesCall = bot:GetAbilityByName(sAbilityList[3])
+
+    local function CanDoSproutCall()
+        if  Sprout:IsFullyCastable()
+        and NaturesCall:IsFullyCastable()
+        then
+            local nManaCost = Sprout:GetManaCost() + NaturesCall:GetManaCost()
+
+            if bot:GetMana() >= nManaCost
+            then
+                return true
+            end
+        end
+
+        return false
+    end
+
+    local function ConsiderSproutCall()
+        if CanDoSproutCall()
+        then
+            local nCastRange = J.GetProperCastRange(false, bot, Sprout:GetCastRange())
+            local botTarget = J.GetProperTarget(bot)
+
+            local nInRangeTrees = bot:GetNearbyTrees(nCastRange)
+            local nEnemyLaneCreeps = bot:GetNearbyLaneCreeps(nCastRange, true)
+
+            if nInRangeTrees ~= nil and #nInRangeTrees >= 1
+            then
+                if J.IsPushing(bot) or J.IsDefending(bot)
+                then
+                    if nEnemyLaneCreeps ~= nil and #nEnemyLaneCreeps >= 4
+                    and J.CanBeAttacked(nEnemyLaneCreeps[1])
+                    then
+                        return BOT_ACTION_DESIRE_HIGH, bot, bot:GetLocation()
+                    end
+                end
+
+                if  J.IsFarming(bot)
+                and J.GetMP(bot) > 0.5
+                then
+                    if J.IsAttacking(bot)
+                    then
+                        local nNeutralCreeps = bot:GetNearbyNeutralCreeps(nCastRange)
+                        if  nNeutralCreeps ~= nil
+                        and J.IsValid(nNeutralCreeps[1])
+                        and ((#nNeutralCreeps >= 3)
+                            or (#nNeutralCreeps >= 2 and nNeutralCreeps[1]:IsAncientCreep()))
+                        then
+                            return BOT_ACTION_DESIRE_HIGH, bot, bot:GetLocation()
+                        end
+
+                        if nEnemyLaneCreeps ~= nil and #nEnemyLaneCreeps >= 3
+                        and J.CanBeAttacked(nEnemyLaneCreeps[1])
+                        then
+                            return BOT_ACTION_DESIRE_HIGH, bot, bot:GetLocation()
+                        end
+                    end
+                end
+
+                if J.IsLaning(bot)
+                and J.GetMP(bot) > 0.5
+                then
+                    if J.IsAttacking(bot)
+                    then
+                        if nEnemyLaneCreeps ~= nil and #nEnemyLaneCreeps >= 2
+                        and J.CanBeAttacked(nEnemyLaneCreeps[1])
+                        then
+                            return BOT_ACTION_DESIRE_HIGH, bot, bot:GetLocation()
+                        end
+                    end
+                end
+
+                if J.IsDoingRoshan(bot)
+                then
+                    if  J.IsRoshan(botTarget)
+                    and not botTarget:IsAttackImmune()
+                    and J.IsInRange(bot, botTarget, bot:GetAttackRange())
+                    and J.IsAttacking(bot)
+                    then
+                        return BOT_ACTION_DESIRE_HIGH, bot, bot:GetLocation()
+                    end
+                end
+
+                if J.IsDoingTormentor(bot)
+                then
+                    if  J.IsTormentor(botTarget)
+                    and J.IsInRange(bot, botTarget, bot:GetAttackRange())
+                    and J.IsAttacking(bot)
+                    then
+                        return BOT_ACTION_DESIRE_HIGH, bot, bot:GetLocation()
+                    end
+                end
+            end
+        end
+
+        return BOT_ACTION_DESIRE_NONE, nil, 0
+    end
+
+    SproutCallDesire, SproutCallTarget, SproutCallLocation = ConsiderSproutCall()
+    if SproutCallDesire > 0
+    then
+        J.SetQueuePtToINT(bot, false)
+        bot:ActionQueue_UseAbilityOnEntity(Sprout, SproutCallTarget)
+        bot:ActionQueue_Delay(0.35 + 0.44)
+        bot:ActionQueue_UseAbilityOnLocation(NaturesCall, SproutCallLocation)
+        return
+    end
+end
+
 function X.CanBlink()
     local blink = nil
 

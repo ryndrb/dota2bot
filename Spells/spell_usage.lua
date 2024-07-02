@@ -65,14 +65,13 @@ InitConsiderAbility()
 function X.AbilityUsage(SpellOrder)
     UpdateRubickAbilities()
 
-    if J.CanNotUseAbility(GetBot()) then return end
-
     for _, key in pairs(SpellOrder)
     do
         if string.find(key, 'Combo')
         then
             C.SpellCombos()
         else
+            if J.CanNotUseAbility(GetBot()) then return end
             if ConsiderAbility[key] ~= nil then ConsiderAbility[key].Cast() end
         end
     end

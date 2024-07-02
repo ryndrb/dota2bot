@@ -92,6 +92,12 @@ function GetDesire()
 		return BOT_ACTION_DESIRE_ABSOLUTE
 	end
 
+	if bot:HasModifier('modifier_faceless_void_chronosphere_selfbuff')
+	and bot.ChronoTarget ~= nil
+	then
+		return bot:GetActiveModeDesire() + 0.1
+	end
+
 	nDesire = X.ConsiderHarassInLaningPhase()
 	if nDesire > 0
 	then
@@ -115,12 +121,12 @@ function GetDesire()
 		return BOT_MODE_DESIRE_ABSOLUTE * 0.98
 	end
 
-	-- Pickup Neutral Item Tokens
-	nDesire = TryPickupDroppedNeutralItemTokens()
-	if nDesire > 0
-	then
-		return nDesire
-	end
+	-- -- Pickup Neutral Item Tokens; since removed item_generic; some overlap
+	-- nDesire = TryPickupDroppedNeutralItemTokens()
+	-- if nDesire > 0
+	-- then
+	-- 	return nDesire
+	-- end
 
 	-- Pickup Roshan Dropped Items
 	nDesire = TryPickupRefresherShard()
@@ -205,6 +211,7 @@ function OnEnd()
 	towerCreepMode = false
 	bot:SetTarget(nil)
 	harassTarget = nil
+	bot.ChronoTarget = nil
 end
 
 
@@ -222,6 +229,13 @@ function Think()
 	and SpecialUnitTarget ~= nil
 	then
 		bot:Action_AttackUnit(SpecialUnitTarget, true)
+		return
+	end
+
+	if bot:HasModifier('modifier_faceless_void_chronosphere_selfbuff')
+	and bot.ChronoTarget ~= nil
+	then
+		bot:Action_AttackUnit(bot.ChronoTarget, true)
 		return
 	end
 

@@ -145,9 +145,44 @@ X['spells'] = {
     ['drow_ranger_multishot'] = true,
     ['drow_ranger_glacier'] = true,
 
+    ['earth_spirit_boulder_smash'] = true,
+    ['earth_spirit_rolling_boulder'] = true,
+    ['earth_spirit_geomagnetic_grip'] = true,
+    ['earth_spirit_petrify'] = true,
+    ['earth_spirit_stone_caller'] = true,
+    ['earth_spirit_magnetize'] = true,
+
     ['earthshaker_fissure'] = true,
     ['earthshaker_enchant_totem'] = true,
     ['earthshaker_echo_slam'] = true,
+
+    ['ember_spirit_searing_chains'] = true,
+    ['ember_spirit_sleight_of_fist'] = true,
+    ['ember_spirit_flame_guard'] = true,
+    ['ember_spirit_activate_fire_remnant'] = true,
+    ['ember_spirit_fire_remnant'] = true,
+
+    ['enchantress_impetus'] = true,
+    ['enchantress_enchant'] = true,
+    ['enchantress_natures_attendants'] = true,
+    ['enchantress_bunny_hop'] = true,
+    ['enchantress_little_friends'] = true,
+
+    ['enigma_malefice'] = true,
+    ['enigma_demonic_conversion'] = true,
+    ['enigma_midnight_pulse'] = true,
+    ['enigma_black_hole'] = true,
+
+    ['faceless_void_time_walk'] = true,
+    ['faceless_void_time_dilation'] = true,
+    ['faceless_void_time_walk_reverse'] = true,
+    ['faceless_void_chronosphere'] = true,
+
+    ['furion_sprout'] = true,
+    ['furion_teleportation'] = true,
+    ['furion_force_of_nature'] = true,
+    ['furion_curse_of_the_forest'] = true,
+    ['furion_wrath_of_nature'] = true,
 }
 
 return X

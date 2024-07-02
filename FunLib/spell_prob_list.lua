@@ -171,7 +171,18 @@ function X.GetSpellReplaceWeight(ability)
         ['enigma_malefice'] = 0.8,
         ['enigma_demonic_conversion'] = 1,
         ['enigma_midnight_pulse'] = 0.6,
-        ['enigma_black_hole'] = 0,
+        ['enigma_black_hole'] = 0.05,
+
+        ['faceless_void_time_walk'] = 0.5,
+        ['faceless_void_time_dilation'] = 0.8,
+        ['faceless_void_time_walk_reverse'] = 1,
+        ['faceless_void_chronosphere'] = 0.05,
+
+        ['furion_sprout'] = 0.1,
+        ['furion_teleportation'] = 0.5,
+        ['furion_force_of_nature'] = 0.8,
+        ['furion_curse_of_the_forest'] = 0.3,
+        ['furion_wrath_of_nature'] = 0.7,
 
         ['rubick_empty1'] = 1,
         ['rubick_empty2'] = 1,

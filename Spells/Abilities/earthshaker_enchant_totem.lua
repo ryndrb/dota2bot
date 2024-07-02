@@ -59,6 +59,7 @@ function X.Consider()
             nInRangeEnemy = J.GetEnemiesNearLoc(nLocationAoE.targetloc, nRadius)
 
             if nInRangeEnemy ~= nil and #nInRangeEnemy >= 2
+            and not J.IsLocationInChrono(nLocationAoE.targetloc)
             then
                 return BOT_ACTION_DESIRE_HIGH, J.GetCenterOfUnits(nInRangeEnemy), true
             end
@@ -92,30 +93,23 @@ function X.Consider()
         and not botTarget:HasModifier('modifier_abaddon_borrowed_time')
         and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
 		then
-            local nInRangeAlly = bot:GetNearbyHeroes(1000, false, BOT_MODE_NONE)
-            local nInRangeEnemy = bot:GetNearbyHeroes(800, true, BOT_MODE_NONE)
-
-            if  nInRangeAlly ~= nil and nInRangeEnemy ~= nil
-            and #nInRangeAlly >= #nInRangeEnemy
+            if bot:HasScepter()
             then
-                if bot:HasScepter()
+                if  J.IsInRange(bot, botTarget, nCastRange)
+                and not J.IsInRange(bot, botTarget, nRadius)
+                and not botTarget:HasModifier('modifier_faceless_void_chronosphere')
                 then
-                    if  J.IsInRange(bot, botTarget, nCastRange)
-                    and not J.IsInRange(bot, botTarget, nRadius)
-                    and not botTarget:HasModifier('modifier_faceless_void_chronosphere')
-                    then
-                        return BOT_ACTION_DESIRE_HIGH, botTarget:GetExtrapolatedLocation(nLeapDuration), true
-                    else
-                        if J.IsInRange(bot, botTarget, nRadius - 50)
-                        then
-                            return BOT_ACTION_DESIRE_HIGH, 0, false
-                        end
-                    end
+                    return BOT_ACTION_DESIRE_HIGH, botTarget:GetExtrapolatedLocation(nLeapDuration), true
                 else
                     if J.IsInRange(bot, botTarget, nRadius - 50)
                     then
                         return BOT_ACTION_DESIRE_HIGH, 0, false
                     end
+                end
+            else
+                if J.IsInRange(bot, botTarget, nRadius - 50)
+                then
+                    return BOT_ACTION_DESIRE_HIGH, 0, false
                 end
             end
 		end
@@ -123,30 +117,25 @@ function X.Consider()
 
     if  J.IsRetreating(bot)
     and bot:GetActiveModeDesire() > 0.7
+    and not J.IsRealInvisible(bot)
     then
-        local nInRangeEnemy = bot:GetNearbyHeroes(1200, true, BOT_MODE_NONE)
+        local nInRangeEnemy = bot:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
         for _, enemyHero in pairs(nInRangeEnemy)
         do
             if  J.IsValidHero(enemyHero)
             and J.IsChasingTarget(enemyHero, bot)
             and not J.IsSuspiciousIllusion(enemyHero)
-            and not J.IsDisabled(enemyHero)
+            and bot:WasRecentlyDamagedByAnyHero(3.5)
             then
-                local nInRangeAlly = enemyHero:GetNearbyHeroes(1200, true, BOT_MODE_NONE)
-                local nTargetInRangeAlly = enemyHero:GetNearbyHeroes(1200, false, BOT_MODE_NONE)
-
-                if  nInRangeAlly ~= nil and nTargetInRangeAlly ~= nil
-                and ((#nTargetInRangeAlly > #nInRangeAlly)
-                    or bot:WasRecentlyDamagedByAnyHero(2))
+                if bot:HasScepter()
                 then
-                    if bot:HasScepter()
+                    return BOT_ACTION_DESIRE_HIGH, J.Site.GetXUnitsTowardsLocation(bot, J.GetTeamFountain(), nCastRange), true
+                else
+                    if J.IsInRange(bot, enemyHero, nRadius)
+                    and J.CanCastOnNonMagicImmune(enemyHero)
+                    and not J.IsDisabled(enemyHero)
                     then
-                        return BOT_ACTION_DESIRE_HIGH, J.Site.GetXUnitsTowardsLocation(bot, J.GetTeamFountain(), nCastRange), true
-                    else
-                        if J.IsInRange(bot, enemyHero, nRadius)
-                        then
-                            return BOT_ACTION_DESIRE_HIGH, 0, false
-                        end
+                        return BOT_ACTION_DESIRE_HIGH, 0, false
                     end
                 end
             end

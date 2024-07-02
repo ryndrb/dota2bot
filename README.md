@@ -176,131 +176,131 @@ To anyone who've found this or is using it, if you have any feedback in improvin
         - [x] Heroes to play different positions (eg. Batrider Support, Abaddon Core, etc.)
         - [x] vscript to increase bots GPM and XPM (AP only), and for them to acquire neutral items (local host only)
         - [x] Functionality for new active ablities gained through Aghs/Shard
-            | Hero                  | Shard   | Scepter | Spell Usage Imp. Count [Latest Date]
-            |:---------------------:|:-------:|:-------:|-------------------------------------
-            | Abaddon               | -       | -       | 2 [2/27/2024]
-            | Alchemist             | &check; | &cross; | 2 [2/27/2024]
-            | Ancient Apparition    | -       | -       | 1 [3/9/2024]
-            | Anti-Mage             | &check; | &check; | 1 [4/3/2024]
-            | Arc Warden            | -       | -       | 1 [5/14/2024]
-            | Axe                   | -       | -       | 0 
-            | Bane                  | -       | -       | 0 
-            | Batrider              | -       | -       | 1 [2/21/2024]
-            | Beastmaster           | -       | -       | 1 [2/21/2024]
-            | Bloodseeker           | -       | &check; | 0 
-            | Bounty Hunter         | -       | &check; | 0 
-            | Brewmaster            | -       | &check; | 1 [3/9/2024]
-            | Bristleback           | &check; | &check; | 0 
-            | Broodmother           | -       | &cross; | 1 [3/9/2024]
-            | Centaur               | -       | &check; | 1 [3/11/2024]
-            | Chaos Knight          | -       | -       | 0 
-            | Chen                  | &cross; | &cross; | 1 [3/29/2024]
-            | Clinkz                | &check; | &check; | 1 [3/29/2024]
-            | Clockwerk             | &check; | &check; | 1 [3/31/2024] 
-            | Crystal Maiden        | &check; | &check; | 0 
-            | Dark Seer             | -       | -       | 1 [4/5/2024]
-            | ~~Dark Willow~~       | &check; | -       | 0 
-            | Dawnbreaker           | -       | -       | 1 [2/6/2024]
-            | Dazzle                | -       | -       | 0 
-            | Death Prophet         | -       | -       | 0 
-            | Disruptor             | -       | -       | 1 [4/12/2024]
-            | Doom                  | -       | -       | 1 [4/12/2024]
-            | Dragon Knight         | -       | -       | 0 
-            | Drow Ranger           | &check; | -       | 0 
-            | Earth Spirit          | &check; | &cross; | 1 [2/2/2024]
-            | Earthshaker           | -       | &check; | 1 [4/18/2024]
-            | ~~Elder Titan~~       | -       | -       | 0 
-            | Ember Spirit          | -       | -       | 1 [2/2/2024]
-            | Enchantress           | &check; | &check; | 0 
-            | Enigma                | -       | -       | 1 [5/16/2024]
-            | Faceless Void         | &check; | -       | 3 [3/17/2024]
-            | Grimstroke            | -       | &check; | 1 [5/31/2024]
-            | Gyrocopter            | -       | -       | 1 [6/8/2024]
-            | ~~Hoodwink~~          | &check; | &check; | 0 
-            | Huskar                | -       | -       | 0 
-            | Invoker               | -       | &check; | 1 [4/24/2024]
-            | Jakiro                | &check; | -       | 0 
-            | Juggernaut            | -       | &check; | 0 
-            | Keeper of the Light   | &check; | &check; | 0 
-            | Kunkka                | &check; | &check; | 0 
-            | Legion Commander      | -       | -       | 0 
-            | Leshrac               | -       | &check; | 1 [3/25/2024]
-            | Lich                  | &check; | &check; | 0 
-            | Lifestealer           | &check; | -       | 0 
-            | Lina                  | -       | &check; | 0 
-            | Lion                  | -       | -       | 0 
-            | ~~Lone Druid~~        | -       | -       | 0 
-            | Luna                  | -       | &check; | 1 [4/15/2024]
-            | Lycan                 | -       | &cross; | 0 
-            | Magnus                | -       | &check; | 0 
-            | Mars                  | -       | -       | 2 [3/17/2024]
-            | ~~Marci~~             | -       | -       | 0 
-            | Medusa                | -       | -       | 0 
-            | Meeepo                | &check; | &check; | 0 
-            | Mirana                | -       | -       | 0 
-            | Monkey King           | &cross; | -       | 0 
-            | Morphling             | -       | &cross; | 0 
-            | ~~Muerta~~            | -       | -       | 0 
-            | Naga Siren            | -       | &check; | 0 
-            | Nature's Prophet      | -       | &check; | 0 
-            | Necrophos             | &check; | -       | 0 
-            | Night Stalker         | &check; | -       | 0 
-            | Nyx Assassin          | &check; | -       | 0 
-            | Ogre Magi             | &check; | &check; | 0 
-            | Omniknight            | -       | -       | 0 
-            | Oracle                | &check; | -       | 0 
-            | Outworld Destroyer    | -       | -       | 0 
-            | Pangolier             | &check; | -       | 0 
-            | Phantom Assasin       | &check; | -       | 0 
-            | Phantom Lancer        | &check; | -       | 0 
-            | Phoenix               | -       | -       | 0 
-            | ~~Primal Beast~~      | -       | -       | 0 
-            | Puck                  | -       | -       | 1 [4/29/2024]
-            | Pugna                 | -       | -       | 0 
-            | Pudge                 | -       | &cross; | 0 
-            | Queen of Pain         | -       | -       | 0 
-            | Razor                 | -       | -       | 0 
-            | Riki                  | -       | -       | 0 
-            | Rubick                | -       | -       | 0 
-            | Sand King             | -       | -       | 0 
-            | Shadow Demon          | &check; | -       | 0 
-            | Shadow Fiend          | &cross; | -       | 0 
-            | Shadow Shaman         | -       | -       | 0 
-            | Silencer              | -       | -       | 0 
-            | Skywrath Mage         | -       | -       | 0 
-            | Slardar               | -       | -       | 0 
-            | Slark                 | -       | -       | 0 
-            | Snapfire              | -       | &cross; | 0 
-            | Sniper                | -       | -       | 0 
-            | Spectre               | -       | &check; | 0 
-            | Spirit Breaker        | &check; | -       | 0 
-            | Storm Sprit           | -       | -       | 1 [2/3/2024]
-            | Sven                  | -       | &cross; | 0 
-            | Techies               | -       | -       | 0 
-            | Templar Assasin       | -       | &cross; | 0 
-            | Terrorblade           | &check; | &check; | 1 [2/4/2024]
-            | Tidehunter            | &check; | -       | 0 
-            | Timbersaw             | &check; | &check; | 1 [2/4/2024]
-            | Tinker                | &check; | -       | 0 
-            | Tiny                  | -       | &check; | 2 [4/29/2024] 
-            | Treant                | -       | &check; | 0 
-            | Troll Warlord         | -       | -       | 0 
-            | Tusk                  | -       | &cross; | 0 
-            | Underlord             | -       | -       | 0 
-            | Undying               | &cross; | -       | 0 
-            | Ursa                  | -       | -       | 1 [2/5/2024]
-            | Vengeful Spirit       | -       | &check; | 0 
-            | Venomancer            | &check; | -       | 0 
-            | Viper                 | -       | &check; | 1 [4/7/2024]
-            | Visage                | -       | &check; | 0 
-            | Void Spirit           | -       | -       | 1 [2/5/2024]
-            | Warlock               | -       | -       | 0 
-            | Weaver                | -       | &check; | 0 
-            | Windranger            | &check; | -       | 0 
-            | Winter Wyvern         | -       | -       | 0 
-            | Witch Doctor          | &check; | -       | 0 
-            | Wraith King           | -       | -       | 0 
-            | Zeus                  | &check; | &check; | 0 
+            | Hero                  | Shard   | Scepter |
+            |:---------------------:|:-------:|:-------:|
+            | Abaddon               | -       | -       |
+            | Alchemist             | &check; | &cross; |
+            | Ancient Apparition    | -       | -       |
+            | Anti-Mage             | &check; | &check; |
+            | Arc Warden            | -       | -       |
+            | Axe                   | -       | -       |
+            | Bane                  | -       | -       |
+            | Batrider              | -       | -       |
+            | Beastmaster           | -       | -       |
+            | Bloodseeker           | -       | &check; |
+            | Bounty Hunter         | -       | &check; |
+            | Brewmaster            | -       | &check; |
+            | Bristleback           | &check; | &check; |
+            | Broodmother           | -       | &cross; |
+            | Centaur               | -       | &check; |
+            | Chaos Knight          | -       | -       |
+            | Chen                  | &cross; | &cross; |
+            | Clinkz                | &check; | &check; |
+            | Clockwerk             | &check; | &check; |
+            | Crystal Maiden        | &check; | &check; |
+            | Dark Seer             | -       | -       |
+            | ~~Dark Willow~~       | &check; | -       |
+            | Dawnbreaker           | -       | -       |
+            | Dazzle                | -       | -       |
+            | Death Prophet         | -       | -       |
+            | Disruptor             | -       | -       |
+            | Doom                  | -       | -       |
+            | Dragon Knight         | -       | -       |
+            | Drow Ranger           | &check; | -       |
+            | Earth Spirit          | &check; | &cross; |
+            | Earthshaker           | -       | &check; |
+            | ~~Elder Titan~~       | -       | -       |
+            | Ember Spirit          | -       | -       |
+            | Enchantress           | &check; | &check; |
+            | Enigma                | -       | -       |
+            | Faceless Void         | &check; | -       |
+            | Grimstroke            | -       | &check; |
+            | Gyrocopter            | -       | -       |
+            | ~~Hoodwink~~          | &check; | &check; |
+            | Huskar                | -       | -       |
+            | Invoker               | -       | &check; |
+            | Jakiro                | &check; | -       |
+            | Juggernaut            | -       | &check; |
+            | Keeper of the Light   | &check; | &check; |
+            | Kunkka                | &check; | &check; |
+            | Legion Commander      | -       | -       |
+            | Leshrac               | -       | &check; |
+            | Lich                  | &check; | &check; |
+            | Lifestealer           | &check; | -       |
+            | Lina                  | -       | &check; |
+            | Lion                  | -       | -       |
+            | ~~Lone Druid~~        | -       | -       |
+            | Luna                  | -       | &check; |
+            | Lycan                 | -       | &cross; |
+            | Magnus                | -       | &check; |
+            | Mars                  | -       | -       |
+            | ~~Marci~~             | -       | -       |
+            | Medusa                | -       | -       |
+            | Meeepo                | &check; | &check; |
+            | Mirana                | -       | -       |
+            | Monkey King           | &cross; | -       |
+            | Morphling             | -       | &cross; |
+            | ~~Muerta~~            | -       | -       |
+            | Naga Siren            | -       | &check; |
+            | Nature's Prophet      | -       | &check; |
+            | Necrophos             | &check; | -       |
+            | Night Stalker         | &check; | -       |
+            | Nyx Assassin          | &check; | -       |
+            | Ogre Magi             | &check; | &check; |
+            | Omniknight            | -       | -       |
+            | Oracle                | &check; | -       |
+            | Outworld Destroyer    | -       | -       |
+            | Pangolier             | &check; | -       |
+            | Phantom Assasin       | &check; | -       |
+            | Phantom Lancer        | &check; | -       |
+            | Phoenix               | -       | -       |
+            | ~~Primal Beast~~      | -       | -       |
+            | Puck                  | -       | -       |
+            | Pugna                 | -       | -       |
+            | Pudge                 | -       | &cross; |
+            | Queen of Pain         | -       | -       |
+            | Razor                 | -       | -       |
+            | Riki                  | -       | -       |
+            | Rubick                | -       | -       |
+            | Sand King             | -       | -       |
+            | Shadow Demon          | &check; | -       |
+            | Shadow Fiend          | &cross; | -       |
+            | Shadow Shaman         | -       | -       |
+            | Silencer              | -       | -       |
+            | Skywrath Mage         | -       | -       |
+            | Slardar               | -       | -       |
+            | Slark                 | -       | -       |
+            | Snapfire              | -       | &cross; |
+            | Sniper                | -       | -       |
+            | Spectre               | -       | &check; |
+            | Spirit Breaker        | &check; | -       |
+            | Storm Sprit           | -       | -       |
+            | Sven                  | -       | &cross; |
+            | Techies               | -       | -       |
+            | Templar Assasin       | -       | &cross; |
+            | Terrorblade           | &check; | &check; |
+            | Tidehunter            | &check; | -       |
+            | Timbersaw             | &check; | &check; |
+            | Tinker                | &check; | -       |
+            | Tiny                  | -       | &check; |
+            | Treant                | -       | &check; |
+            | Troll Warlord         | -       | -       |
+            | Tusk                  | -       | &cross; |
+            | Underlord             | -       | -       |
+            | Undying               | &cross; | -       |
+            | Ursa                  | -       | -       |
+            | Vengeful Spirit       | -       | &check; |
+            | Venomancer            | &check; | -       |
+            | Viper                 | -       | &check; |
+            | Visage                | -       | &check; |
+            | Void Spirit           | -       | -       |
+            | Warlock               | -       | -       |
+            | Weaver                | -       | &check; |
+            | Windranger            | &check; | -       |
+            | Winter Wyvern         | -       | -       |
+            | Witch Doctor          | &check; | -       |
+            | Wraith King           | -       | -       |
+            | Zeus                  | &check; | &check; |
     - ***Improve***
         - [ ] Some heroes ability usage (too spammy, ends up not having enough mana)
         - [ ] Item usage
