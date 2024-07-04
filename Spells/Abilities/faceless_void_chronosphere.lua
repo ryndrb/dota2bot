@@ -19,6 +19,7 @@ end
 
 function X.Consider()
     if not Chronosphere:IsFullyCastable()
+    or bot:HasModifier('modifier_faceless_void_chronosphere_selfbuff')
 	then
 		return BOT_ACTION_DESIRE_NONE, 0
 	end
@@ -38,8 +39,9 @@ function X.Consider()
 
 	if J.IsInTeamFight(bot, 1200)
 	then
-		local nLocationAoE = bot:FindAoELocation(true, true, bot:GetLocation(), nCastRange, nRadius / 1.2, nCastPoint, 0)
-		local nInRangeEnemy = J.GetEnemiesNearLoc(nLocationAoE.targetloc, nRadius / 1.2)
+		local nLocationAoE = bot:FindAoELocation(true, true, bot:GetLocation(), nCastRange, nRadius, nCastPoint, 0)
+        local nInRangeAlly = J.GetAlliesNearLoc(nLocationAoE.targetloc, nRadius)
+		local nInRangeEnemy = J.GetEnemiesNearLoc(nLocationAoE.targetloc, nRadius)
 
 		if nInRangeEnemy ~= nil and #nInRangeEnemy >= 2
 		then
@@ -64,7 +66,7 @@ function X.Consider()
 
 			if targetHero ~= nil
 			then
-                local targetLoc = X.GetBestChrono(nAllyHeroes, nEnemyHeroes, nCastRange, nRadius)
+                local targetLoc = X.GetBestChrono(nInRangeAlly, nInRangeEnemy, nRadius, nLocationAoE.targetloc)
                 if targetLoc == 0 then targetLoc = nLocationAoE.targetloc end
                 bot:SetTarget(targetHero)
                 bot.ChronoTarget = targetHero
@@ -78,7 +80,7 @@ function X.Consider()
 	then
 		if  J.IsValidTarget(botTarget)
 		and J.CanCastOnMagicImmune(botTarget)
-		and J.IsInRange(bot, botTarget, nCastRange + nRadius)
+		and J.IsInRange(bot, botTarget, nCastRange)
 		and not botTarget:IsAttackImmune()
         and not J.IsHaveAegis(botTarget)
 		and not botTarget:HasModifier('modifier_abaddon_borrowed_time')
@@ -90,26 +92,35 @@ function X.Consider()
 			and #nAllyHeroes >= #nEnemyHeroes
 			and #nAllyHeroes <= 1 and #nEnemyHeroes <= 1
 			then
-				local loc = J.Site.GetXUnitsTowardsLocation(bot, botTarget:GetLocation(), nCastRange)
+				local loc = J.GetCorrectLoc(botTarget, nCastPoint)
 
 				if  J.CanKillTarget(botTarget, nAttackDamage * nAttackSpeed * nDuration, DAMAGE_TYPE_PHYSICAL)
 				and not J.IsLocationInChrono(loc)
 				and not J.IsLocationInBlackHole(loc)
 				and not J.IsLocationInArena(loc, nRadius)
 				then
+                    local nInRangeAlly = J.GetAlliesNearLoc(botTarget:GetLocation(), nRadius)
+                    local nInRangeEnemy = J.GetEnemiesNearLoc(botTarget:GetLocation(), nRadius)
+
 					if J.IsCore(botTarget)
 					then
-						bot:SetTarget(botTarget)
+                        local targetLoc = X.GetBestChrono(nInRangeAlly, nInRangeEnemy, nRadius, loc)
+
+                        if targetLoc == 0 then targetLoc = loc end
+                        bot:SetTarget(botTarget)
                         bot.ChronoTarget = botTarget
-						return BOT_ACTION_DESIRE_HIGH, loc
+                        return BOT_ACTION_DESIRE_HIGH, targetLoc
 					end
 
 					if  not J.IsCore(botTarget)
 					and nBotDeaths > nBotKills + 4
 					then
-						bot:SetTarget(botTarget)
+						local targetLoc = X.GetBestChrono(nInRangeAlly, nInRangeEnemy, nRadius, loc)
+
+                        if targetLoc == 0 then targetLoc = loc end
+                        bot:SetTarget(botTarget)
                         bot.ChronoTarget = botTarget
-						return BOT_ACTION_DESIRE_HIGH, loc
+                        return BOT_ACTION_DESIRE_HIGH, targetLoc
 					end
 				end
 			end
@@ -147,7 +158,7 @@ function X.Consider()
                         return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc
                     else
                         bot.ChronoTarget = nil
-                        return nEnemyHeroes[1]:GetLocation()
+                        return BOT_ACTION_DESIRE_HIGH, nEnemyHeroes[1]:GetLocation()
                     end
                 end
             end
@@ -157,42 +168,40 @@ function X.Consider()
 	return BOT_ACTION_DESIRE_NONE, 0
 end
 
-function X.GetBestChrono(hAllyList, hEnemyList, nCastRange, nRadius)
+function X.GetBestChrono(nInRangeAlly, nInRangeEnemy, nRadius, vCurrLoc)
     local vLoc = 0
-    local maxEnemies = 0
-    local minAllies = math.huge
 
-    for _, enemyHero in pairs(hEnemyList)
+    for _ = 1, 25
     do
-        local enemyLoc = J.GetCorrectLoc(enemyHero, 0.35)
+        local loc = J.GetRandomLocationWithinDist(vCurrLoc, 0, nRadius)
 
-        if GetUnitToUnitDistance(bot, enemyHero) <= nCastRange
-        then
-            local enemyCount = 0
-            local allyCount = 0
+        local enemyCount = 0
+        local allyCount = 0
 
-            for _, e in pairs(hEnemyList)
-            do
-                if GetUnitToLocationDistance(e, enemyLoc) <= nRadius
+        for _, enemyHero in pairs(nInRangeEnemy)
+        do
+            if J.IsValidHero(enemyHero)
+            then
+                if GetUnitToLocationDistance(enemyHero, loc) <= nRadius
                 then
                     enemyCount = enemyCount + 1
                 end
             end
+        end
 
-            for _, a in pairs(hAllyList)
-            do
-                if GetUnitToLocationDistance(a, enemyLoc) <= nRadius
-                then
-                    allyCount = allyCount + 1
-                end
-            end
-
-            if (enemyCount > maxEnemies) or (enemyCount == maxEnemies and allyCount < minAllies)
+        for _, allyHero in pairs(nInRangeAlly)
+        do
+            if J.IsValidHero(allyHero)
+            and not allyHero:IsIllusion()
+            and GetUnitToLocationDistance(allyHero, loc) <= nRadius
             then
-                vLoc = enemyLoc
-                maxEnemies = enemyCount
-                minAllies = allyCount
+                allyCount = allyCount + 1
             end
+        end
+
+        if enemyCount > allyCount
+        then
+            vLoc = loc
         end
     end
 

@@ -108,7 +108,7 @@ function X.Consider()
 
 	if J.IsFarming(bot)
 	then
-		local nCreeps = bot:GetNearbyCreeps(nCastRange + 150)
+		local nCreeps = bot:GetNearbyCreeps(nCastRange + 150, true)
         local targetCreep = J.GetMostHpUnit(nCreeps)
 
         if  J.IsValid(targetCreep)
