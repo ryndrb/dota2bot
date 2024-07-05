@@ -1948,11 +1948,11 @@ function TryPickupRefresherShard()
 			local refreshShard = nil
 			local nDroppedItem = GetDroppedItemList()
 
-			for _, item in pairs(nDroppedItem)
+			for _, drop in pairs(nDroppedItem)
 			do
-				if item.item:GetName() == 'item_refresher_shard'
+				if drop.item:GetName() == 'item_refresher_shard'
 				then
-					refreshShard = item.item
+					refreshShard = drop
 					break
 				end
 			end
@@ -1985,11 +1985,11 @@ function TryPickupCheese()
 			local cheese = nil
 			local nDroppedItem = GetDroppedItemList()
 
-			for _, item in pairs(nDroppedItem)
+			for _, drop in pairs(nDroppedItem)
 			do
-				if item.item:GetName() == 'item_cheese'
+				if drop.item:GetName() == 'item_cheese'
 				then
-					cheese = item.item
+					cheese = drop
 					break
 				end
 			end
@@ -2223,8 +2223,8 @@ function X.ConsiderHelpWhenCoreIsTargeted()
 	local botTarget = J.GetProperTarget(bot)
 
 	if  nClosestCore ~= nil
+	and (not J.IsCore(bot) or (J.IsCore(bot) and not J.IsInLaningPhase()))
 	and not (J.IsGoingOnSomeone(bot) and J.IsValidTarget(botTarget) and J.IsInRange(bot, botTarget, 1000))
-	and not J.IsCore(bot)
 	and not (J.IsRetreating(bot) and nModeDesire > 0.7)
 	then
 		local nInRangeAlly = J.GetAlliesNearLoc(nClosestCore:GetLocation(), nClosestCore:GetCurrentVisionRange())
@@ -2237,8 +2237,8 @@ function X.ConsiderHelpWhenCoreIsTargeted()
 			and nInRangeAlly ~= nil and nInRangeEnemy ~= nil
 			and (#nInRangeAlly + 1 >= #nInRangeEnemy)
 			then
-				if (enemyHero:GetTarget() == nClosestCore or enemyHero:GetAttackTarget() == nClosestCore)
-				or nClosestCore:WasRecentlyDamagedByHero(enemyHero, 1)
+				if (enemyHero:GetAttackTarget() == nClosestCore or J.IsChasingTarget(enemyHero, nClosestCore))
+				or nClosestCore:WasRecentlyDamagedByHero(enemyHero, 4)
 				then
 					return enemyHero, true
 				end
