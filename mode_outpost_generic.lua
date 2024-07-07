@@ -127,7 +127,7 @@ function GetDesire()
 		if  J.IsValidHero(bot.ShukuchiKillTarget)
 		and J.IsInLaningPhase()
 		then
-			local nInRangeTower = bot.ShukuchiKillTarget:GetNearbyTowers(700, false)
+			local nInRangeTower = bot.ShukuchiKillTarget:GetNearbyTowers(900, false)
 			if nInRangeTower ~= nil and #nInRangeTower == 0
 			then
 				return BOT_ACTION_DESIRE_ABSOLUTE

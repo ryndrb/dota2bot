@@ -31,7 +31,7 @@ local nAbilityPair = {
 }
 
 local function HasSpell(spellList, ability)
-    return spellList[ability] ~= nil and spellList[ability]
+    return spellList[ability] ~= nil
 end
 
 local function LoadAbility(ability)

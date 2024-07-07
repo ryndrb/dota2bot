@@ -111,10 +111,10 @@ function GetDesire()
 		return BOT_MODE_DESIRE_NONE
 	end
 
-	ShouldAttackSpecialUnit = CanAttackSpecialUnit()
+	ShouldAttackSpecialUnit, nDesire = CanAttackSpecialUnit()
 	if ShouldAttackSpecialUnit
 	then
-		return BOT_ACTION_DESIRE_VERYHIGH
+		return nDesire
 	end
 
 	-- Disperse from Lich, Jakiro Ultimate
@@ -1647,6 +1647,7 @@ function X.ShouldNotRetreat(bot)
 	or bot:HasModifier('modifier_skeleton_king_reincarnation_scepter_active')
 	or (bot:HasModifier('modifier_abaddon_borrowed_time') and J.WeAreStronger(bot, 1000))
 	or (bot:GetCurrentMovementSpeed() < 240 and not bot:HasModifier('modifier_arc_warden_spark_wraith_purge'))
+	or J.WeAreStronger(bot, 1200)
 	then
 		return true
 	end
@@ -1670,6 +1671,7 @@ function X.ShouldNotRetreat(bot)
 
 	local nInRangeAlly = J.GetAllyList(bot, 800)
     if nInRangeAlly ~= nil and #nInRangeAlly <= 1
+	or not J.WeAreStronger(bot, 1600)
 	then
 	    return false
 	end
@@ -1741,100 +1743,134 @@ function X.HasHumanAlly( bot )
 		
 end
 
+local SpecialUnits = {
+	['npc_dota_clinkz_skeleton_archer'] = 0.75,
+	['npc_dota_juggernaut_healing_ward'] = 0.9,
+	['npc_dota_invoker_forged_spirit'] = 0.9,
+	['npc_dota_grimstroke_ink_creature'] = 1,
+	['npc_dota_ignis_fatuus'] = 1,
+	['npc_dota_lone_druid_bear1'] = 0.9,
+	['npc_dota_lone_druid_bear2'] = 0.9,
+	['npc_dota_lone_druid_bear3'] = 0.9,
+	['npc_dota_lone_druid_bear4'] = 0.9,
+	['npc_dota_lycan_wolf_1'] = 0.75,
+	['npc_dota_lycan_wolf_2'] = 0.75,
+	['npc_dota_lycan_wolf_3'] = 0.75,
+	['npc_dota_lycan_wolf_4'] = 0.75,
+	['npc_dota_observer_wards'] = 1,
+	['npc_dota_phoenix_sun'] = 1,
+	['npc_dota_venomancer_plague_ward_1'] = 0.75,
+	['npc_dota_venomancer_plague_ward_2'] = 0.75,
+	['npc_dota_venomancer_plague_ward_3'] = 0.75,
+	['npc_dota_venomancer_plague_ward_4'] = 0.75,
+	['npc_dota_rattletrap_cog'] = 1,
+	['npc_dota_sentry_wards'] = 1,
+	['npc_dota_unit_tombstone1'] = 1,
+	['npc_dota_unit_tombstone2'] = 1,
+	['npc_dota_unit_tombstone3'] = 1,
+	['npc_dota_unit_tombstone4'] = 1,
+	['npc_dota_warlock_golem_1'] = 0.9,
+	['npc_dota_warlock_golem_2'] = 0.9,
+	['npc_dota_warlock_golem_3'] = 0.9,
+	['npc_dota_warlock_golem_scepter_1'] = 0.9,
+	['npc_dota_warlock_golem_scepter_2'] = 0.9,
+	['npc_dota_warlock_golem_scepter_3'] = 0.9,
+	['npc_dota_weaver_swarm'] = 0.9,
+	['npc_dota_zeus_cloud'] = 0.75,
+}
 function CanAttackSpecialUnit()
-	local nInRangeEnemy = J.GetEnemiesNearLoc(bot:GetLocation(), bot:GetCurrentVisionRange())
-	local nAttackRange = bot:GetAttackRange() + 200
-	local nUnits = GetUnitList(UNIT_LIST_ENEMIES)
+	local nInRangeAlly = J.GetAlliesNearLoc(bot:GetLocation(), 1600)
+	local nInRangeEnemy = J.GetEnemiesNearLoc(bot:GetLocation(), 1600)
+	local nAttackRange = bot:GetAttackRange() + 150
+	local nUnits = GetUnitList(UNIT_LIST_ALL)
+
+	local isClockwerkInTeam = false
+	local cogsCount1 = 0
+	local cogsCount2 = 0
+
+	for i = 1, 5
+	do
+		local allyHero = GetTeamMember(i)
+		if allyHero ~= nil and allyHero:GetUnitName() == 'npc_dota_hero_rattletrap'
+		then
+			isClockwerkInTeam = true
+			cogsCount1 = J.GetPowerCogsCountInLoc(bot:GetLocation(), 800)
+			cogsCount2 = J.GetPowerCogsCountInLoc(bot:GetLocation(), 255)
+			break
+		end
+	end
 
 	for _, unit in pairs(nUnits)
 	do
 		if J.IsValid(unit)
 		then
-			if string.find(unit:GetUnitName(), 'clinkz_skeleton_archer')
-			or string.find(unit:GetUnitName(), 'healing_ward')
-			or string.find(unit:GetUnitName(), 'forged_spirit')
-			or string.find(unit:GetUnitName(), 'grimstroke_ink_creature')
-			or string.find(unit:GetUnitName(), 'ignis_fatuus')
-			or string.find(unit:GetUnitName(), 'lone_druid_bear')
-			or string.find(unit:GetUnitName(), 'lycan_wolf')
-			or string.find(unit:GetUnitName(), 'observer_ward')
-			or string.find(unit:GetUnitName(), 'phoenix_sun')
-			or string.find(unit:GetUnitName(), 'plague_ward')
-			or string.find(unit:GetUnitName(), 'rattletrap_cog')
-			or string.find(unit:GetUnitName(), 'sentry_ward')
-			or string.find(unit:GetUnitName(), 'tombstone')
-			or string.find(unit:GetUnitName(), 'warlock_golem')
-			or string.find(unit:GetUnitName(), 'weaver_swarm')
-			or string.find(unit:GetUnitName(), 'zeus_cloud')
+			if SpecialUnits[unit:GetUnitName()] ~= nil
 			then
+				local nAttackUnitDesire = SpecialUnits[unit:GetUnitName()]
+
 				if unit:GetUnitName() == 'npc_dota_rattletrap_cog'
 				then
-					local cogsCount1 = J.GetPowerCogsCountInLoc(bot:GetLocation(), 800)
-					local cogsCount2 = J.GetPowerCogsCountInLoc(bot:GetLocation(), 255)
-					local isClockwerkInTeam = false
-					for i = 1, 5
-					do
-						local allyHero = GetTeamMember(i)
-						if  J.IsValidHero(allyHero)
-						and allyHero:GetUnitName() == 'npc_dota_hero_rattletrap'
+					if #nInRangeEnemy >= 1
+					then
+						local nInRangeEnemy2 = J.GetEnemiesNearLoc(bot:GetLocation(), 777)
+
+						-- Is stuck inside?
+						if cogsCount1 == 8 and cogsCount2 >= 4
 						then
-							isClockwerkInTeam = true
-							break
+							if #nInRangeEnemy2 == 0
+							or (J.IsRetreating(bot) and #nInRangeEnemy2 >= 1)
+							then
+								SpecialUnitTarget = unit
+								return true, nAttackUnitDesire
+							end
 						end
 					end
 
-					if nInRangeEnemy ~= nil
+					if #nInRangeEnemy == 0
 					then
-						if #nInRangeEnemy >= 1
+						if cogsCount1 == 8 and cogsCount2 >= 4
 						then
-							local nInRangeEnemy2 = J.GetEnemiesNearLoc(bot:GetLocation(), 255)
-
-							-- Is stuck inside?
-							if cogsCount1 == 8 and cogsCount2 >= 4
+							if isClockwerkInTeam
 							then
-								if nInRangeEnemy2 ~= nil
-								then
-									if #nInRangeEnemy2 == 0
-									or (J.IsRetreating(bot) and #nInRangeEnemy2 >= 1)
-									then
-										SpecialUnitTarget = unit
-										return true
-									end
-								end
+								SpecialUnitTarget = unit
+								return true, nAttackUnitDesire
 							end
-						end
-
-						if #nInRangeEnemy == 0
-						then
-							if cogsCount1 == 8 and cogsCount2 >= 4
+						else
+							if not isClockwerkInTeam
 							then
-								if isClockwerkInTeam
-								then
-									SpecialUnitTarget = unit
-									return true
-								end
-							else
-								if not isClockwerkInTeam
-								then
-									SpecialUnitTarget = unit
-									return true
-								end
+								SpecialUnitTarget = unit
+								return true, nAttackUnitDesire
 							end
 						end
 					end
 				end
 
-				if  GetUnitToUnitDistance(bot, unit) <= nAttackRange
+				if bot:GetTeam() ~= unit:GetTeam()
+				and GetUnitToUnitDistance(bot, unit) <= nAttackRange
 				and J.CanBeAttacked(unit)
 				then
 					SpecialUnitTarget = unit
-					return true
+
+					if nAttackUnitDesire <= 0.75
+					then
+						if #nInRangeAlly >= #nInRangeEnemy or J.WeAreStronger(bot, 1600)
+						then
+							return true, nAttackUnitDesire
+						end
+					else
+						if #nInRangeAlly >= #nInRangeEnemy or J.WeAreStronger(bot, 1600)
+						then
+							nAttackUnitDesire = Clamp(nAttackUnitDesire + 0.1, 0, 1)
+						end						
+						
+						return true, nAttackUnitDesire
+					end
 				end
 			end
 		end
 	end
 
-	return false
+	return false, 0
 end
 
 function X.ConsiderHarassInLaningPhase()

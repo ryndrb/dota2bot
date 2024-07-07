@@ -130,11 +130,13 @@ To anyone who've found this or is using it, if you have any feedback in improvin
         - More Rubick Spell Steal support
     - ***Bugged (Internal; won't be selected)***
         - Dark Willow
-            - Passive.
+            - Hardly enters Attack mode (Valve default).
+            - ^ Does enter since she uses spells, but won't engage/attack. Just always keeping distance.
         - Elder Titan
             - Does not listen to lane assignments. Forces Mid.
         - Hoodwink
             - Hardly enters Attack mode (Valve default).
+            - ^ Does enter since she uses spells, but won't engage/attack. Just always keeping distance.
         - IO
             - Passive.
         - Lone Druid
@@ -143,6 +145,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
             - Passive.
         - Muerta
             - Passive.
+            - Passable with generic laning Think(). Will add later as she can actually engage (Attack Mode) and attack enemies.
         - Primal Beast
             - Passive.
 
@@ -306,9 +309,12 @@ To anyone who've found this or is using it, if you have any feedback in improvin
         - [ ] Item usage
             - [x] Neutral Items
             - [ ] Consider spell effects from heroes (ie. NPs Sprout, Troll Ult (<- OP with BFury), etc.)
-        - [ ] Re(factor/write) old code for consistency
+                - Sprout got changed 7.36+. No modifiers now.
         - [ ] Blinking (especially by range heroes)
-        - [ ] More skill checks (eg. stuns, projectiles, etc)
+        - [ ] More skill checks
+            - [ ] Stuns/Projectiles
+            - [ ] DoT modifiers
         - [x] Early added heroes to follow current standard
         - [ ] Clean up redundant function calls (ie. illusion checks etc. <- are already called prior, unit retrieval, etc,.)
+            - Issues #42
     
