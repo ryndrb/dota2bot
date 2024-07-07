@@ -49,6 +49,9 @@ local TormentorLocation
 function GetDesire()
 	TormentorLocation = J.GetTormentorLocation(GetTeam())
 
+	bot.laneToPush = J.GetMostPushLaneDesire()
+	bot.laneToDefend = J.GetMostDefendLaneDesire()
+
 	if not beInitDone
 	then
 		beInitDone = true

@@ -1,5 +1,17 @@
 local X = {}
 
+-- local nAbilityPair = {
+--     ['Q'] = abilities[1],
+--     ['W'] = abilities[2],
+--     ['E'] = abilities[3],
+--     ['D'] = abilities[4],
+--     ['F'] = abilities[5],
+--     ['R'] = abilities[6],
+--     ['H1'] = abilities[7],
+--     ['H2'] = abilities[8],
+--     ['H3'] = abilities[9],
+-- }
+
 X['spell_order'] = {
     ['npc_dota_hero_abaddon'] = {'W','Q'},
     ['npc_dota_hero_abyssal_underlord'] = {'W','Q','R'},
@@ -38,10 +50,10 @@ X['spell_order'] = {
     ['npc_dota_hero_enigma'] = {'Combo','E','R','Q','W'},
     ['npc_dota_hero_faceless_void'] = {'D','Q','W','R'},
     ['npc_dota_hero_furion'] = {'Combo','W','Q','E','D','R'},
-    -- ['npc_dota_hero_grimstroke'] = {},
-    -- ['npc_dota_hero_gyrocopter'] = {},
+    ['npc_dota_hero_grimstroke'] = {'E','F','R','W','Q','D'},
+    ['npc_dota_hero_gyrocopter'] = {'W','E','R','Q'},
     -- ['npc_dota_hero_hoodwink'] = {},
-    -- ['npc_dota_hero_huskar'] = {},
+    ['npc_dota_hero_huskar'] = {'Combo','Q','R','W'},
     -- ['npc_dota_hero_invoker'] = {},
     -- ['npc_dota_hero_jakiro'] = {},
     -- ['npc_dota_hero_juggernaut'] = {},

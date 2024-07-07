@@ -183,6 +183,22 @@ X['spells'] = {
     ['furion_force_of_nature'] = true,
     ['furion_curse_of_the_forest'] = true,
     ['furion_wrath_of_nature'] = true,
+
+    --[[1]] ['grimstroke_dark_artistry'] = true,
+    --[[2]] ['grimstroke_ink_creature'] = true,
+    --[[3]] ['grimstroke_spirit_walk'] = true,
+    --[[4]] ['grimstroke_dark_portrait'] = true,
+    --[[5]] ['grimstroke_return'] = true,
+    --[[6]] ['grimstroke_soul_chain'] = true,
+
+    --[[1]] ['gyrocopter_rocket_barrage'] = true,
+    --[[2]] ['gyrocopter_homing_missile'] = true,
+    --[[3]] ['gyrocopter_flak_cannon'] = true,
+    --[[6]] ['gyrocopter_call_down'] = true,
+
+    --[[1]] ['huskar_inner_fire'] = true,
+    --[[2]] ['huskar_burning_spear'] = true,
+    --[[6]] ['huskar_life_break'] = true,
 }
 
 return X

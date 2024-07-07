@@ -184,6 +184,22 @@ function X.GetSpellReplaceWeight(ability)
         ['furion_curse_of_the_forest'] = 0.3,
         ['furion_wrath_of_nature'] = 0.7,
 
+        ['grimstroke_dark_artistry'] = 0.5,
+        ['grimstroke_ink_creature'] = 0.3,
+        ['grimstroke_spirit_walk'] = 0.5,
+        ['grimstroke_return'] = 1,
+        ['grimstroke_dark_portrait'] = 0.2,
+        ['grimstroke_soul_chain'] = 0.2,
+
+        ['gyrocopter_rocket_barrage'] = 0.8,
+        ['gyrocopter_homing_missile'] = 0.3,
+        ['gyrocopter_flak_cannon'] = 0.9,
+        ['gyrocopter_call_down'] = 0.6,
+
+        ['huskar_inner_fire'] = 0.5,
+        ['huskar_burning_spear'] = 1,
+        ['huskar_life_break'] = 1,
+
         ['rubick_empty1'] = 1,
         ['rubick_empty2'] = 1,
     }

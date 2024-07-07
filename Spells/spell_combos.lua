@@ -703,6 +703,54 @@ X.Combos['npc_dota_hero_furion'] = function ()
     end
 end
 
+X.Combos['npc_dota_hero_huskar'] = function ()
+    local abilityH = J.IsItemAvailable( "item_hurricane_pike" )
+    local abilityW = bot:GetAbilityByName('huskar_burning_spear')
+
+    local botTarget = J.GetProperTarget(bot)
+
+    -- Hurricane Pike -> Burning Spear
+    local function ConsiderHW()
+        if abilityH == nil
+            or not abilityH:IsFullyCastable()
+            or not abilityW:IsFullyCastable()
+            or bot:IsDisarmed()
+        then
+            return BOT_ACTION_DESIRE_NONE
+        end
+
+        local nCastRange = 450
+
+        if J.IsGoingOnSomeone( bot )
+        then
+            if J.IsValidHero( botTarget )
+                and J.IsInRange( bot, botTarget, nCastRange )
+                and J.CanCastOnNonMagicImmune( botTarget )
+                and J.GetHP( botTarget ) > 0.25
+                and not botTarget:IsAttackImmune()
+            then
+                return BOT_ACTION_DESIRE_HIGH, botTarget
+            end
+        end
+
+        return BOT_ACTION_DESIRE_NONE
+    end
+
+    CastHWDesire, CastHWTarget = ConsiderHW()
+	if ( CastHWDesire > 0 )
+	then
+		bot:Action_ClearActions( true )
+
+		bot:ActionQueue_UseAbilityOnEntity( abilityH, CastHWTarget )
+		bot:ActionQueue_UseAbilityOnEntity( abilityW, CastHWTarget )
+		bot:ActionQueue_UseAbilityOnEntity( abilityW, CastHWTarget )
+		bot:ActionQueue_UseAbilityOnEntity( abilityW, CastHWTarget )
+		bot:ActionQueue_UseAbilityOnEntity( abilityW, CastHWTarget )
+		bot:SetTarget( CastHWTarget )
+		return
+	end
+end
+
 function X.CanBlink()
     local blink = nil
 
