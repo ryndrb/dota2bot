@@ -76,6 +76,7 @@ X['spell_order'] = {
     -- ['npc_dota_hero_mirana'] = {},
     -- ['npc_dota_hero_morphling'] = {},
     -- ['npc_dota_hero_monkey_king'] = {},
+    ['npc_dota_hero_muerta'] = {'R','D','W','Q','E'},
     -- ['npc_dota_hero_naga_siren'] = {},
     -- ['npc_dota_hero_necrolyte'] = {},
     -- ['npc_dota_hero_nevermore'] = {},

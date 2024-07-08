@@ -2187,6 +2187,11 @@ function X.ConsiderDispersingFromSpells()
 end
 
 function X.ConsiderRetreatWhenTowerTargeted()
+	if DotaTime() > 10 * 60
+	then
+		return false
+	end
+
 	local nInRangeTowers = bot:GetNearbyTowers(1000, true)
 	if  nInRangeTowers ~= nil and #nInRangeTowers >= 1
 	and DotaTime() > RetreatWhenTowerTargetedTime + 3.5

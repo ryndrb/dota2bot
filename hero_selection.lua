@@ -88,7 +88,7 @@ local sHeroList = {										-- pos  1, 2, 3, 4, 5
 	{name = 'npc_dota_hero_mirana', 					role = {0, 0, 0, 40, 60}},
 	{name = 'npc_dota_hero_monkey_king', 				role = {70, 30, 0, 0, 0}},
 	{name = 'npc_dota_hero_morphling', 					role = {95, 5, 0, 0, 0}},
-	{name = 'npc_dota_hero_muerta', 				    role = {0, 0, 0, 0, 0}},--nil
+	{name = 'npc_dota_hero_muerta', 				    role = {100, 0, 0, 0, 0}},
 	{name = 'npc_dota_hero_naga_siren', 				role = {100, 0, 0, 0, 0}},
 	{name = 'npc_dota_hero_necrolyte', 					role = {0, 70, 30, 0, 0}},
 	{name = 'npc_dota_hero_nevermore', 					role = {35, 65, 0, 0, 0}},

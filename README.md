@@ -91,7 +91,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
         - [1,2] Meepo
         - [1,2] Monkey King
         - [1,2] Morphling
-        - ~~[1] Muerta~~
+        - [1] Muerta
         - [1,3,4,5] Nature's Prophet
         - [3] Night Stalker
         - [4,5] Nyx Assassin
@@ -128,7 +128,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
     - ***Later***
         - Morphling Ult
         - More Rubick Spell Steal support
-    - ***Bugged (Internal; won't be selected)***
+    - ***Bugged (Internal; some will be selected)***
         - Dark Willow
             - Hardly enters Attack mode (Valve default).
             - ^ Does enter since she uses spells, but won't engage/attack. Just always keeping distance.
@@ -143,9 +143,9 @@ To anyone who've found this or is using it, if you have any feedback in improvin
             - The Bear is considered a "hero", and not a unit like Visage's Familiars, etc,. Uncontrollable.
         - Marci
             - Passive.
-        - Muerta
-            - Passive.
-            - Passable with generic laning Think(). Will add later as she can actually engage (Attack Mode) and attack enemies.
+        - ~~Muerta~~
+            - ~~Passive.~~
+            - ~~Passable with generic laning Think(). Will add later as she can actually engage (Attack Mode) and attack enemies.~~
         - Primal Beast
             - Passive.
 
@@ -243,7 +243,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
             | Mirana                | -       | -       |
             | Monkey King           | &cross; | -       |
             | Morphling             | -       | &cross; |
-            | ~~Muerta~~            | -       | -       |
+            | Muerta                | -       | &check; |
             | Naga Siren            | -       | &check; |
             | Nature's Prophet      | -       | &check; |
             | Necrophos             | &check; | -       |

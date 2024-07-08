@@ -3881,14 +3881,17 @@ function J.IsNotSelf(bot, ally)
 end
 
 function J.IsThereCoreNearby(nRadius)
-    local nAllyHeroes = GetBot():GetNearbyHeroes(nRadius, false, BOT_MODE_NONE)
-
-    for _, ally in pairs(nAllyHeroes) do
-        if J.IsCore(ally)
-        then
-            return true
-        end
-    end
+	for i = 1, 5
+	do
+		local allyHero = GetTeamMember(i)
+		if allyHero ~= nil
+		and allyHero ~= GetBot()
+		and J.IsCore(allyHero)
+		and J.IsInRange(GetBot(), allyHero, nRadius)
+		then
+			return true
+		end
+	end
 
     return false
 end

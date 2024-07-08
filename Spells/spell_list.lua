@@ -201,6 +201,14 @@ X['spells'] = {
     --[[2]] ['huskar_burning_spear'] = {weight = 1},
     --[[6]] ['huskar_life_break'] = {weight = 1},
 
+
+
+    --[[1]] ['muerta_dead_shot'] = {weight = 0.8},
+    --[[2]] ['muerta_the_calling'] = {weight = 0.5},
+    --[[3]] ['muerta_gunslinger'] = {weight = 1},
+    --[[4]] ['muerta_parting_shot'] = {weight = 0.5},
+    --[[6]] ['muerta_pierce_the_veil'] = {weight = 0.9},
+
     --[[4]] ['rubick_empty1'] = {weight = 1},
     --[[5]] ['rubick_empty2'] = {weight = 1},
 }

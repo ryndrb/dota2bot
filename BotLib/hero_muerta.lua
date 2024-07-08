@@ -8,14 +8,14 @@ local sAbilityList = J.Skill.GetAbilityList( bot )
 local sRole = J.Item.GetRoleItemsBuyList( bot )
 
 local tTalentTreeList = {
-                        ['t25'] = {10, 0},
+                        ['t25'] = {0, 10},
                         ['t20'] = {10, 0},
-                        ['t15'] = {0, 10},
+                        ['t15'] = {10, 0},
                         ['t10'] = {10, 0},
 }
 
 local tAllAbilityBuildList = {
-						{},--pos1
+                        {1,2,1,3,1,6,1,3,3,3,6,2,2,2,6},--pos1
 }
 
 local nAbilityBuildList = J.Skill.GetRandomBuild( tAllAbilityBuildList )
@@ -25,7 +25,27 @@ local nTalentBuildList = J.Skill.GetTalentBuild( tTalentTreeList )
 local sRoleItemsBuyList = {}
 
 sRoleItemsBuyList['pos_1'] = {
+    "item_tango",
+    "item_double_branches",
+    "item_magic_stick",
+    "item_circlet",
 
+    "item_magic_wand",
+    "item_null_talisman",
+    "item_power_treads",
+    "item_maelstrom",
+    "item_dragon_lance",
+    "item_gungir",--
+    "item_black_king_bar",--
+    "item_hurricane_pike",--
+    "item_lesser_crit",
+    "item_aghanims_shard",
+    "item_greater_crit",--
+    "item_satanic",--
+    "item_travel_boots",
+    "item_moon_shard",
+    "item_travel_boots_2",--
+    "item_ultimate_scepter_2",
 }
 
 sRoleItemsBuyList['pos_2'] = sRoleItemsBuyList['pos_1']
@@ -39,7 +59,8 @@ sRoleItemsBuyList['pos_5'] = sRoleItemsBuyList['pos_1']
 X['sBuyList'] = sRoleItemsBuyList[sRole]
 
 X['sSellList'] = {
-
+    "item_magic_wand",
+    "item_null_talisman",
 }
 
 if J.Role.IsPvNMode() or J.Role.IsAllShadow() then X['sBuyList'], X['sSellList'] = { 'PvN_mid' }, {} end
@@ -53,23 +74,6 @@ X['bDeafaultItem'] = false
 
 function X.MinionThink(hMinionUnit)
     Minion.MinionThink(hMinionUnit)
-end
-
-local Deadshot      = bot:GetAbilityByName('muerta_dead_shot')
-local TheCalling    = bot:GetAbilityByName('muerta_the_calling')
-local Gunslinger    = bot:GetAbilityByName('muerta_gunslinger')
-local PartingShot   = bot:GetAbilityByName('muerta_parting_shot')
-local PierceTheVeil = bot:GetAbilityByName('muerta_pierce_the_veil')
-
-local DeadshotDesire, DeadshotTarget
-local TheCallingDesire, TheCallingLocation
-local GunslingerDesire
-local PartingShotDesire, PartingShotTarget
-local PierceTheVeilDesire
-
-function X.SkillsComplement()
-    if J.CanNotUseAbility(bot) then return end
-    -- print(J.ConsolePrintActiveMode(bot))
 end
 
 return X
