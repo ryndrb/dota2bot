@@ -1594,6 +1594,33 @@ local Heroes = {
         },
     },
 
+    ['npc_dota_hero_muerta'] = {
+        ['synergy'] = {
+            'npc_dota_hero_puck',
+            'npc_dota_hero_tidehunter',
+            'npc_dota_hero_necrolyte',
+            'npc_dota_hero_tusk',
+            'npc_dota_hero_marci',
+            'npc_dota_hero_grimstroke',
+            'npc_dota_hero_death_prophet',
+            'npc_dota_hero_phoenix',
+            'npc_dota_hero_visage',
+            'npc_dota_hero_slark',
+        },
+        ['counter'] = {
+            'npc_dota_hero_kunkka',
+            'npc_dota_hero_enchantress',
+            'npc_dota_hero_keeper_of_the_light',
+            'npc_dota_hero_tinker',
+            'npc_dota_hero_medusa',
+            'npc_dota_hero_lina',
+            'npc_dota_hero_void_spirit',
+            'npc_dota_hero_spectre',
+            'npc_dota_hero_naga_siren',
+            'npc_dota_hero_skywrath_mage',
+        },
+    },
+
     ['npc_dota_hero_naga_siren'] = {
         ['synergy'] = {
             'npc_dota_hero_nyx_assassin',
