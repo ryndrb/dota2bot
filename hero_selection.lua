@@ -20,6 +20,7 @@ end
 
 local MU   = require( GetScriptDirectory()..'/FunLib/aba_matchups' )
 local U    = require( GetScriptDirectory()..'/FunLib/lua_util' )
+local N    = require( GetScriptDirectory()..'/FunLib/bot_names' )
 local Role = require( GetScriptDirectory()..'/FunLib/aba_role' )
 local Chat = require( GetScriptDirectory()..'/FunLib/aba_chat' )
 local HeroSet = {}
@@ -366,177 +367,6 @@ function X.IsBanByChat( sHero )
 	return false
 end
 
-local TIWinners =
-{
-	-- Winners
-	{--ti1
-		"Na'Vi.Dendi",
-		"Na'Vi.XBOCT",
-		"Na'Vi.Artsyle",
-		"Na'Vi.LighTofHeaveN",
-		"Na'Vi.Puppey",
-	},
-	{--ti2
-		"iG.Ferrari_430",
-		"iG.YYF",
-		"iG.Zhou",
-		"iG.Faith",
-		"iG.ChuaN",
-	},
-	{--ti3
-		"Alliance.s4",
-		"Alliance.AdmiralBulldog",
-		"Alliance.Loda",
-		"Alliance.Akke",
-		"Alliance.EGM",
-	},
-	{--ti4
-		"Newbee.Mu",
-		"Newbee.xiao8",
-		"Newbee.Hao",
-		"Newbee.SanSheng",
-		"Newbee.Banana",
-	},
-	{--ti5
-		"EG.SumaiL",
-		"EG.UNiVeRsE",
-		"EG.Fear",
-		"EG.ppd",
-		"EG.Aui_2000",
-	},
-	{--ti6
-		"Wings.bLink",
-		"Wings.Faith_bian",
-		"Wings.shadow",
-		"Wings.iceice",
-		"Wings.y`",
-	},
-	{--ti7
-		"Liquid.Miracle-",
-		"Liquid.MinD_ContRoL",
-		"Liquid.MATUMBAMAN",
-		"Liquid.KurokY",
-		"Liquid.Gh",
-	},
-	{--ti8,9
-		"OG.Topson",
-		"OG.Ceb",
-		"OG.ana",
-		"OG.N0tail",
-		"OG.JerAx",
-	},
-	{--ti10
-		"TSpirit.TORONTOTOKYO",
-		"TSpirit.Collapse",
-		"TSpirit.Yatoro",
-		"TSpirit.Miposhka",
-		"TSpirit.Mira",
-	},
-	{--ti11
-		"Tundra.Nine",
-		"Tundra.33",
-		"Tundra.skiter",
-		"Tundra.Sneyking",
-		"Tundra.Saksa",
-	},
-	{--ti12
-		"TSpirit.Larl",
-		"TSpirit.Collapse",
-		"TSpirit.Yatoro雨",
-		"TSpirit.Miposhka",
-		"TSpirit.Mira",
-	},
-}
-
-local TIRunnerUps =
-{
--- Runner-Ups
-	{--ti1
-		"EHOME.QQQ",
-		"EHOME.X!!",
-		"EHOME.820",
-		"EHOME.SJQ",
-		"EHOME.LaNm",
-	},
-	{--ti2
-		"Na'Vi.Dendi",
-		"Na'Vi.LighTofHeaveN",
-		"Na'Vi.XBOCT",
-		"Na'Vi.ARS-ART",
-		"Na'Vi.Puppey",
-	},
-	{--ti3
-		"Na'Vi.Dendi",
-		"Na'Vi.Funn1k",
-		"Na'Vi.XBOCT",
-		"Na'Vi.KuroKy",
-		"Na'Vi.Puppey",
-	},
-	{--ti4
-		"VG.Super",
-		"VG.rOtk",
-		"VG.Sylar",
-		"VG.fy",
-		"VG.Fenrir",
-	},
-	{--ti5
-		"CDEC.Shiki",
-		"CDEC.Xz",
-		"CDEC.Agressif",
-		"CDEC.Q",
-		"CDEC.Garder",
-	},
-	{--ti6
-		"DC.w33",
-		"DC.Moo",
-		"DC.Resolut1on",
-		"DC.MiSeRy",
-		"DC.Saksa",
-	},
-	{--ti7
-		"Newbee.Sccc",
-		"Newbee.kpii",
-		"Newbee.Moogy",
-		"Newbee.Faith",
-		"Newbee.Kaka",
-	},
-	{--ti8
-		"PSG.LGD.Somnus` M",
-		"PSG.LGD.Chalice",
-		"PSG.LGD.Ame",
-		"PSG.LGD.xNova",
-		"PSG.LGD.fy",
-	},
-	{--ti9
-		"Liquid.w33",
-		"Liquid.MinD_ContRoL",
-		"Liquid.Miracle-",
-		"Liquid.KuroKy",
-		"Liquid.Gh",
-	},
-	{--ti10
-		"PSG.LGD.NothingToSay",
-		"PSG.LGD.Faith_bian",
-		"PSG.LGD.Ame",
-		"PSG.LGD.y`",
-		"PSG.LGD.XinQ",
-	},
-	{--ti11
-		"Secret.Nisha",
-		"Secret.Resolut1on",
-		"Secret.Crystallis",
-		"Secret.Puppey",
-		"Secret.Zayac",
-	},
-	{--ti12
-		"GG.Quinn",
-		"GG.Ace",
-		"GG.dyrachyo",
-		"GG.Seleri",
-		"GG.tOfu",
-	},
-}
-
 function X.GetRandomNameList( sStarList )
 	local sNameList = {sStarList[1]}
 	table.remove( sStarList, 1 )
@@ -790,7 +620,7 @@ function X.GetCurrentTeam(nTeam)
 end
 
 function GetBotNames()
-	return GetTeam() == TEAM_RADIANT and TIWinners[RandomInt(1, #TIWinners)] or TIRunnerUps[RandomInt(1, #TIRunnerUps)]
+	return N.GetBotNames()
 end
 
 local bPvNLaneAssignDone = false

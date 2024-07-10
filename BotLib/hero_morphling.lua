@@ -595,7 +595,6 @@ function X.ConsiderAtttributeShift()
     then
         if  nAGIRatio < 0.85
         and J.GetHP(bot) > 0.5
-        and J.IsAttacking(bot)
         then
             if AttributeShiftAGI:GetToggleState() == false
             then
@@ -673,7 +672,6 @@ function X.ConsiderAtttributeShift()
         local nRatio = RemapValClamped(bot:GetHealth(), bot:GetMaxHealth() * 0.5, bot:GetMaxHealth(), 0.5, 0.88)
         if  nAGIRatio < nRatio
         and J.GetHP(bot) > 0.45
-        and J.IsAttacking(bot)
         then
             if AttributeShiftAGI:GetToggleState() == false
             then
@@ -713,8 +711,7 @@ function X.ConsiderAtttributeShift()
         if  (J.IsRoshan(botTarget) or J.IsTormentor(botTarget))
         and J.IsInRange(bot, botTarget, 1000)
         then
-            if  J.GetHP(bot) > 0.5
-            and J.IsAttacking(bot)
+            if J.GetHP(bot) > 0.5
             then
                 if AttributeShiftAGI:GetToggleState() == false
                 then

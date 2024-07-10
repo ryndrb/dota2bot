@@ -42,6 +42,7 @@ function GetDesire()
 	or J.IsPushing(bot)
 	or J.IsDefending(bot)
 	or J.IsDoingRoshan(bot))
+	or nModeDesire <= 0.2
 	then
 		return BOT_ACTION_DESIRE_NONE
 	end

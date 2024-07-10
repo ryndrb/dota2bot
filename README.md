@@ -49,7 +49,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
 
 # Tinkering ABo(u)t (ryndrb)
 - ***Heroes (Pos: 1,2,3,4,5)***
-    - <ins>Heroes Implemented Count:</ins> **116** / 124
+    - <ins>Heroes Implemented Count:</ins> **117** / 124
     - Supports that does damage, CC, or is Ranged are somewhat 'better' for the most part in bot games compared to Melee or non-. (Since positioning and movement are Valve default.)
     - ^. AoE spells are just too good.
     - ***Added***
