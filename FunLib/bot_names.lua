@@ -47,8 +47,8 @@ local tProTeams = {
         }
     },
     [4] = {
-        ['team_org'] = 'Betboom Team',
-        ['alias'] = 'BB',
+        ['team_org'] = 'BetBoom Team',
+        ['alias'] = 'BetBoom',
         ['rosters'] = {
             [1] = {"Nightfall", "gpk", "Pure", "Save-", "TORONTOTOKYO"},
             [2] = {"Nightfall", "gpk", "MeiRo`", "Save-", "TORONTOTOKYO"},
@@ -250,7 +250,7 @@ local tProTeams = {
     },
     [37] = {
         ['team_org'] = 'Team Falcons',
-        ['alias'] = 'Falcons',
+        ['alias'] = 'FLCN',
         ['rosters'] = {
             [1] = {"skiter", "Malr1ne", "AMMAR_THE_F", "Cr1t-", "Sneyking"},
         }
