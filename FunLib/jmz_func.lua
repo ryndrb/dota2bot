@@ -4259,23 +4259,13 @@ function J.IsDoingTormentor(bot)
 end
 
 function J.IsLocationInChrono(loc)
-	for _, enemyHero in pairs(GetUnitList(UNIT_LIST_ENEMY_HEROES))
-	do
-		if  J.IsValidHero(enemyHero)
-		and not J.IsSuspiciousIllusion(enemyHero)
-		and GetUnitToLocationDistance(enemyHero, loc) < 300
-		and enemyHero:HasModifier('modifier_faceless_void_chronosphere_freeze')
-		then
-			return true
-		end
-	end
+	local nRadius = 500
 
-	for _, allyHero in pairs(GetUnitList(UNIT_LIST_ALLIED_HEROES))
+	for _, unit in pairs(GetUnitList(UNIT_LIST_ALL))
 	do
-		if  J.IsValidHero(allyHero)
-		and not allyHero:IsIllusion()
-		and GetUnitToLocationDistance(allyHero, loc) < 300
-		and (allyHero:HasModifier('modifier_faceless_void_chronosphere_freeze'))
+		if J.IsValid(unit)
+		and GetUnitToLocationDistance(unit, loc) <= nRadius
+		and unit:HasModifier('modifier_faceless_void_chronosphere_freeze')
 		then
 			return true
 		end
@@ -4285,13 +4275,13 @@ function J.IsLocationInChrono(loc)
 end
 
 function J.IsLocationInBlackHole(loc)
-	for _, enemyHero in pairs(GetUnitList(UNIT_LIST_ENEMY_HEROES))
+	local nRadius = 500
+
+	for _, unit in pairs(GetUnitList(UNIT_LIST_ALL))
 	do
-		if  J.IsValidHero(enemyHero)
-		and not J.IsSuspiciousIllusion(enemyHero)
-		and GetUnitToLocationDistance(enemyHero, loc) < 300
-		and (enemyHero:HasModifier('modifier_enigma_black_hole_pull')
-			or enemyHero:HasModifier('modifier_enigma_black_hole_pull_scepter'))
+		if J.IsValid(unit)
+		and GetUnitToLocationDistance(unit, loc) <= nRadius
+		and (unit:HasModifier('modifier_enigma_black_hole_pull') or unit:HasModifier('modifier_enigma_black_hole_pull_scepter'))
 		then
 			return true
 		end
@@ -4300,25 +4290,12 @@ function J.IsLocationInBlackHole(loc)
 	return false
 end
 
-function J.IsLocationInArena(loc, radius)
-	for _, enemyHero in pairs(GetUnitList(UNIT_LIST_ENEMY_HEROES))
+function J.IsLocationInArena(loc, nRadius)
+	for _, unit in pairs(GetUnitList(UNIT_LIST_ALL))
 	do
-		if  J.IsValidHero(enemyHero)
-		and not J.IsSuspiciousIllusion(enemyHero)
-		and GetUnitToLocationDistance(enemyHero, loc) < radius
-		and (enemyHero:HasModifier('modifier_mars_arena_of_blood_leash')
-			or enemyHero:HasModifier('modifier_mars_arena_of_blood_animation'))
-		then
-			return true
-		end
-	end
-
-	for _, allyHero in pairs(GetUnitList(UNIT_LIST_ALLIED_HEROES))
-	do
-		if  J.IsValidHero(allyHero)
-		and not allyHero:IsIllusion()
-		and GetUnitToLocationDistance(allyHero, loc) < radius
-		and (allyHero:HasModifier('modifier_mars_arena_of_blood_animation'))
+		if J.IsValid(unit)
+		and GetUnitToLocationDistance(unit, loc) <= nRadius
+		and (unit:HasModifier('modifier_mars_arena_of_blood_leash') or unit:HasModifier('modifier_mars_arena_of_blood_animation'))
 		then
 			return true
 		end

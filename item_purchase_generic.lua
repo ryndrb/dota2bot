@@ -704,7 +704,16 @@ function ItemPurchaseThink()
 		end
 	end
 
-
+	if bot:GetLevel() >= 6
+	then
+		if botGold >= GetItemCost( "item_tpscroll" )
+		and bot:IsAlive()
+		and Item.GetItemCharges( bot, 'item_tpscroll' ) <= 1
+		then
+			bot:ActionImmediate_PurchaseItem( "item_tpscroll" )
+			return
+		end
+	end
 
 	if currentTime > 4 * 60
 		and buyTP == false
