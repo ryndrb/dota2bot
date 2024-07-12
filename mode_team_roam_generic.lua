@@ -1912,6 +1912,7 @@ function X.ConsiderHarassInLaningPhase()
 			and not J.IsRetreating(bot)
 			and nInRangeAlly ~= nil and nInRangeEnemy ~= nil
 			and #nInRangeAlly >= #nInRangeEnemy
+			and nInRangeEnemy[1]:GetLevel() < 6
 			then
 				local nInRangeTower = bot:GetNearbyTowers(1600, true)
 
@@ -1927,7 +1928,7 @@ function X.ConsiderHarassInLaningPhase()
 
 					if (J.IsHumanPlayer(nInRangeEnemy[1]) or J.IsCore(nInRangeEnemy[1]))
 					then
-						return RemapValClamped(J.GetPosition(bot), 1, 5, 0.5, nModeDesire + 0.1)
+						return RemapValClamped(J.GetPosition(bot), 1, 5, 0.45, 0.74)
 					else
 						return RemapValClamped(J.GetPosition(bot), 1, 5, 0.45, 0.6)
 					end

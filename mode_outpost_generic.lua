@@ -92,8 +92,7 @@ function GetDesire()
 	end
 
 	-- Phoenix
-	if  bot:GetUnitName() == 'npc_dota_hero_phoenix'
-	and bot:HasModifier('modifier_phoenix_sun_ray')
+	if bot:HasModifier('modifier_phoenix_sun_ray')
 	and not bot:HasModifier('modifier_phoenix_supernova_hiding')
 	then
 		PhoenixMoveSunRay = true
@@ -103,8 +102,7 @@ function GetDesire()
 	end
 
 	-- Snapfire
-	if  bot:GetUnitName() == 'npc_dota_hero_snapfire'
-	and bot:HasModifier('modifier_snapfire_mortimer_kisses')
+	if bot:HasModifier('modifier_snapfire_mortimer_kisses')
 	then
 		ShouldMoveMortimerKisses = true
 		return BOT_ACTION_DESIRE_ABSOLUTE
@@ -113,15 +111,13 @@ function GetDesire()
 	end
 
 	-- Spirit Breaker
-	if  bot:GetUnitName() == "npc_dota_hero_spirit_breaker"
-	and bot:HasModifier("modifier_spirit_breaker_charge_of_darkness")
+	if bot:HasModifier("modifier_spirit_breaker_charge_of_darkness")
 	then
 		return BOT_MODE_DESIRE_ABSOLUTE
 	end
 
 	-- Weaver
-	if  bot:GetUnitName() == "npc_dota_hero_weaver"
-	and bot:HasModifier("modifier_weaver_shukuchi")
+	if bot:HasModifier("modifier_weaver_shukuchi")
 	and bot.tryShukuchiKill
 	then
 		if  J.IsValidHero(bot.ShukuchiKillTarget)
@@ -407,7 +403,7 @@ function Think()
 		return
 	end
 
-	-- Batrider, Rubick
+	-- Batrider
 	if bot:HasModifier('modifier_batrider_flaming_lasso_self')
 	then
 		bot:Action_MoveToLocation(J.GetTeamFountain())
@@ -465,7 +461,7 @@ function Think()
 		if nKissesTarget ~= nil
 		then
 			local eta = (GetUnitToUnitDistance(bot, nKissesTarget) / 1300) + 0.3
-			bot:Action_MoveToLocation(nKissesTarget:GetExtrapolatedLocation(eta))
+			bot:Action_MoveToLocation(J.GetCorrectLoc(nKissesTarget, eta))
 			return
 		end
 	end
@@ -494,8 +490,7 @@ function Think()
 	end
 
 	-- Void Spirit
-	if  bot:GetUnitName() == 'npc_dota_hero_void_spirit'
-	and bot:HasModifier('modifier_void_spirit_dissimilate_phase')
+	if bot:HasModifier('modifier_void_spirit_dissimilate_phase')
 	then
 		local botTarget = J.GetProperTarget(bot)
 
