@@ -162,11 +162,12 @@ end
 function X.GetAltItem(hItemName1, hItemName2)
 	local sChosenItem = hItemName1
 
-	for _, id in pairs(GetTeamPlayers(GetOpposingTeam()))
+	for i, id in pairs(GetTeamPlayers(GetOpposingTeam()))
 	do
 		local hName = GetSelectedHeroName(id)
 
 		if Item[hItemName2][hName]
+		and i <= 3
 		then
 			sChosenItem = hItemName1
 			break

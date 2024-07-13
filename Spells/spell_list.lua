@@ -209,8 +209,8 @@ X['spells'] = {
     --[[4]] ['muerta_parting_shot'] = {weight = 0.5},
     --[[6]] ['muerta_pierce_the_veil'] = {weight = 0.9},
 
-    --[[4]] ['rubick_empty1'] = {weight = 1},
-    --[[5]] ['rubick_empty2'] = {weight = 1},
+    -- --[[4]] ['rubick_empty1'] = {weight = 1},
+    -- --[[5]] ['rubick_empty2'] = {weight = 1},
 }
 
 function X.GetSpellReplaceWeight(ability)
