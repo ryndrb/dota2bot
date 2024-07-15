@@ -695,8 +695,8 @@ local function ItemUsageComplement()
 	botTarget = J.GetProperTarget( bot )
 	nMode = bot:GetActiveMode()
 
-	local aether = J.IsItemAvailable( "item_aether_lens" )
-	if aether ~= nil then aetherRange = 250 else aetherRange = 0 end
+	if J.IsItemAvailable( "item_aether_lens" ) or J.IsItemAvailable( "item_ethereal_blade" )
+	then aetherRange = 225 else aetherRange = 0 end
 
 	local nItemSlot = { 5, 4, 3, 2, 1, 0, 15, 16 }
 

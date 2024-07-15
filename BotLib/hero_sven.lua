@@ -176,7 +176,7 @@ local nKeepMana, nMP, nHP, nLV, hEnemyHeroList
 function X.SkillsComplement()
 
 
-	J.ConsiderForMkbDisassembleMask( bot )
+	-- J.ConsiderForMkbDisassembleMask( bot )
 	X.SvenConsiderTarget()
 
 

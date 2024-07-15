@@ -7,7 +7,7 @@ local sTalentList = J.Skill.GetTalentList( bot )
 local sAbilityList = J.Skill.GetAbilityList( bot )
 local sRole = J.Item.GetRoleItemsBuyList( bot )
 
-local RI = require(GetScriptDirectory()..'/FunLib/bot_builds/util_role_item')
+local RI = require(GetScriptDirectory()..'/FunLib/util_role_item')
 
 local sUtility = {}
 local sUtilityItem = RI.GetBestUtilityItem(sUtility)

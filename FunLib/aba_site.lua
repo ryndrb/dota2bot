@@ -935,9 +935,9 @@ function Site.IsTimeToFarm( bot )
 		local enemyAncient = GetAncient( GetOpposingTeam() )
 		local allyList = bot:GetNearbyHeroes( 1400, false, BOT_MODE_NONE )
 		local enemyAncientDistance = GetUnitToUnitDistance( bot, enemyAncient )
-		if  enemyAncientDistance < 2800
+		if  enemyAncientDistance < 3800
 		    and enemyAncientDistance > 1400
-			and bot:GetActiveModeDesire() < BOT_MODE_DESIRE_HIGH
+			-- and bot:GetActiveModeDesire() < BOT_MODE_DESIRE_HIGH
 			and #allyList <= 1
 		then
 			return true

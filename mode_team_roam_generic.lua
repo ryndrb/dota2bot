@@ -1873,8 +1873,11 @@ function CanAttackSpecialUnit()
 	return false, 0
 end
 
+-- support harass; cores can just fall to generic attack mode
 function X.ConsiderHarassInLaningPhase()
 	if J.IsInLaningPhase()
+	and not J.IsCore(bot)
+	and not bot:WasRecentlyDamagedByAnyHero(2.5)
 	then
 		local nModeDesire = bot:GetActiveModeDesire()
 		local nInRangeAlly = bot:GetNearbyHeroes(700, false, BOT_MODE_NONE)
@@ -1896,8 +1899,8 @@ function X.ConsiderHarassInLaningPhase()
 		end
 
 		if  J.GetHP(bot) > 0.61
-		and ((J.IsCore(bot) and canLastHitCount <= 1)
-			or (not J.IsCore(bot)))
+		-- and ((J.IsCore(bot) and canLastHitCount <= 1)
+		-- 	or (not J.IsCore(bot)))
 		then
 			-- MK Range
 			if nAttackRange < 300
@@ -1919,18 +1922,18 @@ function X.ConsiderHarassInLaningPhase()
 				if  nInRangeTower ~= nil
 				and (#nInRangeTower == 0
 					or (J.IsValidBuilding(nInRangeTower[1])
-						and GetUnitToUnitDistance(bot, nInRangeTower[1]) > 700
-						and GetUnitToUnitDistance(nInRangeEnemy[1], nInRangeTower[1]) > 700))
-				and not bot:WasRecentlyDamagedByTower(1)
+						and GetUnitToUnitDistance(bot, nInRangeTower[1]) > 888
+						and GetUnitToUnitDistance(nInRangeEnemy[1], nInRangeTower[1]) > 888))
+				and not bot:WasRecentlyDamagedByTower(3.5)
 				then
 					shouldHarass = true
 					harassTarget = nInRangeEnemy[1]
 
 					if (J.IsHumanPlayer(nInRangeEnemy[1]) or J.IsCore(nInRangeEnemy[1]))
 					then
-						return RemapValClamped(J.GetPosition(bot), 1, 5, 0.45, 0.74)
+						return 0.666
 					else
-						return RemapValClamped(J.GetPosition(bot), 1, 5, 0.45, 0.6)
+						return 0.555
 					end
 				else
 					shouldHarass = false

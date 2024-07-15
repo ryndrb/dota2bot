@@ -18,7 +18,8 @@ function GetDesire()
 	and J.IsInLaningPhase()
 	and bot:GetLevel() < 8
 	then
-		if bot:WasRecentlyDamagedByTower(1)
+		if bot:WasRecentlyDamagedByTower(4)
+		and not J.IsRetreating(bot)
 		then
 			return BOT_MODE_DESIRE_VERYHIGH
 		end

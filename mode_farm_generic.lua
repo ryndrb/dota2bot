@@ -67,14 +67,6 @@ function GetDesire()
 		beVeryHighFarmer = J.GetPosition(bot) == 1
 	end
 
-	local nMode = bot:GetActiveMode()
-	local nModeDesire = bot:GetActiveModeDesire()
-	if  (nMode == BOT_MODE_DEFEND_TOWER_TOP or nMode == BOT_MODE_DEFEND_TOWER_MID or nMode == BOT_MODE_DEFEND_TOWER_BOT)
-	and nModeDesire > BOT_MODE_DESIRE_MODERATE
-    then
-        return BOT_ACTION_DESIRE_NONE
-    end
-
 	local TormentorLocation = J.GetTormentorLocation(GetTeam())
 	local nNeutralCreeps = bot:GetNearbyNeutralCreeps(700)
 	for _, c in pairs(nNeutralCreeps)
@@ -116,7 +108,12 @@ function GetDesire()
 	
 	if DotaTime() < 50 then return 0.0 end
 	
-	if X.IsUnitAroundLocation(GetAncient(GetTeam()):GetLocation(), 3000) then
+	local aliveEnemyCount = J.GetNumOfAliveHeroes(true);
+	local aliveAllyCount  = J.GetNumOfAliveHeroes(false);
+
+	if X.IsUnitAroundLocation(GetAncient(GetTeam()):GetLocation(), 3000) 
+	and (aliveAllyCount >= aliveEnemyCount or J.WeAreStronger(bot, 1600))
+	then
 		return BOT_MODE_DESIRE_NONE;
 	end
 	
@@ -210,8 +207,6 @@ function GetDesire()
 		return BOT_MODE_DESIRE_NONE;
 	end
 	
-	local aliveEnemyCount = J.GetNumOfAliveHeroes(true);
-	local aliveAllyCount  = J.GetNumOfAliveHeroes(false);
 	if aliveEnemyCount <= 1
 	then
 		return BOT_MODE_DESIRE_NONE;
