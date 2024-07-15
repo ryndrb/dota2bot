@@ -15,6 +15,16 @@ local sUtilityItem = RI.GetBestUtilityItem(sUtility)
 local HeroBuild = {
     ['pos_1'] = {
         [1] = {
+            ['talent'] = {},
+            ['ability'] = {
+                [1] = {},
+            },
+            ['buy_list'] = {},
+            ['sell_list'] = {},
+        },
+    },
+    ['pos_2'] = {
+        [1] = {
             ['talent'] = {
                 [1] = {
                     ['t25'] = {0, 10},
@@ -52,18 +62,6 @@ local HeroBuild = {
                 "item_null_talisman",
                 "item_magic_wand",
             },
-        },
-    },
-    ['pos_2'] = {
-        [1] = {
-            ['talent'] = {
-                [1] = {},
-            },
-            ['ability'] = {
-                [1] = {},
-            },
-            ['buy_list'] = {},
-            ['sell_list'] = {},
         },
     },
     ['pos_3'] = {
