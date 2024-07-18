@@ -106,7 +106,6 @@ local HeroBuild = {
 				"item_moon_shard",
 			},
             ['sell_list'] = {
-				"item_quelling_blade",
 				"item_bottle",
 				"item_magic_wand",
 			},
