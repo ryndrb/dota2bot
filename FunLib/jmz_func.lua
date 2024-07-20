@@ -4949,6 +4949,23 @@ function J.IsHumanInLoc(vLoc, nRadius)
 	return false
 end
 
+function J.HasItemInInventory( hItem )
+	return GetBot():FindItemSlot(hItem) >= 0
+end
+
+function J.DoesTeamHaveItem(hItem)
+	for i = 1, 5
+	do
+		local member = GetTeamMember(i)
+		if member ~= nil and member:FindItemSlot(hItem) >= 0
+		then
+			return true
+		end
+	end
+
+	return false
+end
+
 function J.ConsolePrintActiveMode(bot)
     local mode = bot:GetActiveMode()
     local botName = string.gsub(bot:GetUnitName(), "npc_dota_", "")

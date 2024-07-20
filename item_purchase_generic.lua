@@ -350,13 +350,14 @@ function ItemPurchaseThink()
 			bot:ActionImmediate_PurchaseItem( "item_clarity" )
 			return
 		elseif botLevel >= 5
+			and not J.HasItemInInventory('item_ward_sentry')
+			and not J.HasItemInInventory('item_gem')
 			and Role['invisEnemyExist'] == true
 			and buyBootsStatus == true
 			and botGold >= GetItemCost( "item_dust" )
 			and Item.GetEmptyInventoryAmount( bot ) >= 2
 			and Item.GetItemCharges( bot, "item_dust" ) <= 0
 			and bot:GetCourierValue() == 0
-			and not J.HasItem(bot, 'item_ward_sentry')
 		then
 			bot:ActionImmediate_PurchaseItem( "item_dust" )
 			return
@@ -452,7 +453,9 @@ function ItemPurchaseThink()
 	then
 		local wardType = 'item_ward_sentry'
 
-		if  GetItemStockCount(wardType) > 0
+		if not J.HasItemInInventory('item_dust')
+		and not J.HasItemInInventory('item_gem')
+		and GetItemStockCount(wardType) > 0
 		and botGold >= GetItemCost(wardType)
 		and Item.GetEmptyInventoryAmount(bot) >= 1
 		and Item.GetItemCharges(bot, wardType) < 2
@@ -508,6 +511,7 @@ function ItemPurchaseThink()
 			end
 		else
 			if not J.IsInLaningPhase()
+			and not J.DoesTeamHaveItem('item_smoke_of_deceit')
 			then
 				bot:ActionImmediate_PurchaseItem('item_smoke_of_deceit')
 				return
