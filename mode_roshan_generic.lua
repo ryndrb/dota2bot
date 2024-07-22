@@ -22,7 +22,7 @@ function GetDesire()
     local aliveAlly = J.GetNumOfAliveHeroes(false)
     local aliveEnemy = J.GetNumOfAliveHeroes(true)
     local hasSameOrMoreHero = aliveAlly >= aliveEnemy
-    local timeOfDay = J.CheckTimeOfDay()
+    local botTarget = J.GetProperTarget(bot)
 
     local aliveHeroesList = {}
     for i = 1, 5
@@ -54,26 +54,9 @@ function GetDesire()
         initDPSFlag = true
     end
 
-    local nTeamFightLocation = J.GetTeamFightLocation(bot)
-    if nTeamFightLocation ~= nil
-    then
-        if  timeOfDay == 'day'
-        and GetUnitToLocationDistance(bot, roshanRadiantLoc) < 1000
-        and GetUnitToLocationDistance(bot, nTeamFightLocation) < 1600
-        then
-            return BOT_ACTION_DESIRE_NONE
-        else
-            if  timeOfDay == 'night'
-            and GetUnitToLocationDistance(bot, roshanDireLoc) < 1000
-            and GetUnitToLocationDistance(bot, nTeamFightLocation) < 1600
-            then
-                return BOT_ACTION_DESIRE_NONE
-            end
-        end
-    end
-
-    local nEnemyHeroes = bot:GetNearbyHeroes(700 + bot:GetAttackRange(), true, BOT_MODE_NONE)
+    local nEnemyHeroes = bot:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
     if nEnemyHeroes ~= nil and #nEnemyHeroes > 0
+    or (J.IsRoshanCloseToChangingSides() and not (J.IsRoshan(botTarget) and J.IsInRange(bot, botTarget, 900)))
     then
         return BOT_ACTION_DESIRE_NONE
     end

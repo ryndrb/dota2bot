@@ -261,9 +261,9 @@ function GetDesire()
 		    teamTime = DotaTime();
 		end
 	end	
-	if GetDefendLaneDesire(LANE_TOP) > 0.85
-	   or GetDefendLaneDesire(LANE_MID) > 0.80
-	   or GetDefendLaneDesire(LANE_BOT) > 0.85
+	if J.GetDefendLaneDesire(LANE_TOP) > 0.85
+	   or J.GetDefendLaneDesire(LANE_MID) > 0.80
+	   or J.GetDefendLaneDesire(LANE_BOT) > 0.85
 	then
 		local nDefendLane,nDefendDesire = J.GetMostDefendLaneDesire();
 		local nDefendLoc  = GetLaneFrontLocation(GetTeam(),nDefendLane,-600);

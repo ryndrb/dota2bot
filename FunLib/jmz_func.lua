@@ -132,6 +132,8 @@ end
 function J.SetUserHeroInit( nAbilityBuildList, nTalentBuildList, sBuyList, sSellList )
 
 	local bot = GetBot()
+	if bot.PushLaneDesire == nil then bot.PushLaneDesire = {0, 0, 0} end
+	if bot.DefendLaneDesire == nil then bot.DefendLaneDesire = {0, 0, 0} end
 
 	if J.Role.IsUserHero() 
 	then
@@ -2708,9 +2710,9 @@ end
 
 function J.GetMostDefendLaneDesire()
 
-	local nTopDesire = GetDefendLaneDesire( LANE_TOP )
-	local nMidDesire = GetDefendLaneDesire( LANE_MID )
-	local nBotDesire = GetDefendLaneDesire( LANE_BOT )
+	local nTopDesire = J.GetDefendLaneDesire(LANE_TOP)
+	local nMidDesire = J.GetDefendLaneDesire(LANE_MID)
+	local nBotDesire = J.GetDefendLaneDesire(LANE_BOT)
 
 	if nTopDesire > nMidDesire and nTopDesire > nBotDesire
 	then
@@ -2726,12 +2728,21 @@ function J.GetMostDefendLaneDesire()
 
 end
 
+function J.GetDefendLaneDesire(lane)
+	if GetBot().DefendLaneDesire ~= nil
+	then
+		return GetBot().DefendLaneDesire[lane]
+	else
+		return GetDefLaneDesire(lane)
+	end
+end
+
 
 function J.GetMostPushLaneDesire()
 
-	local nTopDesire = GetPushLaneDesire( LANE_TOP )
-	local nMidDesire = GetPushLaneDesire( LANE_MID )
-	local nBotDesire = GetPushLaneDesire( LANE_BOT )
+	local nTopDesire = J.GetPushLaneDesire(LANE_TOP)
+	local nMidDesire = J.GetPushLaneDesire(LANE_MID)
+	local nBotDesire = J.GetPushLaneDesire(LANE_BOT)
 
 	if nTopDesire > nMidDesire and nTopDesire > nBotDesire
 	then
@@ -2745,6 +2756,15 @@ function J.GetMostPushLaneDesire()
 
 	return LANE_MID, nMidDesire
 
+end
+
+function J.GetPushLaneDesire(lane)
+	if GetBot().PushLaneDesire ~= nil
+	then
+		return GetBot().PushLaneDesire[lane]
+	else
+		return GetPushLaneDesire(lane)
+	end
 end
 
 
@@ -4908,7 +4928,6 @@ function J.GetHumanPing()
 	do
 		local member = GetTeamMember(i)
 		if  member ~= nil
-		and member:IsAlive()
 		and not member:IsBot()
 		then
 			return member, member:GetMostRecentPing()
@@ -4964,6 +4983,67 @@ function J.DoesTeamHaveItem(hItem)
 	end
 
 	return false
+end
+
+function J.IsT3TowerDown(team, lane)
+	local t3 = {
+		[LANE_TOP] = TOWER_TOP_3,
+		[LANE_MID] = TOWER_MID_3,
+		[LANE_BOT] = TOWER_BOT_3,
+	}
+
+	return GetTower(team, t3[lane]) == nil
+end
+
+local tower_list = {
+	[TOWER_TOP_1] = {lane = LANE_TOP, isTower = true},
+	[TOWER_MID_1] = {lane = LANE_MID, isTower = true},
+	[TOWER_BOT_1] = {lane = LANE_BOT, isTower = true},
+	[TOWER_TOP_2] = {lane = LANE_TOP, isTower = true},
+	[TOWER_MID_2] = {lane = LANE_MID, isTower = true},
+	[TOWER_BOT_2] = {lane = LANE_BOT, isTower = true},
+	[TOWER_TOP_3] = {lane = LANE_TOP, isTower = true},
+	[TOWER_MID_3] = {lane = LANE_MID, isTower = true},
+	[TOWER_BOT_3] = {lane = LANE_BOT, isTower = true},
+	[TOWER_BASE_1] = {lane = LANE_MID, isTower = true},
+	[TOWER_BASE_2] = {lane = LANE_MID, isTower = true},
+	[BARRACKS_TOP_MELEE] = {lane = LANE_TOP, isTower = false},
+	[BARRACKS_TOP_RANGED] = {lane = LANE_TOP, isTower = false},
+	[BARRACKS_MID_MELEE] = {lane = LANE_MID, isTower = false},
+	[BARRACKS_MID_RANGED] = {lane = LANE_MID, isTower = false},
+	[BARRACKS_BOT_MELEE] = {lane = LANE_BOT, isTower = false},
+	[BARRACKS_BOT_RANGED] = {lane = LANE_BOT, isTower = false},
+	['ancient'] = {lane = LANE_MID, isTower = false},
+}
+function J.IsPingCloseToValidTower(team, humanPing)
+	for k, v in pairs(tower_list)
+	do
+		local building = nil
+		if k == 'ancient'
+		then
+			building = GetAncient(team)
+		elseif v.isTower
+		then
+			building = GetTower(team, k)
+		else
+			building = GetBarracks(team, k)
+		end
+
+		if building ~= nil
+		and building:CanBeSeen()
+		and not building:IsInvulnerable()
+		and not building:HasModifier('modifier_backdoor_protection')
+		and not building:HasModifier('modifier_backdoor_protection_in_base')
+		and not building:HasModifier('modifier_backdoor_protection_active')
+		and J.GetDistance(building:GetLocation(), humanPing.location) <= 800
+		then
+			return true, v.lane
+		end
+	end
+end
+
+function J.IsRoshanCloseToChangingSides()
+    return DotaTime() % 300 >= 300 - 30
 end
 
 function J.ConsolePrintActiveMode(bot)
