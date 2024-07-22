@@ -149,172 +149,130 @@ To anyone who've found this or is using it, if you have any feedback in improvin
         - Primal Beast
             - Passive.
 
-- ***Items***
-    - Item progressions
-        - [x] Update / Restructure to ease different builds for novelty; includes spell build.
-    - Reduced most Halberd/Crimson Guards/Aura items (bots sucks at playing around these items). They're OP; A lot of what makes the bots 'harder' in Beginner AI.
-        - [x] Consider team comp instead of (current) random.
-
-- ***Plan To "Fix/Add/Improve" (if possible)***
-    - ***Fix***
-        - [x] Warding
-            - Sentries are planted when pinged or they're after someone.
-            - Pos 4 -> Sentry
-            - Pos 5 -> Observer
-                - Due to how ward slots work. No API func to tell which ward is in front.
-            - Use Danger Ping (Crtl + Alt + Left Click) to tell bots to Ward the ping location if they're suitable to do so.
-                - Must be within 1200 units to the pinged bot (for now).
-        - [ ] Rune behaviour
-    - ***Add***
-        - [x] Tormentor
-            - Desire decreases starting at minute (20; 35 (AP)).
-            - Tricky to harmonize with others due to its nature.
-            - [ ] Force? go when Pinged by a human.
-        - [x] Outpost
-        - [ ] Spell usage for Tormentor and Roshan
-            - [ ] Former Beginner AI
-            - [x] Own
-        - [ ] "Dynamic" item builds
-        - [ ] Clear wave faster with abilities
-        - [x] Heroes to play different positions (eg. Batrider Support, Abaddon Core, etc.)
-        - [x] vscript to increase bots GPM and XPM (AP only), and for them to acquire neutral items (local host only)
-        - [x] Functionality for new active ablities gained through Aghs/Shard
-            | Hero                  | Shard   | Scepter |
-            |:---------------------:|:-------:|:-------:|
-            | Abaddon               | -       | -       |
-            | Alchemist             | &check; | &cross; |
-            | Ancient Apparition    | -       | -       |
-            | Anti-Mage             | &check; | &check; |
-            | Arc Warden            | -       | -       |
-            | Axe                   | -       | -       |
-            | Bane                  | -       | -       |
-            | Batrider              | -       | -       |
-            | Beastmaster           | -       | -       |
-            | Bloodseeker           | -       | &check; |
-            | Bounty Hunter         | -       | &check; |
-            | Brewmaster            | -       | &check; |
-            | Bristleback           | &check; | &check; |
-            | Broodmother           | -       | &cross; |
-            | Centaur               | -       | &check; |
-            | Chaos Knight          | -       | -       |
-            | Chen                  | &cross; | &cross; |
-            | Clinkz                | &check; | &check; |
-            | Clockwerk             | &check; | &check; |
-            | Crystal Maiden        | &check; | &check; |
-            | Dark Seer             | -       | -       |
-            | ~~Dark Willow~~       | &check; | -       |
-            | Dawnbreaker           | -       | -       |
-            | Dazzle                | -       | -       |
-            | Death Prophet         | -       | -       |
-            | Disruptor             | -       | -       |
-            | Doom                  | -       | -       |
-            | Dragon Knight         | -       | -       |
-            | Drow Ranger           | &check; | -       |
-            | Earth Spirit          | &check; | &cross; |
-            | Earthshaker           | -       | &check; |
-            | ~~Elder Titan~~       | -       | -       |
-            | Ember Spirit          | -       | -       |
-            | Enchantress           | &check; | &check; |
-            | Enigma                | -       | -       |
-            | Faceless Void         | &check; | -       |
-            | Grimstroke            | -       | &check; |
-            | Gyrocopter            | -       | -       |
-            | ~~Hoodwink~~          | &check; | &check; |
-            | Huskar                | -       | -       |
-            | Invoker               | -       | &check; |
-            | Jakiro                | &check; | -       |
-            | Juggernaut            | -       | &check; |
-            | Keeper of the Light   | &check; | &check; |
-            | Kunkka                | &check; | &check; |
-            | Legion Commander      | -       | -       |
-            | Leshrac               | -       | &check; |
-            | Lich                  | &check; | &check; |
-            | Lifestealer           | &check; | -       |
-            | Lina                  | -       | &check; |
-            | Lion                  | -       | -       |
-            | ~~Lone Druid~~        | -       | -       |
-            | Luna                  | -       | &check; |
-            | Lycan                 | -       | &cross; |
-            | Magnus                | -       | &check; |
-            | Mars                  | -       | -       |
-            | ~~Marci~~             | -       | -       |
-            | Medusa                | -       | -       |
-            | Meeepo                | &check; | &check; |
-            | Mirana                | -       | -       |
-            | Monkey King           | &cross; | -       |
-            | Morphling             | -       | &cross; |
-            | Muerta                | -       | &check; |
-            | Naga Siren            | -       | &check; |
-            | Nature's Prophet      | -       | &check; |
-            | Necrophos             | &check; | -       |
-            | Night Stalker         | &check; | -       |
-            | Nyx Assassin          | &check; | -       |
-            | Ogre Magi             | &check; | &check; |
-            | Omniknight            | -       | -       |
-            | Oracle                | &check; | -       |
-            | Outworld Destroyer    | -       | -       |
-            | Pangolier             | &check; | -       |
-            | Phantom Assasin       | &check; | -       |
-            | Phantom Lancer        | &check; | -       |
-            | Phoenix               | -       | -       |
-            | ~~Primal Beast~~      | -       | -       |
-            | Puck                  | -       | -       |
-            | Pugna                 | -       | -       |
-            | Pudge                 | -       | &cross; |
-            | Queen of Pain         | -       | -       |
-            | Razor                 | -       | -       |
-            | Riki                  | -       | -       |
-            | Rubick                | -       | -       |
-            | Sand King             | -       | -       |
-            | Shadow Demon          | &check; | -       |
-            | Shadow Fiend          | &cross; | -       |
-            | Shadow Shaman         | -       | -       |
-            | Silencer              | -       | -       |
-            | Skywrath Mage         | -       | -       |
-            | Slardar               | -       | -       |
-            | Slark                 | -       | -       |
-            | Snapfire              | -       | &cross; |
-            | Sniper                | -       | -       |
-            | Spectre               | -       | &check; |
-            | Spirit Breaker        | &check; | -       |
-            | Storm Sprit           | -       | -       |
-            | Sven                  | -       | &cross; |
-            | Techies               | -       | -       |
-            | Templar Assasin       | -       | &cross; |
-            | Terrorblade           | &check; | &check; |
-            | Tidehunter            | &check; | -       |
-            | Timbersaw             | &check; | &check; |
-            | Tinker                | &check; | -       |
-            | Tiny                  | -       | &check; |
-            | Treant                | -       | &check; |
-            | Troll Warlord         | -       | -       |
-            | Tusk                  | -       | &cross; |
-            | Underlord             | -       | -       |
-            | Undying               | &cross; | -       |
-            | Ursa                  | -       | -       |
-            | Vengeful Spirit       | -       | &check; |
-            | Venomancer            | &check; | -       |
-            | Viper                 | -       | &check; |
-            | Visage                | -       | &check; |
-            | Void Spirit           | -       | -       |
-            | Warlock               | -       | -       |
-            | Weaver                | -       | &check; |
-            | Windranger            | &check; | -       |
-            | Winter Wyvern         | -       | -       |
-            | Witch Doctor          | &check; | -       |
-            | Wraith King           | -       | -       |
-            | Zeus                  | &check; | &check; |
-    - ***Improve***
-        - [ ] Some heroes ability usage (too spammy, ends up not having enough mana)
-        - [ ] Item usage
-            - [x] Neutral Items
-            - [ ] Consider spell effects from heroes (ie. NPs Sprout, Troll Ult (<- OP with BFury), etc.)
-                - Sprout got changed 7.36+. No modifiers now.
-        - [ ] Blinking (especially by range heroes)
-        - [ ] More skill checks
-            - [ ] Stuns/Projectiles
-            - [ ] DoT modifiers
-        - [x] Early added heroes to follow current standard
-        - [ ] Clean up redundant function calls (ie. illusion checks etc. <- are already called prior, unit retrieval, etc,.)
-            - Issues #42
+- ***Aghs/Shard func list***
+    | Hero                  | Shard   | Scepter |
+    |:---------------------:|:-------:|:-------:|
+    | Abaddon               | -       | -       |
+    | Alchemist             | &check; | &cross; |
+    | Ancient Apparition    | -       | -       |
+    | Anti-Mage             | &check; | &check; |
+    | Arc Warden            | -       | -       |
+    | Axe                   | -       | -       |
+    | Bane                  | -       | -       |
+    | Batrider              | -       | -       |
+    | Beastmaster           | -       | -       |
+    | Bloodseeker           | -       | &check; |
+    | Bounty Hunter         | -       | &check; |
+    | Brewmaster            | -       | &check; |
+    | Bristleback           | &check; | &check; |
+    | Broodmother           | -       | &cross; |
+    | Centaur               | -       | &check; |
+    | Chaos Knight          | -       | -       |
+    | Chen                  | &cross; | &cross; |
+    | Clinkz                | &check; | &check; |
+    | Clockwerk             | &check; | &check; |
+    | Crystal Maiden        | &check; | &check; |
+    | Dark Seer             | -       | -       |
+    | ~~Dark Willow~~       | &check; | -       |
+    | Dawnbreaker           | -       | -       |
+    | Dazzle                | -       | -       |
+    | Death Prophet         | -       | -       |
+    | Disruptor             | -       | -       |
+    | Doom                  | -       | -       |
+    | Dragon Knight         | -       | -       |
+    | Drow Ranger           | &check; | -       |
+    | Earth Spirit          | &check; | &cross; |
+    | Earthshaker           | -       | &check; |
+    | ~~Elder Titan~~       | -       | -       |
+    | Ember Spirit          | -       | -       |
+    | Enchantress           | &check; | &check; |
+    | Enigma                | -       | -       |
+    | Faceless Void         | &check; | -       |
+    | Grimstroke            | -       | &check; |
+    | Gyrocopter            | -       | -       |
+    | ~~Hoodwink~~          | &check; | &check; |
+    | Huskar                | -       | -       |
+    | Invoker               | -       | &check; |
+    | Jakiro                | &check; | -       |
+    | Juggernaut            | -       | &check; |
+    | Keeper of the Light   | &check; | &check; |
+    | Kunkka                | &check; | &check; |
+    | Legion Commander      | -       | -       |
+    | Leshrac               | -       | &check; |
+    | Lich                  | &check; | &check; |
+    | Lifestealer           | &check; | -       |
+    | Lina                  | -       | &check; |
+    | Lion                  | -       | -       |
+    | ~~Lone Druid~~        | -       | -       |
+    | Luna                  | -       | &check; |
+    | Lycan                 | -       | &cross; |
+    | Magnus                | -       | &check; |
+    | Mars                  | -       | -       |
+    | ~~Marci~~             | -       | -       |
+    | Medusa                | -       | -       |
+    | Meeepo                | &check; | &check; |
+    | Mirana                | -       | -       |
+    | Monkey King           | &cross; | -       |
+    | Morphling             | -       | &cross; |
+    | Muerta                | -       | &check; |
+    | Naga Siren            | -       | &check; |
+    | Nature's Prophet      | -       | &check; |
+    | Necrophos             | &check; | -       |
+    | Night Stalker         | &check; | -       |
+    | Nyx Assassin          | &check; | -       |
+    | Ogre Magi             | &check; | &check; |
+    | Omniknight            | -       | -       |
+    | Oracle                | &check; | -       |
+    | Outworld Destroyer    | -       | -       |
+    | Pangolier             | &check; | -       |
+    | Phantom Assasin       | &check; | -       |
+    | Phantom Lancer        | &check; | -       |
+    | Phoenix               | -       | -       |
+    | ~~Primal Beast~~      | -       | -       |
+    | Puck                  | -       | -       |
+    | Pugna                 | -       | -       |
+    | Pudge                 | -       | &cross; |
+    | Queen of Pain         | -       | -       |
+    | Razor                 | -       | -       |
+    | Riki                  | -       | -       |
+    | Rubick                | -       | -       |
+    | Sand King             | -       | -       |
+    | Shadow Demon          | &check; | -       |
+    | Shadow Fiend          | &cross; | -       |
+    | Shadow Shaman         | -       | -       |
+    | Silencer              | -       | -       |
+    | Skywrath Mage         | -       | -       |
+    | Slardar               | -       | -       |
+    | Slark                 | -       | -       |
+    | Snapfire              | -       | &cross; |
+    | Sniper                | -       | -       |
+    | Spectre               | -       | &check; |
+    | Spirit Breaker        | &check; | -       |
+    | Storm Sprit           | -       | -       |
+    | Sven                  | -       | &cross; |
+    | Techies               | -       | -       |
+    | Templar Assasin       | -       | &cross; |
+    | Terrorblade           | &check; | &check; |
+    | Tidehunter            | &check; | -       |
+    | Timbersaw             | &check; | &check; |
+    | Tinker                | &check; | -       |
+    | Tiny                  | -       | &check; |
+    | Treant                | -       | &check; |
+    | Troll Warlord         | -       | -       |
+    | Tusk                  | -       | &cross; |
+    | Underlord             | -       | -       |
+    | Undying               | &cross; | -       |
+    | Ursa                  | -       | -       |
+    | Vengeful Spirit       | -       | &check; |
+    | Venomancer            | &check; | -       |
+    | Viper                 | -       | &check; |
+    | Visage                | -       | &check; |
+    | Void Spirit           | -       | -       |
+    | Warlock               | -       | -       |
+    | Weaver                | -       | &check; |
+    | Windranger            | &check; | -       |
+    | Winter Wyvern         | -       | -       |
+    | Witch Doctor          | &check; | -       |
+    | Wraith King           | -       | -       |
+    | Zeus                  | &check; | &check; |
     
