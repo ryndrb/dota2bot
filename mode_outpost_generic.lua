@@ -116,23 +116,6 @@ function GetDesire()
 		return BOT_MODE_DESIRE_ABSOLUTE
 	end
 
-	-- Weaver
-	if bot:HasModifier("modifier_weaver_shukuchi")
-	and bot.tryShukuchiKill
-	then
-		if  J.IsValidHero(bot.ShukuchiKillTarget)
-		and J.IsInLaningPhase()
-		then
-			local nInRangeTower = bot.ShukuchiKillTarget:GetNearbyTowers(900, false)
-			if nInRangeTower ~= nil and #nInRangeTower == 0
-			then
-				return BOT_ACTION_DESIRE_ABSOLUTE
-			end
-		else
-			return BOT_ACTION_DESIRE_ABSOLUTE
-		end
-	end
-
 	-- Leshrac
 	ShouldMoveCloseTowerForEdict = ConsiderLeshracEdictTower()
 	if ShouldMoveCloseTowerForEdict
@@ -462,16 +445,6 @@ function Think()
 		then
 			local eta = (GetUnitToUnitDistance(bot, nKissesTarget) / 1300) + 0.3
 			bot:Action_MoveToLocation(J.GetCorrectLoc(nKissesTarget, eta))
-			return
-		end
-	end
-
-	-- Weaver
-	if bot.tryShukuchiKill
-	then
-		if J.IsValidHero(bot.ShukuchiKillTarget)
-		then
-			bot:Action_MoveToLocation(bot.ShukuchiKillTarget:GetLocation())
 			return
 		end
 	end

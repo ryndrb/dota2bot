@@ -196,6 +196,13 @@ function X.SkillsComplement()
         return
     end
 
+    UnBurrowDesire = X.ConsiderUnborrow()
+    if UnBurrowDesire > 0
+    then
+        bot:Action_UseAbility(UnBurrow)
+        return
+    end
+
     BurrowDesire = X.ConsiderBurrow()
     if BurrowDesire > 0
     then
@@ -482,6 +489,23 @@ function X.ConsiderBurrow()
         then
             return BOT_ACTION_DESIRE_HIGH
         end
+    end
+
+    return BOT_ACTION_DESIRE_NONE
+end
+
+function X.ConsiderUnborrow()
+    if UnBurrow:IsHidden()
+    or not UnBurrow:IsFullyCastable()
+    then
+        return BOT_ACTION_DESIRE_NONE
+    end
+
+    local nInRangeEnemy = J.GetEnemiesNearLoc(bot:GetLocation(), 777)
+    if #nInRangeEnemy == 0
+    or #nInRangeEnemy <= 1 and (J.IsInRange(bot, GetAncient(GetTeam()), 2000) or J.IsInRange(bot, GetAncient(GetOpposingTeam()), 2000))
+    then
+        return BOT_ACTION_DESIRE_HIGH
     end
 
     return BOT_ACTION_DESIRE_NONE

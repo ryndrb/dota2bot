@@ -215,17 +215,11 @@ local ShukuchiDesire
 local TimeLapseDesire
 
 local botTarget
-if bot.tryShukuchiKill == nil then bot.tryShukuchiKill = false end
-if bot.ShukuchiKillTarget == nil then bot.ShukuchiKillTarget = nil end
 
 function X.SkillsComplement()
     if J.CanNotUseAbility(bot) then return end
 
     botTarget = J.GetProperTarget(bot)
-    if not bot:HasModifier("modifier_weaver_shukuchi")
-    then
-        bot.tryShukuchiKill = false
-    end
 
     TimeLapseDesire, Target = X.ConsiderTimeLapse()
     if TimeLapseDesire > 0
@@ -247,7 +241,7 @@ function X.SkillsComplement()
     if ShukuchiDesire > 0
     then
         J.SetQueuePtToINT(bot, false)
-        bot:Action_UseAbility(Shukuchi)
+        bot:ActionQueue_UseAbility(Shukuchi)
         return
     end
 
@@ -255,7 +249,7 @@ function X.SkillsComplement()
     if TheSwarmDesire > 0
     then
         J.SetQueuePtToINT(bot, false)
-        bot:Action_UseAbilityOnLocation(TheSwarm, TheSwarmLocation)
+        bot:ActionQueue_UseAbilityOnLocation(TheSwarm, TheSwarmLocation)
         return
     end
 end
@@ -266,77 +260,44 @@ function X.ConsiderTheSwarm()
         return BOT_ACTION_DESIRE_NONE, 0
     end
 
-	local nCastRange = TheSwarm:GetCastRange()
+	local nCastRange = J.GetProperCastRange(false, bot, TheSwarm:GetCastRange())
+    local nCastPoint = TheSwarm:GetCastPoint()
     local nRadius = TheSwarm:GetSpecialValueInt('spawn_radius')
+    local nSpeed = TheSwarm:GetSpecialValueInt('speed')
+
+    local nAllyHeroes = bot:GetNearbyHeroes(1600, false, BOT_MODE_NONE)
+    local nEnemyHeroes = bot:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
 
     if J.IsGoingOnSomeone(bot)
 	then
 		if  J.IsValidTarget(botTarget)
+        and J.CanBeAttacked(botTarget)
         and J.CanCastOnMagicImmune(botTarget)
         and J.IsInRange(bot, botTarget, nCastRange * 0.8)
-        and not J.IsSuspiciousIllusion(botTarget)
         and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
 		then
-            local nInRangeAlly = botTarget:GetNearbyHeroes(1200, true, BOT_MODE_NONE)
-            local nInRangeEnemy = botTarget:GetNearbyHeroes(1200, false, BOT_MODE_NONE)
-
-            if  nInRangeAlly ~= nil and nInRangeEnemy ~= nil
-            and #nInRangeAlly >= #nInRangeEnemy
+            local nDelay = (GetUnitToUnitDistance(bot, botTarget) / nSpeed) + nCastPoint
+            local nInRangeEnemy = J.GetEnemiesNearLoc(botTarget:GetLocation(), nRadius)
+            if nInRangeEnemy ~= nil and #nInRangeEnemy >= 2
             then
-                nInRangeEnemy = J.GetEnemiesNearLoc(botTarget:GetLocation(), nRadius)
-                if nInRangeEnemy ~= nil and #nInRangeEnemy >= 1
-                then
-                    return BOT_ACTION_DESIRE_HIGH, J.GetCenterOfUnits(nInRangeEnemy)
-                end
-
-                return BOT_ACTION_DESIRE_HIGH, botTarget:GetExtrapolatedLocation(0.5)
+                return BOT_ACTION_DESIRE_HIGH, J.GetCenterOfUnits(nInRangeEnemy)
             end
+
+            return BOT_ACTION_DESIRE_HIGH, J.GetCorrectLoc(botTarget, nDelay)
 		end
 	end
 
 	if J.IsRetreating(bot)
+    and not J.IsRealInvisible(bot)
+    and bot:WasRecentlyDamagedByAnyHero(3.5)
+    and bot:GetActiveModeDesire() > 0.75
+    and Shukuchi:GetCooldownTimeRemaining() > 2
 	then
-        local nInRangeEnemy = bot:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
-        for _, enemyHero in pairs(nInRangeEnemy)
-        do
-            if  J.IsValidHero(enemyHero)
-            and J.CanCastOnNonMagicImmune(enemyHero)
-            and J.IsChasingTarget(enemyHero, bot)
-            and not J.IsSuspiciousIllusion(enemyHero)
-            and not J.IsDisabled(enemyHero)
-            then
-                local nInRangeAlly = enemyHero:GetNearbyHeroes(1200, true, BOT_MODE_NONE)
-                local nTargetInRangeAlly = enemyHero:GetNearbyHeroes(1200, false, BOT_MODE_NONE)
-
-                if  nInRangeAlly ~= nil and nTargetInRangeAlly ~= nil
-                and ((#nTargetInRangeAlly > #nInRangeAlly)
-                    or bot:WasRecentlyDamagedByAnyHero(2))
-                then
-                    nInRangeEnemy = J.GetEnemiesNearLoc(enemyHero:GetLocation(), nRadius)
-                    if nInRangeEnemy ~= nil and #nInRangeEnemy >= 1
-                    then
-                        return BOT_ACTION_DESIRE_HIGH, J.GetCenterOfUnits(nInRangeEnemy)
-                    end
-
-                    return BOT_ACTION_DESIRE_HIGH, enemyHero:GetLocation()
-                end
-            end
-        end
-	end
-
-	if J.IsPushing(bot) or J.IsDefending(bot)
-	then
-        local nEnemyLaneCreeps = bot:GetNearbyLaneCreeps(1600, true)
-		if nEnemyLaneCreeps ~= nil and #nEnemyLaneCreeps >= 5
+        if J.IsValidHero(nEnemyHeroes[1])
+        and J.IsChasingTarget(nEnemyHeroes[1], bot)
+        and not J.IsSuspiciousIllusion(nEnemyHeroes[1])
         then
-            return BOT_ACTION_DESIRE_HIGH, J.GetCenterOfUnits(nEnemyLaneCreeps)
-        end
-
-        local nLocationAoE = bot:FindAoELocation(true, true, bot:GetLocation(), 1600, nRadius, 0, 0)
-        local nInRangeEnemy = J.GetEnemiesNearLoc(nLocationAoE.targetloc, nRadius)
-        if nInRangeEnemy ~= nil and #nInRangeEnemy >= 1
-        then
-            return BOT_ACTION_DESIRE_HIGH, J.GetCenterOfUnits(nInRangeEnemy)
+            return BOT_ACTION_DESIRE_HIGH, nEnemyHeroes[1]:GetLocation()
         end
 	end
 
@@ -344,8 +305,9 @@ function X.ConsiderTheSwarm()
     then
         if  J.IsRoshan(botTarget)
         and J.CanCastOnMagicImmune(botTarget)
-        and J.IsInRange(bot, botTarget, 500)
+        and J.IsInRange(bot, botTarget, nCastRange)
         and J.IsAttacking(bot)
+        and J.GetHP(botTarget) > 0.33
         then
             return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation()
         end
@@ -354,10 +316,38 @@ function X.ConsiderTheSwarm()
     if J.IsDoingTormentor(bot)
     then
         if  J.IsTormentor(botTarget)
-        and J.IsInRange(bot, botTarget, 500)
+        and J.IsInRange(bot, botTarget, nCastRange)
         and J.IsAttacking(bot)
+        and J.GetHP(botTarget) > 0.35
         then
             return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation()
+        end
+    end
+
+    for _, allyHero in pairs(nAllyHeroes)
+    do
+        if J.IsValidHero(allyHero)
+        and J.IsRetreating(allyHero)
+        and allyHero:WasRecentlyDamagedByAnyHero(4)
+        and not allyHero:IsIllusion()
+        and not J.IsRealInvisible(allyHero)
+        and not J.IsCore(bot)
+        and not J.IsInTeamFight(bot, 1600)
+        then
+            local nAllyInRangeEnemy = allyHero:GetNearbyHeroes(nCastRange, true, BOT_MODE_NONE)
+
+            if  J.IsValidHero(nAllyInRangeEnemy[1])
+            and J.CanCastOnNonMagicImmune(nAllyInRangeEnemy[1])
+            and J.IsInRange(allyHero, nAllyInRangeEnemy[1], 500)
+            and J.IsInRange(bot, nAllyInRangeEnemy[1], nCastRange)
+            and J.IsChasingTarget(nAllyInRangeEnemy[1], bot)
+            and not J.IsDisabled(nAllyInRangeEnemy[1])
+            and not nAllyInRangeEnemy[1]:HasModifier('modifier_enigma_black_hole_pull')
+            and not nAllyInRangeEnemy[1]:HasModifier('modifier_faceless_void_chronosphere_freeze')
+            then
+                local nDelay = (GetUnitToUnitDistance(bot, botTarget) / nSpeed) + nCastPoint
+                return BOT_ACTION_DESIRE_HIGH, J.GetCorrectLoc(nAllyInRangeEnemy[1], nDelay)
+            end
         end
     end
 
@@ -366,60 +356,39 @@ end
 
 function X.ConsiderShukuchi()
     if not Shukuchi:IsFullyCastable()
+    or J.IsAttacking(bot)
     then
         return BOT_ACTION_DESIRE_NONE
     end
 
     local nAttackRange = bot:GetAttackRange()
     local nDamage = Shukuchi:GetSpecialValueInt('damage')
-    local nDuration = Shukuchi:GetSpecialValueFloat('duration')
-    local nSpeed = 550
+    local nDamageRadius = Shukuchi:GetSpecialValueInt('radius')
+    local attackRange = bot:GetAttackRange()
+    local manaCost = Shukuchi:GetManaCost()
     local roshanLoc = J.GetCurrentRoshanLocation()
     local tormentorLoc = J.GetTormentorLocation(GetTeam())
 
-    local nEnemyHeroes = bot:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
-    for _, enemyHero in pairs(nEnemyHeroes)
-    do
-        if  J.IsValidHero(enemyHero)
-        and J.CanCastOnNonMagicImmune(enemyHero)
-        and J.CanKillTarget(enemyHero, nDamage, DAMAGE_TYPE_MAGICAL)
-        and enemyHero:DistanceFromFountain() > 600
-        and not J.IsSuspiciousIllusion(enemyHero)
-        and not enemyHero:HasModifier('modifier_abaddon_borrowed_time')
-        and not enemyHero:HasModifier('modifier_dazzle_shallow_grave')
-        and not enemyHero:HasModifier('modifier_necrolyte_reapers_scythe')
-        and not enemyHero:HasModifier('modifier_oracle_false_promise_timer')
-        and not enemyHero:HasModifier('modifier_templar_assassin_refraction_absorb')
-        then
-            local eta = (GetUnitToUnitDistance(bot, enemyHero) / nSpeed)
-            if eta + 1 < nDuration
-            then
-                if J.IsInLaningPhase()
-                then
-                    local nInRangeTower = enemyHero:GetNearbyTowers(700, false)
-                    if nInRangeTower ~= nil and #nInRangeTower == 0
-                    then
-                        bot.tryShukuchiKill = true
-                        bot.ShukuchiKillTarget = enemyHero
-                        return BOT_ACTION_DESIRE_HIGH
-                    end
-                else
-                    bot.tryShukuchiKill = true
-                    bot.ShukuchiKillTarget = enemyHero
-                    return BOT_ACTION_DESIRE_HIGH
-                end
-            end
-        end
+    if (J.IsStunProjectileIncoming(bot, 350) or J.IsUnitTargetProjectileIncoming(bot, 400))
+    then
+        return BOT_ACTION_DESIRE_HIGH
     end
+
+	if not bot:HasModifier('modifier_sniper_assassinate') and not bot:IsMagicImmune()
+	then
+		if J.IsWillBeCastUnitTargetSpell(bot, 400)
+		then
+			return BOT_ACTION_DESIRE_HIGH
+		end
+	end
 
     if J.IsGoingOnSomeone(bot)
 	then
-		if  J.IsValidTarget(botTarget)
+		if J.IsValidTarget(botTarget)
         and J.CanCastOnMagicImmune(botTarget)
-        and not J.IsInRange(bot, botTarget, nAttackRange + 300)
+        and not J.IsInRange(bot, botTarget, nAttackRange)
         and not botTarget:HasModifier('modifier_enigma_black_hole_pull')
         and not botTarget:HasModifier('modifier_faceless_void_chronosphere_freeze')
-        and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
 		then
 			return BOT_ACTION_DESIRE_HIGH
 		end
@@ -427,32 +396,22 @@ function X.ConsiderShukuchi()
 
     if J.IsRetreating(bot)
 	then
-        local nInRangeEnemy = bot:GetNearbyHeroes(1200, true, BOT_MODE_NONE)
-        for _, enemyHero in pairs(nInRangeEnemy)
-        do
-            if  J.IsValidHero(enemyHero)
-            and J.IsChasingTarget(enemyHero, bot)
-            and not J.IsDisabled(enemyHero)
-            then
-                local nInRangeAlly = enemyHero:GetNearbyHeroes(1200, true, BOT_MODE_NONE)
-                local nTargetInRangeAlly = enemyHero:GetNearbyHeroes(1200, false, BOT_MODE_NONE)
+        local nInRangeAlly = bot:GetNearbyHeroes(1600, false, BOT_MODE_NONE)
+        local nInRangeEnemy = bot:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
 
-                if  nInRangeAlly ~= nil and nTargetInRangeAlly ~= nil
-                and ((#nTargetInRangeAlly > #nInRangeAlly)
-                    or bot:WasRecentlyDamagedByAnyHero(1.5))
-                then
-                    return BOT_ACTION_DESIRE_HIGH
-                end
-            end
+        if bot:WasRecentlyDamagedByAnyHero(4)
+        or (nInRangeAlly ~= nil and nInRangeEnemy ~= nil and #nInRangeEnemy > #nInRangeAlly)
+        then
+            return BOT_ACTION_DESIRE_HIGH
         end
 
-        if bot:WasRecentlyDamagedByTower(2)
+        if bot:WasRecentlyDamagedByTower(3)
         then
             return BOT_ACTION_DESIRE_HIGH
         end
 
         if  (J.IsTormentor(botTarget) or J.IsRoshan(botTarget))
-        and J.IsInRange(bot, botTarget, 500)
+        and J.IsInRange(bot, botTarget, 1600)
         then
             if J.GetHP(bot) < 0.4
             then
@@ -462,52 +421,40 @@ function X.ConsiderShukuchi()
 	end
 
     if J.IsPushing(bot)
+    and J.GetManaAfter(manaCost) > 0.4
+    and GetUnitToLocationDistance(bot, GetLaneFrontLocation(GetTeam(), bot.laneToPush, 0)) > attackRange * 2
     then
-        local nInRangeAlly = bot:GetNearbyHeroes(1000, false, BOT_MODE_NONE)
-        local nInRangeEnemy = bot:GetNearbyHeroes(1000, true, BOT_MODE_NONE)
-        local eta = (GetUnitToLocationDistance(bot, GetLaneFrontLocation(GetTeam(), bot.laneToPush, 0)) / nSpeed)
-
-        if  J.GetMP(bot) > 0.33
-        and nInRangeAlly ~= nil and #nInRangeAlly == 0
-        and nInRangeEnemy ~= nil and #nInRangeEnemy == 0
-        and eta > nDuration + 1
-        then
-            return  BOT_ACTION_DESIRE_HIGH
-        end
+        return  BOT_ACTION_DESIRE_HIGH
     end
 
     if J.IsDefending(bot)
+    and J.GetManaAfter(manaCost) > 0.4
+    and GetUnitToLocationDistance(bot, GetLaneFrontLocation(GetTeam(), bot.laneToDefend, 0)) > attackRange * 2
     then
-        local nInRangeAlly = bot:GetNearbyHeroes(1000, false, BOT_MODE_NONE)
-        local nInRangeEnemy = bot:GetNearbyHeroes(1000, true, BOT_MODE_NONE)
-        local eta = (GetUnitToLocationDistance(bot, GetLaneFrontLocation(GetTeam(), bot.laneToDefend, 0)) / nSpeed)
-
-        if  J.GetMP(bot) > 0.33
-        and nInRangeAlly ~= nil and #nInRangeAlly == 0
-        and nInRangeEnemy ~= nil and #nInRangeEnemy == 0
-        and eta > nDuration
-        then
-            return  BOT_ACTION_DESIRE_HIGH
-        end
+        return  BOT_ACTION_DESIRE_HIGH
     end
 
     if J.IsFarming(bot)
 	then
-        local eta = (GetUnitToLocationDistance(bot, bot.farmLocation) / nSpeed)
-        local nCreeps = bot:GetNearbyCreeps(1000, true)
-
-		if  nCreeps ~= nil and #nCreeps == 0
-        and J.GetMP(bot) > 0.3
-        and eta > nDuration
+		if J.GetManaAfter(Shukuchi:GetManaCost()) > 0.3
+        and GetUnitToLocationDistance(bot, bot.farmLocation) > attackRange * 2
 		then
 			return BOT_ACTION_DESIRE_HIGH
 		end
 
-        if  J.IsAttacking(bot)
-        and J.IsValid(botTarget)
-        and botTarget:IsCreep()
-        and J.GetMP(bot) > 0.3
-        and nCreeps ~= nil and #nCreeps >= 2
+        local nCanKillCount = 0
+        local nCreeps = bot:GetNearbyCreeps(nDamageRadius, true)
+        for _, creep in pairs(nCreeps)
+        do
+            if J.IsValid(creep)
+            and J.CanBeAttacked(creep)
+            and creep:GetHealth() <= nDamage
+            then
+                nCanKillCount = nCanKillCount + 1
+            end
+        end
+
+        if nCanKillCount >= 2
         then
             return BOT_ACTION_DESIRE_HIGH
         end
@@ -515,11 +462,10 @@ function X.ConsiderShukuchi()
 
     if J.IsLaning(bot)
 	then
-		if  ((bot:GetMana() - Shukuchi:GetManaCost()) / bot:GetMaxMana()) > 0.8
+		if (J.GetManaAfter(manaCost)) > 0.8
 		and bot:DistanceFromFountain() > 100
 		and bot:DistanceFromFountain() < 6000
 		and J.IsInLaningPhase()
-		and #nEnemyHeroes == 0
 		then
 			local nLane = bot:GetAssignedLane()
 			local nLaneFrontLocation = GetLaneFrontLocation(GetTeam(), nLane, 0)
@@ -530,26 +476,37 @@ function X.ConsiderShukuchi()
                 return BOT_ACTION_DESIRE_HIGH
 			end
 		end
+
+        local nCanKillCount = 0
+        local nCreeps = bot:GetNearbyCreeps(nDamageRadius, true)
+        for _, creep in pairs(nCreeps)
+        do
+            if J.IsValid(creep)
+            and J.CanBeAttacked(creep)
+            and creep:GetHealth() <= nDamage
+            then
+                nCanKillCount = nCanKillCount + 1
+            end
+        end
+
+        if nCanKillCount >= 2
+        then
+            return BOT_ACTION_DESIRE_HIGH
+        end
 	end
 
-    if  J.IsDoingRoshan(bot)
-    and J.GetMP(bot) > 0.4
+    if J.IsDoingRoshan(bot)
+    and GetUnitToLocationDistance(bot, roshanLoc) > attackRange * 2
+    and J.GetManaAfter(manaCost) > 0.3
     then
-        local eta = (GetUnitToLocationDistance(bot, roshanLoc) / nSpeed)
-        if eta > nDuration
-        then
-            return BOT_ACTION_DESIRE_HIGH
-        end
+        return BOT_ACTION_DESIRE_HIGH
     end
 
-    if  J.IsDoingTormentor(bot)
-    and J.GetMP(bot) > 0.4
+    if J.IsDoingTormentor(bot)
+    and GetUnitToLocationDistance(bot, tormentorLoc) > attackRange * 2
+    and J.GetManaAfter(manaCost) > 0.3
     then
-        local eta = (GetUnitToLocationDistance(bot, tormentorLoc) / nSpeed)
-        if eta > nDuration
-        then
-            return BOT_ACTION_DESIRE_HIGH
-        end
+        return BOT_ACTION_DESIRE_HIGH
     end
 
     return BOT_ACTION_DESIRE_NONE
@@ -561,65 +518,48 @@ function X.ConsiderTimeLapse()
         return BOT_ACTION_DESIRE_NONE, nil
     end
 
-	if J.IsRetreating(bot)
-	then
-        local nInRangeEnemy = bot:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
-        for _, enemyHero in pairs(nInRangeEnemy)
-        do
-            if  J.IsValidHero(enemyHero)
-            and not J.IsSuspiciousIllusion(enemyHero)
-            and not J.IsDisabled(enemyHero)
+    local nInRangeAlly = bot:GetNearbyHeroes(1600, false, BOT_MODE_NONE)
+    local nInRangeEnemy = bot:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
+
+    if J.IsValidHero(nInRangeEnemy[1])
+    then
+        if  nInRangeAlly ~= nil and nInRangeEnemy ~= nil
+        and (#nInRangeEnemy > #nInRangeAlly)
+        then
+            if J.GetHP(bot) < 0.5
+            and Shukuchi:IsTrained() and Shukuchi:GetCooldownTimeRemaining() < 2
+            and J.IsChasingTarget(nInRangeEnemy[1], bot)
             then
-                local nInRangeAlly = enemyHero:GetNearbyHeroes(1200, true, BOT_MODE_NONE)
-                local nTargetInRangeAlly = enemyHero:GetNearbyHeroes(1200, false, BOT_MODE_NONE)
-
-                if  nInRangeAlly ~= nil and nTargetInRangeAlly ~= nil
-                and ((#nTargetInRangeAlly > #nInRangeAlly))
-                then
-                    if J.GetHP(bot) < 0.42
-                    and Shukuchi:IsTrained() and Shukuchi:GetCooldownTimeRemaining() < 2.5
-                    and J.IsChasingTarget(enemyHero, bot)
-                    then
-                        return BOT_ACTION_DESIRE_HIGH, 'self'
-                    end
-                end
-
-                if  J.GetHP(bot) < 0.33
-                and bot:WasRecentlyDamagedByHero(enemyHero, 1)
-                then
-                    return BOT_ACTION_DESIRE_HIGH, 'self'
-                end
+                return BOT_ACTION_DESIRE_HIGH, 'self'
             end
         end
-	end
+
+        if J.GetHP(bot) < 0.51 and bot:WasRecentlyDamagedByAnyHero(2.5)
+        then
+            return BOT_ACTION_DESIRE_HIGH, 'self'
+        end
+    end
 
 	if bot:HasScepter()
 	then
-        local nCastRange = TimeLapse:GetCastRange()
-		local nInRangeAlly = bot:GetNearbyHeroes(nCastRange, false, BOT_MODE_NONE)
-
+        local nCastRange = J.GetProperCastRange(false, bot, TimeLapse:GetCastRange())
 		for _, allyHero in pairs(nInRangeAlly)
         do
 			if  J.IsValidHero(allyHero)
+            and J.IsInRange(bot, allyHero, nCastRange)
             and J.IsRetreating(allyHero)
-            and J.GetHP(allyHero) < 0.33
+            and J.GetHP(allyHero) < 0.4
             and J.IsCore(allyHero)
-            and J.GetHP(bot) > 0.75
             and allyHero:WasRecentlyDamagedByAnyHero(2)
-            and not J.IsSuspiciousIllusion(allyHero)
+            and not allyHero:IsIllusion()
             and not allyHero:HasModifier('modifier_legion_commander_duel')
             and not allyHero:HasModifier('modifier_necrolyte_reapers_scythe')
 			then
-                local nInRangeEnemy = allyHero:GetNearbyHeroes(1200, true, BOT_MODE_NONE)
-                for _, enemyHero in pairs(nInRangeEnemy)
-                do
-                    if  J.IsValidHero(enemyHero)
-                    and J.IsChasingTarget(enemyHero, allyHero)
-                    and not J.IsSuspiciousIllusion(enemyHero)
-                    and not J.IsDisabled(enemyHero)
-                    then
-                        return BOT_ACTION_DESIRE_HIGH, allyHero
-                    end
+                if J.IsValidHero(nInRangeEnemy[1])
+                and J.IsChasingTarget(nInRangeEnemy[1], allyHero)
+                and not J.IsSuspiciousIllusion(nInRangeEnemy[1])
+                then
+                    return BOT_ACTION_DESIRE_HIGH, allyHero
                 end
 			end
 		end

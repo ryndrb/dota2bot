@@ -558,12 +558,11 @@ function X.ConsiderHookshot()
                 local nInRangeAlly = enemyHero:GetNearbyHeroes(1200, true, BOT_MODE_NONE)
                 local nTargetInRangeAlly = enemyHero:GetNearbyHeroes(1200, false, BOT_MODE_NONE)
                 local eta = (GetUnitToUnitDistance(bot, enemyHero) / nSpeed) + nCastPoint
-                local targetLoc = enemyHero:GetExtrapolatedLocation(eta)
+                local targetLoc = J.GetCorrectLoc(enemyHero, eta)
 
                 if  nInRangeAlly ~= nil and nTargetInRangeAlly ~= nil
                 and #nInRangeAlly >= #nTargetInRangeAlly
-                and not J.IsAllyHeroBetweenMeAndTarget(bot, enemyHero, targetLoc, nRadius)
-                and not J.IsCreepBetweenMeAndTarget(bot, enemyHero, targetLoc, nRadius)
+                and not J.IsUnitBetweenMeAndLocation(bot, enemyHero, targetLoc, nRadius)
                 and not J.IsLocationInChrono(targetLoc)
                 and not J.IsLocationInArena(targetLoc, 800)
                 then
@@ -618,10 +617,9 @@ function X.ConsiderHookshot()
                         and not J.IsNotSelf(bot, allyHero)
                         then
                             local eta = (GetUnitToUnitDistance(bot, allyHero) / nSpeed) + nCastPoint
-                            local targetLoc = allyHero:GetExtrapolatedLocation(eta)
+                            local targetLoc = J.GetCorrectLoc(allyHero, eta)
 
-                            if  not J.IsHeroBetweenMeAndTarget(bot, allyHero, targetLoc, nRadius)
-                            and not J.IsCreepBetweenMeAndTarget(bot, allyHero, targetLoc, nRadius)
+                            if not J.IsUnitBetweenMeAndLocation(bot, allyHero, targetLoc, nRadius)
                             and not J.IsLocationInChrono(targetLoc)
                             and not J.IsLocationInArena(targetLoc, 800)
                             then
@@ -644,8 +642,7 @@ function X.ConsiderHookshot()
 			if  campDist < targetLoc
 			and GetUnitToLocationDistance(bot, camp.location) > 700
 			then
-				if  not J.IsHeroBetweenMeAndLocation(bot, camp.location, nRadius)
-				and not J.IsCreepBetweenMeAndLocation(bot, camp.location, nRadius)
+				if not J.IsUnitBetweenMeAndLocation(bot, bot, camp.location, nRadius)
                 and not J.IsLocationInChrono(camp.location)
                 and not J.IsLocationInArena(camp.location, 800)
 				then
