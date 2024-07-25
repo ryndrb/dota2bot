@@ -36,6 +36,19 @@ function X.Consider()
 	local nEnemyHeroes = bot:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
     local nEnemyTowers = bot:GetNearbyTowers(888, true)
 
+	if bot.InfoBuffer ~= nil
+	then
+		-- try to backtrack ~^40% of damage
+		for i = 1, math.ceil(nDamageWindow)
+		do
+			local prevHealth = bot.InfoBuffer[i].health
+			if prevHealth and (prevHealth / bot:GetMaxHealth()) - J.GetHP(bot) >= 0.4
+			then
+				return BOT_ACTION_DESIRE_HIGH, J.Site.GetXUnitsTowardsLocation(bot, J.GetTeamFountain(), nCastRange)
+			end
+		end
+	end
+
 	if J.IsStuck(bot)
 	then
 		return BOT_ACTION_DESIRE_HIGH, J.Site.GetXUnitsTowardsLocation(bot, J.GetTeamFountain(), nCastRange)
@@ -73,8 +86,10 @@ function X.Consider()
 				then
 					if J.IsInLaningPhase()
 					then
+						local nInRangeAlly = bot:GetNearbyHeroes(888, false, BOT_MODE_NONE)
 						if nEnemyTowers ~= nil
                         and (#nEnemyTowers == 0 or J.IsValidBuilding(nEnemyTowers[1]) and GetUnitToLocationDistance(botTarget, loc) > 888)
+						and botTarget:GetHealth() <= J.GetTotalEstimatedDamageToTarget(nInRangeAlly, botTarget)
 						then
                             if GetUnitToLocationDistance(bot, loc) > nCastRange
                             then
@@ -99,6 +114,7 @@ function X.Consider()
 	if J.IsRetreating(bot)
     and not J.IsRealInvisible(bot)
     and bot:WasRecentlyDamagedByAnyHero(nDamageWindow)
+	and bot:GetActiveModeDesire() > 0.8
 	then
         if  J.IsValidHero(nEnemyHeroes[1])
         and J.IsInRange(bot, nEnemyHeroes[1], 600)

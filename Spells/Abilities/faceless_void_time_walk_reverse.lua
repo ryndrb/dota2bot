@@ -50,13 +50,30 @@ function X.Consider()
 		local nInRangeAlly = botTarget:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
 		local nInRangeEnemy = botTarget:GetNearbyHeroes(1600, false, BOT_MODE_NONE)
 
+		local isPrevLocDist1 = GetUnitToLocationDistance(bot, bot.TimeWalkPrevLocation) > GetUnitToLocationDistance(botTarget, bot.TimeWalkPrevLocation)
+		local isPrevLocDist2 = GetUnitToLocationDistance(bot, bot.TimeWalkPrevLocation) > GetUnitToUnitDistance(bot, botTarget)
+
 		if nInRangeAlly ~= nil and nInRangeEnemy ~= nil
 		then
 			if  #nInRangeEnemy > #nInRangeAlly
-			and GetUnitToLocationDistance(bot, bot.TimeWalkPrevLocation) > GetUnitToLocationDistance(botTarget, bot.TimeWalkPrevLocation)
-			and GetUnitToLocationDistance(bot, bot.TimeWalkPrevLocation) > GetUnitToUnitDistance(bot, botTarget)
+			and isPrevLocDist1
+			and isPrevLocDist2
 			then
 				return BOT_ACTION_DESIRE_HIGH
+			end
+		end
+
+		if bot.InfoBuffer ~= nil
+		then
+			-- try to backtrack ~^40% of damage
+			for i = 1, 3
+			do
+				local prevHealth = bot.InfoBuffer[i].health
+				if prevHealth and (prevHealth / bot:GetMaxHealth()) - J.GetHP(bot) >= 0.4
+				and isPrevLocDist1 and isPrevLocDist2
+				then
+					return BOT_ACTION_DESIRE_HIGH
+				end
 			end
 		end
 	end

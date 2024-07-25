@@ -7230,12 +7230,29 @@ local function UseGlyph()
 
 end
 
+-- store some bot values for last 10 sec
+local infoBuffer = {}
+local timeDelta = 10
+local currIdx = 0
+
+for i = 1, timeDelta do infoBuffer[i] = {health = 0, location = bot:GetLocation()} end
+
+function X.UpdateInfoBuffer()
+	currIdx = (currIdx % timeDelta) + 1
+	infoBuffer[timeDelta + 1 - currIdx] = {
+		health = bot:GetHealth(),
+		location = bot:GetLocation(),
+	}
+	bot.InfoBuffer = infoBuffer
+end
 
 function ItemUsageThink()
 	ItemUsageComplement()
 end
 
 function AbilityUsageThink()
+	if DotaTime() % 1 == 0 then X.UpdateInfoBuffer() end
+
 	if U['spell_order'] ~= nil and U['spell_order'][bot:GetUnitName()] ~= nil
 	then
 		S.AbilityUsage(U['spell_order'][bot:GetUnitName()])

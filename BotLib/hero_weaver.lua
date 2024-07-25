@@ -84,11 +84,10 @@ local HeroBuild = {
                 "item_tango",
                 "item_enchanted_mango",
                 "item_double_branches",
-                "item_circlet",
-                "item_slippers",
+                "item_magic_stick",
             
-                "item_magic_wand",
                 "item_double_wraith_band",
+                "item_magic_wand",
                 "item_power_treads",
                 "item_maelstrom",
                 "item_sphere",--
@@ -103,8 +102,9 @@ local HeroBuild = {
                 "item_ultimate_scepter_2",
             },
             ['sell_list'] = {
-                "item_bracer",
                 "item_magic_wand",
+                "item_wraith_band",
+                "item_power_treads",
             },
         },
     },
@@ -514,19 +514,30 @@ end
 
 function X.ConsiderTimeLapse()
     if not TimeLapse:IsFullyCastable()
+    or bot:HasModifier('modifier_fountain_aura_buff')
     then
         return BOT_ACTION_DESIRE_NONE, nil
     end
 
     local nInRangeAlly = bot:GetNearbyHeroes(1600, false, BOT_MODE_NONE)
     local nInRangeEnemy = bot:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
+    local botHP = J.GetHP(bot)
+
+	if bot.InfoBuffer ~= nil
+	then
+        local prevHealth = bot.InfoBuffer[5].health
+        if prevHealth and (prevHealth / bot:GetMaxHealth()) - botHP >= 0.5
+        then
+            return BOT_ACTION_DESIRE_HIGH, 'self'
+        end
+	end
 
     if J.IsValidHero(nInRangeEnemy[1])
     then
         if  nInRangeAlly ~= nil and nInRangeEnemy ~= nil
         and (#nInRangeEnemy > #nInRangeAlly)
         then
-            if J.GetHP(bot) < 0.5
+            if botHP < 0.5
             and Shukuchi:IsTrained() and Shukuchi:GetCooldownTimeRemaining() < 2
             and J.IsChasingTarget(nInRangeEnemy[1], bot)
             then
@@ -534,9 +545,25 @@ function X.ConsiderTimeLapse()
             end
         end
 
-        if J.GetHP(bot) < 0.51 and bot:WasRecentlyDamagedByAnyHero(2.5)
+        if botHP < 0.51 and bot:WasRecentlyDamagedByAnyHero(2.5)
         then
             return BOT_ACTION_DESIRE_HIGH, 'self'
+        end
+
+        if bot.InfoBuffer ~= nil
+        and J.IsInRange(bot, nInRangeEnemy[1], 800)
+        and botHP < 0.5 and (bot:WasRecentlyDamagedByAnyHero(3) or J.IsChasingTarget(nInRangeEnemy[1], bot))
+        then
+            local prevLoc = bot.InfoBuffer[5].location
+            if prevLoc
+            then
+                local dist = J.GetDistance(bot:GetLocation(), prevLoc)
+                if dist > 800
+                and J.GetDistance(nInRangeEnemy[1]:GetLocation(), prevLoc) > 800
+                then
+                    return BOT_ACTION_DESIRE_HIGH, 'self'
+                end
+            end
         end
     end
 
