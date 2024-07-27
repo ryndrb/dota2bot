@@ -151,6 +151,7 @@ local function HarassEnemyHero(hEnemyList)
     for _, enemyHero in pairs(hEnemyList)
     do
         if J.IsValidHero(enemyHero)
+		and J.IsInRange(bot, enemyHero, bot:GetAttackRange() + 150)
 		and J.CanBeAttacked(enemyHero)
 		and not J.IsSuspiciousIllusion(enemyHero)
         then
@@ -161,16 +162,34 @@ local function HarassEnemyHero(hEnemyList)
     return nil
 end
 
+local function GetLaneDelta(hEnemyList)
+	local botAttackRange = bot:GetAttackRange()
+
+	if J.IsValidHero(hEnemyList[1])
+	and not J.IsSuspiciousIllusion(hEnemyList[1])
+	then
+		local botHP = J.GetHP(bot)
+		local enemyHP = J.GetHP(hEnemyList[1])
+
+		return RemapValClamped((enemyHP - botHP), -1, 0, 800, 300)
+	end
+
+    return botAttackRange
+end
+
 function Think()
 	if not bot:IsAlive() or J.CanNotUseAction(bot) then return end
 
 	local LowHealthThreshold = 0.35
 	local RetreatThreshold = 0.15
 
+	local botAttackRange = bot:GetAttackRange()
+	local botAssignedLane = bot:GetAssignedLane()
 	local nEnemyHeroes = bot:GetNearbyHeroes(1200, true, BOT_MODE_NONE)
 	local nAllyCreeps = bot:GetNearbyCreeps(800, false)
 	local nEnemyCreeps = bot:GetNearbyCreeps(800, true)
-	local nAllyHeroes = bot:GetNearbyHeroes(1200, false, BOT_MODE_NONE)
+	local nAllyHeroes = bot:GetNearbyHeroes(1600, false, BOT_MODE_NONE)
+	local closestEnemyAttackRange = J.GetClosestEnemyHeroAttackRange(nEnemyHeroes)
 
 	if (J.GetHP(bot) < RetreatThreshold and nEnemyHeroes ~= nil and #nEnemyHeroes > 0)
 	or (bot:WasRecentlyDamagedByAnyHero(2) and (bot:GetAttackTarget() ~= nil and not (bot:GetAttackTarget()):IsHero()))
@@ -203,31 +222,39 @@ function Think()
 		return
 	end
 
-	local vLaneFront = GetLaneFrontLocation(GetTeam(), bot:GetAssignedLane(), -(bot:GetAttackRange() - 50))
-	local vEnemyLaneFront = GetLaneFrontLocation(GetOpposingTeam(), bot:GetAssignedLane(), -(bot:GetAttackRange() - 50))
-	local nEnemyLaneAmount = 1 - GetLaneFrontAmount(GetOpposingTeam(), bot:GetAssignedLane(), true)
+	local vLaneFront = GetLaneFrontLocation(GetTeam(), botAssignedLane, 0)
+	local vEnemyLaneFront = GetLaneFrontLocation(GetOpposingTeam(), botAssignedLane, 0)
+	local nEnemyLaneAmount = 1 - GetLaneFrontAmount(GetOpposingTeam(), botAssignedLane, true)
+	local laneDelta = GetLaneDelta(nEnemyHeroes)
 
-	if J.GetDistance(vLaneFront, vEnemyLaneFront) <= 100
+	if J.GetDistance(vLaneFront, vEnemyLaneFront) <= 1600
 	and nEnemyLaneAmount > 0
 	then
-		vLaneFront = vEnemyLaneFront
+		if #nEnemyHeroes > 0
+		then
+			laneDelta = math.max(closestEnemyAttackRange, 300)
+		end
+
+		vLaneFront = GetLaneFrontLocation(GetOpposingTeam(), botAssignedLane, -laneDelta)
+	else
+		vLaneFront = GetLaneFrontLocation(GetTeam(), botAssignedLane, -laneDelta)
 	end
 
 	-- print(vLaneFront, vEnemyLaneFront)
 
 	if J.GetHP(bot) > LowHealthThreshold
 	then
-		nEnemyHeroes = bot:GetNearbyHeroes(bot:GetAttackRange() + 50, true, BOT_MODE_NONE)
+		nEnemyHeroes = bot:GetNearbyHeroes(botAttackRange + 50, true, BOT_MODE_NONE)
 		local harassTarget = HarassEnemyHero(nEnemyHeroes)
 		if not J.IsCore(bot) and J.IsValidHero(harassTarget)
 		then
 			bot:Action_AttackUnit(harassTarget, true)
 		else
-			bot:Action_MoveToLocation(vLaneFront + RandomVector(200))
+			bot:Action_MoveToLocation(vLaneFront + RandomVector(50))
 		end
 	else
-		vLaneFront = GetLaneFrontLocation(GetTeam(), bot:GetAssignedLane(), -RemapValClamped(J.GetHP(bot), 0, 1, 1200, bot:GetAttackRange()))
-		bot:Action_MoveToLocation(vLaneFront)
+		vLaneFront = GetLaneFrontLocation(GetTeam(), botAssignedLane, -1200)
+		bot:Action_MoveToLocation(vLaneFront + RandomVector(50))
 	end
 end
 

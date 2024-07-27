@@ -35,6 +35,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
                 -  5th is for Position 4 (Support Off Lane)
         - (For non-Git) Everytime there is an update, you have to re-download the files and replaced the ones on the `bots` folder.
     - How I test:
+        - Added in launch options: `+cl_clock_recvmargin_enable 0`
         - Bots v Bots
         - (Turbo, only if I'm testing spell and item usage/synergy; All Pick otherwise)
         - `Enable Cheats`

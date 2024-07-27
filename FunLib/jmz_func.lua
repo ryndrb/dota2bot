@@ -428,10 +428,54 @@ function J.GetProperTarget( bot )
 		target = nil
 	end
 
+	if bot == GetBot() and J.IsNonStableHero(bot:GetUnitName())
+	and target == nil
+	and bot:GetActiveMode() ~= BOT_MODE_ATTACK
+	then
+		target = J.GetNonStableHeroTarget(bot)
+		if target ~= nil then bot:SetTarget(target) end
+	end
+
 	return target
 
 end
 
+-- generic if not falling
+function J.GetNonStableHeroTarget(bot)
+	if bot ~= GetBot() then return nil end
+
+	local target = nil
+	local tEnemyHeroes = bot:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
+	local tCreeps = bot:GetNearbyCreeps(1600, true)
+	
+	local hp = 99999
+	for _, enemyHero in pairs(tEnemyHeroes)
+	do
+		if J.IsValidHero(enemyHero)
+		and J.CanBeAttacked(enemyHero)
+		then
+			local currHP = enemyHero:GetHealth()
+			if currHP < hp
+			then
+				hp = currHP
+				target = enemyHero
+			end
+		end
+	end
+
+	if target ~= nil
+	then
+		return target
+	end
+
+	if J.CanBeAttacked(tCreeps[1])
+	and J.IsInRange(bot, tCreeps[1], bot:GetAttackRange())
+	then
+		return tCreeps[1]
+	end
+
+	return nil
+end
 
 function J.IsAllyCanKill( target )
 
@@ -3601,22 +3645,30 @@ function J.GetPosition(bot)
 end
 
 function J.WeAreStronger(bot, radius)
-
-    local mates = bot:GetNearbyHeroes(radius, false, BOT_MODE_NONE);
-    local enemies = bot:GetNearbyHeroes(radius, true, BOT_MODE_NONE);
+    local tAllyHeroes = bot:GetNearbyHeroes(math.min(radius, 1600), false, BOT_MODE_NONE)
+    local tEnemyHeroes = bot:GetNearbyHeroes(math.min(radius, 1600), true, BOT_MODE_NONE)
   
-    local ourPower = 0;
-    local enemyPower = 0;
+    local ourPower = 0
+    local enemyPower = 0
   
-    for _, h in pairs(mates) do
-        ourPower = ourPower + h:GetOffensivePower();
+    for _, h in pairs(tAllyHeroes)
+	do
+		if J.IsValidHero(h)
+		then
+			ourPower = ourPower + h:GetOffensivePower()
+		end
     end
   
-    for _, h in pairs(enemies) do
-        enemyPower = enemyPower + h:GetRawOffensivePower();
+    for _, h in pairs(tEnemyHeroes)
+	do
+		if J.IsValidHero(h)
+		then
+			enemyPower = enemyPower + h:GetRawOffensivePower()
+		end
     end
   
-    return #mates > #enemies and ourPower > enemyPower;
+    return #tAllyHeroes >= #tEnemyHeroes and ourPower > enemyPower
+		or #tEnemyHeroes > #tAllyHeroes and ourPower > enemyPower * 1.25
 end
 
 function J.RandomForwardVector(length)
@@ -5065,6 +5117,38 @@ end
 
 function J.IsRoshanCloseToChangingSides()
     return DotaTime() % 300 >= 300 - 30
+end
+
+function J.IsNonStableHero(hName)
+	local hList = {
+		['npc_dota_hero_dark_willow'] = true,
+		['npc_dota_hero_elder_titan'] = true,
+		['npc_dota_hero_hoodwink'] = true,
+		['npc_dota_hero_lone_druid'] = true,
+		['npc_dota_hero_marci'] = true,
+		['npc_dota_hero_muerta'] = true,
+		['npc_dota_hero_primal_beast'] = true,
+		['npc_dota_hero_wisp'] = true,
+	}
+
+	if hList[hName] then return true else return false end
+end
+
+function J.GetClosestEnemyHeroAttackRange(nEnemyHeroes)
+	local range = 0
+	for _, enemyHero in pairs(nEnemyHeroes)
+	do
+		if J.IsValidHero(enemyHero)
+		then
+			local currRange = enemyHero:GetAttackRange()
+			if currRange > range
+			then
+				range = currRange
+			end
+		end
+	end
+
+	return range
 end
 
 function J.ConsolePrintActiveMode(bot)

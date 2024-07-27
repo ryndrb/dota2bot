@@ -335,23 +335,15 @@ local tProTeams = {
 
 local G2 = {"Monet", "NothingToSay", "JT-", "BoBoKa", "xNova"}
 
--- some sport teams rep; in JP kanji since it's fancier
-local tSportTeams = {
-    -- NBA
-    "鷹", "ケルト", "網", "雄牛", "スズメバチ", "騎士", "ピストン", "ペイサー", "熱", "雄鹿", "ニックス", "魔法", "シクサーズ", "ラプター", "魔法使い",
-    "マブス", "ナゲット", "ダブス", "ロケット", "クリッパー", "レイカーズ", "グリズ", "狼", "ペリカンズ", "雷", "太陽", "ブレイザーズ", "王", "スパーズ", "ジャズ",
-
-    -- "hawk", "celtic", "net", "bull", "hornet", "cav", "piston", "pacer", "heat", "buck", "knick", "magic", "sixer", "raptor", "wizard",
-    -- "mav", "nugget", "dub", "rocket", "clipper", "laker", "grizz", "wolve", "pels", "thunder", "sun", "blazer", "king", "spur", "jazz",
-
-    -- "ATL", "BOS", "BRK", "CHI", "CHO", "CLE", "DET", "IND", "MIA", "MIL", "NYK", "ORL", "PHI", "TOR", "WAS",
-    -- "DAL", "DEN", "GSW", "HOU", "LAC", "LAL", "MEM", "MIN", "NOP", "OKC", "PHO", "POR", "SAC", "SAS", "UTA"
+-- the game does not render them as good (curves); really appear pixelated
+local tKanjis = {
+    "はな", "うみ", "つき", "ゆき", "ほし", "さくら", "もり", "くも", "ゆめ", "そら", "にじ", "きぼう", "あい", "び", "こころ", "わ", "しず", "ぎん", "ひかり", "かぜ", "まこと", "しょう", "かなた", "みらい", "えいえん", "ゆう", "しゅんかん", "げん", "あや", "あきら",
 }
 
 function X.GetBotNames()
     local names = {}
 
-    local rep = tSportTeams[RandomInt(1, #tSportTeams)]
+    local rep = tKanjis[RandomInt(1, #tKanjis)]
     local idx = RandomInt(1, #tProTeams)
     if GetTeam() == TEAM_RADIANT
     then while idx % 2 ~= 0 do idx = RandomInt(1, #tProTeams) end
