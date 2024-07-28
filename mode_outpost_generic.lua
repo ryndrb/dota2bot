@@ -121,12 +121,6 @@ function GetDesire()
 		ShouldMoveMortimerKisses = false
 	end
 
-	-- Spirit Breaker
-	if bot:HasModifier("modifier_spirit_breaker_charge_of_darkness")
-	then
-		return BOT_MODE_DESIRE_ABSOLUTE
-	end
-
 	-- Leshrac
 	ShouldMoveCloseTowerForEdict = ConsiderLeshracEdictTower()
 	if ShouldMoveCloseTowerForEdict
@@ -235,6 +229,15 @@ function GetDesire()
 		if cAbility:IsTrained()
 		then
 			if cAbility:IsInAbilityPhase() or bot:HasModifier('modifier_puck_phase_shift') then
+				return BOT_MODE_DESIRE_ABSOLUTE
+			end
+		end
+	elseif botName == "npc_dota_hero_spirit_breaker"
+	then
+		if cAbility == nil then cAbility = bot:GetAbilityByName("spirit_breaker_charge_of_darkness") end
+		if cAbility:IsTrained()
+		then
+			if cAbility:IsInAbilityPhase() or bot:HasModifier('modifier_spirit_breaker_charge_of_darkness') then
 				return BOT_MODE_DESIRE_ABSOLUTE
 			end
 		end

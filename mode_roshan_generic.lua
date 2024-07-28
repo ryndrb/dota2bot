@@ -56,7 +56,7 @@ function GetDesire()
 
     local nEnemyHeroes = bot:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
     if nEnemyHeroes ~= nil and #nEnemyHeroes > 0
-    or (J.IsRoshanCloseToChangingSides() and not (J.IsRoshan(botTarget) and J.IsInRange(bot, botTarget, 900)))
+    or (J.IsRoshanCloseToChangingSides() and not (J.IsRoshan(botTarget) and J.IsInRange(bot, botTarget, 900) and J.GetHP(botTarget) > 0.45))
     then
         return BOT_ACTION_DESIRE_NONE
     end

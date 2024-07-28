@@ -97,7 +97,7 @@ function X.Consider()
 	if J.IsStuck(bot)
 	then
 		local loc = J.GetEscapeLoc()
-		return BOT_ACTION_DESIRE_HIGH, J.Site.GetXUnitsTowardsLocation(bot, loc, nDistance)
+		return BOT_ACTION_DESIRE_HIGH, J.Site.GetXUnitsTowardsLocation(bot, loc, nDistance), false
 	end
 
 	if J.IsGoingOnSomeone(bot)

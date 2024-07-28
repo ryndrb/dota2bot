@@ -6,11 +6,18 @@ local pingTimeDelta = 5
 function Defend.GetDefendDesire(bot, lane)
 	if bot.laneToDefend == nil then bot.laneToDefend = lane end
 
-	local nInRangeEnemy = J.GetEnemiesNearLoc(bot:GetLocation(), 2200)
+	local nEnemyAroundAncient = J.GetEnemiesAroundAncient()
+	local nSearchRange = 2200
+	if #nEnemyAroundAncient > 0
+	then
+		nSearchRange = 880
+	end
+
+	local nInRangeEnemy = J.GetEnemiesNearLoc(bot:GetLocation(), nSearchRange)
 	if #nInRangeEnemy > 0 and GetUnitToLocationDistance(bot, GetLaneFrontLocation(GetTeam(), lane, 0)) < 1200
 	or (bot:GetAssignedLane() ~= lane and J.GetPosition(bot) == 1 and DotaTime() < 12 * 60) -- reduce carry feeds
 	or (J.IsDoingRoshan(bot) and #J.GetAlliesNearLoc(J.GetCurrentRoshanLocation(), 2800) >= 3)
-	or (J.IsDoingTormentor(bot) and #J.GetAlliesNearLoc(J.GetTormentorLocation(GetTeam()), 900) >= 2 and #J.GetEnemiesAroundAncient() == 0)
+	or (J.IsDoingTormentor(bot) and #J.GetAlliesNearLoc(J.GetTormentorLocation(GetTeam()), 900) >= 2 and #nEnemyAroundAncient == 0)
 	then
 		return BOT_MODE_DESIRE_NONE
 	end
@@ -32,15 +39,34 @@ function Defend.GetDefendDesire(bot, lane)
 		if isPinged and lane == pingedLane
 		and DotaTime() < humanPing.time + pingTimeDelta
 		then
-			return BOT_ACTION_DESIRE_ABSOLUTE * 0.95
+			return BOT_MODE_DESIRE_ABSOLUTE * 0.95
+		end
+	end
+
+	local furthestBuilding = Defend.GetFurthestBuildingOnLane(lane)
+	if J.IsValidBuilding(furthestBuilding)
+	then
+		local isOnlyCreeps = Defend.IsOnlyCreepsAroundBuilding(furthestBuilding)
+
+		if (J.IsTier1(furthestBuilding) and J.GetHP(furthestBuilding) <= 0.2
+			or J.IsTier2(furthestBuilding) and J.GetHP(furthestBuilding) <= 0.2)
+		and not isOnlyCreeps
+		then
+			return BOT_MODE_DESIRE_NONE
+		end
+
+		if (J.IsTier1(furthestBuilding) or J.IsTier2(furthestBuilding))
+		and isOnlyCreeps
+		and J.IsCore(bot) and GetUnitToUnitDistance(bot, furthestBuilding) > 2200
+		then
+			return BOT_MODE_DESIRE_NONE
 		end
 	end
 
 	local nDefendDesire = 0
 	local mul = Defend.GetEnemyAmountMul(lane)
-	local nEnemies = J.GetEnemiesAroundAncient()
 
-	if  nEnemies ~= nil and #nEnemies >= 1
+	if  nEnemyAroundAncient ~= nil and #nEnemyAroundAncient >= 1
 	and (GetTower(GetTeam(), TOWER_MID_3) == nil
 		or (GetTower(GetTeam(), TOWER_TOP_3) == nil
 			and GetTower(GetTeam(), TOWER_MID_3) == nil
@@ -62,6 +88,7 @@ function Defend.DefendThink(bot, lane)
 	local attackRange = bot:GetAttackRange()
 	local vDefendLane = GetLaneFrontLocation(GetTeam(), lane, 0)
 	local nSearchRange = attackRange < 900 and 900 or math.min(attackRange, 1600)
+	local nEnemyAroundAncient = J.GetEnemiesAroundAncient()
 
 	local nAllyHeroes = bot:GetNearbyHeroes(1600, false, BOT_MODE_NONE)
 	local nEnemyHeroes = bot:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
@@ -104,7 +131,12 @@ function Defend.DefendThink(bot, lane)
 		return
 	end
 
-	bot:Action_MoveToLocation(vDefendLane + RandomVector(attackRange))
+	if #nEnemyAroundAncient > 0
+	then
+		vDefendLane = GetAncient(GetTeam()):GetLocation()
+	end
+
+	bot:Action_MoveToLocation(vDefendLane + J.RandomForwardVector(attackRange))
 end
 
 function Defend.GetFurthestBuildingOnLane(lane)
@@ -316,6 +348,39 @@ function Defend.GetEnemyCountInLane(lane, isHero)
 	end
 
 	return #units
+end
+
+function Defend.IsOnlyCreepsAroundBuilding(furthestBuilding)
+	local creepCount = 0
+	local heroCount = 0
+	for _, unit in pairs(GetUnitList(UNIT_LIST_ENEMIES))
+	do
+		if J.IsValid(unit)
+		and GetUnitToUnitDistance(furthestBuilding, unit) <= 900
+		then
+			if unit:IsCreep()
+			or unit:IsAncientCreep()
+			or unit:HasModifier('modifier_chen_holy_persuasion')
+			or unit:HasModifier('modifier_dominated')
+			then
+				creepCount = creepCount + 1
+			end
+
+			local isIllusion = J.IsSuspiciousIllusion(unit)
+
+			if unit:IsHero()
+			and (not isIllusion
+				or isIllusion and unit:HasModifier('modifier_arc_warden_tempest_double')
+				or isIllusion and string.find(unit:GetUnitName(), 'chaos_knight')
+				or isIllusion and string.find(unit:GetUnitName(), 'naga_siren')
+			)
+			then
+				heroCount = heroCount + 1
+			end
+		end
+	end
+
+	return creepCount > 0 and heroCount == 0
 end
 
 return Defend

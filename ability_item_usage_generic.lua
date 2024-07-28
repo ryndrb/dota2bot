@@ -1254,7 +1254,7 @@ X.ConsiderItemDesire["item_blink"] = function( hItem )
 		and not botTarget:IsAttackImmune()
 		and not botTarget:IsInvulnerable()
 		then
-			local nInRangeAlly = botTarget:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
+			local nInRangeAlly = J.GetSpecialModeAllies(botTarget, 1600, BOT_MODE_ATTACK)
 			local nInRangeEnemy = botTarget:GetNearbyHeroes(1600, false, BOT_MODE_NONE)
 
 			if  nInRangeAlly ~= nil and nInRangeEnemy ~= nil

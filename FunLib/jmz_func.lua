@@ -4023,6 +4023,7 @@ function J.IsUnitBetweenMeAndLocation(hSource, hTarget, vTargetLoc, nRadius)
 		and unit:CanBeSeen()
 		and GetUnitToUnitDistance(GetBot(), unit) <= 1600
 		and not unit:IsBuilding()
+		and not string.find(unit:GetUnitName(), 'ward')
 		and hSource ~= unit
 		and hTarget ~= unit
 		then
@@ -4469,21 +4470,12 @@ end
 function J.GetEnemiesAroundAncient()
 	local nUnitList = {}
 
-	for _, unit in pairs(GetUnitList(UNIT_LIST_ENEMY_HEROES))
+	for _, unit in pairs(GetUnitList(UNIT_LIST_ENEMIES))
 	do
-		if  J.IsValidHero(unit)
-		and GetUnitToUnitDistance(unit, GetAncient(GetTeam())) < 1600
+		if J.IsValid(unit)
+		and GetUnitToUnitDistance(unit, GetAncient(GetTeam())) <= 1600
 		then
 			table.insert(nUnitList, unit)
-		end
-	end
-
-	for _, creep in pairs(GetUnitList(UNIT_LIST_ENEMY_CREEPS))
-	do
-		if  J.IsValid(creep)
-		and GetUnitToUnitDistance(creep, GetAncient(GetTeam())) < 1600
-		then
-			table.insert(nUnitList, creep)
 		end
 	end
 

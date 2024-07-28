@@ -97,7 +97,7 @@ function Push.GetPushDesire(bot, lane)
         end
     end
 
-    if bot:WasRecentlyDamagedByTower(3) and DotaTime() < 10 * 60
+    if bot:WasRecentlyDamagedByTower(3)
     or J.GetHP(bot) < 0.45
     then
         return BOT_ACTION_DESIRE_NONE

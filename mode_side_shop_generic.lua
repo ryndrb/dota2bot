@@ -17,6 +17,7 @@ function GetDesire()
 	TormentorLocation = J.GetTormentorLocation(GetTeam())
 
     local nAllyInLoc = J.GetAlliesNearLoc(TormentorLocation, 700)
+	local nInRangeEnemy = bot:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
 	local aliveAlly = J.GetNumOfAliveHeroes(false)
 	local aveDistance, heroCount = GetAveTeamDistance()
 	local spawnTime = J.IsModeTurbo() and 10 or 20
@@ -43,6 +44,7 @@ function GetDesire()
 	or J.IsDefending(bot)
 	or J.IsDoingRoshan(bot))
 	or nModeDesire <= 0.2
+	or #nInRangeEnemy > 0
 	then
 		return BOT_ACTION_DESIRE_NONE
 	end
@@ -277,8 +279,18 @@ function IsEnoughAllies()
 		end
 	end
 
+	local hasEnoughDPS = false
+	local totalAttackDamage = GetTotalAttackDamage(TormentorLocation, 700)
+	local totalAttackSpeed = GetTotalAttackSpeed(TormentorLocation, 700)
+	if totalAttackDamage / heroCount >= 105
+	and totalAttackSpeed / heroCount >= 150
+	and heroCount > 2
+	then
+		hasEnoughDPS = true
+	end
+
 	return ((((bot.lastKillTime == 0 and heroCount >= 5) or (bot.lastKillTime > 0 and heroCount >= 3))) and coreCount >= 2)
-		or J.HasEnoughDPSForTormentor(J.GetAlliesNearLoc(TormentorLocation, 700))
+		or hasEnoughDPS
 end
 
 function DoesAllHaveShard()
@@ -401,4 +413,40 @@ function WasHealthy()
 	end
 
 	return count == J.GetNumOfAliveHeroes(false)
+end
+
+function GetTotalAttackDamage(vLoc, nRadius)
+	local dmg = 0
+
+	for i = 1, 5
+	do
+		local member = GetTeamMember(i)
+
+		if  member ~= nil
+		and member:IsAlive()
+		and GetUnitToLocationDistance(member, vLoc) <= nRadius
+		then
+			dmg = dmg + member:GetAttackDamage()
+		end
+	end
+
+	return dmg
+end
+
+function GetTotalAttackSpeed(vLoc, nRadius)
+	local atkSpd = 0
+
+	for i = 1, 5
+	do
+		local member = GetTeamMember(i)
+
+		if  member ~= nil
+		and member:IsAlive()
+		and GetUnitToLocationDistance(member, vLoc) <= nRadius
+		then
+			atkSpd = atkSpd + member:GetAttackSpeed()
+		end
+	end
+
+	return atkSpd
 end

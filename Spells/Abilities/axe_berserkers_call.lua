@@ -13,6 +13,14 @@ function X.Cast()
     then
         J.SetQueuePtToINT(bot, false)
         bot:ActionQueue_UseAbility(BerserkersCall)
+
+        local BladeMail = J.IsItemAvailable('item_blade_mail')
+        if BladeMail ~= nil and BladeMail:IsFullyCastable()
+        then
+            bot:ActionQueue_Delay(0.3 + 0.5)
+            bot:ActionQueue_UseAbility(BladeMail)
+        end
+
         return
     end
 end

@@ -60,16 +60,16 @@ To anyone who've found this or is using it, if you have any feedback in improvin
         - [2,3,4,5] Batrider
         - [3] Beastmaster
         - [3] Brewmaster
-        - [2,3] Broodmother
+        - [1,2,3] Broodmother
         - [3] Centaur
-        - [4,5] Chen
+        - [5] Chen
         - [1,2,4,5] Clinkz
         - [4,5] Clockwerk
         - [3] Dark Seer
         - ~~[4,5] Dark Willow~~
         - [2,3,4,5] Dawnbreaker
         - [4,5] Disruptor
-        - [3] Doom
+        - [2,3] Doom
         - [2,3,4,5] Earth Spirit
         - [2,3,4,5] Earthshaker
         - ~~[4,5] Elder Titan~~
@@ -117,7 +117,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
         - [1] Troll Warlord
         - [2,3,4,5] Tusk
         - [3] Underlord
-        - [4,5] Undying
+        - [5] Undying
         - [1] Ursa
         - [4,5] Vengeful Spirit
         - [4,5] Venomancer
