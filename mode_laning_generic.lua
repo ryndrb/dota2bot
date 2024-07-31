@@ -9,6 +9,8 @@ function GetDesire()
 	local networth = bot:GetNetWorth()
 	local isBotCore = J.IsCore(bot)
 	local isEarlyGame = J.IsModeTurbo() and DotaTime() < 8 * 60 or DotaTime() < 12 * 60
+	local tAllyHeroes = bot:GetNearbyHeroes(1600, false, BOT_MODE_NONE)
+    local tEnemyHeroes = bot:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
 
 	if currentTime < 0 then
 		return BOT_ACTION_DESIRE_NONE
@@ -18,7 +20,7 @@ function GetDesire()
 	and J.IsInLaningPhase()
 	and bot:GetLevel() < 8
 	then
-		if bot:WasRecentlyDamagedByTower(4)
+		if bot:WasRecentlyDamagedByTower(3)
 		and not J.IsRetreating(bot)
 		then
 			return BOT_MODE_DESIRE_VERYHIGH
@@ -30,22 +32,17 @@ function GetDesire()
 		and J.IsChasingTarget(bot, botTarget)
 		then
 			local nChasingAlly = {}
-			local nInRangeAlly = J.GetAlliesNearLoc(bot:GetLocation(), 1600)
-			for _, allyHero in pairs(nInRangeAlly)
-			do
-				if  J.IsValidHero(allyHero)
-				and J.IsChasingTarget(allyHero, botTarget)
-				and allyHero ~= bot
-				and not J.IsRetreating(allyHero)
-				and not J.IsSuspiciousIllusion(allyHero)
-				then
-					table.insert(nChasingAlly, allyHero)
-				end
-			end
+            for i = 1, 5
+            do
+                local member = GetTeamMember(i)
+                if J.IsValidHero(member)
+                and J.IsChasingTarget(member, botTarget)
+                and J.IsInRange(botTarget, member, 888)
+                then
+                    table.insert(nChasingAlly, member)
+                end
+            end
 
-			table.insert(nChasingAlly, bot)
-
-			-- Consider stop chasing if can't kill and need to CS
 			local nHealth = botTarget:GetHealth()
 			if botTarget:GetUnitName() == 'npc_dota_hero_medusa'
 			then
@@ -53,12 +50,11 @@ function GetDesire()
 			end
 
 			if nHealth > J.GetTotalEstimatedDamageToTarget(nChasingAlly, botTarget)
+            or #tEnemyHeroes > #tAllyHeroes
 			then
-				local nEnemyTowers = botTarget:GetNearbyTowers(888, true)
-				local nEnemyLaneFrontAmount = 1 - GetLaneFrontAmount(GetOpposingTeam(), bot:GetAssignedLane(), true)
-
-				if nEnemyTowers ~= nil and #nEnemyTowers >= 1
-				or nEnemyLaneFrontAmount > 0
+                local nEnemyTowers = bot:GetNearbyTowers(1600, true)
+				if J.IsValidBuilding(nEnemyTowers[1])
+				and J.IsInRange(botTarget, nEnemyTowers[1], 888)
 				then
 					return BOT_MODE_DESIRE_VERYHIGH
 				end

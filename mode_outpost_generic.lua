@@ -20,10 +20,6 @@ local TPScroll = nil
 local botName = bot:GetUnitName()
 local cAbility = nil
 
-local PhoenixMoveSunRay = false
-
-local ShouldMoveMortimerKisses = false
-
 local ShouldMoveCloseTowerForEdict = false
 local EdictTowerTarget = nil
 
@@ -78,49 +74,6 @@ function GetDesire()
 		return bot:GetActiveModeDesire() + 0.1
 	end
 
-	------------------------------
-	-- Hero Channel/Kill/CC abilities
-	------------------------------
-
-	-- Batrider, Rubick
-	if bot:HasModifier('modifier_batrider_flaming_lasso_self')
-	then
-		return BOT_MODE_DESIRE_ABSOLUTE
-	end
-
-	-- Nyx Assassin
-	if  bot.canVendettaKill
-	and bot:HasModifier('modifier_nyx_assassin_vendetta')
-	then
-		return BOT_MODE_DESIRE_ABSOLUTE
-	end
-
-	-- Pangolier
-	if  (bot.rollingThunderTeamFight or bot.rollingThunderRetreat)
-	and bot:HasModifier('modifier_pangolier_gyroshell')
-	then
-		return BOT_MODE_DESIRE_ABSOLUTE
-	end
-
-	-- Phoenix
-	if bot:HasModifier('modifier_phoenix_sun_ray')
-	and not bot:HasModifier('modifier_phoenix_supernova_hiding')
-	then
-		PhoenixMoveSunRay = true
-		return BOT_ACTION_DESIRE_ABSOLUTE
-	else
-		PhoenixMoveSunRay = false
-	end
-
-	-- Snapfire
-	if bot:HasModifier('modifier_snapfire_mortimer_kisses')
-	then
-		ShouldMoveMortimerKisses = true
-		return BOT_ACTION_DESIRE_ABSOLUTE
-	else
-		ShouldMoveMortimerKisses = false
-	end
-
 	-- Leshrac
 	ShouldMoveCloseTowerForEdict = ConsiderLeshracEdictTower()
 	if ShouldMoveCloseTowerForEdict
@@ -128,9 +81,14 @@ function GetDesire()
 		return BOT_ACTION_DESIRE_ABSOLUTE
 	end
 
+	------------------------------
+	-- Hero Channel/Kill/CC abilities
+	------------------------------
+
 	if botName == "npc_dota_hero_rubick"
 	then
-		if bot:IsChanneling() then
+		if bot:IsChanneling() or bot:IsUsingAbility() or bot:IsCastingAbility()
+		then
 			return BOT_MODE_DESIRE_ABSOLUTE
 		end
 	end
@@ -176,7 +134,17 @@ function GetDesire()
 		if cAbility == nil then cAbility = bot:GetAbilityByName("void_spirit_dissimilate") end
 		if cAbility:IsTrained()
 		then
-			if  bot:HasModifier("modifier_void_spirit_dissimilate_phase")
+			if cAbility:IsInAbilityPhase() or bot:HasModifier("modifier_void_spirit_dissimilate_phase")
+			then
+				return BOT_MODE_DESIRE_ABSOLUTE
+			end
+		end
+	elseif botName == "npc_dota_hero_batrider"
+	then
+		if cAbility == nil then cAbility = bot:GetAbilityByName("batrider_flaming_lasso") end
+		if cAbility:IsTrained()
+		then
+			if cAbility:IsInAbilityPhase() or bot:HasModifier("modifier_batrider_flaming_lasso_self")
 			then
 				return BOT_MODE_DESIRE_ABSOLUTE
 			end
@@ -214,6 +182,29 @@ function GetDesire()
 				return BOT_MODE_DESIRE_ABSOLUTE
 			end
 		end
+	elseif botName == "npc_dota_hero_nyx_assassin"
+	then
+		if cAbility == nil then cAbility = bot:GetAbilityByName("nyx_assassin_vendetta") end
+		if cAbility:IsTrained()
+		then
+			if cAbility:IsInAbilityPhase() or bot:HasModifier('modifier_nyx_assassin_vendetta')
+			then
+				if bot.canVendettaKill
+				then
+					return BOT_MODE_DESIRE_ABSOLUTE
+				end
+			end
+		end
+	elseif botName == "npc_dota_hero_pangolier"
+	then
+		if cAbility == nil then cAbility = bot:GetAbilityByName("pangolier_gyroshell") end
+		if cAbility:IsTrained()
+		then
+			if cAbility:IsInAbilityPhase() or bot:HasModifier('modifier_pangolier_gyroshell')
+			then
+				return BOT_MODE_DESIRE_ABSOLUTE
+			end
+		end
 	elseif botName == "npc_dota_hero_phoenix"
 	then
 		if cAbility == nil then cAbility = bot:GetAbilityByName("phoenix_supernova") end
@@ -223,12 +214,31 @@ function GetDesire()
 				return BOT_MODE_DESIRE_ABSOLUTE
 			end
 		end
+
+		if cAbility == nil then cAbility = bot:GetAbilityByName("phoenix_sun_ray") end
+		if cAbility:IsTrained()
+		then
+			if bot:HasModifier('modifier_phoenix_sun_ray')
+			and not bot:HasModifier('modifier_phoenix_supernova_hiding')
+			then
+				return BOT_MODE_DESIRE_ABSOLUTE
+			end
+		end
 	elseif botName == "npc_dota_hero_puck"
 	then
 		if cAbility == nil then cAbility = bot:GetAbilityByName("puck_phase_shift") end
 		if cAbility:IsTrained()
 		then
 			if cAbility:IsInAbilityPhase() or bot:HasModifier('modifier_puck_phase_shift') then
+				return BOT_MODE_DESIRE_ABSOLUTE
+			end
+		end
+	elseif botName == "npc_dota_hero_snapfire"
+	then
+		if cAbility == nil then cAbility = bot:GetAbilityByName("snapfire_mortimer_kisses") end
+		if cAbility:IsTrained()
+		then
+			if cAbility:IsInAbilityPhase() or bot:HasModifier('modifier_snapfire_mortimer_kisses') then
 				return BOT_MODE_DESIRE_ABSOLUTE
 			end
 		end
@@ -423,25 +433,59 @@ function Think()
 		end
 	end
 
-	-- Pangolier
-	if bot.rollingThunderTeamFight
+	-- Rolling Thunder
+	if bot:HasModifier('modifier_pangolier_gyroshell')
 	then
-		local weakestTarget = J.GetVulnerableWeakestUnit(bot, true, true, 1200)
+		if J.IsInTeamFight(bot, 1600)
+		then
+			local target = nil
+			local hp = 0
+			for _, enemyHero in pairs(GetUnitList(UNIT_LIST_ENEMY_HEROES))
+			do
+				if J.IsValidHero(enemyHero)
+				and J.IsInRange(bot, enemyHero, 2200)
+				and J.CanBeAttacked(enemyHero)
+				and J.CanCastOnNonMagicImmune(enemyHero)
+				and not enemyHero:HasModifier('modifier_faceless_void_chronosphere_freeze')
+				and not enemyHero:HasModifier('modifier_necrolyte_reapers_scythe')
+				and hp < enemyHero:GetHealth()
+				then
+					hp = enemyHero:GetHealth()
+					target = enemyHero
+				end
+			end
 
-        if  J.IsValidTarget(weakestTarget)
-        and not J.IsSuspiciousIllusion(weakestTarget)
-        then
-			bot:Action_MoveToLocation(weakestTarget:GetLocation())
-            return
-        end
-	elseif bot.rollingThunderRetreat
-	then
-		bot:Action_MoveToLocation(J.GetEscapeLoc())
-        return
+			if target ~= nil
+			then
+				bot:Action_MoveToLocation(target:GetLocation())
+				return
+			end
+		end
+
+		if J.IsRetreating(bot)
+		then
+			bot:Action_MoveToLocation(J.GetTeamFountain())
+			return
+		end
+
+		local tEnemyHeroes = bot:GetNearbyHeroes(880, true, BOT_MODE_NONE)
+		if J.IsValidHero(tEnemyHeroes[1])
+		and not tEnemyHeroes[1]:HasModifier('modifier_faceless_void_chronosphere_freeze')
+		then
+			bot:Action_MoveToLocation(tEnemyHeroes[1]:GetLocation())
+			return
+		end
+
+		local tCreeps = bot:GetNearbyCreeps(880, true)
+		if J.IsValid(tCreeps[1])
+		then
+			bot:Action_MoveToLocation(tCreeps[1]:GetLocation())
+			return
+		end
 	end
 
 	-- Phoenix
-	if PhoenixMoveSunRay
+	if bot:HasModifier('modifier_phoenix_sun_ray') and not bot:HasModifier('modifier_phoenix_supernova_hiding')
 	then
 		if J.IsValidHero(bot.targetSunRay)
 		then
@@ -451,7 +495,7 @@ function Think()
 	end
 
 	-- Snapfire
-	if ShouldMoveMortimerKisses
+	if bot:HasModifier('modifier_snapfire_mortimer_kisses')
 	then
 		local nKissesTarget = GetMortimerKissesTarget()
 
@@ -595,14 +639,12 @@ function TinkerWaitInBaseAndHeal()
 end
 
 function GetMortimerKissesTarget()
-	local nInRangeEnemy = bot:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
-
-	for _, enemyHero in pairs(nInRangeEnemy)
+	for _, enemyHero in pairs(GetUnitList(UNIT_LIST_ENEMY_HEROES))
 	do
 		if  J.IsValidHero(enemyHero)
+		and J.IsInRange(bot, enemyHero, 3000 + (275 / 2))
 		and J.CanCastOnNonMagicImmune(enemyHero)
 		and not J.IsInRange(bot, enemyHero, 600)
-		and not J.IsSuspiciousIllusion(enemyHero)
 		then
 			if J.IsLocationInChrono(enemyHero:GetLocation())
 			or J.IsLocationInBlackHole(enemyHero:GetLocation())
@@ -612,9 +654,9 @@ function GetMortimerKissesTarget()
 		end
 
 		if  J.IsValidHero(enemyHero)
+		and J.IsInRange(bot, enemyHero, 3000 + (275 / 2))
 		and J.CanCastOnNonMagicImmune(enemyHero)
 		and not J.IsInRange(bot, enemyHero, 600)
-		and not J.IsSuspiciousIllusion(enemyHero)
 		and not enemyHero:HasModifier('modifier_abaddon_borrowed_time')
 		and not enemyHero:HasModifier('modifier_dazzle_shallow_grave')
 		and not enemyHero:HasModifier('modifier_oracle_false_promise_timer')
@@ -625,7 +667,7 @@ function GetMortimerKissesTarget()
 	end
 
 	local nCreeps = bot:GetNearbyCreeps(1600, true)
-	if nCreeps ~= nil and #nCreeps >= 1
+	if J.IsValid(nCreeps[1])
 	then
 		return nCreeps[1]
 	end
