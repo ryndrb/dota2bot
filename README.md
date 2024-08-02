@@ -1,4 +1,4 @@
-# Dota 2 Bot Script
+# Dota 2 Bot Script [7.37]
 
 This is a Dota 2 Bot Script based off of Beginner:AI by (dota2jmz@163.com). Some changes are based upon other existing bot scripts; personal use mostly. Trying to get use to the API and code base.
 Just trying to alleviate cheesiness and make bots movement more organic and objective base. It's a work in progress.

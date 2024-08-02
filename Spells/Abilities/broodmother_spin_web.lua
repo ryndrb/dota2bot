@@ -30,28 +30,28 @@ function X.Consider()
     local nEnemyTowers = bot:GetNearbyTowers(700, true)
     local botTarget = J.GetProperTarget(bot)
 
-    -- limit web in first ~3 minutes for mid; try every 30 sec
-    if bot.shouldWebMid == false
-    and DotaTime() < 3 * 60 and DotaTime() % 30 ~= 0
-    and J.GetPosition(bot) ~= 2
-    then
-        return BOT_ACTION_DESIRE_NONE, 0
-    end
+    -- limit web in first ~3 minutes for mid; try every 30 sec; 7.37 change
+    -- if bot.shouldWebMid == false
+    -- and DotaTime() < 3 * 60 and DotaTime() % 30 ~= 0
+    -- and J.GetPosition(bot) ~= 2
+    -- then
+    --     return BOT_ACTION_DESIRE_NONE, 0
+    -- end
 
-    if bot.shouldWebMid == true
-    then
-        local targetLoc = Vector(-277, -139, 49)
-        if GetTeam() == TEAM_DIRE
-        then
-            targetLoc = Vector(-768, -621, 56)
-        end
+    -- if bot.shouldWebMid == true
+    -- then
+    --     local targetLoc = Vector(-277, -139, 49)
+    --     if GetTeam() == TEAM_DIRE
+    --     then
+    --         targetLoc = Vector(-768, -621, 56)
+    --     end
 
-        if GetUnitToLocationDistance(bot, targetLoc) <= nCastRange / 2
-        then
-            bot.shouldWebMid = false
-            return BOT_ACTION_DESIRE_HIGH, targetLoc
-        end
-    end
+    --     if GetUnitToLocationDistance(bot, targetLoc) <= nCastRange / 2
+    --     then
+    --         bot.shouldWebMid = false
+    --         return BOT_ACTION_DESIRE_HIGH, targetLoc
+    --     end
+    -- end
 
     if  J.IsStuck(bot)
     and not X.DoesLocationHaveWeb(bot:GetLocation(), nRadius)

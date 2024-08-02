@@ -23,7 +23,7 @@ X['spells'] = {
     ['antimage_blink'] = {weight = 0.5},
     ['antimage_counterspell'] = {weight = 0.8},
     ['antimage_counterspell_ally'] = {weight = 0.9},
-    ['antimage_mana_overload'] = {weight = 1},
+    -- ['antimage_mana_overload'] = {weight = 1},
     ['antimage_mana_void'] = {weight = 0.5},
 
     ['arc_warden_flux'] = {weight = 0.6},

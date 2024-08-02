@@ -36,16 +36,17 @@ function GetDesire()
 		end
 	end
 
-	if bot:GetUnitName() == 'npc_dota_hero_broodmother'
-	and J.GetPosition(bot) ~= 2
-	then
-		if bot.shouldWebMid == nil then bot.shouldWebMid = true end
+	-- 7.37 change
+	-- if bot:GetUnitName() == 'npc_dota_hero_broodmother'
+	-- and J.GetPosition(bot) ~= 2
+	-- then
+	-- 	if bot.shouldWebMid == nil then bot.shouldWebMid = true end
 
-		if DotaTime() < 0 and bot.shouldWebMid == true
-		then
-			return BOT_ACTION_DESIRE_ABSOLUTE * 0.99
-		end
-	end
+	-- 	if DotaTime() < 0 and bot.shouldWebMid == true
+	-- 	then
+	-- 		return BOT_ACTION_DESIRE_ABSOLUTE * 0.99
+	-- 	end
+	-- end
 
 	TPScroll = J.GetItem2(bot, 'item_tpscroll')
 
@@ -541,18 +542,18 @@ function Think()
 		return
 	end
 
-	-- Broodmother web mid at the start of game
-	if bot.shouldWebMid == true
-	then
-		local targetLoc = Vector(-277, -139, 49)
-        if GetTeam() == TEAM_DIRE
-        then
-            targetLoc = Vector(-768, -621, 56)
-        end
+	-- Broodmother web mid at the start of game; 7.37 change
+	-- if bot.shouldWebMid == true
+	-- then
+	-- 	local targetLoc = Vector(-277, -139, 49)
+    --     if GetTeam() == TEAM_DIRE
+    --     then
+    --         targetLoc = Vector(-768, -621, 56)
+    --     end
 
-		bot:Action_MoveToLocation(targetLoc)
-		return
-	end
+	-- 	bot:Action_MoveToLocation(targetLoc)
+	-- 	return
+	-- end
 
 	if ClosestOutpost ~= nil
 	then

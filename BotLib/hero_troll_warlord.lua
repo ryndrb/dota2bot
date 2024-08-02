@@ -18,13 +18,13 @@ local HeroBuild = {
             ['talent'] = {
                 [1] = {
                     ['t25'] = {10, 0},
-                    ['t20'] = {10, 0},
+                    ['t20'] = {0, 10},
                     ['t15'] = {0, 10},
                     ['t10'] = {10, 0},
                 }
             },
             ['ability'] = {
-                [1] = {2,1,4,2,2,6,2,1,1,1,6,4,4,4,6},
+                [1] = {2,4,2,5,2,6,2,5,5,5,4,6,4,4,6},
             },
             ['buy_list'] = {
                 "item_tango",
@@ -122,15 +122,17 @@ function X.MinionThink(hMinionUnit)
     Minion.MinionThink(hMinionUnit)
 end
 
-local BerserkersRage        = bot:GetAbilityByName('troll_warlord_berserkers_rage')
+local BattleStance          = bot:GetAbilityByName('troll_warlord_switch_stance')
 local WhirlingAxesRanged    = bot:GetAbilityByName('troll_warlord_whirling_axes_ranged')
 local WhirlingAxesMelee     = bot:GetAbilityByName('troll_warlord_whirling_axes_melee')
 -- local Fervor                = bot:GetAbilityByName('troll_warlord_fervor')
+local BerserkersRage        = bot:GetAbilityByName('troll_warlord_berserkers_rage')
 local BattleTrance          = bot:GetAbilityByName('troll_warlord_battle_trance')
 
-local BerserkersRageDesire
+local BattleStanceDesire
 local WhirlingAxesRangedDesire, WhirlingAxesRangedLocation
 local WhirlingAxesMeleeDesire
+local BerserkersRageDesire
 local BattleTranceDesire
 
 local botTarget
@@ -147,10 +149,10 @@ function X.SkillsComplement()
         return
     end
 
-    BerserkersRageDesire = X.ConsiderBerserkersRage()
-    if BerserkersRageDesire > 0
+    BattleStanceDesire = X.ConsiderBattleStance()
+    if BattleStanceDesire > 0
     then
-        bot:Action_UseAbility(BerserkersRage)
+        bot:Action_UseAbility(BattleStance)
         return
     end
 
@@ -169,14 +171,14 @@ function X.SkillsComplement()
     end
 end
 
-function X.ConsiderBerserkersRage()
-    if not BerserkersRage:IsFullyCastable()
+function X.ConsiderBattleStance()
+    if not BattleStance:IsFullyCastable()
     then
         return BOT_ACTION_DESIRE_NONE
     end
 
-    local nBonusRange = BerserkersRage:GetSpecialValueInt('bonus_range')
-    local nBonusMS = BerserkersRage:GetSpecialValueInt('bonus_move_speed')
+    local nBonusRange = BattleStance:GetSpecialValueInt('bonus_range')
+    local nBonusMS = BattleStance:GetSpecialValueInt('bonus_move_speed')
 	local nEnemyHeroes = bot:GetNearbyHeroes(1200, true, BOT_MODE_NONE)
 
     if J.IsGoingOnSomeone(bot)
@@ -187,7 +189,7 @@ function X.ConsiderBerserkersRage()
             if  J.IsChasingTarget(bot, botTarget)
             and not J.IsLocationInChrono(botTarget:GetLocation())
             then
-                if BerserkersRage:GetToggleState() == false
+                if BattleStance:GetToggleState() == false
                 then
                     return BOT_ACTION_DESIRE_HIGH
                 else
@@ -196,10 +198,10 @@ function X.ConsiderBerserkersRage()
             else
                 if  J.IsAttacking(bot)
                 and J.IsInRange(bot, botTarget, 150)
-                and BerserkersRage:GetToggleState() == false
+                and BattleStance:GetToggleState() == false
                 and not J.IsChasingTarget(botTarget)
                 then
-                    if BerserkersRage:GetToggleState() == false
+                    if BattleStance:GetToggleState() == false
                     then
                         return BOT_ACTION_DESIRE_HIGH
                     else
@@ -230,7 +232,7 @@ function X.ConsiderBerserkersRage()
                 if  nInRangeEnemy[1]:GetCurrentMovementSpeed() > bot:GetCurrentMovementSpeed()
                 and nInRangeEnemy[1]:GetCurrentMovementSpeed() < bot:GetCurrentMovementSpeed() + nBonusMS
                 then
-                    if BerserkersRage:GetToggleState() == false
+                    if BattleStance:GetToggleState() == false
                     then
                         return BOT_ACTION_DESIRE_HIGH
                     else
@@ -246,14 +248,14 @@ function X.ConsiderBerserkersRage()
 	then
 		if nEnemyHeroes ~= nil and #nEnemyHeroes == 0
         then
-            if BerserkersRage:GetToggleState() == false
+            if BattleStance:GetToggleState() == false
             then
                 return BOT_ACTION_DESIRE_HIGH
             else
                 return BOT_ACTION_DESIRE_NONE
             end
         else
-            if BerserkersRage:GetToggleState() == true
+            if BattleStance:GetToggleState() == true
             then
                 return BOT_ACTION_DESIRE_HIGH
             else
@@ -264,7 +266,7 @@ function X.ConsiderBerserkersRage()
 
     if J.IsFarming(bot)
 	then
-        if BerserkersRage:GetToggleState() == false
+        if BattleStance:GetToggleState() == false
         then
             return BOT_ACTION_DESIRE_HIGH
         else
@@ -288,7 +290,7 @@ function X.ConsiderBerserkersRage()
 
 		if enemyRange < 324
         then
-            if BerserkersRage:GetToggleState() == false
+            if BattleStance:GetToggleState() == false
             then
                 return BOT_ACTION_DESIRE_HIGH
             else
@@ -298,7 +300,7 @@ function X.ConsiderBerserkersRage()
 
 		if enemyRange > 324
         then
-            if BerserkersRage:GetToggleState() == true
+            if BattleStance:GetToggleState() == true
             then
                 return BOT_ACTION_DESIRE_HIGH
             else
@@ -307,7 +309,7 @@ function X.ConsiderBerserkersRage()
 		end
 	end
 
-    if BerserkersRage:GetToggleState() == false
+    if BattleStance:GetToggleState() == false
     then
         return BOT_ACTION_DESIRE_HIGH
     end

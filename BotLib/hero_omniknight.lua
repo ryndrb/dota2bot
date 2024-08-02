@@ -250,14 +250,14 @@ function X.SkillsComplement()
 	local aether = J.IsItemAvailable( "item_aether_lens" )
 	if aether ~= nil then aetherRange = 250 end
 
-	
-	castRDesire, castRTarget, sMotive = X.ConsiderR()
+	-- to be improve
+	castRDesire, castRTarget = X.ConsiderR()
 	if castRDesire > 0
 	then
 
 		J.SetQueuePtToINT( bot, true )
 
-		bot:ActionQueue_UseAbilityOnEntity( abilityR, castRTarget )
+		bot:ActionQueue_UseAbilityOnLocation( abilityR, castRTarget )
 		return
 	end
 	
@@ -818,9 +818,8 @@ function X.ConsiderR()
 			and not botTarget:IsDisarmed()
 			and botTarget:GetAttackTarget() == bot
 		then
-			hCastTarget = bot
-			sCastMotive = 'R-辅助攻击:'..J.Chat.GetNormName( botTarget )
-			return BOT_ACTION_DESIRE_HIGH, hCastTarget, sCastMotive					
+			hCastTarget = bot:GetLocation()
+			return BOT_ACTION_DESIRE_HIGH, hCastTarget					
 		end
 	end
 	
@@ -856,9 +855,8 @@ function X.ConsiderR()
 					
 					if guardianCount >= 2
 					then
-						hCastTarget = npcAlly
-						sCastMotive = 'R-攻击时辅助防御:'..J.Chat.GetNormName( hCastTarget )
-						return BOT_ACTION_DESIRE_HIGH, hCastTarget, sCastMotive	
+						hCastTarget = npcAlly:GetLocation()
+						return BOT_ACTION_DESIRE_HIGH, hCastTarget	
 					end
 				end
 			end
@@ -869,9 +867,8 @@ function X.ConsiderR()
 				local retreatModeAlly = npcAlly:GetNearbyHeroes( nRadius, false, BOT_MODE_RETREAT )
 				if ( #attackModeAlly >= 2 or ( #attackModeAlly >= 1 and #retreatModeAlly >= 2 ) )
 				then
-					hCastTarget = npcAlly
-					sCastMotive = 'R-逃跑时辅助攻击:'..J.Chat.GetNormName( hCastTarget )
-					return BOT_ACTION_DESIRE_HIGH, hCastTarget, sCastMotive	
+					hCastTarget = npcAlly:GetLocation()
+					return BOT_ACTION_DESIRE_HIGH, hCastTarget	
 				end
 			end
 		end

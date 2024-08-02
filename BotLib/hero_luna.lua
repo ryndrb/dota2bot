@@ -18,14 +18,14 @@ local HeroBuild = {
             ['talent'] = {
 				[1] = {
 					['t25'] = {0, 10},
-					['t20'] = {0, 10},
+					['t20'] = {10, 0},
 					['t15'] = {0, 10},
 					['t10'] = {0, 10},
 				}
             },
             ['ability'] = {
-				[1] = {1,3,3,2,3,2,3,2,2,1,1,1,6,6,6},
-				[2] = {3,1,3,2,3,6,3,2,2,2,6,1,1,1,6},
+				[1] = {1,2,2,3,2,3,2,3,3,1,1,1,6,6,6},
+				[2] = {2,1,2,3,2,6,2,3,3,3,6,1,1,1,6},
             },
             ['buy_list'] = {
 				"item_tango",
@@ -129,13 +129,14 @@ function X.MinionThink(hMinionUnit)
 end
 
 local LucentBeam 	= bot:GetAbilityByName('luna_lucent_beam')
-local MoonGlaives 	= bot:GetAbilityByName('luna_moon_glaive')
+local LunarOrbit = bot:GetAbilityByName("luna_lunar_orbit")
+-- local MoonGlaives 	= bot:GetAbilityByName('luna_moon_glaive')
 -- local LunarBlessing = bot:GetAbilityByName('luna_lunar_blessing')
 local Eclipse 		= bot:GetAbilityByName('luna_eclipse')
 local talent6 		= bot:GetAbilityByName(sTalentList[6])
 
 local LucentBeamDesire, LucentBeamTarget
-local MoonGlaivesDesire
+local LunarOrbitDesire
 local EclipseDesire
 
 local talent6BonusDamage = 0
@@ -150,10 +151,10 @@ function X.SkillsComplement()
 
 	if talent6:IsTrained() then talent6BonusDamage = talent6:GetSpecialValueInt('value') end
 
-	MoonGlaivesDesire = X.ConsiderMoonGlaives()
-	if MoonGlaivesDesire > 0
+	LunarOrbitDesire = X.ConsiderLunarOrbit()
+	if LunarOrbitDesire > 0
 	then
-		bot:Action_UseAbility(MoonGlaives)
+		bot:Action_UseAbility(LunarOrbit)
 		return
 	end
 
@@ -413,14 +414,14 @@ function X.ConsiderLucentBeam()
 	return BOT_ACTION_DESIRE_NONE, nil
 end
 
-function X.ConsiderMoonGlaives()
-	if not MoonGlaives:IsTrained()
-	or not MoonGlaives:IsFullyCastable()
+function X.ConsiderLunarOrbit()
+	if not LunarOrbit:IsTrained()
+	or not LunarOrbit:IsFullyCastable()
 	then
 		return BOT_ACTION_DESIRE_NONE
 	end
 
-	local nRadius = 175
+	local nRadius = LunarOrbit:GetSpecialValueInt('rotating_glaives_movement_radius')
 	local nEnemyHeroes = bot:GetNearbyHeroes(700, true, BOT_MODE_NONE)
 
 	if  J.GetHP(bot) < 0.5
@@ -473,7 +474,7 @@ function X.ConsiderMoonGlaives()
 		and (#nCreeps >= 3 or (#nCreeps >= 2 and nCreeps[1]:IsAncientCreep()))
 		and J.CanBeAttacked(nCreeps[1])
 		and J.IsAttacking(bot)
-		and J.GetManaAfter(MoonGlaives:GetManaCost()) * bot:GetMana() > Eclipse:GetManaCost() * 2
+		and J.GetManaAfter(LunarOrbit:GetManaCost()) * bot:GetMana() > Eclipse:GetManaCost() * 2
 		then
 			return BOT_ACTION_DESIRE_HIGH
 		end
