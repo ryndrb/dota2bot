@@ -235,7 +235,6 @@ local CelestialHammerDesire, CelestialHammerLocation
 local ConvergeDesire
 local SolarGuardianDesire, SolarGuardianLocation
 
-local BlackKingBar
 local ShouldBKB = false
 
 local ConvergeHammerLocation = nil
@@ -295,10 +294,10 @@ function X.SkillsComplement()
     then
         J.SetQueuePtToINT(bot, false)
 
-        if  X.CanBKB(bot)
+        if  J.CanBlackKingBar(bot)
         and ShouldBKB
         then
-            bot:ActionQueue_UseAbility(BlackKingBar)
+            bot:ActionQueue_UseAbility(bot.BlackKingBar)
             ShouldBKB = false
         end
 

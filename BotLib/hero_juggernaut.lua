@@ -7,6 +7,9 @@ local sTalentList = J.Skill.GetTalentList( bot )
 local sAbilityList = J.Skill.GetAbilityList( bot )
 local sRole = J.Item.GetRoleItemsBuyList( bot )
 
+if GetBot():GetUnitName() == 'npc_dota_hero_juggernaut'
+then
+
 local RI = require(GetScriptDirectory()..'/FunLib/util_role_item')
 
 local sUtility = {}
@@ -136,6 +139,8 @@ function X.MinionThink( hMinionUnit )
 
 end
 
+end
+
 --[[
 
 npc_dota_hero_juggernaut
@@ -166,27 +171,29 @@ modifier_juggernaut_omnislash_invulnerability
 
 --]]
 
-local abilityQ = bot:GetAbilityByName( sAbilityList[1] )
-local abilityW = bot:GetAbilityByName( sAbilityList[2] )
-local abilityE = bot:GetAbilityByName( sAbilityList[3] )
-local abilityR = bot:GetAbilityByName( sAbilityList[6] )
-local abilityD = bot:GetAbilityByName( sAbilityList[4] )
-local talent2 = bot:GetAbilityByName( sTalentList[2] )
-local talent6 = bot:GetAbilityByName( sTalentList[6] )
+local abilityQ = bot:GetAbilityByName('juggernaut_blade_fury')
+local abilityW = bot:GetAbilityByName('juggernaut_healing_ward')
+local abilityE = bot:GetAbilityByName('juggernaut_blade_dance')
+local abilityD = bot:GetAbilityByName('juggernaut_swift_slash')
+local abilityR = bot:GetAbilityByName('juggernaut_omni_slash')
 
 local castQDesire, castQTarget
 local castWDesire, castWTarget
 local castEDesire, castETarget
-local castRDesire, castRTarget
 local castDDesire, castDTarget
+local castRDesire, castRTarget
 
 local nKeepMana, nMP, nHP, nLV, hEnemyList, hAllyList, botTarget, sMotive
 local aetherRange = 0
 
 
 function X.SkillsComplement()
+	if J.CanNotUseAbility( bot ) then return end
 
-	if J.CanNotUseAbility( bot ) or bot:IsInvisible() then return end
+	abilityQ = bot:GetAbilityByName('juggernaut_blade_fury')
+	abilityW = bot:GetAbilityByName('juggernaut_healing_ward')
+	abilityD = bot:GetAbilityByName('juggernaut_swift_slash')
+	abilityR = bot:GetAbilityByName('juggernaut_omni_slash')
 
 	nKeepMana = 400
 	aetherRange = 0
@@ -250,7 +257,7 @@ end
 function X.ConsiderQ()
 
 
-	if not abilityQ:IsFullyCastable() 
+	if not J.CanCastAbility(abilityQ)
 		or bot:HasModifier('modifier_juggernaut_blade_fury')
 		or bot:HasModifier('modifier_juggernaut_omnislash')
 	then return 0 end
@@ -385,7 +392,7 @@ end
 function X.ConsiderW()
 
 
-	if not abilityW:IsFullyCastable() then return 0 end
+	if not J.CanCastAbility(abilityW) then return 0 end
 
 	local nSkillLV = abilityW:GetLevel()
 	local nCastRange = abilityW:GetCastRange()
@@ -460,7 +467,7 @@ end
 function X.ConsiderR()
 
 
-	if not abilityR:IsFullyCastable() 
+	if not J.CanCastAbility(abilityR)
 		or bot:HasModifier('modifier_juggernaut_blade_fury')
 		or bot:HasModifier('modifier_juggernaut_omnislash')
 	then return 0 end
@@ -547,7 +554,7 @@ function X.ConsiderD()
 
 
 	if	not bot:HasScepter()
-		or not abilityD:IsFullyCastable() 
+		or not J.CanCastAbility(abilityD)
 		or bot:HasModifier('modifier_juggernaut_blade_fury')
 		or bot:HasModifier('modifier_juggernaut_omnislash')
 	then return 0 end
@@ -612,5 +619,4 @@ end
 
 
 return X
--- dota2jmz@163.com QQ:2462331592..
 
