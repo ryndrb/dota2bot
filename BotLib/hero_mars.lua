@@ -7,6 +7,9 @@ local sTalentList = J.Skill.GetTalentList( bot )
 local sAbilityList = J.Skill.GetAbilityList( bot )
 local sRole = J.Item.GetRoleItemsBuyList( bot )
 
+if GetBot():GetUnitName() == 'npc_dota_hero_mars'
+then
+
 local RI = require(GetScriptDirectory()..'/FunLib/util_role_item')
 
 local sUtility = {"item_crimson_guard", "item_pipe", "item_lotus_orb", "item_heavens_halberd"}
@@ -128,6 +131,8 @@ function X.MinionThink(hMinionUnit)
 	Minion.MinionThink(hMinionUnit)
 end
 
+end
+
 local SpearOfMars 	= bot:GetAbilityByName('mars_spear')
 local GodsRebuke 	= bot:GetAbilityByName('mars_gods_rebuke')
 local Bulwark 		= bot:GetAbilityByName('mars_bulwark')
@@ -140,7 +145,6 @@ local ArenaOfBloodDesire, ArenaOfBloodLocation
 
 local SpearToAllyDesire, SpearToAllyLocation
 
-local Blink
 local BlinkLocation
 
 local botTarget
@@ -148,13 +152,18 @@ local botTarget
 function X.SkillsComplement()
 	if J.CanNotUseAbility(bot) then return end
 
+	SpearOfMars = bot:GetAbilityByName('mars_spear')
+	GodsRebuke = bot:GetAbilityByName('mars_gods_rebuke')
+	Bulwark = bot:GetAbilityByName('mars_bulwark')
+	ArenaOfBlood = bot:GetAbilityByName('mars_arena_of_blood')
+
 	botTarget = J.GetProperTarget(bot)
 
 	SpearToAllyDesire, SpearToAllyLocation = X.ConsiderSpearToAlly()
 	if SpearToAllyDesire > 0
 	then
 		bot:Action_ClearActions(false)
-		bot:ActionQueue_UseAbilityOnLocation(Blink, BlinkLocation)
+		bot:ActionQueue_UseAbilityOnLocation(bot.Blink, BlinkLocation)
 		bot:ActionQueue_Delay(0.1)
 		bot:ActionQueue_UseAbilityOnLocation(SpearOfMars, SpearToAllyLocation)
 		return
@@ -190,7 +199,7 @@ function X.SkillsComplement()
 end
 
 function X.ConsiderSpearOfMars()
-	if not SpearOfMars:IsFullyCastable()
+	if not J.CanCastAbility(SpearOfMars)
 	then
 		return BOT_ACTION_DESIRE_NONE, nil
 	end
@@ -239,7 +248,7 @@ function X.ConsiderSpearOfMars()
 	end
 
 	if  J.IsGoingOnSomeone(bot)
-	and not CanSpearToAlly()
+	and not X.CanSpearToAlly()
 	then
 		if  J.IsValidTarget(botTarget)
 		and J.CanCastOnNonMagicImmune(botTarget)
@@ -409,7 +418,7 @@ function X.ConsiderSpearOfMars()
 end
 
 function X.ConsiderGodsRebuke()
-    if not GodsRebuke:IsFullyCastable()
+    if not J.CanCastAbility(GodsRebuke)
 	then
 		return BOT_ACTION_DESIRE_NONE, nil
 	end
@@ -610,7 +619,7 @@ function X.ConsiderGodsRebuke()
 end
 
 function X.ConsiderBulwark()
-    if not Bulwark:IsFullyCastable()
+    if not J.CanCastAbility(Bulwark)
 	then
 		return BOT_ACTION_DESIRE_NONE
 	end
@@ -669,7 +678,7 @@ function X.ConsiderBulwark()
 end
 
 function X.ConsiderArenaOfBlood()
-    if not ArenaOfBlood:IsFullyCastable()
+    if not J.CanCastAbility(ArenaOfBlood)
 	then
 		return BOT_ACTION_DESIRE_NONE, nil
 	end
@@ -758,7 +767,7 @@ function X.ConsiderArenaOfBlood()
 end
 
 function X.ConsiderSpearToAlly()
-    if CanSpearToAlly()
+    if X.CanSpearToAlly()
     then
 		local nCastPoint = SpearOfMars:GetCastPoint()
 		local nSpeed = SpearOfMars:GetSpecialValueInt('spear_speed')
@@ -787,9 +796,9 @@ function X.ConsiderSpearToAlly()
     return BOT_ACTION_DESIRE_NONE
 end
 
-function CanSpearToAlly()
-    if  SpearOfMars:IsFullyCastable()
-    and HasBlink()
+function X.CanSpearToAlly()
+    if J.CanCastAbility(SpearOfMars)
+    and J.CanBlinkDagger(bot)
     then
         local nManaCost = SpearOfMars:GetManaCost()
 
@@ -798,31 +807,6 @@ function CanSpearToAlly()
             return true
         end
     end
-
-    return false
-end
-
-function HasBlink()
-    local blink = nil
-
-    for i = 0, 5
-    do
-		local item = bot:GetItemInSlot(i)
-
-		if item ~= nil
-        and (item:GetName() == "item_blink" or item:GetName() == "item_overwhelming_blink" or item:GetName() == "item_arcane_blink" or item:GetName() == "item_swift_blink")
-        then
-			blink = item
-			break
-		end
-	end
-
-    if  blink ~= nil
-    and blink:IsFullyCastable()
-	then
-        Blink = blink
-        return true
-	end
 
     return false
 end

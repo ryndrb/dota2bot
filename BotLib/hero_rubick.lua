@@ -1,13 +1,15 @@
 local X = {}
 local bot = GetBot()
 
-local SU = dofile( GetScriptDirectory()..'/Spells/spell_usage' )
 local J = require( GetScriptDirectory()..'/FunLib/jmz_func' )
-local SPL = require( GetScriptDirectory()..'/Spells/spell_list' )
+local SPL = require( GetScriptDirectory()..'/FunLib/spell_list' )
 local Minion = dofile( GetScriptDirectory()..'/FunLib/aba_minion' )
 local sTalentList = J.Skill.GetTalentList( bot )
 local sAbilityList = J.Skill.GetAbilityList( bot )
 local sRole = J.Item.GetRoleItemsBuyList( bot )
+
+if GetBot():GetUnitName() == 'npc_dota_hero_rubick'
+then
 
 local RI = require(GetScriptDirectory()..'/FunLib/util_role_item')
 
@@ -158,6 +160,8 @@ function X.MinionThink(hMinionUnit)
     Minion.MinionThink(hMinionUnit)
 end
 
+end
+
 local Telekinesis       = bot:GetAbilityByName('rubick_telekinesis')
 local TelekinesisLand   = bot:GetAbilityByName('rubick_telekinesis_land')
 local FadeBolt          = bot:GetAbilityByName('rubick_fade_bolt')
@@ -175,6 +179,28 @@ local botTarget
 
 if bot.shouldBlink == nil then bot.shouldBlink = false end
 
+-- cache
+local heroAbilityUsage = {}
+local function HandleStolenSpell(stolenSpell)
+    if stolenSpell == nil then return end
+
+    local stolenSpellName = stolenSpell:GetName()
+    local stolenSpellHeroName = SPL.GetSpellHeroName(stolenSpellName)
+
+    if stolenSpellHeroName == nil then return end
+
+    if not heroAbilityUsage[stolenSpellHeroName]
+    then
+        heroAbilityUsage[stolenSpellHeroName] = dofile(GetScriptDirectory()..'/BotLib/'..string.gsub(stolenSpellHeroName, 'npc_dota_', ''))
+    end
+
+    local heroSpells = heroAbilityUsage[stolenSpellHeroName]
+    if heroSpells and heroSpells.SkillsComplement
+    then
+        heroSpells.SkillsComplement()
+    end
+end
+
 function X.SkillsComplement()
 	if J.CanNotUseAbility(bot) then return end
 
@@ -189,8 +215,8 @@ function X.SkillsComplement()
         return
     end
 
-    local sOrder = {'D','F'}
-    SU.AbilityUsage(sOrder)
+    HandleStolenSpell(StolenSpell1)
+    HandleStolenSpell(StolenSpell2)
 
     TelekinesisDesire, TelekinesisTarget = X.ConsiderTelekinesis()
     if TelekinesisDesire > 0
@@ -779,7 +805,7 @@ function X.ShouldStealSpellFrom(hero)
         ['npc_dota_hero_furion'] = true,
         ['npc_dota_hero_grimstroke'] = true,
         ['npc_dota_hero_gyrocopter'] = true,
-        -- ['npc_dota_hero_hoodwink'] = ,
+        ['npc_dota_hero_hoodwink'] = false,
         ['npc_dota_hero_huskar'] = true,
         -- ['npc_dota_hero_invoker'] = ,
         -- ['npc_dota_hero_jakiro'] = ,
@@ -797,12 +823,13 @@ function X.ShouldStealSpellFrom(hero)
         -- ['npc_dota_hero_lycan'] = ,
         -- ['npc_dota_hero_magnataur'] = ,
         -- ['npc_dota_hero_marci'] = ,
-        -- ['npc_dota_hero_mars'] = ,
+        ['npc_dota_hero_mars'] = true,
         -- ['npc_dota_hero_medusa'] = ,
         -- ['npc_dota_hero_meepo'] = ,
         -- ['npc_dota_hero_mirana'] = ,
         -- ['npc_dota_hero_morphling'] = ,
         -- ['npc_dota_hero_monkey_king'] = ,
+        ['npc_dota_hero_muerta'] = true,
         -- ['npc_dota_hero_naga_siren'] = ,
         -- ['npc_dota_hero_necrolyte'] = ,
         -- ['npc_dota_hero_nevermore'] = ,

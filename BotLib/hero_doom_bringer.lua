@@ -7,6 +7,9 @@ local sTalentList = J.Skill.GetTalentList( bot )
 local sAbilityList = J.Skill.GetAbilityList( bot )
 local sRole = J.Item.GetRoleItemsBuyList( bot )
 
+if GetBot():GetUnitName() == 'npc_dota_hero_doom_bringer'
+then
+
 local RI = require(GetScriptDirectory()..'/FunLib/util_role_item')
 
 local sUtility = {"item_crimson_guard", "item_pipe", "item_lotus_orb", "item_heavens_halberd"}
@@ -154,6 +157,437 @@ X['bDeafaultItem'] = false
 
 function X.MinionThink(hMinionUnit)
     Minion.MinionThink(hMinionUnit)
+end
+
+end
+
+local Devour        = bot:GetAbilityByName('doom_bringer_devour')
+local ScorchedEarth = bot:GetAbilityByName('doom_bringer_scorched_earth')
+local InfernalBlade = bot:GetAbilityByName('doom_bringer_infernal_blade')
+local Doom          = bot:GetAbilityByName('doom_bringer_doom')
+
+local DevourAbility1 = bot:GetAbilityByName('doom_bringer_empty1')
+local DevourAbility2 = bot:GetAbilityByName('doom_bringer_empty2')
+
+local DevourDesire, DevourTarget
+local ScorchedEarthDesire
+local InfernalBladeDesire, InfernalBladeTarget
+local DoomDesire, DoomTarget
+
+local DevourAbility1Desire, DevourAbility1TargetLocation
+local DevourAbility2Desire, DevourAbility2TargetLocation
+
+local botTarget
+
+function X.SkillsComplement()
+	if J.CanNotUseAbility(bot) then return end
+
+    Devour        = bot:GetAbilityByName('doom_bringer_devour')
+    ScorchedEarth = bot:GetAbilityByName('doom_bringer_scorched_earth')
+    InfernalBlade = bot:GetAbilityByName('doom_bringer_infernal_blade')
+    Doom          = bot:GetAbilityByName('doom_bringer_doom')
+
+    botTarget = J.GetProperTarget(bot)
+
+    DoomDesire, DoomTarget = X.ConsiderDoom()
+    if DoomDesire > 0
+    then
+        bot:Action_UseAbilityOnEntity(Doom, DoomTarget)
+        return
+    end
+
+    InfernalBladeDesire, InfernalBladeTarget = X.ConsiderInfernalBlade()
+    if InfernalBladeDesire > 0
+    then
+        J.SetQueuePtToINT(bot, false)
+        bot:ActionQueue_UseAbilityOnEntity(InfernalBlade, InfernalBladeTarget)
+        return
+    end
+
+    ScorchedEarthDesire = X.ConsiderScorchedEarth()
+    if ScorchedEarthDesire > 0
+    then
+        J.SetQueuePtToINT(bot, false)
+        bot:ActionQueue_UseAbility(ScorchedEarth)
+        return
+    end
+
+    DevourDesire, DevourTarget = X.ConsiderDevour()
+    if DevourDesire > 0
+    then
+        J.SetQueuePtToINT(bot, false)
+        bot:ActionQueue_UseAbilityOnEntity(Devour, DevourTarget)
+        return
+    end
+end
+
+function X.ConsiderDevour()
+    if not J.CanCastAbility(Devour)
+    then
+        return BOT_ACTION_DESIRE_NONE, nil
+    end
+
+	local nMaxLevel = Devour:GetSpecialValueInt('creep_level')
+    local nCreeps = bot:GetNearbyCreeps(1200, true)
+
+    local talent15left = bot:GetAbilityByName('special_bonus_unique_doom_2')
+
+    if not J.IsRetreating(bot)
+    then
+        local nEnemyTowers = bot:GetNearbyTowers(1600, true)
+        local nCreepTarget = X.GetRangedOrSiegeCreep(nCreeps, nMaxLevel)
+
+        if J.IsValid(nCreepTarget)
+        then
+            if  J.IsLaning(bot)
+            and nEnemyTowers ~= nil
+            and (#nEnemyTowers == 0
+                or #nEnemyTowers >= 1 and J.IsValidBuilding(nEnemyTowers[1]) and GetUnitToUnitDistance(nCreepTarget, nEnemyTowers[1]) > 700)
+            then
+                return BOT_ACTION_DESIRE_HIGH, nCreepTarget
+            end
+        end
+
+        for _, creep in pairs(nCreeps)
+        do
+            if  J.IsValid(creep)
+            and J.CanBeAttacked(creep)
+            and creep:GetLevel() <= nMaxLevel
+            and not J.IsRoshan(creep)
+            and not J.IsTormentor(creep)
+            then
+                if  J.IsInLaningPhase()
+                and creep:GetTeam() ~= bot:GetTeam()
+                and creep:GetTeam() ~= TEAM_NEUTRAL
+                and nEnemyTowers ~= nil
+                and (#nEnemyTowers == 0
+                    or #nEnemyTowers >= 1
+                        and J.IsValidBuilding(nEnemyTowers[1])
+                        and GetUnitToUnitDistance(creep, nEnemyTowers[1]) > 700)
+                then
+                    return BOT_ACTION_DESIRE_HIGH, creep
+                end
+
+                nCreepTarget = nil
+                if creep:GetTeam() == TEAM_NEUTRAL
+                then
+                    nCreepTarget = J.GetMostHpUnit(nCreeps)
+                end
+
+                if nCreepTarget ~= nil and nCreepTarget:CanBeSeen()
+                then
+                    if string.find(bot:GetUnitName(), 'doom_bringer')
+                    and nCreepTarget:IsAncientCreep()
+                    and talent15left:IsTrained()
+                    then
+                        return BOT_ACTION_DESIRE_HIGH, nCreepTarget
+                    end
+
+                    if not nCreepTarget:IsAncientCreep()
+                    then
+                        return BOT_ACTION_DESIRE_HIGH, nCreepTarget
+                    end
+                end
+
+                if not creep:IsAncientCreep()
+                then
+                    return BOT_ACTION_DESIRE_HIGH, creep
+                end
+            end
+        end
+    end
+
+    return BOT_ACTION_DESIRE_NONE, nil
+end
+
+function X.ConsiderScorchedEarth()
+    if not J.CanCastAbility(ScorchedEarth)
+    then
+        return BOT_ACTION_DESIRE_NONE
+    end
+
+    local nRadius = ScorchedEarth:GetSpecialValueInt('radius')
+
+    local nEnemyHeroes = bot:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
+    local nCreeps = bot:GetNearbyCreeps(nRadius, true)
+
+    if J.IsGoingOnSomeone(bot)
+	then
+		if  J.IsValidTarget(botTarget)
+        and J.CanCastOnNonMagicImmune(botTarget)
+        and J.IsInRange(bot, botTarget, nRadius + 150)
+        and not J.IsSuspiciousIllusion(botTarget)
+        and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
+        and not botTarget:HasModifier('modifier_oracle_false_promise_timer')
+		then
+            return BOT_ACTION_DESIRE_HIGH
+		end
+	end
+
+    if  J.IsRetreating(bot)
+    and bot:GetActiveModeDesire() >= 0.75
+    and not J.IsRealInvisible(bot)
+	then
+        if  J.IsValidHero(nEnemyHeroes[1])
+        and J.IsInRange(bot, nEnemyHeroes[1], nRadius + 150)
+        and J.IsChasingTarget(nEnemyHeroes[1], bot)
+        and not J.IsSuspiciousIllusion(nEnemyHeroes[1])
+        then
+            return BOT_ACTION_DESIRE_HIGH
+        end
+	end
+
+    if J.IsFarming(bot)
+	then
+        if  nCreeps ~= nil
+        and J.CanBeAttacked(nCreeps[1])
+        and (#nCreeps >= 3 or (#nCreeps >= 2 and nCreeps[1]:IsAncientCreep()))
+        and J.IsAttacking(bot)
+        and J.GetManaAfter(ScorchedEarth:GetManaCost()) > 0.4
+        then
+            return BOT_ACTION_DESIRE_HIGH
+        end
+	end
+
+    if J.IsDoingRoshan(bot)
+	then
+		if  J.IsRoshan(botTarget)
+        and J.CanCastOnNonMagicImmune(botTarget)
+        and J.IsInRange(bot, botTarget, nRadius)
+        and J.GetHP(bot) > 0.2
+        and J.IsAttacking(bot)
+		then
+			return BOT_ACTION_DESIRE_HIGH
+		end
+	end
+
+    if J.IsDoingTormentor(bot)
+    then
+        if  J.IsTormentor(botTarget)
+        and J.IsInRange(bot, botTarget, nRadius)
+        and J.IsAttacking(bot)
+        then
+            return BOT_ACTION_DESIRE_HIGH
+        end
+    end
+
+    return BOT_ACTION_DESIRE_NONE
+end
+
+function X.ConsiderInfernalBlade()
+    if not J.CanCastAbility(InfernalBlade)
+    then
+        return BOT_ACTION_DESIRE_NONE, nil
+    end
+
+	local nCastRange = J.GetProperCastRange(false, bot, InfernalBlade:GetCastRange())
+    local nBurnDamage = InfernalBlade:GetSpecialValueInt('burn_damage')
+    local nDamagePct = InfernalBlade:GetSpecialValueInt('burn_damage_pct') / 100
+    local nDuration = InfernalBlade:GetSpecialValueInt('burn_duration')
+
+	local nEnemyHeroes = bot:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
+    local nEnemyTowers = bot:GetNearbyTowers(1600, true)
+
+	for _, enemyHero in pairs(nEnemyHeroes)
+	do
+		if  J.IsValidHero(enemyHero)
+        and J.IsInRange(bot, enemyHero, 700)
+        and J.CanCastOnNonMagicImmune(enemyHero)
+        and J.CanCastOnTargetAdvanced(enemyHero)
+		then
+            if enemyHero:IsChanneling()
+            then
+                if J.IsInLaningPhase()
+                then
+                    if nEnemyTowers ~= nil
+                    and (#nEnemyTowers == 0 or J.IsValidBuilding(nEnemyTowers[1]) and not J.IsInRange(enemyHero, nEnemyTowers[1], 700))
+                    then
+                        return BOT_ACTION_DESIRE_HIGH, enemyHero
+                    end
+                else
+                    return BOT_ACTION_DESIRE_HIGH, enemyHero
+                end
+            end
+
+            if  J.WillKillTarget(enemyHero, nBurnDamage + enemyHero:GetMaxHealth() * nDamagePct, DAMAGE_TYPE_MAGICAL, nDuration)
+            and not enemyHero:HasModifier('modifier_abaddon_borrowed_time')
+            and not enemyHero:HasModifier('modifier_dazzle_shallow_grave')
+            and not enemyHero:HasModifier('modifier_necrolyte_reapers_scythe')
+            and not enemyHero:HasModifier('modifier_oracle_false_promise_timer')
+            and not enemyHero:HasModifier('modifier_skeleton_king_reincarnation_scepter_active')
+            and not enemyHero:HasModifier('modifier_templar_assassin_refraction_absorb')
+            then
+                if J.IsInLaningPhase()
+                then
+                    if nEnemyTowers ~= nil
+                    and (#nEnemyTowers == 0 or J.IsValidBuilding(nEnemyTowers[1]) and not J.IsInRange(enemyHero, nEnemyTowers[1], 700))
+                    then
+                        return BOT_ACTION_DESIRE_HIGH, enemyHero
+                    end
+                else
+                    return BOT_ACTION_DESIRE_HIGH, enemyHero
+                end
+            end
+		end
+	end
+
+    if J.IsGoingOnSomeone(bot)
+	then
+		if  J.IsValidTarget(botTarget)
+        and J.CanCastOnNonMagicImmune(botTarget)
+        and J.CanCastOnTargetAdvanced(botTarget)
+        and J.IsInRange(bot, botTarget, nCastRange + 150)
+        and not J.IsDisabled(botTarget)
+        and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
+		then
+            return BOT_ACTION_DESIRE_HIGH, botTarget
+		end
+	end
+
+    if J.IsRetreating(bot)
+    and not J.IsRealInvisible(bot)
+	then
+        for _, enemyHero in pairs(nEnemyHeroes)
+        do
+            if  J.IsValidHero(enemyHero)
+            and J.IsInRange(bot, enemyHero, nCastRange)
+            and J.CanCastOnNonMagicImmune(enemyHero)
+            and J.CanCastOnTargetAdvanced(enemyHero)
+            and (J.IsChasingTarget(enemyHero, bot) or bot:WasRecentlyDamagedByHero(enemyHero, 4))
+            and not J.IsDisabled(enemyHero)
+            and not enemyHero:HasModifier('modifier_necrolyte_reapers_scythe')
+            then
+                return BOT_ACTION_DESIRE_HIGH, enemyHero
+            end
+        end
+	end
+
+	if J.IsFarming(bot)
+	then
+		local nCreeps = bot:GetNearbyCreeps(nCastRange + 150, true)
+        local targetCreep = J.GetMostHpUnit(nCreeps)
+
+        if  J.IsValid(targetCreep)
+        and J.GetManaAfter(InfernalBlade:GetManaCost()) > 0.35
+        and not J.IsOtherAllysTarget(targetCreep)
+        then
+            return BOT_ACTION_DESIRE_HIGH, targetCreep
+        end
+	end
+
+    if J.IsLaning(bot)
+	then
+		local nEnemyLaneCreeps = bot:GetNearbyLaneCreeps(nCastRange + 75, true)
+		for _, creep in pairs(nEnemyLaneCreeps)
+		do
+			if  J.IsValid(creep)
+            and J.CanBeAttacked(creep)
+			and (J.IsKeyWordUnit('ranged', creep) or J.IsKeyWordUnit('siege', creep) or J.IsKeyWordUnit('flagbearer', creep))
+			and creep:GetHealth() <= nBurnDamage
+			then
+				if J.IsValidHero(nEnemyHeroes[1])
+                and GetUnitToUnitDistance(creep, nEnemyHeroes[1]) < 500
+				then
+					return BOT_ACTION_DESIRE_HIGH, creep
+				end
+			end
+		end
+	end
+
+	if J.IsDoingRoshan(bot)
+	then
+		if  J.IsRoshan(botTarget)
+        and J.CanBeAttacked(botTarget)
+        and J.IsInRange(bot, botTarget, nCastRange)
+        and J.IsAttacking(bot)
+		then
+			return BOT_ACTION_DESIRE_HIGH, botTarget
+		end
+	end
+
+    if J.IsDoingTormentor(bot)
+    then
+        if  J.IsTormentor(botTarget)
+        and J.IsInRange(bot, botTarget, nCastRange)
+        and J.IsAttacking(bot)
+        then
+            return BOT_ACTION_DESIRE_HIGH, botTarget
+        end
+    end
+
+    return BOT_ACTION_DESIRE_NONE, nil
+end
+
+function X.ConsiderDoom()
+	if not J.CanCastAbility(Doom)
+    then
+		return BOT_ACTION_DESIRE_NONE, nil
+	end
+
+    local nDuration = Doom:GetSpecialValueInt('duration')
+
+    local nAllyHeroes = bot:GetNearbyHeroes(1600, false, BOT_MODE_NONE)
+    local nEnemyHeroes = bot:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
+
+    if J.IsGoingOnSomeone(bot)
+	then
+		local target = nil
+		local dmg = 0
+
+		for _, enemyHero in pairs(nEnemyHeroes)
+		do
+			if  J.IsValid(enemyHero)
+            and J.IsInRange(bot, enemyHero, 1200)
+            and J.CanCastOnMagicImmune(enemyHero)
+            and J.CanCastOnTargetAdvanced(enemyHero)
+            and not J.IsDisabled(enemyHero)
+            and not J.IsHaveAegis(enemyHero)
+            and not enemyHero:HasModifier('modifier_doom_bringer_doom')
+            and not enemyHero:HasModifier('modifier_necrolyte_reapers_scythe')
+            and not enemyHero:HasModifier('modifier_oracle_false_promise_timer')
+			then
+                local estDmg = enemyHero:GetEstimatedDamageToTarget(false, bot, nDuration, DAMAGE_TYPE_ALL)
+                if dmg < estDmg
+                then
+                    dmg = estDmg
+                    target = enemyHero
+                end
+			end
+		end
+
+		if target ~= nil
+		then
+            if nAllyHeroes ~= nil and nEnemyHeroes ~= nil
+            then
+                if J.IsInLaningPhase()
+                then
+                    if  not (#nAllyHeroes >= #nEnemyHeroes + 2)
+                    and J.IsAttacking(target)
+                    then
+                        if target:GetHealth() <= bot:GetEstimatedDamageToTarget(true, target, nDuration, DAMAGE_TYPE_ALL)
+                        then
+                            return BOT_ACTION_DESIRE_HIGH, target
+                        end
+                    end
+                else
+                    if #nAllyHeroes <= 1 and #nEnemyHeroes <= 1
+                    then
+                        if target:GetHealth() <= bot:GetEstimatedDamageToTarget(true, target, nDuration, DAMAGE_TYPE_ALL)
+                        then
+                            return BOT_ACTION_DESIRE_HIGH, target
+                        end
+                    else
+                        if not (#nAllyHeroes >= #nEnemyHeroes + 2)
+                        then
+                            return BOT_ACTION_DESIRE_HIGH, target
+                        end
+                    end
+                end
+            end
+		end
+	end
+
+	return BOT_ACTION_DESIRE_NONE, nil
 end
 
 -- function X.ConsiderDevourAbility(DevouredAbility)
@@ -681,21 +1115,21 @@ end
 --     return BOT_ACTION_DESIRE_HIGH, nil, ''
 -- end
 
--- function X.GetRangedOrSiegeCreep(nCreeps, lvl)
--- 	for _, creep in pairs(nCreeps)
--- 	do
--- 		if  J.IsValid(creep)
---         and J.CanBeAttacked(creep)
---         and creep:GetLevel() <= lvl
---         and (J.IsKeyWordUnit('siege', creep) or J.IsKeyWordUnit('ranged', creep))
---         and not J.IsRoshan(creep)
---         and not J.IsTormentor(creep)
--- 		then
--- 			return creep
--- 		end
--- 	end
+function X.GetRangedOrSiegeCreep(nCreeps, lvl)
+	for _, creep in pairs(nCreeps)
+	do
+		if  J.IsValid(creep)
+        and J.CanBeAttacked(creep)
+        and creep:GetLevel() <= lvl
+        and (J.IsKeyWordUnit('siege', creep) or J.IsKeyWordUnit('ranged', creep))
+        and not J.IsRoshan(creep)
+        and not J.IsTormentor(creep)
+		then
+			return creep
+		end
+	end
 
--- 	return nil
--- end
+	return nil
+end
 
 return X

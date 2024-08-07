@@ -5143,6 +5143,68 @@ function J.GetClosestEnemyHeroAttackRange(nEnemyHeroes)
 	return range
 end
 
+function J.CanCastAbility(ability)
+	if ability == nil
+	or ability:IsNull()
+	or ability:IsPassive()
+	or ability:IsHidden()
+	or not ability:IsTrained()
+	or not ability:IsFullyCastable()
+	or not ability:IsActivated()
+	then
+		return false
+	end
+
+	return true
+end
+
+function J.CanBlinkDagger(bot)
+    local blink = nil
+
+    for i = 0, 5
+    do
+		local item = bot:GetItemInSlot(i)
+
+		if  item ~= nil
+        and (item:GetName() == "item_blink" or item:GetName() == "item_overwhelming_blink" or item:GetName() == "item_arcane_blink" or item:GetName() == "item_swift_blink")
+        then
+			blink = item
+			break
+		end
+	end
+
+    if blink ~= nil and blink:IsFullyCastable()
+	then
+        bot.Blink = blink
+        return true
+	end
+
+    return false
+end
+
+function J.CanBlackKingBar(bot)
+    local bkb = nil
+
+    for i = 0, 5
+    do
+		local item = bot:GetItemInSlot(i)
+
+		if item ~= nil and item:GetName() == "item_black_king_bar"
+        then
+			bkb = item
+			break
+		end
+	end
+
+    if bkb ~= nil and bkb:IsFullyCastable()
+	then
+        bot.BlackKingBar = bkb
+        return true
+	end
+
+    return false
+end
+
 function J.ConsolePrintActiveMode(bot)
     local mode = bot:GetActiveMode()
     local botName = string.gsub(bot:GetUnitName(), "npc_dota_", "")
