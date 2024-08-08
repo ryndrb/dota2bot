@@ -7,6 +7,9 @@ local sTalentList = J.Skill.GetTalentList( bot )
 local sAbilityList = J.Skill.GetAbilityList( bot )
 local sRole = J.Item.GetRoleItemsBuyList( bot )
 
+if GetBot():GetUnitName() == 'npc_dota_hero_night_stalker'
+then
+
 local RI = require(GetScriptDirectory()..'/FunLib/util_role_item')
 
 local sUtility = {"item_crimson_guard", "item_pipe", "item_lotus_orb", "item_heavens_halberd"}
@@ -128,6 +131,8 @@ function X.MinionThink(hMinionUnit)
     Minion.MinionThink(hMinionUnit)
 end
 
+end
+
 local Void              = bot:GetAbilityByName('night_stalker_void')
 local CripplingFear     = bot:GetAbilityByName('night_stalker_crippling_fear')
 local HunterInTheNight  = bot:GetAbilityByName('night_stalker_hunter_in_the_night')
@@ -140,6 +145,11 @@ local DarkAscensionDesire
 
 function X.SkillsComplement()
     if J.CanNotUseAbility(bot) then return end
+
+    Void              = bot:GetAbilityByName('night_stalker_void')
+    CripplingFear     = bot:GetAbilityByName('night_stalker_crippling_fear')
+    HunterInTheNight  = bot:GetAbilityByName('night_stalker_hunter_in_the_night')
+    DarkAscension     = bot:GetAbilityByName('night_stalker_darkness')
 
     DarkAscensionDesire = X.ConsiderDarkAscension()
     if DarkAscensionDesire > 0
@@ -177,7 +187,7 @@ function X.SkillsComplement()
 end
 
 function X.ConsiderVoid()
-    if not Void:IsFullyCastable()
+    if not J.CanCastAbility(Void)
     then
         return BOT_ACTION_DESIRE_NONE, nil
     end
@@ -413,7 +423,7 @@ function X.ConsiderVoid()
 end
 
 function X.ConsiderCripplingFear()
-    if not CripplingFear:IsFullyCastable()
+    if not J.CanCastAbility(CripplingFear)
     then
         return BOT_ACTION_DESIRE_NONE
     end
@@ -509,8 +519,7 @@ function X.ConsiderCripplingFear()
 end
 
 function X.ConsiderHunterInTheNight()
-    if HunterInTheNight:IsPassive()
-    or not HunterInTheNight:IsFullyCastable()
+    if not J.CanCastAbility(HunterInTheNight)
     then
         return BOT_ACTION_DESIRE_NONE, nil
     end
@@ -537,7 +546,7 @@ function X.ConsiderHunterInTheNight()
 end
 
 function X.ConsiderDarkAscension()
-    if not DarkAscension:IsFullyCastable()
+    if not J.CanCastAbility(DarkAscension)
     then
         return BOT_ACTION_DESIRE_NONE
     end

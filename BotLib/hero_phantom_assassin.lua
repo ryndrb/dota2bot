@@ -7,6 +7,9 @@ local sTalentList = J.Skill.GetTalentList( bot )
 local sAbilityList = J.Skill.GetAbilityList( bot )
 local sRole = J.Item.GetRoleItemsBuyList( bot )
 
+if GetBot():GetUnitName() == 'npc_dota_hero_phantom_assassin'
+then
+
 local RI = require(GetScriptDirectory()..'/FunLib/util_role_item')
 
 local sUtility = {}
@@ -129,6 +132,8 @@ function X.MinionThink( hMinionUnit )
 
 end
 
+end
+
 --[[
 
 npc_dota_hero_phantom_assassin
@@ -158,10 +163,11 @@ modifier_phantom_assassin_coupdegrace
 --]]
 
 
-local abilityQ = bot:GetAbilityByName( sAbilityList[1] )
-local abilityW = bot:GetAbilityByName( sAbilityList[2] )
-local abilityE = bot:GetAbilityByName( sAbilityList[3] )
-local abilityAS = bot:GetAbilityByName( sAbilityList[4] )
+local abilityQ = bot:GetAbilityByName('phantom_assassin_stifling_dagger')
+local abilityW = bot:GetAbilityByName('phantom_assassin_phantom_strike')
+local abilityE = bot:GetAbilityByName('phantom_assassin_blur')
+local abilityAS = bot:GetAbilityByName('phantom_assassin_fan_of_knives')
+local abilityR = bot:GetAbilityByName('phantom_assassin_coup_de_grace')
 
 
 local castQDesire, castQTarget
@@ -178,6 +184,11 @@ local lastSkillCreep
 function X.SkillsComplement()
 
 	if J.CanNotUseAbility( bot ) then return end
+
+	abilityQ = bot:GetAbilityByName('phantom_assassin_stifling_dagger')
+	abilityW = bot:GetAbilityByName('phantom_assassin_phantom_strike')
+	abilityE = bot:GetAbilityByName('phantom_assassin_blur')
+	abilityAS = bot:GetAbilityByName('phantom_assassin_fan_of_knives')
 
 	nKeepMana = 300
 	nLV = bot:GetLevel()
@@ -235,7 +246,7 @@ end
 
 function X.ConsiderQ()
 
-	if not abilityQ:IsFullyCastable() then
+	if not J.CanCastAbility(abilityQ) then
 		return BOT_ACTION_DESIRE_NONE
 	end
 
@@ -531,7 +542,7 @@ end
 
 function X.ConsiderW()
 
-	if not abilityW:IsFullyCastable() then
+	if not J.CanCastAbility(abilityW) then
 		return BOT_ACTION_DESIRE_NONE, 0
 	end
 
@@ -730,7 +741,7 @@ function X.ConsiderE()
 
 	local nEnemyTowers = bot:GetNearbyTowers( 878, true )
 
-	if not abilityE:IsFullyCastable()
+	if not J.CanCastAbility(abilityE)
 		or bot:IsInvisible()
 		or #nEnemyTowers >= 1
 		or bot:DistanceFromFountain() < 600
@@ -782,8 +793,7 @@ end
 function X.ConsiderAS()
 
 
-	if not abilityAS:IsTrained()
-		or not abilityAS:IsFullyCastable() 
+	if not J.CanCastAbility(abilityAS)
 	then
 		return BOT_ACTION_DESIRE_NONE
 	end
@@ -824,4 +834,3 @@ end
 
 
 return X
--- dota2jmz@163.com QQ:2462331592..

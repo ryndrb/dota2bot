@@ -453,6 +453,132 @@ X['spells'] = {
         ['muerta_pierce_the_veil'] = {weight = 0.9},
     },
 
+    ['npc_dota_hero_naga_siren'] = {
+        ['naga_siren_mirror_image'] = {weight = 0.9},
+        ['naga_siren_ensnare'] = {weight = 0.2},
+        ['naga_siren_rip_tide'] = {weight = 1},
+        ['naga_siren_reel_in' ] = {weight = 1},
+        ['naga_siren_song_of_the_siren'] = {weight = 0.5},
+        [ 'naga_siren_song_of_the_siren_cancel' ] = {weight = 1},
+    },
+
+    ['npc_dota_hero_necrolyte'] = {
+        ['necrolyte_death_pulse'] = {weight = 0.9},
+        ['necrolyte_sadist'] = {weight = 0.5},
+        ['necrolyte_heartstopper_aura'] = {weight = 1},
+        ['necrolyte_death_seeker'] = {weight = 0.8},
+        ['necrolyte_reapers_scythe '] = {weight = 0.5},
+    },
+
+    ['npc_dota_hero_nevermore'] = {
+        ['nevermore_shadowraze1'] = {weight = 0.9},
+        ['nevermore_shadowraze2'] = {weight = 0.9},
+        ['nevermore_shadowraze3'] = {weight = 0.9},
+        ['nevermore_frenzy'] = {weight = 1},
+        ['nevermore_necromastery'] = {weight = 1},
+        ['nevermore_dark_lord'] = {weight = 1},
+        ['nevermore_requiem'] = {weight = 0.5},
+    },
+
+    ['npc_dota_hero_night_stalker'] = {
+        ['night_stalker_void'] = {weight = 0.5},
+        ['night_stalker_crippling_fear'] = {weight = 0.5},
+        ['night_stalker_hunter_in_the_night'] = {weight = 1},
+        ['night_stalker_darkness'] = {weight = 0.8},
+    },
+
+    ['npc_dota_hero_nyx_assassin'] = {
+        ['nyx_assassin_impale'] = {weight = 0},
+        ['nyx_assassin_jolt'] = {weight = 0.5},
+        ['nyx_assassin_spiked_carapace'] = {weight = 0.8},
+        ['nyx_assassin_burrow'] = {weight = 0.8},
+        ['nyx_assassin_unburrow'] = {weight = 1},
+        ['nyx_assassin_vendetta'] = {weight = 0.4},
+    },
+
+    ['npc_dota_hero_obsidian_destroyer'] = {
+        ['obsidian_destroyer_arcane_orb'] = {weight = 1},
+        ['obsidian_destroyer_astral_imprisonment'] = {weight = 0.2},
+        ['obsidian_destroyer_equilibrium'] = {weight = 1},
+        ['obsidian_destroyer_sanity_eclipse'] = {weight = 0.5},
+    },
+
+    ['npc_dota_hero_ogre_magi'] = {
+        ['ogre_magi_fireblast'] = {weight = 0.1},
+        ['ogre_magi_ignite'] = {weight = 0.5},
+        ['ogre_magi_bloodlust'] = {weight = 0.5},
+        ['ogre_magi_unrefined_fireblast'] = {weight = 0.3},
+        ['ogre_magi_smash'] = {weight = 0.5},
+        ['ogre_magi_multicast'] = {weight = 1},
+    },
+
+    ['npc_dota_hero_omniknight'] = {
+        ['omniknight_purification'] = {weight = 0.5},
+        ['omniknight_martyr'] = {weight = 0.3},
+        ['omniknight_hammer_of_purity'] = {weight = 0.8},
+        ['omniknight_guardian_angel'] = {weight = 0.2},
+    },
+
+    ['npc_dota_hero_oracle'] = {
+        ['oracle_fortunes_end'] = {weight = 0.5},
+        ['oracle_fates_edict'] = {weight = 0.5},
+        ['oracle_purifying_flames'] = {weight = 0.5},
+        ['oracle_rain_of_destiny'] = {weight = 0.5},
+        ['oracle_false_promise'] = {weight = 0.2},
+    },
+
+    ['npc_dota_hero_pangolier'] = {
+        ['pangolier_swashbuckle'] = {weight = 0.5},
+        ['pangolier_shield_crash'] = {weight = 0.5},
+        ['pangolier_luckyshot'] = {weight = 1},
+        ['pangolier_rollup'] = {weight = 0.2},
+        ['pangolier_rollup_stop'] = {weight = 1},
+        ['pangolier_gyroshell'] = {weight = 0.1},
+        ['pangolier_gyroshell_stop'] = {weight = 1},
+    },
+
+    ['npc_dota_hero_phantom_assassin'] = {
+        ['phantom_assassin_stifling_dagger'] = {weight = 0.9},
+        ['phantom_assassin_phantom_strike'] = {weight = 0.9},
+        ['phantom_assassin_fan_of_knives'] = {weight = 0.5},
+        ['phantom_assassin_blur'] = {weight = 0.5},
+        ['phantom_assassin_coup_de_grace'] = {weight = 1},
+    },
+
+    ['npc_dota_hero_phoenix'] = {
+        ['phoenix_icarus_dive'] = {weight = 0.5},
+        ['phoenix_icarus_dive_stop'] = {weight = 1},
+        ['phoenix_fire_spirits'] = {weight = 0.5},
+        ['phoenix_launch_fire_spirit'] = {weight = 1},
+        ['phoenix_sun_ray'] = {weight = 0.5},
+        ['phoenix_sun_ray_stop'] = {weight = 1},
+        ['phoenix_sun_ray_toggle_move'] = {weight = 1},
+        ['phoenix_supernova'] = {weight = 0.1},
+    },
+
+    ['npc_dota_hero_puck'] = {
+        ['puck_illusory_orb'] = {weight = 0.5},
+        ['puck_waning_rift'] = {weight = 0.5},
+        ['puck_phase_shift'] = {weight = 0.5},
+        ['puck_ethereal_jaunt'] = {weight = 0.5},
+        ['puck_dream_coil'] = {weight = 0.1},
+    },
+
+    ['npc_dota_hero_pudge'] = {
+        ['pudge_meat_hook'] = {weight = 0},
+        ['pudge_rot'] = {weight = 0.9},
+        ['pudge_flesh_heap'] = {weight = 0.5},
+        ['pudge_eject'] = {weight = 1},
+        ['pudge_dismember'] = {weight = 0.3},
+    },
+
+    ['npc_dota_hero_pugna'] = {
+        ['pugna_nether_blast'] = {weight = 0.3},
+        ['pugna_decrepify'] = {weight = 0.3},
+        ['pugna_nether_ward'] = {weight = 0.5},
+        ['pugna_life_drain'] = {weight = 0.4},
+    },
+
     -- --[[4]] ['rubick_empty1'] = {weight = 1},
     -- --[[5]] ['rubick_empty2'] = {weight = 1},
 }

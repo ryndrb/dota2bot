@@ -7,6 +7,9 @@ local sTalentList = J.Skill.GetTalentList( bot )
 local sAbilityList = J.Skill.GetAbilityList( bot )
 local sRole = J.Item.GetRoleItemsBuyList( bot )
 
+if GetBot():GetUnitName() == 'npc_dota_hero_naga_siren'
+then
+
 local RI = require(GetScriptDirectory()..'/FunLib/util_role_item')
 
 local sUtility = {}
@@ -131,6 +134,8 @@ function X.MinionThink(hMinionUnit)
 
 end
 
+end
+
 --[[
 
 
@@ -163,12 +168,12 @@ modifier_naga_siren_song_of_the_siren_ignore_me
 
 --]]
 
-local abilityQ = bot:GetAbilityByName( sAbilityList[1] )
-local abilityW = bot:GetAbilityByName( sAbilityList[2] )
-local abilityE = bot:GetAbilityByName( sAbilityList[3] )
-local abilityR = bot:GetAbilityByName( sAbilityList[6] )
-local abilitySR = bot:GetAbilityByName( 'naga_siren_song_of_the_siren_cancel' )
+local abilityQ = bot:GetAbilityByName('naga_siren_mirror_image')
+local abilityW = bot:GetAbilityByName('naga_siren_ensnare')
+local abilityE = bot:GetAbilityByName('naga_siren_rip_tide')
 local ReelIn = bot:GetAbilityByName( 'naga_siren_reel_in' )
+local abilityR = bot:GetAbilityByName('naga_siren_song_of_the_siren')
+local abilitySR = bot:GetAbilityByName( 'naga_siren_song_of_the_siren_cancel' )
 
 local castQDesire, castQTarget
 local castWDesire, castWTarget
@@ -185,6 +190,12 @@ function X.SkillsComplement()
 
 	if J.CanNotUseAbility(bot) or bot:IsInvisible() then return end
 	
+	abilityQ = bot:GetAbilityByName('naga_siren_mirror_image')
+	abilityW = bot:GetAbilityByName('naga_siren_ensnare')
+	abilityE = bot:GetAbilityByName('naga_siren_rip_tide')
+	ReelIn = bot:GetAbilityByName( 'naga_siren_reel_in' )
+	abilityR = bot:GetAbilityByName('naga_siren_song_of_the_siren')
+	abilitySR = bot:GetAbilityByName( 'naga_siren_song_of_the_siren_cancel' )
 	
 	nKeepMana = 400
 	aetherRange = 0
@@ -224,7 +235,7 @@ function X.SkillsComplement()
 	if (ReelInDesire > 0)
 	then
 		J.SetQueuePtToINT(bot, true)
-		bot:Action_UseAbility(ReelIn)
+		bot:ActionQueue_UseAbility(ReelIn)
 		return;
 	end
 	
@@ -254,7 +265,7 @@ end
 function X.ConsiderQ()
 
 
-	if not abilityQ:IsFullyCastable() then return 0 end
+	if not J.CanCastAbility(abilityQ) then return 0 end
 	
 	local nSkillLV    = abilityQ:GetLevel(); 
 	local nCastRange  = abilityQ:GetCastRange()
@@ -398,7 +409,7 @@ end
 function X.ConsiderW()
 
 
-	if not abilityW:IsFullyCastable() then return 0 end
+	if not J.CanCastAbility(abilityW) then return 0 end
 	
 	local nSkillLV    = abilityW:GetLevel(); 
 	local nCastRange  = abilityW:GetCastRange() + aetherRange
@@ -503,7 +514,7 @@ end
 function X.ConsiderR()
 
 
-	if not abilityR:IsFullyCastable() then return 0 end
+	if not J.CanCastAbility(abilityR) then return 0 end
 	
 	local nSkillLV    = abilityR:GetLevel(); 
 	local nCastRange  = abilityR:GetSpecialValueInt( 'radius' )
@@ -566,9 +577,7 @@ end
 function X.ConsiderSR()
 
 
-	if abilitySR:IsHidden()
-		or not abilitySR:IsTrained()
-		or not abilitySR:IsFullyCastable() 
+	if not J.CanCastAbility(abilitySR)
 	then return 0 end	
 
 	
@@ -595,7 +604,7 @@ end
 
 function X.ConsiderReelIn()
 	if not bot:HasScepter()
-	or not ReelIn:IsFullyCastable()
+	or not J.CanCastAbility(ReelIn)
 	or J.IsInTeamFight(bot, 1400)
 	then
 		return BOT_ACTION_DESIRE_NONE

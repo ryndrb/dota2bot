@@ -7,6 +7,9 @@ local sTalentList = J.Skill.GetTalentList( bot )
 local sAbilityList = J.Skill.GetAbilityList( bot )
 local sRole = J.Item.GetRoleItemsBuyList( bot )
 
+if GetBot():GetUnitName() == 'npc_dota_hero_obsidian_destroyer'
+then
+
 local RI = require(GetScriptDirectory()..'/FunLib/util_role_item')
 
 local sUtility = {}
@@ -127,6 +130,8 @@ function X.MinionThink( hMinionUnit )
 	end
 end
 
+end
+
 local ArcaneOrb             = bot:GetAbilityByName('obsidian_destroyer_arcane_orb')
 local AstralImprisonment    = bot:GetAbilityByName('obsidian_destroyer_astral_imprisonment')
 local EssenceFlux           = bot:GetAbilityByName('obsidian_destroyer_equilibrium')
@@ -139,9 +144,13 @@ local SanitysEclipseDesire, SanitysEclipseLocation
 function X.SkillsComplement()
     if J.CanNotUseAbility(bot) then return end
 
-	if  ArcaneOrb:IsTrained()
-	and ArcaneOrb:GetAutoCastState( ) == false
-	and EssenceFlux:GetLevel() >= 3
+    ArcaneOrb             = bot:GetAbilityByName('obsidian_destroyer_arcane_orb')
+    AstralImprisonment    = bot:GetAbilityByName('obsidian_destroyer_astral_imprisonment')
+    EssenceFlux           = bot:GetAbilityByName('obsidian_destroyer_equilibrium')
+    SanitysEclipse        = bot:GetAbilityByName('obsidian_destroyer_sanity_eclipse')
+
+	if  ArcaneOrb ~= nil and ArcaneOrb:IsTrained() and ArcaneOrb:GetAutoCastState( ) == false
+	and EssenceFlux ~= nil and EssenceFlux:GetLevel() >= 3
 	then
 		ArcaneOrb:ToggleAutoCast()
 	end
@@ -169,7 +178,7 @@ function X.SkillsComplement()
 end
 
 function X.ConsiderArcaneOrb()
-    if not ArcaneOrb:IsFullyCastable()
+    if not J.CanCastAbility(ArcaneOrb)
     or ArcaneOrb:GetAutoCastState()
     then
         return BOT_ACTION_DESIRE_NONE, nil
@@ -248,7 +257,7 @@ function X.ConsiderArcaneOrb()
 end
 
 function X.ConsiderAstralImprisonment()
-    if not AstralImprisonment:IsFullyCastable()
+    if not J.CanCastAbility(AstralImprisonment)
     then
         return BOT_ACTION_DESIRE_NONE, nil
     end
@@ -464,7 +473,7 @@ function X.ConsiderAstralImprisonment()
 end
 
 function X.ConsiderSanitysEclipse()
-    if not SanitysEclipse:IsFullyCastable()
+    if not J.CanCastAbility(SanitysEclipse)
     then
         return BOT_ACTION_DESIRE_NONE, 0
     end

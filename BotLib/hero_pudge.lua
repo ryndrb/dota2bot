@@ -7,6 +7,9 @@ local sTalentList = J.Skill.GetTalentList( bot )
 local sAbilityList = J.Skill.GetAbilityList( bot )
 local sRole = J.Item.GetRoleItemsBuyList( bot )
 
+if GetBot():GetUnitName() == 'npc_dota_hero_pudge'
+then
+
 local RI = require(GetScriptDirectory()..'/FunLib/util_role_item')
 
 local sUtility = {"item_crimson_guard", "item_pipe", "item_lotus_orb"}
@@ -210,10 +213,12 @@ function X.MinionThink(hMinionUnit)
     Minion.MinionThink(hMinionUnit)
 end
 
+end
+
 local MeatHook   = bot:GetAbilityByName('pudge_meat_hook')
 local Rot        = bot:GetAbilityByName('pudge_rot')
 local MeatShield = bot:GetAbilityByName('pudge_flesh_heap')
--- local Eject     = bot:GetAbilityByName('')
+-- local Eject     = bot:GetAbilityByName('pudge_eject')
 local Dismember  = bot:GetAbilityByName('pudge_dismember')
 
 local MeatHookDesire, MeatHookLocation
@@ -224,6 +229,11 @@ local DismemberDesire, DismemberTarget
 
 function X.SkillsComplement()
     if J.CanNotUseAbility(bot) then return end
+
+    MeatHook   = bot:GetAbilityByName('pudge_meat_hook')
+    Rot        = bot:GetAbilityByName('pudge_rot')
+    MeatShield = bot:GetAbilityByName('pudge_flesh_heap')
+    Dismember  = bot:GetAbilityByName('pudge_dismember')
 
     MeatHookDesire, MeatHookLocation = X.ConsiderMeatHook()
     if MeatHookDesire > 0
@@ -249,13 +259,13 @@ function X.SkillsComplement()
     DismemberDesire, DismemberTarget = X.ConsiderDismember()
     if DismemberDesire > 0
     then
-        if  Rot:IsTrained()
+        if  J.CanCastAbility(Rot)
         and Rot:GetToggleState() == false
         then
             bot:Action_UseAbility(Rot)
         end
 
-        if  MeatShield:IsTrained()
+        if  J.CanCastAbility(MeatShield)
         and MeatShield:IsFullyCastable()
         then
             bot:Action_UseAbility(MeatShield)
@@ -274,7 +284,7 @@ function X.SkillsComplement()
 end
 
 function X.ConsiderMeatHook()
-    if not MeatHook:IsFullyCastable()
+    if not J.CanCastAbility(MeatHook)
     then
         return BOT_ACTION_DESIRE_NONE, 0
     end
@@ -497,7 +507,7 @@ function X.ConsiderMeatHook()
 end
 
 function X.ConsiderRot()
-    if not Rot:IsFullyCastable()
+    if not J.CanCastAbility(Rot)
     then
         return BOT_ACTION_DESIRE_NONE
     end
@@ -695,7 +705,7 @@ function X.ConsiderRot()
 end
 
 function X.ConsiderMeatShield()
-    if not MeatShield:IsFullyCastable()
+    if not J.CanCastAbility(MeatShield)
     then
         return BOT_ACTION_DESIRE_NONE
     end
@@ -732,7 +742,7 @@ function X.ConsiderMeatShield()
 end
 
 function X.ConsiderDismember()
-    if not Dismember:IsFullyCastable()
+    if not J.CanCastAbility(Dismember)
     then
         return BOT_ACTION_DESIRE_NONE, nil
     end

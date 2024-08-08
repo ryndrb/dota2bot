@@ -7,6 +7,9 @@ local sTalentList = J.Skill.GetTalentList( bot )
 local sAbilityList = J.Skill.GetAbilityList( bot )
 local sRole = J.Item.GetRoleItemsBuyList( bot )
 
+if GetBot():GetUnitName() == 'npc_dota_hero_phoenix'
+then
+
 local RI = require(GetScriptDirectory()..'/FunLib/util_role_item')
 
 local sUtility = {}
@@ -148,6 +151,8 @@ function X.MinionThink(hMinionUnit)
     Minion.MinionThink(hMinionUnit)
 end
 
+end
+
 local IcarusDive        = bot:GetAbilityByName('phoenix_icarus_dive')
 local IcarusDiveStop    = bot:GetAbilityByName('phoenix_icarus_dive_stop')
 local FireSpirits       = bot:GetAbilityByName('phoenix_fire_spirits')
@@ -177,6 +182,15 @@ if bot.targetSunRay == nil then bot.targetSunRay = bot end
 function X.SkillsComplement()
 	if J.CanNotUseAbility(bot) then return end
 
+    IcarusDive        = bot:GetAbilityByName('phoenix_icarus_dive')
+    IcarusDiveStop    = bot:GetAbilityByName('phoenix_icarus_dive_stop')
+    FireSpirits       = bot:GetAbilityByName('phoenix_fire_spirits')
+    FireSpiritsLaunch = bot:GetAbilityByName('phoenix_launch_fire_spirit')
+    SunRay            = bot:GetAbilityByName('phoenix_sun_ray')
+    SunRayStop        = bot:GetAbilityByName('phoenix_sun_ray_stop')
+    ToggleMovement    = bot:GetAbilityByName('phoenix_sun_ray_toggle_move')
+    Supernova         = bot:GetAbilityByName('phoenix_supernova')
+
     FireSpiritsDesire = X.ConsiderFireSpirits()
     if FireSpiritsDesire > 0
     then
@@ -195,7 +209,8 @@ function X.SkillsComplement()
     SupernovaDesire, SupernovaTarget, AllyCast = X.ConsiderSupernova()
     if SupernovaDesire > 0
     then
-        if  bot:HasScepter()
+        if string.find(GetBot():GetUnitName(), 'phoenix')
+        and bot:HasScepter()
         and AllyCast
         then
             bot:Action_UseAbilityOnEntity(Supernova, SupernovaTarget)
@@ -256,8 +271,7 @@ function X.SkillsComplement()
 end
 
 function X.ConsiderIcarusDive()
-    if IcarusDive:IsHidden()
-    or not IcarusDive:IsFullyCastable()
+    if not J.CanCastAbility(IcarusDive)
     or bot:HasModifier('modifier_phoenix_icarus_dive')
     or bot:HasModifier('modifier_phoenix_supernova_hiding')
     then
@@ -374,8 +388,7 @@ function X.ConsiderIcarusDive()
 end
 
 function X.ConsiderIcarusDiveStop()
-    if IcarusDiveStop:IsHidden()
-    or not IcarusDiveStop:IsFullyCastable()
+    if not J.CanCastAbility(IcarusDiveStop)
     or bot:HasModifier('modifier_phoenix_icarus_dive')
     or bot:HasModifier('modifier_phoenix_supernova_hiding')
     then
@@ -438,8 +451,7 @@ function X.ConsiderIcarusDiveStop()
 end
 
 function X.ConsiderFireSpirits()
-    if FireSpirits:IsHidden()
-    or not FireSpirits:IsFullyCastable()
+    if not J.CanCastAbility(FireSpirits)
     or bot:HasModifier('modifier_phoenix_icarus_dive')
     or bot:HasModifier('modifier_phoenix_supernova_hiding')
     or bot:HasModifier('modifier_phoenix_fire_spirit_count')
@@ -582,8 +594,7 @@ function X.ConsiderFireSpirits()
 end
 
 function X.ConsiderFireSpiritsLaunch()
-    if FireSpiritsLaunch:IsHidden()
-    or not FireSpiritsLaunch:IsFullyCastable()
+    if not J.CanCastAbility(FireSpiritsLaunch)
     or bot:HasModifier('modifier_phoenix_icarus_dive')
     or bot:HasModifier('modifier_phoenix_supernova_hiding')
     then
@@ -787,8 +798,7 @@ end
 
 local sunRayTarget = nil
 function X.ConsiderSunRay()
-    if SunRay:IsHidden()
-    or not SunRay:IsFullyCastable()
+    if not J.CanCastAbility(SunRay)
     or bot:HasModifier('modifier_phoenix_icarus_dive')
     or bot:HasModifier('modifier_phoenix_sun_ray')
     then
@@ -846,8 +856,7 @@ function X.ConsiderSunRay()
 end
 
 function X.ConsiderSunRayStop()
-    if SunRayStop:IsHidden()
-    or not SunRayStop:IsFullyCastable()
+    if not J.CanCastAbility(SunRayStop)
     or bot:HasModifier('modifier_phoenix_icarus_dive')
     or not bot:HasModifier('modifier_phoenix_sun_ray')
     then
@@ -880,8 +889,7 @@ function X.ConsiderSunRayStop()
 end
 
 function X.ConsiderToggleMovement()
-    if ToggleMovement:IsHidden()
-    or not ToggleMovement:IsFullyCastable()
+    if not J.CanCastAbility(ToggleMovement)
     or not bot:HasModifier('modifier_phoenix_sun_ray')
     then
         return BOT_ACTION_DESIRE_NONE, ''
@@ -904,8 +912,7 @@ function X.ConsiderToggleMovement()
 end
 
 function X.ConsiderSupernova()
-    if Supernova:IsHidden()
-    or not Supernova:IsFullyCastable()
+    if not J.CanCastAbility(Supernova)
     or bot:HasModifier('modifier_phoenix_supernova_hiding')
     then
         return BOT_ACTION_DESIRE_NONE, nil, false
@@ -920,7 +927,7 @@ function X.ConsiderSupernova()
 
         if nInRangeEnemy ~= nil and #nInRangeEnemy >= 2
         then
-            if bot:HasScepter()
+            if string.find(GetBot():GetUnitName(), 'phoenix') and bot:HasScepter()
             then
                 local nInRangeAlly = bot:GetNearbyHeroes(nCastRange + 100, false, BOT_MODE_NONE)
 

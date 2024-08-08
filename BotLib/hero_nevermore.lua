@@ -7,6 +7,9 @@ local sTalentList = J.Skill.GetTalentList( bot )
 local sAbilityList = J.Skill.GetAbilityList( bot )
 local sRole = J.Item.GetRoleItemsBuyList( bot )
 
+if GetBot():GetUnitName() == 'npc_dota_hero_nevermore'
+then
+
 local RI = require(GetScriptDirectory()..'/FunLib/util_role_item')
 
 local sUtility = {}
@@ -157,6 +160,8 @@ function X.MinionThink( hMinionUnit )
 
 end
 
+end
+
 --[[
 
 npc_dota_hero_nevermore
@@ -188,12 +193,13 @@ modifier_nevermore_necromastery
 
 --]]
 
-local abilityZ = bot:GetAbilityByName( sAbilityList[1] )
-local abilityX = bot:GetAbilityByName( sAbilityList[2] )
-local abilityC = bot:GetAbilityByName( sAbilityList[3] )
-local abilityN = bot:GetAbilityByName( sAbilityList[4] )
+local abilityZ = bot:GetAbilityByName('nevermore_shadowraze1')
+local abilityX = bot:GetAbilityByName('nevermore_shadowraze2')
+local abilityC = bot:GetAbilityByName('nevermore_shadowraze3')
 local FeastOfSouls = bot:GetAbilityByName('nevermore_frenzy')
-local abilityR = bot:GetAbilityByName( sAbilityList[6] )
+local abilityN = bot:GetAbilityByName('nevermore_necromastery')
+local abilityF = bot:GetAbilityByName('nevermore_dark_lord')
+local abilityR = bot:GetAbilityByName('nevermore_requiem')
 local talent4 = bot:GetAbilityByName( sTalentList[4] )
 
 local castZDesire
@@ -214,6 +220,13 @@ function X.SkillsComplement()
 
 
 	if J.CanNotUseAbility( bot ) or bot:IsInvisible() then return end
+
+	abilityZ = bot:GetAbilityByName('nevermore_shadowraze1')
+	abilityX = bot:GetAbilityByName('nevermore_shadowraze2')
+	abilityC = bot:GetAbilityByName('nevermore_shadowraze3')
+	FeastOfSouls = bot:GetAbilityByName('nevermore_frenzy')
+	abilityN = bot:GetAbilityByName('nevermore_necromastery')
+	abilityR = bot:GetAbilityByName('nevermore_requiem')
 
 
 	nKeepMana = 340
@@ -293,9 +306,7 @@ end
 
 function X.ConsiderN()
 
-	if not abilityN:IsTrained()
-		or abilityN:IsPassive()
-		or not abilityN:IsFullyCastable()
+	if not J.CanCastAbility(abilityN)
 		or bot:IsDisarmed()
 		or abilityN:GetAutoCastState()
 	then
@@ -316,7 +327,7 @@ end
 function X.ConsiderR()
 
 
-	if not abilityR:IsFullyCastable()
+	if not J.CanCastAbility(abilityR)
 		or ( bot:WasRecentlyDamagedByAnyHero( 1.5 ) and not bot:HasModifier( "modifier_black_king_bar_immune" ) and nHP < 0.62 )
 	then return 0 end
 
@@ -373,7 +384,7 @@ end
 
 function X.Consider( nAbility, nDistance )
 
-	if not nAbility:IsFullyCastable() then
+	if not J.CanCastAbility(nAbility) then
 		return BOT_ACTION_DESIRE_NONE, 0
 	end
 
@@ -491,7 +502,7 @@ function X.Consider( nAbility, nDistance )
 end
 
 function X.ConsiderFeastOfSouls()
-	if not FeastOfSouls:IsFullyCastable()
+	if not J.CanCastAbility(FeastOfSouls)
 	then
 		return BOT_ACTION_DESIRE_NONE
 	end
@@ -628,4 +639,3 @@ end
 
 
 return X
--- dota2jmz@163.com QQ:2462331592..

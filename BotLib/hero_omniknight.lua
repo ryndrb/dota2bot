@@ -7,6 +7,9 @@ local sTalentList = J.Skill.GetTalentList( bot )
 local sAbilityList = J.Skill.GetAbilityList( bot )
 local sRole = J.Item.GetRoleItemsBuyList( bot )
 
+if GetBot():GetUnitName() == 'npc_dota_hero_omniknight'
+then
+
 local RI = require(GetScriptDirectory()..'/FunLib/util_role_item')
 
 local sUtility = {"item_crimson_guard", "item_pipe", "item_heavens_halberd"}
@@ -215,18 +218,18 @@ function X.MinionThink( hMinionUnit )
 
 end
 
-local abilityQ = bot:GetAbilityByName( sAbilityList[1] )
-local abilityW = bot:GetAbilityByName( sAbilityList[2] )
-local abilityE = bot:GetAbilityByName( sAbilityList[3] )
-local abilityR = bot:GetAbilityByName( sAbilityList[6] )
-local abilityAS = bot:GetAbilityByName( sAbilityList[4] )
+end
+
+local abilityQ = bot:GetAbilityByName('omniknight_purification')
+local abilityW = bot:GetAbilityByName('omniknight_martyr')
+local abilityE = bot:GetAbilityByName('omniknight_hammer_of_purity')
+local abilityR = bot:GetAbilityByName('omniknight_guardian_angel')
 local talent7 = bot:GetAbilityByName( sTalentList[7] )
 
 local castQDesire, castQTarget
 local castWDesire, castWTarget
 local castEDesire, castETarget
 local castRDesire, castRTarget
-local castASDesire, castASTarget
 
 local nKeepMana, nMP, nHP, nLV, hEnemyList, hAllyList, botTarget, sMotive
 local aetherRange = 0
@@ -235,6 +238,11 @@ local aetherRange = 0
 function X.SkillsComplement()
 
 	if J.CanNotUseAbility( bot ) or bot:IsInvisible() then return end
+
+	abilityQ = bot:GetAbilityByName('omniknight_purification')
+	abilityW = bot:GetAbilityByName('omniknight_martyr')
+	abilityE = bot:GetAbilityByName('omniknight_hammer_of_purity')
+	abilityR = bot:GetAbilityByName('omniknight_guardian_angel')
 
 	nKeepMana = 400
 	aetherRange = 0
@@ -298,7 +306,7 @@ end
 function X.ConsiderQ()
 
 
-	if not abilityQ:IsFullyCastable() then return 0 end
+	if not J.CanCastAbility(abilityQ) then return 0 end
 
 	local nSkillLV = abilityQ:GetLevel()
 	local nCastRange = abilityQ:GetCastRange() + aetherRange
@@ -552,7 +560,7 @@ end
 function X.ConsiderW()
 
 
-	if not abilityW:IsFullyCastable() then return 0 end
+	if not J.CanCastAbility(abilityW) then return 0 end
 
 	local nSkillLV = abilityW:GetLevel()
 	local nCastRange = abilityW:GetCastRange() + aetherRange
@@ -649,7 +657,7 @@ end
 function X.ConsiderE()
 
 
-	if not abilityE:IsFullyCastable() then return 0 end
+	if not J.CanCastAbility(abilityE) then return 0 end
 	
 	local nCastRange = abilityE:GetCastRange()
 	local nCastPoint = abilityE:GetCastPoint()
@@ -795,7 +803,7 @@ end
 function X.ConsiderR()
 
 
-	if not abilityR:IsFullyCastable() then return 0 end
+	if not J.CanCastAbility(abilityR) then return 0 end
 
 	local nRadius = abilityR:GetSpecialValueInt( 'radius' )	
 	local nCastRange = nRadius
