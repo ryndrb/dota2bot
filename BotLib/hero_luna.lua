@@ -7,6 +7,9 @@ local sTalentList = J.Skill.GetTalentList( bot )
 local sAbilityList = J.Skill.GetAbilityList( bot )
 local sRole = J.Item.GetRoleItemsBuyList( bot )
 
+if GetBot():GetUnitName() == 'npc_dota_hero_luna'
+then
+
 local RI = require(GetScriptDirectory()..'/FunLib/util_role_item')
 
 local sUtility = {}
@@ -128,8 +131,10 @@ function X.MinionThink(hMinionUnit)
 	Minion.MinionThink(hMinionUnit)
 end
 
+end
+
 local LucentBeam 	= bot:GetAbilityByName('luna_lucent_beam')
-local LunarOrbit = bot:GetAbilityByName("luna_lunar_orbit")
+local LunarOrbit 	= bot:GetAbilityByName("luna_lunar_orbit")
 -- local MoonGlaives 	= bot:GetAbilityByName('luna_moon_glaive')
 -- local LunarBlessing = bot:GetAbilityByName('luna_lunar_blessing')
 local Eclipse 		= bot:GetAbilityByName('luna_eclipse')
@@ -141,43 +146,39 @@ local EclipseDesire
 
 local talent6BonusDamage = 0
 
-local botTarget
+local botTarget, botName
 
 function X.SkillsComplement()
 	if J.CanNotUseAbility(bot) then return end
 
+	LucentBeam 	= bot:GetAbilityByName('luna_lucent_beam')
+	LunarOrbit 	= bot:GetAbilityByName("luna_lunar_orbit")
+	Eclipse 		= bot:GetAbilityByName('luna_eclipse')
+
 	botTarget = J.GetProperTarget(bot)
+	botName = GetBot():GetUnitName()
 	J.ConsiderTarget()
 
-	if talent6:IsTrained() then talent6BonusDamage = talent6:GetSpecialValueInt('value') end
+	if string.find(botName, 'luna') and talent6:IsTrained() then talent6BonusDamage = talent6:GetSpecialValueInt('value') end
 
 	LunarOrbitDesire = X.ConsiderLunarOrbit()
 	if LunarOrbitDesire > 0
 	then
-		bot:Action_UseAbility(LunarOrbit)
+		J.SetQueuePtToINT(bot, false)
+		bot:ActionQueue_UseAbility(LunarOrbit)
 		return
 	end
 
 	EclipseDesire = X.ConsiderEclipse()
 	if EclipseDesire > 0
 	then
-		if J.HasPowerTreads(bot)
-		then
-			J.SetQueuePtToINT(bot, false)
+		J.SetQueuePtToINT(bot, false)
 
-			if bot:HasScepter()
-			then
-				bot:ActionQueue_UseAbilityOnEntity(Eclipse, bot)
-			else
-				bot:ActionQueue_UseAbility(Eclipse)
-			end
+		if bot:HasScepter()
+		then
+			bot:ActionQueue_UseAbilityOnEntity(Eclipse, bot)
 		else
-			if bot:HasScepter()
-			then
-				bot:Action_UseAbilityOnEntity(Eclipse, bot)
-			else
-				bot:Action_UseAbility(Eclipse)
-			end
+			bot:ActionQueue_UseAbility(Eclipse)
 		end
 
 		return
@@ -186,20 +187,14 @@ function X.SkillsComplement()
 	LucentBeamDesire, LucentBeamTarget = X.ConsiderLucentBeam()
 	if LucentBeamDesire > 0
 	then
-		if J.HasPowerTreads(bot)
-		then
-			J.SetQueuePtToINT(bot, false)
-			bot:ActionQueue_UseAbilityOnEntity(LucentBeam, LucentBeamTarget)
-		else
-			bot:Action_UseAbilityOnEntity(LucentBeam, LucentBeamTarget)
-		end
-
+		J.SetQueuePtToINT(bot, false)
+		bot:ActionQueue_UseAbilityOnEntity(LucentBeam, LucentBeamTarget)
 		return
 	end
 end
 
 function X.ConsiderLucentBeam()
-	if not LucentBeam:IsFullyCastable()
+	if not J.CanCastAbility(LucentBeam)
 	then
 		return BOT_ACTION_DESIRE_NONE, nil
 	end
@@ -415,8 +410,7 @@ function X.ConsiderLucentBeam()
 end
 
 function X.ConsiderLunarOrbit()
-	if not LunarOrbit:IsTrained()
-	or not LunarOrbit:IsFullyCastable()
+	if not J.CanCastAbility(LunarOrbit)
 	then
 		return BOT_ACTION_DESIRE_NONE
 	end
@@ -506,7 +500,7 @@ function X.ConsiderLunarOrbit()
 end
 
 function X.ConsiderEclipse()
-	if not Eclipse:IsFullyCastable()
+	if not J.CanCastAbility(Eclipse)
 	then
 		return BOT_ACTION_DESIRE_NONE
 	end

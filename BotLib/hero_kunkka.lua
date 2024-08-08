@@ -7,6 +7,9 @@ local sTalentList = J.Skill.GetTalentList( bot )
 local sAbilityList = J.Skill.GetAbilityList( bot )
 local sRole = J.Item.GetRoleItemsBuyList( bot )
 
+if GetBot():GetUnitName() == 'npc_dota_hero_kunkka'
+then
+
 local RI = require(GetScriptDirectory()..'/FunLib/util_role_item')
 
 local sUtility = {"item_crimson_guard", "item_pipe", "item_heavens_halberd", "item_lotus_orb"}
@@ -166,6 +169,8 @@ function X.MinionThink( hMinionUnit )
 
 end
 
+end
+
 --[[
 
 npc_dota_hero_kunkka
@@ -201,13 +206,13 @@ modifier_kunkka_ghost_ship_damage_delay
 
 --]]
 
-local abilityQ = bot:GetAbilityByName( sAbilityList[1] )
-local abilityW = bot:GetAbilityByName( sAbilityList[2] )
-local abilityE = bot:GetAbilityByName( sAbilityList[3] )
+local abilityQ = bot:GetAbilityByName('kunkka_torrent')
+local abilityW = bot:GetAbilityByName('kunkka_tidebringer')
+local abilityE = bot:GetAbilityByName('kunkka_x_marks_the_spot')
 local abilityE2 = bot:GetAbilityByName( 'kunkka_return' )
 -- local abilityD = bot:GetAbilityByName( sAbilityList[4] )
-local abilityAS = bot:GetAbilityByName( sAbilityList[5] )
-local abilityR = bot:GetAbilityByName( sAbilityList[6] )
+local abilityAS = bot:GetAbilityByName('kunkka_tidal_wave ')
+local abilityR = bot:GetAbilityByName('kunkka_ghostship ')
 
 
 local castQDesire, castQLocation
@@ -244,6 +249,12 @@ function X.SkillsComplement()
 
 	if J.CanNotUseAbility( bot ) or bot:IsInvisible() then return end
 
+	abilityQ = bot:GetAbilityByName('kunkka_torrent')
+	abilityW = bot:GetAbilityByName('kunkka_tidebringer')
+	abilityE = bot:GetAbilityByName('kunkka_x_marks_the_spot')
+	abilityE2 = bot:GetAbilityByName( 'kunkka_return' )
+	abilityAS = bot:GetAbilityByName('kunkka_tidal_wave ')
+	abilityR = bot:GetAbilityByName('kunkka_ghostship ')
 
 	nKeepMana = 240
 	nMP = bot:GetMana()/bot:GetMaxMana()
@@ -254,8 +265,8 @@ function X.SkillsComplement()
 
 
 	--三连的最后一下
-	if abilityE2:IsHidden() == false
-		and abilityE2:IsFullyCastable()
+	if abilityE2 ~= nil and abilityE2:IsHidden() == false
+		and J.CanCastAbility(abilityE2)
 		and ( ( Combo3Time ~= 0 and DotaTime() >= Combo3Time + C3Delay )
 			or ( Combo1Time ~= 0 and DotaTime() >= Combo1Time + C1Delay )
 			or ( Combo2Time ~= 0 and DotaTime() >= Combo2Time + C2Delay ) )
@@ -267,8 +278,8 @@ function X.SkillsComplement()
 		return
 	end
 
-	if abilityE2:IsHidden() == true
-		or abilityE:IsFullyCastable()
+	if abilityE2 ~= nil and abilityE2:IsHidden() == true
+		or J.CanCastAbility(abilityE)
 	then
 		Combo1Time = 0
 		Combo2Time = 0
@@ -405,10 +416,14 @@ end
 
 --X船水
 function X.ConsiderCombo1()
+	if GetBot():GetUnitName() == 'npc_dota_hero_rubick'
+	then
+		return BOT_ACTION_DESIRE_NONE, nil
+	end
 
-	if not abilityQ:IsFullyCastable()
-		or not abilityE:IsFullyCastable()
-		or not abilityR:IsFullyCastable()
+	if not J.CanCastAbility(abilityQ)
+		or not J.CanCastAbility(abilityE)
+		or not J.CanCastAbility(abilityR)
 	then
 		return BOT_ACTION_DESIRE_NONE, nil
 	end
@@ -441,8 +456,12 @@ end
 
 --X船
 function X.ConsiderCombo2()
+	if GetBot():GetUnitName() == 'npc_dota_hero_rubick'
+	then
+		return BOT_ACTION_DESIRE_NONE, nil
+	end
 
-	if not abilityR:IsFullyCastable() or not abilityE:IsFullyCastable()
+	if not J.CanCastAbility(abilityR) or not J.CanCastAbility(abilityE)
 	then
 		return BOT_ACTION_DESIRE_NONE, nil, {}
 	end
@@ -474,7 +493,12 @@ end
 
 --X水
 function X.ConsiderCombo3()
-	if not abilityQ:IsFullyCastable() or not abilityE:IsFullyCastable() or abilityR:IsFullyCastable()
+	if GetBot():GetUnitName() == 'npc_dota_hero_rubick'
+	then
+		return BOT_ACTION_DESIRE_NONE, nil
+	end
+
+	if not J.CanCastAbility(abilityQ) or not J.CanCastAbility(abilityE) or J.CanCastAbility(abilityR)
 	then
 		return BOT_ACTION_DESIRE_NONE, nil, {}
 	end
@@ -554,7 +578,7 @@ end
 
 function X.ConsiderQ()
 
-	if not abilityQ:IsFullyCastable()
+	if not J.CanCastAbility(abilityQ)
 	then
 		return BOT_ACTION_DESIRE_NONE, nil
 	end
@@ -571,8 +595,8 @@ function X.ConsiderQ()
 		end
 	end
 
-	if abilityE:GetLevel() >= 3
-		and abilityE:IsFullyCastable()
+	if J.CanCastAbility(abilityE)
+	and abilityE:GetLevel() >= 3
 		and bot:GetMana() > 160
 	then
 		return BOT_ACTION_DESIRE_NONE, nil
@@ -626,9 +650,9 @@ end
 
 function X.ConsiderE()
 
-	if not abilityE:IsFullyCastable()
-		or abilityQ:IsFullyCastable()
-		or abilityR:IsFullyCastable()
+	if not J.CanCastAbility(abilityE)
+		or J.CanCastAbility(abilityQ)
+		or J.CanCastAbility(abilityR)
 	then
 		return BOT_ACTION_DESIRE_NONE, nil
 	end
@@ -668,7 +692,7 @@ end
 
 function X.ConsiderR()
 
-	if not abilityR:IsFullyCastable() or abilityE:IsFullyCastable() then
+	if not J.CanCastAbility(abilityR) or J.CanCastAbility(abilityE) then
 		return BOT_ACTION_DESIRE_NONE, nil
 	end
 
@@ -717,8 +741,7 @@ end
 function X.ConsiderW()
 
 	if not J.IsRunning( bot )
-		or abilityW == nil
-		or not abilityW:IsFullyCastable()
+		or not J.CanCastAbility(abilityW)
 	then return 0 end
 
 	local npcTarget = J.GetProperTarget( bot )
@@ -775,8 +798,7 @@ end
 
 function X.ConsiderAS()
 
-	if not abilityAS:IsTrained()
-		or not abilityAS:IsFullyCastable() 
+	if not J.CanCastAbility(abilityAS)
 	then
 		return BOT_ACTION_DESIRE_NONE, 0
 	end
@@ -827,4 +849,3 @@ end
 
 
 return X
--- dota2jmz@163.com QQ:2462331592..

@@ -7,6 +7,9 @@ local sTalentList = J.Skill.GetTalentList( bot )
 local sAbilityList = J.Skill.GetAbilityList( bot )
 local sRole = J.Item.GetRoleItemsBuyList( bot )
 
+if GetBot():GetUnitName() == 'npc_dota_hero_life_stealer'
+then
+
 local RI = require(GetScriptDirectory()..'/FunLib/util_role_item')
 
 local sUtility = {}
@@ -127,6 +130,8 @@ function X.MinionThink(hMinionUnit)
     Minion.MinionThink(hMinionUnit)
 end
 
+end
+
 local Rage          = bot:GetAbilityByName('life_stealer_rage')
 -- local Feast         = bot:GetAbilityByName('life_stealer_feast')
 -- local GhoulFrenzy   = bot:GetAbilityByName('life_stealer_ghoul_frenzy')
@@ -144,6 +149,11 @@ function X.SkillsComplement()
     then
         if J.CanNotUseAbility(bot) then return end
     end
+
+    Rage          = bot:GetAbilityByName('life_stealer_rage')
+    OpenWounds    = bot:GetAbilityByName('life_stealer_open_wounds')
+    Infest        = bot:GetAbilityByName('life_stealer_infest')
+    Consume       = bot:GetAbilityByName('life_stealer_consume')
 
     ConsumeDesire = X.ConsiderConsume()
     if ConsumeDesire > 0
@@ -175,7 +185,7 @@ function X.SkillsComplement()
 end
 
 function X.ConsiderRage()
-    if not Rage:IsFullyCastable()
+    if not J.CanCastAbility(Rage)
     or bot:HasModifier('modifier_life_stealer_infest')
     then
         return BOT_ACTION_DESIRE_NONE
@@ -228,7 +238,7 @@ function X.ConsiderRage()
 end
 
 function X.ConsiderOpenWounds()
-    if not OpenWounds:IsFullyCastable()
+    if not J.CanCastAbility(OpenWounds)
     or bot:HasModifier('modifier_life_stealer_infest')
     then
         return BOT_ACTION_DESIRE_NONE, nil
@@ -305,8 +315,7 @@ function X.ConsiderOpenWounds()
 end
 
 function X.ConsiderInfest()
-    if Infest:IsHidden()
-    or not Infest:IsFullyCastable()
+    if not J.CanCastAbility(Infest)
     or bot:HasModifier('modifier_life_stealer_infest')
     then
         return BOT_ACTION_DESIRE_NONE, nil
@@ -397,7 +406,7 @@ function X.ConsiderInfest()
 end
 
 function X.ConsiderConsume()
-    if Consume:IsHidden()
+    if not J.CanCastAbility(Consume)
     then
         return BOT_ACTION_DESIRE_NONE
     end

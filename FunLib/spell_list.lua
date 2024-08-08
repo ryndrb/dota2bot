@@ -369,14 +369,82 @@ X['spells'] = {
         ['lina_flame_cloak'] = {weight = 1},
         ['lina_laguna_blade'] = {weight = 0.5},
     },
-    
+
+    ['npc_dota_hero_lion'] = {
+        ['lion_impale'] = {weight = 0},
+        ['lion_voodoo'] = {weight = 0},
+        ['lion_mana_drain'] = {weight = 0.5},
+        ['lion_finger_of_death'] = {weight = 0.5},
+    },
+
+    ['npc_dota_hero_luna'] = {
+        ['luna_lucent_beam'] = {weight = 0.5},
+        ['luna_lunar_orbit'] = {weight = 1},
+        ['luna_moon_glaive'] = {weight = 1},
+        ['luna_lunar_blessing'] = {weight = 1},
+        ['luna_eclipse'] = {weight = 0.5},
+    },
+
+    ['npc_dota_hero_lycan'] = {
+        ['lycan_summon_wolves'] = {weight = 0.8},
+        ['lycan_howl'] = {weight = 0.5},
+        ['lycan_feral_impulse'] = {weight = 1},
+        ['lycan_wolf_bite'] = {weight = 1},
+        ['lycan_shapeshift'] = {weight = 1},
+    },
+
+    ['npc_dota_hero_magnataur'] = {
+        ['magnataur_shockwave'] = {weight = 8},
+        ['magnataur_empower'] = {weight = 0.8},
+        ['magnataur_skewer'] = {weight = 0.3},
+        ['magnataur_horn_toss'] = {weight = 0.5},
+        ['magnataur_reverse_polarity'] = {weight = 0.1},
+    },
+
     ['npc_dota_hero_mars'] = {
         ['mars_spear'] = {weight = 0.1},
         ['mars_gods_rebuke'] = {weight = 0.8},
         ['mars_bulwark'] = {weight = 1},
         ['mars_arena_of_blood'] = {weight = 0.2},
     },
-    
+
+    ['npc_dota_hero_medusa'] = {
+        ['medusa_split_shot'] = {weight = 1},
+        ['medusa_mystic_snake'] = {weight = 0.5},
+        ['medusa_mana_shield'] = {weight = 1},
+        ['medusa_cold_blooded'] = {weight = 1},
+        ['medusa_gorgon_grasp'] = {weight = 0.3},
+        ['medusa_stone_gaze'] = {weight = 0.8},
+    },
+
+    ['npc_dota_hero_meepo'] = {
+        ['meepo_earthbind'] = {weight = 0.2},
+        ['meepo_poof'] = {weight = 1},
+        ['meepo_ransack'] = {weight = 1},
+        ['meepo_petrify'] = {weight = 0.3},
+        ['meepo_megameepo'] = {weight = 1},
+        ['meepo_megameepo_fling'] = {weight = 1},
+        ['meepo_divided_we_stand'] = {weight = 1},
+    },
+
+    ['npc_dota_hero_mirana'] = {
+        ['mirana_starfall'] = {weight = 0.8},
+        ['mirana_arrow'] = {weight = 0.5},
+        ['mirana_leap'] = {weight = 0.5},
+        ['mirana_invis'] = {weight = 0.5},
+    },
+
+    ['npc_dota_hero_monkey_king'] = {
+        ['monkey_king_boundless_strike'] = {weight = 0.2},
+        ['monkey_king_tree_dance'] = {weight = 0.9},
+        ['monkey_king_primal_spring'] = {weight = 0.8},
+        ['monkey_king_primal_spring_early'] = {weight = 1},
+        ['monkey_king_jingu_mastery'] = {weight = 1},
+        ['monkey_king_mischief'] = {weight = 1},
+        ['monkey_king_untransform'] = {weight = 1},
+        ['monkey_king_wukongs_command'] = {weight = 0.2},
+    },
+
     ['npc_dota_hero_muerta'] = {
         ['muerta_dead_shot'] = {weight = 0.8},
         ['muerta_the_calling'] = {weight = 0.5},

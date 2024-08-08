@@ -7,6 +7,9 @@ local sTalentList = J.Skill.GetTalentList( bot )
 local sAbilityList = J.Skill.GetAbilityList( bot )
 local sRole = J.Item.GetRoleItemsBuyList( bot )
 
+if GetBot():GetUnitName() == 'npc_dota_hero_monkey_king'
+then
+
 local RI = require(GetScriptDirectory()..'/FunLib/util_role_item')
 
 local sUtility = {}
@@ -159,6 +162,8 @@ function X.MinionThink(hMinionUnit)
     Minion.MinionThink(hMinionUnit)
 end
 
+end
+
 local BoundlessStrike   = bot:GetAbilityByName('monkey_king_boundless_strike')
 local TreeDance         = bot:GetAbilityByName('monkey_king_tree_dance')
 local PrimalSpring      = bot:GetAbilityByName('monkey_king_primal_spring')
@@ -177,6 +182,13 @@ local WukongsCommandDesire, WukongsCommandLocation
 
 function X.SkillsComplement()
     if J.CanNotUseAbility(bot) then return end
+
+    BoundlessStrike   = bot:GetAbilityByName('monkey_king_boundless_strike')
+    TreeDance         = bot:GetAbilityByName('monkey_king_tree_dance')
+    PrimalSpring      = bot:GetAbilityByName('monkey_king_primal_spring')
+    Mischief          = bot:GetAbilityByName('monkey_king_mischief')
+    RevertForm        = bot:GetAbilityByName('monkey_king_untransform')
+    WukongsCommand    = bot:GetAbilityByName('monkey_king_wukongs_command')
 
     WukongsCommandDesire, WukongsCommandLocation = X.ConsiderWukongsCommand()
     if WukongsCommandDesire > 0
@@ -198,8 +210,7 @@ function X.SkillsComplement()
         bot:Action_ClearActions(false)
         bot:ActionQueue_UseAbility(Mischief)
 
-        if not RevertForm:IsHidden()
-        or RevertForm:IsFullyCastable()
+        if not J.CanCastAbility(RevertForm)
         then
             bot:ActionQueue_Delay(0.2)
             bot:ActionQueue_UseAbility(RevertForm)
@@ -228,7 +239,7 @@ function X.SkillsComplement()
 end
 
 function X.ConsiderBoundlessStrike()
-    if not BoundlessStrike:IsFullyCastable()
+    if not J.CanCastAbility(BoundlessStrike)
     then
         return BOT_ACTION_DESIRE_NONE, 0
     end
@@ -463,7 +474,7 @@ function X.ConsiderBoundlessStrike()
 end
 
 function X.ConsiderTreeDance()
-    if not TreeDance:IsFullyCastable()
+    if not J.CanCastAbility(TreeDance)
     then
         return BOT_ACTION_DESIRE_NONE, nil
     end
@@ -478,7 +489,7 @@ function X.ConsiderTreeDance()
 	end
 
 	if  J.IsGoingOnSomeone(bot)
-    and PrimalSpring:IsFullyCastable()
+    and J.CanCastAbility(PrimalSpring)
 	then
         local nInRangeAlly = bot:GetNearbyHeroes(1000, false, BOT_MODE_NONE)
 
@@ -527,7 +538,7 @@ function X.ConsiderTreeDance()
             and bot:DistanceFromFountain() > 1000
             then
                 local nTrees = bot:GetNearbyTrees(nCastRange)
-                local furthest = GetFurthestTree(nTrees)
+                local furthest = X.GetFurthestTree(nTrees)
 
                 if furthest ~= nil
                 and (IsLocationVisible(GetTreeLocation(furthest))
@@ -575,9 +586,7 @@ function X.ConsiderTreeDance()
 end
 
 function X.ConsiderPrimalSpring()
-    if PrimalSpring:IsHidden()
-    or not PrimalSpring:IsFullyCastable()
-    or not PrimalSpring:IsActivated()
+    if J.CanCastAbility(PrimalSpring)
     then
         return BOT_ACTION_DESIRE_NONE, 0
     end
@@ -698,7 +707,7 @@ function X.ConsiderPrimalSpring()
 end
 
 function X.ConsiderMischief()
-    if not Mischief:IsFullyCastable()
+    if not J.CanCastAbility(Mischief)
     then
         return BOT_ACTION_DESIRE_NONE
     end
@@ -712,7 +721,7 @@ function X.ConsiderMischief()
 end
 
 function X.ConsiderWukongsCommand()
-    if not WukongsCommand:IsFullyCastable()
+    if not J.CanCastAbility(WukongsCommand)
     then
         return BOT_ACTION_DESIRE_NONE, 0
     end
@@ -765,7 +774,7 @@ function X.ConsiderWukongsCommand()
 end
 
 -- Helper Funcs
-function GetFurthestTree(nTrees)
+function X.GetFurthestTree(nTrees)
 	if GetAncient(GetTeam()) == nil then return nil end
 
 	local furthest = nil

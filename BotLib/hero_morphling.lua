@@ -7,6 +7,9 @@ local sTalentList = J.Skill.GetTalentList( bot )
 local sAbilityList = J.Skill.GetAbilityList( bot )
 local sRole = J.Item.GetRoleItemsBuyList( bot )
 
+if GetBot():GetUnitName() == 'npc_dota_hero_morphling'
+then
+
 local RI = require(GetScriptDirectory()..'/FunLib/util_role_item')
 
 local sUtility = {}
@@ -155,11 +158,13 @@ function X.MinionThink(hMinionUnit)
     Minion.MinionThink(hMinionUnit)
 end
 
+end
+
 local Waveform              = bot:GetAbilityByName('morphling_waveform')
 local AdaptiveStrikeAGI     = bot:GetAbilityByName('morphling_adaptive_strike_agi')
 local AdaptiveStrikeSTR     = bot:GetAbilityByName('morphling_adaptive_strike_str')
-local AttributeShiftAGI    = bot:GetAbilityByName('morphling_morph_agi')
-local AttributeShiftSTR    = bot:GetAbilityByName('morphling_morph_str')
+local AttributeShiftAGI     = bot:GetAbilityByName('morphling_morph_agi')
+local AttributeShiftSTR     = bot:GetAbilityByName('morphling_morph_str')
 local Morph                 = bot:GetAbilityByName('morphling_replicate')
 local MorphReplicate        = bot:GetAbilityByName('morphling_morph_replicate')
 
@@ -185,6 +190,12 @@ local STR_GROWTH_RATE = 3.2
 
 function X.SkillsComplement()
     if J.CanNotUseAbility(bot) then return end
+
+    Waveform              = bot:GetAbilityByName('morphling_waveform')
+    AdaptiveStrikeAGI     = bot:GetAbilityByName('morphling_adaptive_strike_agi')
+    AdaptiveStrikeSTR     = bot:GetAbilityByName('morphling_adaptive_strike_str')
+    AttributeShiftAGI     = bot:GetAbilityByName('morphling_morph_agi')
+    AttributeShiftSTR     = bot:GetAbilityByName('morphling_morph_str')
 
     botTarget = J.GetProperTarget(bot)
 
@@ -256,7 +267,7 @@ function X.SkillsComplement()
 end
 
 function X.ConsiderWaveform()
-    if not Waveform:IsFullyCastable()
+    if not J.CanCastAbility(Waveform)
     then
         return BOT_ACTION_DESIRE_NONE, 0
     end
@@ -413,13 +424,12 @@ function X.ConsiderWaveform()
     and bot:GetActiveModeDesire() > BOT_MODE_DESIRE_HIGH
 	then
         if  bot.farmLocation ~= nil
-        and J.GetManaAfter(Waveform:GetManaCost()) * bot:GetMana() > Waveform:GetManaCost() * 2
+        and J.GetManaAfter(Waveform:GetManaCost()) > 0.35
         then
             if GetUnitToLocationDistance(bot, bot.farmLocation) > nCastRange + 150
             then
                 local targetLoc = J.Site.GetXUnitsTowardsLocation(bot, bot.farmLocation, nCastRange)
                 if  IsLocationPassable(targetLoc)
-                and J.GetManaAfter(Waveform:GetManaCost()) * bot:GetMana() > Waveform:GetManaCost() * 2
                 then
                     return BOT_ACTION_DESIRE_HIGH, targetLoc
                 end
@@ -461,7 +471,7 @@ function X.ConsiderWaveform()
 
 			if  nInRangeEnemy ~= nil and #nInRangeEnemy == 0
 			and IsLocationPassable(targetLoc)
-            and J.GetManaAfter(Waveform:GetManaCost()) * bot:GetMana() > Waveform:GetManaCost() * 2
+            and J.GetManaAfter(Waveform:GetManaCost()) > 0.75
 			then
 				return BOT_ACTION_DESIRE_HIGH, targetLoc
 			end
@@ -478,7 +488,7 @@ function X.ConsiderWaveform()
 
 			if  nInRangeEnemy ~= nil and #nInRangeEnemy == 0
 			and IsLocationPassable(targetLoc)
-            and J.GetManaAfter(Waveform:GetManaCost()) * bot:GetMana() > Waveform:GetManaCost() * 2
+            and J.GetManaAfter(Waveform:GetManaCost()) > 0.75
 			then
 				return BOT_ACTION_DESIRE_HIGH, targetLoc
 			end
@@ -490,7 +500,7 @@ function X.ConsiderWaveform()
 end
 
 function X.ConsiderAdaptiveStrikeAGI()
-    if not AdaptiveStrikeAGI:IsFullyCastable()
+    if not J.CanCastAbility(AdaptiveStrikeAGI)
     then
         return BOT_ACTION_DESIRE_NONE, nil
     end
@@ -575,7 +585,7 @@ function X.ConsiderAdaptiveStrikeAGI()
 			then
 
 				if  (bot:GetTarget() ~= creep or bot:GetAttackTarget() ~= creep)
-                and J.GetManaAfter(AdaptiveStrikeAGI:GetManaCost()) * bot:GetMana() > Waveform:GetManaCost()
+                and J.GetManaAfter(AdaptiveStrikeAGI:GetManaCost()) > 0.2
                 and J.CanBeAttacked(creep)
 				then
                     if  nInRangeEnemy ~= nil and #nInRangeEnemy >= 1
@@ -597,7 +607,7 @@ function X.ConsiderAdaptiveStrikeAGI()
 end
 
 function X.ConsiderAdaptiveStrikeSTR()
-    if not AdaptiveStrikeSTR:IsFullyCastable()
+    if not J.CanCastAbility(AdaptiveStrikeSTR)
     then
         return BOT_ACTION_DESIRE_NONE, nil
     end
@@ -645,6 +655,12 @@ function X.ConsiderAdaptiveStrikeSTR()
 end
 
 function X.ConsiderAtttributeShift()
+    if not J.CanCastAbility(AttributeShiftAGI)
+    or not J.CanCastAbility(AttributeShiftSTR)
+    then
+        return BOT_ACTION_DESIRE_NONE
+    end
+
 	if  J.IsRetreating(bot)
     and not J.IsRealInvisible(bot)
 	then
@@ -900,7 +916,7 @@ function X.ConsiderAtttributeShift()
 end
 
 function X.ConsiderMorph()
-    if not Morph:IsFullyCastable()
+    if not J.CanCastAbility(Morph)
     then
         return BOT_ACTION_DESIRE_NONE, nil
     end

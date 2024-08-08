@@ -7,6 +7,9 @@ local sTalentList = J.Skill.GetTalentList( bot )
 local sAbilityList = J.Skill.GetAbilityList( bot )
 local sRole = J.Item.GetRoleItemsBuyList( bot )
 
+if GetBot():GetUnitName() == 'npc_dota_hero_lich'
+then
+
 local RI = require(GetScriptDirectory()..'/FunLib/util_role_item')
 
 local sUtility = {}
@@ -154,6 +157,8 @@ function X.MinionThink( hMinionUnit )
 
 end
 
+end
+
 
 --[[
 
@@ -194,11 +199,11 @@ modifier_lich_chain_frost_thinker
 --]]
 
 
-local abilityQ = bot:GetAbilityByName( sAbilityList[1] )
-local abilityW = bot:GetAbilityByName( sAbilityList[2] )
-local abilityE = bot:GetAbilityByName( sAbilityList[3] )
-local abilityAS = bot:GetAbilityByName( sAbilityList[4] )
-local abilityR = bot:GetAbilityByName( sAbilityList[6] )
+local abilityQ = bot:GetAbilityByName('lich_frost_nova')
+local abilityW = bot:GetAbilityByName('lich_frost_shield')
+local abilityE = bot:GetAbilityByName('lich_sinister_gaze')
+local abilityAS = bot:GetAbilityByName('lich_ice_spire')
+local abilityR = bot:GetAbilityByName('lich_chain_frost')
 local talent1 = bot:GetAbilityByName( sTalentList[1] )
 local talent2 = bot:GetAbilityByName( sTalentList[2] )
 local talent5 = bot:GetAbilityByName( sTalentList[5] )
@@ -220,6 +225,11 @@ function X.SkillsComplement()
 
 	if J.CanNotUseAbility( bot ) or bot:IsInvisible() then return end
 
+	abilityQ = bot:GetAbilityByName('lich_frost_nova')
+	abilityW = bot:GetAbilityByName('lich_frost_shield')
+	abilityE = bot:GetAbilityByName('lich_sinister_gaze')
+	abilityAS = bot:GetAbilityByName('lich_ice_spire')
+	abilityR = bot:GetAbilityByName('lich_chain_frost')
 
 	nKeepMana = 330
 	aetherRange = 0
@@ -301,7 +311,7 @@ end
 function X.ConsiderQ()
 
 
-	if not abilityQ:IsFullyCastable() then return 0 end
+	if not J.CanCastAbility(abilityQ) then return 0 end
 
 	local nSkillLV = abilityQ:GetLevel()
 	local nCastRange = abilityQ:GetCastRange() + aetherRange
@@ -313,11 +323,14 @@ function X.ConsiderQ()
 	local nManaCost = abilityQ:GetManaCost()
 	local nMainDamage = nSkillLV * 50
 	local nAoeDamage = abilityQ:GetSpecialValueInt( "aoe_damage" )
-	if talent2:IsTrained() then nAoeDamage = nAoeDamage + talent2:GetSpecialValueInt( 'value' ) end
 	local nDamage = nMainDamage + nAoeDamage
 	local nDamageType = DAMAGE_TYPE_MAGICAL
 	local nRadius = abilityQ:GetSpecialValueInt( "radius" )
 
+	if string.find(GetBot():GetUnitName(), 'lich')
+	then
+		if talent2:IsTrained() then nAoeDamage = nAoeDamage + talent2:GetSpecialValueInt( 'value' ) end
+	end
 
 	local nInRangeEnemyList = bot:GetNearbyHeroes( nCastRange + 32, true, BOT_MODE_NONE )
 	local nInBonusEnemyList = bot:GetNearbyHeroes( nCastRange + 150, true, BOT_MODE_NONE )
@@ -608,7 +621,7 @@ end
 function X.ConsiderW()
 
 
-	if not abilityW:IsFullyCastable() then return 0 end
+	if not J.CanCastAbility(abilityW) then return 0 end
 
 	local nSkillLV = abilityW:GetLevel()
 	local nCastRange = abilityW:GetCastRange() + aetherRange
@@ -666,7 +679,8 @@ function X.ConsiderW()
 
 
 	--修塔兵营基地
-	if talent7:IsTrained()
+	if string.find(bot:GetUnitName(), 'lich')
+	and talent7:IsTrained()
 	then
 		local nTowerList = bot:GetNearbyTowers( nCastRange + 50, false )
 		for _, target in pairs( nTowerList )
@@ -814,7 +828,7 @@ end
 function X.ConsiderE()
 
 
-	if not abilityE:IsFullyCastable() then return 0 end
+	if not J.CanCastAbility(abilityE) then return 0 end
 
 	local nSkillLV = abilityE:GetLevel()
 	local nCastRange = abilityE:GetCastRange() + aetherRange
@@ -919,18 +933,22 @@ end
 function X.ConsiderR()
 
 
-	if not abilityR:IsFullyCastable() then return 0 end
+	if not J.CanCastAbility(abilityR) then return 0 end
 
 	local nSkillLV = abilityR:GetLevel()
 	local nCastRange = abilityR:GetCastRange() + aetherRange
 	local nCastPoint = abilityR:GetCastPoint()
 	local nManaCost = abilityR:GetManaCost()
 	local nDamage = abilityR:GetSpecialValueInt( 'damage' )
-	if talent5:IsTrained() then nDamage = nDamage + talent5:GetSpecialValueInt( 'value' ) end
 	local nDamageType = DAMAGE_TYPE_MAGICAL
 	local nInRangeEnemyList = bot:GetNearbyHeroes( nCastRange + 50, true, BOT_MODE_NONE )
 
 	local nRadius = abilityR:GetSpecialValueInt( 'jump_range' )/2
+
+	if string.find(bot:GetUnitName(), 'lich')
+	then
+		if talent5:IsTrained() then nDamage = nDamage + talent5:GetSpecialValueInt( 'value' ) end
+	end
 
 	--击杀
 	for _, npcEnemy in pairs( nInRangeEnemyList )
@@ -1014,8 +1032,7 @@ end
 
 function X.ConsiderAS()
 
-	if not abilityAS:IsTrained()
-		or not abilityAS:IsFullyCastable() 
+	if not J.CanCastAbility(abilityAS)
 	then
 		return BOT_ACTION_DESIRE_NONE, 0
 	end
@@ -1064,6 +1081,5 @@ end
 
 
 return X
--- dota2jmz@163.com QQ:2462331592..
 
 

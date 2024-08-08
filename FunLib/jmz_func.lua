@@ -4401,6 +4401,8 @@ end
 function J.GetMeepos()
 	local Meepos = {}
 
+	if GetBot() == 'npc_dota_hero_rubick' then return Meepos end
+
 	for _, allyHero in pairs(GetUnitList(UNIT_LIST_ALLIED_HEROES))
 	do
 		if  J.IsValidHero(allyHero)
