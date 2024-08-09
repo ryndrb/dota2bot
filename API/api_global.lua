@@ -4,9 +4,69 @@
 -- int GetTeam()
 
 -- Returns the team for which the script is currently being run. If it's being run on a bot, returns the team of that bot.
--- {int, ...} GetTeamPlayers( nTeam )
 
 -- Returns a table of the Player IDs on the specified team
+local o_GetTeamPlayers = GetTeamPlayers
+function GetTeamPlayers(nTeam)
+	local nIDs = o_GetTeamPlayers(nTeam)
+	if nTeam == TEAM_DIRE
+	then
+		local sHuman = {}
+		for _, id in pairs(nIDs)
+		do
+			if not IsPlayerBot(id)
+			then
+				table.insert(sHuman, id)
+			end
+		end
+
+		if #sHuman > 0
+		then
+			local nBotIDs = {5, 6, 7, 8, 9}
+			nIDs = {}
+
+			for i = 1, #nBotIDs do table.insert(nIDs, nBotIDs[i]) end
+
+			-- Map it directly
+			for i = 1, #sHuman
+			do
+				for j = 1, 5
+				do
+					if sHuman[i] + 5 == nBotIDs[j]
+					then
+						nIDs[j] = sHuman[i]
+					end
+				end
+			end
+
+			-- "Shift" > 4
+			for i = #nIDs, 1, -1
+			do
+				local hCount = 0
+				if nIDs[i] > 4
+				then
+					for j = 1, #nIDs
+					do
+						if  nIDs[j + i] ~= nil
+						and nIDs[j + i] < 5
+						then
+							hCount = hCount + 1
+						end
+					end
+
+					nIDs[i] = nIDs[i] + hCount
+				end
+			end
+
+			return nIDs
+		else
+			return nIDs
+		end
+	else
+		return nIDs
+	end
+end
+
 -- hUnit GetTeamMember( nPlayerNumberOnTeam )
 
 -- Returns a handle to the Nth player on the team.

@@ -4554,10 +4554,12 @@ X.ConsiderItemDesire["item_tpscroll"] = function( hItem )
 
 		local tpLocDist = GetUnitToLocationDistance(bot, targetLoc)
 		local roshanLocDist = GetUnitToLocationDistance(bot, roshanLoc)
+		local tpRoshDist = J.GetDistance(targetLoc, roshanLoc)
 
 		if tpLocDist > 5000
 		and roshanLocDist > 5000
 		and roshanLocDist > tpLocDist
+		and tpRoshDist <= 8200
 		then
 			if bot:GetUnitName() == 'npc_dota_hero_furion'
 			then

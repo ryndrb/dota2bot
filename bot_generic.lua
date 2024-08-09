@@ -1,9 +1,7 @@
-----------------------------------------------------------------------------------------------------
---- The Creation Come From: A Beginner AI 
---- Author: 决明子 Email: dota2jmz@163.com 微博@Dota2_决明子
---- Link:http://steamcommunity.com/sharedfiles/filedetails/?id=1573671599
---- Link:http://steamcommunity.com/sharedfiles/filedetails/?id=1627071163
-----------------------------------------------------------------------------------------------------
+require(GetScriptDirectory()..'/API/api_ability')
+require(GetScriptDirectory()..'/API/api_global')
+require(GetScriptDirectory()..'/API/api_unit')
+
 local bot = GetBot()
 local botName = bot:GetUnitName()
 
@@ -30,4 +28,3 @@ function MinionThink(hMinionUnit)
 	BotBuild.MinionThink(hMinionUnit)
 	
 end
--- dota2jmz@163.com QQ:2462331592..

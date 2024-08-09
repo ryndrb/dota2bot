@@ -18,6 +18,8 @@ then
 	nDireFirstLaneType = require( 'game/bot_dire_first_lane_type' )
 end
 
+require(GetScriptDirectory()..'/API/api_global')
+
 local MU   = require( GetScriptDirectory()..'/FunLib/aba_matchups' )
 local U    = require( GetScriptDirectory()..'/FunLib/lua_util' )
 local N    = require( GetScriptDirectory()..'/FunLib/bot_names' )
@@ -111,7 +113,7 @@ local sHeroList = {										-- pos  1, 2, 3, 4, 5
 	{name = 'npc_dota_hero_rattletrap', 				role = {0, 0, 0, 100, 100}},
 	{name = 'npc_dota_hero_razor', 						role = {100, 100, 100, 0, 0}},
 	{name = 'npc_dota_hero_riki', 						role = {100, 100, 0, 0, 0}},
-	{name = 'npc_dota_hero_rubick', 					role = {0, 0, 0, 100, 100}},
+	{name = 'npc_dota_hero_rubick', 					role = {0, 50, 0, 100, 100}},
 	{name = 'npc_dota_hero_sand_king', 					role = {0, 100, 100, 0, 0}},
 	{name = 'npc_dota_hero_shadow_demon', 				role = {0, 0, 0, 100, 100}},
 	{name = 'npc_dota_hero_shadow_shaman', 				role = {0, 0, 0, 100, 100}},
@@ -171,6 +173,13 @@ local function GetAdjustedPool(pos)
 	local sTempList = {}
 
 	local heroList = GetHeroList(pos)
+	if GetTeam() == TEAM_RADIANT
+	then
+		if pos == 2
+		then
+			heroList = {'npc_dota_hero_rubick'}
+		end
+	end
 
 	for i = 1, #heroList
 	do
@@ -398,75 +407,27 @@ function Think()
 	local nIDs = GetTeamPlayers(GetTeam())
 	if GetTeam() == TEAM_DIRE
 	then
-		local sHuman = {}
-		for _, id in pairs(GetTeamPlayers(GetTeam()))
-		do
-			if not IsPlayerBot(id)
-			then
-				table.insert(sHuman, id)
-			end
-		end
+		-- Update Lane Roles
+		local pRoles = {
+			[nIDs[1]] = LANE_MID,
+			[nIDs[2]] = LANE_BOT,
+			[nIDs[3]] = LANE_TOP,
+			[nIDs[4]] = LANE_TOP,
+			[nIDs[5]] = LANE_BOT,
+		}
 
-		if #sHuman > 0
-		then
-			local nBotIDs = {5, 6, 7, 8, 9}
-			nIDs = {}
+		local temp = {}
+		for i, v in ipairs(nIDs) do temp[i] = v end
 
-			for i = 1, #nBotIDs do table.insert(nIDs, nBotIDs[i]) end
+		table.sort(temp)
 
-			-- Map it directly
-			for i = 1, #sHuman
-			do
-				for j = 1, 5
-				do
-					if sHuman[i] + 5 == nBotIDs[j]
-					then
-						nIDs[j] = sHuman[i]
-					end
-				end
-			end
-
-			-- "Shift" > 4 to the right
-			for i = #nIDs, 1, -1
-			do
-				local hCount = 0
-				if nIDs[i] > 4
-				then
-					for j = 1, #nIDs
-					do
-						if  nIDs[j + i] ~= nil
-						and nIDs[j + i] < 5
-						then
-							hCount = hCount + 1
-						end
-					end
-
-					nIDs[i] = nIDs[i] + hCount
-				end
-			end
-
-			-- Update Lane Roles
-			local pRoles = {
-				[nIDs[1]] = LANE_MID,
-				[nIDs[2]] = LANE_BOT,
-				[nIDs[3]] = LANE_TOP,
-				[nIDs[4]] = LANE_TOP,
-				[nIDs[5]] = LANE_BOT,
-			}
-
-			local temp = {}
-			for i, v in ipairs(nIDs) do temp[i] = v end
-
-			table.sort(temp)
-
-			tLaneAssignList = {
-				[1] = pRoles[temp[1]],
-				[2] = pRoles[temp[2]],
-				[3] = pRoles[temp[3]],
-				[4] = pRoles[temp[4]],
-				[5] = pRoles[temp[5]],
-			}
-		end
+		tLaneAssignList = {
+			[1] = pRoles[temp[1]],
+			[2] = pRoles[temp[2]],
+			[3] = pRoles[temp[3]],
+			[4] = pRoles[temp[4]],
+			[5] = pRoles[temp[5]],
+		}
 	end
 
 	if nDelayTime == nil then nDelayTime = GameTime() fLastRand = RandomInt(12, 34) / 10 end

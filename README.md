@@ -102,7 +102,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
         - ~~[2,3] Primal Beast~~
         - [2] Puck
         - [2,3,4,5] Pudge
-        - [4,5] Rubick
+        - [2,4,5] Rubick
         - [4,5] Shadow Demon
         - [2,4,5] Snapfire
         - [1] Spectre
