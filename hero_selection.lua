@@ -173,13 +173,6 @@ local function GetAdjustedPool(pos)
 	local sTempList = {}
 
 	local heroList = GetHeroList(pos)
-	if GetTeam() == TEAM_RADIANT
-	then
-		if pos == 2
-		then
-			heroList = {'npc_dota_hero_rubick'}
-		end
-	end
 
 	for i = 1, #heroList
 	do
