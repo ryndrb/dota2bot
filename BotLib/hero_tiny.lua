@@ -7,6 +7,9 @@ local sTalentList = J.Skill.GetTalentList( bot )
 local sAbilityList = J.Skill.GetAbilityList( bot )
 local sRole = J.Item.GetRoleItemsBuyList( bot )
 
+if GetBot():GetUnitName() == 'npc_dota_hero_tiny'
+then
+
 local RI = require(GetScriptDirectory()..'/FunLib/util_role_item')
 
 local sUtility = {"item_pipe", "item_heavens_halberd", "item_crimson_guard", "item_pipe", "item_nullifier"}
@@ -251,11 +254,14 @@ function X.MinionThink(hMinionUnit)
 	Minion.MinionThink(hMinionUnit)
 end
 
+end
+
 local Avalanche     = bot:GetAbilityByName("tiny_avalanche")
 local Toss          = bot:GetAbilityByName("tiny_toss")
 local TreeGrab      = bot:GetAbilityByName("tiny_tree_grab")
 local TreeThrow     = bot:GetAbilityByName("tiny_toss_tree")
 local TreeVolley    = bot:GetAbilityByName("tiny_tree_channel")
+local Grow  	  	= bot:GetAbilityByName("tiny_grow")
 
 local AvalancheDesire, AvalancheTarget
 local TossDesire, TossTarget
@@ -265,21 +271,25 @@ local TreeVolleyDesire, TreeVolleyTarget
 
 local BlinkTossDesire, BlinkTossTarget
 
-local Blink
-local BlinkLocation
-
-local botTarget
+local botTarget, botName
 
 function X.SkillsComplement()
 	if J.CanNotUseAbility(bot) then return end
 
+	Avalanche     = bot:GetAbilityByName("tiny_avalanche")
+	Toss          = bot:GetAbilityByName("tiny_toss")
+	TreeGrab      = bot:GetAbilityByName("tiny_tree_grab")
+	TreeThrow     = bot:GetAbilityByName("tiny_toss_tree")
+	TreeVolley    = bot:GetAbilityByName("tiny_tree_channel")
+
 	botTarget = J.GetProperTarget(bot)
+	botName = GetBot():GetUnitName()
 
 	BlinkTossDesire, BlinkTossTarget = X.ConsiderBlinkToss()
 	if BlinkTossDesire > 0
 	then
 		bot:Action_ClearActions(false)
-		bot:ActionQueue_UseAbilityOnLocation(Blink, BlinkLocation)
+		bot:ActionQueue_UseAbilityOnLocation(bot.Blink, BlinkTossTarget:GetLocation())
 		bot:ActionQueue_Delay(0.1)
 		bot:ActionQueue_UseAbilityOnEntity(Toss, BlinkTossTarget)
 		return
@@ -322,7 +332,7 @@ function X.SkillsComplement()
 end
 
 function X.ConsiderAvalanche()
-    if not Avalanche:IsFullyCastable()
+    if not J.CanCastAbility(Avalanche)
 	then
 		return BOT_ACTION_DESIRE_NONE, nil
 	end
@@ -424,8 +434,20 @@ function X.ConsiderAvalanche()
 		if  nEnemyLaneCreeps ~= nil and #nEnemyLaneCreeps >= 4
 		and J.IsValid(nEnemyLaneCreeps[1])
 		and J.CanBeAttacked(nEnemyLaneCreeps[1])
-		and J.GetManaAfter(Avalanche:GetManaCost()) * bot:GetMana() > Avalanche:GetManaCost() + Toss:GetManaCost()
 		then
+			if string.find(botName, 'tiny')
+			then
+				if J.GetManaAfter(Avalanche:GetManaCost()) * bot:GetMana() < Avalanche:GetManaCost() + Toss:GetManaCost()
+				then
+					return BOT_ACTION_DESIRE_NONE, 0
+				end
+			else
+				if J.GetMP(GetBot()) < 0.35
+				then
+					return BOT_ACTION_DESIRE_NONE, 0
+				end
+			end
+
 			local nInRangeEnemy = J.GetEnemiesNearLoc(J.GetCenterOfUnits(nEnemyLaneCreeps), 1600)
 			if nInRangeEnemy ~= nil and #nInRangeEnemy == 0
 			then
@@ -435,8 +457,20 @@ function X.ConsiderAvalanche()
 	end
 
 	if  J.IsFarming(bot)
-	and J.GetManaAfter(Avalanche:GetManaCost()) * bot:GetMana() > Avalanche:GetManaCost() + Toss:GetManaCost()
 	then
+		if string.find(botName, 'tiny')
+		then
+			if J.GetManaAfter(Avalanche:GetManaCost()) * bot:GetMana() < Avalanche:GetManaCost() + Toss:GetManaCost()
+			then
+				return BOT_ACTION_DESIRE_NONE, 0
+			end
+		else
+			if J.GetMP(GetBot()) < 0.4
+			then
+				return BOT_ACTION_DESIRE_NONE, 0
+			end
+		end
+
 		local nNeutralCreeps = bot:GetNearbyNeutralCreeps(1000)
 		if  nNeutralCreeps ~= nil
 		and (#nNeutralCreeps >= 3 or (#nNeutralCreeps >= 1 and nNeutralCreeps[1]:IsAncientCreep()))
@@ -520,7 +554,7 @@ function X.ConsiderAvalanche()
 end
 
 function X.ConsiderToss()
-    if not Toss:IsFullyCastable()
+    if not J.CanCastAbility(Toss)
 	then
 		return BOT_ACTION_DESIRE_NONE, nil
 	end
@@ -691,7 +725,7 @@ function X.ConsiderToss()
 end
 
 function X.ConsiderTreeGrab()
-	if not TreeGrab:IsFullyCastable()
+	if not J.CanCastAbility(TreeGrab)
 	or bot:HasModifier('modifier_tiny_tree_grab')
 	then
 		return BOT_ACTION_DESIRE_NONE, nil
@@ -718,7 +752,7 @@ function X.ConsiderTreeGrab()
 end
 
 function X.ConsiderTreeThrow()
-	if not TreeThrow:IsFullyCastable()
+	if not J.CanCastAbility(TreeThrow)
 	or not bot:HasModifier('modifier_tiny_tree_grab')
 	then
 		return BOT_ACTION_DESIRE_NONE, nil
@@ -825,8 +859,7 @@ function X.ConsiderTreeThrow()
 end
 
 function X.ConsiderTreeVolley()
-	if not bot:HasScepter()
-	or not TreeVolley:IsFullyCastable()
+	if not J.CanCastAbility(TreeVolley)
 	then
 		return BOT_ACTION_DESIRE_NONE, nil
 	end
@@ -921,8 +954,6 @@ function X.ConsiderBlinkToss()
 				if  nInRangeAlly ~= nil and nInRangeEnemy ~= nil
 				and #nInRangeAlly >= #nInRangeEnemy
 				then
-					BlinkLocation = botTarget:GetLocation()
-
 					local allyTarget = nil
 					for _, allyHero in pairs(nInRangeAlly)
 					do
@@ -954,8 +985,8 @@ function X.ConsiderBlinkToss()
 end
 
 function X.CanDoBlinkToss()
-    if  Toss:IsFullyCastable()
-    and X.HasBlink()
+    if  J.CanCastAbility(Toss)
+    and J.CanBlinkDagger(GetBot())
     then
         local manaCost = Toss:GetManaCost()
 
@@ -964,31 +995,6 @@ function X.CanDoBlinkToss()
             return true
         end
     end
-
-    return false
-end
-
-function X.HasBlink()
-    local blink = nil
-
-    for i = 0, 5
-    do
-		local item = bot:GetItemInSlot(i)
-
-		if item ~= nil
-        and (item:GetName() == "item_blink" or item:GetName() == "item_overwhelming_blink" or item:GetName() == "item_arcane_blink" or item:GetName() == "item_swift_blink")
-        then
-			blink = item
-			break
-		end
-	end
-
-    if  blink ~= nil
-    and blink:IsFullyCastable()
-	then
-        Blink = blink
-        return true
-	end
 
     return false
 end

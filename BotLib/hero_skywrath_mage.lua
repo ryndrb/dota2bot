@@ -7,6 +7,9 @@ local sTalentList = J.Skill.GetTalentList( bot )
 local sAbilityList = J.Skill.GetAbilityList( bot )
 local sRole = J.Item.GetRoleItemsBuyList( bot )
 
+if GetBot():GetUnitName() == 'npc_dota_hero_skywrath_mage'
+then
+
 local RI = require(GetScriptDirectory()..'/FunLib/util_role_item')
 
 local sUtility = {}
@@ -153,6 +156,8 @@ function X.MinionThink( hMinionUnit )
 
 end
 
+end
+
 --[[
 
 npc_dota_hero_skywrath_mage
@@ -180,10 +185,10 @@ modifier_skywrath_mystic_flare_aura_effect
 
 --]]
 
-local abilityQ = bot:GetAbilityByName( sAbilityList[1] )
-local abilityW = bot:GetAbilityByName( sAbilityList[2] )
-local abilityE = bot:GetAbilityByName( sAbilityList[3] )
-local abilityR = bot:GetAbilityByName( sAbilityList[6] )
+local abilityQ = bot:GetAbilityByName('skywrath_mage_arcane_bolt')
+local abilityW = bot:GetAbilityByName('skywrath_mage_concussive_shot')
+local abilityE = bot:GetAbilityByName('skywrath_mage_ancient_seal')
+local abilityR = bot:GetAbilityByName('skywrath_mage_mystic_flare')
 
 
 local castQDesire, castQTarget
@@ -199,6 +204,11 @@ local aetherRange = 0
 function X.SkillsComplement()
 
 	if J.CanNotUseAbility( bot ) or bot:IsInvisible() then return end
+
+	abilityQ = bot:GetAbilityByName('skywrath_mage_arcane_bolt')
+	abilityW = bot:GetAbilityByName('skywrath_mage_concussive_shot')
+	abilityE = bot:GetAbilityByName('skywrath_mage_ancient_seal')
+	abilityR = bot:GetAbilityByName('skywrath_mage_mystic_flare')
 
 	nKeepMana = 400
 	nLV = bot:GetLevel()
@@ -265,7 +275,7 @@ end
 function X.ConsiderQ()
 
 
-	if not abilityQ:IsFullyCastable() then return 0 end
+	if not J.CanCastAbility(abilityQ) then return 0 end
 
 	local nSkillLV = abilityQ:GetLevel()
 	local nCastRange = abilityQ:GetCastRange() + aetherRange
@@ -404,7 +414,7 @@ end
 function X.ConsiderW()
 
 
-	if not abilityW:IsFullyCastable() then return 0 end
+	if not J.CanCastAbility(abilityW) then return 0 end
 
 	local nSkillLV = abilityW:GetLevel()
 	local nCastRange = 1600
@@ -458,7 +468,7 @@ end
 function X.ConsiderE()
 
 
-	if not abilityE:IsFullyCastable() then return 0 end
+	if not J.CanCastAbility(abilityE) then return 0 end
 
 	local nSkillLV = abilityE:GetLevel()
 	local nCastRange = abilityE:GetCastRange() + aetherRange
@@ -471,7 +481,8 @@ function X.ConsiderE()
 
 	for _, npcEnemy in pairs( nInRangeEnemyHeroList )
 	do
-		if ( npcEnemy:IsCastingAbility() or npcEnemy:IsChanneling() )
+		if J.IsValidHero(npcEnemy)
+		and ( npcEnemy:IsCastingAbility() or npcEnemy:IsChanneling() )
 			and not npcEnemy:HasModifier( "modifier_teleporting" )
 			and not npcEnemy:HasModifier( "modifier_boots_of_travel_incoming" )
 			and J.CanCastOnNonMagicImmune( npcEnemy )
@@ -586,7 +597,7 @@ end
 function X.ConsiderR()
 
 
-	if not abilityR:IsFullyCastable() then return 0 end
+	if not J.CanCastAbility(abilityR) then return 0 end
 
 
 	local nCastRange = abilityR:GetCastRange() + aetherRange
@@ -646,4 +657,3 @@ end
 
 
 return X
--- dota2jmz@163.com QQ:2462331592..

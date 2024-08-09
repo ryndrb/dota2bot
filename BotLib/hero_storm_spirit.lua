@@ -7,6 +7,9 @@ local sTalentList = J.Skill.GetTalentList( bot )
 local sAbilityList = J.Skill.GetAbilityList( bot )
 local sRole = J.Item.GetRoleItemsBuyList( bot )
 
+if GetBot():GetUnitName() == 'npc_dota_hero_storm_spirit'
+then
+
 local RI = require(GetScriptDirectory()..'/FunLib/util_role_item')
 
 local sUtility = {}
@@ -130,6 +133,8 @@ function X.MinionThink( hMinionUnit )
 	end
 end
 
+end
+
 local StaticRemnant 	= bot:GetAbilityByName( "storm_spirit_static_remnant" )
 local ElectricVortex 	= bot:GetAbilityByName( "storm_spirit_electric_vortex" )
 local Overload 			= bot:GetAbilityByName( "storm_spirit_overload" )
@@ -144,6 +149,11 @@ local BallVortexDesire, BallVortexLocation, eta
 
 function X.SkillsComplement()
 	if J.CanNotUseAbility(bot) then return end
+
+	StaticRemnant 	= bot:GetAbilityByName( "storm_spirit_static_remnant" )
+	ElectricVortex 	= bot:GetAbilityByName( "storm_spirit_electric_vortex" )
+	Overload 			= bot:GetAbilityByName( "storm_spirit_overload" )
+	BallLightning 	= bot:GetAbilityByName( "storm_spirit_ball_lightning" )
 
 	BallVortexDesire, BallVortexLocation, eta = X.ConsiderBallVortex()
 	if BallVortexDesire > 0
@@ -165,7 +175,7 @@ function X.SkillsComplement()
 	ElectricVortexDesire, ElectricVortexTarget = X.ConsiderElectricVortex()
 	if ElectricVortexDesire > 0
 	then
-		if bot:HasScepter()
+		if bot:HasScepter() and string.find(GetBot():GetUnitName(), 'storm_spirit')
 		then
 			bot:Action_UseAbility(ElectricVortex)
 			return
@@ -191,7 +201,7 @@ function X.SkillsComplement()
 end
 
 function X.ConsiderStaticRemnant()
-	if not StaticRemnant:IsFullyCastable()
+	if not J.CanCastAbility(StaticRemnant)
 	then
 		return BOT_ACTION_DESIRE_NONE
 	end
@@ -324,7 +334,7 @@ function X.ConsiderStaticRemnant()
 end
 
 function X.ConsiderElectricVortex()
-	if not ElectricVortex:IsFullyCastable()
+	if not J.CanCastAbility(ElectricVortex)
 	then
 		return BOT_ACTION_DESIRE_NONE, 0
 	end
@@ -351,7 +361,6 @@ function X.ConsiderElectricVortex()
 
 	if  J.IsInTeamFight(bot, 1200)
 	and bot:HasScepter()
-	and not CanDoBallVortex()
 	then
 		local nLocationAoE = bot:FindAoELocation(true, true, bot:GetLocation(), nRadius, nRadius, nCastPoint, 0)
 
@@ -391,8 +400,7 @@ function X.ConsiderElectricVortex()
 end
 
 function X.ConsiderOverload()
-	if not Overload:IsTrained()
-	or not Overload:IsFullyCastable()
+	if not J.CanCastAbility(Overload)
 	then
 		return BOT_ACTION_DESIRE_NONE
 	end
@@ -416,8 +424,8 @@ function X.ConsiderOverload()
 end
 
 function X.ConsiderBallLightning()
-	if not BallLightning:IsFullyCastable()
-	or BallLightning:IsInAbilityPhase()
+	if not J.CanCastAbility(BallLightning)
+	or BallLightning ~= nil and BallLightning:IsInAbilityPhase()
 	or bot:IsRooted()
 	or bot:HasModifier("modifier_storm_spirit_ball_lightning")
 	then
@@ -437,7 +445,6 @@ function X.ConsiderBallLightning()
 	end
 
 	if  J.IsGoingOnSomeone(bot)
-	and not CanDoBallVortex()
 	and nMana > 0.15
 	then
 		local nInRangeAlly = bot:GetNearbyHeroes(1000, false, BOT_MODE_NONE)
@@ -483,7 +490,7 @@ function X.ConsiderBallLightning()
 end
 
 function X.ConsiderBallVortex()
-	if CanDoBallVortex()
+	if X.CanDoBallVortex()
 	then
 		local nRadius = 475
 		local nCastPoint = BallLightning:GetCastPoint() + ElectricVortex:GetCastPoint()
@@ -509,8 +516,9 @@ function X.ConsiderBallVortex()
 	return BOT_ACTION_DESIRE_NONE, 0, 0
 end
 
-function CanDoBallVortex()
-	if  ElectricVortex:IsFullyCastable()
+function X.CanDoBallVortex()
+	if  J.CanCastAbility(ElectricVortex)
+	and string.find(GetBot():GetUnitName(), 'storm_spirit')
 	and bot:HasScepter()
     then
 		if J.IsInTeamFight(bot, 1200)

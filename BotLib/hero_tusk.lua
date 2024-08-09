@@ -7,6 +7,9 @@ local sTalentList = J.Skill.GetTalentList( bot )
 local sAbilityList = J.Skill.GetAbilityList( bot )
 local sRole = J.Item.GetRoleItemsBuyList( bot )
 
+if GetBot():GetUnitName() == 'npc_dota_hero_tusk'
+then
+
 local RI = require(GetScriptDirectory()..'/FunLib/util_role_item')
 
 local sUtility = {"item_heavens_halberd", "item_crimson_guard", "item_pipe", "item_nullifier"}
@@ -211,6 +214,8 @@ function X.MinionThink(hMinionUnit)
     Minion.MinionThink(hMinionUnit)
 end
 
+end
+
 local IceShards         = bot:GetAbilityByName('tusk_ice_shards')
 local Snowball          = bot:GetAbilityByName('tusk_snowball')
 local LaunchSnowball    = bot:GetAbilityByName('tusk_launch_snowball')
@@ -231,6 +236,13 @@ if bot.snowballHeroRetreat then bot.snowballHeroRetreat = false end
 
 function X.SkillsComplement()
 	if J.CanNotUseAbility(bot) then return end
+
+    IceShards         = bot:GetAbilityByName('tusk_ice_shards')
+    Snowball          = bot:GetAbilityByName('tusk_snowball')
+    LaunchSnowball    = bot:GetAbilityByName('tusk_launch_snowball')
+    TagTeam           = bot:GetAbilityByName('tusk_tag_team')
+    WalrusKick        = bot:GetAbilityByName('tusk_walrus_kick')
+    WalrusPunch       = bot:GetAbilityByName('tusk_walrus_punch')
 
     botTarget = J.GetProperTarget(bot)
 
@@ -274,7 +286,7 @@ function X.SkillsComplement()
 end
 
 function X.ConsiderIceShards()
-    if not IceShards:IsFullyCastable()
+    if not J.CanCastAbility(IceShards)
     then
         return BOT_ACTION_DESIRE_NONE, 0
     end
@@ -402,7 +414,7 @@ function X.ConsiderIceShards()
 end
 
 function X.ConsiderSnowball()
-    if not Snowball:IsFullyCastable()
+    if not J.CanCastAbility(Snowball)
     then
         return BOT_ACTION_DESIRE_NONE, nil
     end
@@ -535,8 +547,7 @@ function X.ConsiderSnowball()
 end
 
 function X.ConsiderLaunchSnowball()
-    if LaunchSnowball:IsHidden()
-    or not LaunchSnowball:IsFullyCastable()
+    if not J.CanCastAbility(LaunchSnowball)
     or bot.snowballHeroRetreat
     then
         return BOT_ACTION_DESIRE_NONE
@@ -546,7 +557,7 @@ function X.ConsiderLaunchSnowball()
 end
 
 function X.ConsiderTagTeam()
-    if not TagTeam:IsFullyCastable()
+    if not J.CanCastAbility(TagTeam)
     then
         return BOT_ACTION_DESIRE_NONE
     end
@@ -622,7 +633,7 @@ function X.ConsiderTagTeam()
 end
 
 function X.ConsiderWalrusPunch()
-    if not WalrusPunch:IsFullyCastable()
+    if not J.CanCastAbility(WalrusPunch)
     then
         return BOT_ACTION_DESIRE_NONE, nil
     end

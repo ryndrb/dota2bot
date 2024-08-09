@@ -7,6 +7,9 @@ local sTalentList = J.Skill.GetTalentList( bot )
 local sAbilityList = J.Skill.GetAbilityList( bot )
 local sRole = J.Item.GetRoleItemsBuyList( bot )
 
+if GetBot():GetUnitName() == 'npc_dota_hero_rattletrap'
+then
+
 local RI = require(GetScriptDirectory()..'/FunLib/util_role_item')
 
 local sUtility = {}
@@ -151,6 +154,8 @@ function X.MinionThink(hMinionUnit)
 	Minion.MinionThink(hMinionUnit)
 end
 
+end
+
 local BatteryAssault    = bot:GetAbilityByName('rattletrap_battery_assault')
 local PowerCogs         = bot:GetAbilityByName('rattletrap_power_cogs')
 local RocketFlare       = bot:GetAbilityByName('rattletrap_rocket_flare')
@@ -172,6 +177,13 @@ local botTarget
 
 function X.SkillsComplement()
 	if J.CanNotUseAbility(bot) then return end
+
+    BatteryAssault    = bot:GetAbilityByName('rattletrap_battery_assault')
+    PowerCogs         = bot:GetAbilityByName('rattletrap_power_cogs')
+    RocketFlare       = bot:GetAbilityByName('rattletrap_rocket_flare')
+    Jetpack           = bot:GetAbilityByName('rattletrap_jetpack')
+    Overclocking      = bot:GetAbilityByName('rattletrap_overclocking')
+    Hookshot          = bot:GetAbilityByName('rattletrap_hookshot')
 
     botTarget = J.GetProperTarget(bot)
 
@@ -220,7 +232,7 @@ function X.SkillsComplement()
 end
 
 function X.ConsiderBatteryAssault()
-    if not BatteryAssault:IsFullyCastable()
+    if not J.CanCastAbility(BatteryAssault)
     then
         return BOT_ACTION_DESIRE_NONE
     end
@@ -330,7 +342,7 @@ function X.ConsiderBatteryAssault()
 end
 
 function X.ConsiderPowerCogs()
-    if  not PowerCogs:IsFullyCastable()
+    if  not J.CanCastAbility(PowerCogs)
     then
 		return BOT_ACTION_DESIRE_NONE
 	end
@@ -391,7 +403,7 @@ function X.ConsiderPowerCogs()
 end
 
 function X.ConsiderRocketFlare()
-    if not RocketFlare:IsFullyCastable()
+    if not J.CanCastAbility(RocketFlare)
     then
         return BOT_ACTION_DESIRE_NONE, 0
 	end
@@ -532,7 +544,7 @@ function X.ConsiderRocketFlare()
 end
 
 function X.ConsiderHookshot()
-    if not Hookshot:IsFullyCastable()
+    if not J.CanCastAbility(Hookshot)
     then
         return BOT_ACTION_DESIRE_NONE, 0
     end
@@ -569,8 +581,8 @@ function X.ConsiderHookshot()
                     if #nInRangeAlly == 0 and #nTargetInRangeAlly == 0
                     then
                         if  bot:GetEstimatedDamageToTarget(true, enemyHero, 5, DAMAGE_TYPE_ALL) > enemyHero:GetHealth()
-                        and PowerCogs:IsFullyCastable()
-                        and BatteryAssault:IsFullyCastable()
+                        and J.CanCastAbility(PowerCogs)
+                        and J.CanCastAbility(BatteryAssault)
                         then
                             bot:SetTarget(enemyHero)
                             return BOT_ACTION_DESIRE_HIGH, targetLoc
@@ -656,8 +668,7 @@ function X.ConsiderHookshot()
 end
 
 function X.ConsiderJetpack()
-    if not Jetpack:IsTrained()
-    or not Jetpack:IsFullyCastable()
+    if not J.CanCastAbility(Jetpack)
     then
         return BOT_ACTION_DESIRE_NONE
     end
@@ -690,8 +701,7 @@ function X.ConsiderJetpack()
 end
 
 function X.ConsiderOverclocking()
-    if not Overclocking:IsTrained()
-    or not Overclocking:IsFullyCastable()
+    if not J.CanCastAbility(Overclocking)
     then
         return BOT_ACTION_DESIRE_NONE
     end

@@ -7,6 +7,9 @@ local sTalentList = J.Skill.GetTalentList( bot )
 local sAbilityList = J.Skill.GetAbilityList( bot )
 local sRole = J.Item.GetRoleItemsBuyList( bot )
 
+if GetBot():GetUnitName() == 'npc_dota_hero_sand_king'
+then
+
 local RI = require(GetScriptDirectory()..'/FunLib/util_role_item')
 
 local sUtility = {"item_crimson_guard", "item_pipe", "item_lotus_orb", "item_heavens_halberd"}
@@ -160,6 +163,8 @@ function X.MinionThink( hMinionUnit )
 
 end
 
+end
+
 --[[
 
 npc_dota_hero_sand_king
@@ -192,11 +197,10 @@ modifier_sand_king_epicenter_slow
 
 --]]
 
-local abilityQ = bot:GetAbilityByName( sAbilityList[1] )
-local abilityW = bot:GetAbilityByName( sAbilityList[2] )
-local abilityE = bot:GetAbilityByName( sAbilityList[3] )
+local abilityQ = bot:GetAbilityByName('sandking_burrowstrike')
+local abilityW = bot:GetAbilityByName('sandking_sand_storm')
 local Stinger  = bot:GetAbilityByName('sandking_scorpion_strike')
-local abilityR = bot:GetAbilityByName( sAbilityList[6] )
+local abilityR = bot:GetAbilityByName('sandking_epicenter')
 
 
 local castQDesire, castQTarget
@@ -204,13 +208,18 @@ local castWDesire
 local StingerDesire, StingerLocation
 local castRDesire
 
-local nKeepMana, nMP, nHP, nLV, hEnemyList, hAllyList, botTarget, sMotive
+local nKeepMana, nMP, nHP, nLV, hEnemyList, hAllyList, botTarget, sMotive, botName
 local aetherRange = 0
 
 
 function X.SkillsComplement()
 
 	if J.CanNotUseAbility( bot ) then return end
+
+	abilityQ = bot:GetAbilityByName('sandking_burrowstrike')
+	abilityW = bot:GetAbilityByName('sandking_sand_storm')
+	Stinger  = bot:GetAbilityByName('sandking_scorpion_strike')
+	abilityR = bot:GetAbilityByName('sandking_epicenter')
 
 	nKeepMana = 400
 	aetherRange = 0
@@ -220,6 +229,7 @@ function X.SkillsComplement()
 	botTarget = J.GetProperTarget( bot )
 	hEnemyList = bot:GetNearbyHeroes( 1600, true, BOT_MODE_NONE )
 	hAllyList = J.GetAlliesNearLoc( bot:GetLocation(), 1600 )
+	botName = GetBot():GetUnitName()
 
 	local aether = J.IsItemAvailable( "item_aether_lens" )
 	if aether ~= nil then aetherRange = 250 end
@@ -271,7 +281,7 @@ end
 function X.ConsiderQ()
 
 
-	if not abilityQ:IsFullyCastable() then return 0 end
+	if not J.CanCastAbility(abilityQ) then return 0 end
 
 	local nSkillLV = abilityQ:GetLevel()
 	local nCastRange = abilityQ:GetCastRange() + aetherRange
@@ -414,7 +424,7 @@ end
 function X.ConsiderW()
 
 
-	if not abilityW:IsFullyCastable() then return 0 end
+	if not J.CanCastAbility(abilityW) then return 0 end
 
 	local nSkillLV = abilityW:GetLevel()
 	local nCastRange = abilityW:GetCastRange()
@@ -521,7 +531,7 @@ function X.ConsiderW()
 end
 
 function X.ConsiderStinger()
-	if not Stinger:IsFullyCastable()
+	if not J.CanCastAbility(Stinger)
 	then
 		return BOT_ACTION_DESIRE_NONE, 0
 	end
@@ -581,8 +591,15 @@ function X.ConsiderStinger()
             and J.IsChasingTarget(enemyHero, bot)
             and not J.IsSuspiciousIllusion(enemyHero)
             and not J.IsDisabled(enemyHero)
-			and (not abilityQ:IsFullyCastable() and not abilityW:IsFullyCastable())
             then
+				if not string.find(botName, 'rubick')
+				then
+					if (not J.CanCastAbility(abilityQ) and not J.CanCastAbility(abilityW))
+					then
+						return BOT_ACTION_DESIRE_NONE, 0
+					end
+				end
+
                 local nInRangeAlly = enemyHero:GetNearbyHeroes(1200, true, BOT_MODE_NONE)
                 local nTargetInRangeAlly = enemyHero:GetNearbyHeroes(1200, false, BOT_MODE_NONE)
 
@@ -598,8 +615,20 @@ function X.ConsiderStinger()
     end
 
 	if  (J.IsPushing(bot) or J.IsDefending(bot))
-	and nManaAfter > abilityQ:GetManaCost() + abilityW:GetManaCost()
 	then
+		if not string.find(botName, 'rubick')
+		then
+			if nManaAfter > abilityQ:GetManaCost() + abilityW:GetManaCost()
+			then
+				return BOT_ACTION_DESIRE_NONE, 0
+			end
+		else
+			if nManaAfter > 0.35
+			then
+				return BOT_ACTION_DESIRE_NONE, 0
+			end
+		end
+
         local nEnemyLaneCreeps = bot:GetNearbyLaneCreeps(1600, true)
         if  nEnemyLaneCreeps ~= nil and #nEnemyLaneCreeps >= 5
 		and J.CanBeAttacked(nEnemyLaneCreeps[1])
@@ -610,8 +639,20 @@ function X.ConsiderStinger()
 	end
 
     if  J.IsFarming(bot)
-	and nManaAfter > abilityQ:GetManaCost() + abilityW:GetManaCost()
     then
+		if not string.find(botName, 'rubick')
+		then
+			if nManaAfter > abilityQ:GetManaCost() + abilityW:GetManaCost()
+			then
+				return BOT_ACTION_DESIRE_NONE, 0
+			end
+		else
+			if nManaAfter > 0.35
+			then
+				return BOT_ACTION_DESIRE_NONE, 0
+			end
+		end
+
         if J.IsAttacking(bot)
         then
             local nNeutralCreeps = bot:GetNearbyNeutralCreeps(700)
@@ -631,9 +672,21 @@ function X.ConsiderStinger()
     end
 
     if  J.IsLaning(bot)
-	and nManaAfter > abilityQ:GetManaCost() + abilityW:GetManaCost()
 	and nAbilityLevel >= 2
 	then
+		if not string.find(botName, 'rubick')
+		then
+			if nManaAfter > abilityQ:GetManaCost() + abilityW:GetManaCost()
+			then
+				return BOT_ACTION_DESIRE_NONE, 0
+			end
+		else
+			if nManaAfter > 0.48
+			then
+				return BOT_ACTION_DESIRE_NONE, 0
+			end
+		end
+
         local nInRangeEnemy = bot:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
         local nEnemyLaneCreeps = bot:GetNearbyLaneCreeps(nCastRange + nRadius, true)
 
@@ -648,7 +701,7 @@ function X.ConsiderStinger()
 	end
 
     if  J.IsDoingRoshan(bot)
-	and nManaAfter > abilityQ:GetManaCost() + abilityW:GetManaCost()
+	and nManaAfter > 0.41
     then
         if  J.IsRoshan(botTarget)
         and J.CanCastOnNonMagicImmune(botTarget)
@@ -660,7 +713,7 @@ function X.ConsiderStinger()
     end
 
     if  J.IsDoingTormentor(bot)
-	and nManaAfter > abilityQ:GetManaCost() + abilityW:GetManaCost()
+	and nManaAfter > 0.41
     then
         if  J.IsTormentor(botTarget)
         and J.IsInRange(bot, botTarget, 600)
@@ -676,7 +729,7 @@ end
 function X.ConsiderR()
 
 
-	if not abilityR:IsFullyCastable() then return 0 end
+	if not J.CanCastAbility(abilityR) then return 0 end
 
 	local nSkillLV = abilityR:GetLevel()
 	local nCastRange = abilityR:GetCastRange()
@@ -775,5 +828,4 @@ end
 
 
 return X
--- dota2jmz@163.com QQ:2462331592..
 

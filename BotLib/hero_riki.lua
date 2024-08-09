@@ -7,6 +7,9 @@ local sTalentList = J.Skill.GetTalentList( bot )
 local sAbilityList = J.Skill.GetAbilityList( bot )
 local sRole = J.Item.GetRoleItemsBuyList( bot )
 
+if GetBot():GetUnitName() == 'npc_dota_hero_riki'
+then
+
 local RI = require(GetScriptDirectory()..'/FunLib/util_role_item')
 
 local sUtility = {}
@@ -167,6 +170,8 @@ function X.MinionThink( hMinionUnit )
 
 end
 
+end
+
 --[[
 
 npc_dota_hero_riki
@@ -194,11 +199,10 @@ modifier_riki_tricks_of_the_trade_phase
 
 --]]
 
-local abilityQ = bot:GetAbilityByName( sAbilityList[1] )
-local abilityW = bot:GetAbilityByName( sAbilityList[2] )
-local abilityE = bot:GetAbilityByName( sAbilityList[3] )
-local abilityAS = bot:GetAbilityByName( sAbilityList[4] )
-local abilityR = bot:GetAbilityByName( sAbilityList[6] )
+local abilityQ = bot:GetAbilityByName('riki_smoke_screen')
+local abilityW = bot:GetAbilityByName('riki_blink_strike')
+local abilityE = bot:GetAbilityByName('riki_tricks_of_the_trade')
+local abilityR = bot:GetAbilityByName('riki_backstab')
 local talent5 = bot:GetAbilityByName( sTalentList[5] )
 local talent6 = bot:GetAbilityByName( sTalentList[6] )
 local talent8 = bot:GetAbilityByName( sTalentList[8] )
@@ -206,9 +210,8 @@ local talent8 = bot:GetAbilityByName( sTalentList[8] )
 local castQDesire, castQTarget
 local castWDesire, castWTarget
 local castEDesire, castETarget
-local castASDesire, castASTarget
 
-local nKeepMana, nMP, nHP, nLV, hEnemyList, hAllyList, botTarget, sMotive
+local nKeepMana, nMP, nHP, nLV, hEnemyList, hAllyList, botTarget, sMotive, botName
 local aetherRange = 0
 
 local nLastBlinkTime = -90
@@ -220,6 +223,10 @@ function X.SkillsComplement()
 
 	if J.CanNotUseAbility( bot ) or DotaTime() < nLastBlinkTime + nAttackPoint + 0.3 then return end
 
+	abilityQ = bot:GetAbilityByName('riki_smoke_screen')
+	abilityW = bot:GetAbilityByName('riki_blink_strike')
+	abilityE = bot:GetAbilityByName('riki_tricks_of_the_trade')
+
 	nKeepMana = 400
 	aetherRange = 0
 	nLV = bot:GetLevel()
@@ -229,6 +236,7 @@ function X.SkillsComplement()
 	hEnemyList = bot:GetNearbyHeroes( 1600, true, BOT_MODE_NONE )
 	hAllyList = J.GetAlliesNearLoc( bot:GetLocation(), 1600 )
 	nAttackPoint = bot:GetSecondsPerAttack()
+	botName = GetBot():GetUnitName()
 
 
 	local aether = J.IsItemAvailable( "item_aether_lens" )
@@ -276,7 +284,7 @@ end
 function X.ConsiderQ()
 
 
-	if not abilityQ:IsFullyCastable() then return 0 end
+	if not J.CanCastAbility(abilityQ) then return 0 end
 
 	local nSkillLV = abilityQ:GetLevel()
 	local nCastRange = abilityQ:GetCastRange() + aetherRange
@@ -288,7 +296,10 @@ function X.ConsiderQ()
 	local nInRangeEnemyList = J.GetAroundEnemyHeroList( nCastRange )
 
 	local nRadius = abilityQ:GetSpecialValueInt( "radius" )
-	if talent8:IsTrained() then nRadius = nRadius + talent8:GetSpecialValueInt( "value" ) end
+	if string.find(botName, 'riki')
+	then
+		if talent8:IsTrained() then nRadius = nRadius + talent8:GetSpecialValueInt( "value" ) end
+	end
 	local nCastTarget = nil
 
 	--打断
@@ -385,23 +396,29 @@ end
 function X.ConsiderW()
 
 
-	if not abilityW:IsFullyCastable()
+	if not J.CanCastAbility(abilityW)
 		or bot:IsRooted()
 	then return 0 end
 
 	local nSkillLV = abilityW:GetLevel()
 	local nCastRange = abilityW:GetCastRange() + aetherRange
 
-	if talent6:IsTrained() then nCastRange = nCastRange + talent6:GetSpecialValueInt( "value" )	end
+	if string.find(botName, 'riki')
+	then
+		if talent6:IsTrained() then nCastRange = nCastRange + talent6:GetSpecialValueInt( "value" )	end
+	end
 
 	local nCastPoint = abilityW:GetCastPoint()
 	local nManaCost = abilityW:GetManaCost()
 
 	local nPhysicalDamge = bot:GetAttackDamage()
-	if abilityR:IsTrained()
+	if abilityR ~= nil and abilityR:IsTrained()
 	then
 		local nBonusRate = abilityR:GetSpecialValueFloat( "damage_multiplier" )
-		if talent5:IsTrained() then nBonusRate = nBonusRate + talent5:GetSpecialValueFloat( "value" ) end
+		if string.find(botName, 'riki')
+		then
+			if talent5:IsTrained() then nBonusRate = nBonusRate + talent5:GetSpecialValueFloat( "value" ) end
+		end
 		nPhysicalDamge = nPhysicalDamge + bot:GetAttributeValue( ATTRIBUTE_AGILITY ) * nBonusRate
 	end
 
@@ -620,7 +637,7 @@ end
 function X.ConsiderE()
 
 
-	if not abilityE:IsFullyCastable() then return 0 end
+	if not J.CanCastAbility(abilityE) then return 0 end
 
 	local nSkillLV = abilityE:GetLevel()
 	local nCastRange = abilityE:GetCastRange() + aetherRange
@@ -693,113 +710,4 @@ function X.ConsiderE()
 
 end
 
-
-
-function X.ConsiderAS()
-
-	if not abilityAS:IsTrained()
-		or not abilityAS:IsFullyCastable() 
-	then
-		return BOT_ACTION_DESIRE_NONE, 0
-	end
-
-	local nRadius = 700
-	local nCastRange = abilityAS:GetCastRange()
-	local nCastPoint = abilityAS:GetCastPoint()
-	local nManaCost = abilityAS:GetManaCost()
-
-	
-	local tableNearbyEnemyHeroes = bot:GetNearbyHeroes( nCastRange, true, BOT_MODE_NONE )
-	for _, npcEnemy in pairs( tableNearbyEnemyHeroes )
-	do
-		if J.CanCastOnNonMagicImmune( npcEnemy )
-			and J.CanCastOnTargetAdvanced( npcEnemy )
-			and npcEnemy:IsChanneling()
-		then
-			return BOT_ACTION_DESIRE_HIGH, npcEnemy, "AS-打断"
-		end
-	end
-
-	
-	if J.IsRetreating( bot )
-	then
-		local enemyHeroList = bot:GetNearbyHeroes( 1200, true, BOT_MODE_NONE )
-		local targetHero = enemyHeroList[1]
-		if J.IsValidHero( targetHero )
-			and J.CanCastOnNonMagicImmune( targetHero )
-			and J.CanCastOnTargetAdvanced( targetHero )
-			and not J.IsDisabled( targetHero )
-		then
-			return BOT_ACTION_DESIRE_HIGH, targetHero, "AS-撤退了"
-		end
-	end
-	
-
-	if J.IsInTeamFight( bot, 1400 )
-		and #hEnemyList >= 3
-	then
-		local npcMostDangerousEnemy = nil
-		local nMostDangerousDamage = 0
-
-		for _, npcEnemy in pairs( hEnemyList )
-		do
-			if J.IsValid( npcEnemy )
-				and J.CanCastOnNonMagicImmune( npcEnemy )
-				and J.CanCastOnTargetAdvanced( npcEnemy )
-				and not J.IsDisabled( npcEnemy )
-				and not npcEnemy:IsDisarmed()
-			then
-				local npcEnemyDamage = npcEnemy:GetEstimatedDamageToTarget( false, bot, 3.0, DAMAGE_TYPE_PHYSICAL )
-				if ( npcEnemyDamage > nMostDangerousDamage )
-				then
-					nMostDangerousDamage = npcEnemyDamage
-					npcMostDangerousEnemy = npcEnemy
-				end
-			end
-		end
-
-		if ( npcMostDangerousEnemy ~= nil )
-		then
-			return BOT_ACTION_DESIRE_HIGH, npcMostDangerousEnemy, "AS-团战控制"
-		end
-		
-	end
-	
-
-	if J.IsGoingOnSomeone( bot )
-	then
-		if J.IsValidHero(botTarget)
-			and J.CanCastOnNonMagicImmune(botTarget)
-		then
-			if J.IsInRange( bot, botTarget, nCastRange )
-				and not J.IsInRange( bot, botTarget, 600 )
-				and not J.IsDisabled( botTarget )
-				and bot:IsFacingLocation( botTarget:GetLocation(), 30 )
-				and not botTarget:IsFacingLocation( bot:GetLocation(), 100 )
-			then
-				return BOT_ACTION_DESIRE_HIGH, botTarget, "AS-追击"
-			end
-			
-			local enemyHeroList = bot:GetNearbyHeroes( nCastRange, true, BOT_ACTION_DESIRE_NONE )
-			if #enemyHeroList >= 2
-			then
-				for _, npcEnemy in pairs( enemyHeroList )
-				do 
-					if npcEnemy ~= botTarget
-						and J.CanCastOnNonMagicImmune( npcEnemy )
-						and not J.IsDisabled( npcEnemy )
-					then
-						return BOT_ACTION_DESIRE_HIGH, npcEnemy, "AS-睡眠敌方"
-					end
-				end
-			end		
-		end
-	end
-
-	return BOT_ACTION_DESIRE_NONE, 0
-
-end
-
-
 return X
--- dota2jmz@163.com QQ:2462331592..

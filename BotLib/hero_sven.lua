@@ -7,6 +7,9 @@ local sTalentList = J.Skill.GetTalentList( bot )
 local sAbilityList = J.Skill.GetAbilityList( bot )
 local sRole = J.Item.GetRoleItemsBuyList( bot )
 
+if GetBot():GetUnitName() == 'npc_dota_hero_sven'
+then
+
 local RI = require(GetScriptDirectory()..'/FunLib/util_role_item')
 
 local sUtility = {}
@@ -134,6 +137,8 @@ function X.MinionThink( hMinionUnit )
 
 end
 
+end
+
 --[[
 
 npc_dota_hero_sven
@@ -161,9 +166,10 @@ modifier_sven_gods_strength_child
 --]]
 
 
-local abilityQ = bot:GetAbilityByName( sAbilityList[1] )
-local abilityE = bot:GetAbilityByName( sAbilityList[3] )
-local abilityR = bot:GetAbilityByName( sAbilityList[6] )
+local abilityQ = bot:GetAbilityByName('sven_storm_bolt')
+local abilityW = bot:GetAbilityByName('sven_great_cleave')
+local abilityE = bot:GetAbilityByName('sven_warcry')
+local abilityR = bot:GetAbilityByName('sven_gods_strength')
 
 
 local castQDesire, castQTarget
@@ -181,6 +187,10 @@ function X.SkillsComplement()
 
 
 	if J.CanNotUseAbility( bot ) or bot:IsInvisible() then return end
+
+	abilityQ = bot:GetAbilityByName('sven_storm_bolt')
+	abilityE = bot:GetAbilityByName('sven_warcry')
+	abilityR = bot:GetAbilityByName('sven_gods_strength')
 
 	nKeepMana = 400
 	nLV = bot:GetLevel()
@@ -226,7 +236,7 @@ end
 
 function X.ConsiderQ()
 
-	if not abilityQ:IsFullyCastable() then return 0 end
+	if not J.CanCastAbility(abilityQ) then return 0 end
 
 	local nCastRange = abilityQ:GetCastRange()
 	
@@ -502,7 +512,7 @@ end
 
 function X.ConsiderE()
 
-	if not abilityE:IsFullyCastable()
+	if not J.CanCastAbility(abilityE)
 		or ( #hEnemyHeroList == 0 and nHP > 0.2 )
 	then
 		return 0
@@ -571,7 +581,7 @@ end
 
 function X.ConsiderR()
 
-	if not abilityR:IsFullyCastable()
+	if not J.CanCastAbility(abilityR)
 	then
 		return 0
 	end
@@ -619,16 +629,15 @@ function X.SvenConsiderTarget()
 
 	local nInAttackRangeNearestEnemyHero = nEnemyHeroInRange[1]
 
-	if J.IsValidHero( nInAttackRangeWeakestEnemyHero )
-		and J.CanBeAttacked( nInAttackRangeWeakestEnemyHero )
-		and ( GetUnitToUnitDistance( npcTarget, bot ) >  350 or U.HasForbiddenModifier( npcTarget ) )
+	if J.IsValidHero( nInAttackRangeNearestEnemyHero )
+		and J.CanBeAttacked( nInAttackRangeNearestEnemyHero )
+		and ( nInAttackRangeNearestEnemyHero( npcTarget, bot ) >  350 or U.HasForbiddenModifier( npcTarget ) )
 	then
 		--更改目标为
-		bot:SetTarget( nInAttackRangeWeakestEnemyHero )
+		bot:SetTarget( nInAttackRangeNearestEnemyHero )
 		return
 	end
 
 end
 
 return X
--- dota2jmz@163.com QQ:2462331592..

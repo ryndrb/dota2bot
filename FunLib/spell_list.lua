@@ -579,6 +579,235 @@ X['spells'] = {
         ['pugna_life_drain'] = {weight = 0.4},
     },
 
+    ['npc_dota_hero_queenofpain'] = {
+        ['queenofpain_shadow_strike'] = {weight = 0.2},
+        ['queenofpain_blink'] = {weight = 0.4},
+        ['queenofpain_scream_of_pain'] = {weight = 0.8},
+        ['queenofpain_sonic_wave'] = {weight = 0.3},
+    },
+
+    ['npc_dota_hero_rattletrap'] = {
+        ['rattletrap_battery_assault'] = {weight = 0.8},
+        ['rattletrap_power_cogs'] = {weight = 0.8},
+        ['rattletrap_rocket_flare'] = {weight = 0.5},
+        ['rattletrap_jetpack'] = {weight = 0.1},
+        ['rattletrap_overclocking'] = {weight = 0.9},
+        ['rattletrap_hookshot'] = {weight = 0.4},
+    },
+
+    ['npc_dota_hero_razor'] = {
+        ['razor_plasma_field'] = {weight = 0.7},
+        ['razor_static_link'] = {weight = 0.9},
+        ['razor_unstable_current'] = {weight = 1},
+        ['razor_eye_of_the_storm'] = {weight = 0.6},
+    },
+
+    ['npc_dota_hero_riki'] = {
+        ['riki_smoke_screen'] = {weight = 0.2},
+        ['riki_blink_strike'] = {weight = 0.5},
+        ['riki_tricks_of_the_trade'] = {weight = 0.7},
+        ['riki_backstab'] = {weight = 1},
+    },
+
+    ['npc_dota_hero_sand_king'] = {
+        ['sandking_burrowstrike'] = {weight = 0},
+        ['sandking_sand_storm'] = {weight = 0.5},
+        ['sandking_scorpion_strike'] = {weight = 0.8},
+        ['sandking_epicenter'] = {weight = 0.4},
+    },
+
+    ['npc_dota_hero_shadow_demon'] = {
+        ['shadow_demon_disruption'] = {weight = 0.2},
+        ['shadow_demon_disseminate'] = {weight = 0.5},
+        ['shadow_demon_shadow_poison'] = {weight = 0.5},
+        ['shadow_demon_shadow_poison_release'] = {weight = 1},
+        ['shadow_demon_demonic_cleanse'] = {weight = 0.3},
+        ['shadow_demon_demonic_purge'] = {weight = 0.3},
+    },
+
+    ['npc_dota_hero_shadow_shaman'] = {
+        ['shadow_shaman_ether_shock'] = {weight = 0.5},
+        ['shadow_shaman_voodoo'] = {weight = 0},
+        ['shadow_shaman_shackles'] = {weight = 0},
+        ['shadow_shaman_mass_serpent_ward'] = {weight = 0.2},
+    },
+
+    ['npc_dota_hero_shredder'] = {
+        ['shredder_whirling_death'] = {weight = 0.5},
+        ['shredder_timber_chain'] = {weight = 0.5},
+        ['shredder_reactive_armor'] = {weight = 1},
+        ['shredder_chakram'] = {weight = 0.5},
+        ['shredder_return_chakram'] = {weight = 1},
+        ['shredder_chakram_2'] = {weight = 0.5},
+        ['shredder_return_chakram_2'] = {weight = 1},
+        ['shredder_flamethrower'] = {weight = 0.5},
+    },
+
+    ['npc_dota_hero_silencer'] = {
+        ['silencer_curse_of_the_silent'] = {weight = 0.5},
+        ['silencer_glaives_of_wisdom'] = {weight = 0.9},
+        ['silencer_last_word'] = {weight = 1},
+        ['silencer_global_silence'] = {weight = 0.1},
+    },
+
+    ['npc_dota_hero_skeleton_king'] = {
+        ['skeleton_king_hellfire_blast'] = {weight = 0.1},
+        ['skeleton_king_bone_guard'] = {weight = 0.8},
+        ['skeleton_king_mortal_strike'] = {weight = 1},
+        ['skeleton_king_reincarnation'] = {weight = 0.1},
+    },
+
+    ['npc_dota_hero_skywrath_mage'] = {
+        ['skywrath_mage_arcane_bolt'] = {weight = 0.5},
+        ['skywrath_mage_concussive_shot'] = {weight = 0.5},
+        ['skywrath_mage_ancient_seal'] = {weight = 0.5},
+        ['skywrath_mage_mystic_flare'] = {weight = 0.5},
+    },
+
+    ['npc_dota_hero_slardar'] = {
+        ['slardar_sprint'] = {weight = 0.5},
+        ['slardar_slithereen_crush'] = {weight = 0.5},
+        ['slardar_bash'] = {weight = 1},
+        ['slardar_amplify_damage'] = {weight = 0.1},
+    },
+
+    ['npc_dota_hero_slark'] = {
+        ['slark_dark_pact'] = {weight = 0.5},
+        ['slark_pounce'] = {weight = 0.6},
+        ['slark_essence_shift'] = {weight = 1},
+        ['slark_depth_shroud'] = {weight = 0.2},
+        ['slark_shadow_dance'] = {weight = 0.6},
+    },
+
+    ['npc_dota_hero_snapfire'] = {
+        ['snapfire_scatterblast'] = {weight = 0.8},
+        ['snapfire_firesnap_cookie'] = {weight = 0.8},
+        ['snapfire_lil_shredder'] = {weight = 0.8},
+        ['snapfire_gobble_up'] = {weight = 1},
+        ['snapfire_spit_creep'] = {weight = 1},
+        ['snapfire_mortimer_kisses'] = {weight = 0.4},
+    },
+
+    ['npc_dota_hero_sniper'] = {
+        ['sniper_shrapnel'] = {weight = 0.5},
+        ['sniper_headshot'] = {weight = 1},
+        ['sniper_take_aim'] = {weight = 1},
+        ['sniper_concussive_grenade'] = {weight = 0.5},
+        ['sniper_assassinate'] = {weight = 0.8},
+    },
+
+    ['npc_dota_hero_spectre'] = {
+        ['spectre_spectral_dagger'] = {weight = 0.6},
+        ['spectre_desolate'] = {weight = 1},
+        ['spectre_dispersion'] = {weight = 1},
+        ['spectre_haunt_single'] = {weight = 1},
+        ['spectre_haunt'] = {weight = 1},
+        ['spectre_reality'] = {weight = 1},
+    },
+
+    ['npc_dota_hero_spirit_breaker'] = {
+        ['spirit_breaker_charge_of_darkness'] = {weight = 0.6},
+        ['spirit_breaker_bulldoze'] = {weight = 0.7},
+        ['spirit_breaker_greater_bash'] = {weight = 1},
+        ['spirit_breaker_planar_pocket'] = {weight = 0.7},
+        ['spirit_breaker_nether_strike'] = {weight = 0.6},
+    },
+
+    ['npc_dota_hero_storm_spirit'] = {
+        ['storm_spirit_static_remnant'] = {weight = 0.8},
+        ['storm_spirit_electric_vortex'] = {weight = 0.2},
+        ['storm_spirit_overload'] = {weight = 1},
+        ['storm_spirit_ball_lightning'] = {weight = 0.4},
+    },
+
+    ['npc_dota_hero_sven'] = {
+        ['sven_storm_bolt'] = {weight = 0},
+        ['sven_great_cleave'] = {weight = 1},
+        ['sven_warcry'] = {weight = 0.1},
+        ['sven_gods_strength'] = {weight = 0.8},
+    },
+
+    ['npc_dota_hero_techies'] = {
+        ['techies_sticky_bomb'] = {weight = 0.2},
+        ['techies_reactive_tazer'] = {weight = 0.5},
+        ['techies_reactive_tazer_stop'] = {weight = 1},
+        ['techies_suicide'] = {weight = 1},
+        ['techies_minefield_sign'] = {weight = 1},
+        ['techies_land_mines'] = {weight = 0.5},
+    },
+
+    ['npc_dota_hero_templar_assassin'] = {
+        ['templar_assassin_refraction'] = {weight = 1},
+        ['templar_assassin_meld'] = {weight = 0.8},
+        ['templar_assassin_psi_blades'] = {weight = 1},
+        ['templar_assassin_trap'] = {weight = 1},
+        ['templar_assassin_trap_teleport'] = {weight = 1},
+        ['templar_assassin_psionic_trap'] = {weight = 1},
+    },
+
+    ['npc_dota_hero_terrorblade'] = {
+        ['terrorblade_reflection'] = {weight = 0.1},
+        ['terrorblade_conjure_image'] = {weight = 0.6},
+        ['terrorblade_metamorphosis'] = {weight = 0.6},
+        ['terrorblade_demon_zeal'] = {weight = 0.8},
+        ['terrorblade_terror_wave'] = {weight = 0.5},
+        ['terrorblade_sunder'] = {weight = 0.1},
+    },
+
+    ['npc_dota_hero_tidehunter'] = {
+        ['tidehunter_gush'] = {weight = 0.5},
+        ['tidehunter_kraken_shell'] = {weight = 1},
+        ['tidehunter_anchor_smash'] = {weight = 0.5},
+        [ 'tidehunter_dead_in_the_water' ] = {weight = 0.1},
+        ['tidehunter_ravage'] = {weight = 0.1},
+    },
+
+    ['npc_dota_hero_tinker'] = {
+        ['tinker_laser'] = {weight = 0.3},
+        ['tinker_heat_seeking_missile'] = {weight = 1},
+        ['tinker_march_of_the_machines'] = {weight = 0.5},
+        ['tinker_defense_matrix'] = {weight = 0.1},
+        ['tinker_warp_grenade'] = {weight = 0.6},
+        ['tinker_keen_teleport'] = {weight = 0.6},
+        ['tinker_rearm'] = {weight = 1},
+    },
+
+    ['npc_dota_hero_tiny'] = {
+        ["tiny_avalanche"] = {weight = 0.1},
+        ["tiny_toss"] = {weight = 0.1},
+        ["tiny_tree_grab"] = {weight = 1},
+        ["tiny_toss_tree"] = {weight = 1},
+        ["tiny_tree_channel"] = {weight = 0.8},
+        ["tiny_grow"] = {weight = 1},
+    },
+
+    ['npc_dota_hero_treant'] = {
+        ['treant_natures_grasp'] = {weight = 0.2},
+        ['treant_leech_seed'] = {weight = 0.2},
+        ['treant_living_armor'] = {weight = 0.1},
+        ['treant_natures_guise'] = {weight = 1},
+        ['treant_eyes_in_the_forest'] = {weight = 0.5},
+        ['treant_overgrowth'] = {weight = 0.1},
+    },
+
+    ['npc_dota_hero_troll_warlord'] = {
+        ['troll_warlord_switch_stance'] = {weight = 1},
+        ['troll_warlord_whirling_axes_ranged'] = {weight = 0.1},
+        ['troll_warlord_whirling_axes_melee'] = {weight = 0.6},
+        ['troll_warlord_fervor'] = {weight = 1},
+        ['troll_warlord_berserkers_rage'] = {weight = 1},
+        ['troll_warlord_battle_trance'] = {weight = 1},
+    },
+
+    ['npc_dota_hero_tusk'] = {
+        ['tusk_ice_shards'] = {weight = 0.6},
+        ['tusk_snowball'] = {weight = 0.8},
+        ['tusk_launch_snowball'] = {weight = 1},
+        ['tusk_tag_team'] = {weight = 0.8},
+        ['tusk_walrus_kick'] = {weight = 1},
+        ['tusk_walrus_punch'] = {weight = 0.4},
+    },
+
     -- --[[4]] ['rubick_empty1'] = {weight = 1},
     -- --[[5]] ['rubick_empty2'] = {weight = 1},
 }

@@ -7,6 +7,9 @@ local sTalentList = J.Skill.GetTalentList( bot )
 local sAbilityList = J.Skill.GetAbilityList( bot )
 local sRole = J.Item.GetRoleItemsBuyList( bot )
 
+if GetBot():GetUnitName() == 'npc_dota_hero_terrorblade'
+then
+
 local RI = require(GetScriptDirectory()..'/FunLib/util_role_item')
 
 local sUtility = {}
@@ -134,6 +137,8 @@ function X.MinionThink( hMinionUnit )
 
 end
 
+end
+
 local Reflection    = bot:GetAbilityByName( "terrorblade_reflection" )
 local ConjureImage  = bot:GetAbilityByName( "terrorblade_conjure_image" )
 local Metamorphosis = bot:GetAbilityByName( "terrorblade_metamorphosis" )
@@ -151,6 +156,13 @@ local SunderDesire, SunderTarget
 function X.SkillsComplement()
 
     if J.CanNotUseAbility(bot) then return end
+
+	Reflection    = bot:GetAbilityByName( "terrorblade_reflection" )
+	ConjureImage  = bot:GetAbilityByName( "terrorblade_conjure_image" )
+	Metamorphosis = bot:GetAbilityByName( "terrorblade_metamorphosis" )
+	DemonZeal     = bot:GetAbilityByName( "terrorblade_demon_zeal" )
+	TerrorWave    = bot:GetAbilityByName( "terrorblade_terror_wave" )
+	Sunder        = bot:GetAbilityByName( "terrorblade_sunder" )
 
 	SunderDesire, SunderTarget = X.ConsiderSunder()
     if (SunderDesire > 0)
@@ -196,7 +208,7 @@ function X.SkillsComplement()
 end
 
 function X.ConsiderReflection()
-	if not Reflection:IsFullyCastable()
+	if not J.CanCastAbility(Reflection)
 	then
 		return BOT_ACTION_DESIRE_NONE, 0
 	end
@@ -271,7 +283,7 @@ function X.ConsiderReflection()
 end
 
 function X.ConsiderConjureImage()
-	if not ConjureImage:IsFullyCastable()
+	if not J.CanCastAbility(ConjureImage)
 	then
 		return BOT_ACTION_DESIRE_NONE
 	end
@@ -345,7 +357,7 @@ function X.ConsiderConjureImage()
 end
 
 function X.ConsiderMetamorphosis()
-	if not Metamorphosis:IsFullyCastable()
+	if not J.CanCastAbility(Metamorphosis)
 	or bot:HasModifier('modifier_terrorblade_metamorphosis')
 	then
 		return BOT_ACTION_DESIRE_NONE
@@ -398,7 +410,7 @@ function X.ConsiderMetamorphosis()
 end
 
 function X.ConsiderSunder()
-	if not Sunder:IsFullyCastable()
+	if not J.CanCastAbility(Sunder)
 	then
 		return BOT_ACTION_DESIRE_NONE, nil
 	end
@@ -419,8 +431,7 @@ function X.ConsiderSunder()
 end
 
 function X.ConsiderDemonZeal()
-    if not DemonZeal:IsTrained()
-	or not DemonZeal:IsFullyCastable()
+    if not J.CanCastAbility(DemonZeal)
 	then
 		return BOT_ACTION_DESIRE_NONE
 	end
@@ -467,8 +478,7 @@ function X.ConsiderDemonZeal()
 end
 
 function X.ConsiderTerrorWave()
-	if not bot:HasScepter()
-    or not TerrorWave:IsFullyCastable()
+	if not J.CanCastAbility(TerrorWave)
 	or bot:HasModifier('modifier_terrorblade_metamorphosis_transform')
 	then
 		return BOT_ACTION_DESIRE_NONE

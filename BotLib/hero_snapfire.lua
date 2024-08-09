@@ -7,6 +7,9 @@ local sTalentList = J.Skill.GetTalentList( bot )
 local sAbilityList = J.Skill.GetAbilityList( bot )
 local sRole = J.Item.GetRoleItemsBuyList( bot )
 
+if GetBot():GetUnitName() == 'npc_dota_hero_snapfire'
+then
+
 local RI = require(GetScriptDirectory()..'/FunLib/util_role_item')
 
 local sUtility = {}
@@ -177,6 +180,8 @@ function X.MinionThink(hMinionUnit)
     Minion.MinionThink(hMinionUnit)
 end
 
+end
+
 local ScatterBlast      = bot:GetAbilityByName('snapfire_scatterblast')
 local FiresnapCookie    = bot:GetAbilityByName('snapfire_firesnap_cookie')
 local LilShredder       = bot:GetAbilityByName('snapfire_lil_shredder')
@@ -193,6 +198,13 @@ local MortimerKissesDesire, MortimerKissesLocation
 
 function X.SkillsComplement()
 	if J.CanNotUseAbility(bot) then return end
+
+    ScatterBlast      = bot:GetAbilityByName('snapfire_scatterblast')
+    FiresnapCookie    = bot:GetAbilityByName('snapfire_firesnap_cookie')
+    LilShredder       = bot:GetAbilityByName('snapfire_lil_shredder')
+    GobbleUp          = bot:GetAbilityByName('snapfire_gobble_up')
+    SpitOut           = bot:GetAbilityByName('snapfire_spit_creep')
+    MortimerKisses    = bot:GetAbilityByName('snapfire_mortimer_kisses')
 
     MortimerKissesDesire, MortimerKissesLocation = X.ConsiderMortimerKisses()
     if MortimerKissesDesire > 0
@@ -238,7 +250,7 @@ function X.SkillsComplement()
 end
 
 function X.ConsiderScatterBlast()
-    if not ScatterBlast:IsFullyCastable()
+    if not J.CanCastAbility(ScatterBlast)
     or bot:HasModifier('modifier_snapfire_mortimer_kisses')
     then
         return BOT_ACTION_DESIRE_NONE, 0
@@ -442,7 +454,7 @@ function X.ConsiderScatterBlast()
 end
 
 function X.ConsiderFiresnapCookie()
-    if not FiresnapCookie:IsFullyCastable()
+    if not J.CanCastAbility(FiresnapCookie)
     then
         return BOT_ACTION_DESIRE_NONE, nil
     end
@@ -612,7 +624,7 @@ function X.ConsiderFiresnapCookie()
 end
 
 function X.ConsiderLilShredder()
-    if not LilShredder:IsFullyCastable()
+    if not J.CanCastAbility(LilShredder)
     or bot:HasModifier('modifier_snapfire_mortimer_kisses')
     then
         return BOT_ACTION_DESIRE_NONE
@@ -709,7 +721,7 @@ function X.ConsiderLilShredder()
 end
 
 function X.ConsiderMortimerKisses()
-    if not MortimerKisses:IsFullyCastable()
+    if not J.CanCastAbility(MortimerKisses)
     then
         return BOT_ACTION_DESIRE_NONE, 0
     end
@@ -764,7 +776,7 @@ end
 
 function X.ConsiderGobbleUp()
     if not bot:HasScepter()
-    or not GobbleUp:IsFullyCastable()
+    or not J.CanCastAbility(GobbleUp)
     or bot:HasModifier('modifier_snapfire_mortimer_kisses')
     then
         return BOT_ACTION_DESIRE_NONE, nil
@@ -828,7 +840,7 @@ function X.ConsiderGobbleUp()
 end
 
 function X.ConsiderSpitOut()
-    if not SpitOut:IsFullyCastable()
+    if not J.CanCastAbility(SpitOut)
     or not bot:HasModifier('modifier_snapfire_gobble_up_belly_has_unit')
     then
         return BOT_ACTION_DESIRE_NONE, 0

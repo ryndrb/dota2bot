@@ -7,6 +7,9 @@ local sTalentList = J.Skill.GetTalentList( bot )
 local sAbilityList = J.Skill.GetAbilityList( bot )
 local sRole = J.Item.GetRoleItemsBuyList( bot )
 
+if GetBot():GetUnitName() == 'npc_dota_hero_shadow_shaman'
+then
+
 local RI = require(GetScriptDirectory()..'/FunLib/util_role_item')
 
 local sUtility = {}
@@ -156,6 +159,8 @@ function X.MinionThink( hMinionUnit )
 
 end
 
+end
+
 --[[
 
 npc_dota_hero_shadow_shaman
@@ -182,10 +187,10 @@ modifier_shadow_shaman_serpent_ward
 
 --]]
 
-local abilityQ = bot:GetAbilityByName( sAbilityList[1] )
-local abilityW = bot:GetAbilityByName( sAbilityList[2] )
-local abilityE = bot:GetAbilityByName( sAbilityList[3] )
-local abilityR = bot:GetAbilityByName( sAbilityList[6] )
+local abilityQ = bot:GetAbilityByName('shadow_shaman_ether_shock')
+local abilityW = bot:GetAbilityByName('shadow_shaman_voodoo')
+local abilityE = bot:GetAbilityByName('shadow_shaman_shackles')
+local abilityR = bot:GetAbilityByName('shadow_shaman_mass_serpent_ward')
 local talent3 = bot:GetAbilityByName( sTalentList[3] )
 local talent7 = bot:GetAbilityByName( sTalentList[7] )
 
@@ -195,7 +200,7 @@ local castEDesire, castETarget
 local castRDesire, castRLocation
 
 
-local nKeepMana, nMP, nHP, nLV, hEnemyList, hAllyList, botTarget, sMotive
+local nKeepMana, nMP, nHP, nLV, hEnemyList, hAllyList, botTarget, sMotive, botName
 local aetherRange = 0
 local talent7Damage = 0
 
@@ -204,6 +209,11 @@ local talent7Damage = 0
 function X.SkillsComplement()
 
 	if J.CanNotUseAbility( bot ) or bot:IsInvisible() then return end
+
+	abilityQ = bot:GetAbilityByName('shadow_shaman_ether_shock')
+	abilityW = bot:GetAbilityByName('shadow_shaman_voodoo')
+	abilityE = bot:GetAbilityByName('shadow_shaman_shackles')
+	abilityR = bot:GetAbilityByName('shadow_shaman_mass_serpent_ward')
 
 	nKeepMana = 400
 	aetherRange = 0
@@ -214,12 +224,16 @@ function X.SkillsComplement()
 	botTarget = J.GetProperTarget( bot )
 	hEnemyList = bot:GetNearbyHeroes( 1600, true, BOT_MODE_NONE )
 	hAllyList = J.GetAlliesNearLoc( bot:GetLocation(), 1600 )
+	botName = GetBot():GetUnitName()
 
 
 	local aether = J.IsItemAvailable( "item_aether_lens" )
 	if aether ~= nil then aetherRange = 250 end
 --	if talent3:IsTrained() then aetherRange = aetherRange + talent3:GetSpecialValueInt( "value" ) end
-	if talent7:IsTrained() then talent7Damage = talent7:GetSpecialValueInt( "value" ) end
+	if string.find(botName, 'shaman')
+	then
+		if talent7:IsTrained() then talent7Damage = talent7:GetSpecialValueInt( "value" ) end
+	end
 
 
 	castWDesire, castWTarget, sMotive = X.ConsiderW()
@@ -277,7 +291,7 @@ end
 function X.ConsiderQ()
 
 
-	if not abilityQ:IsFullyCastable() then return 0 end
+	if not J.CanCastAbility(abilityQ) then return 0 end
 
 	local nSkillLV = abilityQ:GetLevel()
 	local nCastRange = abilityQ:GetCastRange()
@@ -474,7 +488,7 @@ end
 function X.ConsiderW()
 
 
-	if not abilityW:IsFullyCastable() then return 0 end
+	if not J.CanCastAbility(abilityW) then return 0 end
 
 	local nSkillLV = abilityW:GetLevel()
 	local nCastRange = abilityW:GetCastRange() + aetherRange
@@ -616,7 +630,7 @@ end
 function X.ConsiderE()
 
 
-	if not abilityE:IsFullyCastable() then return 0 end
+	if not J.CanCastAbility(abilityE) then return 0 end
 
 	local nSkillLV = abilityE:GetLevel()
 	local nCastRange = abilityE:GetCastRange() + aetherRange
@@ -738,7 +752,7 @@ end
 function X.ConsiderR()
 
 
-	if not abilityR:IsFullyCastable() then return 0 end
+	if not J.CanCastAbility(abilityR) then return 0 end
 
 	local nSkillLV = abilityR:GetLevel()
 	local nCastRange = abilityR:GetCastRange() + aetherRange + 100
@@ -823,4 +837,3 @@ end
 
 
 return X
--- dota2jmz@163.com QQ:2462331592..

@@ -7,6 +7,9 @@ local sTalentList = J.Skill.GetTalentList( bot )
 local sAbilityList = J.Skill.GetAbilityList( bot )
 local sRole = J.Item.GetRoleItemsBuyList( bot )
 
+if GetBot():GetUnitName() == 'npc_dota_hero_treant'
+then
+
 local RI = require(GetScriptDirectory()..'/FunLib/util_role_item')
 
 local sUtility = {}
@@ -152,6 +155,8 @@ function X.MinionThink(hMinionUnit)
 	Minion.MinionThink(hMinionUnit)
 end
 
+end
+
 local NaturesGrasp      = bot:GetAbilityByName('treant_natures_grasp')
 local LeechSeed         = bot:GetAbilityByName('treant_leech_seed')
 local LivingArmor       = bot:GetAbilityByName('treant_living_armor')
@@ -165,17 +170,22 @@ local LivingArmorDesire, LivingArmorTarget
 local EyesInTheForestDesire, EyesInTheForestTarget
 local OvergrowthDesire
 
-local Blink
 local BlinkOvergrowthDesire, BlinkLocation
 
 function X.SkillsComplement()
 	if J.CanNotUseAbility(bot) then return end
 
+    NaturesGrasp      = bot:GetAbilityByName('treant_natures_grasp')
+    LeechSeed         = bot:GetAbilityByName('treant_leech_seed')
+    LivingArmor       = bot:GetAbilityByName('treant_living_armor')
+    EyesInTheForest   = bot:GetAbilityByName('treant_eyes_in_the_forest')
+    Overgrowth        = bot:GetAbilityByName('treant_overgrowth')
+
     BlinkOvergrowthDesire, BlinkLocation = X.ConsiderBlinkOvergrowth()
     if BlinkOvergrowthDesire > 0
     then
         bot:Action_ClearActions(false)
-        bot:ActionQueue_UseAbilityOnLocation(Blink, BlinkLocation)
+        bot:ActionQueue_UseAbilityOnLocation(bot.Blink, BlinkLocation)
         bot:ActionQueue_Delay(0.1)
         bot:ActionQueue_UseAbility(Overgrowth)
         return
@@ -218,7 +228,7 @@ function X.SkillsComplement()
 end
 
 function X.ConsiderNaturesGrasp()
-    if not NaturesGrasp:IsFullyCastable()
+    if not J.CanCastAbility(NaturesGrasp)
     then
         return BOT_ACTION_DESIRE_NONE, 0
     end
@@ -356,7 +366,7 @@ function X.ConsiderNaturesGrasp()
 end
 
 function X.ConsiderLeechSeed()
-    if not LeechSeed:IsFullyCastable()
+    if not J.CanCastAbility(LeechSeed)
     then
         return BOT_ACTION_DESIRE_NONE, nil
     end
@@ -449,7 +459,7 @@ function X.ConsiderLeechSeed()
 end
 
 function X.ConsiderLivingArmor()
-    if not LivingArmor:IsFullyCastable()
+    if not J.CanCastAbility(LivingArmor)
     then
         return BOT_ACTION_DESIRE_NONE, nil
     end
@@ -548,7 +558,7 @@ function X.ConsiderLivingArmor()
 end
 
 function X.ConsiderOvergrowth()
-    if not Overgrowth:IsFullyCastable()
+    if not J.CanCastAbility(Overgrowth)
     then
         return BOT_ACTION_DESIRE_NONE
     end
@@ -571,8 +581,7 @@ function X.ConsiderOvergrowth()
 end
 
 function X.ConsiderEyesInTheForest()
-    if not EyesInTheForest:IsTrained()
-    or not EyesInTheForest:IsFullyCastable()
+    if not J.CanCastAbility(EyesInTheForest)
     then
         return BOT_ACTION_DESIRE_NONE, nil
     end
@@ -606,7 +615,7 @@ function X.ConsiderEyesInTheForest()
 end
 
 function X.ConsiderBlinkOvergrowth()
-    if CanDoBlinkOvergrowth()
+    if X.CanDoBlinkOvergrowth()
     then
         local nRadius = Overgrowth:GetSpecialValueInt('radius')
 
@@ -628,9 +637,9 @@ function X.ConsiderBlinkOvergrowth()
     return BOT_ACTION_DESIRE_NONE
 end
 
-function CanDoBlinkOvergrowth()
-    if  Overgrowth:IsFullyCastable()
-    and HasBlink()
+function X.CanDoBlinkOvergrowth()
+    if  J.CanCastAbility(Overgrowth)
+    and J.CanBlinkDagger(GetBot())
     then
         local nManaCost = Overgrowth:GetManaCost()
 
@@ -642,31 +651,6 @@ function CanDoBlinkOvergrowth()
     end
 
     bot.shouldBlink = false
-    return false
-end
-
-function HasBlink()
-    local blink = nil
-
-    for i = 0, 5
-    do
-		local item = bot:GetItemInSlot(i)
-
-		if  item ~= nil
-        and (item:GetName() == "item_blink" or item:GetName() == "item_overwhelming_blink" or item:GetName() == "item_arcane_blink" or item:GetName() == "item_swift_blink")
-        then
-			blink = item
-			break
-		end
-	end
-
-    if  blink ~= nil
-    and blink:IsFullyCastable()
-	then
-        Blink = blink
-        return true
-	end
-
     return false
 end
 
