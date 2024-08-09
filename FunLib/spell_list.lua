@@ -326,8 +326,8 @@ X['spells'] = {
         ['kunkka_tidebringer'] = {weight = 1},
         ['kunkka_x_marks_the_spot'] = {weight = 0.3},
         ['kunkka_return'] = {weight = 1},
-        ['kunkka_tidal_wave '] = {weight = 0.2},
-        ['kunkka_ghostship '] = {weight = 0.8},
+        ['kunkka_tidal_wave'] = {weight = 0.2},
+        ['kunkka_ghostship'] = {weight = 0.8},
     },
     
     ['npc_dota_hero_legion_commander'] = {
@@ -467,7 +467,7 @@ X['spells'] = {
         ['necrolyte_sadist'] = {weight = 0.5},
         ['necrolyte_heartstopper_aura'] = {weight = 1},
         ['necrolyte_death_seeker'] = {weight = 0.8},
-        ['necrolyte_reapers_scythe '] = {weight = 0.5},
+        ['necrolyte_reapers_scythe'] = {weight = 0.5},
     },
 
     ['npc_dota_hero_nevermore'] = {

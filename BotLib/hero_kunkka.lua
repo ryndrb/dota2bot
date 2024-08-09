@@ -211,8 +211,8 @@ local abilityW = bot:GetAbilityByName('kunkka_tidebringer')
 local abilityE = bot:GetAbilityByName('kunkka_x_marks_the_spot')
 local abilityE2 = bot:GetAbilityByName( 'kunkka_return' )
 -- local abilityD = bot:GetAbilityByName( sAbilityList[4] )
-local abilityAS = bot:GetAbilityByName('kunkka_tidal_wave ')
-local abilityR = bot:GetAbilityByName('kunkka_ghostship ')
+local abilityAS = bot:GetAbilityByName('kunkka_tidal_wave')
+local abilityR = bot:GetAbilityByName('kunkka_ghostship')
 
 
 local castQDesire, castQLocation
@@ -253,8 +253,8 @@ function X.SkillsComplement()
 	abilityW = bot:GetAbilityByName('kunkka_tidebringer')
 	abilityE = bot:GetAbilityByName('kunkka_x_marks_the_spot')
 	abilityE2 = bot:GetAbilityByName( 'kunkka_return' )
-	abilityAS = bot:GetAbilityByName('kunkka_tidal_wave ')
-	abilityR = bot:GetAbilityByName('kunkka_ghostship ')
+	abilityAS = bot:GetAbilityByName('kunkka_tidal_wave')
+	abilityR = bot:GetAbilityByName('kunkka_ghostship')
 
 	nKeepMana = 240
 	nMP = bot:GetMana()/bot:GetMaxMana()

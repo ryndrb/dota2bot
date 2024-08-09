@@ -202,7 +202,7 @@ local abilityQ = bot:GetAbilityByName('necrolyte_death_pulse')
 local abilityW = bot:GetAbilityByName('necrolyte_sadist')
 local abilityE = bot:GetAbilityByName('necrolyte_heartstopper_aura')
 local abilityAS = bot:GetAbilityByName('necrolyte_death_seeker')
-local abilityR = bot:GetAbilityByName('necrolyte_reapers_scythe ')
+local abilityR = bot:GetAbilityByName('necrolyte_reapers_scythe')
 
 
 local castQDesire
@@ -221,7 +221,7 @@ function X.SkillsComplement()
 	abilityQ = bot:GetAbilityByName('necrolyte_death_pulse')
 	abilityW = bot:GetAbilityByName('necrolyte_sadist')
 	abilityAS = bot:GetAbilityByName('necrolyte_death_seeker')
-	abilityR = bot:GetAbilityByName('necrolyte_reapers_scythe ')
+	abilityR = bot:GetAbilityByName('necrolyte_reapers_scythe')
 
 
 	nKeepMana = 400
