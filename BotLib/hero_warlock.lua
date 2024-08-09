@@ -7,6 +7,9 @@ local sTalentList = J.Skill.GetTalentList( bot )
 local sAbilityList = J.Skill.GetAbilityList( bot )
 local sRole = J.Item.GetRoleItemsBuyList( bot )
 
+if GetBot():GetUnitName() == 'npc_dota_hero_warlock'
+then
+
 local RI = require(GetScriptDirectory()..'/FunLib/util_role_item')
 
 local sUtility = {}
@@ -150,6 +153,7 @@ function X.MinionThink( hMinionUnit )
 
 end
 
+end
 
 --[[
 
@@ -184,10 +188,10 @@ modifier_warlock_golem_permanent_immolation_debuff
 --]]
 
 
-local abilityQ = bot:GetAbilityByName( sAbilityList[1] )
-local abilityW = bot:GetAbilityByName( sAbilityList[2] )
-local abilityE = bot:GetAbilityByName( sAbilityList[3] )
-local abilityR = bot:GetAbilityByName( sAbilityList[6] )
+local abilityQ = bot:GetAbilityByName('warlock_fatal_bonds')
+local abilityW = bot:GetAbilityByName('warlock_shadow_word')
+local abilityE = bot:GetAbilityByName('warlock_upheaval')
+local abilityR = bot:GetAbilityByName('warlock_rain_of_chaos')
 local talent2 = bot:GetAbilityByName( sTalentList[2] )
 local talent6 = bot:GetAbilityByName( sTalentList[6] )
 
@@ -220,7 +224,10 @@ function X.SkillsComplement()
 
 	if J.CanNotUseAbility( bot ) or bot:IsInvisible() then return end
 
-
+	abilityQ = bot:GetAbilityByName('warlock_fatal_bonds')
+	abilityW = bot:GetAbilityByName('warlock_shadow_word')
+	abilityE = bot:GetAbilityByName('warlock_upheaval')
+	abilityR = bot:GetAbilityByName('warlock_rain_of_chaos')
 
 	nKeepMana = 400
 	aetherRange = 0
@@ -303,13 +310,13 @@ function X.ConsiderStop()
 	if bot:IsChanneling()
 		and not bot:HasModifier( "modifier_teleporting" )
 		and bot:GetActiveMode() ~= BOT_MODE_SIDE_SHOP
-		and abilityE:IsTrained() and not abilityE:IsFullyCastable()
+		and not J.CanCastAbility(abilityE)
 	then
 		local tableEnemyHeroes = bot:GetNearbyHeroes( 1600, true, BOT_MODE_NONE )
 		local tableAllyHeroes = bot:GetNearbyHeroes( 1600, false, BOT_MODE_NONE )
-		if abilityR:IsFullyCastable()
-			or abilityQ:IsFullyCastable()
-			or abilityW:IsFullyCastable()
+		if J.CanCastAbility(abilityR)
+			or J.CanCastAbility(abilityQ)
+			or J.CanCastAbility(abilityW)
 			or #tableEnemyHeroes == 0
 			or #tableAllyHeroes == 1
 		then
@@ -323,9 +330,10 @@ end
 
 function X.ConsiderR()
 
-	if not abilityR:IsFullyCastable() then return BOT_ACTION_DESIRE_NONE, nil	end
+	if not J.CanCastAbility(abilityR) then return BOT_ACTION_DESIRE_NONE, nil	end
 
-	if abilityQ:IsFullyCastable()
+	if J.CanCastAbility(abilityQ)
+	and abilityR ~= nil
 		and bot:GetMana() >= ( abilityQ:GetManaCost() + abilityR:GetManaCost() )
 		and nHP > 0.5
 	then
@@ -370,12 +378,12 @@ end
 
 function X.ConsiderRFR()
 
-	if not abilityR:IsFullyCastable()
-		or abilityRef == nil
-		or not abilityRef:IsFullyCastable()
+	if not J.CanCastAbility(abilityR)
+		or not J.CanCastAbility(abilityRef)
 	then return BOT_ACTION_DESIRE_NONE, nil end
 
-	if abilityQ:IsFullyCastable()
+	if J.CanCastAbility(abilityQ)
+	and abilityR ~= nil
 		and bot:GetMana() >= ( abilityQ:GetManaCost() + abilityR:GetManaCost() )
 		and nHP > 0.5
 	then
@@ -412,11 +420,11 @@ end
 
 function X.ConsiderE()
 
-	if not abilityE:IsFullyCastable() then return BOT_ACTION_DESIRE_NONE, nil end
+	if not J.CanCastAbility(abilityE) then return BOT_ACTION_DESIRE_NONE, nil end
 
-	if abilityR:IsFullyCastable()
-		or abilityQ:IsFullyCastable()
-		or abilityW:IsFullyCastable()
+	if J.CanCastAbility(abilityR)
+		or J.CanCastAbility(abilityQ)
+		or J.CanCastAbility(abilityW)
 	then
 		return BOT_ACTION_DESIRE_NONE, nil
 	end
@@ -455,7 +463,7 @@ end
 local lastCheck = -90
 function X.ConsiderW()
 
-	if not abilityW:IsFullyCastable() then	return BOT_ACTION_DESIRE_NONE, nil	end
+	if not J.CanCastAbility(abilityW) then	return BOT_ACTION_DESIRE_NONE, nil	end
 
 	local nCastRange = abilityW:GetCastRange() + 50 + aetherRange
 	local nCastPoint = abilityW:GetCastPoint()
@@ -544,7 +552,7 @@ end
 
 function X.ConsiderQ()
 
-	if not abilityQ:IsFullyCastable() then return BOT_ACTION_DESIRE_NONE, nil end
+	if not J.CanCastAbility(abilityQ) then return BOT_ACTION_DESIRE_NONE, nil end
 
 	local nCastRange = abilityQ:GetCastRange() + 50 + aetherRange
 	local nCastPoint = abilityQ:GetCastPoint()
@@ -594,4 +602,3 @@ function X.ConsiderQ()
 end
 
 return X
--- dota2jmz@163.com QQ:2462331592..

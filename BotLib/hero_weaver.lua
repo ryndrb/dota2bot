@@ -7,6 +7,9 @@ local sTalentList = J.Skill.GetTalentList( bot )
 local sAbilityList = J.Skill.GetAbilityList( bot )
 local sRole = J.Item.GetRoleItemsBuyList( bot )
 
+if GetBot():GetUnitName() == 'npc_dota_hero_weaver'
+then
+
 local RI = require(GetScriptDirectory()..'/FunLib/util_role_item')
 
 local sUtility = {"item_nullifier", "item_heavens_halberd"}
@@ -205,6 +208,8 @@ function X.MinionThink(hMinionUnit)
     Minion.MinionThink(hMinionUnit)
 end
 
+end
+
 local TheSwarm          = bot:GetAbilityByName('weaver_the_swarm')
 local Shukuchi          = bot:GetAbilityByName('weaver_shukuchi')
 -- local GeminateAttack    = bot:GetAbilityByName('weaver_geminate_attack')
@@ -214,12 +219,17 @@ local TheSwarmDesire, TheSwarmLocation
 local ShukuchiDesire
 local TimeLapseDesire
 
-local botTarget
+local botTarget, botName
 
 function X.SkillsComplement()
     if J.CanNotUseAbility(bot) then return end
 
+    TheSwarm          = bot:GetAbilityByName('weaver_the_swarm')
+    Shukuchi          = bot:GetAbilityByName('weaver_shukuchi')
+    TimeLapse         = bot:GetAbilityByName('weaver_time_lapse')
+
     botTarget = J.GetProperTarget(bot)
+    botName = GetBot():GetUnitName()
 
     TimeLapseDesire, Target = X.ConsiderTimeLapse()
     if TimeLapseDesire > 0
@@ -229,6 +239,7 @@ function X.SkillsComplement()
             bot:Action_UseAbility(TimeLapse)
         else
             if bot:HasScepter()
+            and string.find(botName, 'weaver')
             then
                 bot:Action_UseAbilityOnEntity(TimeLapse, Target)
             end
@@ -255,7 +266,7 @@ function X.SkillsComplement()
 end
 
 function X.ConsiderTheSwarm()
-    if not TheSwarm:IsFullyCastable()
+    if not J.CanCastAbility(TheSwarm)
     then
         return BOT_ACTION_DESIRE_NONE, 0
     end
@@ -291,8 +302,15 @@ function X.ConsiderTheSwarm()
     and not J.IsRealInvisible(bot)
     and bot:WasRecentlyDamagedByAnyHero(3.5)
     and bot:GetActiveModeDesire() > 0.75
-    and Shukuchi:GetCooldownTimeRemaining() > 2
 	then
+        if string.find(botName, 'weaver')
+        then
+            if Shukuchi:GetCooldownTimeRemaining() < 2
+            then
+                return BOT_ACTION_DESIRE_NONE, 0
+            end
+        end
+
         if J.IsValidHero(nEnemyHeroes[1])
         and J.IsChasingTarget(nEnemyHeroes[1], bot)
         and not J.IsSuspiciousIllusion(nEnemyHeroes[1])
@@ -355,7 +373,7 @@ function X.ConsiderTheSwarm()
 end
 
 function X.ConsiderShukuchi()
-    if not Shukuchi:IsFullyCastable()
+    if not J.CanCastAbility(Shukuchi)
     or J.IsAttacking(bot)
     then
         return BOT_ACTION_DESIRE_NONE
@@ -513,7 +531,7 @@ function X.ConsiderShukuchi()
 end
 
 function X.ConsiderTimeLapse()
-    if not TimeLapse:IsFullyCastable()
+    if not J.CanCastAbility(TimeLapse)
     or bot:HasModifier('modifier_fountain_aura_buff')
     then
         return BOT_ACTION_DESIRE_NONE, nil
@@ -567,7 +585,7 @@ function X.ConsiderTimeLapse()
         end
     end
 
-	if bot:HasScepter()
+	if bot:HasScepter() and string.find(botName, 'weaver')
 	then
         local nCastRange = J.GetProperCastRange(false, bot, TimeLapse:GetCastRange())
 		for _, allyHero in pairs(nInRangeAlly)

@@ -128,7 +128,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
         - [2,3,4,5] Winter Wyvern
     - ***Later***
         - Morphling Ult
-        - More Rubick Spell Steal support
+        - ~~More Rubick Spell Steal support~~
     - ***Bugged (Internal; some will be selected)***
         - Dark Willow
             - Hardly enters Attack mode (Valve default).

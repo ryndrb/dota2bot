@@ -7,6 +7,9 @@ local sTalentList = J.Skill.GetTalentList( bot )
 local sAbilityList = J.Skill.GetAbilityList( bot )
 local sRole = J.Item.GetRoleItemsBuyList( bot )
 
+if GetBot():GetUnitName() == 'npc_dota_hero_ursa'
+then
+
 local RI = require(GetScriptDirectory()..'/FunLib/util_role_item')
 
 local sUtility = {}
@@ -134,8 +137,11 @@ function X.MinionThink( hMinionUnit )
 
 end
 
+end
+
 local Earthshock    = bot:GetAbilityByName( "ursa_earthshock" )
 local Overpower     = bot:GetAbilityByName( "ursa_overpower" )
+local FurySwipes    = bot:GetAbilityByName( "ursa_fury_swipes" )
 local Enrage        = bot:GetAbilityByName( "ursa_enrage" )
 
 local EarthshockDesire
@@ -144,6 +150,10 @@ local EnrageDesire
 
 function X.SkillsComplement()
     if J.CanNotUseAbility(bot) then return end
+
+	Earthshock    = bot:GetAbilityByName( "ursa_earthshock" )
+	Overpower     = bot:GetAbilityByName( "ursa_overpower" )
+	Enrage        = bot:GetAbilityByName( "ursa_enrage" )
 
 	EnrageDesire = X.ConsiderEnrage()
     if EnrageDesire > 0
@@ -168,7 +178,7 @@ function X.SkillsComplement()
 end
 
 function X.ConsiderEarthshock()
-	if not Earthshock:IsFullyCastable()
+	if not J.CanCastAbility(Earthshock)
 	then
 		return BOT_ACTION_DESIRE_NONE
 	end
@@ -291,7 +301,7 @@ function X.ConsiderEarthshock()
 end
 
 function X.ConsiderOverpower()
-	if not Overpower:IsFullyCastable()
+	if not J.CanCastAbility(Overpower)
 	then
 		return BOT_ACTION_DESIRE_NONE
 	end
@@ -356,7 +366,7 @@ function X.ConsiderOverpower()
 end
 
 function X.ConsiderEnrage()
-	if not Enrage:IsFullyCastable()
+	if not J.CanCastAbility(Enrage)
 	then
 		return BOT_ACTION_DESIRE_NONE
 	end

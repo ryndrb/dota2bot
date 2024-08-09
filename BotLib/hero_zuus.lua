@@ -7,6 +7,9 @@ local sTalentList = J.Skill.GetTalentList( bot )
 local sAbilityList = J.Skill.GetAbilityList( bot )
 local sRole = J.Item.GetRoleItemsBuyList( bot )
 
+if GetBot():GetUnitName() == 'npc_dota_hero_zuus'
+then
+
 local RI = require(GetScriptDirectory()..'/FunLib/util_role_item')
 
 local sUtility = {}
@@ -201,12 +204,14 @@ function X.MinionThink( hMinionUnit )
 
 end
 
-local abilityQ = bot:GetAbilityByName( sAbilityList[1] )
-local abilityW = bot:GetAbilityByName( sAbilityList[2] )
-local abilityE = bot:GetAbilityByName( sAbilityList[3] )
-local abilityD = bot:GetAbilityByName( sAbilityList[4] )
-local abilityAS = bot:GetAbilityByName( sAbilityList[5] )
-local abilityR = bot:GetAbilityByName( sAbilityList[6] )
+end
+
+local abilityQ = bot:GetAbilityByName('zuus_arc_lightning')
+local abilityW = bot:GetAbilityByName('zuus_lightning_bolt')
+local abilityE = bot:GetAbilityByName('zuus_heavenly_jump')
+local abilityD = bot:GetAbilityByName('zuus_cloud')
+local abilityAS = bot:GetAbilityByName('zuus_lightning_hands')
+local abilityR = bot:GetAbilityByName('zuus_thundergods_wrath')
 
 local talent5 = bot:GetAbilityByName( sTalentList[5] )
 local talent7 = bot:GetAbilityByName( sTalentList[7] )
@@ -220,7 +225,7 @@ local castRDesire
 local castEDesire, castETarget
 
 
-local nKeepMana, nMP, nHP, nLV, hEnemyHeroList
+local nKeepMana, nMP, nHP, nLV, hEnemyHeroList, botName
 local aetherRange = 0
 local talentDamage = 0
 
@@ -233,6 +238,12 @@ function X.SkillsComplement()
 
 	if J.CanNotUseAbility( bot ) or bot:IsInvisible() then return end
 
+	abilityQ = bot:GetAbilityByName('zuus_arc_lightning')
+	abilityW = bot:GetAbilityByName('zuus_lightning_bolt')
+	abilityE = bot:GetAbilityByName('zuus_heavenly_jump')
+	abilityD = bot:GetAbilityByName('zuus_cloud')
+	abilityR = bot:GetAbilityByName('zuus_thundergods_wrath')
+
 	nKeepMana = 400
 	aetherRange = 0
 	talentDamage = 0
@@ -243,11 +254,16 @@ function X.SkillsComplement()
 	nManaPercentage = bot:GetMana()/bot:GetMaxMana()
 	nHealthPercentage = bot:GetHealth()/bot:GetMaxHealth()
 	hEnemyHeroList = bot:GetNearbyHeroes( 1600, true, BOT_MODE_NONE )
+	botName = GetBot():GetUnitName()
 
 	local aether = J.IsItemAvailable( "item_aether_lens" )
 	if aether ~= nil then aetherRange = 250 end
-	if abilityAS:IsTrained() then abilityASBonus = 0.09 end
-	if talent8:IsTrained() then talentDamage = talentDamage + talent8:GetSpecialValueInt( "value" ) end
+	if abilityAS ~= nil and abilityAS:IsTrained() then abilityASBonus = 0.09 end
+
+	if string.find(botName, 'zuus')
+	then
+		if talent8:IsTrained() then talentDamage = talentDamage + talent8:GetSpecialValueInt( "value" ) end
+	end
 
 	castRDesire = X.ConsiderR()
 	if ( castRDesire > 0 )
@@ -322,7 +338,7 @@ end
 
 function X.ConsiderQ()
 
-	if not abilityQ:IsFullyCastable() then	return BOT_ACTION_DESIRE_NONE, nil	end
+	if not J.CanCastAbility(abilityQ) then	return BOT_ACTION_DESIRE_NONE, nil	end
 
 	local nCastRange = abilityQ:GetCastRange()
 	local nCastPoint = abilityQ:GetCastPoint()
@@ -411,7 +427,7 @@ end
 
 function X.ConsiderW()
 
-	if not abilityW:IsFullyCastable() then return BOT_ACTION_DESIRE_NONE, nil end
+	if not J.CanCastAbility(abilityW) then return BOT_ACTION_DESIRE_NONE, nil end
 
 	local nCastRange = abilityW:GetCastRange()
 	local nCastPoint = abilityW:GetCastPoint()
@@ -450,7 +466,7 @@ end
 
 function X.ConsiderW2()
 
-	if not abilityW:IsFullyCastable() then
+	if not J.CanCastAbility(abilityW) then
 		return BOT_ACTION_DESIRE_NONE, nil
 	end
 
@@ -550,8 +566,7 @@ end
 
 function X.ConsiderD()
 
-	if not bot:HasScepter()
-		or not abilityD:IsFullyCastable()
+	if not J.CanCastAbility(abilityD)
 		or bot:IsInvisible()
 	then
 		return BOT_ACTION_DESIRE_NONE, nil
@@ -592,7 +607,7 @@ end
 
 function X.ConsiderR()
 
-	if not abilityR:IsFullyCastable() then
+	if not J.CanCastAbility(abilityR) then
 		return BOT_ACTION_DESIRE_NONE
 	end
 
@@ -717,7 +732,7 @@ end
 
 function X.ConsiderE()
 
-	if not abilityE:IsFullyCastable() 
+	if not J.CanCastAbility(abilityE)
 		or bot:IsRooted()
 	then
 		return BOT_ACTION_DESIRE_NONE

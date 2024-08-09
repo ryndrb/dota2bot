@@ -808,6 +808,105 @@ X['spells'] = {
         ['tusk_walrus_punch'] = {weight = 0.4},
     },
 
+    ['npc_dota_hero_undying'] = {
+        ['undying_decay'] = {weight = 0.2},
+        ['undying_soul_rip'] = {weight = 0.2},
+        ['undying_tombstone'] = {weight = 0.1},
+        ['undying_flesh_golem'] = {weight = 1},
+    },
+
+    ['npc_dota_hero_ursa'] = {
+        ['ursa_earthshock'] = {weight = 0.2},
+        ['ursa_overpower'] = {weight = 1},
+        ['ursa_fury_swipes'] = {weight = 1},
+        ['ursa_enrage'] = {weight = 0.1},
+    },
+
+    ['npc_dota_hero_vengefulspirit'] = {
+        ['vengefulspirit_magic_missile'] = {weight = 0},
+        ['vengefulspirit_wave_of_terror'] = {weight = 0.1},
+        ['vengefulspirit_command_aura'] = {weight = 1},
+        ['vengefulspirit_nether_swap'] = {weight = 0.3},
+    },
+
+    ['npc_dota_hero_venomancer'] = {
+        ['venomancer_venomous_gale'] = {weight = 0.4},
+        ['venomancer_poison_sting'] = {weight = 1},
+        ['venomancer_plague_ward'] = {weight = 0.8},
+        ['venomancer_latent_poison'] = {weight = 1},
+        ['venomancer_poison_nova'] = {weight = 1},
+        ['venomancer_noxious_plague'] = {weight = 0.5},
+    },
+
+    ['npc_dota_hero_viper'] = {
+        ['viper_poison_attack'] = {weight = 0.8},
+        ['viper_nethertoxin'] = {weight = 0.5},
+        ['viper_corrosive_skin'] = {weight = 1},
+        ['viper_nose_dive' ] = {weight = 0.6},
+        ['viper_viper_strike'] = {weight = 0.1},
+    },
+
+    ['npc_dota_hero_visage'] = {
+        ['visage_grave_chill'] = {weight = 0.2},
+        ['visage_soul_assumption'] = {weight = 1},
+        ['visage_gravekeepers_cloak'] = {weight = 1},
+        ['visage_silent_as_the_grave'] = {weight = 0.7},
+        ['visage_summon_familiars'] = {weight = 1},
+    },
+
+    ['npc_dota_hero_void_spirit'] = {
+        ['void_spirit_aether_remnant'] = {weight = 0.9},
+        ['void_spirit_dissimilate'] = {weight = 0.5},
+        ['void_spirit_resonant_pulse'] = {weight = 0.2},
+        ['void_spirit_astral_step'] = {weight = 0.2},
+    },
+
+    ['npc_dota_hero_warlock'] = {
+        ['warlock_fatal_bonds'] = {weight = 0.1},
+        ['warlock_shadow_word'] = {weight = 0.5},
+        ['warlock_upheaval'] = {weight = 0.8},
+        ['warlock_rain_of_chaos'] = {weight = 0},
+    },
+
+    ['npc_dota_hero_weaver'] = {
+        ['weaver_the_swarm'] = {weight = 0.4},
+        ['weaver_shukuchi'] = {weight = 0.2},
+        ['weaver_geminate_attack'] = {weight = 1},
+        ['weaver_time_lapse'] = {weight = 0.6},
+    },
+
+    ['npc_dota_hero_windrunner'] = {
+        ['windrunner_shackleshot'] = {weight = 0.1},
+        ['windrunner_powershot'] = {weight = 0.4},
+        ['windrunner_windrun'] = {weight = 0.6},
+        ['windrunner_gale_force'] = {weight = 0.3},
+        ['windrunner_focusfire'] = {weight = 0.9},
+    },
+
+    ['npc_dota_hero_winter_wyvern'] = {
+        ['winter_wyvern_arctic_burn'] = {weight = 0.9},
+        ['winter_wyvern_splinter_blast'] = {weight = 0.6},
+        ['winter_wyvern_cold_embrace'] = {weight = 0.2},
+        ['winter_wyvern_winters_curse'] = {weight = 0.5},
+    },
+
+    ['npc_dota_hero_witch_doctor'] = {
+        ['witch_doctor_paralyzing_cask'] = {weight = 0.1},
+        ['witch_doctor_voodoo_restoration'] = {weight = 0.5},
+        ['witch_doctor_maledict'] = {weight = 0.1},
+        ['witch_doctor_voodoo_switcheroo'] = {weight = 0.1},
+        ['witch_doctor_death_ward'] = {weight = 0.1},
+    },
+
+    ['npc_dota_hero_zuus'] = {
+        ['zuus_arc_lightning'] = {weight = 0.3},
+        ['zuus_lightning_bolt'] = {weight = 0.3},
+        ['zuus_heavenly_jump'] = {weight = 0.2},
+        ['zuus_cloud'] = {weight = 0.6},
+        ['zuus_lightning_hands'] = {weight = 1},
+        ['zuus_thundergods_wrath'] = {weight = 0.4},
+    },
+
     -- --[[4]] ['rubick_empty1'] = {weight = 1},
     -- --[[5]] ['rubick_empty2'] = {weight = 1},
 }

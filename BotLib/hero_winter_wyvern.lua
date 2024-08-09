@@ -7,6 +7,9 @@ local sTalentList = J.Skill.GetTalentList( bot )
 local sAbilityList = J.Skill.GetAbilityList( bot )
 local sRole = J.Item.GetRoleItemsBuyList( bot )
 
+if GetBot():GetUnitName() == 'npc_dota_hero_winter_wyvern'
+then
+
 local RI = require(GetScriptDirectory()..'/FunLib/util_role_item')
 
 local sUtility = {"item_heavens_halberd", "item_pipe", "item_lotus_orb"}
@@ -212,6 +215,8 @@ function X.MinionThink(hMinionUnit)
     Minion.MinionThink(hMinionUnit)
 end
 
+end
+
 local ArcticBurn    = bot:GetAbilityByName('winter_wyvern_arctic_burn')
 local SplinterBlast = bot:GetAbilityByName('winter_wyvern_splinter_blast')
 local ColdEmbrace   = bot:GetAbilityByName('winter_wyvern_cold_embrace')
@@ -226,6 +231,11 @@ local botTarget
 
 function X.SkillsComplement()
 	if J.CanNotUseAbility(bot) then return end
+
+    ArcticBurn    = bot:GetAbilityByName('winter_wyvern_arctic_burn')
+    SplinterBlast = bot:GetAbilityByName('winter_wyvern_splinter_blast')
+    ColdEmbrace   = bot:GetAbilityByName('winter_wyvern_cold_embrace')
+    WintersCurse  = bot:GetAbilityByName('winter_wyvern_winters_curse')
 
     botTarget = J.GetProperTarget(bot)
 
@@ -259,7 +269,7 @@ function X.SkillsComplement()
 end
 
 function X.ConsiderArcticBurn()
-    if not ArcticBurn:IsFullyCastable()
+    if not J.CanCastAbility(ArcticBurn)
     then
         return BOT_ACTION_DESIRE_NONE
     end
@@ -409,7 +419,7 @@ function X.ConsiderArcticBurn()
 end
 
 function X.ConsiderSplinterBlast()
-    if not SplinterBlast:IsFullyCastable()
+    if not J.CanCastAbility(SplinterBlast)
     then
         return BOT_ACTION_DESIRE_NONE, nil
     end
@@ -676,7 +686,7 @@ function X.ConsiderSplinterBlast()
 end
 
 function X.ConsiderColdEmbrace()
-    if not ColdEmbrace:IsFullyCastable()
+    if not J.CanCastAbility(ColdEmbrace)
     then
         return BOT_ACTION_DESIRE_NONE, nil
     end
@@ -831,7 +841,7 @@ function X.ConsiderColdEmbrace()
 end
 
 function X.ConsiderWintersCurse()
-    if not WintersCurse:IsFullyCastable()
+    if not J.CanCastAbility(WintersCurse)
     then
         return BOT_ACTION_DESIRE_NONE, nil
     end

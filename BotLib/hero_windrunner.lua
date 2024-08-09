@@ -7,6 +7,9 @@ local sTalentList = J.Skill.GetTalentList( bot )
 local sAbilityList = J.Skill.GetAbilityList( bot )
 local sRole = J.Item.GetRoleItemsBuyList( bot )
 
+if GetBot():GetUnitName() == 'npc_dota_hero_windrunner'
+then
+
 local RI = require(GetScriptDirectory()..'/FunLib/util_role_item')
 
 local sUtility = {"item_heavens_halberd", "item_nullifier"}
@@ -240,6 +243,8 @@ function X.MinionThink(hMinionUnit)
     Minion.MinionThink(hMinionUnit)
 end
 
+end
+
 local ShackleShot   = bot:GetAbilityByName('windrunner_shackleshot')
 local Powershot     = bot:GetAbilityByName('windrunner_powershot')
 local Windrun       = bot:GetAbilityByName('windrunner_windrun')
@@ -256,6 +261,12 @@ local botTarget
 
 function X.SkillsComplement()
     if J.CanNotUseAbility(bot) then return end
+
+    ShackleShot   = bot:GetAbilityByName('windrunner_shackleshot')
+    Powershot     = bot:GetAbilityByName('windrunner_powershot')
+    Windrun       = bot:GetAbilityByName('windrunner_windrun')
+    GaleForce     = bot:GetAbilityByName('windrunner_gale_force')
+    FocusFire     = bot:GetAbilityByName('windrunner_focusfire')
 
     botTarget = J.GetProperTarget(bot)
 
@@ -296,7 +307,7 @@ function X.SkillsComplement()
 end
 
 function X.ConsiderShackleShot()
-    if not ShackleShot:IsFullyCastable()
+    if not J.CanCastAbility(ShackleShot)
     then
         return BOT_ACTION_DESIRE_NONE, nil
     end
@@ -406,7 +417,7 @@ function X.ConsiderShackleShot()
 end
 
 function X.ConsiderPowershot()
-    if not Powershot:IsFullyCastable()
+    if not J.CanCastAbility(Powershot)
     then
         return BOT_ACTION_DESIRE_NONE, 0
     end
@@ -594,7 +605,7 @@ function X.ConsiderPowershot()
 end
 
 function X.ConsiderWindrun()
-    if not Windrun:IsFullyCastable()
+    if not J.CanCastAbility(Windrun)
     then
         return BOT_ACTION_DESIRE_NONE
     end
@@ -743,7 +754,7 @@ function X.ConsiderWindrun()
 end
 
 function X.ConsiderFocusFire()
-    if not FocusFire:IsFullyCastable()
+    if not J.CanCastAbility(FocusFire)
     then
         return BOT_ACTION_DESIRE_NONE, nil
     end
@@ -843,8 +854,7 @@ function X.ConsiderFocusFire()
 end
 
 function X.ConsiderGaleForce()
-    if not GaleForce:IsTrained()
-    or not GaleForce:IsFullyCastable()
+    if not J.CanCastAbility(GaleForce)
     then
         return BOT_ACTION_DESIRE_NONE, 0
     end
