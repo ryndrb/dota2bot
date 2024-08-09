@@ -7,6 +7,9 @@ local sTalentList = J.Skill.GetTalentList( bot )
 local sAbilityList = J.Skill.GetAbilityList( bot )
 local sRole = J.Item.GetRoleItemsBuyList( bot )
 
+if GetBot():GetUnitName() == 'npc_dota_hero_slardar'
+then
+
 local RI = require(GetScriptDirectory()..'/FunLib/util_role_item')
 
 local sUtility = {"item_crimson_guard", "item_pipe", "item_heavens_halberd"}
@@ -168,6 +171,8 @@ function X.MinionThink( hMinionUnit )
 
 end
 
+end
+
 --[[
 
 npc_dota_hero_slardar
@@ -196,10 +201,10 @@ modifier_slardar_amplify_damage
 
 --]]
 
-local abilityQ = bot:GetAbilityByName( sAbilityList[1] )
-local abilityW = bot:GetAbilityByName( sAbilityList[2] )
-local abilityE = bot:GetAbilityByName( sAbilityList[3] )
-local abilityR = bot:GetAbilityByName( sAbilityList[6] )
+local abilityQ = bot:GetAbilityByName('slardar_sprint')
+local abilityW = bot:GetAbilityByName('slardar_slithereen_crush')
+local abilityE = bot:GetAbilityByName('slardar_bash')
+local abilityR = bot:GetAbilityByName('slardar_amplify_damage')
 local talent2 = bot:GetAbilityByName( sTalentList[2] )
 local talent6 = bot:GetAbilityByName( sTalentList[6] )
 
@@ -215,6 +220,10 @@ local aetherRange = 0
 function X.SkillsComplement()
 
 	if J.CanNotUseAbility( bot ) or bot:IsInvisible() then return end
+
+	abilityQ = bot:GetAbilityByName('slardar_sprint')
+	abilityW = bot:GetAbilityByName('slardar_slithereen_crush')
+	abilityR = bot:GetAbilityByName('slardar_amplify_damage')
 
 	nKeepMana = 400
 	aetherRange = 0
@@ -264,7 +273,7 @@ end
 function X.ConsiderQ()
 
 
-	if not abilityQ:IsFullyCastable() then return 0 end
+	if not J.CanCastAbility(abilityQ) then return 0 end
 
 	local nSkillLV = abilityQ:GetLevel()
 	local nCastRange = abilityQ:GetCastRange()
@@ -314,7 +323,7 @@ end
 function X.ConsiderW()
 
 
-	if not abilityW:IsFullyCastable() then return 0 end
+	if not J.CanCastAbility(abilityW) then return 0 end
 
 	local nSkillLV = abilityW:GetLevel()
 	local nCastRange = abilityW:GetSpecialValueInt( 'crush_radius' )
@@ -459,7 +468,7 @@ end
 function X.ConsiderR()
 
 
-	if not abilityR:IsFullyCastable() then return 0 end
+	if not J.CanCastAbility(abilityR) then return 0 end
 
 	local nSkillLV = abilityR:GetLevel()
 	local nCastRange = abilityR:GetCastRange()
@@ -580,5 +589,4 @@ end
 
 
 return X
--- dota2jmz@163.com QQ:2462331592..
 

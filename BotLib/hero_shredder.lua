@@ -7,6 +7,9 @@ local sTalentList = J.Skill.GetTalentList( bot )
 local sAbilityList = J.Skill.GetAbilityList( bot )
 local sRole = J.Item.GetRoleItemsBuyList( bot )
 
+if GetBot():GetUnitName() == 'npc_dota_hero_shredder'
+then
+
 local RI = require(GetScriptDirectory()..'/FunLib/util_role_item')
 
 local sUtility = {"item_crimson_guard", "item_pipe", "item_lotus_orb"}
@@ -162,6 +165,8 @@ function X.MinionThink( hMinionUnit )
 	end
 end
 
+end
+
 local WhirlingDeath 	= bot:GetAbilityByName( 'shredder_whirling_death' )
 local TimberChain 		= bot:GetAbilityByName( 'shredder_timber_chain' )
 local ReactiveArmor     = bot:GetAbilityByName( 'shredder_reactive_armor' )
@@ -194,6 +199,13 @@ local Chakram1CastTime = 0
 
 function X.SkillsComplement()
 	if J.CanNotUseAbility(bot) then return end
+
+	WhirlingDeath 	= bot:GetAbilityByName( 'shredder_whirling_death' )
+	TimberChain 		= bot:GetAbilityByName( 'shredder_timber_chain' )
+	ReactiveArmor     = bot:GetAbilityByName( 'shredder_reactive_armor' )
+	Chakram 			= bot:GetAbilityByName( 'shredder_chakram' )
+	ChakramReturn 	= bot:GetAbilityByName( 'shredder_return_chakram' )
+	Flamethrower 		= bot:GetAbilityByName( 'shredder_flamethrower' )
 
 	ChakramReturnDesire = X.ConsiderChakramReturn()
 	if ChakramReturnDesire > 0
@@ -268,7 +280,7 @@ function X.SkillsComplement()
 end
 
 function X.ConsiderWhirlingDeath()
-	if not WhirlingDeath:IsFullyCastable()
+	if not J.CanCastAbility(WhirlingDeath)
 	then
 		return BOT_ACTION_DESIRE_NONE
 	end
@@ -390,7 +402,7 @@ function X.ConsiderWhirlingDeath()
 end
 
 function X.ConsiderTimberChain()
-	if not TimberChain:IsFullyCastable()
+	if not J.CanCastAbility(TimberChain)
 	then
 		return BOT_ACTION_DESIRE_NONE, 0
 	end
@@ -467,9 +479,8 @@ function X.ConsiderTimberChain()
 end
 
 function X.ConsiderReactiveArmor()
-	if not ReactiveArmor:IsFullyCastable()
-	or ReactiveArmor:IsPassive()
-	or not bot:HasScepter()
+	if not bot:HasScepter()
+	or not J.CanCastAbility(ReactiveArmor)
 	then
 		return BOT_ACTION_DESIRE_NONE
 	end
@@ -511,8 +522,7 @@ function X.ConsiderReactiveArmor()
 end
 
 function X.ConsiderChakram()
-	if not Chakram:IsFullyCastable()
-	or Chakram:IsHidden()
+	if not J.CanCastAbility(Chakram)
 	then
 		return BOT_ACTION_DESIRE_NONE, 0, 0
 	end
@@ -625,8 +635,7 @@ end
 
 function X.ConsiderChakramReturn()
 	if (Chakram1Location == 0 or Chakram1Location == nil)
-	or not ChakramReturn:IsFullyCastable()
-	or ChakramReturn:IsHidden()
+	or not J.CanCastAbility(ChakramReturn)
 	then
 		return BOT_ACTION_DESIRE_NONE
 	end
@@ -880,8 +889,7 @@ end
 -- end
 
 function X.ConsiderFlamethrower()
-	if not Flamethrower:IsTrained()
-	or not Flamethrower:IsFullyCastable()
+	if not J.CanCastAbility(Flamethrower)
 	then
 		return BOT_ACTION_DESIRE_NONE
 	end

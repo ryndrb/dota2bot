@@ -7,6 +7,9 @@ local sTalentList = J.Skill.GetTalentList( bot )
 local sAbilityList = J.Skill.GetAbilityList( bot )
 local sRole = J.Item.GetRoleItemsBuyList( bot )
 
+if GetBot():GetUnitName() == 'npc_dota_hero_void_spirit'
+then
+
 local RI = require(GetScriptDirectory()..'/FunLib/util_role_item')
 
 local sUtility = {}
@@ -136,6 +139,8 @@ function X.MinionThink( hMinionUnit )
 
 end
 
+end
+
 local AetherRemnant = bot:GetAbilityByName( "void_spirit_aether_remnant" )
 local Dissimilate   = bot:GetAbilityByName( "void_spirit_dissimilate" )
 local ResonantPulse = bot:GetAbilityByName( "void_spirit_resonant_pulse" )
@@ -156,6 +161,11 @@ function X.SkillsComplement()
 	then
 		return
 	end
+
+	AetherRemnant = bot:GetAbilityByName( "void_spirit_aether_remnant" )
+	Dissimilate   = bot:GetAbilityByName( "void_spirit_dissimilate" )
+	ResonantPulse = bot:GetAbilityByName( "void_spirit_resonant_pulse" )
+	AstralStep    = bot:GetAbilityByName( "void_spirit_astral_step" )
 
 	botTarget = J.GetProperTarget(bot)
 	nAllyHeroes = bot:GetNearbyHeroes(1600, false, BOT_MODE_NONE)
@@ -197,7 +207,7 @@ function X.SkillsComplement()
 end
 
 function X.ConsiderAetherRemnant()
-    if not AetherRemnant:IsFullyCastable()
+    if not J.CanCastAbility(AetherRemnant)
 	then
 		return BOT_ACTION_DESIRE_NONE, 0
 	end
@@ -306,7 +316,8 @@ function X.ConsiderAetherRemnant()
 end
 
 function X.ConsiderDissimilate()
-    if not Dissimilate:IsFullyCastable()
+    if not J.CanCastAbility(Dissimilate)
+	or bot:IsRooted()
 	then
 		return BOT_ACTION_DESIRE_NONE
 	end
@@ -358,7 +369,7 @@ function X.ConsiderDissimilate()
 end
 
 function X.ConsiderResonantPulse()
-    if not ResonantPulse:IsFullyCastable()
+    if not J.CanCastAbility(ResonantPulse)
 	then
 		return BOT_ACTION_DESIRE_NONE
 	end
@@ -489,7 +500,7 @@ function X.ConsiderResonantPulse()
 end
 
 function X.ConsiderAstralStep()
-	if not AstralStep:IsFullyCastable()
+	if not J.CanCastAbility(AstralStep)
 	or bot:IsRooted()
 	then
 		return BOT_ACTION_DESIRE_NONE, 0

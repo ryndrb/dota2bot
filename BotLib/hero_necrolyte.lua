@@ -7,6 +7,9 @@ local sTalentList = J.Skill.GetTalentList( bot )
 local sAbilityList = J.Skill.GetAbilityList( bot )
 local sRole = J.Item.GetRoleItemsBuyList( bot )
 
+if GetBot():GetUnitName() == 'npc_dota_hero_necrolyte'
+then
+
 local RI = require(GetScriptDirectory()..'/FunLib/util_role_item')
 
 local sUtility = {"item_pipe", "item_heavens_halberd"}
@@ -163,6 +166,8 @@ function X.MinionThink( hMinionUnit )
 
 end
 
+end
+
 --[[
 
 npc_dota_hero_necrolyte
@@ -193,10 +198,11 @@ modifier_necrolyte_reapers_scythe_respawn_time
 
 --]]
 
-local abilityQ = bot:GetAbilityByName( sAbilityList[1] )
-local abilityW = bot:GetAbilityByName( sAbilityList[2] )
-local abilityAS = bot:GetAbilityByName( sAbilityList[4] )
-local abilityR = bot:GetAbilityByName( sAbilityList[6] )
+local abilityQ = bot:GetAbilityByName('necrolyte_death_pulse')
+local abilityW = bot:GetAbilityByName('necrolyte_sadist')
+local abilityE = bot:GetAbilityByName('necrolyte_heartstopper_aura')
+local abilityAS = bot:GetAbilityByName('necrolyte_death_seeker')
+local abilityR = bot:GetAbilityByName('necrolyte_reapers_scythe')
 
 
 local castQDesire
@@ -211,6 +217,11 @@ function X.SkillsComplement()
 
 
 	if J.CanNotUseAbility( bot ) then return end
+
+	abilityQ = bot:GetAbilityByName('necrolyte_death_pulse')
+	abilityW = bot:GetAbilityByName('necrolyte_sadist')
+	abilityAS = bot:GetAbilityByName('necrolyte_death_seeker')
+	abilityR = bot:GetAbilityByName('necrolyte_reapers_scythe')
 
 
 	nKeepMana = 400
@@ -268,7 +279,7 @@ end
 
 function X.ConsiderW()
 
-	if ( not abilityW:IsFullyCastable() ) then
+	if ( not J.CanCastAbility(abilityW) ) then
 		return BOT_ACTION_DESIRE_NONE
 	end
 
@@ -335,9 +346,9 @@ end
 
 function X.ConsiderQ()
 
-	if not abilityQ:IsFullyCastable()
+	if not J.CanCastAbility(abilityQ)
 		or bot:IsInvisible()
-		or ( J.GetHP( bot ) > 0.62 and abilityR:GetCooldownTimeRemaining() < 6 and bot:GetMana() < abilityR:GetManaCost() )
+		or ( J.GetHP( bot ) > 0.62 and abilityR ~= nil and abilityR:GetCooldownTimeRemaining() < 6 and bot:GetMana() < abilityR:GetManaCost() )
 	then
 		return BOT_ACTION_DESIRE_NONE
 	end
@@ -462,7 +473,7 @@ end
 
 function X.ConsiderR()
 
-	if not abilityR:IsFullyCastable() then
+	if not J.CanCastAbility(abilityR) then
 		return BOT_ACTION_DESIRE_NONE, 0
 	end
 
@@ -596,8 +607,7 @@ end
 
 function X.ConsiderAS()
 
-	if not abilityAS:IsTrained()
-		or not abilityAS:IsFullyCastable() 
+	if not J.CanCastAbility(abilityAS)
 	then
 		return BOT_ACTION_DESIRE_NONE, 0
 	end
@@ -663,4 +673,3 @@ function X.ConsiderAS()
 end
 
 return X
--- dota2jmz@163.com QQ:2462331592..

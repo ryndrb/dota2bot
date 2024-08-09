@@ -7,6 +7,9 @@ local sTalentList = J.Skill.GetTalentList( bot )
 local sAbilityList = J.Skill.GetAbilityList( bot )
 local sRole = J.Item.GetRoleItemsBuyList( bot )
 
+if GetBot():GetUnitName() == 'npc_dota_hero_tidehunter'
+then
+
 local RI = require(GetScriptDirectory()..'/FunLib/util_role_item')
 
 local sUtility = {"item_lotus_orb", "item_heavens_halberd", "item_crimson_guard"}
@@ -133,6 +136,8 @@ function X.MinionThink( hMinionUnit )
 
 end
 
+end
+
 --[[
 
 npc_dota_hero_tidehunter
@@ -161,11 +166,11 @@ modifier_tidehunter_ravage
 
 --]]
 
-local abilityQ = bot:GetAbilityByName( sAbilityList[1] )
-local abilityW = bot:GetAbilityByName( sAbilityList[2] )
-local abilityE = bot:GetAbilityByName( sAbilityList[3] )
-local abilityR = bot:GetAbilityByName( sAbilityList[6] )
+local abilityQ = bot:GetAbilityByName('tidehunter_gush')
+local abilityW = bot:GetAbilityByName('tidehunter_kraken_shell')
+local abilityE = bot:GetAbilityByName('tidehunter_anchor_smash')
 local DeadInTheWater = bot:GetAbilityByName( 'tidehunter_dead_in_the_water' )
+local abilityR = bot:GetAbilityByName('tidehunter_ravage')
 local talent3 = bot:GetAbilityByName( sTalentList[3] )
 
 
@@ -175,13 +180,18 @@ local castEDesire, castETarget
 local castRDesire, castRTarget
 local DeadInTheWaterDesire, AnchorTarget
 
-local nKeepMana, nMP, nHP, nLV, hEnemyList, hAllyList, botTarget, sMotive
+local nKeepMana, nMP, nHP, nLV, hEnemyList, hAllyList, botTarget, sMotive, botName
 local aetherRange = 0
 
 
 function X.SkillsComplement()
 
 	if J.CanNotUseAbility( bot ) or bot:IsInvisible() then return end
+
+	abilityQ = bot:GetAbilityByName('tidehunter_gush')
+	abilityE = bot:GetAbilityByName('tidehunter_anchor_smash')
+	DeadInTheWater = bot:GetAbilityByName( 'tidehunter_dead_in_the_water' )
+	abilityR = bot:GetAbilityByName('tidehunter_ravage')
 
 	nKeepMana = 400
 	aetherRange = 0
@@ -191,6 +201,7 @@ function X.SkillsComplement()
 	botTarget = J.GetProperTarget( bot )
 	hEnemyList = bot:GetNearbyHeroes( 1600, true, BOT_MODE_NONE )
 	hAllyList = J.GetAlliesNearLoc( bot:GetLocation(), 1600 )
+	botName = GetBot():GetUnitName()
 
 
 	--计算天赋可能带来的通用变化
@@ -218,6 +229,7 @@ function X.SkillsComplement()
 		J.SetQueuePtToINT( bot, true )
 		
 		if bot:HasScepter()
+		and string.find(botName, 'tidehunter')
 		and castQTarget ~= nil
 		then
 			bot:ActionQueue_UseAbilityOnLocation( abilityQ, castQTarget:GetLocation() )
@@ -255,7 +267,7 @@ end
 function X.ConsiderQ()
 
 
-	if not abilityQ:IsFullyCastable() then return 0 end
+	if not J.CanCastAbility(abilityQ) then return 0 end
 
 	local nSkillLV = abilityQ:GetLevel()
 	local nCastRange = abilityQ:GetCastRange() + aetherRange
@@ -267,7 +279,10 @@ function X.ConsiderQ()
 	local nManaCost = abilityQ:GetManaCost()
 	
 	local nDamage = abilityQ:GetSpecialValueInt( 'gush_damage' )
-	if talent3:IsTrained() then nDamage = nDamage + talent3:GetSpecialValueInt( 'value' ) end
+	if string.find(botName, 'tidehunter')
+	then
+		if talent3:IsTrained() then nDamage = nDamage + talent3:GetSpecialValueInt( 'value' ) end
+	end
 	
 	local nDamageType = DAMAGE_TYPE_MAGICAL 
 	local nInRangeEnemyList = J.GetAroundEnemyHeroList( nCastRange )
@@ -433,7 +448,7 @@ end
 function X.ConsiderE()
 
 
-	if not abilityE:IsFullyCastable() then return 0 end
+	if not J.CanCastAbility(abilityE) then return 0 end
 
 	local nSkillLV = abilityE:GetLevel()
 	local nRadius = abilityE:GetSpecialValueInt( 'radius' )
@@ -613,7 +628,7 @@ end
 function X.ConsiderR()
 
 
-	if not abilityR:IsFullyCastable() then return 0 end
+	if not J.CanCastAbility(abilityR) then return 0 end
 
 	local nSkillLV = abilityR:GetLevel()
 	local nCastRange = abilityR:GetSpecialValueInt( 'radius' )
@@ -713,8 +728,7 @@ function X.ConsiderR()
 end
 
 function X.ConsiderDeadInTheWater()
-	if not DeadInTheWater:IsTrained()
-	or not DeadInTheWater:IsFullyCastable()
+	if not J.CanCastAbility(DeadInTheWater)
 	then
 		return BOT_ACTION_DESIRE_NONE, nil
 	end

@@ -7,6 +7,9 @@ local sTalentList = J.Skill.GetTalentList( bot )
 local sAbilityList = J.Skill.GetAbilityList( bot )
 local sRole = J.Item.GetRoleItemsBuyList( bot )
 
+if GetBot():GetUnitName() == 'npc_dota_hero_lycan'
+then
+
 local RI = require(GetScriptDirectory()..'/FunLib/util_role_item')
 
 local sUtility = {"item_crimson_guard", "item_pipe", "item_lotus_orb", "item_heavens_halberd"}
@@ -184,6 +187,8 @@ function X.MinionThink(hMinionUnit)
     Minion.MinionThink(hMinionUnit)
 end
 
+end
+
 local SummonWolves  = bot:GetAbilityByName('lycan_summon_wolves')
 local Howl          = bot:GetAbilityByName('lycan_howl')
 local FeralImpulse  = bot:GetAbilityByName('lycan_feral_impulse')
@@ -197,6 +202,10 @@ local ShapeShiftDesire
 
 function X.SkillsComplement()
     if J.CanNotUseAbility(bot) then return end
+
+    SummonWolves  = bot:GetAbilityByName('lycan_summon_wolves')
+    Howl          = bot:GetAbilityByName('lycan_howl')
+    ShapeShift    = bot:GetAbilityByName('lycan_shapeshift')
 
     ShapeShiftDesire = X.ConsiderShapeShift()
     if ShapeShiftDesire > 0
@@ -223,7 +232,7 @@ function X.SkillsComplement()
 end
 
 function X.ConsiderSummonWolves()
-    if not SummonWolves:IsFullyCastable()
+    if not J.CanCastAbility(SummonWolves)
     then
         return BOT_ACTION_DESIRE_NONE
     end
@@ -316,7 +325,7 @@ function X.ConsiderSummonWolves()
 end
 
 function X.ConsiderHowl()
-    if not Howl:IsFullyCastable()
+    if not J.CanCastAbility(Howl)
     then
         return BOT_ACTION_DESIRE_NONE
     end
@@ -452,7 +461,7 @@ function X.ConsiderHowl()
 end
 
 function X.ConsiderShapeShift()
-    if not ShapeShift:IsFullyCastable()
+    if not J.CanCastAbility(ShapeShift)
     then
         return BOT_ACTION_DESIRE_NONE
     end

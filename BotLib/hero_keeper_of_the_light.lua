@@ -7,6 +7,9 @@ local sTalentList = J.Skill.GetTalentList( bot )
 local sAbilityList = J.Skill.GetAbilityList( bot )
 local sRole = J.Item.GetRoleItemsBuyList( bot )
 
+if GetBot():GetUnitName() == 'npc_dota_hero_keeper_of_the_light'
+then
+
 local RI = require(GetScriptDirectory()..'/FunLib/util_role_item')
 
 local sUtility = {}
@@ -177,6 +180,8 @@ function X.MinionThink( hMinionUnit )
 	end
 end
 
+end
+
 local Illuminate    = bot:GetAbilityByName('keeper_of_the_light_illuminate')
 local IlluminateEnd = bot:GetAbilityByName('keeper_of_the_light_illuminate_end')
 local BlindingLight = bot:GetAbilityByName('keeper_of_the_light_blinding_light')
@@ -202,6 +207,16 @@ local IlluminateCastedTime = -100
 
 function X.SkillsComplement()
     if J.CanNotUseAbility(bot) then return end
+
+    Illuminate          = bot:GetAbilityByName('keeper_of_the_light_illuminate')
+    IlluminateEnd       = bot:GetAbilityByName('keeper_of_the_light_illuminate_end')
+    BlindingLight       = bot:GetAbilityByName('keeper_of_the_light_blinding_light')
+    ChakraMagic         = bot:GetAbilityByName('keeper_of_the_light_chakra_magic')
+    SolarBind           = bot:GetAbilityByName('keeper_of_the_light_radiant_bind')
+    WillOWisp           = bot:GetAbilityByName('keeper_of_the_light_will_o_wisp')
+    SpiritForm          = bot:GetAbilityByName('keeper_of_the_light_spirit_form')
+    IlluminateSpirit    = bot:GetAbilityByName('keeper_of_the_light_spirit_form_illuminate')
+    IlluminateEndSpirit = bot:GetAbilityByName('keeper_of_the_light_spirit_form_illuminate_end')
 
     SpiritFormDesire = X.ConsiderSpiritForm()
     if SpiritFormDesire > 0
@@ -274,7 +289,7 @@ function X.SkillsComplement()
 end
 
 function X.ConsiderIlluminate()
-    if not Illuminate:IsFullyCastable()
+    if not J.CanCastAbility(Illuminate)
     then
         return BOT_ACTION_DESIRE_NONE, 0
     end
@@ -487,7 +502,7 @@ end
 -- end
 
 function X.ConsiderBlindingLight()
-    if not BlindingLight:IsFullyCastable()
+    if not J.CanCastAbility(BlindingLight)
     then
         return BOT_ACTION_DESIRE_NONE, 0
     end
@@ -589,7 +604,7 @@ function X.ConsiderBlindingLight()
 end
 
 function X.ConsiderChakraMagic()
-    if not ChakraMagic:IsFullyCastable()
+    if not J.CanCastAbility(ChakraMagic)
     then
         return BOT_ACTION_DESIRE_NONE, nil
     end
@@ -616,8 +631,7 @@ function X.ConsiderChakraMagic()
 end
 
 function X.ConsiderSolarBind()
-    if SolarBind:IsHidden()
-    or not SolarBind:IsFullyCastable()
+    if not J.CanCastAbility(SolarBind)
     then
         return BOT_ACTION_DESIRE_NONE, nil
     end
@@ -711,7 +725,7 @@ function X.ConsiderSolarBind()
 end
 
 function X.ConsiderSpiritForm()
-    if not SpiritForm:IsFullyCastable()
+    if not J.CanCastAbility(SpiritForm)
     then
         return BOT_ACTION_DESIRE_NONE
     end
@@ -796,9 +810,7 @@ end
 -- end
 
 function X.ConsiderWillOWisp()
-    if WillOWisp:IsHidden()
-    or not WillOWisp:IsTrained()
-    or not WillOWisp:IsFullyCastable()
+    if not J.CanCastAbility(WillOWisp)
 	then
 		return BOT_ACTION_DESIRE_NONE, 0
 	end
@@ -812,7 +824,8 @@ function X.ConsiderWillOWisp()
         local nLocationAoE = bot:FindAoELocation(true, true, bot:GetLocation(), nCastRange, nRadius, 0, 0)
 
 		if  nLocationAoE.count >= 2
-        and not IsTargetLocInBigUlt(nLocationAoE.targetloc)
+        and not J.IsLocationInChrono(nLocationAoE.targetloc)
+        and not J.IsLocationInBlackHole(nLocationAoE.targetloc)
 		then
 			return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc
 		end
@@ -839,22 +852,6 @@ function X.ConsiderWillOWisp()
 	end
 
 	return BOT_ACTION_DESIRE_NONE, 0
-end
-
-function IsTargetLocInBigUlt(loc)
-	for _, enemyHero in pairs(GetUnitList(UNIT_LIST_ENEMY_HEROES))
-	do
-		if  J.IsValidHero(enemyHero)
-		and not J.IsSuspiciousIllusion(enemyHero)
-		and GetUnitToLocationDistance(enemyHero, loc) < 300
-		and (enemyHero:HasModifier('modifier_faceless_void_chronosphere_freeze')
-			or enemyHero:HasModifier('modifier_enigma_black_hole_pull'))
-		then
-			return true
-		end
-	end
-
-	return false
 end
 
 return X

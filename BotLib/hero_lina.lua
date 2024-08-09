@@ -7,6 +7,9 @@ local sTalentList = J.Skill.GetTalentList( bot )
 local sAbilityList = J.Skill.GetAbilityList( bot )
 local sRole = J.Item.GetRoleItemsBuyList( bot )
 
+if GetBot():GetUnitName() == 'npc_dota_hero_lina'
+then
+
 local RI = require(GetScriptDirectory()..'/FunLib/util_role_item')
 
 local sUtility = {}
@@ -259,11 +262,13 @@ function X.MinionThink( hMinionUnit )
 
 end
 
-local abilityQ = bot:GetAbilityByName( sAbilityList[1] )
-local abilityW = bot:GetAbilityByName( sAbilityList[2] )
-local abilityE = bot:GetAbilityByName( sAbilityList[3] )
-local abilityR = bot:GetAbilityByName( sAbilityList[6] )
-local FlameCloak = bot:GetAbilityByName( 'lina_flame_cloak' )
+end
+
+local abilityQ = bot:GetAbilityByName('lina_dragon_slave')
+local abilityW = bot:GetAbilityByName('lina_light_strike_array')
+local abilityE = bot:GetAbilityByName('lina_fiery_soul')
+local FlameCloak = bot:GetAbilityByName('lina_flame_cloak')
+local abilityR = bot:GetAbilityByName('lina_laguna_blade')
 local talent2 = bot:GetAbilityByName( sTalentList[2] )
 local talent4 = bot:GetAbilityByName( sTalentList[4] )
 local talent7 = bot:GetAbilityByName( sTalentList[7] )
@@ -274,7 +279,7 @@ local castRDesire, castRTarget
 local FlameCloakDesire
 
 
-local nKeepMana, nMP, nHP, nLV, hEnemyList, hAllyList, botTarget, sMotive
+local nKeepMana, nMP, nHP, nLV, hEnemyList, hAllyList, botTarget, sMotive, botName
 local aetherRange = 0
 local talent4Damage = 0
 
@@ -285,6 +290,10 @@ function X.SkillsComplement()
 
 	if J.CanNotUseAbility( bot ) or bot:IsInvisible() then return end
 
+	abilityQ = bot:GetAbilityByName('lina_dragon_slave')
+	abilityW = bot:GetAbilityByName('lina_light_strike_array')
+	FlameCloak = bot:GetAbilityByName('lina_flame_cloak')
+	abilityR = bot:GetAbilityByName('lina_laguna_blade')
 
 	nKeepMana = 400
 	aetherRange = 0
@@ -295,13 +304,18 @@ function X.SkillsComplement()
 	botTarget = J.GetProperTarget( bot )
 	hEnemyList = bot:GetNearbyHeroes( 1600, true, BOT_MODE_NONE )
 	hAllyList = J.GetAlliesNearLoc( bot:GetLocation(), 1600 )
+	botName = GetBot():GetUnitName()
 
 
 
 	local aether = J.IsItemAvailable( "item_aether_lens" )
 	if aether ~= nil then aetherRange = 250 end
 --	if talent2:IsTrained() then aetherRange = aetherRange + talent2:GetSpecialValueInt( "value" ) end
-	if talent4:IsTrained() then talent4Damage = talent4Damage + talent4:GetSpecialValueInt( "value" ) end
+
+	if string.find(botName, 'lina')
+	then
+		if talent4:IsTrained() then talent4Damage = talent4Damage + talent4:GetSpecialValueInt( "value" ) end
+	end
 
 	FlameCloakDesire = X.ConsiderFlameCloak()
 	if (FlameCloakDesire > 0)
@@ -349,7 +363,7 @@ end
 function X.ConsiderQ()
 
 
-	if not abilityQ:IsFullyCastable() then return 0 end
+	if not J.CanCastAbility(abilityQ) then return 0 end
 
 	local nSkillLV = abilityQ:GetLevel()
 	local nCastRange = abilityQ:GetCastRange() + aetherRange
@@ -548,7 +562,7 @@ end
 function X.ConsiderW()
 
 
-	if not abilityW:IsFullyCastable() then return 0 end
+	if not J.CanCastAbility(abilityW) then return 0 end
 
 	local nSkillLV = abilityW:GetLevel()
 	local nCastRange = abilityW:GetCastRange() + aetherRange
@@ -750,7 +764,7 @@ end
 function X.ConsiderR()
 
 
-	if not abilityR:IsFullyCastable() then return 0 end
+	if not J.CanCastAbility(abilityR) then return 0 end
 
 	local nSkillLV = abilityR:GetLevel()
 	local nCastRange = abilityR:GetCastRange() + aetherRange
@@ -846,8 +860,7 @@ function X.CanCastAbilityROnTarget( nTarget )
 end
 
 function X.ConsiderFlameCloak()
-	if not FlameCloak:IsTrained()
-	or not FlameCloak:IsFullyCastable()
+	if not J.CanCastAbility(FlameCloak)
 	then
 		return BOT_ACTION_DESIRE_NONE
 	end
@@ -866,8 +879,6 @@ function X.ConsiderFlameCloak()
 	if J.IsGoingOnSomeone(bot)
 	and (nEnemyHeroes ~= nil and #nEnemyHeroes >= 2)
 	then
-		local botTarget = bot:GetTarget()
-
 		if J.IsValidTarget(botTarget)
 		and J.CanCastOnNonMagicImmune(botTarget)
 		then

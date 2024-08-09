@@ -7,6 +7,9 @@ local sTalentList = J.Skill.GetTalentList( bot )
 local sAbilityList = J.Skill.GetAbilityList( bot )
 local sRole = J.Item.GetRoleItemsBuyList( bot )
 
+if GetBot():GetUnitName() == 'npc_dota_hero_mirana'
+then
+
 local RI = require(GetScriptDirectory()..'/FunLib/util_role_item')
 
 local sUtility = {}
@@ -155,10 +158,12 @@ function X.MinionThink(hMinionUnit)
 
 end
 
-local abilityQ = bot:GetAbilityByName( sAbilityList[1] )
-local abilityW = bot:GetAbilityByName( sAbilityList[2] )
-local abilityE = bot:GetAbilityByName( sAbilityList[3] )
-local abilityR = bot:GetAbilityByName( sAbilityList[6] )
+end
+
+local abilityQ = bot:GetAbilityByName('mirana_starfall')
+local abilityW = bot:GetAbilityByName('mirana_arrow')
+local abilityE = bot:GetAbilityByName('mirana_leap')
+local abilityR = bot:GetAbilityByName('mirana_invis')
 
 
 local castQDesire, castQTarget
@@ -174,6 +179,11 @@ local aetherRange = 0
 function X.SkillsComplement()
 	
 	if J.CanNotUseAbility(bot) then return end
+
+	abilityQ = bot:GetAbilityByName('mirana_starfall')
+	abilityW = bot:GetAbilityByName('mirana_arrow')
+	abilityE = bot:GetAbilityByName('mirana_leap')
+	abilityR = bot:GetAbilityByName('mirana_invis')
 	
 	nKeepMana = 400
 	aetherRange = 0
@@ -191,7 +201,7 @@ function X.SkillsComplement()
 	castQDesire, castQTarget, sMotive = X.ConsiderQ();
 	if ( castQDesire > 0 ) 
 	then
-		J.SetReportMotive(bDebugMode,sMotive);		
+		J.SetQueuePtToINT(bot, false)
 		bot:ActionQueue_UseAbility( abilityQ )
 		return;
 	end
@@ -199,7 +209,7 @@ function X.SkillsComplement()
 	castWDesire, castWTarget, sMotive = X.ConsiderW();
 	if ( castWDesire > 0 ) 
 	then
-		J.SetReportMotive(bDebugMode,sMotive);
+		J.SetQueuePtToINT(bot, false)
 		bot:ActionQueue_UseAbilityOnLocation( abilityW, castWTarget )
 		return;
 	end
@@ -207,7 +217,7 @@ function X.SkillsComplement()
 	castEDesire, castETarget, sMotive = X.ConsiderE();
 	if ( castEDesire > 0 ) 
 	then
-		J.SetReportMotive(bDebugMode,sMotive);
+		J.SetQueuePtToINT(bot, false)
 		bot:ActionQueue_UseAbility( abilityE )
 		return;
 	end
@@ -215,7 +225,7 @@ function X.SkillsComplement()
 	castRDesire, castRTarget, sMotive = X.ConsiderR();
 	if ( castRDesire > 0 ) 
 	then
-		J.SetReportMotive(bDebugMode,sMotive);
+		J.SetQueuePtToINT(bot, false)
 		bot:ActionQueue_UseAbility( abilityR )
 		return;
 	
@@ -227,7 +237,7 @@ end
 function X.ConsiderQ()
 
 
-	if not abilityQ:IsFullyCastable() then return 0 end
+	if not J.CanCastAbility(abilityQ) then return 0 end
 
 	local nSkillLV = abilityQ:GetLevel()
 	local nCastRange = abilityQ:GetSpecialValueInt( "starfall_radius" )
@@ -393,7 +403,7 @@ end
 function X.ConsiderW()
 
 
-	if not abilityW:IsFullyCastable() then return 0 end
+	if not J.CanCastAbility(abilityW) then return 0 end
 
 	local nSkillLV = abilityW:GetLevel()
 	local nCastRange = abilityW:GetSpecialValueInt( 'arrow_range' )
@@ -413,7 +423,8 @@ function X.ConsiderW()
 	
 	for _, npcEnemy in pairs( nCanSeenEnemyHeroList )
 	do
-		if J.IsInRange( bot, npcEnemy, nCastRange )
+		if J.IsValidHero(npcEnemy)
+		and J.IsInRange( bot, npcEnemy, nCastRange )
 			and not J.IsInRange( bot, npcEnemy, 80 )
 			and J.CanCastOnNonMagicImmune( npcEnemy )
 			and not J.IsOtherAllyCanKillTarget( bot, npcEnemy )
@@ -499,7 +510,7 @@ end
 function X.ConsiderE()
 
 
-	if not abilityE:IsFullyCastable() 
+	if not J.CanCastAbility(abilityE)
 		or bot:IsRooted()
 	then return 0 end
 
@@ -604,7 +615,7 @@ end
 function X.ConsiderR()
 
 
-	if not abilityR:IsFullyCastable() then return 0 end
+	if not J.CanCastAbility(abilityR) then return 0 end
 
 	local nSkillLV = abilityR:GetLevel()
 	local nCastRange = abilityR:GetCastRange()

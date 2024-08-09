@@ -7,6 +7,9 @@ local sTalentList = J.Skill.GetTalentList( bot )
 local sAbilityList = J.Skill.GetAbilityList( bot )
 local sRole = J.Item.GetRoleItemsBuyList( bot )
 
+if GetBot():GetUnitName() == 'npc_dota_hero_venomancer'
+then
+
 local RI = require(GetScriptDirectory()..'/FunLib/util_role_item')
 
 local sUtility = {"item_pipe", "item_lotus_orb", "item_heavens_halberd"}
@@ -148,6 +151,8 @@ function X.MinionThink(hMinionUnit)
     Minion.MinionThink(hMinionUnit)
 end
 
+end
+
 local VenomousGale      = bot:GetAbilityByName('venomancer_venomous_gale')
 -- local PoisonSting       = bot:GetAbilityByName('venomancer_poison_sting')
 local PlagueWard        = bot:GetAbilityByName('venomancer_plague_ward')
@@ -164,6 +169,10 @@ local botTarget
 
 function X.SkillsComplement()
 	if J.CanNotUseAbility(bot) then return end
+
+    VenomousGale      = bot:GetAbilityByName('venomancer_venomous_gale')
+    PlagueWard        = bot:GetAbilityByName('venomancer_plague_ward')
+    NoxiousPlague     = bot:GetAbilityByName('venomancer_noxious_plague')
 
     botTarget = J.GetProperTarget(bot)
 
@@ -197,7 +206,7 @@ function X.SkillsComplement()
 end
 
 function X.ConsiderVenomousGale()
-    if not VenomousGale:IsFullyCastable()
+    if not J.CanCastAbility(VenomousGale)
     then
         return BOT_ACTION_DESIRE_NONE, 0
     end
@@ -408,7 +417,7 @@ function X.ConsiderVenomousGale()
 end
 
 function X.ConsiderPlagueWard()
-    if not PlagueWard:IsFullyCastable()
+    if not J.CanCastAbility(PlagueWard)
     then
         return BOT_ACTION_DESIRE_NONE, 0
     end
@@ -549,7 +558,7 @@ function X.ConsiderPlagueWard()
 end
 
 function X.ConsiderNoxiousPlague()
-    if not NoxiousPlague:IsFullyCastable()
+    if not J.CanCastAbility(NoxiousPlague)
     then
         return BOT_ACTION_DESIRE_NONE, nil
     end

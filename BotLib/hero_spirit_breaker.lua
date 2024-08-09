@@ -7,6 +7,9 @@ local sTalentList = J.Skill.GetTalentList( bot )
 local sAbilityList = J.Skill.GetAbilityList( bot )
 local sRole = J.Item.GetRoleItemsBuyList( bot )
 
+if GetBot():GetUnitName() == 'npc_dota_hero_spirit_breaker'
+then
+
 local RI = require(GetScriptDirectory()..'/FunLib/util_role_item')
 
 local sUtility = {"item_lotus_orb", "item_pipe", "item_crimson_guard", "item_heavens_halberd"}
@@ -219,6 +222,8 @@ function X.MinionThink( hMinionUnit )
 	Minion.MinionThink(hMinionUnit)
 end
 
+end
+
 local ChargeOfDarkness  = bot:GetAbilityByName('spirit_breaker_charge_of_darkness')
 local Bulldoze          = bot:GetAbilityByName('spirit_breaker_bulldoze')
 local GreaterBash       = bot:GetAbilityByName('spirit_breaker_greater_bash')
@@ -235,12 +240,16 @@ if bot.chargeRetreat == nil then bot.chargeRetreat = false end
 function X.SkillsComplement()
 	if J.CanNotUseAbility(bot) then return end
 
+    ChargeOfDarkness  = bot:GetAbilityByName('spirit_breaker_charge_of_darkness')
+    Bulldoze          = bot:GetAbilityByName('spirit_breaker_bulldoze')
+    PlanarPocket      = bot:GetAbilityByName('spirit_breaker_planar_pocket')
+    NetherStrike      = bot:GetAbilityByName('spirit_breaker_nether_strike')
+
     ChargeOfDarknessDesire, ChargeOfDarknessTarget = X.ConsiderChargeOfDarkness()
     if ChargeOfDarknessDesire > 0
     then
         if  ChargeOfDarkness:GetLevel() >= 3
-        and Bulldoze:IsTrained()
-        and Bulldoze:IsFullyCastable()
+        and J.CanCastAbility(Bulldoze)
         then
             bot:Action_UseAbility(Bulldoze)
         end
@@ -272,7 +281,7 @@ function X.SkillsComplement()
 end
 
 function X.ConsiderChargeOfDarkness()
-    if not ChargeOfDarkness:IsFullyCastable()
+    if not J.CanCastAbility(ChargeOfDarkness)
     or bot:HasModifier('modifier_spirit_breaker_charge_of_darkness')
     then
         return BOT_ACTION_DESIRE_NONE, nil
@@ -516,7 +525,7 @@ function X.ConsiderChargeOfDarkness()
 end
 
 function X.ConsiderBulldoze()
-    if not Bulldoze:IsFullyCastable()
+    if not J.CanCastAbility(Bulldoze)
     then
         return BOT_ACTION_DESIRE_NONE
     end
@@ -575,7 +584,7 @@ function X.ConsiderBulldoze()
 end
 
 function X.ConsiderNetherStrike()
-    if not NetherStrike:IsFullyCastable()
+    if not J.CanCastAbility(NetherStrike)
     or bot:HasModifier('modifier_spirit_breaker_charge_of_darkness')
     then
         return BOT_ACTION_DESIRE_NONE, nil
@@ -657,8 +666,7 @@ function X.ConsiderNetherStrike()
 end
 
 function X.ConsiderPlanarPocket()
-    if not PlanarPocket:IsTrained()
-    or not PlanarPocket:IsFullyCastable()
+    if not J.CanCastAbility(PlanarPocket)
     or bot:HasModifier('modifier_spirit_breaker_charge_of_darkness')
     then
         return BOT_ACTION_DESIRE_NONE

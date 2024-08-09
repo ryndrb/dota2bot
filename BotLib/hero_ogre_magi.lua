@@ -7,6 +7,9 @@ local sTalentList = J.Skill.GetTalentList( bot )
 local sAbilityList = J.Skill.GetAbilityList( bot )
 local sRole = J.Item.GetRoleItemsBuyList( bot )
 
+if GetBot():GetUnitName() == 'npc_dota_hero_ogre_magi'
+then
+
 local RI = require(GetScriptDirectory()..'/FunLib/util_role_item')
 
 local sUtility = {"item_crimson_guard", "item_pipe", "item_lotus_orb", "item_heavens_halberd"}
@@ -217,11 +220,14 @@ function X.MinionThink( hMinionUnit )
 
 end
 
-local abilityQ = bot:GetAbilityByName( sAbilityList[1] )
-local abilityW = bot:GetAbilityByName( sAbilityList[2] )
-local abilityE = bot:GetAbilityByName( sAbilityList[3] )
-local abilityD = bot:GetAbilityByName( sAbilityList[4] )
-local FireShield = bot:GetAbilityByName( sAbilityList[5] )
+end
+
+local abilityQ = bot:GetAbilityByName('ogre_magi_fireblast')
+local abilityW = bot:GetAbilityByName('ogre_magi_ignite')
+local abilityE = bot:GetAbilityByName('ogre_magi_bloodlust')
+local abilityD = bot:GetAbilityByName('ogre_magi_unrefined_fireblast')
+local FireShield = bot:GetAbilityByName('ogre_magi_smash')
+local abilityR = bot:GetAbilityByName('ogre_magi_multicast')
 local talent2 = bot:GetAbilityByName( sTalentList[2] )
 local talent8 = bot:GetAbilityByName( sTalentList[8] )
 
@@ -242,6 +248,11 @@ function X.SkillsComplement()
 
 	if J.CanNotUseAbility( bot ) or bot:IsInvisible() then return end
 
+	abilityQ = bot:GetAbilityByName('ogre_magi_fireblast')
+	abilityW = bot:GetAbilityByName('ogre_magi_ignite')
+	abilityE = bot:GetAbilityByName('ogre_magi_bloodlust')
+	abilityD = bot:GetAbilityByName('ogre_magi_unrefined_fireblast')
+	FireShield = bot:GetAbilityByName('ogre_magi_smash')
 
 	nKeepMana = 300
 	aetherRange = 0
@@ -318,7 +329,7 @@ end
 function X.ConsiderQ()
 
 
-	if not abilityQ:IsFullyCastable() then return 0 end
+	if not J.CanCastAbility(abilityQ) then return 0 end
 
 	local nSkillLV = abilityQ:GetLevel()
 	local nCastRange = abilityQ:GetCastRange() + aetherRange
@@ -564,7 +575,7 @@ end
 function X.ConsiderW()
 
 
-	if not abilityW:IsFullyCastable() then return 0 end
+	if not J.CanCastAbility(abilityW) then return 0 end
 
 	local nSkillLV = abilityW:GetLevel()
 	local nCastRange = abilityW:GetCastRange() + aetherRange
@@ -739,7 +750,7 @@ end
 --"modifier_ogre_magi_bloodlust"
 function X.ConsiderE()
 
-	if not abilityE:IsFullyCastable() then return 0 end
+	if not J.CanCastAbility(abilityE) then return 0 end
 
 	local nSkillLV = abilityE:GetLevel()
 	local nCastRange = abilityE:GetCastRange() + aetherRange
@@ -906,7 +917,7 @@ end
 function X.ConsiderD()
 
 
-	if abilityQ:IsFullyCastable() or not abilityD:IsFullyCastable() or not bot:HasScepter() then return 0 end
+	if J.CanCastAbility(abilityQ) or not J.CanCastAbility(abilityD) or not bot:HasScepter() then return 0 end
 
 	local nSkillLV = abilityD:GetLevel()
 	local nCastRange = abilityD:GetCastRange() + aetherRange
@@ -1111,8 +1122,7 @@ end
 
 function X.ConsiderFireShield()
 
-	if not FireShield:IsTrained()
-	or not FireShield:IsFullyCastable()
+	if not J.CanCastAbility(FireShield)
 	then
 		return BOT_ACTION_DESIRE_NONE, 0
 	end

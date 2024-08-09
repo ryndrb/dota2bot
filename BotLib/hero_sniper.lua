@@ -7,6 +7,9 @@ local sTalentList = J.Skill.GetTalentList( bot )
 local sAbilityList = J.Skill.GetAbilityList( bot )
 local sRole = J.Item.GetRoleItemsBuyList( bot )
 
+if GetBot():GetUnitName() == 'npc_dota_hero_sniper'
+then
+
 local RI = require(GetScriptDirectory()..'/FunLib/util_role_item')
 
 local sUtility = {}
@@ -158,6 +161,8 @@ function X.MinionThink( hMinionUnit )
 
 end
 
+end
+
 --[[
 
 npc_dota_hero_sniper
@@ -189,10 +194,11 @@ modifier_sniper_assassinate
 
 --]]
 
-local abilityQ = bot:GetAbilityByName( sAbilityList[1] )
-local abilityE = bot:GetAbilityByName( sAbilityList[3] )
-local abilityAS = bot:GetAbilityByName( sAbilityList[4] )
-local abilityR = bot:GetAbilityByName( sAbilityList[6] )
+local abilityQ = bot:GetAbilityByName('sniper_shrapnel')
+local abilityW = bot:GetAbilityByName('sniper_headshot')
+local abilityE = bot:GetAbilityByName('sniper_take_aim')
+local abilityAS = bot:GetAbilityByName('sniper_concussive_grenade')
+local abilityR = bot:GetAbilityByName('sniper_assassinate')
 
 
 local castQDesire, castQLocation 
@@ -212,6 +218,11 @@ function X.SkillsComplement()
 	J.ConsiderForMkbDisassembleMask( bot )
 
 	if J.CanNotUseAbility( bot ) or bot:IsInvisible() then return end
+
+	abilityQ = bot:GetAbilityByName('sniper_shrapnel')
+	abilityE = bot:GetAbilityByName('sniper_take_aim')
+	abilityAS = bot:GetAbilityByName('sniper_concussive_grenade')
+	abilityR = bot:GetAbilityByName('sniper_assassinate')
 
 	nKeepMana = 280
 	nMP = bot:GetMana()/bot:GetMaxMana()
@@ -292,7 +303,7 @@ end
 
 function X.ConsiderQ()
 
-	if not abilityQ:IsFullyCastable()
+	if not J.CanCastAbility(abilityQ)
 		or lastAbilityQTime > DotaTime() - 0.5
 	then return 0 end
 
@@ -469,7 +480,7 @@ end
 
 function X.ConsiderE()
 
-	if not abilityE:IsFullyCastable()
+	if not J.CanCastAbility(abilityE)
 		or bot:IsDisarmed()
 	then return 0 end
 
@@ -502,7 +513,7 @@ end
 
 function X.ConsiderR()
 
-	if not abilityR:IsFullyCastable() then return 0 end
+	if not J.CanCastAbility(abilityR) then return 0 end
 
 	local nCastRange = abilityR:GetCastRange()
 	local nCastPoint = abilityR:GetCastPoint()
@@ -592,7 +603,12 @@ end
 
 function X.GetCastPoint( bot, unit )
 
-		local nCastTime = abilityR:GetCastPoint()
+		local nCastTime = 0.1
+
+		if string.find(bot:GetUnitName(), 'sniper')
+		then
+			nCastTime = abilityR:GetCastPoint()
+		end
 
 		local nDist = GetUnitToUnitDistance( bot, unit )
 		local nDistTime = nDist/2500
@@ -663,8 +679,7 @@ end
 
 function X.ConsiderAS()
 
-	if not abilityAS:IsTrained()
-		or not abilityAS:IsFullyCastable() 
+	if not J.CanCastAbility(abilityAS)
 	then
 		return BOT_ACTION_DESIRE_NONE, 0
 	end
@@ -715,4 +730,3 @@ end
 
 
 return X
--- dota2jmz@163.com QQ:2462331592..

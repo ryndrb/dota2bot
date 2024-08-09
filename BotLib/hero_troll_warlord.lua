@@ -7,6 +7,9 @@ local sTalentList = J.Skill.GetTalentList( bot )
 local sAbilityList = J.Skill.GetAbilityList( bot )
 local sRole = J.Item.GetRoleItemsBuyList( bot )
 
+if GetBot():GetUnitName() == 'npc_dota_hero_troll_warlord'
+then
+
 local RI = require(GetScriptDirectory()..'/FunLib/util_role_item')
 
 local sUtility = {}
@@ -122,6 +125,8 @@ function X.MinionThink(hMinionUnit)
     Minion.MinionThink(hMinionUnit)
 end
 
+end
+
 local BattleStance          = bot:GetAbilityByName('troll_warlord_switch_stance')
 local WhirlingAxesRanged    = bot:GetAbilityByName('troll_warlord_whirling_axes_ranged')
 local WhirlingAxesMelee     = bot:GetAbilityByName('troll_warlord_whirling_axes_melee')
@@ -139,6 +144,11 @@ local botTarget
 
 function X.SkillsComplement()
     if J.CanNotUseAbility(bot) then return end
+
+    BattleStance          = bot:GetAbilityByName('troll_warlord_switch_stance')
+    WhirlingAxesRanged    = bot:GetAbilityByName('troll_warlord_whirling_axes_ranged')
+    WhirlingAxesMelee     = bot:GetAbilityByName('troll_warlord_whirling_axes_melee')
+    BattleTrance          = bot:GetAbilityByName('troll_warlord_battle_trance')
 
     botTarget = J.GetProperTarget(bot)
 
@@ -172,7 +182,7 @@ function X.SkillsComplement()
 end
 
 function X.ConsiderBattleStance()
-    if not BattleStance:IsFullyCastable()
+    if not J.CanCastAbility(BattleStance)
     then
         return BOT_ACTION_DESIRE_NONE
     end
@@ -318,7 +328,7 @@ function X.ConsiderBattleStance()
 end
 
 function X.ConsiderWhirlingAxesRanged()
-    if not WhirlingAxesRanged:IsFullyCastable()
+    if not J.CanCastAbility(WhirlingAxesRanged)
     then
         return BOT_ACTION_DESIRE_NONE, 0
     end
@@ -536,7 +546,7 @@ function X.ConsiderWhirlingAxesRanged()
 end
 
 function X.ConsiderWhirlingAxesMelee()
-    if not WhirlingAxesMelee:IsFullyCastable()
+    if not J.CanCastAbility(WhirlingAxesMelee)
     then
         return BOT_ACTION_DESIRE_NONE
     end
@@ -720,7 +730,7 @@ function X.ConsiderWhirlingAxesMelee()
 end
 
 function X.ConsiderBattleTrance()
-    if not BattleTrance:IsFullyCastable()
+    if not J.CanCastAbility(BattleTrance)
     then
         return BOT_ACTION_DESIRE_NONE
     end

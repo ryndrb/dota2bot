@@ -7,6 +7,9 @@ local sTalentList = J.Skill.GetTalentList( bot )
 local sAbilityList = J.Skill.GetAbilityList( bot )
 local sRole = J.Item.GetRoleItemsBuyList( bot )
 
+if GetBot():GetUnitName() == 'npc_dota_hero_silencer'
+then
+
 local RI = require(GetScriptDirectory()..'/FunLib/util_role_item')
 
 local sUtility = {}
@@ -180,10 +183,12 @@ function X.MinionThink( hMinionUnit )
 
 end
 
-local abilityQ = bot:GetAbilityByName( sAbilityList[1] )
-local abilityW = bot:GetAbilityByName( sAbilityList[2] )
-local abilityE = bot:GetAbilityByName( sAbilityList[3] )
-local abilityR = bot:GetAbilityByName( sAbilityList[6] )
+end
+
+local abilityQ = bot:GetAbilityByName('silencer_curse_of_the_silent')
+local abilityW = bot:GetAbilityByName('silencer_glaives_of_wisdom')
+local abilityE = bot:GetAbilityByName('silencer_last_word')
+local abilityR = bot:GetAbilityByName('silencer_global_silence')
 
 
 local castQDesire, castQLocation = 0
@@ -198,6 +203,10 @@ local aetherRange = 0
 function X.SkillsComplement()
 
 	if J.CanNotUseAbility( bot ) or bot:IsInvisible() then return end
+
+	abilityQ = bot:GetAbilityByName('silencer_curse_of_the_silent')
+	abilityW = bot:GetAbilityByName('silencer_glaives_of_wisdom')
+	abilityR = bot:GetAbilityByName('silencer_global_silence')
 
 	nKeepMana = 300
 	aetherRange = 0
@@ -265,7 +274,7 @@ end
 
 function X.ConsiderQ()
 
-	if ( not abilityQ:IsFullyCastable() ) then
+	if ( not J.CanCastAbility(abilityQ) ) then
 		return BOT_ACTION_DESIRE_NONE, 0
 	end
 
@@ -534,7 +543,7 @@ end
 
 function X.ConsiderW()
 
-	if not abilityW:IsFullyCastable() or bot:IsDisarmed() then
+	if not J.CanCastAbility(abilityW) or bot:IsDisarmed() then
 		return BOT_ACTION_DESIRE_NONE, 0
 	end
 
@@ -731,7 +740,7 @@ end
 
 function X.ConsiderE()
 
-	if ( not abilityE:IsFullyCastable() ) then
+	if ( not J.CanCastAbility(abilityE) ) then
 		return BOT_ACTION_DESIRE_NONE, 0
 	end
 
@@ -906,7 +915,7 @@ end
 function X.ConsiderR()
 
 
-	if ( not abilityR:IsFullyCastable() ) then
+	if ( not J.CanCastAbility(abilityR) ) then
 		return BOT_ACTION_DESIRE_NONE, 0
 	end
 
@@ -978,7 +987,8 @@ function X.sil_GetWeakestUnit( nEnemyUnits )
 	local nWeakestUnitLowestHealth = 10000
 	for _, unit in pairs( nEnemyUnits )
 	do
-		if 	unit:IsAlive()
+		if 	J.IsValid(unit)
+		and unit:IsAlive()
 			and J.CanCastOnNonMagicImmune( unit )
 			and J.CanCastOnTargetAdvanced( unit )
 		then
@@ -1002,4 +1012,3 @@ end
 
 
 return X
--- dota2jmz@163.com QQ:2462331592..

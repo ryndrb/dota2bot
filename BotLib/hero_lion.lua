@@ -7,6 +7,9 @@ local sTalentList = J.Skill.GetTalentList( bot )
 local sAbilityList = J.Skill.GetAbilityList( bot )
 local sRole = J.Item.GetRoleItemsBuyList( bot )
 
+if GetBot():GetUnitName() == 'npc_dota_hero_lion'
+then
+
 local RI = require(GetScriptDirectory()..'/FunLib/util_role_item')
 
 local sUtility = {}
@@ -151,6 +154,8 @@ function X.MinionThink( hMinionUnit )
 
 end
 
+end
+
 --[[
 
 npc_dota_hero_lion
@@ -180,10 +185,10 @@ modifier_lion_arcana_kill_effect
 
 --]]
 
-local abilityQ = bot:GetAbilityByName( sAbilityList[1] )
-local abilityW = bot:GetAbilityByName( sAbilityList[2] )
-local abilityE = bot:GetAbilityByName( sAbilityList[3] )
-local abilityR = bot:GetAbilityByName( sAbilityList[6] )
+local abilityQ = bot:GetAbilityByName('lion_impale')
+local abilityW = bot:GetAbilityByName('lion_voodoo')
+local abilityE = bot:GetAbilityByName('lion_mana_drain')
+local abilityR = bot:GetAbilityByName('lion_finger_of_death')
 local talent4 = bot:GetAbilityByName( sTalentList[4] )
 local talent5 = bot:GetAbilityByName( sTalentList[5] )
 local talent8 = bot:GetAbilityByName( sTalentList[8] )
@@ -193,10 +198,12 @@ local castWDesire, castWTarget
 local castEDesire, castETarget
 local castRDesire, castRTarget
 
-local nKeepMana, nMP, nHP, nLV, hEnemyList, hAllyList, botTarget, sMotive
+local nKeepMana, nMP, nHP, nLV, hEnemyList, hAllyList, botTarget, sMotive, botName
 local aetherRange = 0
 local lastCastQTime = -99
 
+local isTalent5Trained = false
+local isTalent8Trained = false
 
 function X.SkillsComplement()
 
@@ -208,6 +215,11 @@ function X.SkillsComplement()
 
 	if J.CanNotUseAbility( bot ) or bot:IsInvisible() then return end
 
+	abilityQ = bot:GetAbilityByName('lion_impale')
+	abilityW = bot:GetAbilityByName('lion_voodoo')
+	abilityE = bot:GetAbilityByName('lion_mana_drain')
+	abilityR = bot:GetAbilityByName('lion_finger_of_death')
+
 	nKeepMana = 400
 	aetherRange = 0
 	nLV = bot:GetLevel()
@@ -216,6 +228,20 @@ function X.SkillsComplement()
 	botTarget = J.GetProperTarget( bot )
 	hEnemyList = bot:GetNearbyHeroes( 1600, true, BOT_MODE_NONE )
 	hAllyList = J.GetAlliesNearLoc( bot:GetLocation(), 1600 )
+	botName = GetBot():GetUnitName()
+
+	if string.find(botName, 'lion')
+	then
+		if talent5:IsTrained()
+		then
+			isTalent5Trained = true
+		end
+
+		if talent8:IsTrained()
+		then
+			isTalent8Trained = true
+		end
+	end
 
 	local aether = J.IsItemAvailable( "item_aether_lens" )
 	if aether ~= nil then aetherRange = 250 end
@@ -263,7 +289,7 @@ function X.SkillsComplement()
 
 		J.SetQueuePtToINT( bot, true )
 
-		if talent8:IsTrained()
+		if isTalent8Trained
 		then
 			bot:ActionQueue_UseAbilityOnLocation( abilityW, castWTarget )
 		else
@@ -295,7 +321,8 @@ function X.IsAbilityEChanneling()
 		local nEnemyCreepList = bot:GetNearbyCreeps( 1200, true )
 		for _, nCreep in pairs( nEnemyCreepList )
 		do
-			if nCreep:HasModifier( "modifier_lion_mana_drain" )
+			if J.IsValid(nCreep)
+			and nCreep:HasModifier( "modifier_lion_mana_drain" )
 			then
 				return true
 			end
@@ -304,7 +331,8 @@ function X.IsAbilityEChanneling()
 		local nEnemyHeroList = bot:GetNearbyHeroes( 1200, true, BOT_MODE_NONE )
 		for _, npcEnemy in pairs( nEnemyHeroList )
 		do
-			if npcEnemy:HasModifier( "modifier_lion_mana_drain" )
+			if J.IsValidHero(npcEnemy)
+			and npcEnemy:HasModifier( "modifier_lion_mana_drain" )
 			then
 				return true
 			end
@@ -319,7 +347,7 @@ end
 function X.ConsiderQ()
 
 
-	if not abilityQ:IsFullyCastable() then return 0 end
+	if not J.CanCastAbility(abilityQ) then return 0 end
 
 	local nSkillLV = abilityQ:GetLevel()
 	local nCastRange = abilityQ:GetCastRange() + aetherRange + 20
@@ -485,7 +513,7 @@ end
 function X.ConsiderW()
 
 
-	if not abilityW:IsFullyCastable()
+	if not J.CanCastAbility(abilityW)
 		or lastCastQTime > DotaTime() - 0.8
 	then return 0 end
 
@@ -502,12 +530,12 @@ function X.ConsiderW()
 	for _, npcEnemy in pairs( nInBonusEnemyList )
 	do
 		if J.IsValidHero( npcEnemy )
-			and ( J.CanCastOnTargetAdvanced( npcEnemy ) or talent8:IsTrained() )
+			and ( J.CanCastOnTargetAdvanced( npcEnemy ) or isTalent8Trained )
 			and J.CanCastOnNonMagicImmune( npcEnemy )
 		then
 			if npcEnemy:IsChanneling()
 			then
-				if talent8:IsTrained()
+				if isTalent8Trained
 				then
 					return BOT_ACTION_DESIRE_HIGH, npcEnemy:GetLocation(), 'W-打断吟唱:'..J.Chat.GetNormName( npcEnemy )
 				else
@@ -518,7 +546,7 @@ function X.ConsiderW()
 			if npcEnemy:IsCastingAbility()
 				and J.IsInRange( bot, npcEnemy, nCastRange + 50 )
 			then
-				if talent8:IsTrained()
+				if isTalent8Trained
 				then
 					return BOT_ACTION_DESIRE_HIGH, npcEnemy:GetLocation(), 'W-打断施法:'..J.Chat.GetNormName( npcEnemy )
 				else
@@ -534,7 +562,7 @@ function X.ConsiderW()
 		and ( #nInBonusEnemyList >= 2 or #hAllyList >= 3 )
 	then
 
-		if talent8:IsTrained()
+		if isTalent8Trained
 		then
 			local nAoeLoc = J.GetAoeEnemyHeroLocation( bot, nCastRange, 250, 2 )
 			if nAoeLoc ~= nil
@@ -550,7 +578,7 @@ function X.ConsiderW()
 		do
 			if J.IsValid( npcEnemy )
 				and J.CanCastOnNonMagicImmune( npcEnemy )
-				and ( J.CanCastOnTargetAdvanced( npcEnemy ) or talent8:IsTrained() )
+				and ( J.CanCastOnTargetAdvanced( npcEnemy ) or isTalent8Trained )
 				and not J.IsDisabled( npcEnemy )
 				and not J.IsTaunted( npcEnemy )
 				and not npcEnemy:IsDisarmed()
@@ -567,7 +595,7 @@ function X.ConsiderW()
 		if npcMostDangerousEnemy ~= nil
 			and J.IsInRange( bot, npcMostDangerousEnemy, nCastRange + 50 )
 		then
-			if talent8:IsTrained()
+			if isTalent8Trained
 			then
 				return BOT_ACTION_DESIRE_HIGH, npcMostDangerousEnemy:GetLocation(), 'W-团战:'..J.Chat.GetNormName( npcMostDangerousEnemy )
 			else
@@ -583,13 +611,13 @@ function X.ConsiderW()
 	then
 		if J.IsValidHero( botTarget )
 			and J.CanCastOnNonMagicImmune( botTarget )
-			and ( J.CanCastOnTargetAdvanced( botTarget ) or talent8:IsTrained() )
+			and ( J.CanCastOnTargetAdvanced( botTarget ) or isTalent8Trained )
 			and J.IsInRange( bot, botTarget, nCastRange + 150 )
 			and not J.IsDisabled( botTarget )
 			and not J.IsTaunted( botTarget )
 			and not botTarget:IsDisarmed()
 		then
-			if talent8:IsTrained()
+			if isTalent8Trained
 			then
 				return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation(), 'W-进攻:'..J.Chat.GetNormName( botTarget )
 			else
@@ -608,12 +636,12 @@ function X.ConsiderW()
 		do
 			if J.IsValid( npcEnemy )
 				and J.CanCastOnNonMagicImmune( npcEnemy )
-				and ( J.CanCastOnTargetAdvanced( npcEnemy ) or talent8:IsTrained() )
+				and ( J.CanCastOnTargetAdvanced( npcEnemy ) or isTalent8Trained )
 				and not J.IsDisabled( npcEnemy )
 				and not J.IsTaunted( npcEnemy )
 				and not npcEnemy:IsDisarmed()
 			then
-				if talent8:IsTrained()
+				if isTalent8Trained
 				then
 					return BOT_ACTION_DESIRE_HIGH, npcEnemy:GetLocation(), 'W-保护自己:'..J.Chat.GetNormName( npcEnemy )
 				else
@@ -633,12 +661,12 @@ function X.ConsiderW()
 				and ( bot:WasRecentlyDamagedByHero( npcEnemy, 4.0 )
 						or GetUnitToUnitDistance( bot, npcEnemy ) <= 600 )
 				and J.CanCastOnNonMagicImmune( npcEnemy )
-				and ( J.CanCastOnTargetAdvanced( npcEnemy ) or talent8:IsTrained() )
+				and ( J.CanCastOnTargetAdvanced( npcEnemy ) or isTalent8Trained )
 				and not J.IsDisabled( npcEnemy )
 				and not J.IsTaunted( npcEnemy )
 				and not npcEnemy:IsDisarmed()
 			then
-				if talent8:IsTrained()
+				if isTalent8Trained
 				then
 					return BOT_ACTION_DESIRE_HIGH, npcEnemy:GetLocation(), 'W-撤退:'..J.Chat.GetNormName( npcEnemy )
 				else
@@ -656,7 +684,7 @@ function X.ConsiderW()
 			and not J.IsDisabled( botTarget )
 			and not botTarget:IsDisarmed()
 		then
-			if talent8:IsTrained()
+			if isTalent8Trained
 			then
 				return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation(), 'W-肉山:'..J.Chat.GetNormName( botTarget )
 			else
@@ -674,7 +702,7 @@ end
 function X.ConsiderE()
 
 
-	if not abilityE:IsFullyCastable() then return 0 end
+	if not J.CanCastAbility(abilityE) then return 0 end
 
 	local nSkillLV = abilityE:GetLevel()
 	local nCastRange = abilityE:GetCastRange() + aetherRange
@@ -789,7 +817,7 @@ end
 function X.ConsiderR()
 
 
-	if not abilityR:IsFullyCastable() then return 0 end
+	if not J.CanCastAbility(abilityR) then return 0 end
 
 	local nSkillLV = abilityR:GetLevel()
 	local nRadius	 = 0
@@ -975,7 +1003,7 @@ end
 
 function X.GetAbilityRDamageBonus()
 
-	local nTalantDamage = talent5:IsTrained() and talent5:GetSpecialValueInt( 'value' ) or 0
+	local nTalantDamage = isTalent5Trained and talent5:GetSpecialValueInt( 'value' ) or 0
 	local nDamageBonus = abilityR:GetSpecialValueInt( 'damage_per_kill' ) + nTalantDamage
 	local sModifierName = "modifier_lion_finger_of_death_kill_counter"
 	local nModifierCount = J.GetModifierCount( bot, sModifierName )
@@ -1002,7 +1030,7 @@ end
 
 function X.IsOtherAbilityFullyCastable()
 
-	return abilityQ:IsFullyCastable() or abilityW:IsFullyCastable() or abilityR:IsFullyCastable()
+	return J.CanCastAbility(abilityQ) or J.CanCastAbility(abilityW) or J.CanCastAbility(abilityR)
 
 end
 
@@ -1025,4 +1053,3 @@ function X.MayKillTarget( nTarget )
 end
 
 return X
--- dota2jmz@163.com QQ:2462331592..

@@ -360,8 +360,7 @@ function Think()
 					end
 				end
 
-				if  TPScroll ~= nil
-				and TPScroll:IsFullyCastable()
+				if J.CanCastAbility(TPScroll)
 				then
 					bot:Action_UseAbilityOnLocation(TPScroll, J.GetTeamFountain())
 					return

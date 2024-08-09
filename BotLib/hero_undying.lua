@@ -7,6 +7,9 @@ local sTalentList = J.Skill.GetTalentList( bot )
 local sAbilityList = J.Skill.GetAbilityList( bot )
 local sRole = J.Item.GetRoleItemsBuyList( bot )
 
+if GetBot():GetUnitName() == 'npc_dota_hero_undying'
+then
+
 local RI = require(GetScriptDirectory()..'/FunLib/util_role_item')
 
 local sUtility = {"item_pipe", "item_lotus_orb"}
@@ -146,6 +149,8 @@ function X.MinionThink(hMinionUnit)
     Minion.MinionThink(hMinionUnit)
 end
 
+end
+
 local Decay         = bot:GetAbilityByName('undying_decay')
 local SoulRip       = bot:GetAbilityByName('undying_soul_rip')
 local Tombstone     = bot:GetAbilityByName('undying_tombstone')
@@ -160,6 +165,11 @@ local botTarget
 
 function X.SkillsComplement()
 	if J.CanNotUseAbility(bot) then return end
+
+    Decay         = bot:GetAbilityByName('undying_decay')
+    SoulRip       = bot:GetAbilityByName('undying_soul_rip')
+    Tombstone     = bot:GetAbilityByName('undying_tombstone')
+    FleshGolem    = bot:GetAbilityByName('undying_flesh_golem')
 
     botTarget = J.GetProperTarget(bot)
 
@@ -193,7 +203,7 @@ function X.SkillsComplement()
 end
 
 function X.ConsiderDecay()
-    if not Decay:IsFullyCastable()
+    if not J.CanCastAbility(Decay)
     then
         return BOT_ACTION_DESIRE_NONE, 0
     end
@@ -355,7 +365,7 @@ function X.ConsiderDecay()
 end
 
 function X.ConsiderSoulRip()
-    if not SoulRip:IsFullyCastable()
+    if not J.CanCastAbility(SoulRip)
     then
         return BOT_ACTION_DESIRE_NONE, nil
     end
@@ -548,7 +558,7 @@ function X.ConsiderSoulRip()
 end
 
 function X.ConsiderTombstone()
-    if not Tombstone:IsFullyCastable()
+    if not J.CanCastAbility(Tombstone)
     then
         return BOT_ACTION_DESIRE_NONE, 0
     end
@@ -580,7 +590,7 @@ function X.ConsiderTombstone()
 end
 
 function X.ConsiderFleshGolem()
-    if not FleshGolem:IsFullyCastable()
+    if not J.CanCastAbility(FleshGolem)
     then
         return BOT_ACTION_DESIRE_NONE
     end

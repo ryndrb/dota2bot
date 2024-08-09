@@ -7,6 +7,9 @@ local sTalentList = J.Skill.GetTalentList( bot )
 local sAbilityList = J.Skill.GetAbilityList( bot )
 local sRole = J.Item.GetRoleItemsBuyList( bot )
 
+if GetBot():GetUnitName() == 'npc_dota_hero_magnataur'
+then
+
 local RI = require(GetScriptDirectory()..'/FunLib/util_role_item')
 
 local sUtility = {"item_crimson_guard", "item_pipe", "item_lotus_orb", "item_heavens_halberd"}
@@ -127,6 +130,8 @@ function X.MinionThink(hMinionUnit)
     Minion.MinionThink(hMinionUnit)
 end
 
+end
+
 local Shockwave         = bot:GetAbilityByName('magnataur_shockwave')
 local Empower           = bot:GetAbilityByName('magnataur_empower')
 local Skewer            = bot:GetAbilityByName('magnataur_skewer')
@@ -139,7 +144,6 @@ local SkewerDesire, SkewerLocation
 local HornTossDesire
 local ReversePolarityDesire
 
-local Blink
 local BlinkLocation
 
 local BlinkRPDesire
@@ -152,17 +156,23 @@ if bot.shouldBlink == nil then bot.shouldBlink = false end
 function X.SkillsComplement()
     if J.CanNotUseAbility(bot) then return end
 
+    Shockwave         = bot:GetAbilityByName('magnataur_shockwave')
+    Empower           = bot:GetAbilityByName('magnataur_empower')
+    Skewer            = bot:GetAbilityByName('magnataur_skewer')
+    HornToss          = bot:GetAbilityByName('magnataur_horn_toss')
+    ReversePolarity   = bot:GetAbilityByName('magnataur_reverse_polarity')
+
     BlinkRPSkewerDesire = X.ConsiderBlinkRPSkewer()
     if BlinkRPSkewerDesire > 0
     then
         bot:Action_ClearActions(false)
 
-        if CanBKB()
+        if J.CanBlackKingBar(bot)
         then
-            bot:ActionQueue_UseAbility(BlackKingBar)
+            bot:ActionQueue_UseAbility(bot.BlackKingBar)
         end
 
-        bot:ActionQueue_UseAbilityOnLocation(Blink, BlinkLocation)
+        bot:ActionQueue_UseAbilityOnLocation(bot.Blink, BlinkLocation)
         bot:ActionQueue_Delay(0.1)
         bot:ActionQueue_UseAbility(ReversePolarity)
         bot:ActionQueue_Delay(0.3)
@@ -181,12 +191,12 @@ function X.SkillsComplement()
     then
         bot:Action_ClearActions(false)
 
-        if CanBKB()
+        if J.CanBlackKingBar(bot)
         then
-            bot:ActionQueue_UseAbility(BlackKingBar)
+            bot:ActionQueue_UseAbility(bot.BlackKingBar)
         end
 
-        bot:ActionQueue_UseAbilityOnLocation(Blink, BlinkLocation)
+        bot:ActionQueue_UseAbilityOnLocation(bot.Blink, BlinkLocation)
         bot:ActionQueue_Delay(0.1)
 
         SkewerDesire, SkewerLocation = X.ConsiderSkewer2()
@@ -203,12 +213,12 @@ function X.SkillsComplement()
     then
         bot:Action_ClearActions(false)
 
-        if CanBKB()
+        if J.CanBlackKingBar(bot)
         then
-            bot:ActionQueue_UseAbility(BlackKingBar)
+            bot:ActionQueue_UseAbility(bot.BlackKingBar)
         end
 
-        bot:ActionQueue_UseAbilityOnLocation(Blink, BlinkLocation)
+        bot:ActionQueue_UseAbilityOnLocation(bot.Blink, BlinkLocation)
         bot:ActionQueue_Delay(0.1)
         bot:ActionQueue_UseAbility(ReversePolarity)
         return
@@ -219,12 +229,12 @@ function X.SkillsComplement()
     then
         bot:Action_ClearActions(false)
 
-        if CanBKB()
+        if J.CanBlackKingBar(bot)
         then
-            bot:ActionQueue_UseAbility(BlackKingBar)
+            bot:ActionQueue_UseAbility(bot.BlackKingBar)
         end
 
-        bot:ActionQueue_UseAbilityOnLocation(Blink, BlinkLocation)
+        bot:ActionQueue_UseAbilityOnLocation(bot.Blink, BlinkLocation)
 
         HornTossDesire = X.ConsiderHornToss()
         if HornTossDesire > 0
@@ -281,7 +291,7 @@ function X.SkillsComplement()
 end
 
 function X.ConsiderShockwave()
-    if not Shockwave:IsFullyCastable()
+    if not J.CanCastAbility(Shockwave)
     then
         return BOT_ACTION_DESIRE_NONE, 0
     end
@@ -440,7 +450,7 @@ function X.ConsiderShockwave()
 end
 
 function X.ConsiderEmpower()
-    if not Empower:IsFullyCastable()
+    if not J.CanCastAbility(Empower)
     then
         return BOT_ACTION_DESIRE_NONE, nil
     end
@@ -575,7 +585,8 @@ function X.ConsiderEmpower()
 end
 
 function X.ConsiderSkewer()
-    if not Skewer:IsFullyCastable()
+    if not J.CanCastAbility(Skewer)
+    or bot:IsRooted()
     then
         return BOT_ACTION_DESIRE_NONE, 0
     end
@@ -593,7 +604,7 @@ function X.ConsiderSkewer()
 	end
 
 	if  J.IsGoingOnSomeone(bot)
-    and (not CanDoBlinkSkewer() or not CanDoBlinkRPSkewer() or not CanDoBlinkHornTossSkewer())
+    and (not X.CanDoBlinkSkewer() or not X.CanDoBlinkRPSkewer() or not X.CanDoBlinkHornTossSkewer())
 	then
         local nInRangeAlly = bot:GetNearbyHeroes(1000, false, BOT_MODE_NONE)
         local nInRangeEnemy = bot:GetNearbyHeroes(1000, true, BOT_MODE_NONE)
@@ -652,7 +663,7 @@ function X.ConsiderSkewer()
 end
 
 function X.ConsiderReversePolarity()
-    if not ReversePolarity:IsFullyCastable()
+    if not J.CanCastAbility(ReversePolarity)
     or bot:HasModifier('modifier_magnataur_skewer_movement')
     then
         return BOT_ACTION_DESIRE_NONE
@@ -662,7 +673,7 @@ function X.ConsiderReversePolarity()
 	local nDamage = ReversePolarity:GetSpecialValueInt('polarity_damage')
 
     if  J.IsInTeamFight(bot, 1200)
-    and (not CanDoBlinkRP() or not CanDoBlinkRPSkewer())
+    and (not X.CanDoBlinkRP() or not X.CanDoBlinkRPSkewer())
 	then
 		local nInRangeEnemy = bot:GetNearbyHeroes(nRadius, true, BOT_MODE_NONE)
 
@@ -712,8 +723,7 @@ function X.ConsiderReversePolarity()
 end
 
 function X.ConsiderHornToss()
-    if not HornToss:IsTrained()
-    or not HornToss:IsFullyCastable()
+    if not J.CanCastAbility(HornToss)
     then
         return BOT_ACTION_DESIRE_NONE
     end
@@ -722,7 +732,7 @@ function X.ConsiderHornToss()
     local botTarget = J.GetProperTarget(bot)
 
     if  J.IsGoingOnSomeone(bot)
-    and not CanDoBlinkHornTossSkewer()
+    and not X.CanDoBlinkHornTossSkewer()
     then
         local nInRangeAlly = bot:GetNearbyHeroes(800, false, BOT_MODE_NONE)
         local nInRangeEnemy = bot:GetNearbyHeroes(800, true, BOT_MODE_NONE)
@@ -769,7 +779,7 @@ function X.ConsiderHornToss()
 end
 
 function X.ConsiderBlinkRP()
-    if CanDoBlinkRP()
+    if X.CanDoBlinkRP()
     then
         local nCastRange = 1199
         local nCastPoint = Skewer:GetCastPoint() + ReversePolarity:GetCastPoint()
@@ -797,9 +807,9 @@ function X.ConsiderBlinkRP()
     return BOT_ACTION_DESIRE_NONE
 end
 
-function CanDoBlinkRP()
-    if  ReversePolarity:IsFullyCastable()
-    and HasBlink()
+function X.CanDoBlinkRP()
+    if  J.CanCastAbility(ReversePolarity)
+    and J.CanBlinkDagger(GetBot())
     then
         local nManaCost = ReversePolarity:GetManaCost()
 
@@ -815,7 +825,7 @@ function CanDoBlinkRP()
 end
 
 function X.ConsiderBlinkForSkewer()
-    if CanDoBlinkSkewer()
+    if X.CanDoBlinkSkewer()
     then
         local botTarget = J.GetProperTarget(bot)
 
@@ -843,31 +853,34 @@ function X.ConsiderBlinkForSkewer()
 end
 
 function X.ConsiderSkewer2()
-    local nRadius = Skewer:GetSpecialValueInt('skewer_radius')
-    local nDist = Skewer:GetSpecialValueInt('range')
-
-    local nInRangeAlly = bot:GetNearbyHeroes(800, false, BOT_MODE_NONE)
-    local nInRangeEnemy = bot:GetNearbyHeroes(800, true, BOT_MODE_NONE)
-    local nInRangeEnemy2 = bot:GetNearbyHeroes(nRadius, true, BOT_MODE_NONE)
-
-    for _, enemyHero in pairs(nInRangeEnemy2)
-    do
-        if  J.IsValidHero(enemyHero)
-        and J.CanCastOnNonMagicImmune(enemyHero)
-        and not J.IsSuspiciousIllusion(enemyHero)
-        and not enemyHero:HasModifier('modifier_enigma_black_hole_pull')
-        and not enemyHero:HasModifier('modifier_faceless_void_chronosphere_freeze')
-        and nInRangeAlly ~= nil and nInRangeEnemy
-        and #nInRangeAlly >= #nInRangeEnemy
-        then
-            if  J.IsEnemyBetweenMeAndLocation(bot, J.GetEscapeLoc(), nDist)
-            and J.IsInRange(bot, enemyHero, nRadius)
+    if J.CanCastAbility(Skewer)
+    then
+        local nRadius = Skewer:GetSpecialValueInt('skewer_radius')
+        local nDist = Skewer:GetSpecialValueInt('range')
+    
+        local nInRangeAlly = bot:GetNearbyHeroes(800, false, BOT_MODE_NONE)
+        local nInRangeEnemy = bot:GetNearbyHeroes(800, true, BOT_MODE_NONE)
+        local nInRangeEnemy2 = bot:GetNearbyHeroes(nRadius, true, BOT_MODE_NONE)
+    
+        for _, enemyHero in pairs(nInRangeEnemy2)
+        do
+            if  J.IsValidHero(enemyHero)
+            and J.CanCastOnNonMagicImmune(enemyHero)
+            and not J.IsSuspiciousIllusion(enemyHero)
+            and not enemyHero:HasModifier('modifier_enigma_black_hole_pull')
+            and not enemyHero:HasModifier('modifier_faceless_void_chronosphere_freeze')
+            and nInRangeAlly ~= nil and nInRangeEnemy
+            and #nInRangeAlly >= #nInRangeEnemy
             then
-                if #nInRangeAlly >= 1
+                if  J.IsEnemyBetweenMeAndLocation(bot, J.GetEscapeLoc(), nDist)
+                and J.IsInRange(bot, enemyHero, nRadius)
                 then
-                    return BOT_ACTION_DESIRE_HIGH, J.Site.GetXUnitsTowardsLocation(bot, nInRangeAlly[#nInRangeAlly]:GetLocation(), nDist)
-                else
-                    return BOT_ACTION_DESIRE_HIGH, J.Site.GetXUnitsTowardsLocation(bot, J.GetEscapeLoc(), nDist)
+                    if #nInRangeAlly >= 1
+                    then
+                        return BOT_ACTION_DESIRE_HIGH, J.Site.GetXUnitsTowardsLocation(bot, nInRangeAlly[#nInRangeAlly]:GetLocation(), nDist)
+                    else
+                        return BOT_ACTION_DESIRE_HIGH, J.Site.GetXUnitsTowardsLocation(bot, J.GetEscapeLoc(), nDist)
+                    end
                 end
             end
         end
@@ -876,9 +889,9 @@ function X.ConsiderSkewer2()
     return BOT_ACTION_DESIRE_NONE
 end
 
-function CanDoBlinkSkewer()
-    if  Skewer:IsFullyCastable()
-    and HasBlink()
+function X.CanDoBlinkSkewer()
+    if  J.CanCastAbility(Skewer)
+    and J.CanBlinkDagger(GetBot())
     then
         local nManaCost = Skewer:GetManaCost()
 
@@ -894,7 +907,7 @@ function CanDoBlinkSkewer()
 end
 
 function X.ConsiderBlinkRPSkewer()
-    if CanDoBlinkRPSkewer()
+    if X.CanDoBlinkRPSkewer()
     then
         local nCastRange = 1199
         local nCastPoint = Skewer:GetCastPoint() + ReversePolarity:GetCastPoint()
@@ -922,10 +935,10 @@ function X.ConsiderBlinkRPSkewer()
     return BOT_ACTION_DESIRE_NONE
 end
 
-function CanDoBlinkRPSkewer()
-    if  Skewer:IsFullyCastable()
-    and ReversePolarity:IsFullyCastable()
-    and HasBlink()
+function X.CanDoBlinkRPSkewer()
+    if  J.CanCastAbility(Skewer)
+    and J.CanCastAbility(ReversePolarity)
+    and J.CanBlinkDagger(GetBot())
     then
         local nManaCost = Skewer:GetManaCost() + ReversePolarity:GetManaCost()
 
@@ -941,7 +954,7 @@ function CanDoBlinkRPSkewer()
 end
 
 function X.ConsiderBlinkForHornTossSkewer()
-    if CanDoBlinkHornTossSkewer()
+    if X.CanDoBlinkHornTossSkewer()
     then
         local botTarget = J.GetProperTarget(bot)
 
@@ -969,11 +982,11 @@ function X.ConsiderBlinkForHornTossSkewer()
     return BOT_ACTION_DESIRE_NONE
 end
 
-function CanDoBlinkHornTossSkewer()
-    if  (HornToss:IsTrained() and HornToss:IsFullyCastable())
-    and Skewer:IsFullyCastable()
-    and ReversePolarity:IsFullyCastable()
-    and HasBlink()
+function X.CanDoBlinkHornTossSkewer()
+    if  J.CanCastAbility(HornToss)
+    and J.CanCastAbility(Skewer)
+    and J.CanCastAbility(ReversePolarity)
+    and J.CanBlinkDagger(GetBot())
     then
         local nManaCost = Skewer:GetManaCost() + ReversePolarity:GetManaCost() + HornToss:GetManaCost()
 
@@ -985,57 +998,6 @@ function CanDoBlinkHornTossSkewer()
     end
 
     bot.shouldBlink = false
-    return false
-end
-
-function HasBlink()
-    local blink = nil
-
-    for i = 0, 5
-    do
-		local item = bot:GetItemInSlot(i)
-
-		if  item ~= nil
-        and (item:GetName() == "item_blink" or item:GetName() == "item_overwhelming_blink" or item:GetName() == "item_arcane_blink" or item:GetName() == "item_swift_blink")
-        then
-			blink = item
-			break
-		end
-	end
-
-    if  blink ~= nil
-    and blink:IsFullyCastable()
-	then
-        Blink = blink
-        return true
-	end
-
-    return false
-end
-
-function CanBKB()
-    local bkb = nil
-
-    for i = 0, 5
-    do
-		local item = bot:GetItemInSlot(i)
-
-		if  item ~= nil
-        and item:GetName() == "item_black_king_bar"
-        then
-			bkb = item
-			break
-		end
-	end
-
-    if  bkb ~= nil
-    and bkb:IsFullyCastable()
-    and bot:GetMana() >= 75
-	then
-        BlackKingBar = bkb
-        return true
-	end
-
     return false
 end
 

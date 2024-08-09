@@ -7,6 +7,9 @@ local sTalentList = J.Skill.GetTalentList( bot )
 local sAbilityList = J.Skill.GetAbilityList( bot )
 local sRole = J.Item.GetRoleItemsBuyList( bot )
 
+if GetBot():GetUnitName() == 'npc_dota_hero_puck'
+then
+
 local RI = require(GetScriptDirectory()..'/FunLib/util_role_item')
 
 local sUtility = {}
@@ -129,6 +132,8 @@ function X.MinionThink(hMinionUnit)
     Minion.MinionThink(hMinionUnit)
 end
 
+end
+
 local IllusoryOrb   = bot:GetAbilityByName('puck_illusory_orb')
 local WaningRift    = bot:GetAbilityByName('puck_waning_rift')
 local PhaseShift    = bot:GetAbilityByName('puck_phase_shift')
@@ -149,6 +154,12 @@ local botTarget
 
 function X.SkillsComplement()
     if J.CanNotUseAbility(bot) then return end
+
+    IllusoryOrb   = bot:GetAbilityByName('puck_illusory_orb')
+    WaningRift    = bot:GetAbilityByName('puck_waning_rift')
+    PhaseShift    = bot:GetAbilityByName('puck_phase_shift')
+    EtherealJaunt = bot:GetAbilityByName('puck_ethereal_jaunt')
+    DreamCoil     = bot:GetAbilityByName('puck_dream_coil')
 
     botTarget = J.GetProperTarget(bot)
 
@@ -203,7 +214,7 @@ function X.SkillsComplement()
 end
 
 function X.ConsiderIllusoryOrb()
-    if not IllusoryOrb:IsFullyCastable()
+    if not J.CanCastAbility(IllusoryOrb)
     or bot:HasModifier('modifier_puck_phase_shift')
     then
         return BOT_ACTION_DESIRE_NONE, 0
@@ -299,7 +310,7 @@ function X.ConsiderIllusoryOrb()
         local nEnemyLaneCreeps = bot:GetNearbyLaneCreeps(nCastRange, true)
 
         if  nEnemyLaneCreeps ~= nil and #nEnemyLaneCreeps >= 3
-        and J.GetManaAfter(IllusoryOrb:GetManaCost()) * bot:GetMana() > DreamCoil:GetManaCost()
+        and J.GetManaAfter(IllusoryOrb:GetManaCost()) > 0.45
         then
             return BOT_ACTION_DESIRE_HIGH, J.GetCenterOfUnits(nEnemyLaneCreeps)
         end
@@ -314,7 +325,7 @@ function X.ConsiderIllusoryOrb()
     if J.IsFarming(bot)
     then
         if  J.IsAttacking(bot)
-        and J.GetManaAfter(IllusoryOrb:GetManaCost()) * bot:GetMana() > DreamCoil:GetManaCost()
+        and J.GetManaAfter(IllusoryOrb:GetManaCost()) > 0.45
         then
             local nNeutralCreeps = bot:GetNearbyNeutralCreeps(nCastRange)
             if nNeutralCreeps ~= nil
@@ -395,7 +406,7 @@ function X.ConsiderIllusoryOrb()
 end
 
 function X.ConsiderWaningRift()
-    if not WaningRift:IsFullyCastable()
+    if not J.CanCastAbility(WaningRift)
     or bot:HasModifier('modifier_puck_phase_shift')
     then
         return BOT_ACTION_DESIRE_NONE, 0
@@ -590,7 +601,7 @@ function X.ConsiderWaningRift()
 end
 
 function X.ConsiderPhaseShift()
-    if not PhaseShift:IsFullyCastable()
+    if not J.CanCastAbility(PhaseShift)
     then
         return BOT_ACTION_DESIRE_NONE
     end
@@ -673,13 +684,18 @@ function X.ConsiderPhaseShift()
 end
 
 function X.ConsiderEtherealJaunt()
-    if not EtherealJaunt:IsFullyCastable()
+    if not J.CanCastAbility(EtherealJaunt)
     then
         return BOT_ACTION_DESIRE_NONE
     end
 
 	local nAttackRange = bot:GetAttackRange()
-    local nDuration = PhaseShift:GetSpecialValueInt('duration')
+    local nDuration = 1
+
+    if string.find(GetBot():GetUnitName(), 'puck')
+    then
+        nDuration = PhaseShift:GetSpecialValueInt('duration')
+    end
 
     if IsRetreatOrb
 	then
@@ -781,7 +797,7 @@ function X.ConsiderEtherealJaunt()
 end
 
 function X.ConsiderDreamCoil()
-    if not DreamCoil:IsFullyCastable()
+    if not J.CanCastAbility(DreamCoil)
     or bot:HasModifier('modifier_puck_phase_shift')
     then
         return BOT_ACTION_DESIRE_NONE, 0
@@ -896,8 +912,8 @@ function X.ConsiderDreamCoil()
 end
 
 function X.CanDoPhaseOrb()
-    if  PhaseShift:IsFullyCastable()
-    and IllusoryOrb:IsFullyCastable()
+    if  J.CanCastAbility(PhaseShift)
+    and J.CanCastAbility(IllusoryOrb)
     then
         local nManaCost = PhaseShift:GetManaCost() + IllusoryOrb:GetManaCost()
 

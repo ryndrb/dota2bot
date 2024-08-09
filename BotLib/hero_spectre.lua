@@ -7,6 +7,9 @@ local sTalentList = J.Skill.GetTalentList( bot )
 local sAbilityList = J.Skill.GetAbilityList( bot )
 local sRole = J.Item.GetRoleItemsBuyList( bot )
 
+if GetBot():GetUnitName() == 'npc_dota_hero_spectre'
+then
+
 local RI = require(GetScriptDirectory()..'/FunLib/util_role_item')
 
 local sUtility = {}
@@ -127,8 +130,10 @@ function X.MinionThink(hMinionUnit)
     Minion.MinionThink(hMinionUnit)
 end
 
+end
+
 local SpectralDagger    = bot:GetAbilityByName('spectre_spectral_dagger')
--- local Desolate          = bot:GetAbilityByName('spectre_desolate')
+local Desolate          = bot:GetAbilityByName('spectre_desolate')
 local Dispersion        = bot:GetAbilityByName('spectre_dispersion')
 local ShadowStep        = bot:GetAbilityByName('spectre_haunt_single')
 local Haunt             = bot:GetAbilityByName('spectre_haunt')
@@ -149,6 +154,11 @@ local HauntDuration = 0
 
 function X.SkillsComplement()
     if J.CanNotUseAbility(bot) then return end
+
+    SpectralDagger    = bot:GetAbilityByName('spectre_spectral_dagger')
+    ShadowStep        = bot:GetAbilityByName('spectre_haunt_single')
+    Haunt             = bot:GetAbilityByName('spectre_haunt')
+    Reality           = bot:GetAbilityByName('spectre_reality')
 
     RealityDesire, RealityLocation = X.ConsiderReality()
     if RealityDesire > 0
@@ -195,7 +205,7 @@ function X.SkillsComplement()
 end
 
 function X.ConsiderSpectralDagger()
-    if not SpectralDagger:IsFullyCastable()
+    if not J.CanCastAbility(SpectralDagger)
     then
         return BOT_ACTION_DESIRE_NONE, nil, nil
     end
@@ -438,9 +448,7 @@ function X.ConsiderSpectralDagger()
 end
 
 function X.ConsiderDispersion()
-    if Dispersion:IsPassive()
-    or Dispersion:IsHidden()
-    or not Dispersion:IsFullyCastable()
+    if not J.CanCastAbility(Dispersion)
     then
         return BOT_ACTION_DESIRE_NONE
     end
@@ -493,9 +501,7 @@ function X.ConsiderDispersion()
 end
 
 function X.ConsiderReality()
-    if Reality:IsHidden()
-    or not Reality:IsTrained()
-    or not Reality:IsFullyCastable()
+    if not J.CanCastAbility(Reality)
     then
         return BOT_ACTION_DESIRE_NONE, 0
     end
@@ -609,7 +615,7 @@ function X.ConsiderReality()
 end
 
 function X.ConsiderShadowStep()
-    if not ShadowStep:IsFullyCastable()
+    if not J.CanCastAbility(ShadowStep)
     or J.IsInLaningPhase()
     then
         return BOT_ACTION_DESIRE_NONE, nil
@@ -683,9 +689,8 @@ function X.ConsiderShadowStep()
 end
 
 function X.ConsiderHaunt()
-    if not Haunt:IsTrained()
-    or not Haunt:IsFullyCastable()
-    or ShadowStep:IsFullyCastable()
+    if not J.CanCastAbility(Haunt)
+    or J.CanCastAbility(ShadowStep)
     or J.IsInLaningPhase()
     then
         return BOT_ACTION_DESIRE_NONE

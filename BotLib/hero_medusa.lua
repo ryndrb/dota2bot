@@ -7,6 +7,9 @@ local sTalentList = J.Skill.GetTalentList( bot )
 local sAbilityList = J.Skill.GetAbilityList( bot )
 local sRole = J.Item.GetRoleItemsBuyList( bot )
 
+if GetBot():GetUnitName() == 'npc_dota_hero_medusa'
+then
+
 local RI = require(GetScriptDirectory()..'/FunLib/util_role_item')
 
 local sUtility = {}
@@ -127,6 +130,8 @@ function X.MinionThink( hMinionUnit )
 
 end
 
+end
+
 --[[
 
 npc_dota_hero_medusa
@@ -157,10 +162,12 @@ modifier_medusa_stone_gaze_stone
 
 --]]
 
-local abilityQ = bot:GetAbilityByName( sAbilityList[1] )
-local abilityW = bot:GetAbilityByName( sAbilityList[2] )
+local abilityQ = bot:GetAbilityByName('medusa_split_shot')
+local abilityW = bot:GetAbilityByName('medusa_mystic_snake')
+local abilityE = bot:GetAbilityByName('medusa_mana_shield')
+local abilityAS = bot:GetAbilityByName('medusa_cold_blooded')
 local GorgonGrasp = bot:GetAbilityByName('medusa_gorgon_grasp')
-local abilityR = bot:GetAbilityByName( sAbilityList[6] )
+local abilityR = bot:GetAbilityByName('medusa_stone_gaze')
 local abilityM = nil
 
 local castQDesire
@@ -175,10 +182,15 @@ local lastToggleTime = 0
 
 function X.SkillsComplement()
 
-	J.ConsiderForMkbDisassembleMask( bot )
+	-- J.ConsiderForMkbDisassembleMask( bot )
 	J.ConsiderTarget()
 
 	if J.CanNotUseAbility( bot ) or bot:IsInvisible() then return end
+
+	abilityQ = bot:GetAbilityByName('medusa_split_shot')
+	abilityW = bot:GetAbilityByName('medusa_mystic_snake')
+	GorgonGrasp = bot:GetAbilityByName('medusa_gorgon_grasp')
+	abilityR = bot:GetAbilityByName('medusa_stone_gaze')
 
 	nKeepMana = 400
 	nLV = bot:GetLevel()
@@ -228,7 +240,7 @@ end
 
 function X.ConsiderQ()
 
-	if not abilityQ:IsFullyCastable() then return 0 end
+	if not J.CanCastAbility(abilityQ) then return 0 end
 
 	local nCastRange = bot:GetAttackRange() + 150
 	local nSkillLv = abilityQ:GetLevel()
@@ -263,34 +275,34 @@ function X.ConsiderQ()
 end
 
 
-function X.ConsiderE()
+-- function X.ConsiderE()
 
-	if not abilityE:IsFullyCastable() then return 0 end
+-- 	if not abilityE:IsFullyCastable() then return 0 end
 
-	if nHP > 0.8 and nMP < 0.88 and nLV < 15
-	  and J.GetEnemyCount( bot, 1600 ) <= 1
-	  and lastToggleTime + 3.0 < DotaTime()
-	then
-		if abilityE:GetToggleState()
-		then
-			return BOT_ACTION_DESIRE_HIGH
-		end
-	else
-		if not abilityE:GetToggleState()
-		then
-			lastToggleTime = DotaTime()
-			return BOT_ACTION_DESIRE_HIGH
-		end
-	end
+-- 	if nHP > 0.8 and nMP < 0.88 and nLV < 15
+-- 	  and J.GetEnemyCount( bot, 1600 ) <= 1
+-- 	  and lastToggleTime + 3.0 < DotaTime()
+-- 	then
+-- 		if abilityE:GetToggleState()
+-- 		then
+-- 			return BOT_ACTION_DESIRE_HIGH
+-- 		end
+-- 	else
+-- 		if not abilityE:GetToggleState()
+-- 		then
+-- 			lastToggleTime = DotaTime()
+-- 			return BOT_ACTION_DESIRE_HIGH
+-- 		end
+-- 	end
 
-	return BOT_ACTION_DESIRE_NONE
+-- 	return BOT_ACTION_DESIRE_NONE
 
 
-end
+-- end
 
 function X.ConsiderW()
 
-	if not abilityW:IsFullyCastable() then return 0 end
+	if not J.CanCastAbility(abilityW) then return 0 end
 
 	local nCastRange = abilityW:GetCastRange() + 20
 	local nDamage = abilityW:GetSpecialValueInt( 'snake_damage' ) * 2
@@ -392,7 +404,7 @@ function X.ConsiderW()
 end
 
 function X.ConsiderGorgonGrasp()
-	if not GorgonGrasp:IsFullyCastable()
+	if not J.CanCastAbility(GorgonGrasp)
 	then
 		return BOT_ACTION_DESIRE_NONE, 0
 	end
@@ -500,7 +512,7 @@ end
 
 function X.ConsiderR()
 
-	if not abilityR:IsFullyCastable() then return 0	end
+	if not J.CanCastAbility(abilityR) then return 0	end
 
 	local nCastRange = abilityR:GetSpecialValueInt( "radius" )
 	local nAttackRange = bot:GetAttackRange()
@@ -608,8 +620,7 @@ function X.GetNearestUnit( nUnit, nHeroes, nCreeps, nTable )
 	local NearestDist = 9999
 	for _, unit in pairs( nHeroes )
 	do
-		if unit ~= nil
-			and unit:IsAlive()
+		if J.IsValid(unit)
 			and not X.IsExistInTable( unit, nTable )
 			and GetUnitToUnitDistance( nUnit, unit ) < NearestDist
 		then
@@ -620,8 +631,7 @@ function X.GetNearestUnit( nUnit, nHeroes, nCreeps, nTable )
 
 	for _, unit in pairs( nCreeps )
 	do
-		if unit ~= nil
-			and unit:IsAlive()
+		if J.IsValid(unit)
 			and not X.IsExistInTable( unit, nTable )
 			and GetUnitToUnitDistance( nUnit, unit ) < NearestDist
 		then
@@ -646,4 +656,3 @@ function X.IsExistInTable( u, tUnit )
 end
 
 return X
--- dota2jmz@163.com QQ:2462331592..

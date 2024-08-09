@@ -7,6 +7,9 @@ local sTalentList = J.Skill.GetTalentList( bot )
 local sAbilityList = J.Skill.GetAbilityList( bot )
 local sRole = J.Item.GetRoleItemsBuyList( bot )
 
+if GetBot():GetUnitName() == 'npc_dota_hero_slark'
+then
+
 local RI = require(GetScriptDirectory()..'/FunLib/util_role_item')
 
 local sUtility = {}
@@ -134,6 +137,8 @@ function X.MinionThink( hMinionUnit )
 
 end
 
+end
+
 --[[
 
 npc_dota_hero_slark
@@ -174,11 +179,11 @@ modifier_slark_shadow_dance_visual
 
 --]]
 
-local abilityQ = bot:GetAbilityByName( sAbilityList[1] )
-local abilityW = bot:GetAbilityByName( sAbilityList[2] )
-local abilityE = bot:GetAbilityByName( sAbilityList[3] )
-local abilityR = bot:GetAbilityByName( sAbilityList[6] )
-local abilityAS = bot:GetAbilityByName( sAbilityList[4] )
+local abilityQ = bot:GetAbilityByName('slark_dark_pact')
+local abilityW = bot:GetAbilityByName('slark_pounce')
+local abilityE = bot:GetAbilityByName('slark_essence_shift')
+local abilityAS = bot:GetAbilityByName('slark_depth_shroud')
+local abilityR = bot:GetAbilityByName('slark_shadow_dance')
 local talent2 = bot:GetAbilityByName( sTalentList[2] )
 local talent6 = bot:GetAbilityByName( sTalentList[6] )
 
@@ -195,6 +200,11 @@ local aetherRange = 0
 function X.SkillsComplement()
 
 	if J.CanNotUseAbility( bot ) or bot:IsInvisible() then return end
+
+	abilityQ = bot:GetAbilityByName('slark_dark_pact')
+	abilityW = bot:GetAbilityByName('slark_pounce')
+	abilityAS = bot:GetAbilityByName('slark_depth_shroud')
+	abilityR = bot:GetAbilityByName('slark_shadow_dance')
 
 	nKeepMana = 400
 	aetherRange = 0
@@ -253,7 +263,7 @@ end
 function X.ConsiderQ()
 
 
-	if not abilityQ:IsFullyCastable() then return 0 end
+	if not J.CanCastAbility(abilityQ) then return 0 end
 
 	local nSkillLV = abilityQ:GetLevel()
 	local nCastRange = abilityQ:GetCastRange()
@@ -381,7 +391,7 @@ end
 function X.ConsiderW()
 
 
-	if not abilityW:IsFullyCastable() then return 0 end
+	if not J.CanCastAbility(abilityW) then return 0 end
 
 	local nSkillLV = abilityW:GetLevel()
 	local nCastRange = abilityW:GetSpecialValueInt( 'pounce_distance' )
@@ -454,8 +464,7 @@ end
 function X.ConsiderAS()
 
 
-	if not abilityAS:IsTrained() 
-		or not abilityAS:IsFullyCastable() 
+	if not J.CanCastAbility(abilityAS)
 		or bot:HasModifier( "modifier_slark_shadow_dance" )
 		or nHP > 0.85
 	then return 0 end
@@ -516,7 +525,7 @@ end
 function X.ConsiderR()
 
 
-	if not abilityR:IsFullyCastable() or nHP > 0.8 then return 0 end
+	if not J.CanCastAbility(abilityR) or nHP > 0.8 then return 0 end
 
 	local nSkillLV = abilityR:GetLevel()
 	local nCastRange = abilityR:GetCastRange()
@@ -600,7 +609,8 @@ function X.IsEnemyCastAbility()
 
 	for _, npcEnemy in pairs( enemyList )
 	do
-		if npcEnemy ~= nil and npcEnemy:IsAlive()
+		if J.IsValidHero(npcEnemy)
+		and npcEnemy ~= nil and npcEnemy:IsAlive()
 			and ( npcEnemy:IsCastingAbility() or npcEnemy:IsUsingAbility() )
 			and npcEnemy:IsFacingLocation( bot:GetLocation(), 30 )
 		then
@@ -634,4 +644,3 @@ end
 
 
 return X
--- dota2jmz@163.com QQ:2462331592..

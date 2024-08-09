@@ -7,6 +7,9 @@ local sTalentList = J.Skill.GetTalentList( bot )
 local sAbilityList = J.Skill.GetAbilityList( bot )
 local sRole = J.Item.GetRoleItemsBuyList( bot )
 
+if GetBot():GetUnitName() == 'npc_dota_hero_visage'
+then
+
 local RI = require(GetScriptDirectory()..'/FunLib/util_role_item')
 
 local sUtility = {"item_pipe", "item_crimson_guard"}
@@ -156,6 +159,8 @@ function X.MinionThink(hMinionUnit)
 	Minion.MinionThink(hMinionUnit)
 end
 
+end
+
 local GraveChill        = bot:GetAbilityByName('visage_grave_chill')
 local SoulAssumption    = bot:GetAbilityByName('visage_soul_assumption')
 local GravekeepersCloak = bot:GetAbilityByName('visage_gravekeepers_cloak')
@@ -172,6 +177,12 @@ local botTarget
 
 function X.SkillsComplement()
 	if J.CanNotUseAbility(bot) then return end
+
+    GraveChill        = bot:GetAbilityByName('visage_grave_chill')
+    SoulAssumption    = bot:GetAbilityByName('visage_soul_assumption')
+    GravekeepersCloak = bot:GetAbilityByName('visage_gravekeepers_cloak')
+    SilentAsTheGrave  = bot:GetAbilityByName('visage_silent_as_the_grave')
+    SummonFamiliars   = bot:GetAbilityByName('visage_summon_familiars')
 
     botTarget = J.GetProperTarget(bot)
 
@@ -213,7 +224,7 @@ function X.SkillsComplement()
 end
 
 function X.ConsiderGraveChill()
-    if not GraveChill:IsFullyCastable()
+    if not J.CanCastAbility(GraveChill)
     then
         return BOT_ACTION_DESIRE_NONE, nil
     end
@@ -301,7 +312,7 @@ function X.ConsiderGraveChill()
 end
 
 function X.ConsiderSoulAssumption()
-    if not SoulAssumption:IsFullyCastable()
+    if not J.CanCastAbility(SoulAssumption)
     then
         return BOT_ACTION_DESIRE_NONE, nil
     end
@@ -407,8 +418,7 @@ function X.ConsiderSoulAssumption()
 end
 
 function X.ConsiderGravekeepersCloak()
-    if GravekeepersCloak:IsPassive()
-    or not GravekeepersCloak:IsFullyCastable()
+    if not J.CanCastAbility(GravekeepersCloak)
     then
         return BOT_ACTION_DESIRE_NONE
     end
@@ -422,7 +432,7 @@ function X.ConsiderGravekeepersCloak()
 end
 
 function X.ConsiderSummonFamiliars()
-    if not SummonFamiliars:IsFullyCastable()
+    if not J.CanCastAbility(SummonFamiliars)
     then
         return BOT_ACTION_DESIRE_NONE
     end
@@ -447,8 +457,7 @@ function X.ConsiderSummonFamiliars()
 end
 
 function X.ConsiderSilentAsTheGrave()
-    if not SilentAsTheGrave:IsTrained()
-    or not SilentAsTheGrave:IsFullyCastable()
+    if not J.CanCastAbility(SilentAsTheGrave)
     then
         return BOT_ACTION_DESIRE_NONE
     end

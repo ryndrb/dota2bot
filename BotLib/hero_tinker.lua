@@ -7,6 +7,9 @@ local sTalentList = J.Skill.GetTalentList( bot )
 local sAbilityList = J.Skill.GetAbilityList( bot )
 local sRole = J.Item.GetRoleItemsBuyList( bot )
 
+if GetBot():GetUnitName() == 'npc_dota_hero_tinker'
+then
+
 local RI = require(GetScriptDirectory()..'/FunLib/util_role_item')
 
 local sUtility = {}
@@ -126,6 +129,8 @@ function X.MinionThink(hMinionUnit)
     Minion.MinionThink(hMinionUnit)
 end
 
+end
+
 local Laser                 = bot:GetAbilityByName('tinker_laser')
 -- local HeatSeekingMissile    = bot:GetAbilityByName('tinker_heat_seeking_missile')
 local MarchOfTheMachines    = bot:GetAbilityByName('tinker_march_of_the_machines')
@@ -165,9 +170,16 @@ function X.SkillsComplement()
         bot.healInBase = false
     end
 
+    Laser                 = bot:GetAbilityByName('tinker_laser')
+    MarchOfTheMachines    = bot:GetAbilityByName('tinker_march_of_the_machines')
+    DefenseMatrix         = bot:GetAbilityByName('tinker_defense_matrix')
+    WarpFlare             = bot:GetAbilityByName('tinker_warp_grenade')
+    KeenConveyance        = bot:GetAbilityByName('tinker_keen_teleport')
+    Rearm                 = bot:GetAbilityByName('tinker_rearm')
+
     if J.CanNotUseAbility(bot)
-    or Rearm:IsInAbilityPhase()
-    or KeenConveyance:IsInAbilityPhase()
+    or Rearm ~= nil and Rearm:IsInAbilityPhase()
+    or KeenConveyance ~= nil and KeenConveyance:IsInAbilityPhase()
     or bot:HasModifier('modifier_tinker_rearm')
     or bot:HasModifier('modifier_teleporting')
     then
@@ -412,7 +424,7 @@ function X.SkillsComplement()
 end
 
 function X.ConsiderLaser()
-    if not Laser:IsFullyCastable()
+    if not J.CanCastAbility(Laser)
     then
         return BOT_ACTION_DESIRE_NONE, nil
     end
@@ -729,7 +741,7 @@ end
 -- end
 
 function X.ConsiderMarchOfTheMachines()
-    if not MarchOfTheMachines:IsFullyCastable()
+    if not J.CanCastAbility(MarchOfTheMachines)
     then
         return BOT_ACTION_DESIRE_NONE, 0
     end
@@ -827,7 +839,7 @@ function X.ConsiderMarchOfTheMachines()
 end
 
 function X.ConsiderDefenseMatrix()
-    if not DefenseMatrix:IsFullyCastable()
+    if not J.CanCastAbility(DefenseMatrix)
     then
         return BOT_ACTION_DESIRE_NONE, nil
     end
@@ -977,7 +989,7 @@ function X.ConsiderDefenseMatrix()
 end
 
 function X.ConsiderKeenConveyance()
-    if not KeenConveyance:IsFullyCastable()
+    if not J.CanCastAbility(KeenConveyance)
     or (bot.healInBase and GetUnitToLocationDistance(bot, J.GetTeamFountain()) < 1000)
     then
         return BOT_ACTION_DESIRE_NONE, nil, ''
@@ -1186,7 +1198,7 @@ function X.ConsiderKeenConveyance()
 end
 
 function X.ConsiderRearm()
-    if not Rearm:IsFullyCastable()
+    if not J.CanCastAbility(Rearm)
     then
         return BOT_ACTION_DESIRE_NONE
     end
@@ -1194,12 +1206,12 @@ function X.ConsiderRearm()
     local nInRangeEnemy = J.GetEnemiesNearLoc(bot:GetLocation(), 1600)
     if  bot.healInBase
     and nInRangeEnemy ~= nil and #nInRangeEnemy == 0
-    and KeenConveyance:IsTrained() and KeenConveyance:GetCooldownTimeRemaining() > Rearm:GetChannelTime()
+    and KeenConveyance ~= nil and KeenConveyance:IsTrained() and KeenConveyance:GetCooldownTimeRemaining() > Rearm:GetChannelTime()
     then
         return BOT_ACTION_DESIRE_HIGH
     end
 
-    if Laser:IsTrained() and Laser:GetCooldownTimeRemaining() > Rearm:GetChannelTime()
+    if Laser ~= nil and Laser:IsTrained() and Laser:GetCooldownTimeRemaining() > Rearm:GetChannelTime()
     then
         return BOT_ACTION_DESIRE_HIGH
     end
@@ -1209,7 +1221,7 @@ function X.ConsiderRearm()
 		if  J.IsValidTarget(botTarget)
 		and J.IsInRange(bot, botTarget, 1500)
         and (MarchOfTheMachines:GetCooldownTimeRemaining() > Rearm:GetChannelTime()
-            or Blink ~= nil and not Blink:IsFullyCastable())
+            or not J.CanBlinkDagger(GetBot()))
 		then
             return BOT_ACTION_DESIRE_HIGH
 		end
@@ -1219,12 +1231,12 @@ function X.ConsiderRearm()
     and bot:GetActiveModeDesire() > 0.5
     then
         if  GetUnitToLocationDistance(bot, GetLaneFrontLocation(GetTeam(), bot.laneToPush, 0)) > 4000
-        and KeenConveyance:IsTrained() and KeenConveyance:GetCooldownTimeRemaining() > 5
+        and KeenConveyance ~= nil and KeenConveyance:IsTrained() and KeenConveyance:GetCooldownTimeRemaining() > 5
         then
             return BOT_ACTION_DESIRE_HIGH
         end
 
-        if Laser:GetCooldownTimeRemaining() > Rearm:GetChannelTime()
+        if Laser ~= nil and Laser:GetCooldownTimeRemaining() > Rearm:GetChannelTime()
         then
             return BOT_ACTION_DESIRE_HIGH
         end
@@ -1232,7 +1244,7 @@ function X.ConsiderRearm()
         local nLocationAoE = bot:FindAoELocation(true, true, bot:GetLocation(), 1500, 1500, 0, 0)
         nInRangeEnemy = J.GetEnemiesNearLoc(nLocationAoE.targetloc, 1500)
         if  nInRangeEnemy ~= nil and #nInRangeEnemy >= 1
-        and MarchOfTheMachines:GetCooldownTimeRemaining() > Rearm:GetChannelTime()
+        and MarchOfTheMachines ~= nil and MarchOfTheMachines:GetCooldownTimeRemaining() > Rearm:GetChannelTime()
         then
             return BOT_ACTION_DESIRE_HIGH
         end
@@ -1242,7 +1254,7 @@ function X.ConsiderRearm()
     and bot:GetActiveModeDesire() > 0.5
     then
         if  GetUnitToLocationDistance(bot, GetLaneFrontLocation(GetTeam(), bot.laneToDefend, 0)) > 3800
-        and KeenConveyance:IsTrained() and KeenConveyance:GetCooldownTimeRemaining() > 5
+        and KeenConveyance ~= nil and KeenConveyance:IsTrained() and KeenConveyance:GetCooldownTimeRemaining() > 5
         then
             return BOT_ACTION_DESIRE_HIGH
         end
@@ -1255,7 +1267,7 @@ function X.ConsiderRearm()
         local nLocationAoE = bot:FindAoELocation(true, true, bot:GetLocation(), 1500, 1500, 0, 0)
         nInRangeEnemy = J.GetEnemiesNearLoc(nLocationAoE.targetloc, 1500)
         if  nInRangeEnemy ~= nil and #nInRangeEnemy >= 1
-        and MarchOfTheMachines:GetCooldownTimeRemaining() > Rearm:GetChannelTime()
+        and MarchOfTheMachines ~= nil and MarchOfTheMachines:GetCooldownTimeRemaining() > Rearm:GetChannelTime()
         then
             return BOT_ACTION_DESIRE_HIGH
         end
@@ -1269,7 +1281,7 @@ function X.ConsiderRearm()
             if  nNeutralCreeps ~= nil
             and (#nNeutralCreeps >= 2 or (#nNeutralCreeps >= 1 and nNeutralCreeps[1]:IsAncientCreep()))
             and J.GetMP(bot) > 0.25
-            and Laser:GetCooldownTimeRemaining() > Rearm:GetChannelTime()
+            and Laser ~= nil and Laser:GetCooldownTimeRemaining() > Rearm:GetChannelTime()
             then
                 return BOT_ACTION_DESIRE_HIGH
             end
@@ -1277,7 +1289,7 @@ function X.ConsiderRearm()
             local nEnemyLaneCreeps = bot:GetNearbyLaneCreeps(1600, true)
             if  nEnemyLaneCreeps ~= nil and #nEnemyLaneCreeps >= 2
             and J.GetMP(bot) > 0.25
-            and Laser:GetCooldownTimeRemaining() > Rearm:GetChannelTime()
+            and Laser ~= nil and Laser:GetCooldownTimeRemaining() > Rearm:GetChannelTime()
             then
                 return BOT_ACTION_DESIRE_HIGH
             end
@@ -1289,7 +1301,7 @@ function X.ConsiderRearm()
         if  J.IsRoshan(botTarget)
         and J.IsInRange(bot, botTarget, 500)
         and J.IsAttacking(bot)
-        and DefenseMatrix:GetCooldownTimeRemaining() > Rearm:GetChannelTime()
+        and DefenseMatrix ~= nil and DefenseMatrix:GetCooldownTimeRemaining() > Rearm:GetChannelTime()
         then
             return BOT_ACTION_DESIRE_HIGH
         end
@@ -1300,7 +1312,7 @@ function X.ConsiderRearm()
         if  J.IsTormentor(botTarget)
         and J.IsInRange(bot, botTarget, 500)
         and J.IsAttacking(bot)
-        and DefenseMatrix:GetCooldownTimeRemaining() > Rearm:GetChannelTime()
+        and DefenseMatrix ~= nil and DefenseMatrix:GetCooldownTimeRemaining() > Rearm:GetChannelTime()
         then
             return BOT_ACTION_DESIRE_HIGH
         end
@@ -1310,8 +1322,7 @@ function X.ConsiderRearm()
 end
 
 function X.ConsiderWarpFlare()
-    if not WarpFlare:IsTrained()
-    or not WarpFlare:IsFullyCastable()
+    if not J.CanCastAbility(WarpFlare)
     then
         return BOT_ACTION_DESIRE_NONE, nil
     end

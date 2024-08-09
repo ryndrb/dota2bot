@@ -7,6 +7,9 @@ local sTalentList = J.Skill.GetTalentList( bot )
 local sAbilityList = J.Skill.GetAbilityList( bot )
 local sRole = J.Item.GetRoleItemsBuyList( bot )
 
+if GetBot():GetUnitName() == 'npc_dota_hero_queenofpain'
+then
+
 local RI = require(GetScriptDirectory()..'/FunLib/util_role_item')
 
 local sUtility = {}
@@ -131,6 +134,8 @@ function X.MinionThink(hMinionUnit)
 
 end
 
+end
+
 --[[
 
 npc_dota_hero_queenofpain
@@ -155,10 +160,10 @@ modifier_queenofpain_scream_of_pain_fear
 
 --]]
 
-local abilityQ = bot:GetAbilityByName( sAbilityList[1] )
-local abilityW = bot:GetAbilityByName( sAbilityList[2] )
-local abilityE = bot:GetAbilityByName( sAbilityList[3] )
-local abilityR = bot:GetAbilityByName( sAbilityList[6] )
+local abilityQ = bot:GetAbilityByName('queenofpain_shadow_strike')
+local abilityW = bot:GetAbilityByName('queenofpain_blink')
+local abilityE = bot:GetAbilityByName('queenofpain_scream_of_pain')
+local abilityR = bot:GetAbilityByName('queenofpain_sonic_wave')
 local talent6 = bot:GetAbilityByName( sTalentList[6] )
 
 local castQDesire, castQTarget
@@ -170,10 +175,16 @@ local castRDesire, castRTarget
 local nKeepMana,nMP,nHP,nLV,hEnemyList,hAllyList,botTarget,sMotive;
 local aetherRange = 0
 
+local botName
 
 function X.SkillsComplement()
 	
 	if J.CanNotUseAbility(bot) or bot:IsInvisible() then return end
+
+	abilityQ = bot:GetAbilityByName('queenofpain_shadow_strike')
+	abilityW = bot:GetAbilityByName('queenofpain_blink')
+	abilityE = bot:GetAbilityByName('queenofpain_scream_of_pain')
+	abilityR = bot:GetAbilityByName('queenofpain_sonic_wave')
 	
 	nKeepMana = 400
 	aetherRange = 0
@@ -183,6 +194,7 @@ function X.SkillsComplement()
 	botTarget = J.GetProperTarget(bot);
 	hEnemyList = bot:GetNearbyHeroes(1600, true, BOT_MODE_NONE);
 	hAllyList = J.GetAlliesNearLoc(bot:GetLocation(), 1600);
+	botName = GetBot():GetUnitName()
 	
 	local aether = J.IsItemAvailable("item_aether_lens");
 	if aether ~= nil then aetherRange = 250 end	
@@ -203,7 +215,8 @@ function X.SkillsComplement()
 
 		J.SetQueuePtToINT(bot, true)
 
-		if bot:HasScepter()
+		if string.find(botName, 'queenofpain')
+		and bot:HasScepter()
 		and castQTarget ~= nil
 		then
 			bot:ActionQueue_UseAbilityOnLocation( abilityQ, castQTarget:GetLocation() )
@@ -242,7 +255,7 @@ end
 function X.ConsiderQ()
 
 
-	if not abilityQ:IsFullyCastable() then return 0 end
+	if not J.CanCastAbility(abilityQ) then return 0 end
 	
 	local nSkillLV    = abilityQ:GetLevel()
 	local nCastRange  = abilityQ:GetCastRange()
@@ -357,7 +370,7 @@ end
 function X.ConsiderW()
 
 
-	if not abilityW:IsFullyCastable() 
+	if not J.CanCastAbility(abilityW)
 		or bot:IsRooted()
 		or bot:HasModifier( "modifier_bloodseeker_rupture" )
 	then return 0 end
@@ -516,7 +529,7 @@ end
 function X.ConsiderE()
 
 
-	if not abilityE:IsFullyCastable() then return 0 end
+	if not J.CanCastAbility(abilityE) then return 0 end
 	
 	local nSkillLV    = abilityE:GetLevel()
 	local nCastRange  = abilityE:GetCastRange()
@@ -689,7 +702,7 @@ end
 function X.ConsiderR()
 
 
-	if not abilityR:IsFullyCastable() then return 0 end
+	if not J.CanCastAbility(abilityR) then return 0 end
 	
 	local nSkillLV    = abilityR:GetLevel()
 	local nCastRange  = abilityR:GetCastRange()
@@ -788,5 +801,4 @@ end
 
 
 return X
--- dota2jmz@163.com QQ:2462331592
 

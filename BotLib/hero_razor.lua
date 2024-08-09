@@ -7,6 +7,9 @@ local sTalentList = J.Skill.GetTalentList( bot )
 local sAbilityList = J.Skill.GetAbilityList( bot )
 local sRole = J.Item.GetRoleItemsBuyList( bot )
 
+if GetBot():GetUnitName() == 'npc_dota_hero_razor'
+then
+
 local RI = require(GetScriptDirectory()..'/FunLib/util_role_item')
 
 local sUtility = {}
@@ -191,6 +194,8 @@ function X.MinionThink( hMinionUnit )
 
 end
 
+end
+
 --[[
 
 npc_dota_hero_razor
@@ -222,10 +227,10 @@ modifier_razor_eye_of_the_storm_armor
 --]]
 
 
-local abilityQ = bot:GetAbilityByName( sAbilityList[1] )
-local abilityW = bot:GetAbilityByName( sAbilityList[2] )
-local abilityE = bot:GetAbilityByName( sAbilityList[3] )
-local abilityR = bot:GetAbilityByName( sAbilityList[6] )
+local abilityQ = bot:GetAbilityByName('razor_plasma_field')
+local abilityW = bot:GetAbilityByName('razor_static_link')
+local abilityE = bot:GetAbilityByName('razor_unstable_current')
+local abilityR = bot:GetAbilityByName('razor_eye_of_the_storm')
 
 
 local castQDesire
@@ -243,6 +248,10 @@ function X.SkillsComplement()
 
 
 	if J.CanNotUseAbility( bot ) or bot:IsInvisible() then return end
+
+	abilityQ = bot:GetAbilityByName('razor_plasma_field')
+	abilityW = bot:GetAbilityByName('razor_static_link')
+	abilityR = bot:GetAbilityByName('razor_eye_of_the_storm')
 
 
 	nKeepMana = 280
@@ -300,7 +309,7 @@ end
 function X.ConsiderQ()
 
 
-	if not abilityQ:IsFullyCastable() then return 0 end
+	if not J.CanCastAbility(abilityQ) then return 0 end
 
 	local nSkillLV = abilityQ:GetLevel()
 	local nCastRange = 777
@@ -465,7 +474,7 @@ end
 function X.ConsiderW()
 
 
-	if not abilityW:IsFullyCastable() then return 0 end
+	if not J.CanCastAbility(abilityW) then return 0 end
 
 	local nSkillLV = abilityW:GetLevel()
 	local nCastRange = abilityW:GetCastRange()	 + aetherRange
@@ -572,7 +581,7 @@ end
 function X.ConsiderR()
 
 
-	if not abilityR:IsFullyCastable()
+	if not J.CanCastAbility(abilityR)
 		or bot:HasModifier( 'modifier_razor_eye_of_the_storm' )
 	then return 0 end
 
@@ -634,5 +643,4 @@ end
 
 
 return X
--- dota2jmz@163.com QQ:2462331592..
 

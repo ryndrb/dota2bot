@@ -7,6 +7,9 @@ local sTalentList = J.Skill.GetTalentList( bot )
 local sAbilityList = J.Skill.GetAbilityList( bot )
 local sRole = J.Item.GetRoleItemsBuyList( bot )
 
+if GetBot():GetUnitName() == 'npc_dota_hero_vengefulspirit'
+then
+
 local RI = require(GetScriptDirectory()..'/FunLib/util_role_item')
 
 local sUtility = {}
@@ -150,6 +153,8 @@ function X.MinionThink(hMinionUnit)
     Minion.MinionThink(hMinionUnit)
 end
 
+end
+
 local MagicMissile  = bot:GetAbilityByName('vengefulspirit_magic_missile')
 local WaveOfTerror  = bot:GetAbilityByName('vengefulspirit_wave_of_terror')
 -- local VengeanceAura = bot:GetAbilityByName('vengefulspirit_command_aura')
@@ -163,6 +168,10 @@ local botTarget
 
 function X.SkillsComplement()
 	if J.CanNotUseAbility(bot) then return end
+
+    MagicMissile  = bot:GetAbilityByName('vengefulspirit_magic_missile')
+    WaveOfTerror  = bot:GetAbilityByName('vengefulspirit_wave_of_terror')
+    NetherSwap    = bot:GetAbilityByName('vengefulspirit_nether_swap')
 
     botTarget = J.GetProperTarget(bot)
 
@@ -189,7 +198,7 @@ function X.SkillsComplement()
 end
 
 function X.ConsiderMagicMissile()
-    if not MagicMissile:IsFullyCastable()
+    if not J.CanCastAbility(MagicMissile)
     then
         return BOT_ACTION_DESIRE_NONE, nil
     end
@@ -373,7 +382,7 @@ function X.ConsiderMagicMissile()
 end
 
 function X.ConsiderWaveOfTerror()
-    if not WaveOfTerror:IsFullyCastable()
+    if not J.CanCastAbility(WaveOfTerror)
     then
         return BOT_ACTION_DESIRE_NONE, 0
     end
@@ -543,7 +552,7 @@ function X.ConsiderWaveOfTerror()
 end
 
 function X.ConsiderNetherSwap()
-    if not NetherSwap:IsFullyCastable()
+    if not J.CanCastAbility(NetherSwap)
     then
         return BOT_ACTION_DESIRE_NONE, nil
     end

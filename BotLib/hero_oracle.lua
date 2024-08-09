@@ -7,6 +7,9 @@ local sTalentList = J.Skill.GetTalentList( bot )
 local sAbilityList = J.Skill.GetAbilityList( bot )
 local sRole = J.Item.GetRoleItemsBuyList( bot )
 
+if GetBot():GetUnitName() == 'npc_dota_hero_oracle'
+then
+
 local RI = require(GetScriptDirectory()..'/FunLib/util_role_item')
 
 local sUtility = {}
@@ -60,7 +63,7 @@ local HeroBuild = {
 				}
             },
             ['ability'] = {
-                [1] = {1,3,3,2,3,6,3,2,2,2,1,6,1,1},
+                [1] = {1,3,3,2,3,6,3,2,2,2,1,6,1,1,6},
             },
             ['buy_list'] = {
 				"item_tango",
@@ -100,7 +103,7 @@ local HeroBuild = {
 				}
             },
             ['ability'] = {
-                [1] = {1,3,3,2,3,6,3,2,2,2,1,6,1,1},
+				[1] = {1,3,3,2,3,6,3,2,2,2,1,6,1,1,6},
             },
             ['buy_list'] = {
 				"item_tango",
@@ -156,6 +159,8 @@ function X.MinionThink( hMinionUnit )
 
 end
 
+end
+
 --[[
 
 npc_dota_hero_oracle
@@ -185,12 +190,12 @@ modifier_oracle_false_promise
 
 --]]
 
-local abilityQ = bot:GetAbilityByName( sAbilityList[1] )
-local abilityW = bot:GetAbilityByName( sAbilityList[2] )
-local abilityE = bot:GetAbilityByName( sAbilityList[3] )
-local abilityR = bot:GetAbilityByName( sAbilityList[6] )
+local abilityQ = bot:GetAbilityByName('oracle_fortunes_end')
+local abilityW = bot:GetAbilityByName('oracle_fates_edict')
+local abilityE = bot:GetAbilityByName('oracle_purifying_flames')
+local abilityD = bot:GetAbilityByName('oracle_rain_of_destiny')
+local abilityR = bot:GetAbilityByName('oracle_false_promise')
 local talent3 = bot:GetAbilityByName( sTalentList[3] )
-local abilityD = bot:GetAbilityByName( sAbilityList[4] )
 
 local castQDesire, castQTarget
 local castWDesire, castWTarget
@@ -204,6 +209,12 @@ local aetherRange = 0
 function X.SkillsComplement()
 
 	if J.CanNotUseAbility( bot ) or bot:IsInvisible() then return end
+
+	abilityQ = bot:GetAbilityByName('oracle_fortunes_end')
+	abilityW = bot:GetAbilityByName('oracle_fates_edict')
+	abilityE = bot:GetAbilityByName('oracle_purifying_flames')
+	abilityD = bot:GetAbilityByName('oracle_rain_of_destiny')
+	abilityR = bot:GetAbilityByName('oracle_false_promise')
 
 	nKeepMana = 400
 	aetherRange = 0
@@ -258,7 +269,7 @@ function X.SkillsComplement()
 
 		bot:ActionQueue_UseAbilityOnEntity( abilityQ, castQTarget )
 
-		if abilityE:IsFullyCastable()
+		if J.CanCastAbility(abilityE)
 		then
 			bot:ActionQueue_UseAbilityOnEntity( abilityE, castQTarget )
 		end
@@ -284,7 +295,7 @@ end
 function X.ConsiderD()
 
 
-	if not abilityD:IsTrained()	or not abilityD:IsFullyCastable() then return 0 end
+	if not J.CanCastAbility(abilityD) then return 0 end
 
 	local nSkillLV = abilityD:GetLevel()
 	local nCastRange = 650 + aetherRange
@@ -317,7 +328,7 @@ end
 function X.ConsiderQ()
 
 
-	if not abilityQ:IsFullyCastable() then return 0 end
+	if not J.CanCastAbility(abilityQ) then return 0 end
 
 	local nSkillLV = abilityQ:GetLevel()
 	local nCastRange = abilityQ:GetCastRange() + aetherRange
@@ -347,7 +358,7 @@ end
 function X.ConsiderW()
 
 
-	if not abilityW:IsFullyCastable() then return 0 end
+	if not J.CanCastAbility(abilityW) then return 0 end
 
 	local nSkillLV = abilityW:GetLevel()
 	local nCastRange = abilityW:GetCastRange() + aetherRange
@@ -408,7 +419,7 @@ end
 function X.ConsiderE()
 
 
-	if not abilityE:IsFullyCastable() then return 0 end
+	if not J.CanCastAbility(abilityE) then return 0 end
 
 	local nSkillLV = abilityE:GetLevel()
 	local nCastRange = abilityE:GetCastRange() + aetherRange
@@ -512,7 +523,7 @@ function X.ConsiderE()
 					return BOT_ACTION_DESIRE_HIGH, creep, "E-补刀远程兵"
 				end
 
-				if bot:GetMana() > abilityR:GetManaCost() * 2 and nSkillLV >= 4
+				if bot:GetMana() > 350 and nSkillLV >= 4
 					and J.IsKeyWordUnit( 'melee', creep )
 					and creep:GetHealth() > nDamage * 0.7
 					and J.WillKillTarget( creep, nDamage, nDamageType, nCastPoint )
@@ -550,7 +561,7 @@ end
 function X.ConsiderR()
 
 
-	if not abilityR:IsFullyCastable() then return 0 end
+	if not J.CanCastAbility(abilityR) then return 0 end
 
 	local nSkillLV = abilityR:GetLevel()
 	local nCastRange = abilityR:GetCastRange() + aetherRange
@@ -606,8 +617,3 @@ end
 
 
 return X
--- dota2jmz@163.com QQ:2462331592..
-
-
-
-

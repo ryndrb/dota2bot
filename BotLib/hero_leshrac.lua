@@ -7,6 +7,9 @@ local sTalentList = J.Skill.GetTalentList( bot )
 local sAbilityList = J.Skill.GetAbilityList( bot )
 local sRole = J.Item.GetRoleItemsBuyList( bot )
 
+if GetBot():GetUnitName() == 'npc_dota_hero_leshrac'
+then
+
 local RI = require(GetScriptDirectory()..'/FunLib/util_role_item')
 
 local sUtility = {"item_lotus_orb", "item_pipe"}
@@ -154,6 +157,8 @@ function X.MinionThink(hMinionUnit)
     Minion.MinionThink(hMinionUnit)
 end
 
+end
+
 local SplitEarth        = bot:GetAbilityByName('leshrac_split_earth')
 local DiabolicEdict     = bot:GetAbilityByName('leshrac_diabolic_edict')
 local LightningStorm    = bot:GetAbilityByName('leshrac_lightning_storm')
@@ -172,6 +177,12 @@ if bot.edictPushing == nil then bot.edictPushing = false end
 
 function X.SkillsComplement()
     if J.CanNotUseAbility(bot) then return end
+
+    SplitEarth        = bot:GetAbilityByName('leshrac_split_earth')
+    DiabolicEdict     = bot:GetAbilityByName('leshrac_diabolic_edict')
+    LightningStorm    = bot:GetAbilityByName('leshrac_lightning_storm')
+    Nihilism          = bot:GetAbilityByName('leshrac_greater_lightning_storm')
+    PulseNova         = bot:GetAbilityByName('leshrac_pulse_nova')
 
     botTarget = J.GetProperTarget(bot)
     if not bot:HasModifier('modifier_leshrac_diabolic_edict')
@@ -216,7 +227,7 @@ function X.SkillsComplement()
 end
 
 function X.ConsiderSplitEarth()
-    if not SplitEarth:IsFullyCastable()
+    if not J.CanCastAbility(SplitEarth)
     then
         return BOT_ACTION_DESIRE_NONE, 0
     end
@@ -481,7 +492,7 @@ function X.ConsiderSplitEarth()
 end
 
 function X.ConsiderDiabolicEdict()
-    if not DiabolicEdict:IsFullyCastable()
+    if not J.CanCastAbility(DiabolicEdict)
     then
         return BOT_ACTION_DESIRE_NONE
     end
@@ -567,7 +578,7 @@ function X.ConsiderDiabolicEdict()
 end
 
 function X.ConsiderLightningStorm()
-    if not LightningStorm:IsFullyCastable()
+    if not J.CanCastAbility(LightningStorm)
     then
         return BOT_ACTION_DESIRE_NONE, nil
     end
@@ -793,7 +804,7 @@ function X.ConsiderLightningStorm()
 end
 
 function X.ConsiderPulseNova()
-    if not PulseNova:IsFullyCastable()
+    if not J.CanCastAbility(PulseNova)
     then
         return BOT_ACTION_DESIRE_NONE
     end
@@ -980,8 +991,7 @@ function X.ConsiderPulseNova()
 end
 
 function X.ConsiderNihilism()
-    if not Nihilism:IsTrained()
-    or not Nihilism:IsFullyCastable()
+    if not J.CanCastAbility(Nihilism)
     then
         return BOT_ACTION_DESIRE_NONE
     end

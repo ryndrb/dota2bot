@@ -7,6 +7,9 @@ local sTalentList = J.Skill.GetTalentList( bot )
 local sAbilityList = J.Skill.GetAbilityList( bot )
 local sRole = J.Item.GetRoleItemsBuyList( bot )
 
+if GetBot():GetUnitName() == 'npc_dota_hero_pangolier'
+then
+
 local RI = require(GetScriptDirectory()..'/FunLib/util_role_item')
 
 local sUtility = {"item_lotus_orb", "item_crimson_guard", "item_pipe", "item_heavens_halberd"}
@@ -162,6 +165,8 @@ function X.MinionThink( hMinionUnit )
 	end
 end
 
+end
+
 local Swashbuckle       = bot:GetAbilityByName('pangolier_swashbuckle')
 local ShieldCrash       = bot:GetAbilityByName('pangolier_shield_crash')
 -- local LuckyShot         = bot:GetAbilityByName('pangolier_luckyshot')
@@ -179,6 +184,13 @@ local EndRollingThunderDesire
 
 function X.SkillsComplement()
     if J.CanNotUseAbility(bot) then return end
+
+    Swashbuckle       = bot:GetAbilityByName('pangolier_swashbuckle')
+    ShieldCrash       = bot:GetAbilityByName('pangolier_shield_crash')
+    RollUp            = bot:GetAbilityByName('pangolier_rollup')
+    EndRollUp         = bot:GetAbilityByName('pangolier_rollup_stop')
+    RollingThunder    = bot:GetAbilityByName('pangolier_gyroshell')
+    EndRollingThunder    = bot:GetAbilityByName('pangolier_gyroshell_stop')
 
     EndRollUpDesire = X.ConsiderEndRollUp()
     if EndRollUpDesire > 0
@@ -224,7 +236,7 @@ function X.SkillsComplement()
 end
 
 function X.ConsiderSwashbuckle()
-    if not Swashbuckle:IsFullyCastable()
+    if not J.CanCastAbility(Swashbuckle)
     or bot:HasModifier('modifier_pangolier_gyroshell')
     or bot:HasModifier('modifier_pangolier_swashbuckle_stunned')
     then
@@ -481,7 +493,7 @@ function X.ConsiderSwashbuckle()
 end
 
 function X.ConsiderShieldCrash()
-    if not ShieldCrash:IsFullyCastable()
+    if not J.CanCastAbility(ShieldCrash)
     then
         return BOT_ACTION_DESIRE_NONE
     end
@@ -698,7 +710,7 @@ function X.ConsiderShieldCrash()
 end
 
 function X.ConsiderRollingThunder()
-    if not RollingThunder:IsFullyCastable()
+    if not J.CanCastAbility(RollingThunder)
     or bot:HasModifier('modifier_bloodseeker_rupture')
     then
         return BOT_ACTION_DESIRE_NONE
@@ -740,8 +752,7 @@ function X.ConsiderRollingThunder()
 end
 
 function X.ConsiderEndRollingThunder()
-    if EndRollingThunder:IsHidden()
-    or not EndRollingThunder:IsFullyCastable()
+    if not J.CanCastAbility(EndRollingThunder)
     then
         return BOT_ACTION_DESIRE_NONE
     end
@@ -757,9 +768,7 @@ function X.ConsiderEndRollingThunder()
 end
 
 function X.ConsiderRollUp()
-    if not RollUp:IsTrained()
-    or RollUp:IsHidden()
-    or not RollUp:IsFullyCastable()
+    if not J.CanCastAbility(RollUp)
     then
         return BOT_ACTION_DESIRE_NONE
     end
@@ -804,8 +813,7 @@ function X.ConsiderRollUp()
 end
 
 function X.ConsiderEndRollUp()
-    if EndRollUp:IsHidden()
-    or not EndRollUp:IsFullyCastable()
+    if not J.CanCastAbility(EndRollUp)
     then
         return BOT_ACTION_DESIRE_NONE
     end
