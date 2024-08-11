@@ -1252,7 +1252,7 @@ X.ConsiderItemDesire["item_blink"] = function( hItem )
 		and not botTarget:IsAttackImmune()
 		and not botTarget:IsInvulnerable()
 		then
-			local nInRangeAlly = J.GetSpecialModeAllies(botTarget, 1600, BOT_MODE_ATTACK)
+			local nInRangeAlly = botTarget:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
 			local nInRangeEnemy = botTarget:GetNearbyHeroes(1600, false, BOT_MODE_NONE)
 
 			if  nInRangeAlly ~= nil and nInRangeEnemy ~= nil
@@ -6258,67 +6258,33 @@ X.ConsiderItemDesire['item_smoke_of_deceit'] = function(item)
 end
 
 -- Dust of Appearance
-local EnemyPIDs = nil
+local nEnemyIDs = nil
 X.ConsiderItemDesire['item_dust'] = function(item)
 	local nRadius = 1050
 	
-	if EnemyPIDs == nil then EnemyPIDs = GetTeamPlayers(GetOpposingTeam()) end
+	if nEnemyIDs == nil then nEnemyIDs = GetTeamPlayers(GetOpposingTeam()) end
+	
+	local nInRangeAlly = J.GetAlliesNearLoc(bot:GetLocation(), nRadius)
+	local nInRangeEnemy = J.GetEnemiesNearLoc(bot:GetLocation(), nRadius)
 
-	for _, id in pairs(EnemyPIDs)
-	do
-		local info = GetHeroLastSeenInfo(id)
-
-		if  IsHeroAlive(id) 
-		and info ~= nil
-		then
-			local dInfo = info[1]
-
-			if  dInfo ~= nil 
-			and dInfo.time_since_seen > 0.2
-			and dInfo.time_since_seen < 0.5
-			and GetUnitToLocationDistance(bot, dInfo.location) + 150 <  nRadius 
-			and J.IsClosestToDustLocation(bot, dInfo.location)
-			then	
-				local loc = J.GetXUnitsTowardsLocation2(dInfo.location, DireFountain, 200)
-				if GetTeam() == TEAM_DIRE
-				then
-					loc = J.GetXUnitsTowardsLocation2(dInfo.location, RadiantFountain, 200)
-				end
-
-				if  IsLocationVisible(loc) 
-				and IsLocationPassable(loc)
+	if #nInRangeEnemy == 0
+	then
+		for _, ally in pairs(nInRangeAlly)
+		do
+			if J.IsValidHero(ally)
+			then
+				local isSandKingVisible = X.IsSandKingVisible(nInRangeEnemy, nRadius)
+				local isRadianceCarrierVisible = X.IsItemCarrierVisible(nInRangeEnemy, nRadius, 'item_radiance')
+				local isCoFCarrierVisible = X.IsItemCarrierVisible(nInRangeEnemy, nRadius, 'item_cloak_of_flames')
+				local isGRCarrierVisible = X.IsItemCarrierVisible(nInRangeEnemy, nRadius, 'item_giants_ring')
+		
+				if (ally:HasModifier('modifier_item_radiance_debuff') and not isRadianceCarrierVisible)
+				or (ally:HasModifier('modifier_item_cloak_of_flames_debuff') and not isCoFCarrierVisible)
+				or (ally:HasModifier('modifier_item_giants_ring_visual') and not isGRCarrierVisible)
+				or (ally:HasModifier('modifier_sandking_sand_storm_slow') and not isSandKingVisible)
+				or (ally:HasModifier('modifier_sandking_sand_storm_slow_aura_thinker') and not isSandKingVisible)
 				then
 					return BOT_ACTION_DESIRE_HIGH, bot, 'none', nil
-				end
-			end
-		end	
-	end
-	
-	local nInRangeEnemy = J.GetEnemiesNearLoc(bot:GetLocation(), nRadius)
-	if nInRangeEnemy ~= nil and #nInRangeEnemy == 0
-	then
-		if bot:HasModifier('modifier_item_radiance_debuff') 
-		or bot:HasModifier('modifier_sandking_sand_storm_slow') 
-		or bot:HasModifier('modifier_sandking_sand_storm_slow_aura_thinker') 
-		then
-			return BOT_ACTION_DESIRE_HIGH, bot, 'none', nil
-		end
-
-		for _, id in pairs(EnemyPIDs)
-		do
-			if  IsHeroAlive(id)
-			and bot:WasRecentlyDamagedByPlayer(id, 3.5)
-			then
-				local info = GetHeroLastSeenInfo(id)
-
-				if info ~= nil
-				then
-					local dInfo = info[1]
-					if  dInfo ~= nil
-					and GetUnitToLocationDistance(bot, dInfo.location) < nRadius 
-					then
-						return BOT_ACTION_DESIRE_HIGH, bot, 'none', nil
-					end
 				end
 			end
 		end
@@ -6327,17 +6293,46 @@ X.ConsiderItemDesire['item_dust'] = function(item)
 		do
 			if  J.IsValidTarget(enemyHero)
 			and J.IsUnitWillGoInvisible(enemyHero)
-			and J.IsClosestToDustLocation(bot, enemyHero:GetLocation())
 			and not J.HasInvisCounterBuff(enemyHero)
 			and not J.IsSuspiciousIllusion(enemyHero)
 			then
-				local nEnemyTowers = enemyHero:GetNearbyTowers(888, true)
-				if nEnemyTowers == nil or #nEnemyTowers == 0
+				local nTowers = bot:GetNearbyTowers(1600, false)
+				if #nTowers == 0
+				or (J.IsValidBuilding(nTowers[1]) and not J.IsInRange(enemyHero, nTowers[1], 888))
 				then
-					return BOT_ACTION_DESIRE_HIGH, bot, 'none', nil
+					-- just do it when actively engaging to stop wasting
+					if J.IsChasingTarget(bot, enemyHero)
+					or J.IsInTeamFight(bot, nRadius)
+					or J.GetHP(enemyHero) < 0.25
+					then
+						return BOT_ACTION_DESIRE_HIGH, bot, 'none', nil
+					end
 				end
 			end	
 		end	
+	end
+
+	for _, id in pairs(nEnemyIDs)
+	do
+		if IsHeroAlive(id)
+		then
+			local info = GetHeroLastSeenInfo(id)
+			if info ~= nil
+			then
+				local dInfo = info[1]
+	
+				if  dInfo ~= nil 
+				and dInfo.time_since_seen > 0.2
+				and dInfo.time_since_seen <= 1
+				and GetUnitToLocationDistance(bot, dInfo.location) <= nRadius 
+				then	
+					if IsLocationVisible(dInfo.location) and IsLocationPassable(dInfo.location)
+					then
+						return BOT_ACTION_DESIRE_HIGH, bot, 'none', nil
+					end
+				end
+			end
+		end
 	end
 
 	return BOT_ACTION_DESIRE_NONE
@@ -7178,6 +7173,43 @@ function X.IsTargetedByEnemy( building )
 
 	return false
 
+end
+
+function X.IsSandKingVisible( tHeroList, nRadius )
+
+	for _, enemy in pairs(tHeroList)
+	do
+		if J.IsValidHero(enemy)
+		and not J.IsSuspiciousIllusion(enemy)
+		and string.find(enemy:GetUnitName(), 'sand_king')
+		then
+			return true
+		end
+	end
+
+	return false
+end
+
+function X.IsItemCarrierVisible(tHeroList, nRadius, hItemName)
+	for _, enemy in pairs(tHeroList)
+	do
+		if J.IsValidHero(enemy)
+		and not J.IsSuspiciousIllusion(enemy)
+		then
+			local iSlot = enemy:FindItemSlot(hItemName)
+			if hItemName == 'item_giants_ring' and iSlot == 16
+			then
+				return true
+			end
+
+			if iSlot >= 0 and iSlot <= 5
+			then
+				return true
+			end
+		end
+	end
+
+	return false
 end
 
 local function UseGlyph()

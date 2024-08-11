@@ -6,60 +6,9 @@ function GetDesire()
 
 	local currentTime = DotaTime()
 	local botLV = bot:GetLevel()
-	local networth = bot:GetNetWorth()
-	local isBotCore = J.IsCore(bot)
-	local isEarlyGame = J.IsModeTurbo() and DotaTime() < 8 * 60 or DotaTime() < 12 * 60
-	local tAllyHeroes = bot:GetNearbyHeroes(1600, false, BOT_MODE_NONE)
-    local tEnemyHeroes = bot:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
 
 	if currentTime < 0 then
 		return BOT_ACTION_DESIRE_NONE
-	end
-
-    if  J.IsGoingOnSomeone(bot)
-	and J.IsInLaningPhase()
-	and bot:GetLevel() < 8
-	then
-		if bot:WasRecentlyDamagedByTower(3)
-		and not J.IsRetreating(bot)
-		then
-			return BOT_MODE_DESIRE_VERYHIGH
-		end
-
-		local botTarget = J.GetProperTarget(bot)
-		if  J.IsValidTarget(botTarget)
-		and J.IsInRange(bot, botTarget, 1600)
-		and J.IsChasingTarget(bot, botTarget)
-		then
-			local nChasingAlly = {}
-            for i = 1, 5
-            do
-                local member = GetTeamMember(i)
-                if J.IsValidHero(member)
-                and J.IsChasingTarget(member, botTarget)
-                and J.IsInRange(botTarget, member, 888)
-                then
-                    table.insert(nChasingAlly, member)
-                end
-            end
-
-			local nHealth = botTarget:GetHealth()
-			if botTarget:GetUnitName() == 'npc_dota_hero_medusa'
-			then
-				nHealth = nHealth + botTarget:GetMana()
-			end
-
-			if nHealth > J.GetTotalEstimatedDamageToTarget(nChasingAlly, botTarget)
-            or #tEnemyHeroes > #tAllyHeroes
-			then
-                local nEnemyTowers = bot:GetNearbyTowers(1600, true)
-				if J.IsValidBuilding(nEnemyTowers[1])
-				and J.IsInRange(botTarget, nEnemyTowers[1], 888)
-				then
-					return BOT_MODE_DESIRE_VERYHIGH
-				end
-			end
-		end
 	end
 
 	if  currentTime <= 9 * 60

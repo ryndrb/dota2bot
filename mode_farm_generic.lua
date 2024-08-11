@@ -68,13 +68,14 @@ function GetDesire()
 	end
 
 	local TormentorLocation = J.GetTormentorLocation(GetTeam())
+	local nInRangeAlly = J.GetAlliesNearLoc(TormentorLocation, 700)
 	local nNeutralCreeps = bot:GetNearbyNeutralCreeps(700)
+
+	if #nInRangeAlly >= 2 or J.IsDoingTormentor(bot) then return BOT_MODE_DESIRE_NONE end
+
 	for _, c in pairs(nNeutralCreeps)
 	do
-		local nInRangeAlly = J.GetAlliesNearLoc(TormentorLocation, 700)
-		if  c ~= nil
-		and (c:GetUnitName() == "npc_dota_miniboss"
-			or nInRangeAlly ~= nil and #nInRangeAlly >= 2)
+		if c:GetUnitName() == "npc_dota_miniboss"
 		then
 			return BOT_ACTION_DESIRE_NONE
 		end

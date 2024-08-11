@@ -61,7 +61,6 @@ local HeroBuild = {
             ['sell_list'] = {
 				"item_quelling_blade",
 				"item_magic_wand",
-				"item_power_treads",
 				"item_soul_ring",
 			},
         },

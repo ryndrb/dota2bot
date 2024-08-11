@@ -574,11 +574,6 @@ function J.IsAllyHeroBetweenAllyAndEnemy( hAlly, hEnemy, vLoc, nRadius )
 end
 
 
-function J.IsSandKingThere( bot, nCastRange, fTime )
-
-	return false
-
-end
 
 
 function J.GetUltimateAbility( bot )
