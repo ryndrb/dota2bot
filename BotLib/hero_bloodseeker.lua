@@ -471,11 +471,6 @@ function X.ConsiderBloodrite()
 		end
 	end
 
-	local skThere, skLoc = J.IsSandKingThere( bot, nCastRange, 2.0 )
-	if skThere then
-		return BOT_ACTION_DESIRE_MODERATE, skLoc
-	end
-
 	return BOT_ACTION_DESIRE_NONE, 0
 end
 

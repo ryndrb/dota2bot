@@ -111,7 +111,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
         - [4,5] Techies
         - [1] Terrorblade
         - [2,3] Timbersaw
-        - [2] Tinker
+        - [2,4,5] Tinker
         - [1,2,3,4,5] Tiny
         - [4,5] Treant
         - [1] Troll Warlord

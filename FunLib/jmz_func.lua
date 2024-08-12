@@ -4724,18 +4724,20 @@ function J.GetHeroCountAttackingTarget(nUnits, target)
 	return count
 end
 
-function J.GetHighestRightClickDamageHero(nUnits)
+function J.GetHighestRightClickDamageHero(tHeroUnits)
 	local target = nil
 	local dmg = 0
-	for _, hero in pairs(nUnits)
+
+	for _, hero in pairs(tHeroUnits)
 	do
 		if  J.IsValidHero(hero)
 		and not J.IsMeepoClone(hero)
 		and not J.IsSuspiciousIllusion(hero)
 		then
-			if dmg < hero:GetAttackDamage()
+			local currDMG = hero:GetAttackDamage() * hero:GetAttackSpeed()
+			if dmg < currDMG
 			then
-				dmg = hero:GetAttackDamage()
+				dmg = currDMG
 				target = hero
 			end
 		end

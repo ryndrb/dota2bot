@@ -389,7 +389,12 @@ function Think()
 	then
 		if J.GetHP(bot) < 0.8 or J.GetMP(bot) < 0.8
 		then
-			bot:Action_ClearActions(true)
+			if bot:IsChanneling() or bot:HasModifier('modifier_tinker_rearm')
+			then
+				bot:Action_ClearActions(false)
+			else
+				bot:Action_ClearActions(true)
+			end
 			return
 		end
 	end
