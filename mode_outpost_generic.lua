@@ -24,6 +24,7 @@ local ShouldMoveCloseTowerForEdict = false
 local EdictTowerTarget = nil
 
 local ShouldHuskarMoveOutsideFountain = false
+local ShouldHeroMoveOutsideFountain = false
 
 function GetDesire()
 	if not IsEnemyTier2Down

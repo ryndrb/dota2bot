@@ -444,8 +444,7 @@ function X.GetAvailableSpot(bot)
 		return availableSpot
 	end
 
-	if (J.IsModeTurbo() and DotaTime() < 8 * 60)
-	or DotaTime() < 12 * 60
+	if J.IsInLaningPhase()
 	then
 		local nSpots = X.CheckSpots(X.GetLaningPhaseWardSpots())
 		for _, spot in pairs(nSpots)

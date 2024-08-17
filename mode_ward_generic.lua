@@ -83,7 +83,7 @@ function GetDesire()
 		and not IsEnemyCloserToWardLocation(WardTargetLocation, WardTargetDist)
 		then
 			bot.ward = true
-			return RemapValClamped(WardTargetDist, 6400, 0, BOT_MODE_DESIRE_MODERATE, BOT_MODE_DESIRE_VERYHIGH)
+			return RemapValClamped(WardTargetDist, 6400, 0, BOT_MODE_DESIRE_MODERATE, BOT_MODE_DESIRE_VERYHIGH * 1.1)
 		end
 	else
 		bot.lastPlayerChat = nil

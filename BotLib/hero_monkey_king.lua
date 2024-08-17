@@ -210,7 +210,7 @@ function X.SkillsComplement()
         bot:Action_ClearActions(false)
         bot:ActionQueue_UseAbility(Mischief)
 
-        if not J.CanCastAbility(RevertForm)
+        if J.CanCastAbility(RevertForm)
         then
             bot:ActionQueue_Delay(0.2)
             bot:ActionQueue_UseAbility(RevertForm)
@@ -586,7 +586,7 @@ function X.ConsiderTreeDance()
 end
 
 function X.ConsiderPrimalSpring()
-    if J.CanCastAbility(PrimalSpring)
+    if not J.CanCastAbility(PrimalSpring)
     then
         return BOT_ACTION_DESIRE_NONE, 0
     end

@@ -43,6 +43,15 @@ function Defend.GetDefendDesire(bot, lane)
 		end
 	end
 
+	if DotaTime() < 10 * 60
+	and J.IsCore(bot)
+	and bot:GetAssignedLane() ~= lane
+	and J.GetMP(bot) < 0.45
+	and GetUnitToLocationDistance(bot, GetLaneFrontLocation(GetTeam(), lane, 0)) > 4400
+	then
+		return BOT_MODE_DESIRE_NONE
+	end
+
 	local furthestBuilding = Defend.GetFurthestBuildingOnLane(lane)
 	if J.IsValidBuilding(furthestBuilding)
 	then

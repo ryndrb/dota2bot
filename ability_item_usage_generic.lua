@@ -5357,13 +5357,13 @@ X.ConsiderItemDesire["item_ward_sentry"] = function( hItem )
 	if J.IsGoingOnSomeone( bot )
 		and #nInRangeEnmyList >= 1
 	then
-		local targetHero = nil
 		for _, npcEnemy in pairs( nInRangeEnmyList )
 		do
 			if J.IsValidHero( npcEnemy )
 				and J.IsInRange( bot, npcEnemy, 900 )
 				and J.CanCastOnMagicImmune( npcEnemy )
 				and X.HasInvisibilityOrItem( npcEnemy )
+				and not npcEnemy:HasModifier( "modifier_truesight" )
 				and not npcEnemy:HasModifier( "modifier_slardar_amplify_damage" )
 				and not npcEnemy:HasModifier( "modifier_item_dustofappearance" )
 				and not J.Site.IsLocationHaveTrueSight( npcEnemy:GetLocation() )

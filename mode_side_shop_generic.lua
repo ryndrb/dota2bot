@@ -37,14 +37,16 @@ function GetDesire()
 
 	local enemyAncient = GetAncient(GetOpposingTeam())
 	if nAllyInLoc ~= nil and #nAllyInLoc <= 1
+	and GetUnitToLocationDistance(bot, TormentorLocation) > 1600
 	and (GetUnitToUnitDistance(bot, enemyAncient) < 3200
-	or (topFrontP > 0.9 or midFrontP > 0.9 or botFrontP > 0.9)
-	or (topFrontD > 0.9 or midFrontD > 0.9 or botFrontD > 0.9)
-	or J.IsPushing(bot)
-	or J.IsDefending(bot)
-	or J.IsDoingRoshan(bot))
-	or nModeDesire <= 0.2
-	or #nInRangeEnemy > 0
+		or (topFrontP > 0.9 or midFrontP > 0.9 or botFrontP > 0.9)
+		or (topFrontD > 0.9 or midFrontD > 0.9 or botFrontD > 0.9)
+		or J.IsPushing(bot)
+		or J.IsDefending(bot)
+		or J.IsDoingRoshan(bot)
+		or nModeDesire <= 0.2
+		or #nInRangeEnemy > 0
+	)
 	then
 		return BOT_ACTION_DESIRE_NONE
 	end
@@ -53,7 +55,8 @@ function GetDesire()
     for i = 1, 5
     do
         local member = GetTeamMember(i)
-        if member:IsAlive()
+        if member ~= nil
+		and member:IsAlive()
 		and not J.IsSuspiciousIllusion(member)
 		and not J.IsMeepoClone(member)
         then
@@ -279,18 +282,7 @@ function IsEnoughAllies()
 		end
 	end
 
-	local hasEnoughDPS = false
-	local totalAttackDamage = GetTotalAttackDamage(TormentorLocation, 700)
-	local totalAttackSpeed = GetTotalAttackSpeed(TormentorLocation, 700)
-	if totalAttackDamage / heroCount >= 105
-	and totalAttackSpeed / heroCount >= 150
-	and heroCount > 2
-	then
-		hasEnoughDPS = true
-	end
-
 	return ((((bot.lastKillTime == 0 and heroCount >= 5) or (bot.lastKillTime > 0 and heroCount >= 3))) and coreCount >= 2)
-		or hasEnoughDPS
 end
 
 function DoesAllHaveShard()

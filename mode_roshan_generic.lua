@@ -68,7 +68,7 @@ function GetDesire()
         local mul = RemapValClamped(DotaTime(), sinceRoshAliveTime, sinceRoshAliveTime + (2.5 * 60), 1, 2)
         local nRoshanDesire = (GetRoshanDesire() * mul)
 
-        return Clamp(nRoshanDesire, 0, 1)
+        return Clamp(nRoshanDesire, 0, 0.95)
     end
 
     return BOT_ACTION_DESIRE_NONE
