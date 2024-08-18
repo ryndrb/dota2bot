@@ -2306,13 +2306,13 @@ function X.ConsiderHelpWhenCoreIsTargeted()
 end
 
 function X.ConsiderRetreatInLaneIfCantKill()
-	local tAllyHeroes = bot:GetNearbyHeroes(1600, false, BOT_MODE_NONE)
-    local tEnemyHeroes = bot:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
-
 	if  J.IsGoingOnSomeone(bot)
 	and J.IsInLaningPhase()
 	and bot:GetLevel() < 8
 	then
+		local tAllyHeroes = bot:GetNearbyHeroes(1600, false, BOT_MODE_NONE)
+		local tEnemyHeroes = bot:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
+
 		if bot:WasRecentlyDamagedByTower(3)
 		and not J.IsRetreating(bot)
 		then

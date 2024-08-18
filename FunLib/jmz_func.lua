@@ -140,7 +140,7 @@ function J.CanNotUseAction( bot )
 
 	return not bot:IsAlive()
 			or J.HasQueuedAction( bot )
-			or bot:IsInvulnerable()
+			or (bot:IsInvulnerable() and not bot:HasModifier('modifier_fountain_invulnerability')) -- stop getting stuck in fountain when issuing command
 			or bot:IsCastingAbility()
 			or bot:IsUsingAbility()
 			or bot:IsChanneling()
@@ -156,7 +156,7 @@ function J.CanNotUseAbility( bot )
 
 	return not bot:IsAlive()
 			or J.HasQueuedAction( bot )
-			or bot:IsInvulnerable()
+			or (bot:IsInvulnerable() and not bot:HasModifier('modifier_fountain_invulnerability')) -- stop getting stuck in fountain when issuing command
 			or bot:IsCastingAbility()
 			or bot:IsUsingAbility()
 			or bot:IsChanneling()
