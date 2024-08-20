@@ -1751,46 +1751,12 @@ function X.HasHumanAlly( bot )
 		
 end
 
-local SpecialUnits = {
-	['npc_dota_clinkz_skeleton_archer'] = 0.75,
-	['npc_dota_juggernaut_healing_ward'] = 0.9,
-	['npc_dota_invoker_forged_spirit'] = 0.9,
-	['npc_dota_grimstroke_ink_creature'] = 1,
-	['npc_dota_ignis_fatuus'] = 1,
-	['npc_dota_lone_druid_bear1'] = 0.9,
-	['npc_dota_lone_druid_bear2'] = 0.9,
-	['npc_dota_lone_druid_bear3'] = 0.9,
-	['npc_dota_lone_druid_bear4'] = 0.9,
-	['npc_dota_lycan_wolf_1'] = 0.75,
-	['npc_dota_lycan_wolf_2'] = 0.75,
-	['npc_dota_lycan_wolf_3'] = 0.75,
-	['npc_dota_lycan_wolf_4'] = 0.75,
-	['npc_dota_observer_wards'] = 1,
-	['npc_dota_phoenix_sun'] = 1,
-	['npc_dota_venomancer_plague_ward_1'] = 0.75,
-	['npc_dota_venomancer_plague_ward_2'] = 0.75,
-	['npc_dota_venomancer_plague_ward_3'] = 0.75,
-	['npc_dota_venomancer_plague_ward_4'] = 0.75,
-	['npc_dota_rattletrap_cog'] = 0.9,
-	['npc_dota_sentry_wards'] = 1,
-	['npc_dota_unit_tombstone1'] = 1,
-	['npc_dota_unit_tombstone2'] = 1,
-	['npc_dota_unit_tombstone3'] = 1,
-	['npc_dota_unit_tombstone4'] = 1,
-	['npc_dota_warlock_golem_1'] = 0.9,
-	['npc_dota_warlock_golem_2'] = 0.9,
-	['npc_dota_warlock_golem_3'] = 0.9,
-	['npc_dota_warlock_golem_scepter_1'] = 0.9,
-	['npc_dota_warlock_golem_scepter_2'] = 0.9,
-	['npc_dota_warlock_golem_scepter_3'] = 0.9,
-	['npc_dota_weaver_swarm'] = 0.9,
-	['npc_dota_zeus_cloud'] = 0.75,
-}
 function CanAttackSpecialUnit()
 	local nInRangeAlly = J.GetAlliesNearLoc(bot:GetLocation(), 1600)
 	local nInRangeEnemy = J.GetEnemiesNearLoc(bot:GetLocation(), 1600)
 	local nAttackRange = bot:GetAttackRange() + 150
 	local nUnits = GetUnitList(UNIT_LIST_ALL)
+	local SpecialUnits = J.GetSpecialUnits()
 
 	local isClockwerkInTeam = false
 	local cogsCount1 = 0

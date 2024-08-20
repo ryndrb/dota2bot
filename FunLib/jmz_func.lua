@@ -838,6 +838,7 @@ function J.CanCastOnTargetAdvanced( npcTarget )
 
 	return not npcTarget:HasModifier( "modifier_item_sphere_target" )
 			and not npcTarget:HasModifier( "modifier_antimage_spell_shield" )
+			and not npcTarget:HasModifier( "modifier_brewmaster_earth_spell_immunity" )
 			and not npcTarget:HasModifier( "modifier_item_lotus_orb_active" )
 			and not npcTarget:HasModifier( "modifier_item_aeon_disk_buff" )
 			and ( not npcTarget:HasModifier( "modifier_dazzle_shallow_grave" ) or npcTarget:GetHealth() > 300 )
@@ -5081,6 +5082,7 @@ end
 function J.CanCastAbility(ability)
 	if ability == nil
 	or ability:IsNull()
+	or ability:GetName() == ''
 	or ability:IsPassive()
 	or ability:IsHidden()
 	or not ability:IsTrained()
@@ -5138,6 +5140,68 @@ function J.CanBlackKingBar(bot)
 	end
 
     return false
+end
+
+function J.GetClosestTeamLane(unit)
+	local v_top_lane = GetLaneFrontLocation(GetTeam(), LANE_TOP, 0)
+	local v_mid_lane = GetLaneFrontLocation(GetTeam(), LANE_MID, 0)
+	local v_bot_lane = GetLaneFrontLocation(GetTeam(), LANE_BOT, 0)
+
+	local dist_from_top = GetUnitToLocationDistance(unit, v_top_lane)
+	local dist_from_mid = GetUnitToLocationDistance(unit, v_mid_lane)
+	local dist_from_bot = GetUnitToLocationDistance(unit, v_bot_lane)
+
+	if dist_from_top < dist_from_mid and dist_from_top < dist_from_bot
+	then
+		return v_top_lane
+	elseif dist_from_mid < dist_from_top and dist_from_mid < dist_from_bot
+	then
+		return v_mid_lane
+	elseif dist_from_bot < dist_from_top and dist_from_bot < dist_from_mid
+	then
+		return v_bot_lane
+	end
+
+	return v_mid_lane
+end
+
+local SpecialUnits = {
+	['npc_dota_clinkz_skeleton_archer'] = 0.75,
+	['npc_dota_juggernaut_healing_ward'] = 0.9,
+	['npc_dota_invoker_forged_spirit'] = 0.9,
+	['npc_dota_grimstroke_ink_creature'] = 1,
+	['npc_dota_ignis_fatuus'] = 1,
+	['npc_dota_lone_druid_bear1'] = 0.9,
+	['npc_dota_lone_druid_bear2'] = 0.9,
+	['npc_dota_lone_druid_bear3'] = 0.9,
+	['npc_dota_lone_druid_bear4'] = 0.9,
+	['npc_dota_lycan_wolf_1'] = 0.75,
+	['npc_dota_lycan_wolf_2'] = 0.75,
+	['npc_dota_lycan_wolf_3'] = 0.75,
+	['npc_dota_lycan_wolf_4'] = 0.75,
+	['npc_dota_observer_wards'] = 1,
+	['npc_dota_phoenix_sun'] = 1,
+	['npc_dota_venomancer_plague_ward_1'] = 0.75,
+	['npc_dota_venomancer_plague_ward_2'] = 0.75,
+	['npc_dota_venomancer_plague_ward_3'] = 0.75,
+	['npc_dota_venomancer_plague_ward_4'] = 0.75,
+	['npc_dota_rattletrap_cog'] = 0.9,
+	['npc_dota_sentry_wards'] = 1,
+	['npc_dota_unit_tombstone1'] = 1,
+	['npc_dota_unit_tombstone2'] = 1,
+	['npc_dota_unit_tombstone3'] = 1,
+	['npc_dota_unit_tombstone4'] = 1,
+	['npc_dota_warlock_golem_1'] = 0.9,
+	['npc_dota_warlock_golem_2'] = 0.9,
+	['npc_dota_warlock_golem_3'] = 0.9,
+	['npc_dota_warlock_golem_scepter_1'] = 0.9,
+	['npc_dota_warlock_golem_scepter_2'] = 0.9,
+	['npc_dota_warlock_golem_scepter_3'] = 0.9,
+	['npc_dota_weaver_swarm'] = 0.9,
+	['npc_dota_zeus_cloud'] = 0.75,
+}
+function J.GetSpecialUnits()
+	return SpecialUnits
 end
 
 function J.ConsolePrintActiveMode(bot)
