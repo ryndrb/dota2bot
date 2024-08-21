@@ -464,7 +464,7 @@ X['spells'] = {
 
     ['npc_dota_hero_necrolyte'] = {
         ['necrolyte_death_pulse'] = {weight = 0.9},
-        ['necrolyte_sadist'] = {weight = 0.5},
+        ['necrolyte_ghost_shroud'] = {weight = 0.5},
         ['necrolyte_heartstopper_aura'] = {weight = 1},
         ['necrolyte_death_seeker'] = {weight = 0.8},
         ['necrolyte_reapers_scythe'] = {weight = 0.5},

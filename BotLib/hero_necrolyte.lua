@@ -199,7 +199,7 @@ modifier_necrolyte_reapers_scythe_respawn_time
 --]]
 
 local abilityQ = bot:GetAbilityByName('necrolyte_death_pulse')
-local abilityW = bot:GetAbilityByName('necrolyte_sadist')
+local abilityW = bot:GetAbilityByName('necrolyte_ghost_shroud')
 local abilityE = bot:GetAbilityByName('necrolyte_heartstopper_aura')
 local abilityAS = bot:GetAbilityByName('necrolyte_death_seeker')
 local abilityR = bot:GetAbilityByName('necrolyte_reapers_scythe')
@@ -219,7 +219,7 @@ function X.SkillsComplement()
 	if J.CanNotUseAbility( bot ) then return end
 
 	abilityQ = bot:GetAbilityByName('necrolyte_death_pulse')
-	abilityW = bot:GetAbilityByName('necrolyte_sadist')
+	abilityW = bot:GetAbilityByName('necrolyte_ghost_shroud')
 	abilityAS = bot:GetAbilityByName('necrolyte_death_seeker')
 	abilityR = bot:GetAbilityByName('necrolyte_reapers_scythe')
 
