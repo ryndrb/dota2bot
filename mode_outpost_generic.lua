@@ -235,6 +235,15 @@ function GetDesire()
 				return BOT_MODE_DESIRE_ABSOLUTE
 			end
 		end
+	elseif botName == "npc_dota_hero_ringmaster"
+	then
+		if cAbility == nil then cAbility = bot:GetAbilityByName("ringmaster_tame_the_beasts") end
+		if cAbility:IsTrained()
+		then
+			if cAbility:IsInAbilityPhase() or bot:HasModifier("modifier_ringmaster_tame_the_beasts") then
+				return BOT_MODE_DESIRE_ABSOLUTE
+			end
+		end
 	elseif botName == "npc_dota_hero_snapfire"
 	then
 		if cAbility == nil then cAbility = bot:GetAbilityByName("snapfire_mortimer_kisses") end

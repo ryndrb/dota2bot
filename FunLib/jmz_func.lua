@@ -146,6 +146,7 @@ function J.CanNotUseAction( bot )
 			or bot:IsChanneling()
 			or bot:IsStunned()
 			or bot:IsNightmared()
+			or bot:HasModifier( 'modifier_ringmaster_the_box_buff' )
 			or bot:HasModifier( 'modifier_item_forcestaff_active' )
 			or bot:HasModifier( 'modifier_phantom_lancer_phantom_edge_boost' )
 			or bot:HasModifier( 'modifier_tinker_rearm' )
@@ -164,6 +165,7 @@ function J.CanNotUseAbility( bot )
 			or bot:IsStunned()
 			or bot:IsHexed()
 			or bot:IsNightmared()
+			or bot:HasModifier( 'modifier_ringmaster_the_box_buff' )
 			or bot:HasModifier( "modifier_doom_bringer_doom" )
 			or bot:HasModifier( 'modifier_item_forcestaff_active' )
 			or bot:HasModifier( 'modifier_tinker_rearm' )
@@ -326,7 +328,7 @@ function J.GetAoeEnemyHeroLocation( bot, nCastRange, nRadius, nCount )
 
 		if nTrueCount >= nCount
 		then
-			return nAoe.targetLoc
+			return nAoe.targetloc
 		end
 	end
 
@@ -4401,13 +4403,13 @@ function J.IsHumanPlayerInTeam()
 	return false
 end
 
-function J.GetEnemiesAroundAncient()
+function J.GetEnemiesAroundAncient(nRadius)
 	local nUnitList = {}
 
 	for _, unit in pairs(GetUnitList(UNIT_LIST_ENEMIES))
 	do
 		if J.IsValid(unit)
-		and GetUnitToUnitDistance(unit, GetAncient(GetTeam())) <= 1600
+		and GetUnitToUnitDistance(unit, GetAncient(GetTeam())) <= nRadius
 		then
 			table.insert(nUnitList, unit)
 		end
@@ -4540,10 +4542,13 @@ function J.GetTotalEstimatedDamageToTarget(nUnits, target)
 
 	for _, unit in pairs(nUnits)
 	do
-		if J.IsValid(unit)
+		local bCurrentlyAvailable = true
+		if unit:GetTeam() ~= GetBot():GetTeam()
 		then
-			dmg = dmg + unit:GetEstimatedDamageToTarget(true, target, 5, DAMAGE_TYPE_ALL)
+			bCurrentlyAvailable = false
 		end
+
+		dmg = dmg + unit:GetEstimatedDamageToTarget(bCurrentlyAvailable, target, 5, DAMAGE_TYPE_ALL)
 	end
 
 	return dmg

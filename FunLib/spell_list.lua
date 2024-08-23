@@ -609,6 +609,18 @@ X['spells'] = {
         ['riki_backstab'] = {weight = 1},
     },
 
+    ['npc_dota_hero_ringmaster'] = {
+        ['ringmaster_tame_the_beasts'] = {weight = 0.1},
+        ['ringmaster_tame_the_beasts_crack'] = {weight = 1},
+        ['ringmaster_the_box'] = {weight = 0.3},
+        ['ringmaster_impalement'] = {weight = 0.5},
+        ['ringmaster_spotlight'] = {weight = 0.4},
+        ['ringmaster_wheel'] = {weight = 0.3},
+        ['ringmaster_funhouse_mirror'] = {weight = 0.8},
+        ['ringmaster_strongman_tonic'] = {weight = 0.2},
+        ['ringmaster_whoopee_cushion'] = {weight = 0.2},
+    },
+
     ['npc_dota_hero_sand_king'] = {
         ['sandking_burrowstrike'] = {weight = 0},
         ['sandking_sand_storm'] = {weight = 0.5},

@@ -146,17 +146,7 @@ X['bDeafaultAbility'] = false
 X['bDeafaultItem'] = true
 
 function X.MinionThink( hMinionUnit )
-
-	if Minion.IsValidUnit( hMinionUnit )
-	then
-		if Minion.IsAttackingWard( hMinionUnit:GetUnitName() )
-		then
-			Minion.AttackingWardThink( hMinionUnit )
-		else
-			Minion.IllusionThink( hMinionUnit )
-		end
-	end
-
+	Minion.MinionThink(hMinionUnit)
 end
 
 end

@@ -6,7 +6,7 @@ local pingTimeDelta = 5
 function Defend.GetDefendDesire(bot, lane)
 	if bot.laneToDefend == nil then bot.laneToDefend = lane end
 
-	local nEnemyAroundAncient = J.GetEnemiesAroundAncient()
+	local nEnemyAroundAncient = J.GetEnemiesAroundAncient(2200)
 	local nSearchRange = 2200
 	if #nEnemyAroundAncient > 0
 	then
@@ -95,17 +95,21 @@ function Defend.DefendThink(bot, lane)
     if J.CanNotUseAction(bot) then return end
 
 	local attackRange = bot:GetAttackRange()
-	local vDefendLane = GetLaneFrontLocation(GetTeam(), lane, 0)
+	local vDefendLane = GetLocationAlongLane(lane, GetLaneFrontAmount(GetTeam(), lane, false))
 	local nSearchRange = attackRange < 900 and 900 or math.min(attackRange, 1600)
-	local nEnemyAroundAncient = J.GetEnemiesAroundAncient()
 
-	local nAllyHeroes = bot:GetNearbyHeroes(1600, false, BOT_MODE_NONE)
 	local nEnemyHeroes = bot:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
 
-	local nInRangeEnemy = bot:GetNearbyHeroes(nSearchRange, true, BOT_MODE_NONE)
-	if J.IsValidHero(nInRangeEnemy[1])
+	local nAllyHeroes_real = J.GetAlliesNearLoc(bot:GetLocation(), 1600)
+	local nEnemyHeroes_real = J.GetEnemiesNearLoc(bot:GetLocation(), 1600)
+
+	if J.IsValidHero(nEnemyHeroes_real[1]) and J.IsInRange(bot, nEnemyHeroes_real[1], nSearchRange)
 	then
-		bot:Action_AttackUnit(nInRangeEnemy[1], true)
+		bot:Action_AttackUnit(nEnemyHeroes_real[1], true)
+		return
+	elseif J.IsValidHero(nEnemyHeroes[1]) and J.IsInRange(bot, nEnemyHeroes[1], nSearchRange)
+	then
+		bot:Action_AttackUnit(nEnemyHeroes[1], true)
 		return
 	end
 
@@ -132,20 +136,14 @@ function Defend.DefendThink(bot, lane)
 		end
 	end
 
-	if nAllyHeroes ~= nil and nEnemyHeroes ~= nil
-	and J.IsValidHero(nEnemyHeroes[1])
-	and (#nEnemyHeroes > #nAllyHeroes or not J.WeAreStronger(bot, 1600))
+	if J.IsValidHero(nEnemyHeroes_real[1])
+	and (#nEnemyHeroes_real > #nAllyHeroes_real and not J.WeAreStronger(bot, 1600))
 	then
-		bot:Action_MoveToLocation(J.GetXUnitsTowardsLocation2(vDefendLane, nEnemyHeroes[1]:GetLocation(), 1000) + RandomVector(75))
+		bot:Action_MoveToLocation(J.GetXUnitsTowardsLocation2(vDefendLane, nEnemyHeroes_real[1]:GetLocation(), 800) + RandomVector(75))
 		return
 	end
 
-	if #nEnemyAroundAncient > 0
-	then
-		vDefendLane = GetAncient(GetTeam()):GetLocation()
-	end
-
-	bot:Action_MoveToLocation(vDefendLane + J.RandomForwardVector(attackRange))
+	bot:Action_MoveToLocation(vDefendLane + J.RandomForwardVector(nSearchRange))
 end
 
 function Defend.GetFurthestBuildingOnLane(lane)

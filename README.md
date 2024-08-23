@@ -50,7 +50,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
 
 # Tinkering ABo(u)t (ryndrb)
 - ***Heroes (Pos: 1,2,3,4,5)***
-    - <ins>Heroes Implemented Count:</ins> **117** / 124
+    - <ins>Heroes Implemented Count:</ins> **118** / 125
     - Supports that does damage, CC, or is Ranged are somewhat 'better' for the most part in bot games compared to Melee or non-. (Since positioning and movement are Valve default.)
     - ^. AoE spells are just too good.
     - ***Added***
@@ -102,6 +102,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
         - ~~[2,3] Primal Beast~~
         - [2] Puck
         - [2,3,4,5] Pudge
+        - [2,4,5] Ringmaster
         - [2,4,5] Rubick
         - [4,5] Shadow Demon
         - [2,4,5] Snapfire
@@ -236,6 +237,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
     | Queen of Pain         | -       | -       |
     | Razor                 | -       | -       |
     | Riki                  | -       | -       |
+    | Ringmaster            | &check  | -       |
     | Rubick                | -       | -       |
     | Sand King             | -       | -       |
     | Shadow Demon          | &check; | -       |

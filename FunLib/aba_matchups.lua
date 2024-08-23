@@ -2170,6 +2170,15 @@ local Heroes = {
         },
     },
 
+    ['npc_dota_hero_ringmaster'] = {
+        ['synergy'] = {
+
+        },
+        ['counter'] = {
+
+        },
+    },
+
     ['npc_dota_hero_rubick'] = {
         ['synergy'] = {
             'npc_dota_hero_oracle',
