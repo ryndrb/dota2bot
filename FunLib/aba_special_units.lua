@@ -31,8 +31,6 @@ function X.GetDesire(bot__)
     end
 
 	local isClockwerkInTeam = false
-	local cogsCount1 = 0
-	local cogsCount2 = 0
 
 	for i = 1, 5
 	do
@@ -40,8 +38,6 @@ function X.GetDesire(bot__)
 		if allyHero ~= nil and allyHero:GetUnitName() == 'npc_dota_hero_rattletrap'
 		then
 			isClockwerkInTeam = true
-			cogsCount1 = J.GetPowerCogsCountInLoc(botLocation, 800)
-			cogsCount2 = J.GetPowerCogsCountInLoc(botLocation, 255)
 			break
 		end
 	end
@@ -54,20 +50,21 @@ function X.GetDesire(bot__)
 		then
             targetUnit = unit
             local unitName = unit:GetUnitName()
-            local botUnitDist = GetUnitToUnitDistance(bot, unit)
             local botAttackDamage = X.GetUnitAttackDamageWithinTime(bot, 8.0)
             local unitHP = J.GetHP(unit)
-            local thisUnitIsAfterBot = J.IsChasingTarget(unit, bot) or unit:GetAttackTarget() == bot
             local withinAttackRange = GetUnitToUnitDistance(bot, unit) <= botAttackRange
 
             if string.find(unitName, 'rattletrap_cog')
             then
+                local cogsCount1 = J.GetPowerCogsCountInLoc(botLocation, 1000)
+                local cogsCount2 = J.GetPowerCogsCountInLoc(botLocation, 216)
+
                 if #tEnemyHeroes_all >= 1
                 then
-                    local nInRangeEnemy = J.GetEnemiesNearLoc(botLocation, 777)
+                    local nInRangeEnemy = J.GetEnemiesNearLoc(botLocation, 800)
 
                     -- Is stuck inside?
-                    if cogsCount1 == 8 and cogsCount2 >= 4
+                    if cogsCount1 == 8 and cogsCount2 >= 4 and withinAttackRange
                     then
                         if #nInRangeEnemy == 0
                         or J.IsGoingOnSomeone(bot)
@@ -79,14 +76,11 @@ function X.GetDesire(bot__)
                     end
                 end
 
-                if #tEnemyHeroes == 0
+                if #tEnemyHeroes == 0 and J.IsInRange(bot, unit, botAttackRange + 450)
                 then
                     if cogsCount1 == 8 and cogsCount2 >= 4
                     then
-                        if isClockwerkInTeam
-                        then
-                            return 0.75
-                        end
+                        return 0.95
                     else
                         if not isClockwerkInTeam
                         then
@@ -98,27 +92,17 @@ function X.GetDesire(bot__)
 
             if bot:GetTeam() ~= unit:GetTeam()
             then
-                if string.find(unitName, 'clinkz_skeleton_archer')
-                then
-                    if J.IsInRange(bot, unit, botAttackRange + 300)
-                    then
-                        if #tEnemyHeroes == 0
-                        then
-                            return 0.95
-                        else
-                            return 0.75
-                        end
-                    else
-                        return 0.75
-                    end
-                end
-
                 if string.find(unitName, 'juggernaut_healing_ward')
                 or string.find(unitName, 'invoker_forged_spirit')
                 or string.find(unitName, 'venomancer_plague_ward')
+                or string.find(unitName, 'clinkz_skeleton_archer')
                 then
                     if J.IsInRange(bot, unit, botAttackRange + 300) then
                         return 0.80
+                    end
+
+                    if #tEnemyHeroes == 0 then
+                        return 0.90
                     end
                 end
 
@@ -187,7 +171,7 @@ function X.GetDesire(bot__)
                 if string.find(unitName, 'ignis_fatuss')
                 or string.find(unitName, 'zeus_cloud')
                 then
-                    if #tAllyHeroes >= #tEnemyHeroes
+                    if #tAllyHeroes >= #tEnemyHeroes or #tEnemyHeroes_all == 0
                     then
                         if withinAttackRange then return 0.9 end
                         return 0.75
