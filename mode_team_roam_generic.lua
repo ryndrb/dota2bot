@@ -8,6 +8,7 @@ local bDebugMode = ( 1 == 10 )
 local X = {}
 
 local J = require( GetScriptDirectory()..'/FunLib/jmz_func')
+local AttackSpecialUnit = dofile( GetScriptDirectory()..'/FunLib/aba_special_units')
 local Item = require( GetScriptDirectory()..'/FunLib/aba_item')
 
 local botName = bot:GetUnitName();
@@ -32,7 +33,6 @@ local SwappedRefresherShardTime = -90
 local PickedItem = nil
 
 local ShouldAttackSpecialUnit = false
-local SpecialUnitTarget = nil
 
 local shouldHarass = false
 local harassTarget = nil
@@ -99,9 +99,9 @@ function GetDesire()
 		return BOT_MODE_DESIRE_NONE
 	end
 
-	ShouldAttackSpecialUnit, nDesire = CanAttackSpecialUnit()
-	if ShouldAttackSpecialUnit
-	then
+	nDesire = AttackSpecialUnit.GetDesire(bot)
+	if nDesire > 0 then
+		ShouldAttackSpecialUnit = true
 		return nDesire
 	end
 
@@ -209,11 +209,9 @@ function Think()
 		return
 	end
 
-	if  ShouldAttackSpecialUnit
-	and SpecialUnitTarget ~= nil
+	if ShouldAttackSpecialUnit
 	then
-		bot:Action_AttackUnit(SpecialUnitTarget, true)
-		return
+		AttackSpecialUnit.Think()
 	end
 
 	if bot:HasModifier('modifier_faceless_void_chronosphere_selfbuff')
@@ -1709,102 +1707,6 @@ function X.HasHumanAlly( bot )
 	
 	return false 
 		
-end
-
-function CanAttackSpecialUnit()
-	local nInRangeAlly = J.GetAlliesNearLoc(bot:GetLocation(), 1600)
-	local nInRangeEnemy = J.GetEnemiesNearLoc(bot:GetLocation(), 1600)
-	local nAttackRange = bot:GetAttackRange() + 150
-	local nUnits = GetUnitList(UNIT_LIST_ALL)
-	local SpecialUnits = J.GetSpecialUnits()
-
-	local isClockwerkInTeam = false
-	local cogsCount1 = 0
-	local cogsCount2 = 0
-
-	for i = 1, 5
-	do
-		local allyHero = GetTeamMember(i)
-		if allyHero ~= nil and allyHero:GetUnitName() == 'npc_dota_hero_rattletrap'
-		then
-			isClockwerkInTeam = true
-			cogsCount1 = J.GetPowerCogsCountInLoc(bot:GetLocation(), 800)
-			cogsCount2 = J.GetPowerCogsCountInLoc(bot:GetLocation(), 255)
-			break
-		end
-	end
-
-	for _, unit in pairs(nUnits)
-	do
-		if J.IsValid(unit)
-		then
-			if SpecialUnits[unit:GetUnitName()] ~= nil
-			then
-				local nAttackUnitDesire = SpecialUnits[unit:GetUnitName()]
-
-				if unit:GetUnitName() == 'npc_dota_rattletrap_cog'
-				then
-					if #nInRangeEnemy >= 1
-					then
-						local nInRangeEnemy2 = J.GetEnemiesNearLoc(bot:GetLocation(), 777)
-
-						-- Is stuck inside?
-						if cogsCount1 == 8 and cogsCount2 >= 4
-						then
-							if #nInRangeEnemy2 == 0
-							or (J.IsRetreating(bot) and #nInRangeEnemy2 >= 1)
-							then
-								SpecialUnitTarget = unit
-								return true, nAttackUnitDesire
-							end
-						end
-					end
-
-					if #nInRangeEnemy == 0
-					then
-						if cogsCount1 == 8 and cogsCount2 >= 4
-						then
-							if isClockwerkInTeam
-							then
-								SpecialUnitTarget = unit
-								return true, nAttackUnitDesire
-							end
-						else
-							if not isClockwerkInTeam
-							then
-								SpecialUnitTarget = unit
-								return true, nAttackUnitDesire
-							end
-						end
-					end
-				end
-
-				if bot:GetTeam() ~= unit:GetTeam()
-				and GetUnitToUnitDistance(bot, unit) <= nAttackRange
-				and J.CanBeAttacked(unit)
-				then
-					SpecialUnitTarget = unit
-
-					if nAttackUnitDesire <= 0.75
-					then
-						if #nInRangeAlly >= #nInRangeEnemy or J.WeAreStronger(bot, 1600)
-						then
-							return true, nAttackUnitDesire
-						end
-					else
-						if #nInRangeAlly >= #nInRangeEnemy or J.WeAreStronger(bot, 1600)
-						then
-							nAttackUnitDesire = Clamp(nAttackUnitDesire + 0.1, 0, 1)
-						end						
-						
-						return true, nAttackUnitDesire
-					end
-				end
-			end
-		end
-	end
-
-	return false, 0
 end
 
 -- support harass; cores can just fall to generic attack mode
