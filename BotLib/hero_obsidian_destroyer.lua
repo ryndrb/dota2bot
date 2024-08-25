@@ -149,8 +149,8 @@ function X.SkillsComplement()
     EssenceFlux           = bot:GetAbilityByName('obsidian_destroyer_equilibrium')
     SanitysEclipse        = bot:GetAbilityByName('obsidian_destroyer_sanity_eclipse')
 
-	if  ArcaneOrb ~= nil and ArcaneOrb:IsTrained() and ArcaneOrb:GetAutoCastState( ) == false
-	and EssenceFlux ~= nil and EssenceFlux:GetLevel() >= 3
+	if ArcaneOrb ~= nil and ArcaneOrb:IsTrained() and ArcaneOrb:GetLevel() == 4 and ArcaneOrb:GetAutoCastState() == false
+	and EssenceFlux ~= nil and EssenceFlux:GetLevel() >= 2
 	then
 		ArcaneOrb:ToggleAutoCast()
 	end
