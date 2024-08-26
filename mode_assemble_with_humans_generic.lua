@@ -29,7 +29,7 @@ function GetDesire()
         return BOT_MODE_DESIRE_NONE
     end
 
-    if DotaTime() > 0 and DotaTime() < RetreatWhenTowerTargetedTime + 5 then
+    if DotaTime() > 25 and DotaTime() < RetreatWhenTowerTargetedTime + 5 then
         return BOT_MODE_DESIRE_ABSOLUTE
     end
 
