@@ -35,6 +35,7 @@ local RadiantFountain = Vector(-6619, -6336, 384)
 local DireFountain = Vector(6928, 6372, 392)
 local roshDeathTime = 0
 
+local refreshList = false
 local function AbilityLevelUpComplement()
 
 	if GetGameState() ~= GAME_STATE_PRE_GAME
@@ -74,18 +75,51 @@ local function AbilityLevelUpComplement()
 		bot.stuckLoc = nil
 	end
 
+	-- fix level up list for these two
+	local botName = bot:GetUnitName()
+	if not refreshList then
+		local hasAbility = J.HasAbility(bot, 'faceless_void_chronosphere')
+		if botName == 'npc_dota_hero_faceless_void' and hasAbility then
+			for i = 1, #sAbilityLevelUpList do
+				if sAbilityLevelUpList[i] == 'generic_hidden' then
+					sAbilityLevelUpList[i] = 'faceless_void_chronosphere'
+				end
+			end
+			refreshList = true
+		end
+		hasAbility = J.HasAbility(bot, 'life_stealer_rage')
+		if botName == 'npc_dota_hero_life_stealer' and hasAbility then
+			for i = 1, #sAbilityLevelUpList do
+				if sAbilityLevelUpList[i] == 'generic_hidden' then
+					sAbilityLevelUpList[i] = 'life_stealer_rage'
+				end
+			end
+			refreshList = true
+		end
+	end
+
 	if bot:GetAbilityPoints() > 0
 		and #sAbilityLevelUpList >= 1
 	then
+		if DotaTime() > -40 and sAbilityLevelUpList[1] == 'generic_hidden' then -- some time for Buff to take effect; don't remove right away
+			table.remove(sAbilityLevelUpList, 1)
+			return
+		end
+
 		local abilityToLevelup = bot:GetAbilityByName( sAbilityLevelUpList[1] )
 		if abilityToLevelup ~= nil
 			and not abilityToLevelup:IsHidden() --fix kunkka bug
-			and abilityToLevelup:CanAbilityBeUpgraded()
 			and abilityToLevelup:GetLevel() < abilityToLevelup:GetMaxLevel()
 		then
-			bot:ActionImmediate_LevelAbility( sAbilityLevelUpList[1] )
-			table.remove( sAbilityLevelUpList, 1 )
-			return
+			if (abilityToLevelup:CanAbilityBeUpgraded()
+				or abilityToLevelup:GetName() == 'faceless_void_chronosphere' -- since CanAbilityBeUpgraded always return false for these two
+				or abilityToLevelup:GetName() == 'life_stealer_rage')
+			and abilityToLevelup:GetLevel() < abilityToLevelup:GetMaxLevel()
+			then
+				bot:ActionImmediate_LevelAbility( sAbilityLevelUpList[1] )
+				table.remove( sAbilityLevelUpList, 1 )
+				return
+			end
 		end
 	end
 
