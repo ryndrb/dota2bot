@@ -8,6 +8,7 @@ local bDebugMode = ( 1 == 10 )
 local X = {}
 
 local J = require( GetScriptDirectory()..'/FunLib/jmz_func')
+local AttackSpecialUnit = dofile( GetScriptDirectory()..'/FunLib/aba_special_units')
 local Item = require( GetScriptDirectory()..'/FunLib/aba_item')
 
 local botName = bot:GetUnitName();
@@ -32,16 +33,9 @@ local SwappedRefresherShardTime = -90
 local PickedItem = nil
 
 local ShouldAttackSpecialUnit = false
-local SpecialUnitTarget = nil
 
 local shouldHarass = false
 local harassTarget = nil
-
-local ShouldTryDispersingFromSpells = false
-
-local ShouldRetreatInLaneIfCantKill = false
-local ShouldRetreatWhenTowerTargeted = false
-local RetreatWhenTowerTargetedTime = 0
 
 local ShouldHelpWhenCoreIsTargeted = false
 
@@ -81,25 +75,12 @@ function GetDesire()
 		end
 	end
 
-	ShouldRetreatWhenTowerTargeted = X.ConsiderRetreatWhenTowerTargeted()
-	if  ShouldRetreatWhenTowerTargeted
-	and DotaTime() < RetreatWhenTowerTargetedTime + 3.5
-	then
-		return BOT_ACTION_DESIRE_VERYHIGH
-	end
-
-	-- Consider help nearby core that's being targeted
+	-- Consider help nearby core that's being targeted; defend_ally not reliable
 	targetUnit, ShouldHelpWhenCoreIsTargeted = X.ConsiderHelpWhenCoreIsTargeted()
 	if ShouldHelpWhenCoreIsTargeted
 	then
 		bot:SetTarget(targetUnit)
-		return BOT_ACTION_DESIRE_ABSOLUTE
-	end
-
-	ShouldRetreatInLaneIfCantKill = X.ConsiderRetreatInLaneIfCantKill()
-	if ShouldRetreatInLaneIfCantKill
-	then
-		return BOT_MODE_DESIRE_VERYHIGH
+		return BOT_ACTION_DESIRE_ABSOLUTE * 0.98
 	end
 
 	if bot:HasModifier('modifier_faceless_void_chronosphere_selfbuff')
@@ -118,17 +99,10 @@ function GetDesire()
 		return BOT_MODE_DESIRE_NONE
 	end
 
-	ShouldAttackSpecialUnit, nDesire = CanAttackSpecialUnit()
-	if ShouldAttackSpecialUnit
-	then
+	nDesire = AttackSpecialUnit.GetDesire(bot)
+	if nDesire > 0 then
+		ShouldAttackSpecialUnit = true
 		return nDesire
-	end
-
-	-- Disperse from Lich, Jakiro Ultimate
-	ShouldTryDispersingFromSpells = X.ConsiderDispersingFromSpells()
-	if ShouldTryDispersingFromSpells
-	then
-		return BOT_MODE_DESIRE_ABSOLUTE * 0.98
 	end
 
 	-- -- Pickup Neutral Item Tokens; since removed item_generic; some overlap
@@ -235,31 +209,15 @@ function Think()
 		return
 	end
 
-	if  ShouldAttackSpecialUnit
-	and SpecialUnitTarget ~= nil
+	if ShouldAttackSpecialUnit
 	then
-		bot:Action_AttackUnit(SpecialUnitTarget, true)
-		return
+		AttackSpecialUnit.Think()
 	end
 
 	if bot:HasModifier('modifier_faceless_void_chronosphere_selfbuff')
 	and bot.ChronoTarget ~= nil
 	then
 		bot:Action_AttackUnit(bot.ChronoTarget, true)
-		return
-	end
-
-	-- Disperse from Lich, Jakiro Ultimate
-	if ShouldTryDispersingFromSpells
-	then
-		bot:Action_MoveToLocation(J.GetTeamFountain() + RandomVector(1000))
-		return
-	end
-
-	if ShouldRetreatWhenTowerTargeted
-	or ShouldRetreatInLaneIfCantKill
-	then
-		bot:ActionPush_MoveToLocation(J.GetTeamFountain() + RandomVector(300))
 		return
 	end
 
@@ -1751,102 +1709,6 @@ function X.HasHumanAlly( bot )
 		
 end
 
-function CanAttackSpecialUnit()
-	local nInRangeAlly = J.GetAlliesNearLoc(bot:GetLocation(), 1600)
-	local nInRangeEnemy = J.GetEnemiesNearLoc(bot:GetLocation(), 1600)
-	local nAttackRange = bot:GetAttackRange() + 150
-	local nUnits = GetUnitList(UNIT_LIST_ALL)
-	local SpecialUnits = J.GetSpecialUnits()
-
-	local isClockwerkInTeam = false
-	local cogsCount1 = 0
-	local cogsCount2 = 0
-
-	for i = 1, 5
-	do
-		local allyHero = GetTeamMember(i)
-		if allyHero ~= nil and allyHero:GetUnitName() == 'npc_dota_hero_rattletrap'
-		then
-			isClockwerkInTeam = true
-			cogsCount1 = J.GetPowerCogsCountInLoc(bot:GetLocation(), 800)
-			cogsCount2 = J.GetPowerCogsCountInLoc(bot:GetLocation(), 255)
-			break
-		end
-	end
-
-	for _, unit in pairs(nUnits)
-	do
-		if J.IsValid(unit)
-		then
-			if SpecialUnits[unit:GetUnitName()] ~= nil
-			then
-				local nAttackUnitDesire = SpecialUnits[unit:GetUnitName()]
-
-				if unit:GetUnitName() == 'npc_dota_rattletrap_cog'
-				then
-					if #nInRangeEnemy >= 1
-					then
-						local nInRangeEnemy2 = J.GetEnemiesNearLoc(bot:GetLocation(), 777)
-
-						-- Is stuck inside?
-						if cogsCount1 == 8 and cogsCount2 >= 4
-						then
-							if #nInRangeEnemy2 == 0
-							or (J.IsRetreating(bot) and #nInRangeEnemy2 >= 1)
-							then
-								SpecialUnitTarget = unit
-								return true, nAttackUnitDesire
-							end
-						end
-					end
-
-					if #nInRangeEnemy == 0
-					then
-						if cogsCount1 == 8 and cogsCount2 >= 4
-						then
-							if isClockwerkInTeam
-							then
-								SpecialUnitTarget = unit
-								return true, nAttackUnitDesire
-							end
-						else
-							if not isClockwerkInTeam
-							then
-								SpecialUnitTarget = unit
-								return true, nAttackUnitDesire
-							end
-						end
-					end
-				end
-
-				if bot:GetTeam() ~= unit:GetTeam()
-				and GetUnitToUnitDistance(bot, unit) <= nAttackRange
-				and J.CanBeAttacked(unit)
-				then
-					SpecialUnitTarget = unit
-
-					if nAttackUnitDesire <= 0.75
-					then
-						if #nInRangeAlly >= #nInRangeEnemy or J.WeAreStronger(bot, 1600)
-						then
-							return true, nAttackUnitDesire
-						end
-					else
-						if #nInRangeAlly >= #nInRangeEnemy or J.WeAreStronger(bot, 1600)
-						then
-							nAttackUnitDesire = Clamp(nAttackUnitDesire + 0.1, 0, 1)
-						end						
-						
-						return true, nAttackUnitDesire
-					end
-				end
-			end
-		end
-	end
-
-	return false, 0
-end
-
 -- support harass; cores can just fall to generic attack mode
 function X.ConsiderHarassInLaningPhase()
 	if J.IsInLaningPhase()
@@ -2130,137 +1992,28 @@ function X.FindLeastExpensiveItemSlot()
 	return idx
 end
 
-function X.ConsiderDispersingFromSpells()
-	local isMagicImmune = false
-
-	if bot:IsMagicImmune()
-	or bot:HasModifier('modifier_black_king_bar_immune')
-	or bot:HasModifier('modifier_life_stealer_rage')
-	then
-		isMagicImmune = true
-	end
-
-	-- Pierces Spell Immunity / Urgent
-	if bot:HasModifier('modifier_dark_seer_wall_slow')
-	or bot:HasModifier('modifier_jakiro_macropyre_burn')
-	then
-		return true
-	end
-
-	if  not isMagicImmune 
-	and (  bot:HasModifier('modifier_crystal_maiden_freezing_field_slow')
-		or bot:HasModifier('modifier_disruptor_static_storm')
-		or bot:HasModifier('modifier_lich_chainfrost_slow')
-		or bot:HasModifier('modifier_sandking_sand_storm_slow')
-		or bot:HasModifier('modifier_sand_king_epicenter_slow')
-		or bot:HasModifier('modifier_shredder_chakram_debuff')
-		or bot:HasModifier('modifier_skywrath_mystic_flare_aura_effect')
-		or bot:HasModifier('modifier_warlock_upheaval')
-		or bot:HasModifier('modifier_windrunner_gale_force'))
-	then
-		return true
-	end
-
-	return false
-end
-
-function X.ConsiderRetreatWhenTowerTargeted()
-	if DotaTime() > 10 * 60
-	then
-		return false
-	end
-
-	local nInRangeTowers = bot:GetNearbyTowers(1000, true)
-	if  nInRangeTowers ~= nil and #nInRangeTowers >= 1
-	and DotaTime() > RetreatWhenTowerTargetedTime + 3.5
-	and not J.IsPushing(bot)
-	then
-		local nTower = nInRangeTowers[1]
-		if  J.IsValidBuilding(nTower)
-		and (J.IsTier1(nTower) or J.IsTier2(nTower))
-		then
-			local nTowerTarget = nTower:GetAttackTarget()
-			if nTowerTarget == bot
-			or X.IsChasingSomeoneToKill()
-			then
-				RetreatWhenTowerTargetedTime = DotaTime()
-				return true
-			end
-		end
-	end
-
-	return false
-end
-
-function X.IsChasingSomeoneToKill()
-	local botTarget = J.GetProperTarget(bot)
-
-	if J.IsGoingOnSomeone(bot)
-	then
-		if  J.IsValidTarget(botTarget)
-		and J.IsInRange(bot, botTarget, 1600)
-		and J.IsChasingTarget(bot, botTarget)
-		then
-			local nChasingAlly = {}
-			local nInRangeAlly = J.GetAlliesNearLoc(bot:GetLocation(), 1600)
-			for _, allyHero in pairs(nInRangeAlly)
-			do
-				if  J.IsValidHero(allyHero)
-				and J.IsChasingTarget(allyHero, botTarget)
-				and allyHero ~= bot
-				and not J.IsRetreating(allyHero)
-				and not J.IsSuspiciousIllusion(allyHero)
-				then
-					table.insert(nChasingAlly, allyHero)
-				end
-			end
-
-			table.insert(nChasingAlly, bot)
-
-			local nHealth = botTarget:GetHealth()
-			if botTarget:GetUnitName() == 'npc_dota_hero_medusa'
-			then
-				nHealth = nHealth + botTarget:GetMana()
-			end
-
-			if nHealth > J.GetTotalEstimatedDamageToTarget(nChasingAlly, botTarget)
-			then
-				local nEnemyTowers = botTarget:GetNearbyTowers(888, true)
-
-				if nEnemyTowers ~= nil and #nEnemyTowers >= 1
-				then
-					return true
-				end
-			end
-		end
-	end
-
-	return false
-end
-
 function X.ConsiderHelpWhenCoreIsTargeted()
 	local nRadius = 3500
 	local nModeDesire = bot:GetActiveModeDesire()
 	local nClosestCore = J.GetClosestCore(bot, nRadius)
-	local botTarget = J.GetProperTarget(bot)
 
 	if  nClosestCore ~= nil
-	and (not J.IsCore(bot) or (J.IsCore(bot) and not J.IsInLaningPhase()))
-	and not (J.IsGoingOnSomeone(bot) and J.IsValidTarget(botTarget) and J.IsInRange(bot, botTarget, 1000))
-	and not (J.IsRetreating(bot) and nModeDesire > 0.7)
+	and J.GetHP(nClosestCore) > 0.2
+	and (not J.IsCore(bot) or (J.IsCore(bot) and (not J.IsInLaningPhase() or J.IsInRange(bot, nClosestCore, 1600))))
+	and not J.IsGoingOnSomeone(bot)
+	and not (J.IsRetreating(bot) and nModeDesire > 0.8)
 	then
-		local nInRangeAlly = J.GetAlliesNearLoc(nClosestCore:GetLocation(), nClosestCore:GetCurrentVisionRange())
-		local nInRangeEnemy = J.GetEnemiesNearLoc(nClosestCore:GetLocation(), nClosestCore:GetCurrentVisionRange())
+		local nInRangeAlly = J.GetAlliesNearLoc(nClosestCore:GetLocation(), 1200)
+		local nInRangeEnemy = J.GetEnemiesNearLoc(nClosestCore:GetLocation(), 1600)
 
 		for _, enemyHero in pairs(nInRangeEnemy)
 		do
 			if  J.IsValidHero(enemyHero)
-			and GetUnitToUnitDistance(bot, nClosestCore) <= nRadius
-			and nInRangeAlly ~= nil and nInRangeEnemy ~= nil
+			and GetUnitToUnitDistance(enemyHero, nClosestCore) <= 1600
 			and (#nInRangeAlly + 1 >= #nInRangeEnemy)
 			then
 				if (enemyHero:GetAttackTarget() == nClosestCore or J.IsChasingTarget(enemyHero, nClosestCore))
-				or nClosestCore:WasRecentlyDamagedByHero(enemyHero, 4)
+				or nClosestCore:WasRecentlyDamagedByHero(enemyHero, 2.5)
 				then
 					return enemyHero, true
 				end
@@ -2269,57 +2022,4 @@ function X.ConsiderHelpWhenCoreIsTargeted()
 	end
 
 	return nil, false
-end
-
-function X.ConsiderRetreatInLaneIfCantKill()
-	if  J.IsGoingOnSomeone(bot)
-	and J.IsInLaningPhase()
-	and bot:GetLevel() < 8
-	then
-		local tAllyHeroes = bot:GetNearbyHeroes(1600, false, BOT_MODE_NONE)
-		local tEnemyHeroes = bot:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
-
-		if bot:WasRecentlyDamagedByTower(3)
-		and not J.IsRetreating(bot)
-		then
-			return BOT_MODE_DESIRE_VERYHIGH
-		end
-
-		local botTarget = J.GetProperTarget(bot)
-		if  J.IsValidTarget(botTarget)
-		and J.IsInRange(bot, botTarget, 1600)
-		and J.IsChasingTarget(bot, botTarget)
-		then
-			local nChasingAlly = {}
-            for i = 1, 5
-            do
-                local member = GetTeamMember(i)
-                if J.IsValidHero(member)
-                and J.IsChasingTarget(member, botTarget)
-                and J.IsInRange(botTarget, member, 888)
-                then
-                    table.insert(nChasingAlly, member)
-                end
-            end
-
-			local nHealth = botTarget:GetHealth()
-			if botTarget:GetUnitName() == 'npc_dota_hero_medusa'
-			then
-				nHealth = nHealth + botTarget:GetMana()
-			end
-
-			if nHealth > J.GetTotalEstimatedDamageToTarget(nChasingAlly, botTarget)
-            or #tEnemyHeroes > #tAllyHeroes
-			then
-                local nEnemyTowers = bot:GetNearbyTowers(1600, true)
-				if J.IsValidBuilding(nEnemyTowers[1])
-				and J.IsInRange(botTarget, nEnemyTowers[1], 888)
-				then
-					return true
-				end
-			end
-		end
-	end
-
-	return false
 end
