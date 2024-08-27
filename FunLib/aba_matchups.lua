@@ -2172,10 +2172,28 @@ local Heroes = {
 
     ['npc_dota_hero_ringmaster'] = {
         ['synergy'] = {
-
+            "npc_dota_hero_terrorblade",
+            "npc_dota_hero_bounty_hunter",
+            "npc_dota_hero_storm_spirit",
+            "npc_dota_hero_visage",
+            "npc_dota_hero_templar_assassin",
+            "npc_dota_hero_huskar",
+            "npc_dota_hero_bloodseeker",
+            "npc_dota_hero_bane",
+            "npc_dota_hero_batrider",
+            "npc_dota_hero_tusk",
         },
         ['counter'] = {
-
+            "npc_dota_hero_ember_spirit",
+            "npc_dota_hero_slark",
+            "npc_dota_hero_troll_warlord",
+            "npc_dota_hero_sven",
+            "npc_dota_hero_primal_beast",
+            "npc_dota_hero_legion_commander",
+            "npc_dota_hero_dark_seer",
+            "npc_dota_hero_tiny",
+            "npc_dota_hero_dragon_knight",
+            "npc_dota_hero_meepo",
         },
     },
 
