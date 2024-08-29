@@ -530,7 +530,7 @@ function X.ConsiderAstralStep()
 		and J.CanKillTarget(enemyHero, nDamage, DAMAGE_TYPE_MAGICAL)
 		and not enemyHero:HasModifier('modifier_abaddon_borrowed_time')
 		and not enemyHero:HasModifier('modifier_dazzle_shallow_grave')
-		and not botTarget:HasModifier('modifier_faceless_void_chronosphere_freeze')
+		and not enemyHero:HasModifier('modifier_faceless_void_chronosphere_freeze')
 		and not enemyHero:HasModifier('modifier_templar_assassin_refraction_absorb')
 		and J.WeAreStronger(bot, 1600)
 		then

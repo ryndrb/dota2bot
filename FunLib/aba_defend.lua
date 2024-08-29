@@ -98,6 +98,13 @@ function Defend.DefendThink(bot, lane)
 	local vDefendLane = GetLocationAlongLane(lane, GetLaneFrontAmount(GetTeam(), lane, false))
 	local nSearchRange = attackRange < 900 and 900 or math.min(attackRange, 1600)
 
+	local vAncentLoc = GetAncient(GetTeam()):GetLocation()
+	local nEnemyLaneAmount = 1 - GetLaneFrontAmount(GetOpposingTeam(), lane, true)
+	if nEnemyLaneAmount > 0
+	and J.GetDistance(vAncentLoc, GetLocationAlongLane(lane, nEnemyLaneAmount)) < J.GetDistance(vAncentLoc, vDefendLane) then
+		vDefendLane = GetLocationAlongLane(lane, nEnemyLaneAmount)
+	end
+
 	local nEnemyHeroes = bot:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
 
 	local nAllyHeroes_real = J.GetAlliesNearLoc(bot:GetLocation(), 1600)
@@ -137,7 +144,7 @@ function Defend.DefendThink(bot, lane)
 	end
 
 	if J.IsValidHero(nEnemyHeroes_real[1])
-	and (#nEnemyHeroes_real > #nAllyHeroes_real and not J.WeAreStronger(bot, 1600))
+	and #nEnemyHeroes_real > #nAllyHeroes_real
 	then
 		bot:Action_MoveToLocation(J.GetXUnitsTowardsLocation2(vDefendLane, nEnemyHeroes_real[1]:GetLocation(), 800) + RandomVector(75))
 		return

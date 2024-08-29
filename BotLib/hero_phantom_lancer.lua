@@ -39,8 +39,8 @@ local HeroBuild = {
 				"item_wraith_band",
 				"item_power_treads",
 				"item_magic_wand",
-				"item_ultimate_scepter",
 				"item_diffusal_blade",
+				"item_ultimate_scepter",
 				"item_manta",--
 				"item_heart",--
 				"item_basher",

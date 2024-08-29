@@ -441,47 +441,49 @@ function Think()
 			sSelectHero = X.GetNotRepeatHero(tSelectPoolList[i])
 			if IsPlayerBot(id) and GetSelectedHeroName(id) == ""
 			then
-				local forCounter = RandomInt(1, 2) == 1 -- might change
+				if RandomInt(1, 2) == 1 then
+					local forCounter = RandomInt(1, 2) == 1
 
-				if #nOwnTeam == 0 and #nEnmTeam == 0
-				then
-					sSelectHero = X.GetNotRepeatHero(tSelectPoolList[i])
-				else
-					local didCounter = false
-					local didExhaust = false
-
-					if  forCounter
-					and #X.GetCurrEnmCores(nEnmTeam) >= 1
+					if #nOwnTeam == 0 and #nEnmTeam == 0
 					then
-						-- Pick a random core in the current enemy comp to counter
-						local nCurrEnmCores = X.GetCurrEnmCores(nEnmTeam)
-						local nHeroToCounter = nCurrEnmCores[RandomInt(1, #nCurrEnmCores)]
-						local sPoolList = U.deepCopy(tSelectPoolList[i])
-
-						for j = 1, #tSelectPoolList[i], 1
-						do
-							local idx = RandomInt(1, #sPoolList)
-							local heroName = sPoolList[idx]
-							if  MU.IsCounter(heroName, nHeroToCounter) -- so it's not 'samey'; since bots don't really put pressure like a human would
-							and not X.IsRepeatHero(heroName)
-							then
-								print(heroName, nHeroToCounter)
-								didCounter = true
-								sSelectHero = heroName
-								break
-							end
-
-							table.remove(sPoolList, idx)
-							if j == #tSelectPoolList[i] or #sPoolList == 0 then didExhaust = true end
-						end
+						sSelectHero = X.GetNotRepeatHero(tSelectPoolList[i])
 					else
-						if not forCounter
-						or (didExhaust and not didCounter)
+						local didCounter = false
+						local didExhaust = false
+
+						if  forCounter
+						and #X.GetCurrEnmCores(nEnmTeam) >= 1
 						then
-							local heroName = X.GetBestHeroFromPool(i, nOwnTeam)
-							if heroName ~= nil
+							-- Pick a random core in the current enemy comp to counter
+							local nCurrEnmCores = X.GetCurrEnmCores(nEnmTeam)
+							local nHeroToCounter = nCurrEnmCores[RandomInt(1, #nCurrEnmCores)]
+							local sPoolList = U.deepCopy(tSelectPoolList[i])
+
+							for j = 1, #tSelectPoolList[i], 1
+							do
+								local idx = RandomInt(1, #sPoolList)
+								local heroName = sPoolList[idx]
+								if  MU.IsCounter(heroName, nHeroToCounter) -- so it's not 'samey'; since bots don't really put pressure like a human would
+								and not X.IsRepeatHero(heroName)
+								then
+									print(heroName, nHeroToCounter)
+									didCounter = true
+									sSelectHero = heroName
+									break
+								end
+
+								table.remove(sPoolList, idx)
+								if j == #tSelectPoolList[i] or #sPoolList == 0 then didExhaust = true end
+							end
+						else
+							if not forCounter
+							or (didExhaust and not didCounter)
 							then
-								sSelectHero = heroName
+								local heroName = X.GetBestHeroFromPool(i, nOwnTeam)
+								if heroName ~= nil
+								then
+									sSelectHero = heroName
+								end
 							end
 						end
 					end

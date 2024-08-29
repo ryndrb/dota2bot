@@ -9,6 +9,8 @@ local canDoTormentor = false
 
 local IsTeamHealthy = false
 
+local coreCountInLoc = 0
+
 if bot.tormentorState == nil then bot.tormentorState = false end
 if bot.lastKillTime == nil then bot.lastKillTime = 0 end
 if bot.wasAttackingTormentor == nil then bot.wasAttackingTormentor = false end
@@ -186,6 +188,7 @@ function GetDesire()
         end
 
 		if nAllyInLoc ~= nil and #nAllyInLoc >= 2
+		or coreCountInLoc >= 1
 		or IsHumanInLoc()
 		then
 			return BOT_ACTION_DESIRE_VERYHIGH
@@ -261,7 +264,6 @@ end
 
 function IsEnoughAllies()
 	local heroCount = 0
-    local coreCount = 0
 
 	for i = 1, 5
 	do
@@ -275,14 +277,14 @@ function IsEnoughAllies()
 		then
             if J.IsCore(member)
             then
-                coreCount = coreCount + 1
+                coreCountInLoc = coreCountInLoc + 1
             end
 
 			heroCount = heroCount + 1
 		end
 	end
 
-	return ((((bot.lastKillTime == 0 and heroCount >= 5) or (bot.lastKillTime > 0 and heroCount >= 3))) and coreCount >= 2)
+	return ((((bot.lastKillTime == 0 and heroCount >= 5) or (bot.lastKillTime > 0 and heroCount >= 3))) and coreCountInLoc >= 2)
 end
 
 function DoesAllHaveShard()

@@ -558,6 +558,7 @@ function ItemPurchaseThink()
 	--死前如果会损失金钱则购买额外TP
 	if botGold >= GetItemCost( "item_tpscroll" )
 		and bot:IsAlive()
+		and not J.IsMeepoClone(bot)
 		and botGold < ( GetItemCost( "item_tpscroll" ) + botWorth / 40 )
 		and botHP < 0.08
 		and GetGameMode() ~= 23
@@ -712,6 +713,7 @@ function ItemPurchaseThink()
 	then
 		if botGold >= GetItemCost( "item_tpscroll" )
 		and bot:IsAlive()
+		and not J.IsMeepoClone(bot)
 		and Item.GetItemCharges( bot, 'item_tpscroll' ) <= 1
 		then
 			bot:ActionImmediate_PurchaseItem( "item_tpscroll" )
@@ -723,6 +725,7 @@ function ItemPurchaseThink()
 		and buyTP == false
 		and bot:GetCourierValue() == 0
 		and botGold >= GetItemCost( "item_tpscroll" )
+		and not J.IsMeepoClone(bot)
 		and not Item.HasItem( bot, 'item_travel_boots' )
 		and not Item.HasItem( bot, 'item_travel_boots_2' )
 	then

@@ -380,6 +380,7 @@ function Think()
 			if J.GetHP(bot) < 0.85 or J.GetMP(bot) < 0.85
 			then
 				if  J.Item.GetItemCharges(bot, 'item_tpscroll') <= 1
+				and not J.IsMeepoClone(bot)
 				and bot:GetGold() >= GetItemCost('item_tpscroll')
 				then
 					bot:ActionImmediate_PurchaseItem('item_tpscroll')
