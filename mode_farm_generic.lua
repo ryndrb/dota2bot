@@ -48,16 +48,14 @@ if bot.farmLocation == nil then bot.farmLocation = bot:GetLocation() end
 
 function GetDesire()
 
-	if  not isWelcomeMessageDone
-	and J.GetPosition(bot) == 5
-	then
-		if J.IsModeTurbo() and DotaTime() > -45 or DotaTime() > -60
-		then
+    if not isWelcomeMessageDone and J.GetFirstBotInTeam() == bot
+    then
+        if J.IsModeTurbo() and (DotaTime() > -45 or DotaTime() > -60) then
 			bot:ActionImmediate_Chat("Check out the GitHub page to get the latest files: https://github.com/ryndrb/dota2bot", true)
 			bot:ActionImmediate_Chat("If you have any feedback in improving the experience, kindly post them on the Steam Workshop page.", true)
 			isWelcomeMessageDone = true
 		end
-	end
+    end
 
 	if not bInitDone
 	then
@@ -69,13 +67,15 @@ function GetDesire()
 
 	local TormentorLocation = J.GetTormentorLocation(GetTeam())
 	local nInRangeAlly = J.GetAlliesNearLoc(TormentorLocation, 700)
-	local nNeutralCreeps = bot:GetNearbyNeutralCreeps(700)
+	local nNeutralCreeps = bot:GetNearbyNeutralCreeps(1600)
 
 	if #nInRangeAlly >= 2 or J.IsDoingTormentor(bot) then return BOT_MODE_DESIRE_NONE end
 
-	for _, c in pairs(nNeutralCreeps)
+	for _, creep in pairs(nNeutralCreeps)
 	do
-		if c:GetUnitName() == "npc_dota_miniboss"
+		if J.IsValid(creep)
+		and J.IsInRange(bot, creep, 900)
+		and creep:GetUnitName() == "npc_dota_miniboss"
 		then
 			return BOT_ACTION_DESIRE_NONE
 		end
@@ -113,12 +113,11 @@ function GetDesire()
 	local aliveAllyCount  = J.GetNumOfAliveHeroes(false);
 
 	if X.IsUnitAroundLocation(GetAncient(GetTeam()):GetLocation(), 3000) 
-	and (aliveAllyCount >= aliveEnemyCount or J.WeAreStronger(bot, 1600))
+	and aliveAllyCount >= aliveEnemyCount
 	then
 		return BOT_MODE_DESIRE_NONE;
 	end
 	
-	minute = math.floor(DotaTime() / 60);
 	sec = DotaTime() % 60;
 	
 		
@@ -161,14 +160,13 @@ function GetDesire()
 	
 	local nTeamFightLocation = J.GetTeamFightLocation(bot);
 	if nTeamFightLocation ~= nil 
-	   and ( not beVeryHighFarmer or bot:GetLevel() >= 20 )
+	   and ( not beVeryHighFarmer or bot:GetLevel() >= 18 )
 	   and GetUnitToLocationDistance(bot,nTeamFightLocation) < 2800
 	then
 		return BOT_MODE_DESIRE_NONE;
 	end	
 	
-	if bot:GetActiveMode() == BOT_MODE_LANING then laningTime = DotaTime(); end
-	if DotaTime() - laningTime < 15.0 and GetHeroDeaths(bot:GetPlayerID()) <= 2 then return BOT_MODE_DESIRE_NONE; end	
+	if J.IsLaning(bot) then return BOT_MODE_DESIRE_NONE end
 	
 	if bot:IsAlive() and bot:HasModifier('modifier_arc_warden_tempest_double') 
 	   and GetRoshanDesire() > 0.85
@@ -185,15 +183,15 @@ function GetDesire()
 			local botTarget = bot:GetAttackTarget()
 
 			if  J.IsRoshan(botTarget)
-			and J.IsInRange(bot, botTarget, 400)
+			and J.IsInRange(bot, botTarget, 900)
 			and J.GetHP(botTarget) < 0.33
 			then
 				if preferedCamp == nil then preferedCamp = J.Site.GetClosestNeutralSpwan(bot, availableCamp) end
-				return BOT_MODE_DESIRE_ABSOLUTE
+				return bot:GetActiveModeDesire() + 0.1
 			end
 		end
 
-		if nMode == BOT_MODE_ITEM
+		if bot:GetActiveMode() == BOT_MODE_ITEM
 		then
 			if preferedCamp == nil then preferedCamp = J.Site.GetClosestNeutralSpwan(bot, availableCamp) end
 			return bot:GetActiveModeDesire() + 0.1

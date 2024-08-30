@@ -503,10 +503,52 @@ function Think()
 	-- Phoenix
 	if bot:HasModifier('modifier_phoenix_sun_ray') and not bot:HasModifier('modifier_phoenix_supernova_hiding')
 	then
-		if J.IsValidHero(bot.targetSunRay)
-		then
-			bot:Action_MoveToLocation(bot.targetSunRay:GetLocation())
-			return
+		local nRadius = 130
+		local nBeamDistance = 1150
+		local vBeamEndLoc = J.GetFaceTowardDistanceLocation(bot, nBeamDistance)
+
+		if J.IsValidHero(bot.sun_ray_target) then
+			local tResult = PointToLineDistance(bot:GetLocation(), vBeamEndLoc, bot.sun_ray_target:GetLocation())
+			if tResult ~= nil and not tResult.within and tResult.distance > nRadius then
+				if J.IsInRange(bot, bot.sun_ray_target, nBeamDistance) then
+					bot:Action_MoveToLocation(bot.sun_ray_target:GetLocation())
+					return
+				end
+			else
+				bot:Action_MoveToLocation(bot.sun_ray_target:GetLocation())
+				return
+			end
+		end
+
+		-- beam other enemy
+		local tEnemyHeroes = bot:GetNearbyHeroes(nBeamDistance, true, BOT_MODE_NONE)
+		for _, enemy in pairs(tEnemyHeroes) do
+			if J.IsValidHero(enemy)
+			and J.CanCastOnNonMagicImmune(enemy)
+			and not enemy:HasModifier('modifier_abaddon_borrowed_time')
+			and not enemy:HasModifier('modifier_dazzle_shallow_grave')
+			and not enemy:HasModifier('modifier_necrolyte_reapers_scythe') then
+				bot:Action_MoveToLocation(enemy:GetLocation())
+				return
+			end
+		end
+
+		-- heal ally
+		local tInRangeAlly = bot:GetNearbyHeroes(nBeamDistance, false, BOT_MODE_NONE)
+		for _, ally in pairs(tInRangeAlly)
+		do
+			if J.IsValidHero(ally)
+			and J.GetHP(ally) < 0.5
+			and ally:WasRecentlyDamagedByAnyHero(3.5)
+			and not ally:IsIllusion()
+			then
+				if not J.IsRunning(ally)
+				or ally:HasModifier('modifier_faceless_void_chronosphere_freeze')
+				or ally:HasModifier('modifier_enigma_black_hole_pull') then
+					bot:Action_MoveToLocation(ally:GetLocation())
+					return
+				end
+			end
 		end
 	end
 

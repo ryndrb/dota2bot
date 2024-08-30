@@ -263,7 +263,7 @@ function X.GetModifierDesire()
 
     if bot:HasModifier('modifier_sandking_sand_storm_slow')
     then
-        if (not X.IsUnitTargetRealHeroInRange(bot) or not canBeCloseToKillingTarget)
+        if (not X.IsUnitTargetRealHeroInRange(botAttackRange) or not canBeCloseToKillingTarget)
         and not (#tAllyHeroes_real >= #tEnemyHeroes_real + 2)
         then
             bot.should_attack_move = true
@@ -275,7 +275,7 @@ function X.GetModifierDesire()
     or bot:HasModifier('modifier_disruptor_static_storm')
     then
         if not botIsMagicImmune
-        and (not X.IsUnitTargetRealHeroInRange(bot) or not canBeCloseToKillingTarget)
+        and (not X.IsUnitTargetRealHeroInRange(botAttackRange) or not canBeCloseToKillingTarget)
         and not (#tAllyHeroes_real >= #tEnemyHeroes_real + 2)
         then
             return RemapValClamped(botHP, 0.25, 0.5, 0.95, 0.75)

@@ -553,19 +553,11 @@ function Site.RefreshCamp( bot )
 
 	local camps = GetNeutralSpawners()
 	local allCampList = {}
-	local nSum = 0
-	local nCount = 0
-	for i, id in pairs( GetTeamPlayers( GetTeam() ) )
-	do
-		nSum = nSum + GetHeroLevel( id )
-		nCount = nCount + 1
-	end
-	local nAverageLV = nSum / nCount
-
+	local botLevel = bot:GetLevel()
 
 	for k, camp in pairs( camps )
 	do
-		if ( nAverageLV <= 7 or bot:GetAttackDamage() <= 80 )
+		if ( botLevel <= 7 or bot:GetAttackDamage() <= 80 )
 		then
 			if not Site.IsEnemyCamp( camp )
 				and not Site.IsLargeCamp( camp )
@@ -573,14 +565,14 @@ function Site.RefreshCamp( bot )
 			then
 				table.insert( allCampList, { idx = k, cattr = camp } )
 			end
-		elseif nAverageLV <= 11
+		elseif botLevel <= 11
 		then
 			if not Site.IsEnemyCamp( camp )
 				and not Site.IsAncientCamp( camp )
 			then
 				table.insert( allCampList, { idx = k, cattr = camp } )
 			end
-		elseif nAverageLV <= 14
+		elseif botLevel <= 14
 		then
 			if not Site.IsEnemyCamp( camp )
 			then

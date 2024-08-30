@@ -4318,6 +4318,38 @@ function J.IsLocationInBlackHole(loc)
 	return false
 end
 
+function J.IsEnemyChronosphereInLocation(loc)
+	local nRadius = 500
+
+	for _, unit in pairs(GetUnitList(UNIT_LIST_ALLIES))
+	do
+		if J.IsValid(unit)
+		and GetUnitToLocationDistance(unit, loc) <= nRadius
+		and unit:HasModifier('modifier_faceless_void_chronosphere_freeze')
+		then
+			return true
+		end
+	end
+
+	return false
+end
+
+function J.IsEnemyBlackHoleInLocation(loc)
+	local nRadius = 500
+
+	for _, unit in pairs(GetUnitList(UNIT_LIST_ALLIES))
+	do
+		if J.IsValid(unit)
+		and GetUnitToLocationDistance(unit, loc) <= nRadius
+		and (unit:HasModifier('modifier_enigma_black_hole_pull') or unit:HasModifier('modifier_enigma_black_hole_pull_scepter'))
+		then
+			return true
+		end
+	end
+
+	return false
+end
+
 function J.IsLocationInArena(loc, nRadius)
 	for _, unit in pairs(GetUnitList(UNIT_LIST_ALL))
 	do
@@ -5168,6 +5200,18 @@ function J.GetClosestTeamLane(unit)
 	end
 
 	return v_mid_lane
+end
+
+function J.GetFirstBotInTeam()
+	for i = 1, 5
+	do
+		local ally = GetTeamMember(i)
+		if ally ~= nil
+		and ally:IsBot()
+		then
+			return ally
+		end
+	end
 end
 
 local SpecialUnits = {
