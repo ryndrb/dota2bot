@@ -2716,7 +2716,7 @@ function J.GetDefendLaneDesire(lane)
 	then
 		return GetBot().DefendLaneDesire[lane]
 	else
-		return GetDefLaneDesire(lane)
+		return GetDefendLaneDesire(lane)
 	end
 end
 
