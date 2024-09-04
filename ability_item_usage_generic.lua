@@ -2397,9 +2397,9 @@ X.ConsiderItemDesire["item_heavens_halberd"] = function( hItem )
 			and J.CanCastOnNonMagicImmune( npcEnemy )
 			and X.IsWithoutSpellShield( npcEnemy )
 			and npcEnemy:GetAttackTarget() ~= nil
-			and ( npcEnemy:GetPrimaryAttribute() ~= ATTRIBUTE_INTELLECT or npcEnemy:GetAttackDamage() > 180 )
+			-- and ( npcEnemy:GetPrimaryAttribute() ~= ATTRIBUTE_INTELLECT or npcEnemy:GetAttackDamage() > 180 )
 		then
-			local nEnemyDamage = npcEnemy:GetEstimatedDamageToTarget( false, bot, 3.0, DAMAGE_TYPE_PHYSICAL )
+			local nEnemyDamage = npcEnemy:GetAttackDamage() * npcEnemy:GetAttackSpeed()
 			if ( nEnemyDamage > targetHeroDamage )
 			then
 				targetHeroDamage = nEnemyDamage

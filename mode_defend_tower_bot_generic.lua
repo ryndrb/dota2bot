@@ -5,6 +5,6 @@ function GetDesire()
     return GetBot().DefendLaneDesire[LANE_BOT]
 end
 
-function Think()
-    Defend.DefendThink(GetBot(), LANE_BOT)
-end
+-- function Think()
+--     Defend.DefendThink(GetBot(), LANE_BOT)
+-- end
