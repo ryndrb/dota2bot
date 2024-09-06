@@ -27,6 +27,7 @@ local tProTeams = {
         ['alias'] = 'Aurora',
         ['rosters'] = {
             [1] = {"23", "lorenof", "Jabz", "Q", "Oli"},
+            [2] = {"23savage", "lorenof", "Jabz", "Q", "Oli"},
         }
     },
     [2] = {
@@ -50,8 +51,9 @@ local tProTeams = {
         ['team_org'] = 'BetBoom Team',
         ['alias'] = 'BetBoom',
         ['rosters'] = {
-            [1] = {"Nightfall", "gpk", "Pure", "Save-", "TORONTOTOKYO"},
-            [2] = {"Nightfall", "gpk", "MeiRo`", "Save-", "TORONTOTOKYO"},
+            [1] = {"Nightfall", "gpk-", "Pure", "Save-", "TORONTOTOKYO"},
+            [2] = {"Nightfall", "gpk-", "MeiRo`", "Save-", "TORONTOTOKYO"},
+            [3] = {"Saika", "gpk-", "MeiRo`", "Save-", "TORONTOTOKYO"},
         }
     },
     [5] = {
@@ -75,6 +77,7 @@ local tProTeams = {
         ['rosters'] = {
             [1] = {"EternaLEnVy", "FATA-", "MSS", "Aui_2000", "pieliedie"},
             [2] = {"EternaLEnVy", "Ace♠", "Sneyking", "MISERY", "pieliedie"},
+            [3] = {"医者watson`", "No[o]ne-", "DM", "Kataomi`", "Fishman"},
         }
     },
     [33] = {
@@ -96,8 +99,8 @@ local tProTeams = {
         ['alias'] = 'Entity',
         ['rosters'] = {
             [1] = {"Pure", "Stormstormer", "Tobi", "Kataomi`", "Fishman"},
-            [2] = {"医者watson", "Stormstormer", "Gabbi", "Kataomi`", "Fishman"},
-            [3] = {"医者watson", "No[o]ne-", "DM", "Kataomi`", "Fishman"},
+            [2] = {"医者watson`", "Stormstormer", "Gabbi", "Kataomi`", "Fishman"},
+            [3] = {"医者watson`", "No[o]ne-", "DM", "Kataomi`", "Fishman"},
         }
     },
     [8] = {
@@ -288,7 +291,7 @@ local tProTeams = {
             [1] = {"Yatoro雨", "TORONTOTOKYO", "Collapse", "Mira", "Miposhka"},
             [2] = {"YATOROGOD雨", "TORONTOTOKYO", "Collapse", "Mira", "Miposhka"},
             [3] = {"Yatoro雨", "Larl", "Collapse", "Mira", "Miposhka"},
-            [4] = {"Raddan雨", "Larl", "Collapse", "Mira", "Miposhka"},
+            [4] = {"Raddan", "Larl", "Collapse", "Mira", "Miposhka"},
         }
     },
     [24] = {
@@ -328,16 +331,24 @@ local tProTeams = {
         ['team_org'] = 'Xtreme Gaming',
         ['alias'] = 'XG',
         ['rosters'] = {
-            [1] = {"Ame^^", "Xm", "Xxs", "XinQ", "Dy"},
+            [1] = {"Ame", "Xm", "Xxs", "XinQ", "Dy"},
         }
     },
 }
 
 local G2 = {"Monet", "NothingToSay", "JT-", "BoBoKa", "xNova"}
 
--- the game does not render them as good (curves); really appear pixelated
 local tKanjis = {
-    "はな", "うみ", "つき", "ゆき", "ほし", "さくら", "もり", "くも", "ゆめ", "そら", "にじ", "きぼう", "あい", "び", "こころ", "わ", "しず", "ぎん", "ひかり", "かぜ", "まこと", "しょう", "かなた", "みらい", "えいえん", "ゆう", "しゅんかん", "げん", "あや", "あきら",
+    "あ", "い", "う", "え", "お",
+    "か", "き", "く", "け", "こ",
+    "さ", "し", "す", "せ", "そ",
+    "た", "ち", "つ", "て", "と",
+    "な", "に", "ぬ", "ね", "の",
+    "は", "ひ", "ふ", "へ", "ほ",
+    "ま", "み", "む", "め", "も",
+    "や", "ゆ", "よ",
+    "ら", "り", "る", "れ", "ろ",
+    "わ", "を", "ん"
 }
 
 function X.GetBotNames()

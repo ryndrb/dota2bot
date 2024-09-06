@@ -32,7 +32,7 @@ local HeroBuild = {
         [1] = {
             ['talent'] = {
 				[1] = {
-					['t25'] = {0, 10},
+					['t25'] = {10, 10},
 					['t20'] = {0, 10},
 					['t15'] = {0, 10},
 					['t10'] = {10, 0},
@@ -75,7 +75,7 @@ local HeroBuild = {
         [1] = {
             ['talent'] = {
 				[1] = {
-					['t25'] = {0, 10},
+					['t25'] = {10, 10},
 					['t20'] = {0, 10},
 					['t15'] = {0, 10},
 					['t10'] = {10, 0},
@@ -431,10 +431,11 @@ function X.ConsiderTimberChain()
 
 	local nCastRange = J.GetProperCastRange(false, bot, TimberChain:GetCastRange())
 	local nCastPoint = TimberChain:GetCastPoint()
-	local nRadius = TimberChain:GetSpecialValueInt('chain_radius')
+	local nDamageRadius = TimberChain:GetSpecialValueInt('radius')
+	local nChainRadius = TimberChain:GetSpecialValueInt('chain_radius')
 	local nSpeed = TimberChain:GetSpecialValueInt('speed')
 	local nDamage = TimberChain:GetSpecialValueInt('damage')
-	local nWhirlingDamage = WhirlingDeath:GetSpecialValueInt('whirling_damage') * (1 + bot:GetSpellAmp())
+	local nWhirlingDamage = WhirlingDeath:GetSpecialValueInt('whirling_damage')
 	local botTarget = J.GetProperTarget(bot)
 
 	if J.IsGoingOnSomeone(bot)
@@ -445,12 +446,15 @@ function X.ConsiderTimberChain()
 		and J.IsInRange(bot, botTarget, nCastRange)
 		and not botTarget:HasModifier('modifier_faceless_void_chronosphere_freeze')
 		then
-			if J.WeAreStronger(bot, 1200) then
-				local nTargetTree = X.GetBestTree(botTarget, nCastRange, nRadius)
+			local tInRangeAlly = J.GetAlliesNearLoc(botTarget:GetLocation(), 1200)
+			local tInRangeEnemy = J.GetEnemiesNearLoc(botTarget:GetLocation(), 1200)
+			if J.WeAreStronger(bot, 1200)
+			or #tInRangeAlly >= #tInRangeEnemy then
+				local nTargetTree = X.GetBestTree(botTarget, nCastRange, nDamageRadius)
 				if nTargetTree ~= nil
 				then
-					if bot:GetLevel() < 6
-					and J.CanCastAbility(WhirlingDeath)
+					if J.CanCastAbility(WhirlingDeath)
+					and bot:GetMana() > TimberChain:GetManaCost() + WhirlingDeath:GetManaCost()
 					and J.CanKillTarget(botTarget, nDamage + nWhirlingDamage, DAMAGE_TYPE_PURE)
 					then
 						return BOT_ACTION_DESIRE_HIGH, GetTreeLocation(nTargetTree)
@@ -472,7 +476,7 @@ function X.ConsiderTimberChain()
 		and J.IsInRange(bot, tEnemyHeroes[1], 800)
 		and J.IsChasingTarget(tEnemyHeroes[1], bot)
 		and bot:WasRecentlyDamagedByAnyHero(4.0) then
-			local nTargetTree = X.GetBestRetreatTree(nCastRange, nRadius)
+			local nTargetTree = X.GetBestRetreatTree(nCastRange, nChainRadius)
 			if nTargetTree then
 				return BOT_ACTION_DESIRE_HIGH, GetTreeLocation(nTargetTree)
 			end
@@ -481,7 +485,7 @@ function X.ConsiderTimberChain()
 
 	if J.IsStuck(bot)
 	then
-		local nTargetTree = X.GetBestRetreatTree(nCastRange, nRadius)
+		local nTargetTree = X.GetBestRetreatTree(nCastRange, nChainRadius)
 		if nTargetTree then
 			return BOT_ACTION_DESIRE_HIGH, GetTreeLocation(nTargetTree)
 		end
@@ -984,10 +988,10 @@ function X.GetBestRetreatTree(nCastRange, nRadius)
 
 	local vToFountain = vTeamFountain - botLoc
 
-	for _, tree in pairs(nTrees)
+	for i = #nTrees, 1, -1
 	do
-		if tree then
-			local vTreeLoc = GetTreeLocation(tree)
+		if nTrees[i] then
+			local vTreeLoc = GetTreeLocation(nTrees[i])
 			if not X.AreThereTreesInBetween(botLoc, vTreeLoc, nCastRange, nRadius) then
 				local currDist1 = GetUnitToLocationDistance(bot, vTreeLoc)
 				local currDist2 = J.GetDistance(vTeamFountain, vTreeLoc)
@@ -997,7 +1001,8 @@ function X.GetBestRetreatTree(nCastRange, nRadius)
 				and currDist1 > bestRetreatTreeDist
 				and currDist2 < bestRetreatTreeFountainDist then
 					bestRetreatTreeDist = currDist1
-					bestRetreatTree = tree
+					bestRetreatTreeFountainDist = currDist2
+					bestRetreatTree = nTrees[i]
 				end
 			end
 		end
@@ -1021,13 +1026,17 @@ function X.GetBestTree(hTarget, nCastRange, nRadius)
 
 	for _, tree in pairs(nTrees)
 	do
-		-- checking for in between trees is too rigid and slower
 		if tree then
+			if J.IsInRange(bot, hTarget, nRadius - 25) then
+				return tree
+			end
+
 			local vTreeLoc = GetTreeLocation(tree)
 			local vToTree = vTreeLoc - botLoc
 			local dot = X.GetDotProduct(vToTree, vToTarget)
 			local tResult = PointToLineDistance(bot:GetLocation(), vTreeLoc, hTarget:GetLocation())
 			if (tResult and tResult.within and tResult.distance <= nRadius)
+			and not X.AreThereTreesInBetween(botLoc, hTargetLoc, nCastRange, nRadius)
 			and dot > 0
 			then
 				bestTree = tree
