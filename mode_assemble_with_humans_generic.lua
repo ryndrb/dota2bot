@@ -389,8 +389,8 @@ end
 function X.IsBeingAttackedByHero(unit)
     for _, enemy in pairs(GetUnitList(UNIT_LIST_ENEMIES))
     do
-        if J.IsValidHero(unit)
-        and (enemy:GetAttackTarget() == bot or J.IsChasingTarget(unit, bot))
+        if J.IsValidHero(enemy)
+        and (enemy:GetAttackTarget() == unit or J.IsChasingTarget(enemy, unit))
         then
             return true
         end
@@ -402,9 +402,9 @@ end
 function X.IsBeingAttackedByRealHero(unit)
     for _, enemy in pairs(GetUnitList(UNIT_LIST_ENEMIES))
     do
-        if J.IsValidHero(unit)
-        and not J.IsSuspiciousIllusion(unit)
-        and (enemy:GetAttackTarget() == bot or J.IsChasingTarget(unit, bot))
+        if J.IsValidHero(enemy)
+        and not J.IsSuspiciousIllusion(enemy)
+        and (enemy:GetAttackTarget() == unit or J.IsChasingTarget(enemy, unit))
         then
             return true
         end

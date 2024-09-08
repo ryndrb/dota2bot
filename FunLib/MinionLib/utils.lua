@@ -134,8 +134,8 @@ end
 function U.IsTargetedByHero(unit)
 	for _, enemy in pairs(GetUnitList(UNIT_LIST_ENEMY_HEROES))
 	do
-		if U.IsValidUnit(unit)
-		and unit:IsHero()
+		if U.IsValidUnit(enemy)
+		and enemy:IsHero()
 		and GetUnitToUnitDistance( unit, enemy ) <= enemy:GetAttackRange() + 300
 		and enemy:GetAttackTarget() == unit
 		then
@@ -149,8 +149,8 @@ end
 function U.IsTargetedByTower(unit)
 	for _, enemy in pairs(GetUnitList(UNIT_LIST_ENEMY_BUILDINGS))
 	do
-		if U.IsValidUnit(unit)
-		and unit:IsTower()
+		if U.IsValidUnit(enemy)
+		and enemy:IsTower()
 		and GetUnitToUnitDistance( unit, enemy ) <= enemy:GetAttackRange() + 300
 		and enemy:GetAttackTarget() == unit
 		then
@@ -164,8 +164,8 @@ end
 function U.IsTargetedByCreep(unit)
 	for _, enemy in pairs(GetUnitList(UNIT_LIST_ENEMY_CREEPS))
 	do
-		if U.IsValidUnit(unit)
-		and unit:IsCreep()
+		if U.IsValidUnit(enemy)
+		and enemy:IsCreep()
 		and GetUnitToUnitDistance( unit, enemy ) <= enemy:GetAttackRange() + 300
 		and enemy:GetAttackTarget() == unit
 		then
@@ -175,8 +175,8 @@ function U.IsTargetedByCreep(unit)
 
     for _, enemy in pairs(GetUnitList(UNIT_LIST_NEUTRAL_CREEPS))
 	do
-		if U.IsValidUnit(unit)
-		and unit:IsCreep()
+		if U.IsValidUnit(enemy)
+		and enemy:IsCreep()
 		and GetUnitToUnitDistance( unit, enemy ) <= enemy:GetAttackRange() + 300
 		and enemy:GetAttackTarget() == unit
 		then

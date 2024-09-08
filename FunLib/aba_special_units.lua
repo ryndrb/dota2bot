@@ -363,8 +363,8 @@ end
 function X.IsBeingAttackedByHero(unit)
     for _, enemy in pairs(GetUnitList(UNIT_LIST_ENEMIES))
     do
-        if J.IsValidHero(unit)
-        and enemy:GetAttackTarget() == bot
+        if J.IsValidHero(enemy)
+        and enemy:GetAttackTarget() == unit
         then
             return true
         end
