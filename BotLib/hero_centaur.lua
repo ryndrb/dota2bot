@@ -12,7 +12,7 @@ then
 
 local RI = require(GetScriptDirectory()..'/FunLib/util_role_item')
 
-local sUtility = {"item_crimson_guard", "item_pipe", "item_lotus_orb"}
+local sUtility = {"item_pipe", "item_lotus_orb", "item_heavens_halberd"}
 local sUtilityItem = RI.GetBestUtilityItem(sUtility)
 
 local HeroBuild = {
@@ -31,56 +31,86 @@ local HeroBuild = {
     ['pos_2'] = {
         [1] = {
             ['talent'] = {
-                [1] = {},
+                [1] = {
+					['t25'] = {0, 10},
+					['t20'] = {10, 0},
+					['t15'] = {10, 0},
+					['t10'] = {10, 0},
+				},
             },
             ['ability'] = {
-                [1] = {},
+                [1] = {2,1,3,2,2,6,2,1,1,1,6,3,3,3,6},
             },
-            ['buy_list'] = {},
-            ['sell_list'] = {},
+            ['buy_list'] = {
+				"item_tango",
+				"item_double_branches",
+				"item_ring_of_protection",
+			
+                "item_bottle",
+                "item_double_bracer",
+				"item_phase_boots",
+				"item_magic_wand",
+                "item_blade_mail",
+                "item_blink",
+                "item_kaya",
+                "item_aghanims_shard",--
+                "item_heart",--
+                "item_kaya_and_sange",--
+                "item_shivas_guard",--
+                "item_travel_boots",
+                "item_overwhelming_blink",--
+                "item_travel_boots_2",--
+				"item_moon_shard",
+				"item_ultimate_scepter_2",
+			},
+            ['sell_list'] = {
+                "item_ring_of_protection",
+                "item_bottle",
+                "item_bracer",
+				"item_magic_wand",
+                "item_blade_mail",
+			},
         },
     },
     ['pos_3'] = {
         [1] = {
             ['talent'] = {
-				[1] = {
-					['t25'] = {10, 0},
+                [1] = {
+					['t25'] = {0, 10},
 					['t20'] = {10, 0},
-					['t15'] = {10, 0},
-					['t10'] = {0, 10},
-				}
+					['t15'] = {0, 10},
+					['t10'] = {10, 0},
+				},
             },
             ['ability'] = {
-                [1] = {1,2,2,1,2,6,2,1,1,3,3,6,3,3,6},
+                [1] = {1,2,3,3,3,6,3,1,1,1,6,2,2,2,6},
             },
             ['buy_list'] = {
 				"item_tango",
 				"item_double_branches",
-				"item_quelling_blade",
 				"item_ring_of_protection",
 			
-				"item_helm_of_iron_will",
+                "item_double_bracer",
 				"item_phase_boots",
 				"item_magic_wand",
-				"item_veil_of_discord",
-				"item_blink",
-				"item_eternal_shroud",--
-				"item_shivas_guard",--
-				sUtilityItem,
+                "item_blade_mail",
+                "item_blink",
+                "item_crimson_guard",--
+                sUtilityItem,--
 				"item_aghanims_shard",
-				"item_kaya_and_sange",--
-				"item_heart",--
-				"item_overwhelming_blink",--
-				"item_travel_boots_2",--
+                "item_shivas_guard",--
+                "item_heart",--
+                "item_travel_boots",
+                "item_overwhelming_blink",--
+                "item_travel_boots_2",--
 				"item_moon_shard",
-				"item_ultimate_scepter",
 				"item_ultimate_scepter_2",
 			},
             ['sell_list'] = {
-				"item_quelling_blade",
 				"item_ring_of_protection",
-				"item_helm_of_iron_will",
+                "item_bracer",
 				"item_magic_wand",
+                "item_blade_mail",
 			},
         },
     },

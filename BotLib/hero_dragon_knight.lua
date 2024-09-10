@@ -12,7 +12,7 @@ then
 
 local RI = require(GetScriptDirectory()..'/FunLib/util_role_item')
 
-local sUtility = {}
+local sUtility = {"item_heavens_halberd", "item_pipe"}
 local sUtilityItem = RI.GetBestUtilityItem(sUtility)
 
 local HeroBuild = {
@@ -20,41 +20,41 @@ local HeroBuild = {
         [1] = {
             ['talent'] = {
 				[1] = {
-					['t25'] = {10, 0},
+					['t25'] = {0, 10},
 					['t20'] = {0, 10},
 					['t15'] = {10, 0},
 					['t10'] = {0, 10},
 				}
             },
             ['ability'] = {
-				[1] = {1,3,3,2,3,6,1,1,1,2,6,2,2,3,6},
-				[2] = {2,3,3,1,1,6,1,1,2,2,2,6,3,3,6},
-				[3] = {1,3,3,2,1,6,1,1,3,3,6,2,2,2,6},
+				[1] = {1,2,1,3,3,6,3,3,1,1,6,2,2,2,6},
             },
             ['buy_list'] = {
-				"item_quelling_blade",
-				"item_double_branches",
 				"item_tango",
+				"item_double_branches",
+				"item_quelling_blade",
 			
 				"item_bracer",
 				"item_power_treads",
 				"item_magic_wand",
-				"item_mage_slayer",--
-				"item_manta",--
-				"item_ultimate_scepter",
-				"item_orchid",
+				"item_armlet",
+				"item_yasha",
 				"item_black_king_bar",--
-				"item_bloodthorn",--
+				"item_sange_and_yasha",--
 				"item_greater_crit",--
+				"item_ultimate_scepter",
+				"item_satanic",--
+				"item_bloodthorn",--
+				"item_ultimate_scepter_2",
 				"item_travel_boots_2",--
 				"item_moon_shard",
 				"item_aghanims_shard",
-				"item_ultimate_scepter_2",
 			},
             ['sell_list'] = {
 				"item_quelling_blade",
 				"item_bracer",
 				"item_magic_wand",
+				"item_armlet",
 			},
         },
     },
@@ -69,29 +69,23 @@ local HeroBuild = {
 				}
             },
             ['ability'] = {
-				[1] = {1,3,3,2,3,6,1,1,1,2,6,2,2,3,6},
-				[2] = {2,3,3,1,1,6,1,1,2,2,2,6,3,3,6},
-				[3] = {1,3,3,2,1,6,1,1,3,3,6,2,2,2,6},
+				[1] = {1,3,3,2,1,6,1,1,3,3,6,2,2,2,6},
             },
             ['buy_list'] = {
 				"item_tango",
 				"item_double_branches",
 				"item_quelling_blade",
-				"item_double_gauntlets",
 			
-				"item_bottle",
 				"item_double_bracer",
-				"item_boots",
-				"item_magic_wand",
+				"item_bottle",
 				"item_power_treads",
-				"item_hand_of_midas",
+				"item_magic_wand",
 				"item_blink",
-				"item_manta",--
-				"item_ultimate_scepter",
 				"item_black_king_bar",--
-				"item_octarine_core",--
 				"item_assault",--
-				"item_travel_boots",
+				"item_greater_crit",--
+				"item_ultimate_scepter",
+				"item_satanic",--
 				"item_ultimate_scepter_2",
 				"item_overwhelming_blink",--
 				"item_travel_boots_2",--
@@ -100,10 +94,9 @@ local HeroBuild = {
 			},
             ['sell_list'] = {
 				"item_quelling_blade",
-				"item_bottle",
 				"item_bracer",
+				"item_bottle",
 				"item_magic_wand",
-				"item_hand_of_midas",
 			},
         },
     },
@@ -114,45 +107,37 @@ local HeroBuild = {
 					['t25'] = {10, 0},
 					['t20'] = {0, 10},
 					['t15'] = {10, 0},
-					['t10'] = {0, 10},
+					['t10'] = {10, 0},
 				}
             },
             ['ability'] = {
-				[1] = {1,3,3,2,3,6,1,1,1,2,6,2,2,3,6},
-				[2] = {2,3,3,1,1,6,1,1,2,2,2,6,3,3,6},
-				[3] = {1,3,3,2,1,6,1,1,3,3,6,2,2,2,6},
+				[1] = {1,2,3,3,3,6,3,1,1,1,6,2,2,2,6},
             },
             ['buy_list'] = {
 				"item_tango",
 				"item_double_branches",
 				"item_quelling_blade",
-				"item_gauntlets",
-				"item_circlet",
 			
 				"item_bracer",
-				"item_boots",
-				"item_magic_wand",
 				"item_power_treads",
-				"item_hand_of_midas",
+				"item_magic_wand",
+				"item_orchid",
 				"item_blink",
-				"item_ultimate_scepter",
+				"item_crimson_guard",--
 				"item_black_king_bar",--
-				"item_assault",--
-				"item_octarine_core",--
-				"item_bloodthorn",--
-				"item_ultimate_scepter_2",
+				sUtilityItem,--
 				"item_travel_boots",
+				"item_sheepstick",--
 				"item_overwhelming_blink",--
 				"item_travel_boots_2",--
-			
 				"item_moon_shard",
 				"item_aghanims_shard",
+				"item_ultimate_scepter_2",
 			},
             ['sell_list'] = {
 				"item_quelling_blade",
 				"item_bracer",
 				"item_magic_wand",
-				"item_hand_of_midas",
 			},
         },
     },

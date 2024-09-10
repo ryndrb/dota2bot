@@ -12,7 +12,7 @@ then
 
 local RI = require(GetScriptDirectory()..'/FunLib/util_role_item')
 
-local sUtility = {"item_crimson_guard", "item_pipe", "item_lotus_orb"}
+local sUtility = {"item_crimson_guard", "item_lotus_orb"}
 local sUtilityItem = RI.GetBestUtilityItem(sUtility)
 
 local HeroBuild = {
@@ -51,17 +51,19 @@ local HeroBuild = {
 				"item_null_talisman",
 				"item_magic_wand",
 				"item_arcane_boots",
+				"item_kaya",
 				"item_blink",
 				"item_kaya_and_sange",--
-				"item_eternal_shroud",--
 				"item_shivas_guard",--
-				"item_aghanims_shard",
 				"item_cyclone",
-				"item_travel_boots",
+				"item_ultimate_scepter",
+				"item_aghanims_shard",
 				"item_wind_waker",--
-				"item_arcane_blink",--
-				"item_travel_boots_2",--
 				"item_ultimate_scepter_2",
+				"item_sheepstick",--
+				"item_travel_boots",
+				"item_overwhelming_blink",--
+				"item_travel_boots_2",--
 				"item_moon_shard"
 			},
             ['sell_list'] = {
@@ -87,30 +89,26 @@ local HeroBuild = {
             ['buy_list'] = {
 				"item_tango",
 				"item_double_branches",
-				"item_circlet",
-				"item_gauntlets",
 			
-				"item_magic_wand",
 				"item_bracer",
-				"item_helm_of_iron_will",
-				"item_ring_of_basilius",
 				"item_arcane_boots",
-				"item_veil_of_discord",
-				"item_blink",
-				"item_eternal_shroud",--
-				"item_kaya_and_sange",--
+				"item_magic_wand",
+				"item_kaya",
+				"item_pipe",--
 				"item_shivas_guard",--
 				sUtilityItem,--
+				"item_kaya_and_sange",--
+				"item_ultimate_scepter",
 				"item_travel_boots",
-				"item_arcane_blink",--
+				"item_wind_waker",--
+				"item_ultimate_scepter_2",
 				"item_travel_boots_2",--
 				"item_aghanims_shard",
-				"item_ultimate_scepter_2",
 				"item_moon_shard"
 			},
             ['sell_list'] = {
-				"item_magic_wand",
 				"item_bracer",
+				"item_magic_wand",
 			},
         },
     },

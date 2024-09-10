@@ -12,7 +12,7 @@ then
 
 local RI = require(GetScriptDirectory()..'/FunLib/util_role_item')
 
-local sUtility = {"item_heavens_halberd", "item_crimson_guard", "item_pipe"}
+local sUtility = {"item_heavens_halberd", "item_pipe", "item_lotus_orb"}
 local sUtilityItem = RI.GetBestUtilityItem(sUtility)
 
 local HeroBuild = {
@@ -32,28 +32,27 @@ local HeroBuild = {
         [1] = {
             ['talent'] = {
                 [1] = {
-                    ['t25'] = {0, 10},
-                    ['t20'] = {0, 10},
+                    ['t25'] = {10, 0},
+                    ['t20'] = {10, 0},
                     ['t15'] = {10, 0},
-                    ['t10'] = {10, 0},
+                    ['t10'] = {0, 10},
                 }
             },
             ['ability'] = {
-                [1] = {1,2,3,3,3,6,3,1,1,1,6,2,2,2,6},
+                [1] = {2,3,2,3,2,6,2,1,3,3,6,1,1,1,6},
             },
             ['buy_list'] = {
                 "item_tango",
                 "item_quelling_blade",
                 "item_double_branches",
             
-                "item_bracer",
                 "item_bottle",
-                "item_soul_ring",
-                "item_arcane_boots",
+                "item_bracer",
+                "item_phase_boots",
                 "item_magic_wand",
                 "item_blink",
-                "item_aghanims_shard",
                 "item_ultimate_scepter",
+                "item_aghanims_shard",
                 "item_black_king_bar",--
                 "item_octarine_core",--
                 "item_greater_crit",--
@@ -91,17 +90,16 @@ local HeroBuild = {
                 "item_quelling_blade",
                 "item_double_branches",
             
-                "item_bracer",
-                "item_soul_ring",
+                "item_double_bracer",
                 "item_arcane_boots",
                 "item_magic_wand",
                 "item_blink",
+                "item_crimson_guard",--
+                "item_black_king_bar",--
                 "item_aghanims_shard",
                 "item_ultimate_scepter",
-                "item_black_king_bar",--
                 sUtilityItem,--
-                "item_octarine_core",--
-                "item_greater_crit",--
+                "item_sheepstick",--
                 "item_travel_boots",
                 "item_overwhelming_blink",--`
                 "item_travel_boots_2",--
@@ -111,7 +109,6 @@ local HeroBuild = {
             ['sell_list'] = {
                 "item_quelling_blade",
                 "item_bracer",
-                "item_soul_ring",
                 "item_magic_wand",
             },
         },
@@ -124,7 +121,13 @@ local HeroBuild = {
                     ['t20'] = {0, 10},
                     ['t15'] = {10, 0},
                     ['t10'] = {10, 0},
-                }
+                },
+                [2] = {
+                    ['t25'] = {0, 10},
+                    ['t20'] = {0, 10},
+                    ['t15'] = {0, 10},
+                    ['t10'] = {10, 0},
+                },
             },
             ['ability'] = {
                 [1] = {1,2,3,3,3,6,3,1,1,1,6,2,2,2,6},
@@ -164,7 +167,13 @@ local HeroBuild = {
                     ['t20'] = {0, 10},
                     ['t15'] = {10, 0},
                     ['t10'] = {10, 0},
-                }
+                },
+                [2] = {
+                    ['t25'] = {0, 10},
+                    ['t20'] = {0, 10},
+                    ['t15'] = {0, 10},
+                    ['t10'] = {10, 0},
+                },
             },
             ['ability'] = {
                 [1] = {1,2,3,3,3,6,3,1,1,1,6,2,2,2,6},

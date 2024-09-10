@@ -12,7 +12,7 @@ then
 
 local RI = require(GetScriptDirectory()..'/FunLib/util_role_item')
 
-local sUtility = {"item_lotus_orb", "item_pipe", "item_crimson_guard", "item_heavens_halberd"}
+local sUtility = {"item_crimson_guard", "item_lotus_orb"}
 local sUtilityItem = RI.GetBestUtilityItem(sUtility)
 
 local HeroBuild = {
@@ -32,7 +32,7 @@ local HeroBuild = {
         [1] = {
             ['talent'] = {
                 [1] = {
-                    ['t25'] = {0, 10},
+                    ['t25'] = {10, 0},
                     ['t20'] = {0, 10},
                     ['t15'] = {0, 10},
                     ['t10'] = {0, 10},
@@ -46,21 +46,20 @@ local HeroBuild = {
                 "item_tango",
                 "item_double_branches",
             
-                "item_bottle",
-                "item_bracer",
+                "item_double_bracer",
                 "item_wind_lace",
-                "item_phase_boots",
                 "item_magic_wand",
-                "item_hand_of_midas",
+                "item_phase_boots",
+                "item_blade_mail",
+                "item_cyclone",
+                "item_black_king_bar",--
                 "item_octarine_core",--
                 "item_ultimate_scepter",
-                "item_black_king_bar",--
-                "item_cyclone",
-                "item_ultimate_scepter_2",
+                "item_yasha_and_kaya",--
+                "item_shivas_guard",--
                 "item_wind_waker",--
                 "item_travel_boots",
-                "item_heart",--
-                "item_yasha_and_kaya",--
+                "item_ultimate_scepter_2",
                 "item_aghanims_shard",
                 "item_travel_boots_2",--
                 "item_moon_shard",
@@ -69,7 +68,6 @@ local HeroBuild = {
                 "item_quelling_blade",
                 "item_bracer",
                 "item_magic_wand",
-                "item_hand_of_midas",
             },
         },
     },
@@ -77,7 +75,7 @@ local HeroBuild = {
         [1] = {
             ['talent'] = {
                 [1] = {
-                    ['t25'] = {0, 10},
+                    ['t25'] = {10, 0},
                     ['t20'] = {0, 10},
                     ['t15'] = {0, 10},
                     ['t10'] = {0, 10},
@@ -91,20 +89,19 @@ local HeroBuild = {
                 "item_tango",
                 "item_double_branches",
             
-                "item_bracer",
+                "item_double_bracer",
                 "item_wind_lace",
-                "item_phase_boots",
                 "item_magic_wand",
-                "item_hand_of_midas",
-                "item_octarine_core",--
+                "item_phase_boots",
+                "item_heavens_halberd",--
                 "item_black_king_bar",--
                 sUtilityItem,--
                 "item_ultimate_scepter",
                 "item_cyclone",
                 "item_ultimate_scepter_2",
+                "item_yasha_and_kaya",--
                 "item_wind_waker",--
                 "item_travel_boots",
-                "item_yasha_and_kaya",--
                 "item_aghanims_shard",
                 "item_travel_boots_2",--
                 "item_moon_shard",
@@ -113,7 +110,6 @@ local HeroBuild = {
                 "item_quelling_blade",
                 "item_bracer",
                 "item_magic_wand",
-                "item_hand_of_midas",
             },
         },
     },
@@ -142,8 +138,8 @@ local HeroBuild = {
                 "item_ancient_janggo",
                 "item_invis_sword",
                 "item_cyclone",
-                "item_octarine_core",--
                 "item_boots_of_bearing",--
+                "item_octarine_core",--
                 "item_ultimate_scepter",
                 "item_black_king_bar",--
                 "item_silver_edge",--
@@ -183,8 +179,8 @@ local HeroBuild = {
                 "item_mekansm",
                 "item_invis_sword",
                 "item_cyclone",
-                "item_octarine_core",--
                 "item_guardian_greaves",--
+                "item_octarine_core",--
                 "item_ultimate_scepter",
                 "item_black_king_bar",--
                 "item_silver_edge",--

@@ -73,10 +73,11 @@ local HeroBuild = {
             
                 "item_tranquil_boots",
                 "item_magic_wand",
+                "item_ancient_janggo",
                 "item_force_staff",--
                 "item_boots_of_bearing",--
                 "item_blink",
-                sUtilityItem,--
+                "item_lotus_orb",--
                 "item_sheepstick",--
                 "item_heart",--
                 "item_overwhelming_blink",--
@@ -97,6 +98,12 @@ local HeroBuild = {
                     ['t20'] = {0, 10},
                     ['t15'] = {10, 0},
                     ['t10'] = {0, 10},
+                },
+                [2] = {
+                    ['t25'] = {0, 10},
+                    ['t20'] = {0, 10},
+                    ['t15'] = {0, 10},
+                    ['t10'] = {0, 10},
                 }
             },
             ['ability'] = {
@@ -110,10 +117,11 @@ local HeroBuild = {
             
                 "item_arcane_boots",
                 "item_magic_wand",
+                "item_mekansm",
                 "item_force_staff",--
                 "item_guardian_greaves",--
                 "item_blink",
-                sUtilityItem,--
+                "item_lotus_orb",--
                 "item_sheepstick",--
                 "item_heart",--
                 "item_overwhelming_blink",--

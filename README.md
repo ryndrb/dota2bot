@@ -1,39 +1,35 @@
-# Dota 2 Bot Script [7.37]
+# DotA 2 Bot Script: TinkeringABo(u)t [7.37]
 
-This is a Dota 2 Bot Script based off of Beginner:AI by (dota2jmz@163.com). Some changes are based upon other existing bot scripts; personal use mostly. Trying to get use to the API and code base.
-Just trying to alleviate cheesiness and make bots movement more organic and objective base. It's a work in progress.
+This is a DotA 2 Bot Script based on [Beginner:AI NEW](https://steamcommunity.com/sharedfiles/filedetails/?id=1627071163); it's mainly for personal use.
+This is where I update this script. I very rarely, if ever, update the Steam Workshop page.
 
-Evasion/damage reduction/aura items are just too good in bots games (since itemization isn't dynamic). It's also still very lineup dependent on how well they'll perform.
+Since this is an inherently RB system, the best viable way to make bots "good" is through aura stacking. Evasion, damage reduction, and aura items tend to be really strong
+in bot games. Though if there are multiple decent human players vs bots, it won't really matter much. Also, performance can still be hit or miss depending on the team composition. Point-Click AoE heroes are good.
 
-Worth noting that I also use a vscript to improve the bots GPM and XPM (AP only), and also have them able to get neutral items (Check Buff; Recommended to use).
+Worth noting that I'm also using a [vscript](https://github.com/ryndrb/dota2bot/tree/master/Buff) to boost bots GPM and XPM in All Pick mode, and they can get Neutral Items too. This is recommended to use.
 
-To anyone who've found this or is using it, if you have any feedback in improving the script, kindly post them on the Steam Workshop page: https://steamcommunity.com/workshop/filedetails/discussion/3139791706/4143942846477191222/
-
-^ Or open an Issue / make a Pull Request here.
+If you’ve come across this script or is using it, good feedback is always welcome. Drop any suggestion on the [Steam Workshop](https://steamcommunity.com/sharedfiles/filedetails/?id=3139791706) page or open an Issue or Pull Request.
 
 - ***To Use***
-    - Since Valve hasn't fixed the workshop bug yet, bot scripts (that were uploaded after the bug occured) are only playable through local host lobby.
+    - Since Valve hasn't fixed the workshop bug yet, bot scripts (that were uploaded after the bug occured) are only playable through `Local Host` lobby.
     - To use this:
-        - Go to Steam/steamapps/common/dota 2 beta/game/dota/scripts/vscripts. You will see that there is a `bots` folder inside. Either delete this folder or rename it.
+        - Go to `Steam/steamapps/common/dota 2 beta/game/dota/scripts/vscripts`. You will see that there is a `bots` folder inside. Either delete this folder or rename it.
             - Once you've deleted or renamed the bots folder, create a new folder called `bots`.
             - Download the files on this repo by going to `<> Code` and Under `Local`, select `Download ZIP`.
             - Extract the contents of the zip inside the `bots` folder.
-            - Alternatively, if you have Git installed (ignore 2-3 from above):
-                - Open Command Prompt inside the folder (Right Click on Windows 11). Type: `git clone https://github.com/ryndrb/dota2bot.git`.
-                - The contents of this repository will then be downloaded. And everytime this repository is updated, open Command Prompt inside the `bots` folder. Type: `git pull` to update the files inside the folder.
-                - ^ Or delete the contents of `bots`, then run `git clone` again, if no tinkered changes were made.
+            - Alternatively, if you know how to use Git, just clone/pull this inside the `bots` folder.
         - Then, launch DotA 2.
         - Click `Play Dota`. Under `Custom Lobbies`, select `Create`.
         - Under the `Lobby Settings` at the bottom, select `Edit`. Then, in the drop down `Radiant Bots` and `Dire Bots` menus, select `Local Dev Script`.
         - The `Server Location` must be `Local Host`.
-        - Click OK, and it should be good to go.
-            - The lobby has 5 slots
+        - Click OK, and it should be good to go. Bot names should be: `(team.name.(kanji)TA)`.
+            - The lobby has 5 slots:
                 -  1st is for Position 2 (Mid Lane)
                 -  2nd is for Position 3 (Off Lane)
                 -  3rd is for Position 1 (Safe Lane)
                 -  4th is for Position 5 (Support Safe Lane)
                 -  5th is for Position 4 (Support Off Lane)
-        - (For non-Git) Everytime there is an update, you have to re-download the files and replaced the ones on the `bots` folder.
+        - (For non-Git) Everytime there is an update, you have to re-download the files and replaced the ones on the `bots` folder. If you've made personal changes to some files, you have to make a backup to those files, or fix the conflicts yourself.
     - How I test:
         - Added in launch options: `+cl_clock_recvmargin_enable 0`
         - Bots v Bots
@@ -45,14 +41,12 @@ To anyone who've found this or is using it, if you have any feedback in improvin
         - Type: `host_timescale 0` in console to pause.
 
 - ***Key Scripts***
-    - BOT Experiment (by Furiospuppy)
+    - BOT Experiment (by Furiouspuppy)
     - ExtremePush (https://github.com/insraq/dota2bots)
 
 # Tinkering ABo(u)t (ryndrb)
 - ***Heroes (Pos: 1,2,3,4,5)***
     - <ins>Heroes Implemented Count:</ins> **118** / 125
-    - Supports that does damage, CC, or is Ranged are somewhat 'better' for the most part in bot games compared to Melee or non-. (Since positioning and movement are Valve default.)
-    - ^. AoE spells are just too good.
     - ***Added***
         - [1,2,3,4,5] Abaddon
         - [1,2,3] Alchemist
@@ -129,7 +123,6 @@ To anyone who've found this or is using it, if you have any feedback in improvin
         - [2,3,4,5] Winter Wyvern
     - ***Later***
         - Morphling Ult
-        - ~~More Rubick Spell Steal support~~
     - ***Bugged (Internal; some will be selected)***
         - Dark Willow
             - Hardly enters Attack mode (Valve default).
@@ -237,7 +230,7 @@ To anyone who've found this or is using it, if you have any feedback in improvin
     | Queen of Pain         | -       | -       |
     | Razor                 | -       | -       |
     | Riki                  | -       | -       |
-    | Ringmaster            | &check  | -       |
+    | Ringmaster            | &check; | -       |
     | Rubick                | -       | -       |
     | Sand King             | -       | -       |
     | Shadow Demon          | &check; | -       |

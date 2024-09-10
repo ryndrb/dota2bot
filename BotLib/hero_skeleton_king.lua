@@ -23,8 +23,14 @@ local HeroBuild = {
 					['t25'] = {0, 10},
 					['t20'] = {10, 0},
 					['t15'] = {10, 0},
-					['t10'] = {10, 0},
-				}
+					['t10'] = {0, 10},
+				},
+				[2] = {
+					['t25'] = {0, 10},
+					['t20'] = {0, 10},
+					['t15'] = {10, 0},
+					['t10'] = {0, 10},
+				},
             },
             ['ability'] = {
                 [1] = {2,1,2,3,2,6,2,3,3,3,6,1,1,1,6},
@@ -40,16 +46,15 @@ local HeroBuild = {
 				"item_armlet",
 				"item_radiance",--
 				"item_blink",
-				"item_aghanims_shard",
+				"item_black_king_bar",--
 				"item_assault",--
-				"item_ultimate_scepter",
-				"item_overwhelming_blink",--
-				"item_ultimate_scepter_2",
 				"item_abyssal_blade",--
 				"item_travel_boots",
-				"item_refresher",--
+				"item_overwhelming_blink",--
 				"item_travel_boots_2",--
 				"item_moon_shard",
+				"item_aghanims_shard",
+				"item_ultimate_scepter_2",
 			},
             ['sell_list'] = {
 				"item_gauntlets",
@@ -95,16 +100,17 @@ local HeroBuild = {
 				"item_magic_wand",
 				"item_phase_boots",
 				"item_radiance",--
-				"item_blink",
-				"item_ultimate_scepter",
 				"item_assault",--
-				"item_aghanims_shard",
+				"item_blink",
+				"item_black_king_bar",--
+				"item_basher",
+				"item_travel_boots",
 				"item_overwhelming_blink",--
-				"item_refresher",--
-				"item_ultimate_scepter_2",
-				"item_nullifier",--
+				"item_abyssal_blade",--
 				"item_travel_boots_2",--
 				"item_moon_shard",
+				"item_aghanims_shard",
+				"item_ultimate_scepter_2",
 			},
             ['sell_list'] = {
 				"item_quelling_blade",

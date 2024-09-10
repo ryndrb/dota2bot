@@ -12,7 +12,7 @@ then
 
 local RI = require(GetScriptDirectory()..'/FunLib/util_role_item')
 
-local sUtility = {"item_crimson_guard", "item_pipe", "item_lotus_orb", "item_heavens_halberd"}
+local sUtility = {"item_pipe", "item_lotus_orb", "item_heavens_halberd"}
 local sUtilityItem = RI.GetBestUtilityItem(sUtility)
 
 local HeroBuild = {
@@ -46,32 +46,32 @@ local HeroBuild = {
 				"item_double_branches",
 				"item_quelling_blade",
 			
-				"item_bottle",
 				"item_bracer",
+                "item_bottle",
 				"item_boots",
+				"item_magic_wand",
 				"item_soul_ring",
 				"item_phase_boots",
-				"item_magic_wand",
 				"item_blade_mail",
 				"item_echo_sabre",
-				"item_aghanims_shard",
-				"item_desolator",--
+                "item_desolator",--
 				"item_black_king_bar",--
-				"item_assault",--
+                "item_basher",
+				"item_aghanims_shard",
+                "item_shivas_guard",--
 				"item_harpoon",--
-				"item_basher",
-				"item_greater_crit",--
+                "item_wind_waker",--
 				"item_abyssal_blade",--
-				"item_ultimate_scepter_2",
 				"item_moon_shard",
+				"item_ultimate_scepter_2",
 			},
             ['sell_list'] = {
 				"item_quelling_blade",
-				"item_bottle",
 				"item_bracer",
-				"item_phase_boots",
-				"item_soul_ring",
+                "item_bottle",
 				"item_magic_wand",
+				"item_soul_ring",
+				"item_phase_boots",
 				"item_blade_mail",
 			},
         },
@@ -96,27 +96,27 @@ local HeroBuild = {
 			
 				"item_bracer",
 				"item_boots",
+				"item_magic_wand",
 				"item_soul_ring",
 				"item_phase_boots",
-				"item_magic_wand",
 				"item_blade_mail",
 				"item_echo_sabre",
-				"item_aghanims_shard",
-				"item_desolator",--
+                "item_crimson_guard",--
 				"item_black_king_bar",--
 				sUtilityItem,--
+				"item_aghanims_shard",
 				"item_assault",--
 				"item_harpoon",--
 				"item_abyssal_blade",--
-				"item_ultimate_scepter_2",
 				"item_moon_shard",
+				"item_ultimate_scepter_2",
 			},
             ['sell_list'] = {
 				"item_quelling_blade",
 				"item_bracer",
-				"item_phase_boots",
-				"item_soul_ring",
 				"item_magic_wand",
+				"item_soul_ring",
+				"item_phase_boots",
 				"item_blade_mail",
 			},
         },
@@ -133,6 +133,7 @@ local HeroBuild = {
             },
             ['ability'] = {
                 [1] = {1,2,2,3,2,6,2,1,1,1,6,3,3,3,6},
+                [2] = {2,1,2,1,2,6,2,3,1,1,6,3,3,3,6},
             },
             ['buy_list'] = {
 				"item_double_branches",
@@ -148,7 +149,7 @@ local HeroBuild = {
 				"item_solar_crest",--
 				"item_ultimate_scepter",
 				"item_holy_locket",--
-				sUtilityItem,--
+				"item_heavens_halberd",--
 				"item_boots_of_bearing",--
 				"item_assault",--
 				"item_shivas_guard",--
@@ -171,6 +172,7 @@ local HeroBuild = {
             },
             ['ability'] = {
                 [1] = {1,2,2,3,2,6,2,1,1,1,6,3,3,3,6},
+                [2] = {2,1,2,1,2,6,2,3,1,1,6,3,3,3,6},
             },
             ['buy_list'] = {
 				"item_double_branches",
@@ -187,7 +189,7 @@ local HeroBuild = {
 				"item_solar_crest",--
 				"item_ultimate_scepter",
 				"item_holy_locket",--
-				sUtilityItem,--
+				"item_heavens_halberd",--
 				"item_assault",--
 				"item_shivas_guard",--
 				"item_ultimate_scepter_2",

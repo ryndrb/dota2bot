@@ -12,7 +12,7 @@ then
 
 local RI = require(GetScriptDirectory()..'/FunLib/util_role_item')
 
-local sUtility = {"item_crimson_guard", "item_pipe", "item_heavens_halberd"}
+local sUtility = {"item_pipe", "item_heavens_halberd"}
 local sUtilityItem = RI.GetBestUtilityItem(sUtility)
 
 local HeroBuild = {
@@ -63,9 +63,9 @@ local HeroBuild = {
 				"item_magic_wand",
 				"item_blade_mail",
 				"item_blink",
+				"item_crimson_guard",--
 				"item_black_king_bar",--
 				sUtilityItem,--
-				"item_assault",--
 				"item_greater_crit",--
 				"item_overwhelming_blink",--
 				"item_travel_boots_2",--

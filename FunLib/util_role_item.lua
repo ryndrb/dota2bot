@@ -104,6 +104,16 @@ Item['item_radiance'] = {
 	['npc_dota_hero_terrorblade'] = true,
 }
 
+Item['item_assault'] = {
+	['npc_dota_hero_chaos_knight'] = true,
+	['npc_dota_hero_meepo'] = true,
+	['npc_dota_hero_naga_siren'] = true,
+	['npc_dota_hero_phantom_lancer'] = true,
+	['npc_dota_hero_terrorblade'] = true,
+	['npc_dota_hero_phantom_assassin'] = true,
+	['npc_dota_hero_templar_assassin'] = true,
+}
+
 function X.GetBestUtilityItem(itemTable)
 	local nItemList = {}
 	for i = 1, #itemTable
@@ -140,6 +150,11 @@ function X.GetBestUtilityItem(itemTable)
 			if Item['item_nullifier'][hName] and nItemList['item_nullifier']
 			then
 				nItemList['item_nullifier'] = nItemList['item_nullifier'] + 1
+			end
+
+			if Item['item_assault'][hName] and nItemList['item_assault']
+			then
+				nItemList['item_assault'] = nItemList['item_assault'] + 1
 			end
 		end
 	end

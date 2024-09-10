@@ -46,7 +46,7 @@ local HeroBuild = {
                 [1] = {
 					['t25'] = {0, 10},
 					['t20'] = {0, 10},
-					['t15'] = {10, 0},
+					['t15'] = {0, 10},
 					['t10'] = {10, 0},
 				},
             },
@@ -59,12 +59,10 @@ local HeroBuild = {
 				"item_quelling_blade",
 				"item_double_gauntlets",
 	
-				"item_bracer",
-				"item_helm_of_iron_will",
-				"item_soul_ring",
+				"item_double_bracer",
 				"item_arcane_boots",
 				"item_magic_wand",
-				"item_veil_of_discord",
+				"item_soul_ring",
 				"item_mekansm",
 				"item_pipe",--
 				"item_guardian_greaves",--
@@ -79,8 +77,8 @@ local HeroBuild = {
             ['sell_list'] = {
 				"item_quelling_blade",
 				"item_bracer",
-				"item_soul_ring",
 				"item_magic_wand",
+				"item_soul_ring",
 			},
         },
     },

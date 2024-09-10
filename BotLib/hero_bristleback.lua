@@ -43,23 +43,20 @@ local HeroBuild = {
 			
 				"item_bracer",
 				"item_arcane_boots",
-				"item_vanguard",
 				"item_magic_wand",
 				"item_ultimate_scepter",
-				"item_aghanims_shard",
 				"item_bloodstone",--
-				"item_kaya_and_sange",--
 				"item_black_king_bar",--
+				"item_sange_and_yasha",--
 				"item_assault",--
-				"item_basher",
-				"item_travel_boots_2",--
+				"item_aghanims_shard",
 				"item_abyssal_blade",--
+				"item_travel_boots_2",--
 				"item_moon_shard",
 			},
             ['sell_list'] = {
 				"item_quelling_blade",
 				"item_bracer",
-				"item_vanguard",
 				"item_magic_wand",
 			},
         },
@@ -89,17 +86,16 @@ local HeroBuild = {
 				"item_double_branches",
 				"item_quelling_blade",
 			
-				"item_bracer",
 				"item_bottle",
+				"item_bracer",
 				"item_arcane_boots",
-				"item_vanguard",
 				"item_magic_wand",
 				"item_ultimate_scepter",
-				"item_aghanims_shard",
 				"item_bloodstone",--
-				"item_kaya_and_sange",--
 				"item_black_king_bar",--
+				"item_sange_and_yasha",--
 				"item_assault",--
+				"item_aghanims_shard",
 				"item_basher",
 				"item_travel_boots_2",--
 				"item_abyssal_blade",--
@@ -107,9 +103,8 @@ local HeroBuild = {
 			},
             ['sell_list'] = {
 				"item_quelling_blade",
-				"item_bracer",
 				"item_bottle",
-				"item_vanguard",
+				"item_bracer",
 				"item_magic_wand",
 			},
         },
@@ -121,18 +116,11 @@ local HeroBuild = {
 					['t25'] = {0, 10},
 					['t20'] = {10, 0},
 					['t15'] = {10, 0},
-					['t10'] = {10, 0},
-				},
-				[2] = {
-					['t25'] = {0, 10},
-					['t20'] = {10, 0},
-					['t15'] = {10, 0},
 					['t10'] = {0, 10},
 				}
             },
             ['ability'] = {
-				[1] = {2,3,2,3,2,6,2,3,3,1,6,1,1,1,6},
-				[2] = {2,3,2,1,2,6,2,3,3,3,6,1,1,1,6},
+				[1] = {2,3,2,1,2,6,2,3,3,3,6,1,1,1,6},
             },
             ['buy_list'] = {
 				"item_tango",
@@ -141,24 +129,22 @@ local HeroBuild = {
 			
 				"item_bracer",
 				"item_arcane_boots",
-				"item_vanguard",
 				"item_magic_wand",
+				"item_pipe",--
 				"item_ultimate_scepter",
 				"item_aghanims_shard",
 				"item_bloodstone",--
-				"item_pipe",--
 				sUtilityItem,--
-				"item_shivas_guard",--
-				"item_black_king_bar",--
+				"item_sange_and_yasha",--
 				"item_travel_boots",
 				"item_ultimate_scepter_2",
+				"item_wind_waker",--
 				"item_travel_boots_2",--
 				"item_moon_shard",
 			},
             ['sell_list'] = {
 				"item_quelling_blade",
 				"item_bracer",
-				"item_vanguard",
 				"item_magic_wand",
 			},
         },

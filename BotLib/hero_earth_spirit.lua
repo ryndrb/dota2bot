@@ -12,7 +12,7 @@ then
 
 local RI = require(GetScriptDirectory()..'/FunLib/util_role_item')
 
-local sUtility = {"item_heavens_halberd", "item_lotus_orb", "item_crimson_guard", "item_pipe"}
+local sUtility = {"item_pipe", "item_heavens_halberd", "item_lotus_orb"}
 local sUtilityItem = RI.GetBestUtilityItem(sUtility)
 
 local HeroBuild = {
@@ -37,6 +37,12 @@ local HeroBuild = {
 					['t15'] = {0, 10},
 					['t10'] = {0, 10},
 				},
+				[2] = {
+					['t25'] = {0, 10},
+					['t20'] = {0, 10},
+					['t15'] = {0, 10},
+					['t10'] = {10, 0},
+				},
             },
             ['ability'] = {
                 [1] = {1,2,1,2,1,6,1,2,2,3,6,3,3,3,6},
@@ -47,26 +53,28 @@ local HeroBuild = {
 				"item_faerie_fire",
 				"item_quelling_blade",
 			
+				"item_double_bracer",
 				"item_bottle",
-				"item_boots",
-				"item_magic_wand",
 				"item_urn_of_shadows",
+				"item_magic_wand",
+				"item_boots",
+				"item_veil_of_discord",
 				"item_spirit_vessel",
 				"item_blade_mail",
-				"item_heart",--
+				"item_kaya",
 				"item_black_king_bar",--
-				"item_travel_boots",
+				"item_heart",--
+				"item_kaya_and_sange",--
 				"item_shivas_guard",--
-				"item_octarine_core",--
-				"item_travel_boots_2",--
 				"item_sheepstick",--
-			
+				"item_travel_boots_2",--
 				"item_aghanims_shard",
 				"item_moon_shard",
 				"item_ultimate_scepter_2",
 			},
             ['sell_list'] = {
 				"item_quelling_blade",
+				"item_bracer",
 				"item_bottle",
 				"item_magic_wand",
 				"item_spirit_vessel",
@@ -93,22 +101,20 @@ local HeroBuild = {
 				"item_faerie_fire",
 				"item_quelling_blade",
 			
-				"item_bracer",
+				"item_double_bracer",
 				"item_magic_wand",
 				"item_boots",
 				"item_veil_of_discord",
 				"item_blade_mail",
+				"item_crimson_guard",--
+				"item_black_king_bar",--
 				"item_heart",--
 				sUtilityItem,--
-				"item_black_king_bar",--
-				"item_travel_boots",
 				"item_shivas_guard",--
-				"item_octarine_core",--
 				"item_travel_boots_2",--
-				"item_wind_waker",--
 				"item_aghanims_shard",
-				"item_ultimate_scepter_2",
 				"item_moon_shard",
+				"item_ultimate_scepter_2",
 			},
             ['sell_list'] = {
 				"item_quelling_blade",
