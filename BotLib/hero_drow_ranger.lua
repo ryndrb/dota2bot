@@ -32,43 +32,68 @@ local HeroBuild = {
             ['buy_list'] = {
 				"item_tango",
 				"item_double_branches",
-				"item_slippers",
-				"item_circlet",
 			
 				"item_wraith_band",
 				"item_power_treads",
 				"item_magic_wand",
 				"item_dragon_lance",
-				"item_manta",
-				"item_ultimate_scepter",
-				"item_hurricane_pike",--
+                "item_lesser_crit",
 				"item_black_king_bar",--
+				"item_hurricane_pike",--
+				"item_ultimate_scepter",
+				"item_greater_crit",--
 				"item_butterfly",--
 				"item_aghanims_shard",
-				"item_greater_crit",--
 				"item_satanic",--
-				"item_ultimate_scepter_2",
 				"item_travel_boots",
-				"item_moon_shard",
+				"item_ultimate_scepter_2",
 				"item_travel_boots_2",--
+				"item_moon_shard",
 			},
             ['sell_list'] = {
 				"item_wraith_band",
 				"item_magic_wand",
-				"item_manta",
 			},
         },
     },
     ['pos_2'] = {
         [1] = {
             ['talent'] = {
-                [1] = {},
+                [1] = {
+                    ['t25'] = {0, 10},
+                    ['t20'] = {0, 10},
+                    ['t15'] = {10, 0},
+                    ['t10'] = {10, 0},
+                }
             },
             ['ability'] = {
-                [1] = {},
+                [1] = {1,3,1,2,3,6,3,3,1,1,6,2,2,2,6},
             },
-            ['buy_list'] = {},
-            ['sell_list'] = {},
+            ['buy_list'] = {
+				"item_tango",
+				"item_double_branches",
+			
+				"item_wraith_band",
+				"item_power_treads",
+				"item_magic_wand",
+				"item_dragon_lance",
+                "item_lesser_crit",
+				"item_black_king_bar",--
+				"item_hurricane_pike",--
+				"item_ultimate_scepter",
+				"item_greater_crit",--
+				"item_butterfly",--
+				"item_aghanims_shard",
+				"item_satanic",--
+				"item_travel_boots",
+				"item_ultimate_scepter_2",
+				"item_travel_boots_2",--
+				"item_moon_shard",
+			},
+            ['sell_list'] = {
+				"item_wraith_band",
+				"item_magic_wand",
+			},
         },
     },
     ['pos_3'] = {

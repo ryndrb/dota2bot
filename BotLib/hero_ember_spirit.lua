@@ -49,19 +49,20 @@ local HeroBuild = {
 			
 				"item_bottle",
 				"item_boots",
-				"item_phase_boots",
 				"item_magic_wand",
+				"item_phase_boots",
 				"item_mage_slayer",
 				"item_maelstrom",
-				"item_kaya_and_sange",--
+				"item_kaya",
 				"item_black_king_bar",--
 				"item_gungir",--
+				"item_kaya_and_sange",--
 				"item_shivas_guard",--
 				"item_ultimate_scepter",
 				"item_travel_boots",
+				"item_octarine_core",--
 				"item_aghanims_shard",
 				"item_ultimate_scepter_2",
-				"item_octarine_core",--
 				"item_travel_boots_2",--
 				"item_moon_shard",
 			},
@@ -100,8 +101,7 @@ local HeroBuild = {
 				"item_black_king_bar",--
                 "item_greater_crit",--
 				"item_aghanims_shard",
-				-- "item_shivas_guard",--
-				"item_octarine_core",--
+				"item_skadi",--
 				"item_ultimate_scepter",
 				"item_travel_boots",
 				"item_ultimate_scepter_2",

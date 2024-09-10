@@ -33,14 +33,13 @@ local HeroBuild = {
 				"item_tango",
 				"item_double_branches",
 				"item_quelling_blade",
-				"item_slippers",
-				"item_circlet",
 			
-				"item_wraith_band",
+				"item_double_wraith_band",
 				"item_power_treads",
 				"item_magic_wand",
 				"item_diffusal_blade",
 				"item_manta",--
+				"item_lesser_crit",
 				"item_ultimate_scepter",
 				"item_greater_crit",--
 				"item_basher",
@@ -48,7 +47,7 @@ local HeroBuild = {
 				"item_disperser",--
 				"item_abyssal_blade",--
 				"item_ultimate_scepter_2",
-				"item_monkey_king_bar",--
+				"item_butterfly",--
 				"item_moon_shard",
 				"item_aghanims_shard",
 			},

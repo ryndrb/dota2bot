@@ -22,7 +22,7 @@ local HeroBuild = {
 				[1] = {
 					['t25'] = {10, 0},
 					['t20'] = {10, 0},
-					['t15'] = {10, 0},
+					['t15'] = {0, 10},
 					['t10'] = {0, 10},
 				}
             },
@@ -45,9 +45,9 @@ local HeroBuild = {
 				"item_heart",--
 				"item_basher",
 				"item_disperser",--
-				"item_ultimate_scepter_2",
 				"item_butterfly",--
 				"item_bloodthorn",--
+				"item_ultimate_scepter_2",
 				"item_abyssal_blade",--
 				"item_moon_shard",
 				"item_aghanims_shard",

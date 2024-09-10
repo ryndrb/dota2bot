@@ -23,7 +23,7 @@ local HeroBuild = {
 					['t25'] = {10, 0},
 					['t20'] = {0, 10},
 					['t15'] = {10, 0},
-					['t10'] = {10, 0},
+					['t10'] = {0, 10},
 				}
             },
             ['ability'] = {
@@ -36,8 +36,8 @@ local HeroBuild = {
 				"item_quelling_blade",
 			
 				"item_power_treads",
-				"item_null_talisman",
 				"item_magic_wand",
+				"item_null_talisman",
 				"item_dragon_lance",
 				"item_desolator",--
 				"item_blink",
@@ -65,7 +65,7 @@ local HeroBuild = {
 					['t25'] = {10, 0},
 					['t20'] = {0, 10},
 					['t15'] = {10, 0},
-					['t10'] = {10, 0},
+					['t10'] = {0, 10},
 				}
             },
             ['ability'] = {
@@ -79,8 +79,8 @@ local HeroBuild = {
 			
 				"item_bottle",
 				"item_power_treads",
-				"item_null_talisman",
 				"item_magic_wand",
+				"item_null_talisman",
 				"item_dragon_lance",
 				"item_desolator",--
 				"item_blink",

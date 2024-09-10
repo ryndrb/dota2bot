@@ -22,7 +22,7 @@ local HeroBuild = {
                 [1] = {
                     ['t25'] = {10, 0},
                     ['t20'] = {0, 10},
-                    ['t15'] = {0, 10},
+                    ['t15'] = {10, 0},
                     ['t10'] = {10, 0},
                 }
             },
@@ -42,11 +42,11 @@ local HeroBuild = {
                 "item_dragon_lance",
                 "item_gungir",--
                 "item_black_king_bar",--
-                "item_aghanims_shard",
                 "item_greater_crit",--
-                "item_hurricane_pike",--
+                "item_aghanims_shard",
                 "item_satanic",--
                 "item_butterfly",--
+                "item_hurricane_pike",--
                 "item_moon_shard",
                 "item_ultimate_scepter_2",
             },
@@ -73,42 +73,13 @@ local HeroBuild = {
     ['pos_3'] = {
         [1] = {
             ['talent'] = {
-                [1] = {
-                    ['t25'] = {10, 0},
-                    ['t20'] = {0, 10},
-                    ['t15'] = {0, 10},
-                    ['t10'] = {10, 0},
-                }
+                [1] = {},
             },
             ['ability'] = {
-                [1] = {2,3,2,3,2,6,3,2,3,1,6,1,1,1,6},
+                [1] = {},
             },
-            ['buy_list'] = {
-                "item_tango",
-                "item_enchanted_mango",
-                "item_double_branches",
-                "item_magic_stick",
-            
-                "item_double_wraith_band",
-                "item_magic_wand",
-                "item_power_treads",
-                "item_maelstrom",
-                "item_sphere",--
-                "item_desolator",--
-                sUtilityItem,--
-                "item_orchid",
-                "item_gungir",--
-                "item_aghanims_shard",
-                "item_bloodthorn",--
-                "item_satanic",--
-                "item_moon_shard",
-                "item_ultimate_scepter_2",
-            },
-            ['sell_list'] = {
-                "item_magic_wand",
-                "item_wraith_band",
-                "item_power_treads",
-            },
+            ['buy_list'] = {},
+            ['sell_list'] = {},
         },
     },
     ['pos_4'] = {
@@ -137,7 +108,7 @@ local HeroBuild = {
                 "item_boots_of_bearing",--
                 "item_gungir",--
                 "item_sheepstick",--
-                "item_sphere",--
+                "item_greater_crit",--
                 "item_ultimate_scepter_2",
                 "item_aghanims_shard",
                 "item_moon_shard",
@@ -174,7 +145,7 @@ local HeroBuild = {
                 "item_guardian_greaves",--
                 "item_gungir",--
                 "item_sheepstick",--
-                "item_sphere",--
+                "item_greater_crit",--
                 "item_ultimate_scepter_2",
                 "item_aghanims_shard",
                 "item_moon_shard",

@@ -12,7 +12,7 @@ then
 
 local RI = require(GetScriptDirectory()..'/FunLib/util_role_item')
 
-local sUtility = {"item_heavens_halberd", "item_crimson_guard", "item_nullifier"}
+local sUtility = {"item_heavens_halberd", "item_crimson_guard"}
 local sUtilityItem = RI.GetBestUtilityItem(sUtility)
 
 local HeroBuild = {
@@ -21,14 +21,13 @@ local HeroBuild = {
             ['talent'] = {
                 [1] = {
 					['t25'] = {10, 0},
-					['t20'] = {10, 0},
+					['t20'] = {0, 10},
 					['t15'] = {0, 10},
-					['t10'] = {10, 0},
+					['t10'] = {0, 10},
 				},
             },
             ['ability'] = {
-				[1] = {1,2,1,3,1,6,2,2,2,1,6,3,3,3,6},
-				[2] = {2,1,1,3,2,6,2,2,1,1,6,3,3,3,6},
+				[1] = {1,2,1,3,2,6,2,2,1,1,6,3,3,3,6},
             },
             ['buy_list'] = {
 				"item_tango",
@@ -41,9 +40,9 @@ local HeroBuild = {
 				"item_bfury",--
 				"item_manta",--
 				"item_butterfly",--
-				"item_basher",
 				"item_skadi",--
-				"item_disperser",--
+				"item_basher",
+				"item_monkey_king_bar",--
 				"item_abyssal_blade",--
 				"item_moon_shard",
 				"item_ultimate_scepter_2",
@@ -73,28 +72,28 @@ local HeroBuild = {
             ['talent'] = {
                 [1] = {
 					['t25'] = {10, 0},
-					['t20'] = {10, 0},
+					['t20'] = {0, 10},
 					['t15'] = {0, 10},
-					['t10'] = {10, 0},
+					['t10'] = {0, 10},
 				},
             },
             ['ability'] = {
-				[1] = {1,2,1,3,1,6,2,2,2,1,6,3,3,3,6},
-				[2] = {2,1,1,3,2,6,2,2,1,1,6,3,3,3,6},
+				[1] = {1,2,1,3,2,6,2,2,1,1,6,3,3,3,6},
             },
             ['buy_list'] = {
 				"item_tango",
+				"item_orb_of_venom",
 				"item_double_branches",
-				"item_quelling_blade",
 	
 				"item_wraith_band",
+				"item_orb_of_corrosion",
 				"item_magic_wand",
+				"item_vanguard",
 				"item_power_treads",
-				"item_bfury",--
+				"item_diffusal_blade",--
+				"item_crimson_guard",--
 				"item_manta",--
-				sUtilityItem,--
-				"item_black_king_bar",--
-				"item_basher",
+				"item_heavens_halberd",--
 				"item_disperser",--
 				"item_abyssal_blade",--
 				"item_moon_shard",
@@ -103,6 +102,7 @@ local HeroBuild = {
 			},
             ['sell_list'] = {
 				"item_wraith_band",
+				"item_orb_of_corrosion",
 				"item_magic_wand",
 				"item_power_treads",
 			},

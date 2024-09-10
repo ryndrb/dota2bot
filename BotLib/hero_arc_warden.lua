@@ -20,7 +20,7 @@ local HeroBuild = {
         [1] = {
             ['talent'] = {
                 [1] = {
-					['t25'] = {10, 0},
+					['t25'] = {0, 10},
 					['t20'] = {10, 0},
 					['t15'] = {10, 0},
 					['t10'] = {10, 0},
@@ -40,13 +40,12 @@ local HeroBuild = {
 				"item_boots",
 				"item_magic_wand",
 				"item_hand_of_midas",
-				"item_maelstrom",
 				"item_gungir",--
 				"item_travel_boots",
 				"item_manta",--
-				"item_sheepstick",--
-				"item_bloodthorn",--
+				"item_greater_crit",--
 				"item_skadi",--
+				"item_bloodthorn",--
 				"item_travel_boots_2",--
 				"item_moon_shard",
 				"item_aghanims_shard",
@@ -63,7 +62,7 @@ local HeroBuild = {
         [1] = {
             ['talent'] = {
 				[1] = {
-					['t25'] = {10, 0},
+					['t25'] = {0, 10},
 					['t20'] = {0, 10},
 					['t15'] = {0, 10},
 					['t10'] = {0, 10},
@@ -80,7 +79,7 @@ local HeroBuild = {
 	
 				"item_bottle",
 				"item_magic_wand",
-				"item_spirit_vessel",
+				"item_urn_of_shadows",
 				"item_boots",
 				"item_hand_of_midas",
 				"item_gungir",--
@@ -90,10 +89,10 @@ local HeroBuild = {
 				"item_ultimate_scepter",
 				"item_orchid",
 				"item_sheepstick",--
-				"item_overwhelming_blink",--
 				"item_bloodthorn",--
-				"item_travel_boots_2",--
+				"item_overwhelming_blink",--
 				"item_ultimate_scepter_2",
+				"item_travel_boots_2",--
 				"item_moon_shard",
 				"item_aghanims_shard",
 			},
@@ -101,17 +100,17 @@ local HeroBuild = {
 				"item_circlet",
 				"item_bottle",
 				"item_magic_wand",
-				"item_spirit_vessel",
+				"item_urn_of_shadows",
 				"item_hand_of_midas",
 			},
         },
 		[2] = {
             ['talent'] = {
 				[1] = {
-					['t25'] = {10, 0},
-					['t20'] = {0, 10},
-					['t15'] = {0, 10},
-					['t10'] = {0, 10},
+					['t25'] = {0, 10},
+					['t20'] = {10, 0},
+					['t15'] = {10, 0},
+					['t10'] = {10, 0},
 				},
             },
             ['ability'] = {
@@ -123,7 +122,6 @@ local HeroBuild = {
 				"item_faerie_fire",
 	
 				"item_bottle",
-				"item_spirit_vessel",
 				"item_magic_wand",
 				"item_boots",
 				"item_hand_of_midas",
@@ -141,7 +139,6 @@ local HeroBuild = {
 			},
             ['sell_list'] = {
 				"item_bottle",
-				"item_spirit_vessel",
 				"item_magic_wand",
 				"item_hand_of_midas",
 			},

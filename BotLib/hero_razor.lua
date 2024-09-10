@@ -20,7 +20,7 @@ local HeroBuild = {
         [1] = {
             ['talent'] = {
 				[1] = {
-					['t25'] = {0, 10},
+					['t25'] = {10, 0},
 					['t20'] = {10, 0},
 					['t15'] = {0, 10},
 					['t10'] = {0, 10},
@@ -37,14 +37,12 @@ local HeroBuild = {
 			
 				"item_power_treads",
 				"item_magic_wand",
-				"item_falcon_blade",
 				"item_manta",--
 				"item_black_king_bar",--
 				"item_aghanims_shard",
 				"item_butterfly",--
 				"item_satanic",--
 				"item_assault",--
-				"item_skadi",--
 				"item_refresher",--
 				"item_moon_shard",
 				"item_ultimate_scepter_2",
@@ -53,7 +51,6 @@ local HeroBuild = {
 				"item_quelling_blade",
 				"item_power_treads",
 				"item_magic_wand",
-				"item_falcon_blade",
 			},
         },
     },
@@ -61,7 +58,7 @@ local HeroBuild = {
         [1] = {
             ['talent'] = {
 				[1] = {
-					['t25'] = {0, 10},
+					['t25'] = {10, 0},
 					['t20'] = {10, 0},
 					['t15'] = {0, 10},
 					['t10'] = {0, 10},
@@ -79,14 +76,12 @@ local HeroBuild = {
 				"item_bottle",
 				"item_power_treads",
 				"item_magic_wand",
-				"item_falcon_blade",
 				"item_manta",--
 				"item_black_king_bar",--
 				"item_aghanims_shard",
 				"item_butterfly",--
 				"item_satanic",--
 				"item_assault",--
-				"item_skadi",--
 				"item_refresher",--
 				"item_moon_shard",
 				"item_ultimate_scepter_2",
@@ -96,7 +91,6 @@ local HeroBuild = {
 				"item_bottle",
 				"item_power_treads",
 				"item_magic_wand",
-				"item_falcon_blade",
 			},
         },
     },
@@ -107,7 +101,7 @@ local HeroBuild = {
 					['t25'] = {10, 0},
 					['t20'] = {10, 0},
 					['t15'] = {10, 0},
-					['t10'] = {0, 10},
+					['t10'] = {10, 0},
 				}
             },
             ['ability'] = {
@@ -116,20 +110,18 @@ local HeroBuild = {
             ['buy_list'] = {
 				"item_tango",
 				"item_double_branches",
-				"item_slippers",
-				"item_circlet",
+				"item_double_circlet",
 			
-				"item_wraith_band",
+				"item_double_wraith_band",
 				"item_boots",
 				"item_magic_wand",
-				"item_falcon_blade",
 				"item_power_treads",
 				"item_manta",--
 				"item_black_king_bar",--
+				"item_heavens_halberd",--
 				"item_aghanims_shard",
 				"item_shivas_guard",--
 				"item_assault",--
-				"item_refresher",--
 				"item_satanic",--
 				"item_moon_shard",
 				"item_ultimate_scepter_2",
@@ -137,7 +129,6 @@ local HeroBuild = {
             ['sell_list'] = {
 				"item_wraith_band",
 				"item_magic_wand",
-				"item_falcon_blade",
 				"item_power_treads",
 			},
         },

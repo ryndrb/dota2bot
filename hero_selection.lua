@@ -56,7 +56,7 @@ local sHeroList = {										-- pos  1, 2, 3, 4, 5
 	{name = 'npc_dota_hero_death_prophet', 				role = {0, 100, 100, 0, 0}},
 	{name = 'npc_dota_hero_doom_bringer', 				role = {0, 80, 100, 0, 0}},
 	{name = 'npc_dota_hero_dragon_knight', 				role = {50, 100, 100, 0, 0}},
-	{name = 'npc_dota_hero_drow_ranger', 				role = {100, 0, 0, 0, 0}},
+	{name = 'npc_dota_hero_drow_ranger', 				role = {100, 80, 0, 0, 0}},
 	{name = 'npc_dota_hero_earth_spirit', 				role = {0, 100, 50, 100, 5}},
 	{name = 'npc_dota_hero_earthshaker', 				role = {0, 50, 100, 100, 0}},
 	{name = 'npc_dota_hero_elder_titan', 				role = {0, 0, 0, 0, 0}},--nil
@@ -66,7 +66,7 @@ local sHeroList = {										-- pos  1, 2, 3, 4, 5
 	{name = 'npc_dota_hero_faceless_void', 				role = {100, 0, 0, 0, 0}},-- Run Buff vscript to have missing Chronosphere
 	{name = 'npc_dota_hero_furion', 					role = {100, 0, 100, 5, 100}},
 	{name = 'npc_dota_hero_grimstroke', 				role = {0, 0, 0, 100, 100}},
-	{name = 'npc_dota_hero_gyrocopter', 				role = {100, 0, 0, 100, 100}},
+	{name = 'npc_dota_hero_gyrocopter', 				role = {100, 100, 0, 100, 100}},
 	{name = 'npc_dota_hero_hoodwink', 					role = {0, 0, 0, 0, 0}},--nil
 	{name = 'npc_dota_hero_huskar', 					role = {0, 100, 100, 0, 0}},
 	{name = 'npc_dota_hero_invoker', 					role = {0, 100, 0, 0, 0}},
@@ -123,7 +123,7 @@ local sHeroList = {										-- pos  1, 2, 3, 4, 5
 	{name = 'npc_dota_hero_skeleton_king', 				role = {100, 0, 40, 0, 0}},
 	{name = 'npc_dota_hero_skywrath_mage', 				role = {0, 0, 0, 100, 100}},
 	{name = 'npc_dota_hero_slardar', 					role = {0, 50, 100, 0, 0}},
-	{name = 'npc_dota_hero_slark', 						role = {100, 0, 0, 0, 0}},
+	{name = 'npc_dota_hero_slark', 						role = {100, 0, 50, 0, 0}},
 	{name = "npc_dota_hero_snapfire", 					role = {0, 100, 0, 100, 100}},
 	{name = 'npc_dota_hero_sniper', 					role = {100, 100, 0, 0, 0}},
 	{name = 'npc_dota_hero_spectre', 					role = {100, 0, 0, 0, 0}},
@@ -140,7 +140,7 @@ local sHeroList = {										-- pos  1, 2, 3, 4, 5
 	{name = 'npc_dota_hero_troll_warlord', 				role = {100, 0, 0, 0, 0}},
 	{name = 'npc_dota_hero_tusk', 						role = {0, 5, 100, 100, 5}},
 	{name = 'npc_dota_hero_undying', 					role = {0, 0, 0, 0, 100}},
-	{name = 'npc_dota_hero_ursa', 						role = {100, 0, 0, 0, 0}},
+	{name = 'npc_dota_hero_ursa', 						role = {100, 0, 50, 0, 0}},
 	{name = 'npc_dota_hero_vengefulspirit', 			role = {0, 0, 0, 100, 100}},
 	{name = 'npc_dota_hero_venomancer', 				role = {0, 0, 0, 100, 100}},
 	{name = 'npc_dota_hero_viper', 						role = {0, 100, 100, 0, 0}},

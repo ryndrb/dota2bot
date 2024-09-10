@@ -55,7 +55,7 @@ If you’ve come across this script or is using it, good feedback is always welc
         - [3] Beastmaster
         - [3] Brewmaster
         - [1,2,3] Broodmother
-        - [3] Centaur
+        - [2,3] Centaur
         - [5] Chen
         - [1,2,4,5] Clinkz
         - [4,5] Clockwerk
@@ -65,14 +65,14 @@ If you’ve come across this script or is using it, good feedback is always welc
         - [4,5] Disruptor
         - [2,3] Doom
         - [2,3,4,5] Earth Spirit
-        - [2,3,4,5] Earthshaker
+        - [2,3,4] Earthshaker
         - ~~[4,5] Elder Titan~~
         - [2] Ember Spirit
-        - [3,4,5] Enchantress
+        - [3,5] Enchantress
         - [3,4,5] Enigma
         - [1] Faceless Void
         - [4,5] Grimstroke
-        - [1,4,5] Gyrocopter
+        - [1,2,4,5] Gyrocopter
         - ~~[4,5] Hoodwink~~
         - [2] Invoker
         - [2,4,5] Keeper of the Light
@@ -113,7 +113,7 @@ If you’ve come across this script or is using it, good feedback is always welc
         - [2,3,4,5] Tusk
         - [3] Underlord
         - [5] Undying
-        - [1] Ursa
+        - [1,3] Ursa
         - [4,5] Vengeful Spirit
         - [4,5] Venomancer
         - [2,3] Visage

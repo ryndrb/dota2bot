@@ -22,7 +22,7 @@ local HeroBuild = {
                 [1] = {
                     ['t25'] = {10, 0},
                     ['t20'] = {10, 0},
-                    ['t15'] = {0, 10},
+                    ['t15'] = {10, 0},
                     ['t10'] = {10, 0},
                 }
             },
@@ -33,28 +33,25 @@ local HeroBuild = {
                 "item_tango",
                 "item_double_branches",
                 "item_quelling_blade",
-                "item_orb_of_venom",
-            
+                
+                "item_wraith_band",
                 "item_boots",
-                "item_orb_of_corrosion",
                 "item_magic_wand",
                 "item_power_treads",
-                "item_echo_sabre",
-                "item_desolator",--
+                "item_gungir",--
                 "item_black_king_bar",--
-                "item_harpoon",--
                 "item_basher",
                 "item_skadi",--
+                "item_greater_crit",--
                 "item_travel_boots",
                 "item_abyssal_blade",--
                 "item_travel_boots_2",--
-                "item_ultimate_scepter_2",
-                "item_moon_shard",
                 "item_aghanims_shard",
+                "item_moon_shard",
+                "item_ultimate_scepter_2",
             },
             ['sell_list'] = {
                 "item_quelling_blade",
-                "item_orb_of_corrosion",
                 "item_magic_wand",
             },
         },
@@ -82,11 +79,10 @@ local HeroBuild = {
                 "item_power_treads",
                 "item_magic_wand",
                 "item_orb_of_corrosion",
-                "item_echo_sabre",
-                "item_desolator",--
+                "item_gungir",--
                 "item_black_king_bar",--
-                "item_harpoon",--
                 "item_basher",
+                "item_greater_crit",--
                 "item_skadi",--
                 "item_travel_boots",
                 "item_abyssal_blade",--
@@ -97,8 +93,8 @@ local HeroBuild = {
             },
             ['sell_list'] = {
                 "item_quelling_blade",
-                "item_orb_of_corrosion",
                 "item_bottle",
+                "item_orb_of_corrosion",
                 "item_magic_wand",
             },
         },

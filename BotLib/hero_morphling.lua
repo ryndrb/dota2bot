@@ -40,8 +40,8 @@ local HeroBuild = {
                 "item_power_treads",
                 "item_lifesteal",
                 "item_manta",--
-                "item_angels_demise",--
                 "item_black_king_bar",--
+                "item_angels_demise",--
                 "item_butterfly",--
                 "item_aghanims_shard",
                 "item_satanic",--
@@ -118,8 +118,8 @@ local HeroBuild = {
                 "item_power_treads",
                 "item_lifesteal",
                 "item_manta",--
-                "item_angels_demise",--
                 "item_black_king_bar",--
+                "item_angels_demise",--
                 "item_butterfly",--
                 "item_aghanims_shard",
                 "item_satanic",--

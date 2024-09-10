@@ -22,7 +22,7 @@ local HeroBuild = {
                 [1] = {
 					['t25'] = {0, 10},
 					['t20'] = {0, 10},
-					['t15'] = {0, 10},
+					['t15'] = {10, 0},
 					['t10'] = {0, 10},
 				},
             },
@@ -41,7 +41,7 @@ local HeroBuild = {
 				"item_maelstrom",
 				"item_magic_wand",
 				"item_black_king_bar",--
-				"item_mjollnir",--
+				"item_gungir",--
 				"item_basher",
 				"item_aghanims_shard",
 				"item_butterfly",--
@@ -80,12 +80,11 @@ local HeroBuild = {
 				"item_circlet",
 			
 				"item_wraith_band",
-				"item_bottle",
 				"item_phase_boots",
 				"item_maelstrom",
 				"item_magic_wand",
 				"item_black_king_bar",--
-				"item_mjollnir",--
+				"item_gungir",--
 				"item_basher",
 				"item_aghanims_shard",
 				"item_butterfly",--
@@ -97,7 +96,6 @@ local HeroBuild = {
 				"item_ultimate_scepter_2",
 			},
             ['sell_list'] = {
-				"item_bottle",
 				"item_quelling_blade",
 				"item_wraith_band",
 				"item_phase_boots",
@@ -127,11 +125,10 @@ local HeroBuild = {
 				"item_boots",
 				"item_magic_wand",
 				"item_phase_boots",
-				"item_maelstrom",
-				"item_black_king_bar",--
 				"item_gungir",--
-				"item_heavens_halberd",--
+				"item_black_king_bar",--
 				sUtilityItem,--
+				"item_heavens_halberd",--
 				"item_basher",
 				"item_travel_boots",
 				"item_abyssal_blade",--
