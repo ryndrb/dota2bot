@@ -73,12 +73,13 @@ local HeroBuild = {
 			
 				"item_tranquil_boots",
 				"item_magic_wand",
+				"item_aether_lens",--
+				"item_ancient_janggo",
 				"item_aghanims_shard",
 				"item_glimmer_cape",--
 				"item_ultimate_scepter",
 				"item_boots_of_bearing",--
-				"item_aether_lens",--
-				"item_octarine_core",--
+				"item_lotus_orb",--
 				"item_black_king_bar",--
 				"item_refresher",--
 				"item_ultimate_scepter_2",
@@ -110,12 +111,13 @@ local HeroBuild = {
 			
 				"item_arcane_boots",
 				"item_magic_wand",
+				"item_aether_lens",--
+				"item_mekansm",
 				"item_aghanims_shard",
 				"item_glimmer_cape",--
 				"item_ultimate_scepter",
 				"item_guardian_greaves",--
-				"item_aether_lens",--
-				"item_octarine_core",--
+				"item_lotus_orb",--
 				"item_black_king_bar",--
 				"item_refresher",--
 				"item_ultimate_scepter_2",

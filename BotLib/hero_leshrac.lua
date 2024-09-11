@@ -32,7 +32,7 @@ local HeroBuild = {
         [1] = {
             ['talent'] = {
                 [1] = {
-                    ['t25'] = {10, 0},
+                    ['t25'] = {0, 10},
                     ['t20'] = {10, 0},
                     ['t15'] = {0, 10},
                     ['t10'] = {10, 0},
@@ -52,11 +52,12 @@ local HeroBuild = {
                 "item_null_talisman",
                 "item_arcane_boots",
                 "item_magic_wand",
-                "item_cyclone",
+                "item_kaya",
+                "item_bloodstone",--
                 "item_kaya_and_sange",--
-                "item_eternal_shroud",--
-                "item_shivas_guard",--
                 "item_black_king_bar",--
+                "item_cyclone",
+                "item_shivas_guard",--
                 "item_aghanims_shard",
                 "item_travel_boots",
                 "item_wind_waker",--
@@ -75,9 +76,9 @@ local HeroBuild = {
         [1] = {
             ['talent'] = {
                 [1] = {
-                    ['t25'] = {10, 0},
-                    ['t20'] = {0, 10},
-                    ['t15'] = {10, 0},
+                    ['t25'] = {0, 10},
+                    ['t20'] = {10, 0},
+                    ['t15'] = {0, 10},
                     ['t10'] = {10, 0},
                 }
             },
@@ -94,12 +95,11 @@ local HeroBuild = {
                 "item_magic_wand",
                 "item_kaya",
                 "item_bloodstone",--
-                "item_black_king_bar",--
                 sUtilityItem,--
+                "item_black_king_bar",--
+                "item_shivas_guard",--
                 "item_kaya_and_sange",--
                 "item_aghanims_shard",
-                "item_travel_boots",
-                "item_shivas_guard",--
                 "item_travel_boots_2",--
                 "item_ultimate_scepter_2",
                 "item_moon_shard",

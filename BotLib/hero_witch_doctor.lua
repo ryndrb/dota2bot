@@ -73,15 +73,15 @@ local HeroBuild = {
 			
 				"item_tranquil_boots",
 				"item_magic_wand",
-				"item_aghanims_shard",
 				"item_glimmer_cape",--
-				"item_solar_crest",--
+				"item_aghanims_shard",
+				"item_force_staff",--
 				"item_ultimate_scepter",
 				"item_boots_of_bearing",--
 				"item_cyclone",
 				"item_refresher",--
-				"item_black_king_bar",--
 				"item_wind_waker",--
+				"item_black_king_bar",--
 				"item_ultimate_scepter_2",
 				"item_moon_shard",
 			},
@@ -111,15 +111,15 @@ local HeroBuild = {
 			
 				"item_arcane_boots",
 				"item_magic_wand",
-				"item_aghanims_shard",
 				"item_glimmer_cape",--
+				"item_aghanims_shard",
 				"item_force_staff",--
 				"item_ultimate_scepter",
 				"item_guardian_greaves",--
 				"item_cyclone",
 				"item_refresher",--
-				"item_black_king_bar",--
 				"item_wind_waker",--
+				"item_black_king_bar",--
 				"item_ultimate_scepter_2",
 				"item_moon_shard",
 			},

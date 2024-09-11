@@ -59,7 +59,7 @@ local HeroBuild = {
 					['t25'] = {10, 0},
 					['t20'] = {10, 0},
 					['t15'] = {0, 10},
-					['t10'] = {0, 10},
+					['t10'] = {10, 0},
 				}
             },
             ['ability'] = {
@@ -68,9 +68,10 @@ local HeroBuild = {
             ['buy_list'] = {
 				"item_double_tango",
 				"item_double_branches",
-				"item_faerie_fire",
+				"item_circlet",
 				"item_blood_grenade",
 			
+				"item_null_talisman",
 				"item_tranquil_boots",
 				"item_magic_wand",
 				"item_rod_of_atos",
@@ -80,12 +81,13 @@ local HeroBuild = {
 				"item_boots_of_bearing",--
 				"item_ultimate_scepter",
 				"item_octarine_core",--
-				"item_gungir",--
 				"item_sheepstick",--
+				"item_gungir",--
 				"item_ultimate_scepter_2",
 				"item_moon_shard",
 			},
             ['sell_list'] = {
+				"item_null_talisman",
 				"item_magic_wand",
 			},
         },
@@ -97,7 +99,7 @@ local HeroBuild = {
 					['t25'] = {10, 0},
 					['t20'] = {10, 0},
 					['t15'] = {0, 10},
-					['t10'] = {0, 10},
+					['t10'] = {10, 0},
 				}
             },
             ['ability'] = {
@@ -106,9 +108,10 @@ local HeroBuild = {
             ['buy_list'] = {
 				"item_double_tango",
 				"item_double_branches",
-				"item_faerie_fire",
+				"item_circlet",
 				"item_blood_grenade",
 			
+				"item_null_talisman",
 				"item_arcane_boots",
 				"item_magic_wand",
 				"item_rod_of_atos",
@@ -118,12 +121,13 @@ local HeroBuild = {
 				"item_guardian_greaves",--
 				"item_ultimate_scepter",
 				"item_octarine_core",--
+				"item_sheepstick",--
 				"item_gungir",--
-				"item_shivas_guard",--
 				"item_ultimate_scepter_2",
 				"item_moon_shard",
 			},
             ['sell_list'] = {
+				"item_null_talisman",
 				"item_magic_wand",
 			},
         },

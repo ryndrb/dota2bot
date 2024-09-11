@@ -57,9 +57,9 @@ local HeroBuild = {
         [1] = {
             ['talent'] = {
 				[1] = {
-					['t25'] = {0, 10},
+					['t25'] = {10, 0},
 					['t20'] = {10, 0},
-					['t15'] = {0, 10},
+					['t15'] = {10, 0},
 					['t10'] = {0, 10},
 				}
             },
@@ -74,15 +74,16 @@ local HeroBuild = {
 				"item_enchanted_mango",
 				"item_blood_grenade",
 			
-				"item_boots",
+				"item_tranquil_boots",
 				"item_magic_wand",
-				"item_solar_crest",--
-				"item_aghanims_shard",
+				"item_ancient_janggo",
 				"item_glimmer_cape",--
+				"item_solar_crest",--
 				"item_boots_of_bearing",--
+				"item_aghanims_shard",
+				"item_black_king_bar",--
 				"item_force_staff",--
 				"item_sheepstick",--
-				"item_aeon_disk",--
 				"item_ultimate_scepter_2",
 				"item_moon_shard",
 			},
@@ -95,9 +96,9 @@ local HeroBuild = {
         [1] = {
             ['talent'] = {
 				[1] = {
-					['t25'] = {0, 10},
+					['t25'] = {10, 0},
 					['t20'] = {10, 0},
-					['t15'] = {0, 10},
+					['t15'] = {10, 0},
 					['t10'] = {0, 10},
 				}
             },
@@ -106,21 +107,21 @@ local HeroBuild = {
             },
             ['buy_list'] = {
 				"item_tango",
-				"item_tango",
 				"item_double_branches",
 				"item_faerie_fire",
 				"item_enchanted_mango",
 				"item_blood_grenade",
 			
-				"item_boots",
+				"item_arcane_boots",
 				"item_magic_wand",
-				"item_solar_crest",--
-				"item_aghanims_shard",
+				"item_mekansm",
 				"item_glimmer_cape",--
+				"item_solar_crest",--
 				"item_guardian_greaves",--
+				"item_aghanims_shard",
+				"item_black_king_bar",--
 				"item_force_staff",--
 				"item_sheepstick",--
-				"item_aeon_disk",--
 				"item_ultimate_scepter_2",
 				"item_moon_shard",
 			},

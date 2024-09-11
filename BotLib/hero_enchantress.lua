@@ -63,9 +63,10 @@ local HeroBuild = {
                 "item_power_treads",
                 "item_magic_wand",
                 "item_mage_slayer",--
+                "item_pipe",--
+                "item_force_staff",
                 "item_hurricane_pike",--
                 sUtilityItem,--
-                "item_pipe",--
                 "item_assault",--
                 "item_moon_shard",
                 "item_travel_boots_2",--
@@ -98,18 +99,22 @@ local HeroBuild = {
                 "item_blood_grenade",
             
                 "item_magic_wand",
+                "item_double_bracer",
                 "item_boots",
+                "item_force_staff",
                 "item_hurricane_pike",--
                 "item_aghanims_shard",
                 "item_mage_slayer",--
                 "item_boots_of_bearing",--
-                "item_moon_shard",--
+                "item_moon_shard",
                 "item_bloodthorn",--
                 "item_sheepstick",--
+                "item_assault",--
                 "item_ultimate_scepter_2",
             },
             ['sell_list'] = {
                 "item_magic_wand",
+                "item_bracer",
             },
         },
     },
@@ -133,18 +138,22 @@ local HeroBuild = {
                 "item_blood_grenade",
             
                 "item_magic_wand",
+                "item_double_bracer",
                 "item_boots",
+                "item_force_staff",
                 "item_hurricane_pike",--
                 "item_aghanims_shard",
                 "item_mage_slayer",--
                 "item_guardian_greaves",--
-                "item_moon_shard",--
+                "item_moon_shard",
                 "item_bloodthorn",--
                 "item_sheepstick",--
+                "item_assault",--
                 "item_ultimate_scepter_2",
             },
             ['sell_list'] = {
                 "item_magic_wand",
+                "item_bracer",
             },
         },
     },

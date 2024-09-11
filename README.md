@@ -37,7 +37,7 @@ If you’ve come across this script or is using it, good feedback is always welc
         - `Enable Cheats`
         - Type: `sv_cheats 1` in console.
         - Type: `host_timescale 2` or `host_timescale 4` in console.
-        - Type: `script_reload_code bots/Buff/buff` in console (once the map has loaded).
+        - Type: `script_reload_code bots/Buff/buff` in console (pick phase).
         - Type: `host_timescale 0` in console to pause.
 
 - ***Key Scripts***
@@ -87,7 +87,7 @@ If you’ve come across this script or is using it, good feedback is always welc
         - [1,2] Monkey King
         - [1,2] Morphling
         - [1] Muerta
-        - [1,3,4,5] Nature's Prophet
+        - [1,2,3,4,5] Nature's Prophet
         - [3] Night Stalker
         - [4,5] Nyx Assassin
         - [2] Outworld Destroyer
@@ -96,7 +96,7 @@ If you’ve come across this script or is using it, good feedback is always welc
         - ~~[2,3] Primal Beast~~
         - [2] Puck
         - [2,3,4,5] Pudge
-        - [2,4,5] Ringmaster
+        - [4,5] Ringmaster
         - [2,4,5] Rubick
         - [4,5] Shadow Demon
         - [2,4,5] Snapfire

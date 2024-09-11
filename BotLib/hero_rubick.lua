@@ -53,15 +53,15 @@ local HeroBuild = {
                 "item_phylactery",
                 "item_ultimate_scepter",
                 "item_octarine_core",--
-                "item_black_king_bar",--
                 "item_blink",
+                "item_black_king_bar",--
                 "item_travel_boots",
                 "item_cyclone",
+                "item_sheepstick",--
                 "item_ultimate_scepter_2",
-                "item_travel_boots_2",--
                 "item_arcane_blink",--
                 "item_wind_waker",--
-                "item_sheepstick",--
+                "item_travel_boots_2",--
                 "item_aghanims_shard",
                 "item_moon_shard",
             },
@@ -113,10 +113,10 @@ local HeroBuild = {
                 "item_force_staff",--
                 "item_boots_of_bearing",--
                 "item_ultimate_scepter",
-                "item_octarine_core",--
                 "item_cyclone",
-                "item_ethereal_blade",--
+                "item_sheepstick",--
                 "item_wind_waker",--
+                "item_ethereal_blade",--
                 "item_arcane_blink",--
                 "item_ultimate_scepter_2",
                 "item_moon_shard",
@@ -155,10 +155,10 @@ local HeroBuild = {
                 "item_force_staff",--
                 "item_guardian_greaves",--
                 "item_ultimate_scepter",
-                "item_octarine_core",--
                 "item_cyclone",
-                "item_ethereal_blade",--
+                "item_sheepstick",--
                 "item_wind_waker",--
+                "item_ethereal_blade",--
                 "item_arcane_blink",--
                 "item_ultimate_scepter_2",
                 "item_moon_shard",

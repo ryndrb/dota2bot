@@ -34,8 +34,8 @@ local HeroBuild = {
 				[1] = {
 					['t25'] = {0, 10},
 					['t20'] = {10, 0},
-					['t15'] = {0, 10},
-					['t10'] = {10, 0},
+					['t15'] = {10, 0},
+					['t10'] = {0, 10},
 				}
             },
             ['ability'] = {
@@ -51,10 +51,11 @@ local HeroBuild = {
 				"item_magic_wand",
 				"item_aether_lens",
 				"item_dagon_2",
+				"item_kaya",
 				"item_octarine_core",--
 				"item_black_king_bar",--
-				"item_dagon_5",--
 				"item_kaya_and_sange",--
+				"item_dagon_5",--
 				"item_travel_boots",
 				"item_ethereal_blade",--
 				"item_travel_boots_2",--
@@ -84,7 +85,7 @@ local HeroBuild = {
         [1] = {
             ['talent'] = {
 				[1] = {
-					['t25'] = {0, 10},
+					['t25'] = {10, 0},
 					['t20'] = {0, 10},
 					['t15'] = {10, 0},
 					['t10'] = {10, 0},
@@ -99,14 +100,13 @@ local HeroBuild = {
 				"item_enchanted_mango",
 				"item_blood_grenade",
 			
-				"item_boots",
 				"item_tranquil_boots",
 				"item_magic_wand",
 				"item_glimmer_cape",--
 				"item_aether_lens",--
-				"item_aghanims_shard",
-				"item_force_staff",--
 				"item_boots_of_bearing",--
+				"item_force_staff",--
+				"item_aghanims_shard",
 				"item_cyclone",
 				"item_lotus_orb",--
 				"item_wind_waker",--
@@ -122,7 +122,7 @@ local HeroBuild = {
         [1] = {
             ['talent'] = {
 				[1] = {
-					['t25'] = {0, 10},
+					['t25'] = {10, 0},
 					['t20'] = {0, 10},
 					['t15'] = {10, 0},
 					['t10'] = {10, 0},
@@ -137,14 +137,13 @@ local HeroBuild = {
 				"item_enchanted_mango",
 				"item_blood_grenade",
 			
-				"item_boots",
 				"item_arcane_boots",
 				"item_magic_wand",
 				"item_glimmer_cape",--
 				"item_aether_lens",--
-				"item_aghanims_shard",
-				"item_force_staff",--
 				"item_guardian_greaves",--
+				"item_force_staff",--
+				"item_aghanims_shard",
 				"item_cyclone",
 				"item_lotus_orb",--
 				"item_wind_waker",--

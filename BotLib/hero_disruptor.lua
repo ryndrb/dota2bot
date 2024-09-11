@@ -59,11 +59,11 @@ local HeroBuild = {
                     ['t25'] = {10, 0},
                     ['t20'] = {0, 10},
                     ['t15'] = {10, 0},
-                    ['t10'] = {0, 10},
+                    ['t10'] = {10, 0},
                 }
             },
             ['ability'] = {
-                [1] = {2,1,2,3,2,6,2,3,3,3,6,1,1,1,6},
+                [1] = {1,2,2,3,2,6,2,1,1,1,6,3,3,3,6},
             },
             ['buy_list'] = {
                 "item_double_tango",
@@ -75,8 +75,8 @@ local HeroBuild = {
                 "item_magic_wand",
                 "item_force_staff",--
                 "item_solar_crest",--
-                "item_glimmer_cape",--
                 "item_boots_of_bearing",--
+                "item_octarine_core",--
                 "item_sheepstick",--
                 "item_wind_waker",--
                 "item_aghanims_shard",
@@ -95,11 +95,11 @@ local HeroBuild = {
                     ['t25'] = {10, 0},
                     ['t20'] = {0, 10},
                     ['t15'] = {10, 0},
-                    ['t10'] = {0, 10},
+                    ['t10'] = {10, 0},
                 }
             },
             ['ability'] = {
-                [1] = {2,1,2,3,2,6,2,3,3,3,6,1,1,1,6},
+                [1] = {1,2,2,3,2,6,2,1,1,1,6,3,3,3,6},
             },
             ['buy_list'] = {
                 "item_double_tango",
@@ -111,8 +111,8 @@ local HeroBuild = {
                 "item_magic_wand",
                 "item_force_staff",--
                 "item_solar_crest",--
-                "item_glimmer_cape",--
                 "item_guardian_greaves",--
+                "item_octarine_core",--
                 "item_sheepstick",--
                 "item_wind_waker",--
                 "item_aghanims_shard",

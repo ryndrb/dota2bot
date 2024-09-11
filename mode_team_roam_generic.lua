@@ -262,6 +262,9 @@ function X.SupportFindTarget()
 	local botLV   = bot:GetLevel();
 	local botAD   = bot:GetAttackDamage();
 	local botBAD  = X.GetAttackDamageToCreep(bot) - 1; 
+	if bot:GetUnitName() == 'npc_dota_hero_jakiro' then
+		botAD = botAD * 2
+	end
 	
 	
 	if X.CanBeAttacked(nTarget) and nTarget == targetUnit
@@ -566,9 +569,11 @@ function X.CarryFindTarget()
 	local botHP   = bot:GetHealth()/bot:GetMaxHealth();
 	local botMode = bot:GetActiveMode();
 	local botLV   = bot:GetLevel();
-	local botAD   = bot:GetAttackDamage() - 0.8;
-	local botBAD  = X.GetAttackDamageToCreep(bot) - 1.2; 
-	
+	local botAD   = bot:GetAttackDamage()
+	local botBAD  = X.GetAttackDamageToCreep(bot)
+	if bot:GetUnitName() == 'npc_dota_hero_jakiro' then
+		botAD = botAD * 2
+	end
 	
 	if  X.CanBeAttacked(nTarget) and nTarget == targetUnit
 		and GetUnitToUnitDistance(bot,nTarget) <= 1600
@@ -951,23 +956,27 @@ end
 
 
 function X.GetAttackDamageToCreep( bot )
+	local nDamage = bot:GetAttackDamage()
+	if bot:GetUnitName() == 'npc_dota_hero_jakiro' then
+		nDamage = nDamage * 2
+	end
 	
 	if bot:GetItemSlotType(bot:FindItemSlot("item_quelling_blade")) == ITEM_SLOT_TYPE_MAIN
 	then
 		if bot:GetAttackRange() > 310 or bot:GetUnitName() == "npc_dota_hero_templar_assassin"
 		then
-			return bot:GetAttackDamage() + 4;
+			return nDamage + 4;
 		else
-			return bot:GetAttackDamage() + 8;
+			return nDamage + 8;
 		end
 	end
 	
 	if bot:FindItemSlot("item_bfury") >= 0
 	then
-		return bot:GetAttackDamage() + 15;
+		return nDamage + 15;
 	end
 	
-	return bot:GetAttackDamage();
+	return nDamage
 end
 
 

@@ -75,11 +75,11 @@ local HeroBuild = {
 				"item_glimmer_cape",--
 				"item_aghanims_shard",
 				"item_force_staff",--
-				"item_solar_crest",--
 				"item_boots_of_bearing",--
 				"item_ultimate_scepter",
+				"item_lotus_orb",--
 				"item_refresher",--
-				"item_octarine_core",--
+				"item_assault",--
 				"item_ultimate_scepter_2",
 				"item_moon_shard",
 			},
@@ -111,11 +111,11 @@ local HeroBuild = {
 				"item_glimmer_cape",--
 				"item_aghanims_shard",
 				"item_force_staff",--
-				"item_aether_lens",--
 				"item_guardian_greaves",--
 				"item_ultimate_scepter",
+				"item_lotus_orb",--
 				"item_refresher",--
-				"item_octarine_core",--
+				"item_assault",--
 				"item_ultimate_scepter_2",
 				"item_moon_shard",
 			},

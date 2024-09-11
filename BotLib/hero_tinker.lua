@@ -50,7 +50,7 @@ local HeroBuild = {
                 "item_bottle",
                 "item_double_null_talisman",
                 "item_magic_wand",
-                "item_blink",--
+                "item_blink",
                 "item_ultimate_scepter",
                 "item_arcane_blink",--
                 "item_shivas_guard",--
@@ -105,9 +105,9 @@ local HeroBuild = {
                 "item_boots",
                 "item_magic_wand",
                 "item_holy_locket",--
-                "item_mekansm",
+                "item_ancient_janggo",
                 "item_glimmer_cape",--
-                "item_guardian_greaves",--
+                "item_boots_of_bearing",--
                 "item_aether_lens",
                 "item_veil_of_discord",
                 "item_sheepstick",--

@@ -41,8 +41,8 @@ local HeroBuild = {
                 "item_black_king_bar",--
                 "item_aghanims_shard",
                 "item_orchid",
-                "item_satanic",--
                 "item_assault",--
+                "item_satanic",--
                 "item_bloodthorn",--
                 "item_monkey_king_bar",--
                 "item_moon_shard",
@@ -58,13 +58,40 @@ local HeroBuild = {
     ['pos_2'] = {
         [1] = {
             ['talent'] = {
-                [1] = {},
+                [1] = {
+                    ['t25'] = {0, 10},
+                    ['t20'] = {0, 10},
+                    ['t15'] = {10, 0},
+                    ['t10'] = {10, 0},
+                }
             },
             ['ability'] = {
-                [1] = {},
+                [1] = {1,3,2,1,1,6,1,2,2,2,6,3,3,3,6},
             },
-            ['buy_list'] = {},
-            ['sell_list'] = {},
+            ['buy_list'] = {
+                "item_tango",
+                "item_double_branches",
+                "item_faerie_fire",
+                "item_double_circlet",
+            
+                "item_bottle",
+                "item_power_treads",
+                "item_magic_wand",
+                "item_gungir",--
+                "item_black_king_bar",--
+                "item_aghanims_shard",
+                "item_orchid",
+                "item_assault",--
+                "item_satanic",--
+                "item_bloodthorn",--
+                "item_sheepstick",--
+                "item_moon_shard",
+                "item_ultimate_scepter_2",
+            },
+            ['sell_list'] = {
+                "item_power_treads",
+                "item_magic_wand",
+            },
         },
     },
     ['pos_3'] = {
@@ -72,7 +99,7 @@ local HeroBuild = {
             ['talent'] = {
                 [1] = {
                     ['t25'] = {0, 10},
-                    ['t20'] = {10, 0},
+                    ['t20'] = {0, 10},
                     ['t15'] = {10, 0},
                     ['t10'] = {10, 0},
                 }
@@ -90,11 +117,11 @@ local HeroBuild = {
                 "item_magic_wand",
                 "item_gungir",--
                 "item_black_king_bar",--
-                "item_aghanims_shard",
-                sUtilityItem,--
                 "item_assault",--
+                "item_aghanims_shard",
                 "item_satanic",--
                 "item_sheepstick",--
+                "item_nullifier",--
                 "item_moon_shard",
                 "item_ultimate_scepter_2",
             },
@@ -110,7 +137,7 @@ local HeroBuild = {
             ['talent'] = {
                 [1] = {
                     ['t25'] = {0, 10},
-                    ['t20'] = {10, 0},
+                    ['t20'] = {0, 10},
                     ['t15'] = {10, 0},
                     ['t10'] = {10, 0},
                 }
@@ -124,17 +151,17 @@ local HeroBuild = {
                 "item_blood_grenade",
                 "item_double_circlet",
             
-                "item_urn_of_shadows",
-                "item_magic_wand",
-                "item_spirit_vessel",--
                 "item_boots",
+                "item_magic_wand",
+                "item_urn_of_shadows",
+                "item_solar_crest",--
                 "item_aghanims_shard",
+                "item_spirit_vessel",--
+                "item_boots_of_bearing",--
                 "item_ultimate_scepter",
                 "item_orchid",
-                "item_boots_of_bearing",--
                 "item_heavens_halberd",--
                 "item_bloodthorn",--
-                "item_black_king_bar",--
                 "item_sheepstick",--
                 "item_ultimate_scepter_2",
                 "item_moon_shard",
@@ -150,7 +177,7 @@ local HeroBuild = {
             ['talent'] = {
                 [1] = {
                     ['t25'] = {0, 10},
-                    ['t20'] = {10, 0},
+                    ['t20'] = {0, 10},
                     ['t15'] = {10, 0},
                     ['t10'] = {10, 0},
                 }
@@ -164,17 +191,17 @@ local HeroBuild = {
                 "item_blood_grenade",
                 "item_double_circlet",
             
-                "item_urn_of_shadows",
-                "item_magic_wand",
-                "item_spirit_vessel",--
                 "item_boots",
+                "item_magic_wand",
+                "item_urn_of_shadows",
+                "item_solar_crest",--
                 "item_aghanims_shard",
+                "item_spirit_vessel",--
+                "item_guardian_greaves",--
                 "item_ultimate_scepter",
                 "item_orchid",
-                "item_guardian_greaves",--
                 "item_heavens_halberd",--
                 "item_bloodthorn",--
-                "item_black_king_bar",--
                 "item_sheepstick",--
                 "item_ultimate_scepter_2",
                 "item_moon_shard",

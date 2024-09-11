@@ -35,24 +35,22 @@ local HeroBuild = {
 				"item_magic_stick",
 			
 				"item_magic_wand",
-				"item_falcon_blade",
-				"item_boots",
+				"item_arcane_boots",
 				"item_maelstrom",
-				"item_travel_boots",
-				"item_gungir",--
 				"item_dragon_lance",
+				"item_gungir",--
 				"item_black_king_bar",--
 				"item_greater_crit",--
-				"item_satanic",--
+				"item_travel_boots",
 				"item_hurricane_pike",--
+				"item_satanic",--
+				"item_travel_boots_2",--
 				"item_aghanims_shard",
 				"item_moon_shard",
-				"item_travel_boots_2",--
 				"item_ultimate_scepter_2",
 			},
             ['sell_list'] = {
 				"item_magic_wand",
-				"item_falcon_blade",
 			},
         },
     },
@@ -80,10 +78,10 @@ local HeroBuild = {
 				"item_magic_wand",
 				"item_travel_boots",
 				"item_kaya",
-				"item_aghanims_shard",
 				"item_ultimate_scepter",
-				"item_black_king_bar",--
 				"item_yasha_and_kaya",--
+				"item_aghanims_shard",
+				"item_black_king_bar",--
 				"item_cyclone",
 				"item_octarine_core",--
 				"item_sheepstick",--
@@ -113,26 +111,26 @@ local HeroBuild = {
             ['buy_list'] = {
 				"item_tango",
 				"item_double_branches",
-				"item_faerie_fire",
+				"item_magic_stick",
 			
 				"item_bottle",
-				"item_null_talisman",
-				"item_boots",
 				"item_magic_wand",
+				"item_arcane_boots",
+				"item_maelstrom",
+				"item_dragon_lance",
 				"item_gungir",--
-				"item_travel_boots",
 				"item_black_king_bar",--
 				"item_greater_crit",--
-				"item_aghanims_shard",
+				"item_travel_boots",
+				"item_hurricane_pike",--
 				"item_satanic",--
-				"item_sheepstick",--
 				"item_travel_boots_2",--
+				"item_aghanims_shard",
 				"item_moon_shard",
 				"item_ultimate_scepter_2",
 			},
             ['sell_list'] = {
 				"item_bottle",
-				"item_null_talisman",
 				"item_magic_wand",
 			},
         },
@@ -153,8 +151,8 @@ local HeroBuild = {
         [1] = {
             ['talent'] = {
 				[1] = {
-					['t25'] = {10, 0},
-					['t20'] = {10, 0},
+					['t25'] = {0, 10},
+					['t20'] = {0, 10},
 					['t15'] = {10, 0},
 					['t10'] = {10, 0},
 				}
@@ -173,15 +171,13 @@ local HeroBuild = {
 				"item_aether_lens",
 				"item_cyclone",
 				"item_aghanims_shard",
-				"item_ultimate_scepter",
+				"item_rod_of_atos",
 				"item_boots_of_bearing",--
-				"item_ghost",
-				"item_maelstrom",
-				"item_ethereal_blade",--
-				"item_wind_waker",--
+				"item_glimmer_cape",--
 				"item_gungir",--
+				"item_wind_waker",--
 				"item_sheepstick",--
-				"item_hurricane_pike",--
+				"item_ethereal_blade",--
 				"item_ultimate_scepter_2",
 				"item_moon_shard",
 			},
@@ -195,8 +191,8 @@ local HeroBuild = {
         [1] = {
             ['talent'] = {
 				[1] = {
-					['t25'] = {10, 0},
-					['t20'] = {10, 0},
+					['t25'] = {0, 10},
+					['t20'] = {0, 10},
 					['t15'] = {10, 0},
 					['t10'] = {10, 0},
 				}
@@ -215,15 +211,13 @@ local HeroBuild = {
 				"item_aether_lens",
 				"item_cyclone",
 				"item_aghanims_shard",
-				"item_ultimate_scepter",
+				"item_rod_of_atos",
 				"item_guardian_greaves",--
-				"item_ghost",
-				"item_maelstrom",
-				"item_ethereal_blade",--
-				"item_wind_waker",--
+				"item_glimmer_cape",--
 				"item_gungir",--
+				"item_wind_waker",--
 				"item_sheepstick",--
-				"item_hurricane_pike",--
+				"item_ethereal_blade",--
 				"item_ultimate_scepter_2",
 				"item_moon_shard",
 			},

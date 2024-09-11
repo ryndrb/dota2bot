@@ -58,7 +58,7 @@ local HeroBuild = {
             ['talent'] = {
                 [1] = {
                     ['t25'] = {10, 0},
-                    ['t20'] = {10, 0},
+                    ['t20'] = {0, 10},
                     ['t15'] = {10, 0},
                     ['t10'] = {10, 0},
                 }
@@ -73,13 +73,13 @@ local HeroBuild = {
             
                 "item_tranquil_boots",
                 "item_magic_wand",
+                "item_glimmer_cape",--
                 "item_aether_lens",--
                 "item_blink",
-                nGlimmerForce,--
                 "item_boots_of_bearing",--
+                "item_force_staff",--
                 "item_ultimate_scepter",
                 "item_octarine_core",--
-                "item_aeon_disk",--
                 "item_ultimate_scepter_2",
                 "item_arcane_blink",--
                 "item_moon_shard",
@@ -94,7 +94,7 @@ local HeroBuild = {
             ['talent'] = {
                 [1] = {
                     ['t25'] = {10, 0},
-                    ['t20'] = {10, 0},
+                    ['t20'] = {0, 10},
                     ['t15'] = {10, 0},
                     ['t10'] = {10, 0},
                 }
@@ -109,12 +109,12 @@ local HeroBuild = {
             
                 "item_arcane_boots",
                 "item_magic_wand",
+                "item_glimmer_cape",--
                 "item_aether_lens",--
                 "item_blink",
-                nGlimmerForce,--
                 "item_guardian_greaves",--
+                "item_force_staff",--
                 "item_ultimate_scepter",
-                "item_aeon_disk",--
                 "item_octarine_core",--
                 "item_ultimate_scepter_2",
                 "item_arcane_blink",--

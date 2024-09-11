@@ -58,7 +58,7 @@ local HeroBuild = {
                 [1] = {
                     ['t25'] = {0, 10},
                     ['t20'] = {10, 0},
-                    ['t15'] = {10, 0},
+                    ['t15'] = {0, 10},
                     ['t10'] = {10, 0},
                 }
             },
@@ -67,7 +67,7 @@ local HeroBuild = {
             },
             ['buy_list'] = {
                 "item_tango",
-                "item_double_enchanted_mango",
+                "item_enchanted_mango",
                 "item_double_branches",
                 "item_blood_grenade",
             
@@ -79,9 +79,9 @@ local HeroBuild = {
                 "item_ultimate_scepter",
                 "item_boots_of_bearing",--
                 "item_sheepstick",--
-                "item_ethereal_blade",--
-                "item_refresher",--
+                "item_solar_crest",--
                 "item_aeon_disk",--
+                "item_ethereal_blade",--
                 "item_ultimate_scepter_2",
                 "item_moon_shard",
             },
@@ -96,7 +96,7 @@ local HeroBuild = {
                 [1] = {
                     ['t25'] = {0, 10},
                     ['t20'] = {10, 0},
-                    ['t15'] = {10, 0},
+                    ['t15'] = {0, 10},
                     ['t10'] = {10, 0},
                 }
             },
@@ -105,7 +105,7 @@ local HeroBuild = {
             },
             ['buy_list'] = {
                 "item_tango",
-                "item_double_enchanted_mango",
+                "item_enchanted_mango",
                 "item_double_branches",
                 "item_blood_grenade",
             
@@ -117,9 +117,9 @@ local HeroBuild = {
                 "item_guardian_greaves",--
                 "item_ultimate_scepter",
                 "item_sheepstick",--
-                "item_ethereal_blade",--
+                "item_solar_crest",--
                 "item_aeon_disk",--
-                "item_refresher",--
+                "item_ethereal_blade",--
                 "item_ultimate_scepter_2",
                 "item_moon_shard",
             },
