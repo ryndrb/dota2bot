@@ -120,7 +120,7 @@ If you’ve come across this script or is using it, good feedback is always welc
         - [2] Void Spirit
         - [1,4,5] Weaver
         - [1,2,3,4,5] Windranger
-        - [2,3,4,5] Winter Wyvern
+        - [4,5] Winter Wyvern
     - ***Later***
         - Morphling Ult
     - ***Bugged (Internal; some will be selected)***

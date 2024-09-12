@@ -52,9 +52,11 @@ local HeroBuild = {
                 "item_boots",
                 "item_magic_wand",
                 "item_maelstrom",
-                "item_dragon_lance",
-                "item_gungir",--
+                "item_rod_of_atos",
                 "item_travel_boots",
+                "item_gungir",--
+                "item_lesser_crit",
+                "item_force_staff",
                 "item_greater_crit",--
                 "item_aghanims_shard",
                 "item_black_king_bar",--
@@ -97,16 +99,17 @@ local HeroBuild = {
                 [1] = {1,2,1,2,1,6,1,2,2,3,6,3,3,3,6},
             },
             ['buy_list'] = {
-                "item_tango",
+                "item_double_tango",
                 "item_double_branches",
-                "item_enchanted_mango",
+                "item_circlet",
                 "item_blood_grenade",
             
                 "item_tranquil_boots",
                 "item_magic_wand",
+                "item_ancient_janggo",
+                "item_force_staff",--
                 "item_boots_of_bearing",--
                 "item_aghanims_shard",
-                "item_force_staff",--
                 "item_rod_of_atos",
                 "item_heavens_halberd",--
                 "item_shivas_guard",--
@@ -134,16 +137,17 @@ local HeroBuild = {
                 [1] = {1,2,1,2,1,6,1,2,2,3,6,3,3,3,6},
             },
             ['buy_list'] = {
-                "item_tango",
+                "item_double_tango",
                 "item_double_branches",
-                "item_enchanted_mango",
+                "item_circlet",
                 "item_blood_grenade",
             
                 "item_arcane_boots",
                 "item_magic_wand",
+                "item_mekansm",
+                "item_force_staff",--
                 "item_guardian_greaves",--
                 "item_aghanims_shard",
-                "item_force_staff",--
                 "item_rod_of_atos",
                 "item_heavens_halberd",--
                 "item_shivas_guard",--

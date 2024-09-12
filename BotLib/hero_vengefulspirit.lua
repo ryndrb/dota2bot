@@ -63,7 +63,7 @@ local HeroBuild = {
                 }
             },
             ['ability'] = {
-                [1] = {2,1,1,2,1,6,1,2,2,3,6,3,3,3,6},
+                [1] = {1,2,1,2,1,6,1,2,2,3,6,3,3,3,6},
             },
             ['buy_list'] = {
                 "item_double_tango",
@@ -74,13 +74,14 @@ local HeroBuild = {
                 "item_boots",
                 "item_magic_wand",
                 "item_tranquil_boots",
+                "item_ancient_janggo",
+                "item_aghanims_shard",
                 "item_solar_crest",--
                 "item_boots_of_bearing",--
-                "item_aghanims_shard",
                 "item_force_staff",
-                "item_glimmer_cape",--
                 "item_lotus_orb",--
                 "item_aeon_disk",--
+                "item_wind_waker",--
                 "item_hurricane_pike",--
                 "item_ultimate_scepter_2",
                 "item_moon_shard",
@@ -102,7 +103,7 @@ local HeroBuild = {
                 }
             },
             ['ability'] = {
-                [1] = {2,1,1,2,1,6,1,2,2,3,6,3,3,3,6},
+                [1] = {1,2,1,2,1,6,1,2,2,3,6,3,3,3,6},
             },
             ['buy_list'] = {
                 "item_double_tango",
@@ -113,13 +114,14 @@ local HeroBuild = {
                 "item_boots",
                 "item_magic_wand",
                 "item_arcane_boots",
+                "item_mekansm",
+                "item_aghanims_shard",
                 "item_solar_crest",--
                 "item_guardian_greaves",--
-                "item_aghanims_shard",
                 "item_force_staff",
-                "item_glimmer_cape",--
                 "item_lotus_orb",--
                 "item_aeon_disk",--
+                "item_wind_waker",--
                 "item_hurricane_pike",--
                 "item_ultimate_scepter_2",
                 "item_moon_shard",

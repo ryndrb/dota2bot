@@ -62,18 +62,19 @@ local HeroBuild = {
             ['buy_list'] = {
                 "item_tango",
                 "item_double_branches",
-            
+                "item_blood_grenade",
+
                 "item_bracer",
-                "item_ancient_janggo",
                 "item_boots",
                 "item_magic_wand",
+                "item_arcane_boots",
                 "item_blink",
                 "item_black_king_bar",--
                 "item_pipe",--
-                sUtilityItem,--
+                "item_shivas_guard",--
                 "item_refresher",--
                 "item_travel_boots",
-                "item_arcane_blink",--
+                "item_overwhelming_blink",--
                 "item_travel_boots_2",--
                 "item_aghanims_shard",
                 "item_ultimate_scepter_2",
@@ -81,7 +82,6 @@ local HeroBuild = {
             },
             ['sell_list'] = {
                 "item_bracer",
-                "item_ancient_janggo",
                 "item_magic_wand",
             },
         },
@@ -90,9 +90,9 @@ local HeroBuild = {
         [1] = {
             ['talent'] = {
                 [1] = {
-                    ['t25'] = {10, 0},
+                    ['t25'] = {0, 10},
                     ['t20'] = {10, 0},
-                    ['t15'] = {0, 10},
+                    ['t15'] = {10, 0},
                     ['t10'] = {0, 10},
                 }
             },
@@ -100,28 +100,28 @@ local HeroBuild = {
                 [1] = {2,1,2,1,2,6,2,1,1,3,6,3,3,3,6},
             },
             ['buy_list'] = {
-                "item_enchanted_mango",
-                "item_double_tango",
-                "item_circlet",
+                "item_tango",
                 "item_double_branches",
                 "item_blood_grenade",
-            
-                "item_magic_wand",
+
+                "item_bracer",
                 "item_boots",
-                "item_vladmir",--
-                "item_tranquil_boots",
+                "item_magic_wand",
+                "item_ancient_janggo",
+                "item_glimmer_cape",--
+                "item_arcane_boots",
                 "item_blink",
                 "item_boots_of_bearing",--
                 "item_black_king_bar",--
-                "item_pipe",--
                 "item_refresher",--
+                "item_shivas_guard",--
                 "item_arcane_blink",--
                 "item_aghanims_shard",
                 "item_ultimate_scepter_2",
                 "item_moon_shard",
             },
             ['sell_list'] = {
-                "item_circlet",
+                "item_bracer",
                 "item_magic_wand",
             },
         },
@@ -130,9 +130,9 @@ local HeroBuild = {
         [1] = {
             ['talent'] = {
                 [1] = {
-                    ['t25'] = {10, 0},
+                    ['t25'] = {0, 10},
                     ['t20'] = {10, 0},
-                    ['t15'] = {0, 10},
+                    ['t15'] = {10, 0},
                     ['t10'] = {0, 10},
                 }
             },
@@ -140,28 +140,28 @@ local HeroBuild = {
                 [1] = {2,1,2,1,2,6,2,1,1,3,6,3,3,3,6},
             },
             ['buy_list'] = {
-                "item_enchanted_mango",
-                "item_double_tango",
-                "item_circlet",
+                "item_tango",
                 "item_double_branches",
                 "item_blood_grenade",
-            
-                "item_magic_wand",
+
+                "item_bracer",
                 "item_boots",
-                "item_vladmir",--
+                "item_magic_wand",
+                "item_mekansm",
+                "item_glimmer_cape",--
                 "item_arcane_boots",
                 "item_blink",
                 "item_guardian_greaves",--
                 "item_black_king_bar",--
-                "item_pipe",--
                 "item_refresher",--
+                "item_shivas_guard",--
                 "item_arcane_blink",--
                 "item_aghanims_shard",
                 "item_ultimate_scepter_2",
                 "item_moon_shard",
             },
             ['sell_list'] = {
-                "item_circlet",
+                "item_bracer",
                 "item_magic_wand",
             },
         },

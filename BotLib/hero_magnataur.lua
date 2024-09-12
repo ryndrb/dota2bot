@@ -65,8 +65,8 @@ local HeroBuild = {
                 "item_blink",
                 "item_echo_sabre",
                 "item_black_king_bar",--
-                "item_harpoon",--
                 sUtilityItem,--
+                "item_harpoon",--
                 "item_sheepstick",--
                 "item_aghanims_shard",
                 "item_travel_boots",
@@ -76,7 +76,6 @@ local HeroBuild = {
                 "item_moon_shard",
             },
             ['sell_list'] = {
-                "item_circlet",
                 "item_bracer",
                 "item_wraith_band",
                 "item_magic_wand",

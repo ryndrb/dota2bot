@@ -12,7 +12,7 @@ then
 
 local RI = require(GetScriptDirectory()..'/FunLib/util_role_item')
 
-local sUtility = {"item_heavens_halberd", "item_nullifier"}
+local sUtility = {}
 local sUtilityItem = RI.GetBestUtilityItem(sUtility)
 
 local HeroBuild = {
@@ -127,9 +127,9 @@ local HeroBuild = {
                 "item_power_treads",
                 "item_maelstrom",
                 "item_black_king_bar",--
-                "item_ultimate_scepter",
-                sUtilityItem,--
+                "item_heavens_halberd",--
                 "item_gungir",--
+                "item_ultimate_scepter",
                 "item_sheepstick",--
                 "item_travel_boots",
                 "item_ultimate_scepter_2",
@@ -160,21 +160,21 @@ local HeroBuild = {
             ['buy_list'] = {
                 "item_double_tango",
                 "item_faerie_fire",
-                "item_double_enchanted_mango",
+                "item_enchanted_mango",
                 "item_double_branches",
                 "item_blood_grenade",
             
                 "item_tranquil_boots",
                 "item_magic_wand",
                 "item_solar_crest",--
-                "item_blink",
+                "item_orchid",
                 "item_aghanims_shard",
                 "item_force_staff",
                 "item_boots_of_bearing",--
                 "item_lotus_orb",--
                 "item_gungir",--
+                "item_bloodthorn",--
                 "item_hurricane_pike",--
-                "item_swift_blink",--
                 "item_ultimate_scepter_2",
                 "item_moon_shard",
             },
@@ -199,21 +199,21 @@ local HeroBuild = {
             ['buy_list'] = {
                 "item_double_tango",
                 "item_faerie_fire",
-                "item_double_enchanted_mango",
+                "item_enchanted_mango",
                 "item_double_branches",
                 "item_blood_grenade",
             
                 "item_arcane_boots",
                 "item_magic_wand",
                 "item_solar_crest",--
-                "item_blink",
+                "item_orchid",
                 "item_aghanims_shard",
                 "item_force_staff",
                 "item_guardian_greaves",--
                 "item_lotus_orb",--
                 "item_gungir",--
+                "item_bloodthorn",--
                 "item_hurricane_pike",--
-                "item_swift_blink",--
                 "item_ultimate_scepter_2",
                 "item_moon_shard",
             },

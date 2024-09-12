@@ -33,9 +33,9 @@ local HeroBuild = {
             ['talent'] = {
                 [1] = {
                     ['t25'] = {10, 0},
-                    ['t20'] = {0, 10},
-                    ['t15'] = {0, 10},
-                    ['t10'] = {10, 0},
+                    ['t20'] = {10, 0},
+                    ['t15'] = {10, 0},
+                    ['t10'] = {0, 10},
                 }
             },
             ['ability'] = {
@@ -48,26 +48,27 @@ local HeroBuild = {
                 "item_faerie_fire",
             
                 "item_bottle",
+                "item_bracer",
                 "item_magic_wand",
                 "item_arcane_boots",
-                "item_diffusal_blade",
-                "item_mage_slayer",--
                 "item_blink",
                 "item_ultimate_scepter",
                 "item_aghanims_shard",
                 "item_basher",
-                "item_disperser",--
                 "item_octarine_core",--
-                "item_abyssal_blade",--
-                "item_ultimate_scepter_2",
                 "item_travel_boots",
+                "item_sheepstick",--
+                "item_shivas_guard",--
+                "item_abyssal_blade",--
                 "item_overwhelming_blink",--
                 "item_travel_boots_2",--
+                "item_ultimate_scepter_2",
                 "item_moon_shard",
             },
             ['sell_list'] = {
                 "item_quelling_blade",
                 "item_bottle",
+                "item_bracer",
                 "item_magic_wand",
             },
         },
@@ -78,8 +79,8 @@ local HeroBuild = {
                 [1] = {
                     ['t25'] = {10, 0},
                     ['t20'] = {10, 0},
-                    ['t15'] = {0, 10},
-                    ['t10'] = {10, 0},
+                    ['t15'] = {10, 0},
+                    ['t10'] = {0, 10},
                 }
             },
             ['ability'] = {
@@ -90,17 +91,16 @@ local HeroBuild = {
                 "item_tango",
                 "item_double_branches",
             
-                "item_bracer",
+                "item_double_bracer",
                 "item_arcane_boots",
                 "item_magic_wand",
-                "item_diffusal_blade",
                 "item_blink",
                 sUtilityItem,--
-                "item_mage_slayer",--
-                "item_ultimate_scepter",
                 "item_aghanims_shard",
+                "item_assault",--
+                "item_ultimate_scepter",
                 "item_octarine_core",--
-                "item_disperser",--
+                "item_shivas_guard",--
                 "item_ultimate_scepter_2",
                 "item_travel_boots",
                 "item_overwhelming_blink",--

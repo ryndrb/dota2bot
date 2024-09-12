@@ -12,7 +12,7 @@ then
 
 local RI = require(GetScriptDirectory()..'/FunLib/util_role_item')
 
-local sUtility = {"item_crimson_guard", "item_pipe", "item_lotus_orb"}
+local sUtility = {"item_crimson_guard", "item_lotus_orb"}
 local sUtilityItem = RI.GetBestUtilityItem(sUtility)
 
 local HeroBuild = {
@@ -61,54 +61,13 @@ local HeroBuild = {
 				"item_double_bracer",
 				"item_boots",
 				"item_magic_wand",
-				"item_hand_of_midas",
 				"item_radiance",--
-				"item_aghanims_shard",
-				"item_travel_boots",
+                "item_pipe",--
 				"item_black_king_bar",--
-				sUtilityItem,--
-				"item_octarine_core",--
-				"item_refresher",--
-				"item_travel_boots_2",--
-				"item_ultimate_scepter_2",
-				"item_moon_shard",
-			},
-            ['sell_list'] = {
-				"item_quelling_blade",
-				"item_bracer",
-				"item_magic_wand",
-				"item_hand_of_midas",
-			},
-        },
-        [2] = {
-            ['talent'] = {
-				[1] = {
-					['t25'] = {10, 0},
-					['t20'] = {0, 10},
-					['t15'] = {0, 10},
-					['t10'] = {10, 0},
-				}
-            },
-            ['ability'] = {
-                [1] = {1,2,3,3,3,6,3,2,2,2,6,1,1,1,6},
-                [2] = {2,3,2,1,2,6,2,3,3,3,6,1,1,1,6},
-            },
-            ['buy_list'] = {
-				"item_tango",
-				"item_double_branches",
-				"item_quelling_blade",
-			
-				"item_double_bracer",
-				"item_arcane_boots",
-				"item_magic_wand",
-				"item_radiance",--
-                "item_veil_of_discord",
 				sUtilityItem,--
 				"item_aghanims_shard",
 				"item_travel_boots",
-				"item_black_king_bar",--
 				"item_shivas_guard",--
-				"item_assault",--
 				"item_travel_boots_2",--
 				"item_ultimate_scepter_2",
 				"item_moon_shard",

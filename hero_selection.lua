@@ -149,7 +149,7 @@ local sHeroList = {										-- pos  1, 2, 3, 4, 5
 	{name = 'npc_dota_hero_warlock', 					role = {0, 0, 0, 50, 100}},
 	{name = 'npc_dota_hero_weaver', 					role = {100, 0, 0, 100, 100}},
 	{name = 'npc_dota_hero_windrunner', 				role = {80, 100, 5, 70, 5}},
-	{name = 'npc_dota_hero_winter_wyvern', 				role = {0, 5, 25, 100, 100}},
+	{name = 'npc_dota_hero_winter_wyvern', 				role = {0, 0, 0, 100, 100}},
 	{name = 'npc_dota_hero_wisp', 						role = {0, 0, 0, 0, 0}},--nil
 	{name = 'npc_dota_hero_witch_doctor', 				role = {0, 0, 0, 100, 100}},
 	{name = 'npc_dota_hero_zuus', 						role = {0, 100, 0, 50, 25}},

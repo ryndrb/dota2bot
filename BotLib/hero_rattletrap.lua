@@ -14,7 +14,6 @@ local RI = require(GetScriptDirectory()..'/FunLib/util_role_item')
 
 local sUtility = {}
 local sUtilityItem = RI.GetBestUtilityItem(sUtility)
-local sGlimmerSolarCrest = RandomInt(1, 2) == 1 and "item_glimmer_cape" or "item_solar_crest"
 
 local HeroBuild = {
     ['pos_1'] = {
@@ -57,14 +56,14 @@ local HeroBuild = {
         [1] = {
             ['talent'] = {
                 [1] = {
-                    ['t25'] = {10, 0},
-                    ['t20'] = {10, 0},
-                    ['t15'] = {0, 10},
-                    ['t10'] = {10, 0},
+                    ['t25'] = {0, 10},
+                    ['t20'] = {0, 10},
+                    ['t15'] = {10, 0},
+                    ['t10'] = {0, 10},
                 }
             },
             ['ability'] = {
-                [1] = {1,2,1,3,1,6,1,2,2,2,6,3,3,3,6},
+                [1] = {1,2,1,3,1,6,1,3,3,3,6,2,2,2,6},
             },
             ['buy_list'] = {
                 "item_double_tango",
@@ -75,15 +74,13 @@ local HeroBuild = {
                 "item_boots",
                 "item_magic_wand",
                 "item_tranquil_boots",
-                "item_urn_of_shadows",
+                "item_solar_crest",--
                 "item_force_staff",--
-                "item_spirit_vessel",--
-                sGlimmerSolarCrest,--
+                "item_boots_of_bearing",--
                 "item_aghanims_shard",
-                "item_boots_of_bearing",-- 
-                "item_shivas_guard",--
                 "item_heavens_halberd",--
-                "item_ultimate_scepter",
+                "item_shivas_guard",--
+                "item_sheepstick",--
                 "item_ultimate_scepter_2",
                 "item_moon_shard",
             },
@@ -96,7 +93,7 @@ local HeroBuild = {
         [1] = {
             ['talent'] = {
                 [1] = {
-                    ['t25'] = {10, 0},
+                    ['t25'] = {0, 10},
                     ['t20'] = {0, 10},
                     ['t15'] = {10, 0},
                     ['t10'] = {0, 10},
@@ -114,15 +111,13 @@ local HeroBuild = {
                 "item_boots",
                 "item_magic_wand",
                 "item_arcane_boots",
-                "item_urn_of_shadows",
+                "item_solar_crest",--
                 "item_force_staff",--
-                "item_spirit_vessel",--
-                sGlimmerSolarCrest,--
-                "item_aghanims_shard",
                 "item_guardian_greaves",-- 
-                "item_shivas_guard",--
+                "item_aghanims_shard",
                 "item_heavens_halberd",--
-                "item_ultimate_scepter",
+                "item_shivas_guard",--
+                "item_sheepstick",--
                 "item_ultimate_scepter_2",
                 "item_moon_shard",
             },

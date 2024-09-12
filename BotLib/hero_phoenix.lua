@@ -69,19 +69,19 @@ local HeroBuild = {
                 "item_double_tango",
                 "item_double_branches",
                 "item_blood_grenade",
+                "item_faerie_fire",
             
                 "item_boots",
                 "item_magic_wand",
                 "item_tranquil_boots",
-                "item_veil_of_discord",
-                "item_aghanims_shard",
-                "item_force_staff",--
+                "item_cyclone",
+                "item_glimmer_cape",--
                 "item_boots_of_bearing",--
                 "item_shivas_guard",--
-                "item_cyclone",
                 "item_refresher",--
                 "item_sheepstick",--
                 "item_wind_waker",--
+                "item_aghanims_shard",
                 "item_ultimate_scepter_2",
                 "item_moon_shard",
             },
@@ -107,19 +107,19 @@ local HeroBuild = {
                 "item_double_tango",
                 "item_double_branches",
                 "item_blood_grenade",
+                "item_faerie_fire",
             
                 "item_boots",
                 "item_magic_wand",
                 "item_arcane_boots",
-                "item_veil_of_discord",
-                "item_aghanims_shard",
-                "item_force_staff",--
+                "item_cyclone",
+                "item_glimmer_cape",--
                 "item_guardian_greaves",--
                 "item_shivas_guard",--
-                "item_cyclone",
                 "item_refresher",--
                 "item_sheepstick",--
                 "item_wind_waker",--
+                "item_aghanims_shard",
                 "item_ultimate_scepter_2",
                 "item_moon_shard",
             },

@@ -73,11 +73,12 @@ local HeroBuild = {
                 "item_tranquil_boots",
                 "item_magic_wand",
                 "item_dagon_2",
+                "item_force_staff",--
+                "item_ancient_janggo",
                 "item_aghanims_shard",
                 "item_blink",
-                "item_force_staff",--
                 "item_boots_of_bearing",--
-                "item_octarine_core",--
+                "item_lotus_orb",--
                 "item_ultimate_scepter",
                 "item_dagon_5",--
                 "item_swift_blink",--
@@ -111,11 +112,12 @@ local HeroBuild = {
                 "item_arcane_boots",
                 "item_magic_wand",
                 "item_dagon_2",
+                "item_force_staff",--
+                "item_mekansm",
                 "item_aghanims_shard",
                 "item_blink",
-                "item_force_staff",--
                 "item_guardian_greaves",--
-                "item_octarine_core",--
+                "item_lotus_orb",--
                 "item_ultimate_scepter",
                 "item_dagon_5",--
                 "item_swift_blink",--

@@ -200,8 +200,10 @@ local LaserDesire, LaserTarget
 local MarchOfTheMachinesDesire, MarchOfTheMachinesLocation
 local DefenseMatrixDesire, DefenseMatrixTarget
 local WarpFlareDesire, WarpFlareTarget
-local KeenConveyanceDesire, KeenConveyanceTargetLocation, KeenConveyanceCastTime
+local KeenConveyanceDesire, KeenConveyanceTargetLocation
 local RearmDesire
+
+local KeenConveyanceCastTime = 0
 
 local botTarget
 

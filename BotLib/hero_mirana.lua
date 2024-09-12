@@ -69,17 +69,17 @@ local HeroBuild = {
 				"item_double_tango",
 				"item_double_branches",
 				"item_blood_grenade",
-			
 				"item_circlet",
+
 				"item_magic_wand",
 				"item_tranquil_boots",
 				"item_ancient_janggo",
 				"item_rod_of_atos",
-				"item_force_staff",--
+				"item_glimmer_cape",--
 				"item_boots_of_bearing",--
-				"item_pipe",--
-				"item_sheepstick",--
 				"item_gungir",--
+				"item_lotus_orb",--
+				"item_sheepstick",--
 				"item_wind_waker",--
 				"item_aghanims_shard",
 				"item_ultimate_scepter_2",
@@ -108,17 +108,17 @@ local HeroBuild = {
 				"item_double_tango",
 				"item_double_branches",
 				"item_blood_grenade",
-			
 				"item_circlet",
+
 				"item_magic_wand",
 				"item_arcane_boots",
 				"item_mekansm",
 				"item_rod_of_atos",
+				"item_glimmer_cape",--
 				"item_guardian_greaves",--
-				"item_force_staff",--
-				"item_pipe",--
-				"item_sheepstick",--
 				"item_gungir",--
+				"item_lotus_orb",--
+				"item_sheepstick",--
 				"item_wind_waker",--
 				"item_aghanims_shard",
 				"item_ultimate_scepter_2",

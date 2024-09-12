@@ -13,7 +13,7 @@ then
 
 local RI = require(GetScriptDirectory()..'/FunLib/util_role_item')
 
-local sUtility = {"item_lotus_orb", "item_pipe"}
+local sUtility = {}
 local sUtilityItem = RI.GetBestUtilityItem(sUtility)
 
 local HeroBuild = {
@@ -60,8 +60,14 @@ local HeroBuild = {
                     ['t25'] = {10, 0},
                     ['t20'] = {10, 0},
                     ['t15'] = {0, 10},
-                    ['t10'] = {10, 0},
-                }
+                    ['t10'] = {0, 10},
+                },
+                [2] = {
+                    ['t25'] = {0, 10},
+                    ['t20'] = {10, 0},
+                    ['t15'] = {0, 10},
+                    ['t10'] = {0, 10},
+                },
             },
             ['ability'] = {
                 [1] = {1,3,1,2,1,6,1,3,3,3,6,2,2,2,6},
@@ -77,9 +83,9 @@ local HeroBuild = {
                 "item_tranquil_boots",
                 "item_glimmer_cape",--
                 "item_boots_of_bearing",--
-                "item_force_staff",--
-                sUtilityItem,--
-                "item_octarine_core",--
+                "item_solar_crest",--
+                "item_lotus_orb",--
+                "item_shivas_guard",--
                 "item_sheepstick",--
                 "item_aghanims_shard",
                 "item_moon_shard",
@@ -98,8 +104,14 @@ local HeroBuild = {
                     ['t25'] = {10, 0},
                     ['t20'] = {10, 0},
                     ['t15'] = {0, 10},
-                    ['t10'] = {10, 0},
-                }
+                    ['t10'] = {0, 10},
+                },
+                [2] = {
+                    ['t25'] = {0, 10},
+                    ['t20'] = {10, 0},
+                    ['t15'] = {0, 10},
+                    ['t10'] = {0, 10},
+                },
             },
             ['ability'] = {
                 [1] = {1,3,1,2,1,6,1,3,3,3,6,2,2,2,6},
@@ -115,9 +127,9 @@ local HeroBuild = {
                 "item_arcane_boots",
                 "item_glimmer_cape",--
                 "item_guardian_greaves",--
-                "item_force_staff",--
-                sUtilityItem,--
-                "item_octarine_core",--
+                "item_solar_crest",--
+                "item_lotus_orb",--
+                "item_shivas_guard",--
                 "item_sheepstick",--
                 "item_aghanims_shard",
                 "item_moon_shard",

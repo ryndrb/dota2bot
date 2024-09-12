@@ -50,18 +50,18 @@ local HeroBuild = {
 				"item_bottle",
 				"item_magic_wand",
 				"item_arcane_boots",
-				"item_urn_of_shadows",
 				"item_phylactery",
 				"item_hand_of_midas",
-				"item_spirit_vessel",
 				"item_aghanims_shard",
 				"item_ultimate_scepter",
-				"item_kaya_and_sange",--
+				"item_force_staff",
+				"item_kaya",
 				"item_angels_demise",--
 				"item_black_king_bar",--
-				"item_hurricane_pike",--
+				"item_kaya_and_sange",--
 				"item_travel_boots",
-				"item_octarine_core",--
+				"item_hurricane_pike",--
+				"item_sheepstick",--
 				"item_travel_boots_2",--
 				"item_ultimate_scepter_2",
 				"item_moon_shard",
@@ -71,7 +71,6 @@ local HeroBuild = {
 				"item_bottle",
 				"item_magic_wand",
 				"item_hand_of_midas",
-				"item_spirit_vessel",
 			},
         },
     },
@@ -104,17 +103,16 @@ local HeroBuild = {
 				"item_double_tango",
 				"item_double_branches",
 				"item_blood_grenade",
-			
 				"item_circlet",
+
 				"item_boots",
 				"item_magic_wand",
 				"item_tranquil_boots",
 				"item_aether_lens",--
-				"item_solar_crest",--
 				"item_glimmer_cape",--
 				"item_aghanims_shard",
 				"item_boots_of_bearing",--
-				"item_ultimate_scepter",
+				"item_force_staff",--
 				"item_aeon_disk",--
 				"item_refresher",--
 				"item_ultimate_scepter_2",
@@ -143,17 +141,16 @@ local HeroBuild = {
 				"item_double_tango",
 				"item_double_branches",
 				"item_blood_grenade",
-			
 				"item_circlet",
+
 				"item_boots",
 				"item_magic_wand",
 				"item_arcane_boots",
 				"item_aether_lens",--
 				"item_glimmer_cape",--
 				"item_aghanims_shard",
-				"item_force_staff",--
 				"item_guardian_greaves",--
-				"item_ultimate_scepter",
+				"item_force_staff",--
 				"item_aeon_disk",--
 				"item_refresher",--
 				"item_ultimate_scepter_2",

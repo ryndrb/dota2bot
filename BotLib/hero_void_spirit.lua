@@ -59,7 +59,7 @@ local HeroBuild = {
 				"item_travel_boots",
 				"item_greater_crit",--
 				"item_bloodthorn",--
-				"item_sheepstick",--
+				"item_shivas_guard",--
 				"item_ultimate_scepter_2",
 				"item_travel_boots_2",--
 				"item_moon_shard",

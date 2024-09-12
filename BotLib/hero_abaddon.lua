@@ -11,7 +11,7 @@ local RI = require(GetScriptDirectory()..'/FunLib/util_role_item')
 if GetBot():GetUnitName() == 'npc_dota_hero_abaddon'
 then
 
-local sUtility = {"item_pipe", "item_crimson_guard", "item_heavens_halberd", "item_lotus_orb"}
+local sUtility = {"item_pipe", "item_heavens_halberd", "item_lotus_orb"}
 local sUtilityItem = RI.GetBestUtilityItem(sUtility)
 
 local HeroBuild = {
@@ -35,9 +35,9 @@ local HeroBuild = {
                 "item_circlet",
 
                 "item_wraith_band",
-                "item_orb_of_corrosion",
                 "item_magic_wand",
-                "item_power_treads",
+                "item_orb_of_corrosion",
+                "item_phase_boots",
                 "item_echo_sabre",
                 "item_manta",--
                 "item_harpoon",--
@@ -77,19 +77,17 @@ local HeroBuild = {
 
                 "item_bottle",
                 "item_wraith_band",
-                "item_boots",
                 "item_magic_wand",
                 "item_orb_of_corrosion",
                 "item_phase_boots",
                 "item_echo_sabre",
-                "item_yasha",
-                "item_harpoon",--
                 "item_manta",--
-                "item_ultimate_scepter_2",
                 "item_assault",--
-                "item_black_king_bar",--
-                "item_basher",
+                "item_harpoon",--
                 "item_aghanims_shard",
+                "item_basher",
+                "item_heart",--
+                "item_ultimate_scepter",
                 "item_travel_boots",
                 "item_abyssal_blade",--
                 "item_travel_boots_2",--
@@ -111,7 +109,7 @@ local HeroBuild = {
                     ['t25'] = {0, 10},
                     ['t20'] = {10, 0},
                     ['t15'] = {0, 10},
-                    ['t10'] = {0, 10},
+                    ['t10'] = {10, 0},
                 },
             },
             ['ability'] = {
@@ -122,28 +120,23 @@ local HeroBuild = {
                 "item_double_branches",
                 "item_quelling_blade",
     
-                "item_wraith_band",
-                "item_orb_of_venom",
-                "item_boots",
+                "item_gloves",
                 "item_magic_wand",
                 "item_orb_of_corrosion",
                 "item_phase_boots",
-                "item_echo_sabre",
-                "item_manta",--
-                "item_harpoon",--
-                "item_blink",
+                "item_radiance",--
+                "item_crimson_guard",--
+                "item_assault",--
                 sUtilityItem,--
-                "item_skadi",--
-                "item_aghanims_shard",
-                "item_travel_boots",
-                "item_overwhelming_blink",--
+                "item_ultimate_scepter",
+                "item_heart",--
                 "item_travel_boots_2",--
                 "item_ultimate_scepter_2",
+                "item_aghanims_shard",
                 "item_moon_shard",
             },
             ['sell_list'] = {
                 "item_quelling_blade",
-                "item_wraith_band",
                 "item_magic_wand",
                 "item_orb_of_corrosion",
             }
@@ -164,10 +157,9 @@ local HeroBuild = {
             },
             ['buy_list'] = {
                 "item_double_tango",
-                "item_double_enchanted_mango",
                 "item_double_branches",
-                "item_faerie_fire",
                 "item_blood_grenade",
+                "item_circlet",
     
                 "item_tranquil_boots",
                 "item_magic_wand",
@@ -183,7 +175,7 @@ local HeroBuild = {
                 "item_moon_shard"
             },
             ['sell_list'] = {
-                "item_magic_wand",
+                "item_circlet",
             }
         },
     },
@@ -202,10 +194,9 @@ local HeroBuild = {
             },
             ['buy_list'] = {
                 "item_double_tango",
-                "item_double_enchanted_mango",
                 "item_double_branches",
-                "item_faerie_fire",
                 "item_blood_grenade",
+                "item_circlet",
     
                 "item_arcane_boots",
                 "item_magic_wand",
@@ -221,7 +212,7 @@ local HeroBuild = {
                 "item_moon_shard"
             },
             ['sell_list'] = {
-                "item_magic_wand",
+                "item_circlet",
             }
         },
     },
