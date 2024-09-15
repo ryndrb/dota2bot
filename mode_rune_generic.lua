@@ -64,6 +64,15 @@ local vWaitRuneLocList = {
 local lastCheckDropTime = 0
 local hasTaunt = false
 
+local radiantWRLocation = Vector(-8134.554688, -310.884827, 256)
+local direWRLocation = Vector(8324.925781, 258.564606, 256)
+local wisdomRuneSpots = {
+	[1] = radiantWRLocation,
+	[2] = direWRLocation,
+}
+local wisdomRuneInfo = {0, 0, false} -- time, loc, did
+local timeInMin = 0
+
 function GetDesire()
 
 	if not hasTaunt
@@ -106,6 +115,43 @@ function GetDesire()
 		and bot:DistanceFromFountain() < 100
 	then
 		return 1.0
+	end
+
+	-- wisdom rune
+	if bot:GetLevel() < 30 then
+		timeInMin = X.GetMulTime()
+		X.UpdateWisdom()
+		if DotaTime() >= 7 * 60
+		and not J.IsMeepoClone(bot)
+		and not bot:HasModifier('modifier_arc_warden_tempest_double') then
+			if DotaTime() < wisdomRuneInfo[1] + 3.0 then
+				if not bot:WasRecentlyDamagedByAnyHero(3.0) then
+					return BOT_MODE_DESIRE_ABSOLUTE
+				end
+			else
+				wisdomRuneInfo[1] = 0
+				wisdomRuneInfo[3] = false
+			end
+
+			local tEnemyTowers = bot:GetNearbyTowers(700, true)
+			local tEnemyHeroes = J.GetEnemiesNearLoc(bot:GetLocation(), 1200)
+			if (#tEnemyTowers > 0 and bot:WasRecentlyDamagedByTower(1.0))
+			or #tEnemyHeroes > 0 then
+				return 0
+			end
+
+			local runeSpot = X.GetWisdomRuneSpot()
+			if runeSpot ~= nil
+			and bot.wisdom ~= nil
+			and bot.wisdom[timeInMin][runeSpot] == false
+			and bot == X.GetWisdomAlly(wisdomRuneSpots[runeSpot]) then
+				wisdomRuneInfo[2] = runeSpot
+				wisdomRuneInfo[3] = true
+				return X.GetWisdomDesire(wisdomRuneSpots[runeSpot])
+			end
+		end
+	else
+		wisdomRuneInfo[3] = false
 	end
 
 	
@@ -230,7 +276,19 @@ function Think()
 	then 
 		return
 	end
-	
+
+	-- wisdom rune
+	if wisdomRuneInfo[3] then
+		if GetUnitToLocationDistance(bot, wisdomRuneSpots[wisdomRuneInfo[2]]) < 75 then
+			if bot.wisdom[timeInMin][wisdomRuneInfo[2]] == false then
+				wisdomRuneInfo[1] = DotaTime()
+			end
+			bot.wisdom[timeInMin][wisdomRuneInfo[2]] = true
+		end
+
+		bot:Action_MoveDirectly(wisdomRuneSpots[wisdomRuneInfo[2]]) -- can fail since pick up is up to valve
+		return
+	end
 	
 	if DotaTime() < 0 
 	then 
@@ -725,4 +783,117 @@ function X.GetGoOutLocation()
 	
 	return vLocation
 
+end
+
+-- wisdom rune
+function X.UpdateWisdom()
+	-- todo: see if a human has been at a spot within time, so don't go there and waste time
+	if timeInMin >= 7 and timeInMin % 7 == 0 then
+		for i = 1, 5 do
+			local member = GetTeamMember(i)
+			-- init
+			if member ~= nil and member == bot then
+				if bot.wisdom == nil then bot.wisdom = {} end
+				if bot.wisdom[timeInMin] == nil then
+					bot.wisdom[timeInMin] = { [1] = false, [2] = false } -- radi, dire
+				end
+
+				member.wisdom = bot.wisdom
+			end
+
+			-- update
+			if member ~= nil
+			and member.wisdom ~= nil
+			and member.wisdom[timeInMin] ~= nil
+			then
+				if member.wisdom[timeInMin][1] == true and bot.wisdom[timeInMin][1] == false then
+					bot.wisdom[timeInMin][1] = true
+				end
+
+				if member.wisdom[timeInMin][2] == true and bot.wisdom[timeInMin][2] == false then
+					bot.wisdom[timeInMin][2] = true
+				end
+			end
+		end
+	end
+end
+
+local lastMin = 0
+function X.GetMulTime()
+	local currTime = math.floor(DotaTime() / 60)
+	if currTime > lastMin and currTime % 7 == 0 then
+		lastMin = currTime
+	end
+	return lastMin
+end
+
+function X.GetWisdomAlly(vLoc)
+	local target = nil
+	local score = math.huge
+	for i = 1, 5 do
+		local member = GetTeamMember(i)
+		if member ~= nil and member:IsAlive() then
+			local dist = GetUnitToLocationDistance(member, vLoc)
+			if dist < score then
+				target = member
+				score = dist
+			end
+		end
+	end
+
+	return target
+end
+
+function X.GetWisdomDesire(vWisdomLoc)
+	if (J.IsDefending(bot) and bot:GetActiveModeDesire() > 0.7)
+	or J.IsInTeamFight(bot, 1600) then
+		return 0
+	end
+
+	local nDesire = 0
+	local botLevel = bot:GetLevel()
+	local distFromLoc = GetUnitToLocationDistance(bot, vWisdomLoc)
+	if botLevel < 12 then
+		nDesire = RemapValClamped(distFromLoc, 6400, 3200, 0.75, 0.95)
+	elseif botLevel < 18 then
+		nDesire = RemapValClamped(distFromLoc, 6400, 3200, 0.5, 0.95)
+	elseif botLevel < 25 then
+		nDesire = RemapValClamped(distFromLoc, 5800, 1600, 0.25, 0.95)
+	elseif botLevel < 30 then
+		nDesire = RemapValClamped(distFromLoc, 5800, 1600, 0.1, 0.95)
+	end
+
+	return nDesire
+end
+
+function X.GetWisdomRuneSpot()
+	if GetTeam() == TEAM_RADIANT then
+		local dist1 = GetUnitToLocationDistance(bot, radiantWRLocation)
+		local dist2 = GetUnitToLocationDistance(bot, direWRLocation)
+		if dist1 < dist2 then
+			return 1
+		else
+			local tier_1_tower = GetTower(GetOpposingTeam(), TOWER_BOT_1) -- don't feed
+			if tier_1_tower == nil then
+				return 2
+			end
+		end
+
+		return 1
+	elseif GetTeam() == TEAM_DIRE then
+		local dist1 = GetUnitToLocationDistance(bot, radiantWRLocation)
+		local dist2 = GetUnitToLocationDistance(bot, direWRLocation)
+		if dist1 > dist2 then
+			return 2
+		else
+			local tier_1_tower = GetTower(GetOpposingTeam(), TOWER_TOP_1) -- don't feed
+			if tier_1_tower == nil then
+				return 1
+			end
+		end
+
+		return 2
+	end
+
+	return nil
 end
