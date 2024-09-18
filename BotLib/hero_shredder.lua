@@ -276,10 +276,16 @@ function X.ConsiderWhirlingDeath()
 	end
 
 	local nRadius = WhirlingDeath:GetSpecialValueInt('whirling_radius')
+	local nTreeDamage = WhirlingDeath:GetSpecialValueInt('tree_damage_scale')
 	local nDamage = WhirlingDeath:GetSpecialValueInt('whirling_damage')
 	local nManaCost = WhirlingDeath:GetManaCost()
 	local botManaAfter = J.GetManaAfter(nManaCost)
 	local botTarget = J.GetProperTarget(bot)
+
+	local nTrees = bot:GetNearbyTrees(nRadius)
+	if #nTrees > 0 then
+		nDamage = nDamage + #nTrees * nTreeDamage
+	end
 
 	local tEnemyHeroes = bot:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
 
@@ -944,6 +950,16 @@ function X.ConsiderFlamethrower()
 		end
 	end
 
+	if J.IsPushing(bot) then
+		if J.IsValidBuilding(botTarget)
+		and J.CanBeAttacked(botTarget)
+		and J.GetHP(botTarget) > 0.5
+		and J.IsInRange(bot, botTarget, nFrontRange)
+		and J.IsAttacking(bot) then
+			return BOT_ACTION_DESIRE_HIGH
+		end
+	end
+
 	if J.IsDoingRoshan(bot) then
 		if J.IsRoshan(botTarget)
 		and J.IsInRange(bot, botTarget, nFrontRange)
@@ -984,7 +1000,7 @@ function X.GetBestRetreatTree(nCastRange, nRadius)
 	local vTeamFountain = J.GetTeamFountain()
 	local botLoc = bot:GetLocation()
 
-	local vToFountain = vTeamFountain - botLoc
+	local vToFountain = (vTeamFountain - botLoc):Normalized()
 
 	for i = #nTrees, 1, -1
 	do
@@ -993,7 +1009,7 @@ function X.GetBestRetreatTree(nCastRange, nRadius)
 			if not X.AreThereTreesInBetween(botLoc, vTreeLoc, nCastRange, nRadius) then
 				local currDist1 = GetUnitToLocationDistance(bot, vTreeLoc)
 				local currDist2 = J.GetDistance(vTeamFountain, vTreeLoc)
-				local vToTree = vTreeLoc - botLoc
+				local vToTree = (vTreeLoc - botLoc):Normalized()
 				local dot = X.GetDotProduct(vToTree, vToFountain)
 				if dot > 0
 				and currDist1 > bestRetreatTreeDist
@@ -1020,25 +1036,35 @@ function X.GetBestTree(hTarget, nCastRange, nRadius)
 	local botLoc = bot:GetLocation()
 	local hTargetLoc = hTarget:GetLocation()
 
-	local vToTarget = hTargetLoc - botLoc
+	local vToTarget = (hTargetLoc - botLoc):Normalized()
 
 	for _, tree in pairs(nTrees)
 	do
 		if tree then
-			if J.IsInRange(bot, hTarget, nRadius - 25) then
+			local vTreeLoc = GetTreeLocation(tree)
+			local vToTree = (vTreeLoc - botLoc):Normalized()
+			local dot = X.GetDotProduct(vToTree, vToTarget)
+
+			if J.IsInRange(bot, hTarget, nRadius - 25)
+			and dot >= 0.5 then
 				return tree
 			end
 
-			local vTreeLoc = GetTreeLocation(tree)
-			local vToTree = vTreeLoc - botLoc
-			local dot = X.GetDotProduct(vToTree, vToTarget)
 			local tResult = PointToLineDistance(bot:GetLocation(), vTreeLoc, hTarget:GetLocation())
-			if (tResult and tResult.within and tResult.distance <= nRadius)
-			and not X.AreThereTreesInBetween(botLoc, hTargetLoc, nCastRange, nRadius)
+			if not X.AreThereTreesInBetween(botLoc, hTargetLoc, nCastRange, nRadius)
 			and dot > 0
 			then
-				bestTree = tree
-				break
+				if J.IsChasingTarget(bot, hTarget) then
+					if tResult and tResult.within and tResult.distance <= nRadius * 2 then
+						bestTree = tree
+						break
+					end
+				else
+					if tResult and tResult.within and tResult.distance <= nRadius then
+						bestTree = tree
+						break
+					end
+				end
 			end
 		end
 	end
