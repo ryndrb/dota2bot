@@ -478,13 +478,15 @@ function Think()
 			end
 		end
 
-		if J.IsRetreating(bot)
-		then
+		local tAllyHeroes = J.GetAlliesNearLoc(bot:GetLocation(), 1200)
+		local tEnemyHeroes = J.GetEnemiesNearLoc(bot:GetLocation(), 1200)
+		if #tEnemyHeroes > #tAllyHeroes
+		or (not J.WeAreStronger(bot, 1200) and J.GetHP(bot) < 0.55)
+		or (#tEnemyHeroes > 0 and J.GetHP(bot) < 0.3) then
 			bot:Action_MoveToLocation(J.GetTeamFountain())
 			return
 		end
 
-		local tEnemyHeroes = bot:GetNearbyHeroes(880, true, BOT_MODE_NONE)
 		if J.IsValidHero(tEnemyHeroes[1])
 		and not tEnemyHeroes[1]:HasModifier('modifier_faceless_void_chronosphere_freeze')
 		then

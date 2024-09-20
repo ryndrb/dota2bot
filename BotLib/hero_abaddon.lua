@@ -461,6 +461,7 @@ end
 
 function X.ConsiderMistCoil()
     if not J.CanCastAbility(MistCoil)
+    or (J.IsRetreating(bot) and J.IsRealInvisible(bot))
     then
 		return BOT_ACTION_DESIRE_NONE, nil
 	end
@@ -490,65 +491,44 @@ function X.ConsiderMistCoil()
 
 	for _, allyHero in pairs(nAllyHeroes)
 	do
-        if  J.IsValidHero(allyHero)
-        and not allyHero:IsInvulnerable()
-        and not allyHero:IsIllusion()
-        and (allyHero:HasModifier('modifier_faceless_void_chronosphere_freeze')
-            or allyHero:HasModifier('modifier_enigma_black_hole_pull'))
-        then
-            return BOT_ACTION_DESIRE_HIGH, allyHero
-        end
-
-		if  J.IsValidHero(allyHero)
-		and J.IsInRange(bot, allyHero, nCastRange)
-		and not allyHero:HasModifier('modifier_legion_commander_press_the_attack')
-		and not allyHero:IsMagicImmune()
-		and not allyHero:IsInvulnerable()
-        and not allyHero:IsIllusion()
-		then
-			if  J.IsRetreating(allyHero)
-            and J.GetHP(allyHero) < 0.6
-			then
-				return BOT_ACTION_DESIRE_HIGH, allyHero
-			end
-
-			if J.IsGoingOnSomeone(allyHero)
-			then
-                local allyTarget = allyHero:GetAttackTarget()
-
-				if  J.IsValidHero(allyTarget)
-				and allyHero:IsFacingLocation(allyTarget:GetLocation(), 30)
-				and J.IsInRange(allyHero, allyTarget, 300)
-                and J.GetHP(allyHero) < 0.8
-                and J.GetHP(bot) > 0.2
-				then
-					return BOT_ACTION_DESIRE_HIGH, allyHero
-				end
-			end
-		end
-	end
-
-    if J.IsRetreating(bot)
-    and not J.IsRealInvisible(bot)
-    then
-        for _, enemyHero in pairs(nEnemyHeroes)
-        do
-            if  J.IsValidHero(enemyHero)
-            and not J.IsDisabled(enemyHero)
-            and J.IsInRange(bot, enemyHero, 600)
+        if J.IsValidHero(allyHero)
+        and allyHero ~= bot then
+            if not allyHero:IsInvulnerable()
+            and not allyHero:IsIllusion()
+            and (allyHero:HasModifier('modifier_faceless_void_chronosphere_freeze')
+                or allyHero:HasModifier('modifier_enigma_black_hole_pull'))
             then
-                if  nAllyHeroes ~= nil and #nEnemyHeroes ~= nil
-                and ((#nAllyHeroes == 0 and #nEnemyHeroes >= 1)
-                    or (#nAllyHeroes >= 1
-                        and J.GetHP(bot) < 0.3
-                        and bot:WasRecentlyDamagedByAnyHero(1)
-                        and not bot:HasModifier('modifier_abaddon_borrowed_time')))
+                return BOT_ACTION_DESIRE_HIGH, allyHero
+            end
+    
+            if J.IsInRange(bot, allyHero, nCastRange)
+            and not allyHero:HasModifier('modifier_legion_commander_press_the_attack')
+            and not allyHero:IsMagicImmune()
+            and not allyHero:IsInvulnerable()
+            and not allyHero:IsIllusion()
+            then
+                if  J.IsRetreating(allyHero)
+                and J.GetHP(allyHero) < 0.6
                 then
-                    return BOT_ACTION_DESIRE_HIGH, bot
+                    return BOT_ACTION_DESIRE_HIGH, allyHero
+                end
+    
+                if J.IsGoingOnSomeone(allyHero)
+                then
+                    local allyTarget = allyHero:GetAttackTarget()
+    
+                    if  J.IsValidHero(allyTarget)
+                    and allyHero:IsFacingLocation(allyTarget:GetLocation(), 30)
+                    and J.IsInRange(allyHero, allyTarget, 300)
+                    and J.GetHP(allyHero) < 0.8
+                    and J.GetHP(bot) > 0.2
+                    then
+                        return BOT_ACTION_DESIRE_HIGH, allyHero
+                    end
                 end
             end
         end
-    end
+	end
 
     if  J.IsLaning(bot)
     and J.IsCore(bot)

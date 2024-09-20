@@ -545,6 +545,13 @@ X['spells'] = {
         ['phantom_assassin_coup_de_grace'] = {weight = 1},
     },
 
+    ['npc_dota_hero_phantom_lancer'] = {
+        ['phantom_lancer_spirit_lance'] = {weight = 0.8},
+        ['phantom_lancer_doppelwalk'] = {weight = 0.5},
+        ['phantom_lancer_phantom_edge'] = {weight = 1},
+        ['phantom_lancer_juxtapose'] = {weight = 1},
+    },
+
     ['npc_dota_hero_phoenix'] = {
         ['phoenix_icarus_dive'] = {weight = 0.5},
         ['phoenix_icarus_dive_stop'] = {weight = 1},

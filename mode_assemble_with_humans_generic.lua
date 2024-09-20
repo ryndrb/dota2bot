@@ -128,9 +128,9 @@ function X.GetUnitDesire()
                 local tIllusions = X.GetUnitTypeAttackingBot(1600, unitName)
                 local illusionPower = X.GetTotalAttackDamage(tIllusions, 5.0)
 
-                if illusionPower > unitHealth
+                if illusionPower > botHealth
                 then
-                    if illusionPower > unitHealth * 1.5
+                    if illusionPower > botHealth * 1.5
                     then
                         return 0.95
                     else
@@ -380,6 +380,26 @@ function X.GetTotalAttackDamage(tUnits, nTime)
 	do
 		if J.IsValid(unit) then
             dmg = dmg + unit:GetAttackDamage() * unit:GetAttackSpeed() * nTime
+
+            if J.IsSuspiciousIllusion(unit) then
+                local unitName = unit:GetUnitName()
+                -- just consider the highest level damage
+                if string.find(unitName, 'phantom_lancer') then
+                    dmg = dmg * 0.19
+                elseif string.find(unitName, 'naga_siren') then
+                    dmg = dmg * 0.4
+                elseif string.find(unitName, 'terrorblade') then
+                    if X.IsEnemyTerrorbladeNear(unit, 1200) then
+                        dmg = dmg * (0.6 + 0.25)
+                    else
+                        dmg = dmg * (0.6 - 0.50)
+                    end
+                elseif unit:HasModifier('modifier_darkseer_wallofreplica_illusion') then
+                    dmg = dmg * 0.9
+                else
+                    dmg = dmg * 0.33
+                end
+            end
 		end
 	end
 
@@ -431,6 +451,19 @@ function X.IsUnitTargetRealHeroInRange(nRadius)
     return J.IsValidHero(botTarget)
         and not J.IsSuspiciousIllusion(botTarget)
         and J.IsInRange(bot, botTarget, nRadius)
+end
+
+function X.IsEnemyTerrorbladeNear(unit, nRadius)
+    for _, enemy in pairs(GetUnitList(UNIT_LIST_ENEMY_HEROES))
+    do
+        if J.IsValidHero(enemy)
+        and not J.IsSuspiciousIllusion(enemy)
+        and J.IsInRange(unit, enemy, nRadius) then
+            return true
+        end
+    end
+
+    return false
 end
 
 return X
