@@ -286,7 +286,7 @@ function Think()
 			bot.wisdom[timeInMin][wisdomRuneInfo[2]] = true
 		end
 
-		bot:Action_MoveDirectly(wisdomRuneSpots[wisdomRuneInfo[2]]) -- can fail since pick up is up to valve
+		bot:Action_MoveDirectly(wisdomRuneSpots[wisdomRuneInfo[2]] + RandomVector(25)) -- can fail since pick up is up to valve
 		return
 	end
 	
@@ -803,6 +803,7 @@ function X.UpdateWisdom()
 
 			-- update
 			if member ~= nil
+			and bot.wisdom ~= nil
 			and member.wisdom ~= nil
 			and member.wisdom[timeInMin] ~= nil
 			then
@@ -832,7 +833,7 @@ function X.GetWisdomAlly(vLoc)
 	local score = math.huge
 	for i = 1, 5 do
 		local member = GetTeamMember(i)
-		if member ~= nil and member:IsAlive() then
+		if member ~= nil and member:IsAlive() and not J.IsDoingTormentor(member) then
 			local dist = GetUnitToLocationDistance(member, vLoc)
 			if dist < score then
 				target = member
