@@ -109,7 +109,6 @@ local HeroBuild = {
                 "item_magic_wand",
                 "item_ancient_janggo",
                 "item_glimmer_cape",--
-                "item_arcane_boots",
                 "item_blink",
                 "item_boots_of_bearing",--
                 "item_black_king_bar",--

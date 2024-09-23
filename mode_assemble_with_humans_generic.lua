@@ -22,11 +22,31 @@ local nChainFrostBounceDistance = 600 -- min
 local ShouldRetreatWhenTowerTargeted = false
 local RetreatWhenTowerTargetedTime = 0
 
+local retreatFromTormentorTime = 0
+
 bot.should_attack_move = false
 
 function GetDesire()
     if not bot:IsAlive() or J.IsRetreating(bot) then
         return BOT_MODE_DESIRE_NONE
+    end
+
+    -- retreat from tormentor if can die
+    if DotaTime() > (J.IsModeTurbo() and (10 * 60) or (20 * 60)) then
+        local TormentorLocation = J.GetTormentorLocation(GetTeam())
+        if DotaTime() < retreatFromTormentorTime + 20 then
+            if not bot:HasModifier('modifier_fountain_aura_buff') or J.GetHP(bot) < 0.5 then
+                return BOT_MODE_DESIRE_ABSOLUTE
+            else
+                retreatFromTormentorTime = 0
+            end
+        end
+
+        if GetUnitToLocationDistance(bot, TormentorLocation) < 1200
+        and J.GetHP(bot) < 0.25
+        and bot.tormentor_state == true then
+            retreatFromTormentorTime = DotaTime()
+        end
     end
 
     if DotaTime() > 25 and DotaTime() < RetreatWhenTowerTargetedTime + 5 then
@@ -102,7 +122,11 @@ function Think()
     if bot.should_attack_move then
         bot:Action_AttackMove(vTeamFountain + J.RandomForwardVector(600))
     else
-        bot:Action_MoveToLocation(vTeamFountain + J.RandomForwardVector(600))
+        if DotaTime() < retreatFromTormentorTime + 20 then
+            bot:Action_MoveToLocation(vTeamFountain)
+        else
+            bot:Action_MoveToLocation(vTeamFountain + J.RandomForwardVector(600))
+        end
     end
 end
 

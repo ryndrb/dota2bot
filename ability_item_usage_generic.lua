@@ -6346,28 +6346,29 @@ X.ConsiderItemDesire['item_dust'] = function(item)
 		end	
 	end
 
-	for _, id in pairs(nEnemyIDs)
-	do
-		if IsHeroAlive(id)
-		then
-			local info = GetHeroLastSeenInfo(id)
-			if info ~= nil
-			then
-				local dInfo = info[1]
+	-- keeps triggering in fow; above stuff is satisfactory
+	-- for _, id in pairs(nEnemyIDs)
+	-- do
+	-- 	if IsHeroAlive(id)
+	-- 	then
+	-- 		local info = GetHeroLastSeenInfo(id)
+	-- 		if info ~= nil
+	-- 		then
+	-- 			local dInfo = info[1]
 	
-				if  dInfo ~= nil 
-				and dInfo.time_since_seen > 0.2
-				and dInfo.time_since_seen <= 1
-				and GetUnitToLocationDistance(bot, dInfo.location) <= nRadius 
-				then	
-					if IsLocationVisible(dInfo.location) and IsLocationPassable(dInfo.location)
-					then
-						return BOT_ACTION_DESIRE_HIGH, bot, 'none', nil
-					end
-				end
-			end
-		end
-	end
+	-- 			if  dInfo ~= nil 
+	-- 			and dInfo.time_since_seen > 0.2
+	-- 			and dInfo.time_since_seen <= 1
+	-- 			and GetUnitToLocationDistance(bot, dInfo.location) <= nRadius 
+	-- 			then	
+	-- 				if IsLocationVisible(dInfo.location) and IsLocationPassable(dInfo.location)
+	-- 				then
+	-- 					return BOT_ACTION_DESIRE_HIGH, bot, 'none', nil
+	-- 				end
+	-- 			end
+	-- 		end
+	-- 	end
+	-- end
 
 	return BOT_ACTION_DESIRE_NONE
 end

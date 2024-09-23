@@ -378,10 +378,8 @@ function GetDesire()
 					end
 					
 					local farmDistance = GetUnitToLocationDistance(bot,preferedCamp.cattr.location);
-					
-					if botName == 'npc_dota_hero_medusa' and farmDistance < 133 then return 0.33 end 
 					bot.farmLocation = preferedCamp.cattr.location
-					return math.floor((RemapValClamped(farmDistance, 6000, 0, BOT_MODE_DESIRE_MODERATE, BOT_MODE_DESIRE_ABSOLUTE))*10)/10;
+					return RemapValClamped(farmDistance, 6400, 600, BOT_MODE_DESIRE_MODERATE, BOT_MODE_DESIRE_ABSOLUTE)
 				end
 			end
 		end

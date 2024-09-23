@@ -52,6 +52,7 @@ local HeroBuild = {
                 "item_ultimate_scepter_2",
             },
             ['sell_list'] = {
+                "item_quelling_blade",
                 "item_bracer",
                 "item_wraith_band",
                 "item_magic_wand",
@@ -94,6 +95,7 @@ local HeroBuild = {
                 "item_ultimate_scepter_2",
             },
             ['sell_list'] = {
+                "item_quelling_blade",
                 "item_bracer",
                 "item_wraith_band",
                 "item_magic_wand",

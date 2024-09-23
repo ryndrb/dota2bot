@@ -803,9 +803,8 @@ function X.UpdateWisdom()
 
 			-- update
 			if member ~= nil
-			and bot.wisdom ~= nil
-			and member.wisdom ~= nil
-			and member.wisdom[timeInMin] ~= nil
+			and bot.wisdom ~= nil and bot.wisdom[timeInMin] ~= nil
+			and member.wisdom ~= nil and member.wisdom[timeInMin] ~= nil
 			then
 				if member.wisdom[timeInMin][1] == true and bot.wisdom[timeInMin][1] == false then
 					bot.wisdom[timeInMin][1] = true

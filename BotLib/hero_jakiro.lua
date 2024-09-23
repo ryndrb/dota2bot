@@ -321,7 +321,7 @@ function X.ConsiderQ()
         and not enemy:HasModifier('modifier_oracle_false_promise_timer')
         and not enemy:HasModifier('modifier_templar_assassin_refraction_absorb')
         then
-            return BOT_ACTION_DESIRE_HIGH, J.GetCorrectLoc(enemy, enemy)
+            return BOT_ACTION_DESIRE_HIGH, J.GetCorrectLoc(enemy, nCastPoint)
         end
     end
 
