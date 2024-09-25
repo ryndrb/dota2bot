@@ -60,10 +60,11 @@ function Push.GetPushDesire(bot, lane)
 
     if ShouldNotPushLane
     then
-        if  DotaTime() < LanePushCooldown + 10
-        and LanePush == lane
+        if DotaTime() < LanePushCooldown + 10
         then
-            return BOT_MODE_DESIRE_NONE
+            if LanePush == lane then
+                return BOT_MODE_DESIRE_NONE
+            end
         else
             ShouldNotPushLane = false
             LanePushCooldown = 0
@@ -239,44 +240,10 @@ end
 function Push.PushThink(bot, lane)
     if J.CanNotUseAction(bot) then return end
 
-    local laneFrontLocation = GetLaneFrontLocation(GetTeam(), lane, 0)
-    local enemyDistance = 0
-    local enemyAlive = 0
-    local teammateDistance = 0
-    local teammateAlive = 0
-    local nRange = bot:GetAttackRange()
-
-    for _, id in pairs(GetTeamPlayers(GetOpposingTeam()))
-    do
-        if IsHeroAlive(id)
-        then
-            local info = GetHeroLastSeenInfo(id)
-
-            if info.location ~= nil
-            then
-                enemyDistance = enemyDistance + math.max(#(info.location - laneFrontLocation), bot:GetCurrentVisionRange())
-                enemyAlive = enemyAlive + 1
-            end
-        end
-    end
-
-    for _,id in pairs(GetTeamPlayers(GetTeam()))
-    do
-        if IsHeroAlive(id)
-        then
-            local info = GetHeroLastSeenInfo(id)
-
-            if info.location ~= nil
-            then
-                teammateDistance = teammateDistance + #(info.location - laneFrontLocation)
-                teammateAlive = teammateAlive + 1
-            end
-        end
-    end
-
-    local offset = -math.max(teammateDistance / teammateAlive - enemyDistance / enemyAlive, 0)
+    local botAttackRange = bot:GetAttackRange()
+    local fDeltaFromFront = (Min(J.GetHP(bot), 0.7) * 1000 - 700) + RemapValClamped(botAttackRange, 300, 700, 0, -600)
     local nEnemyTowers = bot:GetNearbyTowers(1600, true)
-    local targetLoc = GetLaneFrontLocation(GetTeam(), lane, offset)
+    local targetLoc = GetLaneFrontLocation(GetTeam(), lane, fDeltaFromFront)
 
     local nEnemyAncient = GetAncient(GetOpposingTeam())
     if  GetUnitToUnitDistance(bot, nEnemyAncient) < 1600
@@ -286,11 +253,11 @@ function Push.PushThink(bot, lane)
         return
     end
 
-    local nCreeps = bot:GetNearbyLaneCreeps(math.min(700 + nRange, 1600), true)
+    local nCreeps = bot:GetNearbyLaneCreeps(math.min(700 + botAttackRange, 1600), true)
     if J.IsCore(bot)
     or (not J.IsCore(bot) and not J.IsThereCoreNearby(800) and J.GetDistance(bot:GetLocation(), targetLoc) < 1600)
     then
-        nCreeps = bot:GetNearbyCreeps(math.min(700 + nRange, 1600), true)
+        nCreeps = bot:GetNearbyCreeps(math.min(700 + botAttackRange, 1600), true)
     end
 
     if  nCreeps ~= nil and #nCreeps > 0
@@ -300,7 +267,7 @@ function Push.PushThink(bot, lane)
         return
     end
 
-    local nBarracks = bot:GetNearbyBarracks(math.min(700 + nRange, 1600), true)
+    local nBarracks = bot:GetNearbyBarracks(math.min(700 + botAttackRange, 1600), true)
     if  nBarracks ~= nil and #nBarracks > 0
     and Push.CanBeAttacked(nBarracks[1])
     then
@@ -315,7 +282,7 @@ function Push.PushThink(bot, lane)
         return
     end
 
-    local sEnemyTowers = bot:GetNearbyFillers(math.min(700 + nRange, 1600), true)
+    local sEnemyTowers = bot:GetNearbyFillers(math.min(700 + botAttackRange, 1600), true)
     if  sEnemyTowers ~= nil and #sEnemyTowers > 0
     and Push.CanBeAttacked(sEnemyTowers[1])
     then

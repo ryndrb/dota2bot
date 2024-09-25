@@ -366,53 +366,8 @@ function J.GetProperTarget( bot )
 		target = nil
 	end
 
-	if bot == GetBot() and J.IsNonStableHero(bot:GetUnitName())
-	and target == nil
-	and bot:GetActiveMode() ~= BOT_MODE_ATTACK
-	then
-		target = J.GetNonStableHeroTarget(bot)
-		if target ~= nil then bot:SetTarget(target) end
-	end
-
 	return target
 
-end
-
--- generic if not falling
-function J.GetNonStableHeroTarget(bot)
-	if bot ~= GetBot() then return nil end
-
-	local target = nil
-	local tEnemyHeroes = bot:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
-	local tCreeps = bot:GetNearbyCreeps(1600, true)
-	
-	local hp = 99999
-	for _, enemyHero in pairs(tEnemyHeroes)
-	do
-		if J.IsValidHero(enemyHero)
-		and J.CanBeAttacked(enemyHero)
-		then
-			local currHP = enemyHero:GetHealth()
-			if currHP < hp
-			then
-				hp = currHP
-				target = enemyHero
-			end
-		end
-	end
-
-	if target ~= nil
-	then
-		return target
-	end
-
-	if J.CanBeAttacked(tCreeps[1])
-	and J.IsInRange(bot, tCreeps[1], bot:GetAttackRange())
-	then
-		return tCreeps[1]
-	end
-
-	return nil
 end
 
 function J.IsAllyCanKill( target )
