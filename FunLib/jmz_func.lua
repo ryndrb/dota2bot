@@ -5208,6 +5208,28 @@ function J.GetSpecialUnits()
 	return SpecialUnits
 end
 
+function J.GetPointsAroundVector(vCenter, nRadius, numPoints)
+    local points = {vCenter}
+    local angle_step = 360 / numPoints
+
+    for i = 1, numPoints do
+        local angleRad = math.rad(angle_step * i)
+        local point = Vector(
+            vCenter.x + nRadius * math.cos(angleRad),
+            vCenter.y + nRadius * math.sin(angleRad),
+            vCenter.z
+        )
+
+        table.insert(points, point)
+    end
+
+    return points
+end
+
+function J.DotProduct(A, B)
+	return A.x * B.x + A.y * B.y + A.z * B.z
+end
+
 function J.ConsolePrintActiveMode(bot)
     local mode = bot:GetActiveMode()
     local botName = string.gsub(bot:GetUnitName(), "npc_dota_", "")

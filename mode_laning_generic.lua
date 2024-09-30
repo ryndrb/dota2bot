@@ -1,6 +1,9 @@
 local bot = GetBot()
 local J = require( GetScriptDirectory()..'/FunLib/jmz_func')
 
+local clearMode = false
+local botName = bot:GetUnitName()
+
 if bot.isInLanePhase == nil then bot.isInLanePhase = false end
 function GetDesire()
 
@@ -9,6 +12,31 @@ function GetDesire()
 
 	if currentTime < 0 then
 		return BOT_ACTION_DESIRE_NONE
+	end
+
+	if J.IsNonStableHero(botName) then
+		if clearMode then
+			clearMode = false
+			return 0
+		end
+
+		-- last hit
+		if J.IsInLaningPhase() then
+			local nEnemyLaneCreeps = bot:GetNearbyLaneCreeps(bot:GetAttackRange() + 150, true)
+			local hitCreep = GetBestLastHitCreep(nEnemyLaneCreeps)
+			if J.IsValid(hitCreep) then
+				local nLanePartner = J.GetLanePartner(bot)
+				if nLanePartner == nil
+				or J.IsCore(bot)
+				or (not J.IsCore(bot)
+					and J.IsCore(nLanePartner)
+					and (not nLanePartner:IsAlive()
+						or not J.IsInRange(bot, nLanePartner, 800)))
+				then
+					return 0.9
+				end
+			end
+		end
 	end
 
 	if  currentTime <= 9 * 60
@@ -35,19 +63,24 @@ function GetDesire()
 	return BOT_MODE_DESIRE_NONE
 end
 
--- others later since they need to engage, otherwise they feed
--- muerta still sometimes does not engage; not lane related
-if bot:GetUnitName() == 'npc_dota_hero_muerta'
+if J.IsNonStableHero(botName)
 then
 
-local function GetBestLastHitCreep(hCreepList)
-	for _, creep in pairs(hCreepList)
-	do
-		if J.IsValid(creep) and J.CanBeAttacked(creep)
-		then
-			local nAttackDelayTime = J.GetAttackProDelayTime(bot, creep)
-			if J.WillKillTarget(creep, bot:GetAttackDamage(), DAMAGE_TYPE_PHYSICAL, nAttackDelayTime)
-			then
+function GetBestLastHitCreep(hCreepList)
+	local attackDamage = bot:GetAttackDamage()
+
+	if bot:GetItemSlotType(bot:FindItemSlot("item_quelling_blade")) == ITEM_SLOT_TYPE_MAIN then
+		if bot:GetAttackRange() > 310 or bot:GetUnitName() == "npc_dota_hero_templar_assassin" then
+			attackDamage = attackDamage + 4
+		else
+			attackDamage = attackDamage + 8
+		end
+	end
+
+	for _, creep in pairs(hCreepList) do
+		if J.IsValid(creep) and J.CanBeAttacked(creep) then
+			local nDelay = J.GetAttackProDelayTime(bot, creep)
+			if J.WillKillTarget(creep, attackDamage, DAMAGE_TYPE_PHYSICAL, nDelay) then
 				return creep
 			end
 		end
@@ -56,7 +89,7 @@ local function GetBestLastHitCreep(hCreepList)
 	return nil
 end
 
-local function GetBestDenyCreep(hCreepList)
+function GetBestDenyCreep(hCreepList)
 	for _, creep in pairs(hCreepList)
 	do
 		if J.IsValid(creep)
@@ -71,82 +104,66 @@ local function GetBestDenyCreep(hCreepList)
 	return nil
 end
 
--- local function GetSafePosition(hAllyList, vLaneFront)
--- 	local vSafe = vLaneFront
--- 	for _, allyHero in pairs(hAllyList)
--- 	do
--- 		if J.IsValidHero(allyHero)
--- 		and J.IsInRange(bot, allyHero, 1600)
--- 		and bot:DistanceFromFountain() > allyHero:DistanceFromFountain()
--- 		then
--- 			vSafe = allyHero:GetLocation()
--- 			break
--- 		end
--- 	end
-
--- 	if J.GetDistance(bot:GetLocation(), vSafe) > 1600
--- 	then
--- 		vSafe = J.GetTeamFountain()
--- 	end
-
--- 	return vSafe + RandomVector(200)
--- end
-
-local function HarassEnemyHero(hEnemyList)
-    for _, enemyHero in pairs(hEnemyList)
-    do
-        if J.IsValidHero(enemyHero)
+function GetHarassTarget(hEnemyList)
+	for _, enemyHero in pairs(hEnemyList) do
+		if J.IsValidHero(enemyHero)
 		and J.IsInRange(bot, enemyHero, bot:GetAttackRange() + 150)
 		and J.CanBeAttacked(enemyHero)
 		and not J.IsSuspiciousIllusion(enemyHero)
-        then
-            return enemyHero
-        end
-    end
-
-    return nil
-end
-
-local function GetLaneDelta(hEnemyList)
-	local botAttackRange = bot:GetAttackRange()
-
-	if J.IsValidHero(hEnemyList[1])
-	and not J.IsSuspiciousIllusion(hEnemyList[1])
-	then
-		local botHP = J.GetHP(bot)
-		local enemyHP = J.GetHP(hEnemyList[1])
-
-		return RemapValClamped((enemyHP - botHP), -1, 0, 800, 300)
+		then
+			return enemyHero
+		end
 	end
 
-    return botAttackRange
+	return nil
 end
 
 function Think()
-	if not bot:IsAlive() or J.CanNotUseAction(bot) then return end
-
-	local LowHealthThreshold = 0.35
-	local RetreatThreshold = 0.15
-
-	local botAttackRange = bot:GetAttackRange()
-	local botAssignedLane = bot:GetAssignedLane()
-	local nEnemyHeroes = bot:GetNearbyHeroes(1200, true, BOT_MODE_NONE)
-	local nAllyCreeps = bot:GetNearbyCreeps(800, false)
-	local nEnemyCreeps = bot:GetNearbyCreeps(800, true)
-	local nAllyHeroes = bot:GetNearbyHeroes(1600, false, BOT_MODE_NONE)
-	local closestEnemyAttackRange = J.GetClosestEnemyHeroAttackRange(nEnemyHeroes)
-
-	if (J.GetHP(bot) < RetreatThreshold and nEnemyHeroes ~= nil and #nEnemyHeroes > 0)
-	or (bot:WasRecentlyDamagedByAnyHero(2) and (bot:GetAttackTarget() ~= nil and not (bot:GetAttackTarget()):IsHero()))
-	or (J.GetHP(bot) < RetreatThreshold and (bot:WasRecentlyDamagedByCreep(2) or bot:WasRecentlyDamagedByTower(2)))
-	then
-		bot:Action_MoveToLocation(J.GetTeamFountain() + RandomVector(600))
+	if not bot:IsAlive() or J.CanNotUseAction(bot) then
+		clearMode = true
 		return
 	end
 
+	local botAttackRange = bot:GetAttackRange()
+	local botAssignedLane = bot:GetAssignedLane()
+	local nAllyCreeps = bot:GetNearbyLaneCreeps(1200, false)
+	local nEnemyCreeps = bot:GetNearbyLaneCreeps(1200, true)
+
+	local nFurthestEnemyAttackRange = GetFurthestEnemyAttackRange()
+
+	if bot:WasRecentlyDamagedByAnyHero(2.0)
+	or bot:WasRecentlyDamagedByTower(2.0)
+	or (bot:WasRecentlyDamagedByCreep(2.0) and not (bot:HasModifier('modifier_tower_aura') or bot:HasModifier('modifier_tower_aura_bonus')) and #nAllyCreeps > 0) then
+		nFurthestEnemyAttackRange = nFurthestEnemyAttackRange + 450
+	end
+
+	local tEnemyLaneCreeps = bot:GetNearbyLaneCreeps(1200, true)
+	local tEnemyTowers = bot:GetNearbyTowers(800, true)
+
+	if bot:WasRecentlyDamagedByTower(1.0) and #tEnemyLaneCreeps > 0 then
+		if DropTowerAggro(bot, tEnemyLaneCreeps) then
+			return
+		end
+	elseif bot:WasRecentlyDamagedByTower(1.0) then
+		if #tEnemyTowers > 0 then
+			local dist = GetUnitToUnitDistance(bot, tEnemyTowers[1])
+			if dist < 800 then
+				bot:Action_MoveToLocation(J.GetXUnitsTowardsLocation2(bot:GetLocation(), J.GetTeamFountain(), 800 - dist))
+				return
+			end
+		end
+	end
+
+	if #tEnemyTowers > 0 then
+		local dist = GetUnitToUnitDistance(bot , tEnemyTowers[1])
+		if dist < 800 then
+			bot:Action_MoveToLocation(J.GetXUnitsTowardsLocation2(bot:GetLocation(), J.GetTeamFountain(), 800 - dist))
+			return
+		end
+	end
+
 	local hitCreep = GetBestLastHitCreep(nEnemyCreeps)
-	if J.IsValid(hitCreep)
-	then
+	if J.IsValid(hitCreep) then
 		local nLanePartner = J.GetLanePartner(bot)
 		if nLanePartner == nil
 		or J.IsCore(bot)
@@ -155,52 +172,76 @@ function Think()
 			and (not nLanePartner:IsAlive()
 				or not J.IsInRange(bot, nLanePartner, 800)))
 		then
-			bot:Action_AttackUnit(hitCreep, true)
-			return
+			if GetUnitToUnitDistance(bot, hitCreep) > botAttackRange then
+				bot:Action_MoveToUnit(hitCreep)
+				return
+			else
+				bot:Action_AttackUnit(hitCreep, true)
+				return
+			end
 		end
 	end
 
 	local denyCreep = GetBestDenyCreep(nAllyCreeps)
-	if J.IsValid(denyCreep)
-	then
+	if J.IsValid(denyCreep) then
 		bot:Action_AttackUnit(denyCreep, true)
 		return
 	end
 
-	local vLaneFront = GetLaneFrontLocation(GetTeam(), botAssignedLane, 0)
-	local vEnemyLaneFront = GetLaneFrontLocation(GetOpposingTeam(), botAssignedLane, 0)
-	local nEnemyLaneAmount = 1 - GetLaneFrontAmount(GetOpposingTeam(), botAssignedLane, true)
-	local laneDelta = GetLaneDelta(nEnemyHeroes)
-
-	if J.GetDistance(vLaneFront, vEnemyLaneFront) <= 1600
-	and nEnemyLaneAmount > 0
-	then
-		if #nEnemyHeroes > 0
-		then
-			laneDelta = math.max(closestEnemyAttackRange, 300)
-		end
-
-		vLaneFront = GetLaneFrontLocation(GetOpposingTeam(), botAssignedLane, -laneDelta)
-	else
-		vLaneFront = GetLaneFrontLocation(GetTeam(), botAssignedLane, -laneDelta)
-	end
-
-	-- print(vLaneFront, vEnemyLaneFront)
-
-	if J.GetHP(bot) > LowHealthThreshold
-	then
-		nEnemyHeroes = bot:GetNearbyHeroes(botAttackRange + 50, true, BOT_MODE_NONE)
-		local harassTarget = HarassEnemyHero(nEnemyHeroes)
-		if not J.IsCore(bot) and J.IsValidHero(harassTarget)
-		then
+	-- support harass (later ie. willow, hoodwink etc); don't strong creep aggro
+	tEnemyLaneCreeps = bot:GetNearbyLaneCreeps(600, true)
+	local tEnemyHeroes = bot:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
+	if #tEnemyLaneCreeps <= 1 and not J.IsCore(bot) then
+		local harassTarget = GetHarassTarget(tEnemyHeroes)
+		if J.IsValidHero(harassTarget) then
 			bot:Action_AttackUnit(harassTarget, true)
-		else
-			bot:Action_MoveToLocation(vLaneFront + RandomVector(50))
+			return
 		end
-	else
-		vLaneFront = GetLaneFrontLocation(GetTeam(), botAssignedLane, -1200)
-		bot:Action_MoveToLocation(vLaneFront + RandomVector(50))
 	end
+
+	local fLaneFrontAmount = GetLaneFrontAmount(GetTeam(), botAssignedLane, false)
+	local fLaneFrontAmount_enemy = GetLaneFrontAmount(GetOpposingTeam(), botAssignedLane, false)
+	if nFurthestEnemyAttackRange == 0 then
+		nFurthestEnemyAttackRange = Max(botAttackRange, 330)
+	end
+
+	local target_loc = GetLaneFrontLocation(GetTeam(), botAssignedLane, -nFurthestEnemyAttackRange)
+	if fLaneFrontAmount_enemy < fLaneFrontAmount then
+		target_loc = GetLaneFrontLocation(GetOpposingTeam(), botAssignedLane, -nFurthestEnemyAttackRange)
+	end
+
+	bot:Action_MoveToLocation(target_loc + RandomVector(50))
+end
+
+function GetFurthestEnemyAttackRange()
+	local attackRange = 0
+	local nInRangeEnemy = bot:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
+	for _, enemy in pairs(nInRangeEnemy) do
+		if J.IsValidHero(enemy) and not J.IsSuspiciousIllusion(enemy) then
+			local enemyAttackRange = enemy:GetAttackRange()
+			if enemyAttackRange > attackRange then
+				attackRange = enemyAttackRange
+			end
+		end
+	end
+
+	return attackRange
+end
+
+function DropTowerAggro(hUnit, nearbyCrepsAlly)
+	if J.IsValid(hUnit) then
+		local nearbyTowers = hUnit:GetNearbyTowers(750, true)
+		if #nearbyCrepsAlly > 0 and #nearbyTowers == 1 then
+			for _, creep in pairs(nearbyCrepsAlly) do
+				if J.IsValid(creep) and GetUnitToUnitDistance(creep, nearbyTowers[1]) < 700 then
+					hUnit:Action_AttackUnit(creep, true)
+					return true
+				end
+			end
+		end
+	end
+
+	return false
 end
 
 end

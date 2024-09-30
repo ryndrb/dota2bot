@@ -84,7 +84,7 @@ local sHeroList = {										-- pos  1, 2, 3, 4, 5
 	{name = 'npc_dota_hero_luna', 						role = {100, 0, 0, 0, 0}},
 	{name = 'npc_dota_hero_lycan', 						role = {50, 100, 100, 0, 0}},
 	{name = 'npc_dota_hero_magnataur', 					role = {0, 0, 100, 0, 0}},
-	{name = 'npc_dota_hero_marci',	 					role = {0, 0, 0, 0, 0}},--nil
+	{name = 'npc_dota_hero_marci',	 					role = {50, 100, 50, 0, 0}},
 	{name = 'npc_dota_hero_mars', 						role = {0, 0, 100, 0, 0}},
 	{name = 'npc_dota_hero_medusa', 					role = {100, 0, 0, 0, 0}},
 	{name = 'npc_dota_hero_meepo', 						role = {100, 100, 0, 0, 0}},
@@ -105,7 +105,7 @@ local sHeroList = {										-- pos  1, 2, 3, 4, 5
 	{name = 'npc_dota_hero_phantom_lancer', 			role = {100, 0, 0, 0, 0}},
 	{name = 'npc_dota_hero_phantom_assassin', 			role = {100, 0, 0, 0, 0}},
 	{name = 'npc_dota_hero_phoenix', 					role = {0, 0, 0, 100, 100}},
-	{name = 'npc_dota_hero_primal_beast', 				role = {0, 0, 0, 0, 0}},--nil
+	{name = 'npc_dota_hero_primal_beast', 				role = {0, 100, 50, 0, 0}},
 	{name = 'npc_dota_hero_puck', 						role = {0, 100, 0, 0, 0}},
 	{name = 'npc_dota_hero_pudge', 						role = {0, 100, 100, 5, 5}},
 	{name = 'npc_dota_hero_pugna', 						role = {0, 50, 0, 100, 100}},

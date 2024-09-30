@@ -401,6 +401,13 @@ X['spells'] = {
         ['magnataur_reverse_polarity'] = {weight = 0.1},
     },
 
+    ['npc_dota_hero_marci'] = {
+        ['marci_grapple'] = {weight = 0.2},
+        ['marci_companion_run'] = {weight = 0.7},
+        ['marci_guardian'] = {weight = 0.5},
+        ['marci_unleash'] = {weight = 0.8},
+    },
+
     ['npc_dota_hero_mars'] = {
         ['mars_spear'] = {weight = 0.1},
         ['mars_gods_rebuke'] = {weight = 0.8},
@@ -561,6 +568,15 @@ X['spells'] = {
         ['phoenix_sun_ray_stop'] = {weight = 1},
         ['phoenix_sun_ray_toggle_move'] = {weight = 1},
         ['phoenix_supernova'] = {weight = 0.1},
+    },
+
+    ['npc_dota_hero_primal_beast'] = {
+        ['primal_beast_onslaught'] = {weight = 0.9},
+        ['primal_beast_onslaught_release'] = {weight = 0.9},
+        ['primal_beast_trample'] = {weight = 0.9},
+        ['primal_beast_uproar'] = {weight = 1},
+        ['primal_beast_rock_throw'] = {weight = 0.3},
+        ['primal_beast_pulverize'] = {weight = 0.1},
     },
 
     ['npc_dota_hero_puck'] = {

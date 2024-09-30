@@ -610,6 +610,8 @@ function X.ConsiderFriendlyShadow()
             end
         end
 	end
+
+	return BOT_ACTION_DESIRE_NONE, nil
 end
 
 function X.ConsiderTrack()

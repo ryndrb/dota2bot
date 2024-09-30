@@ -333,7 +333,7 @@ function X.ConsiderConjureImage()
 			return BOT_ACTION_DESIRE_HIGH
 		end
 
-		if (J.IsValidBuilding(botTarget) (botTarget == GetAncient(GetOpposingTeam())))
+		if (J.IsValidBuilding(botTarget) or (botTarget == GetAncient(GetOpposingTeam())))
 		and J.IsInRange(bot, botTarget, bot:GetAttackRange() + 300)
 		and J.CanBeAttacked(botTarget)
 		and J.IsAttacking(bot) then

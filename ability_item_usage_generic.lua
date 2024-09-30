@@ -7338,7 +7338,7 @@ function ItemUsageThink()
 end
 
 function AbilityUsageThink()
-	if DotaTime() % 1 == 0 then X.UpdateInfoBuffer() end
+	if math.floor(DotaTime()) % 1 == 0 then X.UpdateInfoBuffer() end
 
 	BotBuild.SkillsComplement()
 end

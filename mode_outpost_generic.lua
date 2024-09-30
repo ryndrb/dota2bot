@@ -209,7 +209,7 @@ function GetDesire()
 		end
 	elseif botName == "npc_dota_hero_phoenix"
 	then
-		if cAbility == nil then cAbility = bot:GetAbilityByName("phoenix_supernova") end
+		cAbility = bot:GetAbilityByName("phoenix_supernova")
 		if cAbility:IsTrained()
 		then
 			if bot:HasModifier('modifier_phoenix_supernova_hiding') then
@@ -217,7 +217,7 @@ function GetDesire()
 			end
 		end
 
-		if cAbility == nil then cAbility = bot:GetAbilityByName("phoenix_sun_ray") end
+		cAbility = bot:GetAbilityByName("phoenix_sun_ray")
 		if cAbility:IsTrained()
 		then
 			if bot:HasModifier('modifier_phoenix_sun_ray')
@@ -280,6 +280,31 @@ function GetDesire()
 				return BOT_MODE_DESIRE_ABSOLUTE
 			end
 		end
+	elseif botName == "npc_dota_hero_primal_beast"
+	then
+		cAbility = bot:GetAbilityByName("primal_beast_onslaught")
+		if cAbility:IsTrained()
+		then
+			if cAbility:IsInAbilityPhase() or bot:HasModifier('modifier_primal_beast_onslaught_windup') or bot:HasModifier('modifier_prevent_taunts') or bot:HasModifier('modifier_primal_beast_onslaught_movement_adjustable') then
+				return BOT_MODE_DESIRE_ABSOLUTE
+			end
+		end
+
+		cAbility = bot:GetAbilityByName("primal_beast_trample")
+		if cAbility:IsTrained()
+		then
+			if cAbility:IsInAbilityPhase() or bot:HasModifier('modifier_primal_beast_trample') then
+				return 6.66
+			end
+		end
+
+		cAbility = bot:GetAbilityByName("primal_beast_pulverize")
+		if cAbility:IsTrained()
+		then
+			if cAbility:IsInAbilityPhase() or bot:HasModifier('modifier_primal_beast_pulverize_self') then
+				return BOT_MODE_DESIRE_ABSOLUTE
+			end
+		end
 	end
 
 	----------
@@ -333,6 +358,13 @@ function OnEnd()
 end
 
 function Think()
+	if bot:HasModifier('modifier_tinker_rearm')
+	or bot:HasModifier('modifier_primal_beast_pulverize_self') then
+		return
+	end
+
+	PrimalBeastTrample()
+
 	if J.CanNotUseAction(bot) then return end
 
 	-- Huskar
@@ -395,17 +427,18 @@ function Think()
 		end
 	end
 
+	-- Primal Beast (Onslaught)
+	if bot:HasModifier('modifier_primal_beast_onslaught_windup') or bot:HasModifier('modifier_prevent_taunts') or bot:HasModifier('modifier_primal_beast_onslaught_movement_adjustable') then
+		if bot.onslaught_location ~= nil then
+			bot:Action_MoveToLocation(bot.onslaught_location)
+			return
+		end
+	end
+
 	-- Tinker
 	if TinkerShouldWaitInBaseToHeal
 	then
-		if J.GetHP(bot) < 0.8 or J.GetMP(bot) < 0.8
-		then
-			if bot:IsChanneling() or bot:HasModifier('modifier_tinker_rearm')
-			then
-				bot:Action_ClearActions(false)
-			else
-				bot:Action_ClearActions(true)
-			end
+		if J.GetHP(bot) < 0.8 or J.GetMP(bot) < 0.8 then
 			return
 		end
 	end
@@ -413,7 +446,6 @@ function Think()
 	-- Spirit Breaker
 	if bot:HasModifier('modifier_spirit_breaker_charge_of_darkness')
 	then
-		bot:Action_ClearActions(false)
 		local nInRangeEnemy = bot:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
 
 		if  bot.chargeRetreat
@@ -831,4 +863,108 @@ function ConsiderHeroMoveOutsideFountain()
 	end
 
 	return false
+end
+
+-- Primal Beast Trample
+local trample_step = 12
+local trample = {}
+local function DoTrample(vLoc)
+	trample = J.GetPointsAroundVector(vLoc, 300, 12) -- go in circles
+	if trample_step < 12 then
+		bot:Action_MoveToLocation(trample[trample_step])
+		trample_step = trample_step + 1
+	else
+		trample_step = 1
+	end
+end
+
+local function TrampleToBase()
+	trample_step = 12
+	trample = {}
+	bot:Action_MoveToLocation(J.GetTeamFountain())
+end
+
+function PrimalBeastTrample()
+	if bot:HasModifier('modifier_primal_beast_trample') then
+		local tAllyHeroes = J.GetAlliesNearLoc(bot:GetLocation(), 1200)
+		local tEnemyHeroes = J.GetEnemiesNearLoc(bot:GetLocation(), 1200)
+
+		if #tEnemyHeroes > #tAllyHeroes + 1
+		or (not J.WeAreStronger(bot, 800) and J.GetHP(bot) < 0.55)
+		or (#tEnemyHeroes > 0 and J.GetHP(bot) < 0.3) then
+			TrampleToBase()
+			return
+		end
+
+		-- bot.trample_status {1 - type, 2 - location, 3 - target, if any}
+		if bot.trample_status ~= nil and type(bot.trample_status) == "table" then
+			if bot.trample_status[1] == 'engaging' then
+				if J.IsValidHero(bot.trample_status[3]) then
+					DoTrample(bot.trample_status[3]:GetLocation())
+					return
+				elseif #tEnemyHeroes > 0 then
+					local target = nil
+					local hp = 0
+					for _, enemyHero in pairs(tEnemyHeroes) do
+						if J.IsValidHero(enemyHero)
+						and J.IsInRange(bot, enemyHero, 2200)
+						and J.CanBeAttacked(enemyHero)
+						and J.CanCastOnNonMagicImmune(enemyHero)
+						and not enemyHero:HasModifier('modifier_faceless_void_chronosphere_freeze')
+						and not enemyHero:HasModifier('modifier_necrolyte_reapers_scythe')
+						and hp < enemyHero:GetHealth()
+						then
+							hp = enemyHero:GetHealth()
+							target = enemyHero
+						end
+					end
+
+					if target ~= nil then
+						DoTrample(target:GetLocation())
+						return
+					end
+				else
+					if #tAllyHeroes >= #tEnemyHeroes and J.WeAreStronger(bot, 800) then
+						for _, ally in pairs(tAllyHeroes) do
+							if J.IsValidHero(ally) and not J.IsSuspiciousIllusion(ally) then
+								local allyTarget = ally:GetAttackTarget()
+								if J.IsValidHero(allyTarget) then
+									DoTrample(allyTarget:GetLocation())
+									return
+								end
+							end
+						end
+					end
+				end
+				TrampleToBase()
+				return
+			elseif bot.trample_status[1] == 'retreating' then
+				TrampleToBase()
+				return
+			elseif bot.trample_status[1] == 'farming' or bot.trample_status[1] == 'laning' then
+				local tCreeps = bot:GetNearbyCreeps(1200, true)
+				if J.IsValid(tCreeps[1]) and J.CanBeAttacked(tCreeps[1])
+				then
+					local nLocationAoE = bot:FindAoELocation(true, false, tCreeps[1]:GetLocation(), 0, 300, 0, 0)
+					if nLocationAoE.count > 0 then
+						DoTrample(nLocationAoE.targetloc)
+						return
+					end
+				else
+					TrampleToBase()
+					return
+				end
+			elseif bot.trample_status[1] == 'miniboss' then
+				if J.IsValid(bot.trample_status[3]) then
+					DoTrample(bot.trample_status[2])
+					return
+				else
+					TrampleToBase()
+					return
+				end
+			end
+		end
+		TrampleToBase()
+		return
+	end
 end

@@ -81,7 +81,7 @@ If you’ve come across this script or is using it, good feedback is always welc
         - ~~[2] Lone Druid~~
         - [1,2,3] Lycan
         - [3] Magnus
-        - ~~[1,3] Marci~~
+        - [1,2,3] Marci
         - [3] Mars
         - [1,2] Meepo
         - [1,2] Monkey King
@@ -93,7 +93,7 @@ If you’ve come across this script or is using it, good feedback is always welc
         - [2] Outworld Destroyer
         - [2,3] Pangolier
         - [4,5] Phoenix
-        - ~~[2,3] Primal Beast~~
+        - [2,3] Primal Beast
         - [2] Puck
         - [2,3,4,5] Pudge
         - [4,5] Ringmaster
@@ -124,25 +124,14 @@ If you’ve come across this script or is using it, good feedback is always welc
     - ***Later***
         - Morphling Ult
     - ***Bugged (Internal; some will be selected)***
-        - Dark Willow
-            - Hardly enters Attack mode (Valve default).
-            - ^ Does enter since she uses spells, but won't engage/attack. Just always keeping distance.
-        - Elder Titan
-            - Does not listen to lane assignments. Forces Mid.
-        - Hoodwink
-            - Hardly enters Attack mode (Valve default).
-            - ^ Does enter since she uses spells, but won't engage/attack. Just always keeping distance.
-        - IO
-            - Passive.
-        - Lone Druid
-            - The Bear is considered a "hero", and not a unit like Visage's Familiars, etc,. Uncontrollable.
-        - Marci
-            - Passive.
-        - ~~Muerta~~
-            - ~~Passive.~~
-            - ~~Passable with generic laning Think(). Will add later as she can actually engage (Attack Mode) and attack enemies.~~
-        - Primal Beast
-            - Passive.
+        - [ ] Dark Willow
+        - [ ] Elder Titan
+        - [ ] Hoodwink
+        - [ ] IO
+        - [ ] Lone Druid
+        - [x] Marci
+        - [x] Muerta
+        - [x] Primal Beast
 
 - ***Aghs/Shard func list***
     | Hero                  | Shard   | Scepter |

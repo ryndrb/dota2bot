@@ -1423,14 +1423,22 @@ local Heroes = {
         },
     },
 
-    -- ['npc_dota_hero_marci'] = {
-    --     ['synergy'] = {
-
-    --     },
-    --     ['counter'] = {
-
-    --     },
-    -- },
+    ['npc_dota_hero_marci'] = {
+        ['synergy'] = {
+            'npc_dota_hero_enchantress',
+            'npc_dota_hero_pudge',
+            'npc_dota_hero_phoenix',
+            'npc_dota_hero_chen',
+            'npc_dota_hero_oracle',
+        },
+        ['counter'] = {
+            'npc_dota_hero_nevermore',
+            'npc_dota_hero_wisp',
+            'npc_dota_hero_magnataur',
+            'npc_dota_hero_dark_seer',
+            'npc_dota_hero_enigma',
+        },
+    },
 
     ['npc_dota_hero_mars'] = {
         ['synergy'] = {
@@ -1972,14 +1980,22 @@ local Heroes = {
         },
     },
 
-    -- ['npc_dota_hero_primal_beast'] = {
-    --     ['synergy'] = {
-
-    --     },
-    --     ['counter'] = {
-            
-    --     },
-    -- },
+    ['npc_dota_hero_primal_beast'] = {
+        ['synergy'] = {
+            'npc_dota_hero_beastmaster',
+            'npc_dota_hero_night_stalker',
+            'npc_dota_hero_alchemist',
+            'npc_dota_hero_clinkz',
+            'npc_dota_hero_templar_assassin',
+        },
+        ['counter'] = {
+            'npc_dota_hero_bristleback',
+            'npc_dota_hero_sniper',
+            'npc_dota_hero_axe',
+            'npc_dota_hero_nevermore',
+            'npc_dota_hero_phantom_assassin',
+        },
+    },
 
     ['npc_dota_hero_puck'] = {
         ['synergy'] = {
