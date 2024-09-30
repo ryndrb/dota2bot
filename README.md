@@ -46,7 +46,7 @@ If you’ve come across this script or is using it, good feedback is always welc
 
 # Tinkering ABo(u)t (ryndrb)
 - ***Heroes (Pos: 1,2,3,4,5)***
-    - <ins>Heroes Implemented Count:</ins> **118** / 125
+    - <ins>Heroes Implemented Count:</ins> **120** / 125
     - ***Added***
         - [1,2,3,4,5] Abaddon
         - [1,2,3] Alchemist
@@ -192,7 +192,7 @@ If you’ve come across this script or is using it, good feedback is always welc
     | Lycan                 | -       | &cross; |
     | Magnus                | -       | &check; |
     | Mars                  | -       | -       |
-    | ~~Marci~~             | -       | -       |
+    | Marci                 | -       | -       |
     | Medusa                | -       | -       |
     | Meeepo                | &check; | &check; |
     | Mirana                | -       | -       |
@@ -212,7 +212,7 @@ If you’ve come across this script or is using it, good feedback is always welc
     | Phantom Assasin       | &check; | -       |
     | Phantom Lancer        | &check; | -       |
     | Phoenix               | -       | -       |
-    | ~~Primal Beast~~      | -       | -       |
+    | Primal Beast          | &check; | -       |
     | Puck                  | -       | -       |
     | Pugna                 | -       | -       |
     | Pudge                 | -       | &cross; |
