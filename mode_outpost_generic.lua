@@ -305,6 +305,15 @@ function GetDesire()
 				return BOT_MODE_DESIRE_ABSOLUTE
 			end
 		end
+	elseif botName == "npc_dota_hero_hoodwink"
+	then
+		if cAbility == nil then cAbility = bot:GetAbilityByName("hoodwink_sharpshooter") end
+		if cAbility:IsTrained()
+		then
+			if cAbility:IsInAbilityPhase() or bot:HasModifier('modifier_hoodwink_sharpshooter_windup') then
+				return BOT_MODE_DESIRE_ABSOLUTE
+			end
+		end
 	end
 
 	----------
@@ -364,6 +373,7 @@ function Think()
 	end
 
 	PrimalBeastTrample()
+	HoodwinkSharpshooter()
 
 	if J.CanNotUseAction(bot) then return end
 
@@ -966,5 +976,65 @@ function PrimalBeastTrample()
 		end
 		TrampleToBase()
 		return
+	end
+end
+
+-- Hoodwink Sharpshooter
+function HoodwinkSharpshooter()
+	if bot:HasModifier('modifier_hoodwink_sharpshooter_windup') then
+		local Sharpshooter = bot:GetAbilityByName('hoodwink_sharpshooter')
+		local nCastRange = Sharpshooter:GetCastRange()
+
+		if J.IsValidHero(bot.sharpshooter_target) then
+			bot:Action_MoveToLocation(bot.sharpshooter_target:GetLocation())
+			return
+		else
+			local target = nil
+			local targetHealth = math.huge
+			for _, enemy in pairs(GetUnitList(UNIT_LIST_ENEMY_HEROES)) do
+				if J.IsValidHero(enemy)
+				and J.IsInRange(bot, enemy, nCastRange * 0.8)
+				and J.CanCastOnNonMagicImmune(enemy)
+				and not enemy:HasModifier('modifier_abaddon_borrowed_time')
+				and not enemy:HasModifier('modifier_dazzle_shallow_grave')
+				and not enemy:HasModifier('modifier_necrolyte_reapers_scythe')
+				and not enemy:HasModifier('modifier_item_aeon_disk_buff')
+				and not enemy:HasModifier('modifier_item_blade_mail_reflect')
+				then
+					local enemyHealth = enemy:GetHealth()
+					if enemyHealth < targetHealth then
+						targetHealth = enemyHealth
+						target = enemy
+					end
+				end
+			end
+
+			if target ~= nil then
+				bot:Action_MoveToLocation(target:GetLocation())
+				return
+			end
+
+			--
+			for i = 1, 5 do
+				local member = GetTeamMember(i)
+				if J.IsValidHero(member)
+				and J.IsInRange(bot, member, 1600)
+				then
+					local memberTarget = member:GetAttackTarget()
+					if J.IsValidHero(memberTarget)
+					and J.IsInRange(bot, memberTarget, nCastRange)
+					and J.CanCastOnNonMagicImmune(memberTarget)
+					and not memberTarget:HasModifier('modifier_abaddon_borrowed_time')
+					and not memberTarget:HasModifier('modifier_dazzle_shallow_grave')
+					and not memberTarget:HasModifier('modifier_necrolyte_reapers_scythe')
+					and not memberTarget:HasModifier('modifier_item_aeon_disk_buff')
+					and not memberTarget:HasModifier('modifier_item_blade_mail_reflect')
+					then
+						bot:Action_MoveToLocation(memberTarget:GetLocation())
+						return
+					end
+				end
+			end
+		end
 	end
 end

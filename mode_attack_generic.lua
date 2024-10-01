@@ -15,7 +15,7 @@ local botAttackRange, botHP, botMP, botHealth, botAttackDamage, botAttackSpeed, 
 local retreatTime = 0
 
 function GetDesire()
-    if DotaTime() < retreatTime + 2.5 then
+    if DotaTime() < retreatTime + 2.5 and not J.IsInTeamFight(bot, 3200) then
         return 0
     end
 
@@ -49,8 +49,8 @@ function GetDesire()
     end
 
     local fTotalDamageToUs = GetAllDamageAttacking(bot, 1600, 5.0)
-    if fTotalDamageToUs > botHealth * 1.5
-    or botHP < RemapValClamped(bot:GetLevel(), 1, 8, 0.4, 0.2) then
+    if fTotalDamageToUs > botHealth * 1.5 and not J.IsInTeamFight(bot, 3200)
+    or botHP < RemapValClamped(bot:GetLevel(), 1, 8, 0.4, 0.2) and #tEnemyHeroes_real > #tAllyHeroes_real then
         return 0
     end
 
@@ -65,7 +65,7 @@ function GetDesire()
             end
         end
 
-        if GetAllDamageAttacking(botTarget, 800, 5.0) < botTargetHealth then
+        if GetAllDamageAttacking(botTarget, 800, 5.0) * 2 < botTargetHealth then
             return 0
         end
     end
@@ -82,6 +82,17 @@ function GetDesire()
                     return 1.0
                 else
                     return 0.95
+                end
+            else
+                for i = 1, 5 do
+                    local member = GetTeamMember(i)
+                    if J.IsValidHero(member) and GetUnitToLocationDistance(member, nTeamFightLocation) < 4000 then
+                        local target = member:GetAttackTarget()
+                        if J.IsValidHero(target) then
+                            bot:SetTarget(target)
+                            return 0.95
+                        end
+                    end
                 end
             end
         end

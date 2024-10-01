@@ -73,7 +73,7 @@ If you’ve come across this script or is using it, good feedback is always welc
         - [1] Faceless Void
         - [4,5] Grimstroke
         - [1,2,4,5] Gyrocopter
-        - ~~[4,5] Hoodwink~~
+        - [4,5] Hoodwink
         - [2] Invoker
         - [2,4,5] Keeper of the Light
         - [2,3] Leshrac
@@ -126,7 +126,7 @@ If you’ve come across this script or is using it, good feedback is always welc
     - ***Bugged (Internal; some will be selected)***
         - [ ] Dark Willow
         - [ ] Elder Titan
-        - [ ] Hoodwink
+        - [x] Hoodwink
         - [ ] IO
         - [ ] Lone Druid
         - [x] Marci
@@ -174,7 +174,7 @@ If you’ve come across this script or is using it, good feedback is always welc
     | Faceless Void         | &check; | -       |
     | Grimstroke            | -       | &check; |
     | Gyrocopter            | -       | -       |
-    | ~~Hoodwink~~          | &check; | &check; |
+    | Hoodwink              | &check; | &check; |
     | Huskar                | -       | -       |
     | Invoker               | -       | &check; |
     | Jakiro                | &check; | -       |

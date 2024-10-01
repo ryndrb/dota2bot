@@ -67,7 +67,7 @@ local sHeroList = {										-- pos  1, 2, 3, 4, 5
 	{name = 'npc_dota_hero_furion', 					role = {100, 0, 100, 5, 100}},
 	{name = 'npc_dota_hero_grimstroke', 				role = {0, 0, 0, 100, 100}},
 	{name = 'npc_dota_hero_gyrocopter', 				role = {100, 100, 0, 100, 100}},
-	{name = 'npc_dota_hero_hoodwink', 					role = {0, 0, 0, 0, 0}},--nil
+	{name = 'npc_dota_hero_hoodwink', 					role = {0, 0, 0, 100, 80}},
 	{name = 'npc_dota_hero_huskar', 					role = {0, 100, 100, 0, 0}},
 	{name = 'npc_dota_hero_invoker', 					role = {0, 100, 0, 0, 0}},
 	{name = 'npc_dota_hero_jakiro', 					role = {0, 15, 0, 100, 100}},
