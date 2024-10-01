@@ -268,6 +268,16 @@ X['spells'] = {
         ['gyrocopter_flak_cannon'] = {weight = 0.9},
         ['gyrocopter_call_down'] = {weight = 0.6},
     },
+
+    ['npc_dota_hero_hoodwink'] = {
+        ['hoodwink_acorn_shot'] = {weight = 0.8},
+        ['hoodwink_bushwhack'] = {weight = 0.8},
+        ['hoodwink_scurry'] = {weight = 0.8},
+        ['hoodwink_hunters_boomerang'] = {weight = 0.5},
+        ['hoodwink_decoy'] = {weight = 0.9},
+        ['hoodwink_sharpshooter'] = {weight = 0.8},
+        ['hoodwink_sharpshooter_release'] = {weight = 1},
+    },
     
     ['npc_dota_hero_huskar'] = {
         ['huskar_inner_fire'] = {weight = 0.5},

@@ -1007,7 +1007,22 @@ local Heroes = {
         },
     },
 
-    -- ['npc_dota_hero_hoodwink'] = {},
+    ['npc_dota_hero_hoodwink'] = {
+        ['synergy'] = {
+            'npc_dota_hero_morphling',
+            'npc_dota_hero_sven',
+            'npc_dota_hero_broodmother',
+            'npc_dota_hero_oracle',
+            'npc_dota_hero_arc_warden',
+        },
+        ['counter'] = {
+            'npc_dota_hero_bristleback',
+            'npc_dota_hero_chaos_knight',
+            'npc_dota_hero_huskar',
+            'npc_dota_hero_monkey_king',
+            'npc_dota_hero_pugna',
+        },
+    },
 
     ['npc_dota_hero_huskar'] = {
         ['synergy'] = {
