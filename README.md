@@ -46,7 +46,7 @@ If you’ve come across this script or is using it, good feedback is always welc
 
 # Tinkering ABo(u)t (ryndrb)
 - ***Heroes (Pos: 1,2,3,4,5)***
-    - <ins>Heroes Implemented Count:</ins> **120** / 125
+    - <ins>Heroes Implemented Count:</ins> **122** / 125
     - ***Added***
         - [1,2,3,4,5] Abaddon
         - [1,2,3] Alchemist
@@ -60,7 +60,7 @@ If you’ve come across this script or is using it, good feedback is always welc
         - [1,2,4,5] Clinkz
         - [4,5] Clockwerk
         - [3] Dark Seer
-        - ~~[4,5] Dark Willow~~
+        - [4,5] Dark Willow
         - [2,3,4,5] Dawnbreaker
         - [4,5] Disruptor
         - [2,3] Doom
