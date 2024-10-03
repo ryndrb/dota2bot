@@ -7,6 +7,8 @@ local sTalentList = J.Skill.GetTalentList( bot )
 local sAbilityList = J.Skill.GetAbilityList( bot )
 local sRole = J.Item.GetRoleItemsBuyList( bot )
 
+local bMagicBuild = false
+
 if GetBot():GetUnitName() == 'npc_dota_hero_nevermore'
 then
 
@@ -111,7 +113,6 @@ local HeroBuild = {
 				"item_tango",
 				"item_double_branches",
 				"item_faerie_fire",
-				"item_double_enchanted_mango",
 				
 				"item_bottle",
 				"item_power_treads",
@@ -119,6 +120,7 @@ local HeroBuild = {
 				"item_magic_wand",
 				"item_kaya",
 				"item_blink",
+				"item_cyclone",
 				"item_black_king_bar",--
 				"item_yasha_and_kaya",--
 				"item_ultimate_scepter",
@@ -173,11 +175,13 @@ local HeroBuild = {
         },
     },
 }
-
-local sSelectedBuild = HeroBuild[sRole][RandomInt(1, #HeroBuild[sRole])]
+local build_idx = RandomInt(1, #HeroBuild[sRole])
+local sSelectedBuild = HeroBuild[sRole][build_idx]
 
 local nTalentBuildList = J.Skill.GetTalentBuild(J.Skill.GetRandomBuild(sSelectedBuild.talent))
 local nAbilityBuildList = J.Skill.GetRandomBuild(sSelectedBuild.ability)
+
+if build_idx == 2 then bMagicBuild = true end
 
 X['sBuyList'] = sSelectedBuild.buy_list
 X['sSellList'] = sSelectedBuild.sell_list
@@ -192,421 +196,242 @@ X['bDeafaultAbility'] = false
 X['bDeafaultItem'] = false
 
 function X.MinionThink( hMinionUnit )
-
-	if Minion.IsValidUnit( hMinionUnit )
-	then
-		Minion.IllusionThink( hMinionUnit )
-	end
-
+	Minion.MinionThink(hMinionUnit)
 end
 
 end
 
---[[
-
-npc_dota_hero_nevermore
-
-"Ability1"		"nevermore_shadowraze1"
-"Ability2"		"nevermore_shadowraze2"
-"Ability3"		"nevermore_shadowraze3"
-"Ability4"		"nevermore_necromastery"
-"Ability5"		"nevermore_dark_lord"
-"Ability6"		"nevermore_requiem"
-"Ability10"		"special_bonus_spell_amplify_8"
-"Ability11"		"special_bonus_attack_speed_20"
-"Ability12"		"special_bonus_unique_nevermore_3"
-"Ability13"		"special_bonus_movement_speed_30"
-"Ability14"		"special_bonus_unique_nevermore_1"
-"Ability15"		"special_bonus_unique_nevermore_2"
-"Ability16"		"special_bonus_unique_nevermore_5"
-"Ability17"		"special_bonus_cooldown_reduction_40"
-
-modifier_nevermore_shadowraze_debuff
-modifier_nevermore_shadowraze_counter
-modifier_nevermore_presence_aura
-modifier_nevermore_presence
-modifier_nevermore_requiem_invis_break
-modifier_nevermore_requiem_thinker
-modifier_nevermore_requiem_aura
-modifier_nevermore_requiem
-modifier_nevermore_necromastery
-
---]]
-
-local abilityZ = bot:GetAbilityByName('nevermore_shadowraze1')
-local abilityX = bot:GetAbilityByName('nevermore_shadowraze2')
-local abilityC = bot:GetAbilityByName('nevermore_shadowraze3')
+local ShadowRaze_Q = bot:GetAbilityByName('nevermore_shadowraze1')
+local ShadowRaze_W = bot:GetAbilityByName('nevermore_shadowraze2')
+local ShadowRaze_E = bot:GetAbilityByName('nevermore_shadowraze3')
 local FeastOfSouls = bot:GetAbilityByName('nevermore_frenzy')
-local abilityN = bot:GetAbilityByName('nevermore_necromastery')
-local abilityF = bot:GetAbilityByName('nevermore_dark_lord')
-local abilityR = bot:GetAbilityByName('nevermore_requiem')
-local talent4 = bot:GetAbilityByName( sTalentList[4] )
+local Necromastery = bot:GetAbilityByName('nevermore_necromastery')
+local DarkLord = bot:GetAbilityByName('nevermore_dark_lord')
+local RequiemOfSouls = bot:GetAbilityByName('nevermore_requiem')
 
-local castZDesire
-local castXDesire
-local castCDesire
-local castNDesire, castNTarget
+local ShadowRazeQ_Desire
+local ShadowRazeW_Desire
+local ShadowRazeE_Desire
 local FeastOfSoulsDesire
-local castRDesire
+local RequiemOfSoulsDesire
 
-local nKeepMana, nMP, nHP, nLV, hEnemyHeroList, botTarget
-
-
+local botMP, botHP, botTarget, botLevel
 
 function X.SkillsComplement()
-
-
-	J.ConsiderTarget()
-
-
-	if J.CanNotUseAbility( bot ) or bot:IsInvisible() then return end
-
-	abilityZ = bot:GetAbilityByName('nevermore_shadowraze1')
-	abilityX = bot:GetAbilityByName('nevermore_shadowraze2')
-	abilityC = bot:GetAbilityByName('nevermore_shadowraze3')
+	ShadowRaze_Q = bot:GetAbilityByName('nevermore_shadowraze1')
+	ShadowRaze_W = bot:GetAbilityByName('nevermore_shadowraze2')
+	ShadowRaze_E = bot:GetAbilityByName('nevermore_shadowraze3')
 	FeastOfSouls = bot:GetAbilityByName('nevermore_frenzy')
-	abilityN = bot:GetAbilityByName('nevermore_necromastery')
-	abilityR = bot:GetAbilityByName('nevermore_requiem')
+	RequiemOfSouls = bot:GetAbilityByName('nevermore_requiem')
 
+	if J.CanNotUseAbility( bot ) then return end
 
-	nKeepMana = 340
-	nLV = bot:GetLevel()
-	nMP = bot:GetMana()/bot:GetMaxMana()
-	nHP = bot:GetHealth()/bot:GetMaxHealth()
-	hEnemyHeroList = bot:GetNearbyHeroes( 1600, true, BOT_MODE_NONE )
 	botTarget = J.GetProperTarget(bot)
+	botHP = J.GetHP(bot)
+	botMP = J.GetMP(bot)
+	botLevel = bot:GetLevel()
 
+	X.ConsiderUltCombo()
 
-	
-
-
-	castCDesire = X.Consider( abilityC, 700 )
-	if castCDesire > 0
-	then
-
-		J.SetQueuePtToINT( bot, true )
-
-		bot:ActionQueue_UseAbility( abilityC )
+	RequiemOfSoulsDesire = X.ConsdierRequiemOfSouls()
+	if RequiemOfSoulsDesire > 0 then
+		bot:Action_UseAbility(RequiemOfSouls)
 		return
+	end
+
+	if J.CanCastAbility(ShadowRaze_E) then
+		ShadowRazeE_Desire = X.ConsiderShadownRaze(ShadowRaze_E)
+		if ShadowRazeE_Desire > 0 then
+			J.SetQueuePtToINT(bot, true)
+			bot:ActionQueue_UseAbility(ShadowRaze_E)
+			return
+		end
+	end
+
+	if J.CanCastAbility(ShadowRaze_W) then
+		ShadowRazeW_Desire = X.ConsiderShadownRaze(ShadowRaze_W)
+		if ShadowRazeW_Desire > 0 then
+			J.SetQueuePtToINT(bot, true)
+			bot:ActionQueue_UseAbility(ShadowRaze_W)
+			return
+		end
+	end
+
+	if J.CanCastAbility(ShadowRaze_Q) then
+		ShadowRazeQ_Desire = X.ConsiderShadownRaze(ShadowRaze_Q)
+		if ShadowRazeQ_Desire > 0 then
+			J.SetQueuePtToINT(bot, true)
+			bot:ActionQueue_UseAbility(ShadowRaze_Q)
+			return
+		end
 	end
 
 	FeastOfSoulsDesire = X.ConsiderFeastOfSouls()
 	if FeastOfSoulsDesire > 0
 	then
-		J.SetQueuePtToINT(bot, false)
+		J.SetQueuePtToINT(bot, true)
 		bot:ActionQueue_UseAbility(FeastOfSouls)
 		return
 	end
-
-	castXDesire = X.Consider( abilityX, 450 )
-	if castXDesire > 0
-	then
-
-		J.SetQueuePtToINT( bot, true )
-
-		bot:ActionQueue_UseAbility( abilityX )
-		return
-	end
-
-	castZDesire = X.Consider( abilityZ, 200 )
-	if castZDesire > 0
-	then
-
-		J.SetQueuePtToINT( bot, true )
-
-		bot:ActionQueue_UseAbility( abilityZ )
-		return
-
-	end
-
-	castRDesire = X.ConsiderR()
-	if castRDesire > 0
-	then
-
-		J.SetQueuePtToINT( bot, false )
-
-		bot:ActionQueue_UseAbility ( abilityR )
-		return
-
-	end
-	
-	
-	castNDesire, castNTarget = X.ConsiderN()
-	if castNDesire > 0
-	then
-
-		bot:ActionQueue_UseAbilityOnEntity ( abilityN, castNTarget )
-		return
-
-	end
-	
-	
 end
 
-
-function X.ConsiderN()
-
-	if not J.CanCastAbility(abilityN)
-		or bot:IsDisarmed()
-		or abilityN:GetAutoCastState()
-	then
-		return 0
+function X.ConsiderShadownRaze(hAbility)
+	if not J.CanCastAbility(hAbility) then
+		return BOT_ACTION_DESIRE_NONE
 	end
-	
-	
-	if not abilityN:GetAutoCastState()
-	then
-		abilityN:ToggleAutoCast()
-	end
-		
-		
-	return BOT_ACTION_DESIRE_NONE
 
-end
+	local nCastRange = hAbility:GetSpecialValueInt('shadowraze_range')
+	local nCastPoint = hAbility:GetCastPoint()
+	local nDamage = hAbility:GetSpecialValueInt('shadowraze_damage')
+	local nStackBonusDamage = hAbility:GetSpecialValueInt('stack_bonus_damage')
+	local nRadius = hAbility:GetSpecialValueInt('shadowraze_radius')
+	local nManaCost = hAbility:GetManaCost()
+	local nCastLocation = J.GetFaceTowardDistanceLocation(bot, nCastRange)
 
-function X.ConsiderR()
+	local nEnemyHeroes = bot:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
 
-
-	if not J.CanCastAbility(abilityR)
-		or ( bot:WasRecentlyDamagedByAnyHero( 1.5 ) and not bot:HasModifier( "modifier_black_king_bar_immune" ) and nHP < 0.62 )
-	then return 0 end
-
-
-	local nRadius = 1000
-
-	local nEnemysHerosInLong	 = J.GetEnemyList( bot, 1400 )
-	local nEnemysHerosInSkillRange = J.GetEnemyList( bot, 850 )
-	local nEnemysHerosNearby	 = J.GetEnemyList( bot, 400 )
-
-	for _, enemy in pairs( nEnemysHerosNearby )
-	do
-		if J.IsValidHero( enemy )
-			and enemy:HasModifier( "modifier_brewmaster_storm_cyclone" )
-			and J.GetModifierTime( enemy, "modifier_brewmaster_storm_cyclone" ) < 1.66
-			and enemy:GetHealth() > 800
+	for _, enemy in pairs(nEnemyHeroes) do
+		if J.IsValidHero(enemy)
+		and J.IsInRange(bot, enemy, nCastRange + nRadius)
+		and J.CanCastOnNonMagicImmune(enemy)
+		and not enemy:HasModifier('modifier_abaddon_borrowed_time')
+		and not enemy:HasModifier('modifier_dazzle_shallow_grave')
+		and not enemy:HasModifier('modifier_necrolyte_reapers_scythe')
+		and not enemy:HasModifier('modifier_oracle_false_promise_timer')
+		and X.IsUnitCanBeKill(enemy, nDamage, nStackBonusDamage, nCastPoint)
+		and X.IsUnitNearLoc(enemy, nCastLocation, nRadius, 0)
 		then
 			return BOT_ACTION_DESIRE_HIGH
 		end
 	end
 
-	if J.IsInTeamFight( bot, 1200 ) or J.IsGoingOnSomeone( bot )
-	then
-		if #nEnemysHerosInSkillRange >= 3
-			or ( #nEnemysHerosNearby >= 1 and #nEnemysHerosInSkillRange >= 2 )
-			or ( #nEnemysHerosInLong >= 3 and #nEnemysHerosInSkillRange >= 2 )
-			or ( #nEnemysHerosInLong >= 4 and #nEnemysHerosNearby >= 1 )
+	if J.IsGoingOnSomeone(bot) then
+		if J.IsValidHero(botTarget)
+		and J.IsInRange(bot, botTarget, nCastRange + nRadius)
+		and J.CanCastOnNonMagicImmune(botTarget)
+		and not botTarget:HasModifier('modifier_abaddon_borrowed_time')
+		and not botTarget:HasModifier('modifier_dazzle_shallow_grave')
+		and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
+		and X.IsUnitNearLoc(botTarget, nCastLocation, nRadius, 0)
 		then
 			return BOT_ACTION_DESIRE_HIGH
 		end
-
-		local nAoe = bot:FindAoELocation( true, true, bot:GetLocation(), 100, 800, 1.67, 0 )
-		if nAoe.count >= 3
-		then
-			return BOT_ACTION_DESIRE_HIGH
-		end
-
-		local npcTarget = J.GetProperTarget( bot )
-		if J.IsValidHero( npcTarget )
-			and J.CanCastOnNonMagicImmune( npcTarget )
-			and not J.IsDisabled( npcTarget )
-			and GetUnitToUnitDistance( npcTarget, bot ) <= 400
-			and npcTarget:GetHealth() > 800
-			and nHP > 0.38
-		then
-			return BOT_ACTION_DESIRE_HIGH
-		end
-
 	end
 
-	return 0
-end
-
-
-function X.Consider( nAbility, nDistance )
-
-	if not J.CanCastAbility(nAbility) then
-		return BOT_ACTION_DESIRE_NONE, 0
-	end
-
-	local nRadius	 = 248
-	local nCastLocation = J.GetFaceTowardDistanceLocation( bot, nDistance )
-	local nCastPoint = nAbility:GetCastPoint()
-	local nDamageType = DAMAGE_TYPE_MAGICAL
-	local nSkillLV	 = nAbility:GetLevel()
-	local nDamage	 = 20 + 70 * nSkillLV
-	
-	if talent4:IsTrained() then nDamage = nDamage + talent4:GetSpecialValueInt( "value" ) end
-	
-	local nBonus	 = nAbility:GetSpecialValueInt( 'stack_bonus_damage' )
-	local keyWord	 = "ranged"
-	local nEnemyHeroes = bot:GetNearbyHeroes( 1000, true, BOT_MODE_NONE )
-	local npcTarget = J.GetProperTarget( bot )
-
-
-	if J.IsValidHero( npcTarget )
-		and J.CanCastOnNonMagicImmune( npcTarget )
-		and X.IsUnitNearLoc( npcTarget, nCastLocation, nRadius - 20, nCastPoint )
-		and not ( bot:GetMana() <= nKeepMana * ( 1 - nSkillLV/4 ) )
-	then
-		return BOT_ACTION_DESIRE_HIGH
-	end
-	
-	
-	if J.IsValid( npcTarget )
-	then
-		for _, enemy in pairs( nEnemyHeroes )
-		do
-			if J.IsValidHero( enemy )
-				and J.CanCastOnNonMagicImmune( enemy )
-				and X.IsUnitNearLoc( enemy, nCastLocation, nRadius - 30, nCastPoint )
-				and ( not ( bot:GetMana() <= nKeepMana * ( 1 - nSkillLV/4 ) )
-					or X.IsUnitCanBeKill( enemy, nDamage, nBonus, nCastPoint ) )
-			then
-				return BOT_ACTION_DESIRE_HIGH
-			end
-		end
-	end
-
-	if nLV <= 12
-	then
-		local nLaneCreeps = bot:GetNearbyLaneCreeps( 1000, true )
-		local keyCount = 0
-		for _, creep in pairs( nLaneCreeps )
-		do
-			if J.IsValid( creep )
-				and not creep:HasModifier( "modifier_fountain_glyph" )
-				and J.IsKeyWordUnit( keyWord, creep )
-				and X.IsUnitNearLoc( creep, nCastLocation, nRadius, nCastPoint )
-				and X.IsUnitCanBeKill( creep, nDamage, nBonus, nCastPoint )
-			then
-				keyCount = keyCount + 1
-			end
-		end
-		if keyCount >= 2
-		then
-			--十二级下可击杀二远程
-			return BOT_ACTION_DESIRE_HIGH
-		end
-	end
-
-	if not J.IsRetreating( bot )
-	then
-		local nEnemysCreeps = bot:GetNearbyCreeps( 1200, true )
-		local tableLaneCreeps = bot:GetNearbyLaneCreeps( nDistance + nRadius * 1.5, true )
+	if not J.IsRetreating(bot) and not J.IsRealInvisible(bot) then
+		local nEnemyCreeps = bot:GetNearbyCreeps(1200, true)
+		local nEnemyLaneCreeps = bot:GetNearbyLaneCreeps(Min(nCastRange + nRadius * 1.5, 1600), true)
 		local nCanHurtCount = 0
 		local nCanKillCount = 0
-		for _, creep in pairs( nEnemysCreeps )
-		do
-			if J.IsValid( creep )
-				and not creep:HasModifier( "modifier_fountain_glyph" )
-				and ( creep:GetMagicResist() < 0.4 or nMP > 0.9 )
-				and X.IsUnitNearLoc( creep, nCastLocation, nRadius, nCastPoint )
+		for _, creep in pairs(nEnemyCreeps) do
+			if J.IsValid(creep)
+			and J.CanBeAttacked(creep)
+			and not J.IsRunning(creep)
+			and X.IsUnitNearLoc(creep, nCastLocation, nRadius, 0)
 			then
 				nCanHurtCount = nCanHurtCount + 1
-				if X.IsUnitCanBeKill( creep, nDamage, nBonus, nCastPoint )
-				then
+				if X.IsUnitCanBeKill(creep, nDamage, nStackBonusDamage, nCastPoint) then
 					nCanKillCount = nCanKillCount + 1
+					if J.IsLaning(bot) then
+						if string.find(creep:GetUnitName(), 'ranged')
+						and not J.IsInRange(bot, creep, bot:GetAttackRange())
+						and #nEnemyHeroes > 0
+						then
+							return BOT_ACTION_DESIRE_HIGH
+						end
+					end
 				end
 			end
 		end
 
-		if nLV >= 8 and nEnemyHeroes[1] == nil
-		then
-			if ( nCanHurtCount >= 4 and nMP > 0.6 )
-				or ( nCanHurtCount >= 3 and bot:GetActiveMode() ~= BOT_MODE_LANING and nMP > 0.78 )
-				or ( nCanKillCount >= 2 and nCanHurtCount == #tableLaneCreeps )
-				or ( nCanHurtCount >= 2 and nMP > 0.8 and nLV > 10 and #nEnemysCreeps == 2 )
-				or ( nCanHurtCount >= 2 and nLV > 24 and #nEnemysCreeps == 2 and J.IsAllowedToSpam( bot, 180 ) )
+		local nInRangeEnemy = J.GetEnemiesNearLoc(bot:GetLocation(), 1200)
+		if not J.IsInLaningPhase() and #nInRangeEnemy <= 1 then
+			if (nCanHurtCount >= 4 and botMP > 0.6)
+			or (nCanHurtCount >= 3 and not J.IsLaning(bot) and botMP > 0.8)
+			or (nCanHurtCount >= 2 and nCanHurtCount == #nEnemyLaneCreeps)
+			or (nCanHurtCount >= 2 and botMP > 0.8 and botLevel > 10 and #nEnemyCreeps >= 2)
+			or (nCanHurtCount >= 2 and botLevel > 24 and J.GetManaAfter(nManaCost) > 0.4)
 			then
 				return BOT_ACTION_DESIRE_HIGH
 			end
 		end
 
-		if nLV <= 10
-		then
-			if nCanKillCount >= 2 and ( nCanHurtCount == #tableLaneCreeps or nMP > 0.8 )
-			then
-				--十级下可击杀二小兵
+		if botLevel <= 10 then
+			if nCanKillCount >= 2 and (nCanHurtCount == #nEnemyLaneCreeps or botMP > 0.8) then
 				return BOT_ACTION_DESIRE_HIGH
 			end
 		end
 
-		if nCanKillCount >= 3
-		then
-			--可击杀3小兵
+		if nCanKillCount >= 3 then
 			return BOT_ACTION_DESIRE_HIGH
 		end
 	end
 
-	return 0
+	if J.IsDoingRoshan(bot) or J.IsDoingTormentor(bot) then
+		if (J.IsRoshan(botTarget) or J.IsTormentor(botTarget))
+		and X.IsUnitNearLoc(botTarget, nCastLocation, nRadius, 0)
+		and not J.IsRunning(botTarget)
+		and J.CanBeAttacked(botTarget)
+		and J.IsAttacking(bot)
+		then
+			return BOT_ACTION_DESIRE_HIGH
+		end
+	end
+
+	return BOT_ACTION_DESIRE_NONE
 end
 
 function X.ConsiderFeastOfSouls()
 	if not J.CanCastAbility(FeastOfSouls)
+	or (bMagicBuild and J.CanCastAbility(RequiemOfSouls))
 	then
 		return BOT_ACTION_DESIRE_NONE
 	end
 
 	local nAttackRange = bot:GetAttackRange()
 	local nSoulCount = bot:GetModifierStackCount(bot:GetModifierByName('modifier_nevermore_necromastery'))
-	local nManaAfter = J.GetManaAfter(FeastOfSouls:GetManaCost()) * bot:GetMana()
+	local nManaAfter = J.GetManaAfter(FeastOfSouls:GetManaCost())
+	local bFeast = false
 
-	if nSoulCount < 5 then return BOT_ACTION_DESIRE_NONE end
+	if bMagicBuild then
+		bFeast = (nSoulCount - 5) >= 18
+	else
+		bFeast = (nSoulCount - 5) >= 13
+	end
+
+	if nSoulCount < 5 or not bFeast then return BOT_ACTION_DESIRE_NONE end
 
 	if J.IsGoingOnSomeone(bot)
 	then
-		if  J.IsValidTarget(botTarget)
-        and J.IsInRange(bot, botTarget, nAttackRange)
+		if  J.IsValidHero(botTarget)
+        and J.IsInRange(bot, botTarget, nAttackRange + 300)
+		and J.CanBeAttacked(botTarget)
         and not J.IsChasingTarget(bot, botTarget)
         and not J.IsSuspiciousIllusion(botTarget)
         and not botTarget:HasModifier('modifier_abaddon_borrowed_time')
         and not botTarget:HasModifier('modifier_dazzle_shallow_grave')
         and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
 		then
-            local nInRangeAlly = botTarget:GetNearbyHeroes(1200, true, BOT_MODE_NONE)
-            local nInRangeEnemy = botTarget:GetNearbyHeroes(1200, false, BOT_MODE_NONE)
-
-            if  nInRangeAlly ~= nil and nInRangeEnemy ~= nil
-            and #nInRangeAlly >= #nInRangeEnemy
-            then
-                return BOT_ACTION_DESIRE_HIGH
-            end
+			return BOT_ACTION_DESIRE_HIGH
 		end
 	end
 
-    if  J.IsFarming(bot)
-	and nManaAfter > 0.3
+    if J.IsFarming(bot) and nManaAfter > 0.4
     then
         if J.IsAttacking(bot)
         then
-            local nNeutralCreeps = bot:GetNearbyNeutralCreeps(1000)
-            if  nNeutralCreeps ~= nil
-            and (#nNeutralCreeps >= 3
-                or (#nNeutralCreeps >= 2 and nNeutralCreeps[1]:IsAncientCreep()))
-            then
-				return BOT_ACTION_DESIRE_HIGH
-            end
-
-            local nEnemyLaneCreeps = bot:GetNearbyLaneCreeps(1000, true)
-            if nEnemyLaneCreeps ~= nil and #nEnemyLaneCreeps >= 4
+            local nEnemyCreeps = bot:GetNearbyCreeps(1200, true)
+            if J.IsValid(nEnemyCreeps[1])
+			and (#nEnemyCreeps >= 3 or (#nEnemyCreeps >= 2 and nEnemyCreeps[1]:IsAncientCreep()))
+			and J.CanBeAttacked(nEnemyCreeps[1])
             then
 				return BOT_ACTION_DESIRE_HIGH
             end
         end
     end
 
-    if J.IsPushing(bot) or J.IsDefending(bot)
+    if J.IsPushing(bot)
     then
-		local nInRangeEnemy = bot:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
-        local nEnemyLaneCreeps = bot:GetNearbyLaneCreeps(1000, true)
-
-        if  nEnemyLaneCreeps ~= nil and #nEnemyLaneCreeps >= 4
-		and nInRangeEnemy ~= nil and #nInRangeEnemy == 0
-		and nManaAfter > 0.3
-        then
-			return BOT_ACTION_DESIRE_HIGH
-        end
-
 		if  J.IsValidBuilding(botTarget)
 		and J.CanBeAttacked(botTarget)
 		and J.IsAttacking(bot)
@@ -618,6 +443,8 @@ function X.ConsiderFeastOfSouls()
 	if J.IsDoingRoshan(bot) or J.IsDoingTormentor(bot)
 	then
 		if  (J.IsRoshan(botTarget) or J.IsTormentor(botTarget))
+		and J.CanBeAttacked(botTarget)
+		and J.GetHP(botTarget) > 0.5
         and J.IsInRange(bot, botTarget, nAttackRange)
         and J.IsAttacking(bot)
 		then
@@ -628,26 +455,208 @@ function X.ConsiderFeastOfSouls()
 	return BOT_ACTION_DESIRE_NONE
 end
 
-function X.IsUnitNearLoc( nUnit, vLoc, nRange, nDely )
-
-	if GetUnitToLocationDistance( nUnit, vLoc ) > 250
+function X.ConsdierRequiemOfSouls()
+	if not J.CanCastAbility(RequiemOfSouls)
 	then
-		return false
+		return BOT_ACTION_DESIRE_NONE
 	end
 
-	local nMoveSta = nUnit:GetMovementDirectionStability()
-	if nMoveSta < 0.98 then nRange = nRange - 14 end
-	if nMoveSta < 0.91 then nRange = nRange - 26 end
-	if nMoveSta < 0.81 then nRange = nRange - 30 end
+	local nRadius = RequiemOfSouls:GetSpecialValueInt('requiem_radius')
+	local nCastPoint = RequiemOfSouls:GetCastPoint()
+	local nSoulCount = J.GetModifierCount(bot, 'modifier_nevermore_necromastery')
+	local nDamage = RequiemOfSouls:GetSpecialValueInt('#AbilityDamage')
 
-	local fLoc = J.GetCorrectLoc( nUnit, nDely )
-	if J.GetLocationToLocationDistance( fLoc, vLoc ) < nRange
+	local nDelay = 2.5 - nCastPoint
+	if J.HasItem(bot, 'item_yasha_and_kaya') then
+		nDelay = nDelay * 0.75
+		if FeastOfSouls ~= nil and FeastOfSouls:IsTrained() then
+			local talent_25_right = FeastOfSouls:GetSpecialValueInt('cast_speed_pct')
+			nDelay = nDelay * (1 - ((talent_25_right - 100) / 100))
+		end
+	end
+
+	local nEnemyHeroes = bot:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
+	for _, enemy in pairs(nEnemyHeroes) do
+		if J.IsValidHero(enemy)
+		and J.IsInRange(bot, enemy, 400)
+		and ((enemy:HasModifier('modifier_eul_cyclone') and J.GetModifierTime(enemy, 'modifier_eul_cyclone') < nDelay)
+			or (enemy:HasModifier('modifier_brewmaster_storm_cyclone') and J.GetModifierTime(enemy, 'modifier_brewmaster_storm_cyclone') < nDelay))
+		and enemy:GetHealth() > 800
+		and J.CanCastOnNonMagicImmune(enemy)
+		and not string.find(enemy:GetUnitName(), 'medusa')
+		and not enemy:HasModifier('modifier_abaddon_borrowed_time')
+		and not enemy:HasModifier('modifier_dazzle_shallow_grave')
+		and not enemy:HasModifier('modifier_enigma_black_hole_pull')
+		and not enemy:HasModifier('modifier_faceless_void_chronosphere_freeze')
+		and not enemy:HasModifier('modifier_necrolyte_reapers_scythe')
+		and not enemy:HasModifier('modifier_oracle_false_promise_timer')
+		and nSoulCount >= 15
+		then
+			return BOT_ACTION_DESIRE_HIGH
+		end
+	end
+
+	if J.IsInTeamFight(bot, 1200) and nSoulCount >= 15 then
+		local nLocationAoE = bot:FindAoELocation(true, true, bot:GetLocation(), 0, nRadius * 0.6, nDelay, 0)
+		local nInRangeEnemy = J.GetEnemiesNearLoc(nLocationAoE.targetloc, nRadius * 0.6)
+
+		local nNonMagicImmuneEnemyCount = 0
+		for _, enemy in pairs(nInRangeEnemy) do
+			if J.IsValidHero(enemy)
+			and J.CanCastOnNonMagicImmune(enemy)
+			then
+				nNonMagicImmuneEnemyCount = nNonMagicImmuneEnemyCount + 1
+				if (enemy:HasModifier('modifier_enigma_black_hole_pull')
+					or enemy:HasModifier('modifier_faceless_void_chronosphere_freeze')
+					or enemy:HasModifier('modifier_legion_commander_duel'))
+				and J.IsCore(enemy)
+				and J.GetHP(enemy) > 0.4
+				then
+					return BOT_ACTION_DESIRE_HIGH
+				end
+			end
+		end
+
+		if #nInRangeEnemy >= 2 and nNonMagicImmuneEnemyCount >= 2 then
+			return BOT_ACTION_DESIRE_HIGH
+		end
+	end
+
+	if J.IsGoingOnSomeone(bot) then
+		if J.IsValidHero(botTarget)
+		and J.CanCastOnNonMagicImmune(botTarget)
+		and not string.find(botTarget:GetUnitName(), 'medusa')
+		and not J.IsDisabled(botTarget)
+		and J.IsInRange(bot, botTarget, nRadius * 0.6)
+		and not J.IsChasingTarget(bot, botTarget)
+		and botTarget:GetHealth() > 800
+		and botHP > 0.35
+		and nSoulCount >= 10
+		then
+			return BOT_ACTION_DESIRE_HIGH
+		end
+	end
+
+	return BOT_ACTION_DESIRE_NONE
+end
+
+-- gets disabled a lot; not reliable since does not really communicate with teammates
+function X.ConsiderUltCombo()
+	if not J.CanCastAbility(RequiemOfSouls) then
+		return
+	end
+
+	local EulsScepter = J.GetItem('item_cyclone')
+	if EulsScepter == nil then
+		EulsScepter = J.GetItem('item_wind_waker')
+	end
+	local bBlink = J.CanBlinkDagger(bot)
+	local bBKB = J.CanBlackKingBar(bot)
+	local bEuls = J.CanCastAbility(EulsScepter)
+
+	local nBlinkRange = 1200
+	local nEulsRange = 550
+	local nRadius = RequiemOfSouls:GetSpecialValueInt('requiem_radius')
+	local nCastPoint = RequiemOfSouls:GetCastPoint()
+	local nSoulCount = J.GetModifierCount(bot, 'modifier_nevermore_necromastery')
+	local nDamage = RequiemOfSouls:GetSpecialValueInt('#AbilityDamage')
+
+	local nAllyHeroes = J.GetAlliesNearLoc(bot:GetLocation(), 1600)
+	local nEnemyHeroes = J.GetEnemiesNearLoc(bot:GetLocation(), 1600)
+
+	local nDelay = 2.5 - nCastPoint
+	if J.HasItem(bot, 'item_yasha_and_kaya') then
+		nDelay = nDelay * 0.75
+		if FeastOfSouls ~= nil and FeastOfSouls:IsTrained() then
+			local talent_25_right = FeastOfSouls:GetSpecialValueInt('cast_speed_pct')
+			nDelay = nDelay * (1 - ((talent_25_right - 100) / 100))
+		end
+	end
+
+	if bBKB and bBlink and bEuls and nSoulCount >= 17
+	and bot:GetMana() > (bot.BlackKingBar:GetManaCost() + EulsScepter:GetManaCost() + RequiemOfSouls:GetManaCost())
+	then
+		if J.IsInTeamFight(bot, 1200) then
+			local nInRangeEnemy = J.GetEnemiesNearLoc(bot:GetLocation(), nBlinkRange)
+			local hTarget = nil
+			local hTargetDamage = 0
+
+			for _, enemy in pairs(nInRangeEnemy) do
+				if J.IsValidHero(enemy)
+				and J.GetHP(enemy) > 0.5
+				and J.CanCastOnNonMagicImmune(enemy)
+				and J.CanCastOnTargetAdvanced(enemy)
+				and not string.find(enemy:GetUnitName(), 'medusa')
+				and not enemy:HasModifier('modifier_abaddon_borrowed_time')
+				and not enemy:HasModifier('modifier_dazzle_shallow_grave')
+				and not enemy:HasModifier('modifier_enigma_black_hole_pull')
+				and not enemy:HasModifier('modifier_faceless_void_chronosphere_freeze')
+				and not enemy:HasModifier('modifier_necrolyte_reapers_scythe')
+				then
+					local enemyDamage = enemy:GetEstimatedDamageToTarget(false, bot, 8.0, DAMAGE_TYPE_ALL)
+					if enemyDamage > hTargetDamage then
+						hTarget = enemy
+						hTargetDamage = enemyDamage
+					end
+				end
+			end
+
+			if hTarget ~= nil then
+				bot:Action_UseAbility(bot.BlackKingBar)
+				bot:ActionQueue_UseAbilityOnLocation(bot.Blink, hTarget:GetLocation())
+				bot:ActionQueue_Delay(0.1)
+				bot:ActionQueue_UseAbilityOnEntity(EulsScepter, hTarget)
+				bot:ActionQueue_Delay(nDelay)
+				bot:ActionQueue_UseAbility(RequiemOfSouls)
+				return
+			end
+		end
+	end
+
+	-- TODO: check if can be stunned
+	if bBlink and bEuls and nSoulCount >= 10
+	and bot:GetMana() > (EulsScepter:GetManaCost() + RequiemOfSouls:GetManaCost())
+	then
+		if J.IsGoingOnSomeone(bot)
+		and math.abs(#nAllyHeroes - #nEnemyHeroes) <= 1
+		and #nAllyHeroes <= 2
+		then
+			for _, enemy in pairs(nEnemyHeroes) do
+				if J.IsValidHero(enemy)
+				and J.GetHP(enemy) > 0.3
+				and J.CanCastOnNonMagicImmune(enemy)
+				and J.CanCastOnTargetAdvanced(enemy)
+				and not string.find(enemy:GetUnitName(), 'medusa')
+				and not enemy:HasModifier('modifier_abaddon_borrowed_time')
+				and not enemy:HasModifier('modifier_dazzle_shallow_grave')
+				and not enemy:HasModifier('modifier_enigma_black_hole_pull')
+				and not enemy:HasModifier('modifier_faceless_void_chronosphere_freeze')
+				and not enemy:HasModifier('modifier_legion_commander_duel')
+				and not enemy:HasModifier('modifier_necrolyte_reapers_scythe')
+				and not enemy:HasModifier('modifier_oracle_false_promise_timer')
+				then
+					local fDamage = bot:GetEstimatedDamageToTarget(true, enemy, 8.0, DAMAGE_TYPE_ALL)
+					if J.CanKillTarget(enemy, fDamage, DAMAGE_TYPE_ALL) then
+						bot:Action_UseAbilityOnLocation(bot.Blink, enemy:GetLocation())
+						bot:ActionQueue_Delay(0.1)
+						bot:ActionQueue_UseAbilityOnEntity(EulsScepter, enemy)
+						bot:ActionQueue_Delay(nDelay)
+						bot:ActionQueue_UseAbility(RequiemOfSouls)
+						return
+					end
+				end
+			end
+		end
+	end
+end
+
+function X.IsUnitNearLoc(nUnit, vLoc, nRadius, nDelay)
+	if J.GetLocationToLocationDistance(J.GetCorrectLoc(nUnit, nDelay), vLoc) <= nRadius
 	then
 		return true
 	end
 
 	return false
-
 end
 
 

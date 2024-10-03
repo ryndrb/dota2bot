@@ -1187,6 +1187,7 @@ end
 --跳刀
 X.ConsiderItemDesire["item_blink"] = function( hItem )
 	local nCastRange = 1200 + aetherRange
+	local botName = bot:GetUnitName()
 
 	if bot:IsRooted()
 	or bot:HasModifier('modifier_nyx_assassin_vendetta')
@@ -1264,17 +1265,24 @@ X.ConsiderItemDesire["item_blink"] = function( hItem )
 		-- for their queued spell combos
 		if  bot.shouldBlink ~= nil
 		and bot.shouldBlink
-		and (bot:GetUnitName() == 'npc_dota_hero_batrider'
-			or bot:GetUnitName() == 'npc_dota_hero_beastmaster'
-			or bot:GetUnitName() == 'npc_dota_hero_dark_seer'
-			or bot:GetUnitName() == 'npc_dota_hero_earthshaker'
-			or bot:GetUnitName() == 'npc_dota_hero_magnataur'
-			or bot:GetUnitName() == 'npc_dota_hero_rubick'
-			-- or bot:GetUnitName() == 'npc_dota_hero_tinker'
-			or bot:GetUnitName() == 'npc_dota_hero_tiny'
-			or bot:GetUnitName() == 'npc_dota_hero_treant')
+		and (botName == 'npc_dota_hero_batrider'
+			or botName == 'npc_dota_hero_beastmaster'
+			or botName == 'npc_dota_hero_dark_seer'
+			or botName == 'npc_dota_hero_earthshaker'
+			or botName == 'npc_dota_hero_magnataur'
+			or botName == 'npc_dota_hero_rubick'
+			-- or botName == 'npc_dota_hero_tinker'
+			or botName == 'npc_dota_hero_tiny'
+			or botName == 'npc_dota_hero_treant')
 		then
 			return BOT_ACTION_DESIRE_NONE
+		end
+
+		if botName == 'npc_dota_hero_nevermore' then
+			local RequiemOfSouls = bot:GetAbilityByName('nevermore_requiem')
+			if J.CanCastAbility(RequiemOfSouls) then
+				return BOT_ACTION_DESIRE_NONE
+			end
 		end
 
 		if  J.IsValidTarget(botTarget)
@@ -4525,6 +4533,7 @@ X.ConsiderItemDesire["item_tpscroll"] = function( hItem )
 	local botLocation = bot:GetLocation()
 	local botHP = J.GetHP( bot )
 	local botMP = J.GetMP( bot )
+	local botLV = bot:GetLevel()
 	local nEnemyCount = X.GetNumHeroWithinRange( 1600 )
 	local nAllyCount = J.GetAllyCount( bot, 1600 )
 	local itemFlask = J.IsItemAvailable( "item_flask" )

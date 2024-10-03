@@ -124,7 +124,7 @@ If you’ve come across this script or is using it, good feedback is always welc
     - ***Later***
         - Morphling Ult
     - ***Bugged (Internal; some will be selected)***
-        - [ ] Dark Willow
+        - [x] Dark Willow
         - [ ] Elder Titan
         - [x] Hoodwink
         - [ ] IO
@@ -157,7 +157,7 @@ If you’ve come across this script or is using it, good feedback is always welc
     | Clockwerk             | &check; | &check; |
     | Crystal Maiden        | &check; | &check; |
     | Dark Seer             | -       | -       |
-    | ~~Dark Willow~~       | &check; | -       |
+    | Dark Willow           | -       | -       |
     | Dawnbreaker           | -       | -       |
     | Dazzle                | -       | -       |
     | Death Prophet         | -       | -       |

@@ -143,6 +143,14 @@ X['spells'] = {
         ['crystal_maiden_crystal_clone'] = {weight = 1},
         ['crystal_maiden_freezing_field'] = {weight = 0.1},
     },
+
+    ['npc_dota_hero_dark_willow'] = {
+        ['dark_willow_bramble_maze'] = {weight = 0.1},
+        ['dark_willow_shadow_realm'] = {weight = 0.5},
+        ['dark_willow_cursed_crown'] = {weight = 0.4},
+        ['dark_willow_bedlam'] = {weight = 0.8},
+        ['dark_willow_terrorize'] = {weight = 0.1},
+    },
     
     ['npc_dota_hero_dark_seer'] = {
         ['dark_seer_vacuum'] = {weight = 0.3},

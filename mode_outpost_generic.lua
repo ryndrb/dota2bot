@@ -314,6 +314,15 @@ function GetDesire()
 				return BOT_MODE_DESIRE_ABSOLUTE
 			end
 		end
+	elseif botName == "npc_dota_hero_nevermore"
+	then
+		if cAbility == nil then cAbility = bot:GetAbilityByName("nevermore_requiem") end
+		if cAbility:IsTrained()
+		then
+			if cAbility:IsInAbilityPhase() or bot:HasModifier('modifier_nevermore_requiem_invis_break') then
+				return BOT_MODE_DESIRE_ABSOLUTE
+			end
+		end
 	end
 
 	----------

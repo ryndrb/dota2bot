@@ -571,7 +571,22 @@ local Heroes = {
         },
     },
 
-    -- ['npc_dota_hero_dark_willow'] = {},
+    ['npc_dota_hero_dark_willow'] = {
+        ['synergy'] = {
+            'npc_dota_hero_meepo',
+            'npc_dota_hero_necrolyte',
+            'npc_dota_hero_outworld_destroyer',
+            'npc_dota_hero_medusa',
+            'npc_dota_hero_abaddon',
+        },
+        ['counter'] = {
+            'npc_dota_hero_doom_bringer',
+            'npc_dota_hero_batrider',
+            'npc_dota_hero_death_prophet',
+            'npc_dota_hero_magnataur',
+            'npc_dota_hero_sven',
+        },
+    },
 
     ['npc_dota_hero_dawnbreaker'] = {
         ['synergy'] = {

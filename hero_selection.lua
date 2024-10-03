@@ -49,7 +49,7 @@ local sHeroList = {										-- pos  1, 2, 3, 4, 5
 	{name = 'npc_dota_hero_clinkz', 					role = {100, 50, 0, 50, 5}},
 	{name = 'npc_dota_hero_crystal_maiden', 			role = {0, 0, 0, 100, 100}},
 	{name = 'npc_dota_hero_dark_seer', 					role = {0, 0, 100, 0, 0}},
-	{name = 'npc_dota_hero_dark_willow', 				role = {0, 0, 0, 0, 0}},--nil
+	{name = 'npc_dota_hero_dark_willow', 				role = {0, 0, 0, 100, 50}},
 	{name = 'npc_dota_hero_dawnbreaker', 				role = {0, 5, 100, 50, 50}},
 	{name = 'npc_dota_hero_dazzle', 					role = {0, 50, 0, 100, 100}},
 	{name = 'npc_dota_hero_disruptor', 					role = {0, 0, 0, 100, 100}},

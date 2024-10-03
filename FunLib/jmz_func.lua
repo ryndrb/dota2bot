@@ -1979,7 +1979,7 @@ function J.GetFaceTowardDistanceLocation( bot, nDistance )
 
 	local npcBotLocation = bot:GetLocation()
 	local tempRadians = bot:GetFacing() * math.pi / 180
-	local tempVector = Vector( math.cos( tempRadians ), math.sin( tempRadians ) )
+	local tempVector = Vector( math.cos( tempRadians ), math.sin( tempRadians ), npcBotLocation.z )
 
 	return npcBotLocation + nDistance * tempVector
 
@@ -2776,6 +2776,8 @@ function J.CanBeAttacked( unit )
 			and not unit:IsAttackImmune()
 			and not unit:IsInvulnerable()
 			and not unit:HasModifier("modifier_fountain_glyph")
+			and not unit:HasModifier("modifier_dark_willow_shadow_realm_buff")
+			and not unit:HasModifier("modifier_ringmaster_the_box_buff")
 			and (unit:GetTeam() == GetTeam() 
 					or not unit:HasModifier("modifier_crystal_maiden_frostbite") )
 			and (unit:GetTeam() ~= GetTeam() 

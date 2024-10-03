@@ -98,6 +98,22 @@ function GetDesire()
         end
     end
 
+    if (not J.IsCore(bot) or (J.IsCore(bot) and not J.IsInLaningPhase())) and not J.IsFarming(bot) then
+        for i = 1, 5 do
+            local member = GetTeamMember(i)
+            if J.IsValidHero(member) and member ~= bot
+            and J.IsGoingOnSomeone(member)
+            and J.IsInRange(bot, member, 4400)
+            then
+                local target = member:GetAttackTarget()
+                if J.IsValidHero(target) then
+                    bot:SetTarget(target)
+                    return 0.95
+                end
+            end
+        end
+    end
+
     if (bot:HasModifier('modifier_marci_unleash') and J.GetModifierTime(bot, 'modifier_marci_unleash') >= 0.5)
     or (bot:HasModifier('modifier_muerta_pierce_the_veil_buff') and J.GetModifierTime(bot, 'modifier_muerta_pierce_the_veil_buff') >= 0.5)
     then
