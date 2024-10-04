@@ -114,8 +114,8 @@ function GetDesire()
         end
     end
 
-    if (bot:HasModifier('modifier_marci_unleash') and J.GetModifierTime(bot, 'modifier_marci_unleash') >= 0.5)
-    or (bot:HasModifier('modifier_muerta_pierce_the_veil_buff') and J.GetModifierTime(bot, 'modifier_muerta_pierce_the_veil_buff') >= 0.5)
+    if (bot:HasModifier('modifier_marci_unleash') and J.GetModifierTime(bot, 'modifier_marci_unleash') >= 7.5)
+    or (bot:HasModifier('modifier_muerta_pierce_the_veil_buff') and J.GetModifierTime(bot, 'modifier_muerta_pierce_the_veil_buff') >= 3.5)
     then
         if J.IsValidHero(botTarget) and J.CanBeAttacked(botTarget) and not J.IsSuspiciousIllusion(botTarget) then
             bot:SetTarget(botTarget)
