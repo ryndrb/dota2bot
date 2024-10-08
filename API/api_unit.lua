@@ -503,6 +503,16 @@
 -- int GetAssignedLane()
 
 -- Gets the assigned lane of this unit.
+-- fix lane of Elder Titan (and IO)
+local o_GetAssignedLane = CDOTA_Bot_Script.GetAssignedLane
+function CDOTA_Bot_Script:GetAssignedLane()
+    if self ~= nil
+    and (self:GetUnitName() == 'npc_dota_hero_elder_titan' or self:GetUnitName() == 'npc_dota_hero_wisp')
+    and self.lane ~= nil then
+        return self.lane
+    end
+    return o_GetAssignedLane(self)
+end
 
 -- float GetOffensivePower()
 

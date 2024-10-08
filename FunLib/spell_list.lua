@@ -223,6 +223,14 @@ X['spells'] = {
         ['earthshaker_echo_slam'] = {weight = 0.1},
     },
     
+    ['npc_dota_hero_elder_titan'] = {
+        ['elder_titan_echo_stomp'] = {weight = 0.8},
+        ['elder_titan_ancestral_spirit'] = {weight = 1},
+        ['elder_titan_move_spirit'] = {weight = 1},
+        ['elder_titan_return_spirit'] = {weight = 1},
+        ['elder_titan_earth_splitter'] = {weight = 0.5},
+    },
+
     ['npc_dota_hero_ember_spirit'] = {
         ['ember_spirit_searing_chains'] = {weight = 0.7},
         ['ember_spirit_sleight_of_fist'] = {weight = 0.9},

@@ -323,6 +323,15 @@ function GetDesire()
 				return BOT_MODE_DESIRE_ABSOLUTE
 			end
 		end
+	elseif botName == "npc_dota_hero_elder_titan"
+	then
+		if cAbility == nil then cAbility = bot:GetAbilityByName("elder_titan_echo_stomp") end
+		if cAbility:IsTrained()
+		then
+			if cAbility:IsChanneling() then
+				return BOT_MODE_DESIRE_ABSOLUTE
+			end
+		end
 	end
 
 	----------

@@ -831,7 +831,22 @@ local Heroes = {
         },
     },
 
-    -- ['npc_dota_hero_elder_titan'] = {},
+    ['npc_dota_hero_elder_titan'] = {
+        ['synergy'] = {
+            'npc_dota_hero_puck',
+            'npc_dota_hero_necrolyte',
+            'npc_dota_hero_ogre_magi',
+            'npc_dota_hero_life_stealer',
+            'npc_dota_hero_shredder',
+        },
+        ['counter'] = {
+            'npc_dota_hero_meepo',
+            'npc_dota_hero_phantom_lancer',
+            'npc_dota_hero_naga_siren',
+            'npc_dota_hero_broodmother',
+            'npc_dota_hero_antimage',
+        },
+    },
 
     ['npc_dota_hero_ember_spirit'] = {
         ['synergy'] = {

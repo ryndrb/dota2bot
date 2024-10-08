@@ -59,7 +59,7 @@ local sHeroList = {										-- pos  1, 2, 3, 4, 5
 	{name = 'npc_dota_hero_drow_ranger', 				role = {100, 80, 0, 0, 0}},
 	{name = 'npc_dota_hero_earth_spirit', 				role = {0, 100, 50, 100, 5}},
 	{name = 'npc_dota_hero_earthshaker', 				role = {0, 50, 100, 100, 0}},
-	{name = 'npc_dota_hero_elder_titan', 				role = {0, 0, 0, 0, 0}},--nil
+	{name = 'npc_dota_hero_elder_titan', 				role = {0, 0, 50, 40, 80}},
 	{name = 'npc_dota_hero_ember_spirit', 				role = {0, 100, 0, 0, 0}},
 	{name = 'npc_dota_hero_enchantress', 				role = {0, 0, 100, 0, 100}},
 	{name = 'npc_dota_hero_enigma', 					role = {0, 0, 50, 80, 100}},
