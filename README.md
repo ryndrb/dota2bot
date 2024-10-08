@@ -46,7 +46,7 @@ If you’ve come across this script or is using it, good feedback is always welc
 
 # Tinkering ABo(u)t (ryndrb)
 - ***Heroes (Pos: 1,2,3,4,5)***
-    - <ins>Heroes Implemented Count:</ins> **122** / 125
+    - <ins>Heroes Implemented Count:</ins> **123** / 125
     - ***Added***
         - [1,2,3,4,5] Abaddon
         - [1,2,3] Alchemist
@@ -66,7 +66,7 @@ If you’ve come across this script or is using it, good feedback is always welc
         - [2,3] Doom
         - [2,3,4,5] Earth Spirit
         - [2,3,4] Earthshaker
-        - ~~[4,5] Elder Titan~~
+        - [3,4,5] Elder Titan
         - [2] Ember Spirit
         - [3,5] Enchantress
         - [3,4,5] Enigma
@@ -125,7 +125,7 @@ If you’ve come across this script or is using it, good feedback is always welc
         - Morphling Ult
     - ***Bugged (Internal; some will be selected)***
         - [x] Dark Willow
-        - [ ] Elder Titan
+        - [x] Elder Titan
         - [x] Hoodwink
         - [ ] IO
         - [ ] Lone Druid
@@ -167,7 +167,7 @@ If you’ve come across this script or is using it, good feedback is always welc
     | Drow Ranger           | &check; | -       |
     | Earth Spirit          | &check; | &cross; |
     | Earthshaker           | -       | &check; |
-    | ~~Elder Titan~~       | -       | -       |
+    | Elder Titan           | -       | -       |
     | Ember Spirit          | -       | -       |
     | Enchantress           | &check; | &check; |
     | Enigma                | -       | -       |
