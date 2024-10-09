@@ -231,25 +231,6 @@ function X.SkillsComplement()
         return
     end
 
-    if bot.lane == nil then
-        local botPos = J.GetPosition(bot)
-        if botPos == 1 or botPos == 5 then
-            if GetTeam() == TEAM_RADIANT then
-                bot.lane = 3
-            else
-                bot.lane = 1
-            end
-        elseif botPos == 2 then
-            bot.lane = 2
-        elseif botPos == 3 or botPos == 4 then
-            if GetTeam() == TEAM_RADIANT then
-                bot.lane = 1
-            else
-                bot.lane = 3
-            end
-        end
-    end
-
     -- due to alt-cast bug, ET will not use echo stomp once shard is acquired (tormentor)
 
     botTarget = J.GetProperTarget(bot)

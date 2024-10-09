@@ -47,6 +47,30 @@ function GetDesire()
 	bot.laneToPush = J.GetMostPushLaneDesire()
 	bot.laneToDefend = J.GetMostDefendLaneDesire()
 
+	-- fix lanes for these two
+	if botName == 'npc_dota_hero_elder_titan'
+	or botName == 'npc_dota_hero_wisp'
+	then
+		if bot.lane == nil then
+			local botPos = J.GetPosition(bot)
+			if botPos == 1 or botPos == 5 then
+				if GetTeam() == TEAM_RADIANT then
+					bot.lane = 3
+				else
+					bot.lane = 1
+				end
+			elseif botPos == 2 then
+				bot.lane = 2
+			elseif botPos == 3 or botPos == 4 then
+				if GetTeam() == TEAM_RADIANT then
+					bot.lane = 1
+				else
+					bot.lane = 3
+				end
+			end
+		end
+	end
+
 	if not beInitDone
 	then
 		beInitDone = true
