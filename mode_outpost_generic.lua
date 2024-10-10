@@ -332,6 +332,17 @@ function GetDesire()
 				return BOT_MODE_DESIRE_ABSOLUTE
 			end
 		end
+	elseif botName == "npc_dota_hero_wisp"
+	then
+		if cAbility == nil then cAbility = bot:GetAbilityByName("wisp_tether") end
+		if cAbility:IsTrained()
+		then
+			if bot:HasModifier('modifier_wisp_tether') and bot.tethered_ally ~= nil and not (J.IsRetreating(bot) and J.GetHP(bot) < 0.25) then
+				if GetUnitToUnitDistance(bot, bot.tethered_ally) > 550 then
+					return BOT_MODE_DESIRE_ABSOLUTE
+				end
+			end
+		end
 	end
 
 	----------
@@ -658,6 +669,22 @@ function Think()
 			bot:Action_MoveToLocation(J.GetEscapeLoc())
 		end
 
+		return
+	end
+
+	-- IO Tether
+	if bot:HasModifier('modifier_wisp_tether') and bot.tethered_ally ~= nil then
+		local attackTarget = bot.tethered_ally:GetAttackTarget()
+		if J.IsValid(attackTarget) and J.IsInRange(bot, attackTarget, bot:GetAttackRange() + 300)
+		and not J.IsGoingOnSomeone(bot)
+		then
+			bot:SetTarget(attackTarget)
+			bot:Action_AttackUnit(attackTarget, true)
+			return
+		end
+
+		-- TODO: Less frontlining when engaging sometimes
+		bot:Action_MoveToLocation(bot.tethered_ally:GetLocation())
 		return
 	end
 

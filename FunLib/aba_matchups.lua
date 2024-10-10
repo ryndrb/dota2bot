@@ -3237,14 +3237,22 @@ local Heroes = {
         },
     },
 
-    -- ['npc_dota_hero_wisp'] = {
-    --     ['synergy'] = {
-
-    --     },
-    --     ['counter'] = {
-            
-    --     },
-    -- },
+    ['npc_dota_hero_wisp'] = {
+        ['synergy'] = {
+            'npc_dota_hero_marci',
+            'npc_dota_hero_gyrocopter',
+            'npc_dota_hero_viper',
+            'npc_dota_hero_bristleback',
+            'npc_dota_hero_nevermore',
+        },
+        ['counter'] = {
+            'npc_dota_hero_spectre',
+            'npc_dota_hero_pugna',
+            'npc_dota_hero_orcale',
+            'npc_dota_hero_rubick',
+            'npc_dota_hero_tinker',
+        },
+    },
 
     ['npc_dota_hero_witch_doctor'] = {
         ['synergy'] = {

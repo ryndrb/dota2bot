@@ -951,6 +951,16 @@ X['spells'] = {
         ['winter_wyvern_winters_curse'] = {weight = 0.5},
     },
 
+    ['npc_dota_hero_wisp'] = {
+        ['wisp_tether'] = {weight = 0.9},
+        ['wisp_tether_break'] = {weight = 1},
+        ['wisp_spirits'] = {weight = 1},
+        ['wisp_spirits_in'] = {weight = 1},
+        ['wisp_spirits_out'] = {weight = 1},
+        ['wisp_overcharge'] = {weight = 0.4},
+        ['wisp_relocate'] = {weight = 0.9},
+    },
+
     ['npc_dota_hero_witch_doctor'] = {
         ['witch_doctor_paralyzing_cask'] = {weight = 0.1},
         ['witch_doctor_voodoo_restoration'] = {weight = 0.5},
