@@ -186,7 +186,7 @@ function X.ConsiderMove(hMinionUnit)
 
         return BOT_ACTION_DESIRE_HIGH, J.GetClosestTeamLane(hMinionUnit)
     else
-        return BOT_ACTION_DESIRE_HIGH, bot:GetLocation()
+        return BOT_ACTION_DESIRE_HIGH, bot:GetLocation() + RandomVector(150)
     end
 end
 
