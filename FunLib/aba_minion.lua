@@ -4,12 +4,12 @@ local bot = GetBot()
 local J = require(GetScriptDirectory()..'/FunLib/jmz_func')
 local U = require(GetScriptDirectory()..'/FunLib/MinionLib/utils')
 
-local AttackingWards = require(GetScriptDirectory()..'/FunLib/MinionLib/attacking_wards')
-local BrewLink = require(GetScriptDirectory()..'/FunLib/MinionLib/brew_link')
-local Familiars = require(GetScriptDirectory()..'/FunLib/MinionLib/familiars')
-local Illusion = require(GetScriptDirectory()..'/FunLib/MinionLib/illusions')
-local MinionWithSkill = require(GetScriptDirectory()..'/FunLib/MinionLib/minion_with_skill')
-local VengefulSprit = require(GetScriptDirectory()..'/FunLib/MinionLib/vengeful_spirit')
+local AttackingWards = dofile(GetScriptDirectory()..'/FunLib/MinionLib/attacking_wards')
+local BrewLink = dofile(GetScriptDirectory()..'/FunLib/MinionLib/brew_link')
+local Familiars = dofile(GetScriptDirectory()..'/FunLib/MinionLib/familiars')
+local Illusion = dofile(GetScriptDirectory()..'/FunLib/MinionLib/illusions')
+local MinionWithSkill = dofile(GetScriptDirectory()..'/FunLib/MinionLib/minion_with_skill')
+local VengefulSprit = dofile(GetScriptDirectory()..'/FunLib/MinionLib/vengeful_spirit')
 
 local nTeamAncient = GetAncient(GetTeam());
 local vTeamAncientLoc = nil;

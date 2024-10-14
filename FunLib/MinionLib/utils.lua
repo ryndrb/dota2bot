@@ -206,14 +206,14 @@ function U.InitiateAbility(unit)
 
         if unit:GetUnitName() == 'npc_dota_hero_vengefulspirit'
         then
-            for i = 1, 23
+            for i = 0, 23
             do
-                unit.abilities[i] = unit:GetAbilityInSlot(i)
+                unit.abilities[i+1] = unit:GetAbilityInSlot(i)
             end
         else
-            for i = 1, 4
+            for i = 0, 3
             do
-                unit.abilities[i] = unit:GetAbilityInSlot(i)
+                unit.abilities[i+1] = unit:GetAbilityInSlot(i)
             end
         end
     end
