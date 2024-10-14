@@ -146,7 +146,8 @@ local tProTeams = {
         ['team_org'] = 'HEROIC',
         ['alias'] = 'HEROIC',
         ['rosters'] = {
-            [1] = {"K1", "4nalog", "Davai Lama", "Scofield", "KJ"},
+            [1] = {"K1", "4nalog <01", "Davai Lama", "Scofield", "KJ"},
+            [2] = {"ɹǝʞɹɐd", "4nalog <01", "Davai Lama", "Scofield", "KJ"},
         }
     },
     [12] = {

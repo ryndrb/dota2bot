@@ -106,8 +106,12 @@ function GetDesire()
 			return BOT_MODE_DESIRE_ABSOLUTE * 1.1;
 		end
 	end
+
+	local botActiveMode = bot:GetActiveMode()
 	
-	if DotaTime() < 50 then return 0.0 end
+	if DotaTime() < 50 or botActiveMode == BOT_MODE_RUNE then
+		return 0.0
+	end
 	
 	local aliveEnemyCount = J.GetNumOfAliveHeroes(true);
 	local aliveAllyCount  = J.GetNumOfAliveHeroes(false);
