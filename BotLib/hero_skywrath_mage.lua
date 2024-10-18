@@ -404,8 +404,19 @@ function X.ConsiderQ()
 		if J.IsRoshan( botTarget )
 			and J.GetHP( botTarget ) > 0.2
 			and J.IsInRange( botTarget, bot, nCastRange )
+			and J.CanBeAttacked(botTarget)
+			and J.IsAttacking(bot)
 		then
 			return BOT_ACTION_DESIRE_HIGH, botTarget, 'Q肉山'
+		end
+	end
+
+	if J.IsDoingTormentor(bot) then
+		if J.IsTormentor(botTarget)
+        and J.IsInRange(bot, botTarget, nCastRange)
+        and J.IsAttacking(bot)
+		then
+			return BOT_ACTION_DESIRE_HIGH, botTarget, ''
 		end
 	end
 
@@ -586,8 +597,19 @@ function X.ConsiderE()
 	then
 		if J.IsRoshan( botTarget )
 			and J.IsInRange( botTarget, bot, nCastRange )
+			and J.CanBeAttacked(botTarget)
+			and J.IsAttacking(bot)
 		then
 			return BOT_ACTION_DESIRE_HIGH, botTarget, "E肉山"
+		end
+	end
+
+	if J.IsDoingTormentor(bot) then
+		if J.IsTormentor(botTarget)
+        and J.IsInRange(bot, botTarget, nCastRange)
+        and J.IsAttacking(bot)
+		then
+			return BOT_ACTION_DESIRE_HIGH, botTarget, ''
 		end
 	end
 

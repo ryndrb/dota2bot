@@ -465,12 +465,26 @@ function X.ConsiderQ()
 			and J.IsInRange( nAttackTarget, bot, 600 )
 			and not nAttackTarget:HasModifier( "modifier_sniper_shrapnel_slow" )
 			and not X.IsAbiltyQCastedHere( nAttackTarget:GetLocation(), nRadius )
+			and J.CanBeAttacked(nAttackTarget)
+			and J.IsAttacking(bot)
 		then
 			local nAllies = bot:GetNearbyHeroes( 800, false, BOT_MODE_ROSHAN )
 			if #nAllies >= 4
 			then
 				return BOT_ACTION_DESIRE_HIGH, nAttackTarget:GetLocation()
 			end
+		end
+	end
+
+	local botTarget = J.GetProperTarget(bot)
+	if J.IsDoingTormentor(bot)
+	then
+		if J.IsTormentor(botTarget)
+        and J.IsInRange( botTarget, bot, nRadius )
+        and J.IsAttacking(bot)
+		and not botTarget:HasModifier( "modifier_sniper_shrapnel_slow" )
+		then
+			return BOT_ACTION_DESIRE_HIGH
 		end
 	end
 

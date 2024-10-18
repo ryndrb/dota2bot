@@ -342,7 +342,27 @@ function X.ConsiderQ()
 		end
 	end
 	
-	
+	if J.IsDoingRoshan(bot)
+	then
+		if J.IsRoshan( botTarget )
+		and J.IsInRange( botTarget, bot, nCastRange )
+		and J.CanBeAttacked(botTarget)
+		and J.IsAttacking(bot)
+		and not botTarget:HasModifier('modifier_roshan_spell_block')
+		then
+			return BOT_ACTION_DESIRE_HIGH, botTarget, ''
+		end
+	end
+
+    if J.IsDoingTormentor(bot)
+	then
+		if J.IsTormentor(botTarget)
+        and J.IsInRange( botTarget, bot, nCastRange )
+        and J.IsAttacking(bot)
+		then
+			return BOT_ACTION_DESIRE_HIGH, botTarget, ''
+		end
+	end
 	
 
 	if J.IsFarming( bot )
@@ -695,6 +715,27 @@ function X.ConsiderE()
 			sCastMotive = 'E-打野AOE'..(#creepList)
 			return BOT_ACTION_DESIRE_HIGH, hCastTarget, sCastMotive
 	    end
+	end
+
+	if J.IsDoingRoshan(bot)
+	then
+		if J.IsRoshan( botTarget )
+		and J.IsInRange( botTarget, bot, nCastRange )
+		and J.CanBeAttacked(botTarget)
+		and J.IsAttacking(bot)
+		then
+			return BOT_ACTION_DESIRE_HIGH
+		end
+	end
+
+    if J.IsDoingTormentor(bot)
+	then
+		if J.IsTormentor(botTarget)
+        and J.IsInRange( botTarget, bot, nCastRange )
+        and J.IsAttacking(bot)
+		then
+			return BOT_ACTION_DESIRE_HIGH
+		end
 	end
 	
 	

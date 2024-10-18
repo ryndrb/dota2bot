@@ -501,6 +501,31 @@ function X.ConsiderPhantasm()
 		return BOT_ACTION_DESIRE_HIGH
 	end
 
+	if J.IsDoingRoshan(bot) then
+		if J.IsRoshan(botTarget)
+		and J.IsInRange(bot, botTarget, 800)
+		and J.CanBeAttacked(botTarget)
+		and J.GetHP(botTarget) > 0.5
+		and J.IsAttacking(bot)
+		and (J.IsEarlyGame() or J.IsMidGame())
+		and J.GetManaAfter(Phantasm:GetManaCost()) > 0.35
+		then
+			return BOT_ACTION_DESIRE_HIGH
+		end
+	end
+
+	if J.IsDoingTormentor(bot) then
+		if J.IsTormentor(botTarget)
+		and J.IsInRange(bot, botTarget, 800)
+		and J.CanBeAttacked(botTarget)
+		and J.GetHP(botTarget) > 0.5
+		and J.IsAttacking(bot)
+		and (J.IsEarlyGame() or J.IsMidGame())
+		then
+			return BOT_ACTION_DESIRE_HIGH
+		end
+	end
+
 	return BOT_ACTION_DESIRE_NONE
 end
 

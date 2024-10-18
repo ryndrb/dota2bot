@@ -519,9 +519,20 @@ function X.ConsiderQ()
 	then
 		if J.IsRoshan( botTarget ) and J.GetHP( botTarget ) > 0.15
 			and J.IsInRange( botTarget, bot, nCastRange )
+			and J.IsAttacking(bot)
 		then
 			nTargetLocation = botTarget:GetLocation()
 			return BOT_ACTION_DESIRE_HIGH, nTargetLocation, 'Q肉山'
+		end
+	end
+
+	if J.IsDoingTormentor(bot)
+	then
+		if J.IsTormentor(botTarget)
+		and J.IsInRange(bot, botTarget, 800)
+		and J.IsAttacking(bot)
+		then
+			return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation(), ''
 		end
 	end
 
@@ -742,9 +753,20 @@ function X.ConsiderW()
 	then
 		if J.IsRoshan( botTarget ) and J.GetHP( botTarget ) > 0.3
 			and J.IsInRange( botTarget, bot, nCastRange )
+			and J.IsAttacking(bot)
 		then
 			nTargetLocation = botTarget:GetLocation()
 			return BOT_ACTION_DESIRE_HIGH, nTargetLocation, 'W肉山'
+		end
+	end
+
+	if J.IsDoingTormentor(bot)
+	then
+		if J.IsTormentor(botTarget)
+		and J.IsInRange(bot, botTarget, 800)
+		and J.IsAttacking(bot)
+		then
+			return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation(), ''
 		end
 	end
 

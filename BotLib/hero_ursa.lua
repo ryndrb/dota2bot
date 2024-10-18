@@ -385,7 +385,20 @@ function X.ConsiderOverpower()
 
 	if J.IsDoingRoshan(bot)
 	then
-		if J.IsRoshan(botTarget)
+		if J.IsRoshan( botTarget )
+		and J.IsInRange( botTarget, bot, 600)
+		and J.CanBeAttacked(botTarget)
+		and J.IsAttacking(bot)
+		then
+			return BOT_ACTION_DESIRE_HIGH
+		end
+	end
+
+    if J.IsDoingTormentor(bot)
+	then
+		if J.IsTormentor(botTarget)
+        and J.IsInRange( botTarget, bot, 600)
+        and J.IsAttacking(bot)
 		then
 			return BOT_ACTION_DESIRE_HIGH
 		end

@@ -405,6 +405,25 @@ function X.ConsiderIlluminate()
 		end
 	end
 
+    if J.IsDoingRoshan(bot) then
+		if J.IsRoshan(botTarget)
+		and J.IsInRange(botTarget, bot, nCastRange)
+		and J.CanBeAttacked(botTarget)
+		and J.IsAttacking(bot)
+		then
+			return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation()
+		end
+	end
+
+    if J.IsDoingTormentor(bot) then
+		if J.IsTormentor(botTarget)
+        and J.IsInRange(botTarget, bot, nCastRange)
+        and J.IsAttacking(bot)
+		then
+			return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation()
+		end
+	end
+
     return BOT_ACTION_DESIRE_NONE, 0
 end
 

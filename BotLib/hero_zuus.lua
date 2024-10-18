@@ -408,6 +408,28 @@ function X.ConsiderQ()
 		end
 	end
 
+	local botTarget = J.GetProperTarget(bot)
+	if J.IsDoingRoshan(bot)
+	then
+		if J.IsRoshan( botTarget )
+		and J.IsInRange( botTarget, bot, nCastRange)
+		and J.CanBeAttacked(botTarget)
+		and J.IsAttacking(bot)
+		then
+			return BOT_ACTION_DESIRE_HIGH, botTarget
+		end
+	end
+
+    if J.IsDoingTormentor(bot)
+	then
+		if J.IsTormentor(botTarget)
+        and J.IsInRange( botTarget, bot, nCastRange)
+        and J.IsAttacking(bot)
+		then
+			return BOT_ACTION_DESIRE_HIGH, botTarget
+		end
+	end
+
 	return BOT_ACTION_DESIRE_NONE, nil
 end
 
@@ -445,6 +467,28 @@ function X.ConsiderW()
 		and targetRanged:GetHealth() < targetRanged:GetActualIncomingDamage( nDamage + targetRanged:GetHealth() * abilityASBonus , DAMAGE_TYPE_MAGICAL )
 	then
 		return BOT_ACTION_DESIRE_HIGH, targetRanged
+	end
+
+	local botTarget = J.GetProperTarget(bot)
+	if J.IsDoingRoshan(bot)
+	then
+		if J.IsRoshan( botTarget )
+		and J.IsInRange( botTarget, bot, nCastRange)
+		and J.CanBeAttacked(botTarget)
+		and J.IsAttacking(bot)
+		then
+			return BOT_ACTION_DESIRE_HIGH, botTarget
+		end
+	end
+
+    if J.IsDoingTormentor(bot)
+	then
+		if J.IsTormentor(botTarget)
+        and J.IsInRange( botTarget, bot, nCastRange)
+        and J.IsAttacking(bot)
+		then
+			return BOT_ACTION_DESIRE_HIGH, botTarget
+		end
 	end
 
 	return BOT_ACTION_DESIRE_NONE, nil

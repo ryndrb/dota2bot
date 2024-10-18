@@ -431,11 +431,23 @@ function X.ConsiderQ()
 	then
 		if J.IsRoshan( botTarget )
 			and J.IsInRange( botTarget, bot, nCastRange )
+			and J.CanBeAttacked(botTarget)
+			and J.IsAttacking(bot)
 		then
 			hCastTarget = botTarget
 			sCastMotive = 'Q-肉山'
 			return BOT_ACTION_DESIRE_HIGH, hCastTarget, sCastMotive
 		end	
+	end
+
+	if J.IsDoingTormentor(bot)
+	then
+		if J.IsTormentor(botTarget)
+        and J.IsInRange( botTarget, bot, nCastRange )
+        and J.IsAttacking(bot)
+		then
+			return BOT_ACTION_DESIRE_HIGH, botTarget, ''
+		end
 	end
 
 
@@ -616,6 +628,27 @@ function X.ConsiderE()
 			sCastMotive = 'E-打野AOE'..(#creepList)
 			return BOT_ACTION_DESIRE_HIGH, sCastMotive
 	    end
+	end
+
+	if J.IsDoingRoshan(bot)
+	then
+		if J.IsRoshan( botTarget )
+		and J.IsInRange( botTarget, bot, nRadius )
+		and J.CanBeAttacked(botTarget)
+		and J.IsAttacking(bot)
+		then
+			return BOT_ACTION_DESIRE_HIGH, ''
+		end
+	end
+
+    if J.IsDoingTormentor(bot)
+	then
+		if J.IsTormentor(botTarget)
+        and J.IsInRange( botTarget, bot, nRadius )
+        and J.IsAttacking(bot)
+		then
+			return BOT_ACTION_DESIRE_HIGH, ''
+		end
 	end
 
 

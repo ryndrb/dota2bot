@@ -788,8 +788,18 @@ function X.ConsiderE()
 	then
 		if J.IsRoshan( botTarget )
 			and J.IsInRange( botTarget, bot, 1000 )
+			and J.IsAttacking(bot)
 		then
 			return BOT_ACTION_DESIRE_HIGH, bestTarget, 'E打肉'..J.Chat.GetNormName( bestTarget )
+		end
+	end
+
+	if J.IsDoingTormentor(bot) and bestTarget ~= nil then
+		if J.IsTormentor(botTarget)
+        and J.IsInRange( botTarget, bot, 800 )
+        and J.IsAttacking(bot)
+		then
+			return BOT_ACTION_DESIRE_HIGH, bestTarget, ''
 		end
 	end
 

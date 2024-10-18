@@ -396,6 +396,7 @@ function X.ConsiderMagneticField()
 			and J.IsValidTarget(nInRangeAlly[1]:GetAttackTarget())
 			and GetUnitToUnitDistance(nInRangeAlly[1], nInRangeAlly[1]:GetAttackTarget()) <= nInRangeAlly[1]:GetAttackRange() + 50
 			and not nInRangeAlly[1]:HasModifier('modifier_arc_warden_magnetic_field_attack_speed')
+			and not nInRangeAlly[1]:HasModifier('modifier_arc_warden_magnetic_field_attack_range')
 			then
 				return BOT_ACTION_DESIRE_HIGH
 			end
@@ -412,7 +413,7 @@ function X.ConsiderMagneticField()
 			do
 				local allyTarget = allyHero:GetAttackTarget()
 				if  J.IsValidHero(allyHero)
-				and (J.IsInRange(bot, allyHero, nRadius) and not allyHero:HasModifier('modifier_arc_warden_magnetic_field_attack_speed'))
+				and (J.IsInRange(bot, allyHero, nRadius) and not allyHero:HasModifier('modifier_arc_warden_magnetic_field_attack_speed') and not allyHero:HasModifier('modifier_arc_warden_magnetic_field_attack_range'))
 				and (J.IsValidTarget(allyTarget) and GetUnitToUnitDistance(allyHero, allyTarget) <= allyHero:GetAttackRange())
 				and not J.IsSuspiciousIllusion(allyHero)
 				and not J.IsSuspiciousIllusion(allyTarget)
@@ -426,6 +427,7 @@ function X.ConsiderMagneticField()
 
 	if  (J.IsDefending(bot) or J.IsPushing(bot))
 	and not bot:HasModifier('modifier_arc_warden_magnetic_field_attack_speed')
+	and not bot:HasModifier('modifier_arc_warden_magnetic_field_attack_range')
 	then
 		local nEnemyLaneCreeps = bot:GetNearbyLaneCreeps(888, true)
 		local nEnemyTowers = bot:GetNearbyTowers(888, true)
@@ -447,6 +449,7 @@ function X.ConsiderMagneticField()
 	if  J.IsFarming(bot)
 	and J.GetManaAfter(MagneticField:GetManaCost()) > 0.4
 	and not bot:HasModifier('modifier_arc_warden_magnetic_field_attack_speed')
+	and not bot:HasModifier('modifier_arc_warden_magnetic_field_attack_range')
 	then
 		local nEnemyLaneCreeps = bot:GetNearbyLaneCreeps(888, true)
 		if J.IsAttacking(bot)
@@ -468,6 +471,7 @@ function X.ConsiderMagneticField()
 
 	if  J.IsDoingRoshan(bot)
 	and not bot:HasModifier('modifier_arc_warden_magnetic_field_attack_speed')
+	and not bot:HasModifier('modifier_arc_warden_magnetic_field_attack_range')
 	then
 		if  J.IsRoshan(botTarget)
 		and J.IsInRange(bot, botTarget, bot:GetAttackRange())
@@ -479,6 +483,7 @@ function X.ConsiderMagneticField()
 
 	if  J.IsDoingTormentor(bot)
 	and not bot:HasModifier('modifier_arc_warden_magnetic_field_attack_speed')
+	and not bot:HasModifier('modifier_arc_warden_magnetic_field_attack_range')
 	then
 		if  J.IsTormentor(botTarget)
 		and J.IsInRange(bot, botTarget, bot:GetAttackRange())

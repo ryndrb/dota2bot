@@ -445,11 +445,22 @@ function X.ConsiderW()
 		if J.IsRoshan( npcTarget )
 			and not J.IsDisabled( npcTarget )
 			and not npcTarget:IsDisarmed()
+			and J.CanBeAttacked(npcTarget)
 			and J.IsInRange( npcTarget, bot, nCastRange )
+			and J.IsAttacking(bot)
 		then
 			hCastTarget = botTarget
 			sCastMotive = 'W-打肉山'
 			return BOT_ACTION_DESIRE_HIGH, hCastTarget, sCastMotive
+		end
+	end
+
+	if J.IsDoingTormentor(bot) then
+		if J.IsTormentor(botTarget)
+        and J.IsInRange(bot, botTarget, nCastRange)
+        and J.IsAttacking(bot)
+		then
+			return BOT_ACTION_DESIRE_HIGH
 		end
 	end
 

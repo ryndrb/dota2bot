@@ -496,8 +496,21 @@ function X.ConsiderQ()
 	then
 		local npcTarget = bot:GetAttackTarget()
 		if ( J.IsRoshan( npcTarget ) and J.GetHP( npcTarget ) > 0.3 and J.IsInRange( npcTarget, bot, nRange ) )
+		and J.CanBeAttacked(npcTarget)
+		and J.IsAttacking(bot)
 		then
 			return BOT_ACTION_DESIRE_LOW
+		end
+	end
+
+	local botTarget = J.GetProperTarget(bot)
+	if J.IsDoingTormentor(bot)
+	then
+		if J.IsTormentor(botTarget)
+        and J.IsInRange( botTarget, bot, 800 )
+        and J.IsAttacking(bot)
+		then
+			return BOT_ACTION_DESIRE_HIGH
 		end
 	end
 
@@ -566,8 +579,21 @@ function X.ConsiderW()
 	then
 		local npcTarget = bot:GetAttackTarget()
 		if ( J.IsRoshan( npcTarget ) and J.IsInRange( npcTarget, bot, nCastRange + 40 ) )
+		and J.CanBeAttacked(npcTarget)
+		and J.IsAttacking(bot)
 		then
 			return BOT_ACTION_DESIRE_LOW
+		end
+	end
+
+	local botTarget = J.GetProperTarget(bot)
+	if J.IsDoingTormentor(bot)
+	then
+		if J.IsTormentor(botTarget)
+        and J.IsInRange( botTarget, bot, nCastRange )
+        and J.IsAttacking(bot)
+		then
+			return BOT_ACTION_DESIRE_HIGH
 		end
 	end
 
