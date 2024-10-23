@@ -870,7 +870,7 @@ X.ConsiderSpellUsage['centaur_khan_war_stomp'] = function (hMinionUnit, ability)
     if J.IsGoingOnSomeone(bot) then
         if  J.IsValidTarget(botTarget)
         and J.CanCastOnNonMagicImmune(botTarget)
-        and J.IsInRange(hMinionUnit, botTarget, nCastRange)
+        and J.IsInRange(hMinionUnit, botTarget, nRadius)
         and not J.IsDisabled(botTarget)
         and not botTarget:HasModifier('modifier_abaddon_borrowed_time')
         and not botTarget:HasModifier('modifier_dazzle_shallow_grave')
