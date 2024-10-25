@@ -173,18 +173,56 @@
 -- int GetHealth()
 
 -- Gets the health of the unit.
+local o_GetHealth = CDOTA_Bot_Script.GetHealth
+function CDOTA_Bot_Script:GetHealth()
+    if self ~= nil and (self:GetUnitName() == 'npc_dota_hero_medusa')
+    then
+        local nHealth = o_GetHealth(self) + self:GetMana()
+        return nHealth
+    end
+    return o_GetHealth(self)
+end
+
 -- int GetMaxHealth()
 
 -- Gets the maximum health of the specified unit.
+local o_GetMaxHealth = CDOTA_Bot_Script.GetMaxHealth
+function CDOTA_Bot_Script:GetMaxHealth()
+    if self ~= nil and (self:GetUnitName() == 'npc_dota_hero_medusa')
+    then
+        local nHealth = o_GetMaxHealth(self) + self:GetMaxMana()
+        return nHealth
+    end
+    return o_GetMaxHealth(self)
+end
+
 -- int GetHealthRegen()
 
 -- Gets the current health regen per second of the unit.
 -- int GetMana()
 
 -- Gets the current mana of the unit.
+local o_GetMana = CDOTA_Bot_Script.GetMana
+function CDOTA_Bot_Script:GetMana()
+    if self ~= nil and (self:GetUnitName() == 'npc_dota_hero_huskar')
+    then
+        return 0
+    end
+    return o_GetMana(self)
+end
+
 -- int GetMaxMana()
 
 -- Gets the maximum mana of the unit.
+local o_GetMaxMana = CDOTA_Bot_Script.GetMaxMana
+function CDOTA_Bot_Script:GetMaxMana()
+    if self ~= nil and (self:GetUnitName() == 'npc_dota_hero_huskar')
+    then
+        return 0
+    end
+    return o_GetMaxMana(self)
+end
+
 -- int GetManaRegen()
 
 -- Gets the current mana regen of the unit.

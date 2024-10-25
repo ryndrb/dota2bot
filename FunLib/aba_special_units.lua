@@ -25,11 +25,6 @@ function X.GetDesire(bot__)
     local tAllyHeroes_all = bot:GetNearbyHeroes(1600, false, BOT_MODE_NONE)
     local tEnemyHeroes_all = bot:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
 
-    if string.find(bot:GetUnitName(), 'medusa')
-    then
-        botHealth = botHealth + bot:GetMana()
-    end
-
 	local isClockwerkInTeam = false
 
 	for i = 1, 5
@@ -98,7 +93,7 @@ function X.GetDesire(bot__)
                 or string.find(unitName, 'clinkz_skeleton_archer')
                 then
                     if J.IsInRange(bot, unit, botAttackRange + 300) then
-                        return 0.80
+                        return 0.7
                     end
 
                     if #tEnemyHeroes == 0 then
@@ -125,14 +120,14 @@ function X.GetDesire(bot__)
                 then
                     if J.IsInRange(bot, unit, botAttackRange + 150) then
                         if J.IsGoingOnSomeone(bot) and (not X.IsHeroWithinRadius(tEnemyHeroes, 450) or not X.IsBeingAttackedByHero(bot)) then
-                            return 0.80
+                            return 0.75
                         else
                             if not X.IsBeingAttackedByHero(bot) then
                                 return 0.90
                             end
                         end
                     else
-                        return 0.75
+                        return 0.7
                     end
                 end
 
@@ -254,7 +249,7 @@ function X.GetDesire(bot__)
                     and not J.IsRetreating(bot)
                     then
                         if J.IsInRange(bot, unit, botAttackRange + 300) then return 0.95 end
-                        return 0.80
+                        return 0.7
                     end
                 end
 

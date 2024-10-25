@@ -2790,11 +2790,11 @@ function J.GetHP( bot )
 	local nCurHealth = bot:GetHealth()
     local nMaxHealth = bot:GetMaxHealth()
 
-	if bot:GetUnitName() == 'npc_dota_hero_medusa'
-    then
-        nCurHealth = nCurHealth + bot:GetMana()
-        nMaxHealth = nMaxHealth + bot:GetMaxMana()
-    end
+	-- if bot:GetUnitName() == 'npc_dota_hero_medusa'
+    -- then
+    --     nCurHealth = nCurHealth + bot:GetMana()
+    --     nMaxHealth = nMaxHealth + bot:GetMaxMana()
+    -- end
 
 	return nCurHealth / nMaxHealth
 end

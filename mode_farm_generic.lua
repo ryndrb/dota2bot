@@ -66,10 +66,18 @@ function GetDesire()
 	end
 
 	local TormentorLocation = J.GetTormentorLocation(GetTeam())
-	local nInRangeAlly = J.GetAlliesNearLoc(TormentorLocation, 700)
+	local nInRangeAlly_tormentor = J.GetAlliesNearLoc(TormentorLocation, 900)
+	local nInRangeAlly_roshan = J.GetAlliesNearLoc(J.GetCurrentRoshanLocation(), 900)
 	local nNeutralCreeps = bot:GetNearbyNeutralCreeps(1600)
 
-	if #nInRangeAlly >= 2 or J.IsDoingTormentor(bot) then return BOT_MODE_DESIRE_NONE end
+	if #nInRangeAlly_tormentor >= 2
+	or #nInRangeAlly_roshan >= 2
+	or J.IsDoingTormentor(bot)
+	or J.IsDoingRoshan(bot)
+	or J.IsDefending(bot)
+	then
+		return BOT_MODE_DESIRE_NONE
+	end
 
 	for _, creep in pairs(nNeutralCreeps)
 	do

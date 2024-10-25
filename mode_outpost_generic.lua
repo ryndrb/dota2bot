@@ -26,6 +26,8 @@ local EdictTowerTarget = nil
 local ShouldHuskarMoveOutsideFountain = false
 local ShouldHeroMoveOutsideFountain = false
 
+local fDissimilateTime = 0
+
 function GetDesire()
 	if not IsEnemyTier2Down
 	then
@@ -136,8 +138,9 @@ function GetDesire()
 		if cAbility == nil then cAbility = bot:GetAbilityByName("void_spirit_dissimilate") end
 		if cAbility:IsTrained()
 		then
-			if cAbility:IsInAbilityPhase() or bot:HasModifier("modifier_void_spirit_dissimilate_phase")
+			if cAbility:IsInAbilityPhase()
 			then
+				fDissimilateTime = DotaTime()
 				return BOT_MODE_DESIRE_ABSOLUTE
 			end
 		end
@@ -404,6 +407,61 @@ function Think()
 	PrimalBeastTrample()
 	HoodwinkSharpshooter()
 
+	-- Void Spirit Dissimilate;
+	-- modifier_void_spirit_dissimilate_phase returns false
+	if DotaTime() < fDissimilateTime + 1.15
+	then
+		-- static locs, for now
+		if bot.dissimilate_status ~= nil then
+			if bot.dissimilate_status[1] == 'engaging' then
+				if J.IsValidHero(bot.dissimilate_status[2]) then
+					bot:Action_MoveToLocation(bot.dissimilate_status[2]:GetLocation())
+					return
+				else
+					local target = nil
+					local hp = 0
+					local nEnemyHeroes = J.GetEnemiesNearLoc(bot:GetLocation(), 800)
+					for _, enemyHero in pairs(nEnemyHeroes) do
+						if J.IsValidHero(enemyHero)
+						and J.CanBeAttacked(enemyHero)
+						and J.CanCastOnNonMagicImmune(enemyHero)
+						and not enemyHero:HasModifier('modifier_faceless_void_chronosphere_freeze')
+						and not enemyHero:HasModifier('modifier_necrolyte_reapers_scythe')
+						and hp < enemyHero:GetHealth()
+						then
+							hp = enemyHero:GetHealth()
+							target = enemyHero
+						end
+					end
+
+					if target ~= nil then
+						bot:Action_MoveToLocation(target:GetLocation())
+						return
+					end
+				end
+			elseif bot.dissimilate_status[1] == 'farming' then
+				local tEnemyCreeps = bot:GetNearbyCreeps(520, true)
+				if J.CanBeAttacked(tEnemyCreeps[1])
+				and (#tEnemyCreeps >= 4 or (#tEnemyCreeps >= 2 and tEnemyCreeps[1]:IsAncientCreep()))
+				and not J.IsRunning(tEnemyCreeps[1])
+				and J.IsAttacking(bot)
+				then
+					local nLocationAoE = bot:FindAoELocation(true, false, tEnemyCreeps[1]:GetLocation(), 0, 300, 0, 0)
+					if nLocationAoE.count >= 2 then
+						bot:Action_MoveToLocation(nLocationAoE.targetloc)
+						return
+					end
+				end
+			elseif bot.dissimilate_status[1] == 'miniboss' then
+				bot:Action_MoveToLocation(bot.dissimilate_status[2]:GetLocation())
+				return
+			elseif bot.dissimilate_status[1] == 'retreating' then
+				bot:Action_MoveToLocation(bot.dissimilate_status[2])
+				return
+			end
+		end
+	end
+
 	if J.CanNotUseAction(bot) then return end
 
 	-- Huskar
@@ -649,27 +707,6 @@ function Think()
 				return
 			end
 		end
-	end
-
-	-- Void Spirit
-	if bot:HasModifier('modifier_void_spirit_dissimilate_phase')
-	then
-		local botTarget = J.GetProperTarget(bot)
-
-		if J.IsGoingOnSomeone(bot)
-		then
-			if J.IsValidTarget(botTarget)
-			then
-				bot:Action_MoveToLocation(botTarget:GetLocation())
-			end
-		end
-
-		if J.IsRetreating(bot)
-		then
-			bot:Action_MoveToLocation(J.GetEscapeLoc())
-		end
-
-		return
 	end
 
 	-- IO Tether

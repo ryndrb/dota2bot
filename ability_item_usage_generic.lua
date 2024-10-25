@@ -4496,7 +4496,7 @@ X.ConsiderItemDesire["item_tpscroll"] = function( hItem )
 		or ( bot:HasModifier( "modifier_oracle_false_promise_timer" ) and J.GetModifierTime( bot, "modifier_oracle_false_promise_timer" ) <= 3.2 )
 		or ( bot:HasModifier( "modifier_jakiro_macropyre_burn" ) and J.GetModifierTime( bot, "modifier_jakiro_macropyre_burn" ) >= 1.4 )
 		or ( bot:HasModifier( "modifier_arc_warden_tempest_double" ) and bot:GetRemainingLifespan() < 3.3 )
-		or (J.IsDoingRoshan(bot) and GetUnitToLocationDistance(bot, J.GetCurrentRoshanLocation()) <= 2800)
+		or (J.IsRoshanAlive() and GetUnitToLocationDistance(bot, J.GetCurrentRoshanLocation()) <= 1600)
 	then return BOT_ACTION_DESIRE_NONE end
 
 	if bot:GetHealth() < 240
@@ -4519,6 +4519,23 @@ X.ConsiderItemDesire["item_tpscroll"] = function( hItem )
 
 	if DotaTime() < roshDeathTime + 2 and GetUnitToLocationDistance(bot, J.GetCurrentRoshanLocation()) <= 1600
 	then
+		return BOT_ACTION_DESIRE_NONE
+	end
+
+	-- TODO: Check for enemy stuns
+	local nNeutralCreeps = bot:GetNearbyNeutralCreeps(800)
+	local bAnnoyingCreep = false
+	for _, creep in pairs(nNeutralCreeps) do
+		if J.IsValid(creep) then
+			if creep:GetUnitName() == 'npc_dota_neutral_ogre_mauler'
+			and (creep:GetAttackTarget() == bot or J.IsChasingTarget(creep, bot))
+			then
+				bAnnoyingCreep = true
+			end
+		end
+	end
+
+	if bAnnoyingCreep then
 		return BOT_ACTION_DESIRE_NONE
 	end
 

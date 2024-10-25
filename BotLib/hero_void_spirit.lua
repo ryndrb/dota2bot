@@ -71,6 +71,50 @@ local HeroBuild = {
 				"item_magic_wand",
 			},
         },
+		[2] = {
+            ['talent'] = {
+				[1] = {
+					['t25'] = {0, 10},
+					['t20'] = {10, 0},
+					['t15'] = {10, 0},
+					['t10'] = {10, 0},
+				}
+            },
+            ['ability'] = {
+                [1] = {3,1,3,2,2,6,2,2,3,3,6,1,1,1,6},
+            },
+            ['buy_list'] = {
+				"item_quelling_blade",
+				"item_tango",
+				"item_double_branches",
+				"item_circlet",
+			
+				"item_bottle",
+				"item_bracer",
+				"item_boots",
+				"item_magic_wand",
+				"item_power_treads",
+				"item_orchid",
+				"item_kaya",
+				"item_ultimate_scepter",
+				"item_black_king_bar",--
+				"item_devastator",--
+				"item_kaya_and_sange",--
+				"item_travel_boots",
+				"item_bloodthorn",--
+				"item_ultimate_scepter_2",
+				"item_shivas_guard",--
+				"item_travel_boots_2",--
+				"item_moon_shard",
+				"item_aghanims_shard",
+			},
+            ['sell_list'] = {
+				"item_quelling_blade",
+				"item_bottle",
+				"item_bracer",
+				"item_magic_wand",
+			},
+        },
     },
     ['pos_3'] = {
         [1] = {
@@ -323,9 +367,11 @@ function X.ConsiderDissimilate()
 	end
 
 	local nRadius = Dissimilate:GetSpecialValueInt('first_ring_distance_offset')
+	local nManaCost = Dissimilate:GetManaCost()
 
     if (J.IsStunProjectileIncoming(bot, 350) or J.IsUnitTargetProjectileIncoming(bot, 400))
     then
+		bot.dissimilate_status = {'retreat', J.GetTeamFountain()}
         return BOT_ACTION_DESIRE_HIGH
     end
 
@@ -333,6 +379,7 @@ function X.ConsiderDissimilate()
 	then
 		if J.IsWillBeCastUnitTargetSpell(bot, 400)
 		then
+			bot.dissimilate_status = {'retreat', J.GetTeamFountain()}
 			return BOT_ACTION_DESIRE_HIGH
 		end
 	end
@@ -347,6 +394,7 @@ function X.ConsiderDissimilate()
 		and not J.IsSuspiciousIllusion(botTarget)
 		and not botTarget:HasModifier('modifier_faceless_void_chronosphere_freeze')
 		then
+			bot.dissimilate_status = {'engaging', botTarget}
 			return BOT_ACTION_DESIRE_HIGH
 		end
 	end
@@ -361,6 +409,47 @@ function X.ConsiderDissimilate()
 		and J.IsChasingTarget(nEnemyHeroes[1], bot)
 		and (not J.IsSuspiciousIllusion(nEnemyHeroes[1]) or J.GetHP(bot) < 0.2)
 		then
+			bot.dissimilate_status = {'retreating', J.GetTeamFountain()}
+			return BOT_ACTION_DESIRE_HIGH
+		end
+	end
+
+	if J.IsFarming(bot) and J.GetManaAfter(nManaCost) > 0.45
+	then
+		local tEnemyCreeps = bot:GetNearbyCreeps(nRadius, true)
+		if J.CanBeAttacked(tEnemyCreeps[1])
+		and (#tEnemyCreeps >= 4 or (#tEnemyCreeps >= 2 and tEnemyCreeps[1]:IsAncientCreep()))
+		and not J.IsRunning(tEnemyCreeps[1])
+		and J.IsAttacking(bot)
+		then
+			local nLocationAoE = bot:FindAoELocation(true, false, tEnemyCreeps[1]:GetLocation(), 0, 300, 0, 0)
+			if nLocationAoE.count >= 2 then
+				bot.dissimilate_status = {'farming', tEnemyCreeps[1]}
+				return BOT_ACTION_DESIRE_HIGH
+			end
+		end
+	end
+
+	if J.IsDoingRoshan(bot) and J.GetManaAfter(nManaCost) > 0.4
+	then
+		if J.IsRoshan(botTarget)
+		and J.CanBeAttacked(botTarget)
+		and J.IsInRange(bot, botTarget, nRadius)
+		and J.GetHP(botTarget) > 0.2
+		and J.IsAttacking(bot)
+		then
+			bot.dissimilate_status = {'miniboss', botTarget}
+			return BOT_ACTION_DESIRE_HIGH
+		end
+	end
+
+	if J.IsDoingTormentor(bot) and J.GetManaAfter(nManaCost) > 0.4
+	then
+		if J.IsRoshan(botTarget)
+		and J.IsInRange(bot, botTarget, nRadius)
+		and J.IsAttacking(bot)
+		then
+			bot.dissimilate_status = {'miniboss', botTarget}
 			return BOT_ACTION_DESIRE_HIGH
 		end
 	end

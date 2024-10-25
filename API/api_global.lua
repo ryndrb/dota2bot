@@ -382,3 +382,7 @@ end
 -- DebugDrawText( fScreenX, fScreenY, sText, nRed, nGreen, nBlue )
 
 -- Draws the specified text at fScreenX, fScreenY on the screen in the specified color for one frame.
+
+-- { location, time_remaining, playerid } GetIncomingTeleports()
+
+-- Gets a table of all the teleports that are visibly happening.

@@ -55,7 +55,7 @@ function Defend.GetDefendDesire(bot, lane)
 	end
 
 	local furthestBuilding = Defend.GetFurthestBuildingOnLane(lane)
-	if J.IsValidBuilding(furthestBuilding) and furthestBuilding ~= GetAncient(GetTeam())
+	if J.CanBeAttacked(furthestBuilding) and furthestBuilding ~= GetAncient(GetTeam())
 	then
 		local isOnlyCreeps = Defend.IsOnlyCreepsAroundBuilding(furthestBuilding)
 
@@ -163,21 +163,6 @@ function Defend.GetFurthestBuildingOnLane(lane)
 		if Defend.IsValidBuildingTarget(FurthestBuilding) then
 			return FurthestBuilding, 2.5
 		end
-
-		FurthestBuilding = GetTower(bot:GetTeam(), TOWER_BASE_1)
-		if Defend.IsValidBuildingTarget(FurthestBuilding) then
-			return GetAncient(bot:GetTeam()), 2.5
-		end
-
-		FurthestBuilding = GetTower(bot:GetTeam(), TOWER_BASE_2)
-		if Defend.IsValidBuildingTarget(FurthestBuilding) then
-			return GetAncient(bot:GetTeam()), 2.5
-		end
-
-		FurthestBuilding = GetAncient(bot:GetTeam())
-		if Defend.IsValidBuildingTarget(FurthestBuilding) then
-			return GetAncient(bot:GetTeam()), 3
-		end
 	end
 
 	if lane == LANE_MID then
@@ -264,21 +249,6 @@ function Defend.GetFurthestBuildingOnLane(lane)
 		FurthestBuilding = GetBarracks(bot:GetTeam(), BARRACKS_BOT_RANGED)
 		if Defend.IsValidBuildingTarget(FurthestBuilding) then
 			return FurthestBuilding, 2.5
-		end
-
-		FurthestBuilding = GetTower(bot:GetTeam(), TOWER_BASE_1)
-		if Defend.IsValidBuildingTarget(FurthestBuilding) then
-			return GetAncient(bot:GetTeam()), 2.5
-		end
-
-		FurthestBuilding = GetTower(bot:GetTeam(), TOWER_BASE_2)
-		if Defend.IsValidBuildingTarget(FurthestBuilding) then
-			return GetAncient(bot:GetTeam()), 2.5
-		end
-
-		FurthestBuilding = GetAncient(bot:GetTeam())
-		if Defend.IsValidBuildingTarget(FurthestBuilding) then
-			return GetAncient(bot:GetTeam()), 3
 		end
 	end
 

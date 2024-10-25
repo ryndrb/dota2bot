@@ -21,6 +21,7 @@ If you’ve come across this script or is using it, good feedback is always welc
         - Then, launch DotA 2.
         - Click `Play Dota`. Under `Custom Lobbies`, select `Create`.
         - Under the `Lobby Settings` at the bottom, select `Edit`. Then, in the drop down `Radiant Bots` and `Dire Bots` menus, select `Local Dev Script`.
+            - It's meant to play itself as it's built that way.
         - The `Server Location` must be `Local Host`.
         - Click OK, and it should be good to go. Bot names should be: `(team.name.(kanji)TA)`.
             - The lobby has 5 slots:
@@ -83,7 +84,7 @@ If you’ve come across this script or is using it, good feedback is always welc
         - [1,2,3] Lycan
         - [3] Magnus
         - [1,2,3] Marci
-        - [3] Mars
+        - [2,3] Mars
         - [1,2] Meepo
         - [1,2] Monkey King
         - [1,2] Morphling

@@ -82,7 +82,7 @@ function GetDesire()
 	local nDesire = 0
 
 	local nEnemyHeroes = J.GetEnemiesNearLoc(bot:GetLocation(), 1600)
-	if J.IsGoingOnSomeone(bot) and #nEnemyHeroes >= 2 then
+	if J.IsCore(bot) and J.IsGoingOnSomeone(bot) and #nEnemyHeroes >= 2 then
 		X.SetNearbyTarget(nEnemyHeroes)
 	end
 
@@ -118,11 +118,11 @@ function GetDesire()
 		return bot:GetActiveModeDesire() + 0.1
 	end
 
-	nDesire = X.ConsiderHarassInLaningPhase()
-	if nDesire > 0
-	then
-		return nDesire
-	end
+	-- nDesire = X.ConsiderHarassInLaningPhase()
+	-- if nDesire > 0
+	-- then
+	-- 	return nDesire
+	-- end
 
 	if not bot:IsAlive() or bot:GetCurrentActionType() == BOT_ACTION_TYPE_DELAY then
 		return BOT_MODE_DESIRE_NONE
@@ -162,48 +162,53 @@ function GetDesire()
 
 	if J.Role['bStopAction'] then return 2.0 end
 
-	if IsHeroCore
+	if not J.IsFarming(bot)
+	or not J.IsPushing(bot)
+	or not J.IsDefending(bot)
 	then
-		local botTarget, targetDesire = X.CarryFindTarget()
-		if botTarget ~= nil
+		if IsHeroCore
 		then
-			targetUnit = botTarget
-			bot:SetTarget(botTarget)
-			return targetDesire
-		end
-	end
-
-	if IsSupport
-	then
-		local botTarget, targetDesire = X.SupportFindTarget()
-		if botTarget ~= nil
-		then
-			targetUnit = botTarget
-			bot:SetTarget(botTarget)
-			return targetDesire
-		end
-	end
-
-	if bot:IsAlive() and bot:DistanceFromFountain() > 4600
-	then
-		if towerTime ~= 0 and X.IsValid(towerCreep)
-			and DotaTime() < towerTime + towerCreepTime
-		then
-			return BOT_MODE_DESIRE_ABSOLUTE *0.9;
-		else
-			towerTime = 0;
-			towerCreepMode = false;
-		end
-
-		towerCreepTime,towerCreep = X.ShouldAttackTowerCreep(bot);
-		if towerCreepTime ~= 0 and towerCreep ~= nil
-		then
-			if towerTime == 0 then 
-				towerTime = DotaTime(); 
-				towerCreepMode = true;
+			local botTarget, targetDesire = X.CarryFindTarget()
+			if botTarget ~= nil
+			then
+				targetUnit = botTarget
+				bot:SetTarget(botTarget)
+				return targetDesire
 			end
-			bot:SetTarget(towerCreep);
-			return BOT_MODE_DESIRE_ABSOLUTE *0.9;
+		end
+
+		if IsSupport
+		then
+			local botTarget, targetDesire = X.SupportFindTarget()
+			if botTarget ~= nil
+			then
+				targetUnit = botTarget
+				bot:SetTarget(botTarget)
+				return targetDesire
+			end
+		end
+
+		if bot:IsAlive() and bot:DistanceFromFountain() > 4600
+		then
+			if towerTime ~= 0 and X.IsValid(towerCreep)
+				and DotaTime() < towerTime + towerCreepTime
+			then
+				return BOT_MODE_DESIRE_ABSOLUTE *0.9;
+			else
+				towerTime = 0;
+				towerCreepMode = false;
+			end
+
+			towerCreepTime,towerCreep = X.ShouldAttackTowerCreep(bot);
+			if towerCreepTime ~= 0 and towerCreep ~= nil
+			then
+				if towerTime == 0 then 
+					towerTime = DotaTime(); 
+					towerCreepMode = true;
+				end
+				bot:SetTarget(towerCreep);
+				return BOT_MODE_DESIRE_ABSOLUTE *0.9;
+			end
 		end
 	end
 	
@@ -269,7 +274,7 @@ function Think()
 	end
 
 	if  (IsHeroCore or IsSupport)
-	and targetUnit ~= nil and not targetUnit:IsNull() and targetUnit:IsAlive()
+	and targetUnit ~= nil and not targetUnit:IsNull() and targetUnit:CanBeSeen() and targetUnit:IsAlive()
 	then
 		bot:Action_AttackUnit(targetUnit, true)
 		return
@@ -1651,7 +1656,6 @@ function X.ShouldNotRetreat(bot)
 	or bot:HasModifier('modifier_skeleton_king_reincarnation_scepter_active')
 	or (bot:HasModifier('modifier_abaddon_borrowed_time') and J.WeAreStronger(bot, 1000))
 	or (bot:GetCurrentMovementSpeed() < 240 and not bot:HasModifier('modifier_arc_warden_spark_wraith_purge'))
-	or J.WeAreStronger(bot, 1200)
 	then
 		return true
 	end
@@ -1675,7 +1679,6 @@ function X.ShouldNotRetreat(bot)
 
 	local nInRangeAlly = J.GetAllyList(bot, 800)
     if nInRangeAlly ~= nil and #nInRangeAlly <= 1
-	or not J.WeAreStronger(bot, 1600)
 	then
 	    return false
 	end
@@ -2070,6 +2073,7 @@ local targetTime = 0
 local target = nil
 function X.SetNearbyTarget(tUnits)
     if J.IsValidHero(target)
+	and J.CanBeAttacked(target)
 	and not J.IsSuspiciousIllusion(target)
 	and not target:HasModifier('modifier_abaddon_borrowed_time')
 	and not target:HasModifier('modifier_necrolyte_reapers_scythe')
@@ -2077,15 +2081,18 @@ function X.SetNearbyTarget(tUnits)
 	and not target:HasModifier('modifier_skeleton_king_reincarnation_scepter_active')
 	and not target:HasModifier('modifier_item_blade_mail_reflect')
 	and not target:HasModifier('modifier_item_aeon_disk_buff')
-	and DotaTime() < targetTime + 3.5
+	and DotaTime() < targetTime + 5
 	then
 		return bot:SetTarget(target)
+	else
+		targetTime = 0
 	end
 
     local __target = nil
     local targetScore = 0
     for _, enemy in pairs(tUnits) do
         if J.IsValidHero(enemy)
+		and J.CanBeAttacked(target)
         and not J.IsSuspiciousIllusion(enemy)
 		and not enemy:HasModifier('modifier_abaddon_borrowed_time')
 		and not enemy:HasModifier('modifier_necrolyte_reapers_scythe')
@@ -2110,7 +2117,7 @@ function X.SetNearbyTarget(tUnits)
 				mul = 3
 			elseif enemyName == 'npc_dota_hero_bristleback' and not enemy:IsFacingLocation(bot:GetLocation(), 90) then
 				mul = 0.5
-			elseif enemyName == 'npc_dota_hero_enchantress' then
+			elseif enemyName == 'npc_dota_hero_enchantress' and enemy:GetLevel() >= 6 then
 				mul = 0.5
             end
 
@@ -2123,7 +2130,7 @@ function X.SetNearbyTarget(tUnits)
 			end
 
             local enemyScore = (Min(1, bot:GetAttackRange() / GetUnitToUnitDistance(bot, enemy)))
-								* ((1-J.GetHP(enemy)) * bot:GetEstimatedDamageToTarget(true, enemy, 5.0, DAMAGE_TYPE_ALL))
+								* ((1-J.GetHP(enemy)) * bot:GetEstimatedDamageToTarget(true, enemy, 10.0, DAMAGE_TYPE_ALL))
 								* mul
             if enemyScore > targetScore then
                 targetScore = enemyScore

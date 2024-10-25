@@ -68,10 +68,6 @@ function GetDesire()
     tAllyHeroes_real = J.GetAlliesNearLoc(botLocation, 1600)
     tEnemyHeroes_real = J.GetEnemiesNearLoc(botLocation, 1600)
 
-    if bot:GetUnitName() == 'npc_dota_hero_medusa' then
-        botHealth = botHealth + bot:GetMana()
-    end
-
     nDesire = X.GetUnitDesire()
     if nDesire > 0 then
         return nDesire
