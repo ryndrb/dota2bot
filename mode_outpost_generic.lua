@@ -138,6 +138,10 @@ function GetDesire()
 		if cAbility == nil then cAbility = bot:GetAbilityByName("void_spirit_dissimilate") end
 		if cAbility:IsTrained()
 		then
+			if DotaTime() < fDissimilateTime + 1.15 then
+				return BOT_MODE_DESIRE_ABSOLUTE
+			end
+
 			if cAbility:IsInAbilityPhase()
 			then
 				fDissimilateTime = DotaTime()
@@ -279,7 +283,7 @@ function GetDesire()
 		if cAbility == nil then cAbility = bot:GetAbilityByName("tinker_rearm") end
 		if cAbility:IsTrained()
 		then
-			if cAbility:IsInAbilityPhase() or bot:IsChanneling() or bot:HasModifier('modifier_tinker_rearm') then
+			if cAbility:IsInAbilityPhase() or bot:HasModifier('modifier_tinker_rearm') then
 				return BOT_MODE_DESIRE_ABSOLUTE
 			end
 		end

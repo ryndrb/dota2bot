@@ -143,7 +143,9 @@ function Push.GetPushDesire(bot, lane)
     end
 
     -- General Push
-    if Push.WhichLaneToPush(bot) == lane then
+    if (not J.IsCore(bot) and (Push.WhichLaneToPush(bot) == lane))
+    or (J.IsCore(bot) and ((J.IsLateGame() and (Push.WhichLaneToPush(bot) == lane)) or (J.IsEarlyGame() or J.IsMidGame())))
+    then
         if eAliveCount == 0
         or aAliveCoreCount >= eAliveCoreCount
         or (aAliveCoreCount >= 1 and aAliveCount >= eAliveCount + 2)

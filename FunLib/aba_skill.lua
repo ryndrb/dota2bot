@@ -91,7 +91,10 @@ function X.GetAbilityList( bot )
 	local sAbilityList = {}
 	for slot = 0, 6
 	do
-		table.insert( sAbilityList, bot:GetAbilityInSlot( slot ):GetName() )
+		local hAbility = bot:GetAbilityInSlot( slot )
+		if hAbility ~= nil then
+			table.insert( sAbilityList, bot:GetAbilityInSlot( slot ):GetName() )
+		end
 	end
 
 	return sAbilityList
