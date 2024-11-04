@@ -2331,7 +2331,7 @@ function J.IsValid( nTarget )
 			and not nTarget:IsNull()
 			and nTarget:CanBeSeen()
 			and nTarget:IsAlive()
-			and not nTarget:IsBuilding()
+			-- and not nTarget:IsBuilding()
 
 end
 

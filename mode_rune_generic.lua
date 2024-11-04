@@ -160,11 +160,7 @@ function GetDesire()
             elseif nRuneStatus == RUNE_STATUS_UNKNOWN
                 and DotaTime() > 113
             then
-				if J.IsCore(bot) and DotaTime() > 5 * 60 then
-					return X.GetScaledDesire(BOT_MODE_DESIRE_MODERATE, ClosestDistance, MAX_DIST * 2.5)
-				else
-					return X.GetScaledDesire(BOT_MODE_DESIRE_MODERATE, ClosestDistance, MAX_DIST)
-				end
+				return X.GetScaledDesire(BOT_MODE_DESIRE_MODERATE, ClosestDistance, MAX_DIST)
             elseif nRuneStatus == RUNE_STATUS_MISSING
                 and DotaTime() > 60
                 and (minute % 2 == 1 and second > 53)
@@ -504,7 +500,7 @@ function X.IsEnemyPickRune(nRune)
 end
 
 function X.GetScaledDesire(nBase, nCurrDist, nMaxDist)
-    return Clamp(nBase + RemapValClamped(nCurrDist, 600, nMaxDist, 1 - nBase, 0), 0, 0.95)
+    return Clamp(nBase + RemapValClamped(nCurrDist, nMaxDist, 0, 0, 1 - nBase), 0, 0.95)
 end
 
 function X.GetGoOutLocation()

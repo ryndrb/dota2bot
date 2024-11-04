@@ -671,7 +671,7 @@ function X.ConsiderEscapeAct()
         end
     end
 
-    if J.GetHP(bot) < 0.25 and X.IsBeingAttacked(bot)
+    if J.GetHP(bot) < 0.25 and X.IsBeingAttackedByRealHero(bot)
     and not J.IsRealInvisible(bot)
     then
         return BOT_ACTION_DESIRE_HIGH, bot
@@ -1013,7 +1013,7 @@ function X.ConsiderStrongmanTonic()
         end
     end
 
-    if J.GetHP(bot) < 0.5 and X.IsBeingAttacked(bot)
+    if J.GetHP(bot) < 0.5 and X.IsBeingAttackedByRealHero(bot)
     and not J.IsRealInvisible(bot)
     then
         return BOT_ACTION_DESIRE_HIGH, bot
@@ -1072,18 +1072,15 @@ function X.ConsiderWhoopeeCushion()
     return BOT_ACTION_DESIRE_NONE
 end
 
-function X.IsBeingAttacked(unit)
+function X.IsBeingAttackedByRealHero(unit)
     for _, enemy in pairs(GetUnitList(UNIT_LIST_ENEMIES))
     do
-        if J.IsValid(unit)
+        if J.IsValidHero(enemy)
+        and J.IsInRange(bot, enemy, 1600)
+        and not J.IsSuspiciousIllusion(enemy)
+        and (enemy:GetAttackTarget() == unit or J.IsChasingTarget(enemy, unit))
         then
-            local enemyName = enemy:GetUnitName()
-            if J.IsValidHero(enemy)
-            or J.IsValidBuilding(enemy)
-            or string.find(enemyName, 'warlock_golem')
-            then
-                return true
-            end
+            return true
         end
     end
 

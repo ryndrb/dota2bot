@@ -562,7 +562,7 @@ function X.ConsiderToss()
 		and not J.IsSuspiciousIllusion(enemyHero)
 		then
 			if  (enemyHero:IsChanneling() or J.IsCastingUltimateAbility(enemyHero))
-			and Avalanche:IsTrained() and not Avalanche:IsCooldownReady()
+			and Avalanche ~= nil and Avalanche:IsTrained() and not Avalanche:IsCooldownReady()
 			then
 				return BOT_ACTION_DESIRE_HIGH, enemyHero
 			end

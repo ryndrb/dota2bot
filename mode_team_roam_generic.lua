@@ -162,9 +162,10 @@ function GetDesire()
 
 	if J.Role['bStopAction'] then return 2.0 end
 
-	if not J.IsFarming(bot)
-	or not J.IsPushing(bot)
-	or not J.IsDefending(bot)
+	if (not J.IsFarming(bot)
+		or not J.IsPushing(bot)
+		or not J.IsDefending(bot))
+	and #nEnemyHeroes == 0
 	then
 		if IsHeroCore
 		then
