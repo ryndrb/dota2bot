@@ -195,7 +195,6 @@ function X.SkillsComplement()
     end
 
     if J.CanNotUseAbility(bot)
-    or bot:HasModifier('modifier_primal_beast_onslaught_windup')
     or bot:HasModifier('modifier_prevent_taunts')
     or bot:HasModifier('modifier_primal_beast_onslaught_movement_adjustable')
     or bot:HasModifier('modifier_primal_beast_trample')
@@ -267,7 +266,7 @@ function X.ConsiderOnslaught()
     end
 
     local nDistance = Onslaught:GetSpecialValueInt('max_distance')
-    local nSpeed = Onslaught:GetSpecialValueInt('charge_speed')
+    local nRadius = Onslaught:GetSpecialValueInt('knockback_distance')
     local nChannelTime = Onslaught:GetSpecialValueFloat('chargeup_time')
     local botTarget = J.GetProperTarget(bot)
 
@@ -283,7 +282,8 @@ function X.ConsiderOnslaught()
             local tInRangeEnemy = J.GetEnemiesNearLoc(enemyHero:GetLocation(), 1200)
             if #tInRangeAlly >= #tInRangeEnemy and enemyHero:HasModifier('modifier_teleporting') then
                 local dist = GetUnitToUnitDistance(bot, enemyHero)
-                OnslaughtETA = RemapValClamped(dist, 100, nDistance, 0, nChannelTime) + dist / nSpeed
+                OnslaughtETA = RemapValClamped(dist, 100, nDistance, 0.3, nChannelTime)
+                bot.onslaught_status = {'engage', botTarget}
                 return BOT_ACTION_DESIRE_HIGH, enemyHero:GetLocation()
             end
         end
@@ -301,7 +301,8 @@ function X.ConsiderOnslaught()
             local tInRangeEnemy = J.GetEnemiesNearLoc(botTarget:GetLocation(), 1200)
             if #tInRangeAlly >= #tInRangeEnemy then
                 local dist = GetUnitToUnitDistance(bot, botTarget)
-                OnslaughtETA = RemapValClamped(dist, 100, nDistance, 0, nChannelTime) + dist / nSpeed
+                OnslaughtETA = RemapValClamped(dist, 100, nDistance, 0.3, nChannelTime)
+                bot.onslaught_status = {'engage', botTarget}
                 return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation()
             end
         end
@@ -316,8 +317,9 @@ function X.ConsiderOnslaught()
         and ((not J.WeAreStronger(bot, 1200) and J.GetHP(bot) < 0.75)
             or J.IsChasingTarget(nEnemyHeroes[1], bot))
         then
-            local dist = GetUnitToLocationDistance(bot, J.GetTeamFountain())
-            OnslaughtETA = RemapValClamped(dist, 100, nDistance, 0, nChannelTime) + dist / nSpeed
+            local dist = RemapValClamped(GetUnitToUnitDistance(bot, nEnemyHeroes[1]), 600, 1200, nChannelTime * 0.6, nChannelTime)
+            OnslaughtETA = RemapValClamped(dist, 100, nDistance, 0.3, nChannelTime)
+            bot.onslaught_status = {'retreat', J.GetTeamFountain()}
             return BOT_ACTION_DESIRE_HIGH, J.GetTeamFountain()
         end
     end
@@ -326,14 +328,19 @@ function X.ConsiderOnslaught()
         local nCreeps = bot:GetNearbyCreeps(800, true)
         if J.IsValid(nCreeps[1])
         and J.GetMP(bot) > 0.5
-        and ((#nCreeps >= 4 and not J.HasItem(bot, 'item_radiance')) or #nCreeps >= 2 and nCreeps[1]:IsAncientCreep())
         and not J.IsRunning(nCreeps[1])
         and J.CanBeAttacked(nCreeps[1])
         and J.IsAttacking(bot)
         then
-            local dist = GetUnitToLocationDistance(bot, J.GetCenterOfUnits(nCreeps))
-            OnslaughtETA = RemapValClamped(dist, 100, nDistance, 0, nChannelTime) + dist / nSpeed
-            return BOT_ACTION_DESIRE_HIGH, J.GetCenterOfUnits(nCreeps)
+            local nLocationAoE = bot:FindAoELocation(true, false, nCreeps[1]:GetLocation(), 0, nRadius, 0, 0)
+            if ((#nCreeps >= 4 and nLocationAoE.count >= 4) and not J.HasItem(bot, 'item_radiance'))
+            or (#nCreeps >= 2 and nLocationAoE.count >= 2 and nCreeps[1]:IsAncientCreep())
+            then
+                local dist = GetUnitToLocationDistance(bot, nLocationAoE.targetloc)
+                OnslaughtETA = RemapValClamped(dist, 100, nDistance, 0.3, nChannelTime)
+                bot.onslaught_status = {'farm', nLocationAoE.targetloc}
+                return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc
+            end
         end
     end
 
@@ -346,7 +353,7 @@ function X.ConsiderBeginOnslaughtDesire()
         return BOT_ACTION_DESIRE_NONE
     end
 
-    if DotaTime() >= OnslaughtStartTime + OnslaughtETA + 0.3 then -- sometimes frame fail if dist is short
+    if DotaTime() >= OnslaughtStartTime + OnslaughtETA then
         return BOT_ACTION_DESIRE_HIGH
     end
 

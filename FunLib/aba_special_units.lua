@@ -293,7 +293,6 @@ function X.Think()
     if J.CanNotUseAction(bot) then return end
 
     if J.IsValid(targetUnit) and not bot:IsDisarmed() then
-        bot:SetTarget(targetUnit)
         bot:Action_AttackUnit(targetUnit, true)
         return
     end

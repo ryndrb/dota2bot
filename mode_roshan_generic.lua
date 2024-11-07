@@ -51,21 +51,32 @@ function GetDesire()
         initDPSFlag = true
     end
 
-    local nEnemyHeroes = bot:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
+    local nEnemyHeroes = J.GetEnemiesNearLoc(bot:GetLocation(), 1300)
     if nEnemyHeroes ~= nil and #nEnemyHeroes > 0
     or (J.IsRoshanCloseToChangingSides() and not (J.IsRoshan(botTarget) and J.IsInRange(bot, botTarget, 900) and J.GetHP(botTarget) > 0.25))
     then
         return BOT_MODE_DESIRE_NONE
     end
 
-    if  shouldKillRoshan
-    and initDPSFlag
-    and (hasSameOrMoreHero or (not hasSameOrMoreHero and IsEnoughAllies()))
-    then
+    if shouldKillRoshan and initDPSFlag then
         local mul = RemapValClamped(DotaTime(), sinceRoshAliveTime, sinceRoshAliveTime + (2.5 * 60), 1, 2)
         local nRoshanDesire = Max(GetRoshanDesire(), 0.1) * mul
 
-        return Clamp(nRoshanDesire, 0, 0.95)
+        local human, humanPing = J.GetHumanPing()
+        if human ~= nil and DotaTime() > 5.0 then
+            if humanPing ~= nil
+            and humanPing.normal_ping
+            and GetUnitToLocationDistance(human, J.GetCurrentRoshanLocation()) <= 1200
+            and J.GetDistance(humanPing.location, J.GetCurrentRoshanLocation()) <= 600
+            and DotaTime() < humanPing.time + 5.0
+            then
+                return 0.95
+            end
+        end
+
+        if hasSameOrMoreHero or (not hasSameOrMoreHero and J.HasEnoughDPSForRoshan(aliveHeroesList)) then
+            return Clamp(nRoshanDesire, 0, 0.95)
+        end
     end
 
     return BOT_MODE_DESIRE_NONE

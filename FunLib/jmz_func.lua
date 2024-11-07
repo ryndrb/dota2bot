@@ -3736,7 +3736,8 @@ function J.IsRoshanAlive()
         killTime = GetRoshanKillTime()
     end
 
-    if DotaTime() - killTime > (J.IsModeTurbo() and (6 * 60) or (11 * 60))
+    if GetRoshanKillTime() == 0
+	or DotaTime() - killTime > (J.IsModeTurbo() and (6 * 60) or (11 * 60))
     then
         return true
     end

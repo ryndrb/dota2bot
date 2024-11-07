@@ -53,6 +53,26 @@ function GetDesire()
         return BOT_MODE_DESIRE_ABSOLUTE
     end
 
+    -- when roshan dies, every desire sometimes drops to 0 somehow and it lingers in Roshan mode (which is also 0)
+    if bot:GetActiveMode() == BOT_MODE_ROSHAN
+    and not J.IsRoshanAlive()
+    and GetUnitToLocationDistance(bot, J.GetCurrentRoshanLocation()) < 1200 then
+        local bAegisNearby = false
+        for _, droppedItem in pairs(GetDroppedItemList()) do
+            if droppedItem ~= nil
+            and droppedItem.item:GetName() == 'item_aegis'
+            and GetUnitToLocationDistance(bot, droppedItem.location) < 1200
+            then
+                bAegisNearby = true
+                break
+            end
+        end
+
+        if not bAegisNearby then
+            return BOT_MODE_DESIRE_MODERATE
+        end
+    end
+
     local nDesire = 0
     botTarget = J.GetProperTarget(bot)
     botLevel = bot:GetLevel()
@@ -152,9 +172,9 @@ function X.GetUnitDesire()
                 then
                     if illusionPower > botHealth * 1.5
                     then
-                        return 0.95
+                        return 0.90
                     else
-                        return 0.80
+                        return 0.70
                     end
                 end
             end
@@ -180,7 +200,7 @@ function X.GetUnitDesire()
 
                     if spiderlingsPower > botHealth
                     then
-                        return RemapValClamped(spiderlingsPower / botHealth, 0.8, 1.5, 0.75, 0.95)
+                        return RemapValClamped(spiderlingsPower / botHealth, 0.8, 1.5, 0.55, 0.90)
                     end
                 end
             end
@@ -195,7 +215,7 @@ function X.GetUnitDesire()
 
                     if eidolonPower > botHealth
                     then
-                        return RemapValClamped(eidolonPower / botHealth, 0.8, 1.5, 0.75, 0.95)
+                        return RemapValClamped(eidolonPower / botHealth, 0.8, 1.5, 0.55, 0.90)
                     end
                 end
             end

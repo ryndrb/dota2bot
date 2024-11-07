@@ -165,6 +165,14 @@ function GetDesire()
 	if not J.IsFarming(bot)
 	or not J.IsPushing(bot)
 	or not J.IsDefending(bot)
+	or not J.IsDoingRoshan(bot)
+	or not J.IsDoingTormentor(bot)
+	or bot:GetActiveMode() ~= BOT_MODE_RUNE
+	or bot:GetActiveMode() ~= BOT_MODE_SECRET_SHOP
+	or bot:GetActiveMode() ~= BOT_MODE_EVASIVE_MANEUVERS
+	or bot:GetActiveMode() ~= BOT_MODE_OUTPOST
+	or bot:GetActiveMode() ~= BOT_MODE_WARD
+	or (J.IsRetreating(bot) and bot:GetActiveModeDesire() > 0.85)
 	then
 		if IsHeroCore
 		then
