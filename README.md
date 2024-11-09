@@ -47,7 +47,7 @@ If you’ve come across this script or is using it, good feedback is always welc
 
 # Tinkering ABo(u)t (ryndrb)
 - ***Heroes (Pos: 1,2,3,4,5)***
-    - <ins>Heroes Implemented Count:</ins> **124** / 125
+    - <ins>Heroes Implemented Count:</ins> **125** / 126
     - ***Added***
         - [1,2,3,4,5] Abaddon
         - [1,2,3] Alchemist
@@ -78,6 +78,7 @@ If you’ve come across this script or is using it, good feedback is always welc
         - [2] Invoker
         - [4,5] IO
         - [2,4,5] Keeper of the Light
+        - [1,2] Kez
         - [2,3] Leshrac
         - [1] Lifestealer
         - ~~[2] Lone Druid~~
@@ -128,6 +129,7 @@ If you’ve come across this script or is using it, good feedback is always welc
         - [x] Elder Titan
         - [x] Hoodwink
         - [x] IO
+        - [x] Kez
         - [ ] Lone Druid
         - [x] Marci
         - [x] Muerta
@@ -181,6 +183,7 @@ If you’ve come across this script or is using it, good feedback is always welc
     | Jakiro                | &check; | -       |
     | Juggernaut            | -       | &check; |
     | Keeper of the Light   | &check; | &check; |
+    | Kez                   | &check; | -       |
     | Kunkka                | &check; | &check; |
     | Legion Commander      | -       | -       |
     | Leshrac               | -       | &check; |

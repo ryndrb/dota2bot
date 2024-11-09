@@ -127,7 +127,10 @@ function GetDesire()
         if J.IsValidHero(botTarget) and J.CanBeAttacked(botTarget) and not J.IsSuspiciousIllusion(botTarget) then
             bot:SetTarget(botTarget)
             if J.IsInLaningPhase() and GetUnitToLocationDistance(bot, GetLaneFrontLocation(GetTeam(), bot:GetAssignedLane(), 0)) < 2000 then
-                return 0.5
+                local nEnemyLaneCreeps = bot:GetNearbyLaneCreeps(600, true)
+                if #nEnemyLaneCreeps <= 1 then
+                    return 0.5
+                end
             else
                 return 0.95
             end
@@ -173,7 +176,10 @@ function GetDesire()
         bot:SetTarget(hTarget)
         if fTotalEnemyDamage * 2 < botHealth then
             if J.IsInLaningPhase() and GetBestLastHitCreep(tEnemyLaneCreeps) ~= nil then
-                return 0.5
+                local nEnemyLaneCreeps = bot:GetNearbyLaneCreeps(600, true)
+                if #nEnemyLaneCreeps <= 1 then
+                    return 0.5
+                end
             else
                 return 0.95
             end

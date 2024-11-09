@@ -1189,6 +1189,23 @@ local Heroes = {
         },
     },
 
+    ['npc_dota_hero_kez'] = {
+        ['synergy'] = {
+            'npc_dota_hero_abyssal_underlord',
+            'npc_dota_hero_lina',
+            'npc_dota_hero_lich',
+            'npc_dota_hero_shadow_shaman',
+            'npc_dota_hero_lion',
+        },
+        ['counter'] = {
+            'npc_dota_hero_naga_siren',
+            'npc_dota_hero_chen',
+            'npc_dota_hero_keeper_of_the_light',
+            'npc_dota_hero_arc_warden',
+            'npc_dota_hero_broodmother',
+        },
+    },
+
     ['npc_dota_hero_kunkka'] = {
         ['synergy'] = {
             'npc_dota_hero_dawnbreaker',

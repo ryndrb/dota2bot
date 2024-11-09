@@ -5047,6 +5047,7 @@ function J.IsNonStableHero(hName)
 		['npc_dota_hero_dark_willow'] = true,
 		['npc_dota_hero_elder_titan'] = true,
 		['npc_dota_hero_hoodwink'] = true,
+		['npc_dota_hero_kez'] = true,
 		['npc_dota_hero_lone_druid'] = true,
 		['npc_dota_hero_marci'] = true,
 		['npc_dota_hero_muerta'] = true,

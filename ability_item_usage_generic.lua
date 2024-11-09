@@ -107,6 +107,35 @@ local function AbilityLevelUpComplement()
 		end
 
 		local abilityToLevelup = bot:GetAbilityByName( sAbilityLevelUpList[1] )
+
+		-- handle when in sai mode
+		if botName == 'npc_dota_hero_kez' then
+			if bot.kez_mode == 'sai' then
+				for i = 0, 6 do
+					local hAbility = bot:GetAbilityInSlot(i)
+					if hAbility ~= nil then
+						if sAbilityLevelUpList[1] == 'kez_echo_slash' and hAbility:GetName() == 'kez_falcon_rush'
+						then
+							abilityToLevelup = hAbility
+							sAbilityLevelUpList[1] = 'kez_falcon_rush'
+						elseif sAbilityLevelUpList[1] == 'kez_grappling_claw' and hAbility:GetName() == 'kez_talon_toss'
+						then
+							abilityToLevelup = hAbility
+							sAbilityLevelUpList[1] = 'kez_talon_toss'
+						elseif sAbilityLevelUpList[1] == 'kez_kazurai_katana' and hAbility:GetName() == 'kez_shodo_sai'
+						then
+							abilityToLevelup = hAbility
+							sAbilityLevelUpList[1] = 'kez_shodo_sai'
+						elseif sAbilityLevelUpList[1] == 'kez_raptor_dance' and hAbility:GetName() == 'kez_ravens_veil'
+						then
+							abilityToLevelup = hAbility
+							sAbilityLevelUpList[1] = 'kez_ravens_veil'
+						end
+					end
+				end
+			end
+		end
+
 		if abilityToLevelup ~= nil
 			and not abilityToLevelup:IsHidden() --fix kunkka bug
 			and abilityToLevelup:GetLevel() < abilityToLevelup:GetMaxLevel()

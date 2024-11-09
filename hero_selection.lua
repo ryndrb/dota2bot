@@ -73,6 +73,7 @@ local sHeroList = {										-- pos  1, 2, 3, 4, 5
 	{name = 'npc_dota_hero_jakiro', 					role = {0, 15, 0, 100, 100}},
 	{name = 'npc_dota_hero_juggernaut', 				role = {100, 0, 0, 0, 0}},
 	{name = 'npc_dota_hero_keeper_of_the_light', 		role = {0, 50, 0, 100, 25}},
+	{name = 'npc_dota_hero_kez', 						role = {100, 100, 0, 0, 0}},
 	{name = 'npc_dota_hero_kunkka', 					role = {0, 100, 100, 0, 0}},
 	{name = 'npc_dota_hero_legion_commander', 			role = {0, 0, 100, 0, 0}},
 	{name = 'npc_dota_hero_leshrac', 					role = {0, 100, 50, 0, 0}},
@@ -318,7 +319,9 @@ function X.GetNotRepeatHero( nTable )
 		for id = 0, 20
 		do
 			if ( IsTeamPlayer( id ) and GetSelectedHeroName( id ) == sHero )
-				or ( sHero ~= "npc_dota_hero_ringmaster" and IsCMBannedHero( sHero ) )
+				or ( sHero ~= "npc_dota_hero_ringmaster"
+					and sHero ~= "npc_dota_hero_kez"
+					and IsCMBannedHero( sHero ) )
 				or ( X.IsBanByChat( sHero ) )
 			then
 				bRepeated = true
@@ -337,7 +340,9 @@ function X.IsRepeatHero( sHero )
 	for id = 0, 20
 	do
 		if ( IsTeamPlayer( id ) and GetSelectedHeroName( id ) == sHero )
-			or ( sHero ~= "npc_dota_hero_ringmaster" and IsCMBannedHero( sHero ) )
+			or ( sHero ~= "npc_dota_hero_ringmaster"
+				and sHero ~= "npc_dota_hero_kez"
+				and IsCMBannedHero( sHero ) )
 			or ( X.IsBanByChat( sHero ) )
 		then
 			return true
