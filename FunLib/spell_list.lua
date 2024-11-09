@@ -346,6 +346,18 @@ X['spells'] = {
         ['keeper_of_the_light_spirit_form_illuminate'] = {weight = 0.9},
         ['keeper_of_the_light_spirit_form_illuminate_end'] = {weight = 1},
     },
+
+    ['npc_dota_hero_kez'] = {
+        ['kez_echo_slash'] = {weight = 0.9},
+        ['kez_grappling_claw'] = {weight = 0.5},
+        ['kez_kazurai_katana'] = {weight = 1},
+        ['kez_raptor_dance'] = {weight = 0.8},
+        ['kez_falcon_rush'] = {weight = 0.8},
+        ['kez_talon_toss'] = {weight = 0.2},
+        ['kez_shodo_sai'] = {weight = 1},
+        ['kez_ravens_veil'] = {weight = 0.6},
+        ['kez_switch_weapons'] = {weight = 1},
+    },
     
     ['npc_dota_hero_kunkka'] = {
         ['kunkka_torrent'] = {weight = 0.7},
