@@ -40,9 +40,10 @@ local HeroBuild = {
 				"item_power_treads",
 				"item_echo_sabre",
 				"item_aghanims_shard",
+				"item_lesser_crit",
 				"item_black_king_bar",--
-				"item_greater_crit",--
 				"item_assault",--
+				"item_greater_crit",--
 				"item_harpoon",--
 				"item_satanic",--
 				"item_moon_shard",
