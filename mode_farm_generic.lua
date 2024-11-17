@@ -50,7 +50,7 @@ function GetDesire()
 
     if not isWelcomeMessageDone and J.GetFirstBotInTeam() == bot
     then
-        if J.IsModeTurbo() and (DotaTime() > -45 or DotaTime() > -60) then
+        if DotaTime() > -45 then
 			bot:ActionImmediate_Chat("Check out the GitHub page to get the latest files: https://github.com/ryndrb/dota2bot", true)
 			bot:ActionImmediate_Chat("If you have any feedback in improving the experience, kindly post them on the Steam Workshop page.", true)
 			isWelcomeMessageDone = true

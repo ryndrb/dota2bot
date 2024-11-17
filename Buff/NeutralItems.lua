@@ -90,8 +90,7 @@ local Tier5NeutralItems = {
 }
 
 -- Just give out random for now.
--- Will work out a decent algorithm later to better assign suitable items.
-function NeutralItems.GiveNeutralItems(TeamRadiant, TeamDire)
+function NeutralItems.GiveNeutralItems(hHeroList)
     local isTurboMode = Helper.IsTurboMode()
 
     -- Tier 1 Neutral Items
@@ -100,11 +99,7 @@ function NeutralItems.GiveNeutralItems(TeamRadiant, TeamDire)
     then
         GameRules:SendCustomMessage('Bots receiving Tier 1 Neutral Items...', 0, 0)
 
-        for _, h in pairs(TeamRadiant) do
-            NeutralItems.GiveItem(Tier1NeutralItems[RandomInt(1, #Tier1NeutralItems)], h, isTierOneDone)
-        end
-
-        for _, h in pairs(TeamDire) do
+        for _, h in pairs(hHeroList) do
             NeutralItems.GiveItem(Tier1NeutralItems[RandomInt(1, #Tier1NeutralItems)], h, isTierOneDone)
         end
 
@@ -117,11 +112,7 @@ function NeutralItems.GiveNeutralItems(TeamRadiant, TeamDire)
     then
         GameRules:SendCustomMessage('Bots receiving Tier 2 Neutral Items...', 0, 0)
 
-        for _, h in pairs(TeamRadiant) do
-            NeutralItems.GiveItem(Tier2NeutralItems[RandomInt(1, #Tier2NeutralItems)], h, isTierOneDone)
-        end
-
-        for _, h in pairs(TeamDire) do
+        for _, h in pairs(hHeroList) do
             NeutralItems.GiveItem(Tier2NeutralItems[RandomInt(1, #Tier2NeutralItems)], h, isTierOneDone)
         end
 
@@ -134,11 +125,7 @@ function NeutralItems.GiveNeutralItems(TeamRadiant, TeamDire)
     then
         GameRules:SendCustomMessage('Bots receiving Tier 3 Neutral Items...', 0, 0)
 
-        for _, h in pairs(TeamRadiant) do
-            NeutralItems.GiveItem(Tier3NeutralItems[RandomInt(1, #Tier3NeutralItems)], h, isTierTwoDone)
-        end
-
-        for _, h in pairs(TeamDire) do
+        for _, h in pairs(hHeroList) do
             NeutralItems.GiveItem(Tier3NeutralItems[RandomInt(1, #Tier3NeutralItems)], h, isTierTwoDone)
         end
 
@@ -151,11 +138,7 @@ function NeutralItems.GiveNeutralItems(TeamRadiant, TeamDire)
     then
         GameRules:SendCustomMessage('Bots receiving Tier 4 Neutral Items...', 0, 0)
 
-        for _, h in pairs(TeamRadiant) do
-            NeutralItems.GiveItem(Tier4NeutralItems[RandomInt(1, #Tier4NeutralItems)], h, isTierThreeDone)
-        end
-
-        for _, h in pairs(TeamDire) do
+        for _, h in pairs(hHeroList) do
             NeutralItems.GiveItem(Tier4NeutralItems[RandomInt(1, #Tier4NeutralItems)], h, isTierThreeDone)
         end
 
@@ -168,11 +151,7 @@ function NeutralItems.GiveNeutralItems(TeamRadiant, TeamDire)
     then
         GameRules:SendCustomMessage('Bots receiving Tier 5 Neutral Items...', 0, 0)
 
-        for _, h in pairs(TeamRadiant) do
-            NeutralItems.GiveItem(Tier5NeutralItems[RandomInt(1, #Tier5NeutralItems)], h, isTierFourDone)
-        end
-
-        for _, h in pairs(TeamDire) do
+        for _, h in pairs(hHeroList) do
             NeutralItems.GiveItem(Tier5NeutralItems[RandomInt(1, #Tier5NeutralItems)], h, isTierFourDone)
         end
 

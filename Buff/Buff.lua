@@ -3,6 +3,7 @@ dofile('bots/Buff/Experience')
 dofile('bots/Buff/GPM')
 dofile('bots/Buff/NeutralItems')
 dofile('bots/Buff/Helper')
+dofile('bots/Buff/Towers')
 
 if Buff == nil
 then
@@ -98,6 +99,47 @@ local function CheckBotCount()
     end
 end
 
+local bTowerBuff = false -- enable tower buff
+local hBotTeams = {false, false} -- buff this script
+
+local function CheckBots()
+    if GameRules:GetDOTATime(false, false) > 0 then
+        return
+    end
+
+    local hUnitList_rad = FindUnitsInRadius(
+        DOTA_TEAM_GOODGUYS,
+        Vector(-5568.449707, -5045.937500, 259.999023),
+        nil,
+        150,
+        DOTA_UNIT_TARGET_TEAM_FRIENDLY,
+        DOTA_UNIT_TARGET_HERO,
+        DOTA_UNIT_TARGET_FLAG_NONE,
+        FIND_ANY_ORDER,
+        false
+    )
+
+    local hUnitList_dir = FindUnitsInRadius(
+        DOTA_TEAM_BADGUYS,
+        Vector(5122.543457, 4615.339355, 264.000000),
+        nil,
+        150,
+        DOTA_UNIT_TARGET_TEAM_FRIENDLY,
+        DOTA_UNIT_TARGET_HERO,
+        DOTA_UNIT_TARGET_FLAG_NONE,
+        FIND_ANY_ORDER,
+        false
+    )
+
+    if #hUnitList_rad >= 1 and not hUnitList_rad[1]:IsPlayer() and hUnitList_rad[1]:GetTeam() == DOTA_TEAM_GOODGUYS then
+        hBotTeams[1] = true
+    end
+
+    if #hUnitList_dir >= 1 and not hUnitList_dir[1]:IsPlayer() and hUnitList_dir[1]:GetTeam() == DOTA_TEAM_BADGUYS then
+        hBotTeams[2] = true
+    end
+end
+
 function Buff:Init()
     if not BuffEnabled then
         GameRules:SendCustomMessage('Buff mode enabled!', 0, 0)
@@ -114,20 +156,47 @@ function Buff:Init()
         Buff:AddBotsToTable()
         local TeamRadiant = botTable[DOTA_TEAM_GOODGUYS]
         local TeamDire = botTable[DOTA_TEAM_BADGUYS]
+        local hHeroList = {}
+
+        CheckBots()
 
         if GameRules:GetDOTATime(false, false) > 0 then
-            NeutralItems.GiveNeutralItems(TeamRadiant, TeamDire)
+            if bTowerBuff then
+                if hBotTeams[1] then
+                    T.HandleTowerBuff(DOTA_TEAM_GOODGUYS)
+                end
+                if hBotTeams[2] then
+                    T.HandleTowerBuff(DOTA_TEAM_BADGUYS)
+                end
+            end
+
+            if hBotTeams[1] then
+                for _, h in pairs(TeamRadiant) do
+                    table.insert(hHeroList, h)
+                end
+            end
+            if hBotTeams[2] then
+                for _, h in pairs(TeamDire) do
+                    table.insert(hHeroList, h)
+                end
+            end
+
+            NeutralItems.GiveNeutralItems(hHeroList)
 
             if not Helper.IsTurboMode()
             then
-                for _, h in pairs(TeamRadiant) do
-                    GPM.UpdateBotGold(h, TeamRadiant)
-                    XP.UpdateXP(h, TeamRadiant)
+                if hBotTeams[1] then
+                    for _, h in pairs(TeamRadiant) do
+                        GPM.UpdateBotGold(h, TeamRadiant)
+                        XP.UpdateXP(h, TeamRadiant)
+                    end
                 end
 
-                for _, h in pairs(TeamDire) do
-                    GPM.UpdateBotGold(h, TeamDire)
-                    XP.UpdateXP(h, TeamDire)
+                if hBotTeams[2] then
+                    for _, h in pairs(TeamDire) do
+                        GPM.UpdateBotGold(h, TeamDire)
+                        XP.UpdateXP(h, TeamDire)
+                    end
                 end
             end
         end

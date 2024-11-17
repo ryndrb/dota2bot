@@ -136,7 +136,7 @@ function GetDesire()
 	elseif botName == "npc_dota_hero_keeper_of_the_light"
 	then
 		if cAbility == nil then cAbility = bot:GetAbilityByName("keeper_of_the_light_illuminate") end
-		if cAbility:IsInAbilityPhase() or bot:IsChanneling() or bot:HasModifier('modifier_keeper_of_the_light_illuminate') then
+		if cAbility:IsChanneling() then
 			return BOT_MODE_DESIRE_ABSOLUTE
 		end
 	elseif botName == "npc_dota_hero_meepo"
@@ -194,7 +194,6 @@ function GetDesire()
 		if cAbility:IsTrained()
 		then
 			if bot:HasModifier('modifier_phoenix_sun_ray')
-			and not bot:HasModifier('modifier_phoenix_supernova_hiding')
 			then
 				return BOT_MODE_DESIRE_ABSOLUTE
 			end
@@ -466,68 +465,6 @@ function Think()
 		end
 	end
 
-	if J.CanNotUseAction(bot) then return end
-
-	-- Huskar
-	if ShouldHuskarMoveOutsideFountain
-	then
-		bot:Action_MoveToLocation(J.GetEnemyFountain())
-		return
-	end
-
-	-- Get out of fountain if in item mode
-	if ShouldHeroMoveOutsideFountain
-	then
-		bot:Action_MoveToLocation(J.GetEnemyFountain())
-		return
-	end
-
-	-- Heal in Base
-	-- Just for TP. Too much back and forth when "forcing" them try to walk to fountain; <- not reliable and misses farm.
-	if ShouldWaitInBaseToHeal
-	then
-		if GetUnitToLocationDistance(bot, J.GetTeamFountain()) > 150
-		then
-			local nInRangeEnemy = J.GetEnemiesNearLoc(bot:GetLocation(), 1600)
-			if  J.Item.GetItemCharges(bot, 'item_tpscroll') >= 1
-			and nInRangeEnemy ~= nil and #nInRangeEnemy == 0
-			then
-				if bot:GetUnitName() == 'npc_dota_hero_furion'
-				then
-					local Teleportation = bot:GetAbilityByName('furion_teleportation')
-					if  Teleportation:IsTrained()
-					and Teleportation:IsFullyCastable()
-					then
-						bot:Action_UseAbilityOnLocation(Teleportation, J.GetTeamFountain())
-						return
-					end
-				end
-
-				if J.CanCastAbility(TPScroll)
-				then
-					bot:Action_UseAbilityOnLocation(TPScroll, J.GetTeamFountain())
-					return
-				end
-			end
-		else
-			if J.GetHP(bot) < 0.85 or J.GetMP(bot) < 0.85
-			then
-				if  J.Item.GetItemCharges(bot, 'item_tpscroll') <= 1
-				and not J.IsMeepoClone(bot)
-				and bot:GetGold() >= GetItemCost('item_tpscroll')
-				then
-					bot:ActionImmediate_PurchaseItem('item_tpscroll')
-					return
-				end
-
-				bot:Action_MoveToLocation(bot:GetLocation() + 150)
-				return
-			else
-				ShouldWaitInBaseToHeal = false
-			end
-		end
-	end
-
 	-- Primal Beast (Onslaught)
 	if bot:HasModifier('modifier_primal_beast_onslaught_windup') or bot:HasModifier('modifier_prevent_taunts') or bot:HasModifier('modifier_primal_beast_onslaught_movement_adjustable') then
 		if bot.onslaught_status ~= nil then
@@ -598,14 +535,6 @@ function Think()
 		end
 	end
 
-	-- Tinker
-	if TinkerShouldWaitInBaseToHeal
-	then
-		if J.GetHP(bot) < 0.8 or J.GetMP(bot) < 0.8 then
-			return
-		end
-	end
-
 	-- Spirit Breaker
 	if bot:HasModifier('modifier_spirit_breaker_charge_of_darkness')
 	then
@@ -626,22 +555,6 @@ function Think()
 	then
 		bot:Action_MoveToLocation(J.GetTeamFountain())
 		return
-	end
-
-	-- Nyx Assassin
-	if bot.canVendettaKill
-	then
-		if bot.vendettaTarget ~= nil
-		then
-			if GetUnitToUnitDistance(bot, bot.vendettaTarget) > bot:GetAttackRange()
-			then
-				bot:Action_MoveToLocation(bot.vendettaTarget:GetLocation())
-				return
-			else
-				bot:Action_AttackUnit(bot.vendettaTarget, true)
-				return
-			end
-		end
 	end
 
 	-- Rolling Thunder
@@ -698,23 +611,15 @@ function Think()
 	end
 
 	-- Phoenix
-	if bot:HasModifier('modifier_phoenix_sun_ray') and not bot:HasModifier('modifier_phoenix_supernova_hiding')
+	if bot:HasModifier('modifier_phoenix_sun_ray')
 	then
 		local nRadius = 130
 		local nBeamDistance = 1150
 		local vBeamEndLoc = J.GetFaceTowardDistanceLocation(bot, nBeamDistance)
 
 		if J.IsValidHero(bot.sun_ray_target) then
-			local tResult = PointToLineDistance(bot:GetLocation(), vBeamEndLoc, bot.sun_ray_target:GetLocation())
-			if tResult ~= nil and not tResult.within and tResult.distance > nRadius then
-				if J.IsInRange(bot, bot.sun_ray_target, nBeamDistance) then
-					bot:Action_MoveToLocation(bot.sun_ray_target:GetLocation())
-					return
-				end
-			else
-				bot:Action_MoveToLocation(bot.sun_ray_target:GetLocation())
-				return
-			end
+			bot:Action_MoveToLocation(bot.sun_ray_target:GetLocation())
+			return
 		end
 
 		-- beam other enemy
@@ -725,6 +630,7 @@ function Think()
 			and not enemy:HasModifier('modifier_abaddon_borrowed_time')
 			and not enemy:HasModifier('modifier_dazzle_shallow_grave')
 			and not enemy:HasModifier('modifier_necrolyte_reapers_scythe') then
+				bot.sun_ray_target = enemy
 				bot:Action_MoveToLocation(enemy:GetLocation())
 				return
 			end
@@ -742,6 +648,7 @@ function Think()
 				if not J.IsRunning(ally)
 				or ally:HasModifier('modifier_faceless_void_chronosphere_freeze')
 				or ally:HasModifier('modifier_enigma_black_hole_pull') then
+					bot.sun_ray_target = ally
 					bot:Action_MoveToLocation(ally:GetLocation())
 					return
 				end
@@ -762,19 +669,6 @@ function Think()
 		end
 	end
 
-	-- Leshrac
-	if ShouldMoveCloseTowerForEdict
-	then
-		if EdictTowerTarget ~= nil
-		then
-			if GetUnitToUnitDistance(bot, EdictTowerTarget) > 350
-			then
-				bot:Action_MoveToLocation(EdictTowerTarget:GetLocation())
-				return
-			end
-		end
-	end
-
 	-- IO Tether
 	if bot:HasModifier('modifier_wisp_tether') and bot.tethered_ally ~= nil then
 		local attackTarget = bot.tethered_ally:GetAttackTarget()
@@ -789,6 +683,105 @@ function Think()
 		-- TODO: Less frontlining when engaging sometimes
 		bot:Action_MoveToLocation(bot.tethered_ally:GetLocation())
 		return
+	end
+
+	if J.CanNotUseAction(bot) then return end
+
+	-- Huskar
+	if ShouldHuskarMoveOutsideFountain
+	then
+		bot:Action_MoveToLocation(J.GetEnemyFountain())
+		return
+	end
+
+	-- Get out of fountain if in item mode
+	if ShouldHeroMoveOutsideFountain
+	then
+		bot:Action_MoveToLocation(J.GetEnemyFountain())
+		return
+	end
+
+	-- Leshrac
+	if ShouldMoveCloseTowerForEdict
+	then
+		if EdictTowerTarget ~= nil
+		then
+			if GetUnitToUnitDistance(bot, EdictTowerTarget) > 350
+			then
+				bot:Action_MoveToLocation(EdictTowerTarget:GetLocation())
+				return
+			end
+		end
+	end
+
+	-- Nyx Assassin
+	if bot.canVendettaKill
+	then
+		if bot.vendettaTarget ~= nil
+		then
+			if GetUnitToUnitDistance(bot, bot.vendettaTarget) > bot:GetAttackRange()
+			then
+				bot:Action_MoveToLocation(bot.vendettaTarget:GetLocation())
+				return
+			else
+				bot:Action_AttackUnit(bot.vendettaTarget, true)
+				return
+			end
+		end
+	end
+
+	-- Heal in Base
+	-- Just for TP. Too much back and forth when "forcing" them try to walk to fountain; <- not reliable and misses farm.
+	if ShouldWaitInBaseToHeal
+	then
+		if GetUnitToLocationDistance(bot, J.GetTeamFountain()) > 150
+		then
+			local nInRangeEnemy = J.GetEnemiesNearLoc(bot:GetLocation(), 1600)
+			if  J.Item.GetItemCharges(bot, 'item_tpscroll') >= 1
+			and nInRangeEnemy ~= nil and #nInRangeEnemy == 0
+			then
+				if bot:GetUnitName() == 'npc_dota_hero_furion'
+				then
+					local Teleportation = bot:GetAbilityByName('furion_teleportation')
+					if  Teleportation:IsTrained()
+					and Teleportation:IsFullyCastable()
+					then
+						bot:Action_UseAbilityOnLocation(Teleportation, J.GetTeamFountain())
+						return
+					end
+				end
+
+				if J.CanCastAbility(TPScroll)
+				then
+					bot:Action_UseAbilityOnLocation(TPScroll, J.GetTeamFountain())
+					return
+				end
+			end
+		else
+			if J.GetHP(bot) < 0.85 or J.GetMP(bot) < 0.85
+			then
+				if  J.Item.GetItemCharges(bot, 'item_tpscroll') <= 1
+				and not J.IsMeepoClone(bot)
+				and bot:GetGold() >= GetItemCost('item_tpscroll')
+				then
+					bot:ActionImmediate_PurchaseItem('item_tpscroll')
+					return
+				end
+
+				bot:Action_MoveToLocation(bot:GetLocation() + 150)
+				return
+			else
+				ShouldWaitInBaseToHeal = false
+			end
+		end
+	end
+
+	-- Tinker
+	if TinkerShouldWaitInBaseToHeal
+	then
+		if J.GetHP(bot) < 0.8 or J.GetMP(bot) < 0.8 then
+			return
+		end
 	end
 
 	-- Broodmother web mid at the start of game; 7.37 change

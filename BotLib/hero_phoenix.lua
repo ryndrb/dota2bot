@@ -832,16 +832,17 @@ function X.ConsiderSunRayStop()
     local botHP = J.GetHP(bot)
 
     if bot.sun_ray_engage then
-        if (X.IsBeingAttackedByRealHero(bot) and botHP < 0.25 and bot:WasRecentlyDamagedByAnyHero(2.0))
+        if (X.IsBeingAttackedByRealHero(tEnemyHeroes, bot) and botHP < 0.25 and bot:WasRecentlyDamagedByAnyHero(2.0))
         or #tAllyHeroes + 1 < #tEnemyHeroes
         or #tEnemyHeroes == 0
+        or #tAllyHeroes == 0 and #tEnemyHeroes == 0
         then
             return BOT_ACTION_DESIRE_HIGH
         end
     end
 
     if bot.sun_ray_heal_ally then
-        if (X.IsBeingAttackedByRealHero(bot) and botHP < 0.25 and bot:WasRecentlyDamagedByAnyHero(2.0))
+        if (X.IsBeingAttackedByRealHero(tEnemyHeroes, bot) and botHP < 0.25 and bot:WasRecentlyDamagedByAnyHero(2.0))
         then
             return BOT_ACTION_DESIRE_HIGH
         end
@@ -851,28 +852,40 @@ function X.ConsiderSunRayStop()
         return BOT_ACTION_DESIRE_HIGH
     end
 
+    if math.floor(DotaTime()) % 2 == 0 then
+        if J.IsValidHero(bot.sun_ray_target)
+        and not bot:IsFacingLocation(bot.sun_ray_target:GetLocation(), 45)
+        then
+            return BOT_ACTION_DESIRE_HIGH
+        end
+    end
+
     return BOT_ACTION_DESIRE_NONE
 end
 
 function X.ConsiderToggleMovement()
     if not J.CanCastAbility(ToggleMovement)
     or not bot:HasModifier('modifier_phoenix_sun_ray')
+    or bot:HasModifier('modifier_phoenix_supernova_hiding')
     or bot:IsRooted()
     then
         return BOT_ACTION_DESIRE_NONE, ''
     end
 
-    local nRadius = SunRay:GetSpecialValueInt('radius')
     local nBeamDistance = 1150
-    local vBeamEndLoc = J.GetFaceTowardDistanceLocation(bot, nBeamDistance)
 
-    if bot.sun_ray_target and not bot.sun_ray_target:IsNull() then
-        local tResult = PointToLineDistance(bot:GetLocation(), vBeamEndLoc, bot.sun_ray_target:GetLocation())
-		if tResult ~= nil and tResult.within and tResult.distance <= nRadius then
-            return BOT_ACTION_DESIRE_HIGH, 'off'
-        else
-            return BOT_ACTION_DESIRE_HIGH, 'on'
+    if J.IsValidHero(bot.sun_ray_target) then
+        if not J.IsInRange(bot, bot.sun_ray_target, nBeamDistance) then
+            if ToggleMovement:GetToggleState() == false then
+                return BOT_ACTION_DESIRE_HIGH, 'on'
+            end
+
+            return BOT_ACTION_DESIRE_NONE, ''
         end
+    end
+
+    if ToggleMovement:GetToggleState() == true then
+        return BOT_ACTION_DESIRE_HIGH, 'off'
     end
 
     return BOT_ACTION_DESIRE_NONE, ''
@@ -919,12 +932,12 @@ function X.ConsiderSupernova()
     return BOT_ACTION_DESIRE_NONE, nil, false
 end
 
-function X.IsBeingAttackedByRealHero(unit)
-    for _, enemy in pairs(GetUnitList(UNIT_LIST_ENEMIES))
+function X.IsBeingAttackedByRealHero(hUnitList, hUnit)
+    for _, enemy in pairs(hUnitList)
     do
         if J.IsValidHero(enemy)
         and not J.IsSuspiciousIllusion(enemy)
-        and (enemy:GetAttackTarget() == unit or J.IsChasingTarget(enemy, unit))
+        and (enemy:GetAttackTarget() == hUnit or J.IsChasingTarget(enemy, hUnit))
         then
             return true
         end

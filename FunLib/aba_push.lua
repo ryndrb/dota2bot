@@ -81,6 +81,8 @@ function Push.GetPushDesire(bot, lane)
 
     local botTarget = bot:GetAttackTarget()
     if J.IsValidBuilding(botTarget)
+    and not string.find(botTarget:GetUnitName(), 'tower1')
+    and not string.find(botTarget:GetUnitName(), 'tower2')
     then
         if  botTarget:HasModifier('modifier_fountain_glyph')
         and not (aAliveCount >= eAliveCount + 2)

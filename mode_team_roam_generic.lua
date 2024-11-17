@@ -79,6 +79,12 @@ function GetDesire()
 		IsSupport = not J.IsCore(bot)
 	end
 
+	if DotaTime() < -50 then
+		if bot == J.GetFirstBotInTeam() then
+			return BOT_MODE_DESIRE_ABSOLUTE
+		end
+	end
+
 	local nDesire = 0
 
 	local nEnemyHeroes = J.GetEnemiesNearLoc(bot:GetLocation(), 1600)
@@ -242,6 +248,16 @@ end
 
 
 function Think()
+	if DotaTime() < -50 then
+		if bot:GetTeam() == TEAM_RADIANT then
+			bot:Action_MoveDirectly(Vector(-5568.449707, -5045.937500, 259.999023))
+			return
+		else
+			bot:Action_MoveDirectly(Vector(5122.543457, 4615.339355, 264.000000))
+			return
+		end
+	end
+
 	if J.CanNotUseAction(bot) then return end
 
 	if  shouldHarass

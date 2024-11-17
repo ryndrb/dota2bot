@@ -343,8 +343,6 @@ X['spells'] = {
         ['keeper_of_the_light_recall'] = {weight = 1},
         ['keeper_of_the_light_will_o_wisp'] = {weight = 0.1},
         ['keeper_of_the_light_spirit_form'] = {weight = 1},
-        ['keeper_of_the_light_spirit_form_illuminate'] = {weight = 0.9},
-        ['keeper_of_the_light_spirit_form_illuminate_end'] = {weight = 1},
     },
 
     ['npc_dota_hero_kez'] = {

@@ -669,6 +669,38 @@ function X.ConsiderFalconRush()
         end
     end
 
+    if J.IsPushing(bot) then
+        if J.IsValidBuilding(botTarget)
+        and J.CanBeAttacked(botTarget)
+        and J.IsInRange(bot, botTarget, bot:GetAttackRange() + 150)
+        and J.IsAttacking(botTarget)
+        and J.GetManaAfter(botTarget) > 0.4
+        then
+            return BOT_ACTION_DESIRE_HIGH
+        end
+    end
+
+    if J.IsDoingRoshan(bot) then
+        if J.IsRoshan(botTarget)
+        and J.CanBeAttacked(botTarget)
+        and J.IsInRange(bot, botTarget, 500)
+        and J.IsAttacking(bot)
+        and J.GetManaAfter(botTarget) > 0.3
+        then
+            return BOT_ACTION_DESIRE_HIGH
+        end
+    end
+
+    if J.IsDoingTormentor(bot) then
+        if J.IsTormentor(botTarget)
+        and J.IsInRange(bot, botTarget, 500)
+        and J.IsAttacking(bot)
+        and J.GetManaAfter(botTarget) > 0.3
+        then
+            return BOT_ACTION_DESIRE_HIGH
+        end
+    end
+
     return BOT_ACTION_DESIRE_NONE
 end
 
