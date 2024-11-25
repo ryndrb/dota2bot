@@ -80,13 +80,13 @@ local HeroBuild = {
                 "item_boots_of_bearing",--
                 "item_sheepstick",--
                 "item_solar_crest",--
+                "item_ultimate_scepter_2",
                 "item_aeon_disk",--
                 "item_ethereal_blade",--
-                "item_ultimate_scepter_2",
                 "item_moon_shard",
             },
             ['sell_list'] = {
-                "item_magic_wand",
+                "item_magic_wand", "item_ultimate_scepter",
             },
         },
     },
@@ -114,17 +114,17 @@ local HeroBuild = {
                 "item_aether_lens",
                 "item_aghanims_shard",
                 "item_glimmer_cape",--
-                "item_guardian_greaves",--
                 "item_ultimate_scepter",
+                "item_guardian_greaves",--
                 "item_sheepstick",--
                 "item_solar_crest",--
+                "item_ultimate_scepter_2",
                 "item_aeon_disk",--
                 "item_ethereal_blade",--
-                "item_ultimate_scepter_2",
                 "item_moon_shard",
             },
             ['sell_list'] = {
-                "item_magic_wand",
+                "item_magic_wand", "item_ultimate_scepter",
             },
         },
     },

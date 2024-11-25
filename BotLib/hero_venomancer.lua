@@ -78,15 +78,16 @@ local HeroBuild = {
                 "item_solar_crest",--
                 "item_spirit_vessel",--
                 "item_boots_of_bearing",--
-                "item_force_staff",--
+                "item_force_staff",
                 "item_aghanims_shard",
                 sUtilityItem,--
                 "item_wind_waker",--
                 "item_ultimate_scepter_2",
+                "item_hurricane_pike",--
                 "item_moon_shard",
             },
             ['sell_list'] = {
-                "item_magic_wand",
+                "item_magic_wand", "item_spirit_vessel",
             },
         },
     },
@@ -116,15 +117,16 @@ local HeroBuild = {
                 "item_solar_crest",--
                 "item_spirit_vessel",--
                 "item_guardian_greaves",--
-                "item_force_staff",--
+                "item_force_staff",
                 "item_aghanims_shard",
                 sUtilityItem,--
                 "item_wind_waker",--
                 "item_ultimate_scepter_2",
+                "item_hurricane_pike",--
                 "item_moon_shard",
             },
             ['sell_list'] = {
-                "item_magic_wand",
+                "item_magic_wand", "item_spirit_vessel",
             },
         },
     },

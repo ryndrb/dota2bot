@@ -48,17 +48,15 @@ local HeroBuild = {
 				"item_quelling_blade",
 				"item_double_gauntlets",
 			
-				"item_double_bracer",
-				"item_boots",
 				"item_magic_wand",
+				"item_double_bracer",
 				"item_phase_boots",
 				"item_phylactery",
 				"item_blink",
 				"item_aghanims_shard",
 				"item_black_king_bar",--
 				"item_angels_demise",--
-				"item_kaya_and_sange",--
-				"item_travel_boots",
+				"item_sange_and_yasha",--
 				"item_shivas_guard",--
 				"item_overwhelming_blink",--
 				"item_travel_boots_2",--
@@ -66,9 +64,10 @@ local HeroBuild = {
 				"item_ultimate_scepter_2",
 			},
             ['sell_list'] = {
-				"item_quelling_blade",
-				"item_bracer",
-				"item_magic_wand",
+				"item_quelling_blade", "item_blink",
+				"item_magic_wand", "item_black_king_bar",
+				"item_bracer", "item_sange_and_yasha",
+				"item_bracer", "item_shivas_guard",
 			},
         },
     },
@@ -91,9 +90,8 @@ local HeroBuild = {
 				"item_quelling_blade",
 				"item_double_gauntlets",
 			
-				"item_double_bracer",
-				"item_boots",
 				"item_magic_wand",
+				"item_double_bracer",
 				"item_phase_boots",
 				"item_blink",
 				"item_aghanims_shard",
@@ -101,16 +99,16 @@ local HeroBuild = {
 				"item_black_king_bar",--
 				sUtilityItem,--
 				"item_shivas_guard",--
-				"item_travel_boots",
 				"item_overwhelming_blink",--
 				"item_travel_boots_2",--
 				"item_moon_shard",
 				"item_ultimate_scepter_2",
 			},
             ['sell_list'] = {
-				"item_quelling_blade",
-				"item_bracer",
-				"item_magic_wand",
+				"item_quelling_blade", "item_crimson_guard",
+				"item_magic_wand", "item_black_king_bar",
+				"item_bracer", sUtilityItem,
+				"item_bracer", "item_shivas_guard",
 			},
         },
     },
@@ -134,8 +132,8 @@ local HeroBuild = {
 				"item_faerie_fire",
 				"item_blood_grenade",
 			
-				"item_tranquil_boots",
 				"item_magic_wand",
+				"item_tranquil_boots",
 				"item_solar_crest",--
 				"item_force_staff",--
 				"item_boots_of_bearing",--
@@ -170,8 +168,8 @@ local HeroBuild = {
 				"item_faerie_fire",
 				"item_blood_grenade",
 			
-				"item_arcane_boots",
 				"item_magic_wand",
+				"item_arcane_boots",
 				"item_solar_crest",--
 				"item_force_staff",--
 				"item_guardian_greaves",--

@@ -37,26 +37,27 @@ local HeroBuild = {
 				"item_circlet",
 			
 				"item_wraith_band",
-				"item_power_treads",
 				"item_magic_wand",
+				"item_power_treads",
 				"item_diffusal_blade",
+				"item_yasha",
 				"item_ultimate_scepter",
 				"item_manta",--
 				"item_heart",--
 				"item_basher",
 				"item_disperser",--
 				"item_butterfly",--
-				"item_bloodthorn",--
 				"item_ultimate_scepter_2",
 				"item_abyssal_blade",--
+				"item_bloodthorn",--
 				"item_moon_shard",
 				"item_aghanims_shard",
 			},
             ['sell_list'] = {
-				"item_quelling_blade",
-				"item_wraith_band",
-				"item_power_treads",
-				"item_magic_wand",
+				"item_quelling_blade", "item_ultimate_scepter",
+				"item_magic_wand", "item_heart",
+				"item_wraith_band", "item_basher",
+				"item_power_treads", "item_bloodthorn",
 			},
         },
     },

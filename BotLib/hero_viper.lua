@@ -44,31 +44,31 @@ local HeroBuild = {
             ['buy_list'] = {
 				"item_tango",
 				"item_faerie_fire",
-				"item_clarity",
 				"item_double_branches",
 				"item_circlet",
 				"item_slippers",
 			
 				"item_bottle",
-				"item_wraith_band",
 				"item_magic_wand",
+				"item_wraith_band",
 				"item_power_treads",
-				"item_mage_slayer",--
+				"item_mage_slayer",
 				"item_dragon_lance",
 				"item_manta",--
 				"item_hurricane_pike",--
 				"item_aghanims_shard",
-				"item_kaya_and_sange",--
-				"item_travel_boots",
+				"item_assault",--
 				"item_shivas_guard",--
+				"item_greater_crit",--
 				"item_travel_boots_2",--
 				"item_ultimate_scepter_2",
 				"item_moon_shard",
 			},
             ['sell_list'] = {
-				"item_bottle",
-				"item_wraith_band",
-				"item_magic_wand",
+				"item_magic_wand", "item_manta",
+				"item_bottle", "item_assault",
+				"item_wraith_band", "item_shivas_guard",
+				"item_mage_slayer", "item_greater_crit",
 			},
         },
     },
@@ -91,24 +91,26 @@ local HeroBuild = {
 				"item_enchanted_mango",
 				"item_double_circlet",
 			
-				"item_double_wraith_band",
-				"item_boots",
 				"item_magic_wand",
+				"item_double_wraith_band",
 				"item_power_treads",
-				"item_mage_slayer",--
+				"item_mage_slayer",
 				"item_dragon_lance",
 				sUtilityItem,--
 				"item_black_king_bar",--
 				"item_aghanims_shard",
 				"item_hurricane_pike",--
 				"item_sheepstick",--
+				"item_butterfly",--
 				"item_travel_boots_2",--
 				"item_ultimate_scepter_2",
 				"item_moon_shard",
 			},
             ['sell_list'] = {
-				"item_wraith_band",
-				"item_magic_wand",
+				"item_magic_wand", sUtilityItem,
+				"item_wraith_band", "item_black_king_bar",
+				"item_wraith_band", "item_sheepstick",
+				"item_mage_slayer", "item_butterfly",
 			},
         },
     },

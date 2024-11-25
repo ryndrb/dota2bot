@@ -21,7 +21,7 @@ local HeroBuild = {
             ['talent'] = {
 				[1] = {
 					['t25'] = {0, 10},
-					['t20'] = {10, 0},
+					['t20'] = {0, 10},
 					['t15'] = {10, 0},
 					['t10'] = {0, 10},
 				},
@@ -41,8 +41,8 @@ local HeroBuild = {
 				"item_double_gauntlets",
 				"item_quelling_blade",
 			
-				"item_phase_boots",
 				"item_magic_wand",
+				"item_phase_boots",
 				"item_armlet",
 				"item_radiance",--
 				"item_blink",
@@ -57,10 +57,11 @@ local HeroBuild = {
 				"item_ultimate_scepter_2",
 			},
             ['sell_list'] = {
-				"item_gauntlets",
-				"item_quelling_blade",
-				"item_magic_wand",
-				"item_armlet",
+				"item_gauntlets", "item_radiance",
+				"item_gauntlets", "item_blink",
+				"item_quelling_blade", "item_black_king_bar",
+				"item_magic_wand", "item_assault",
+				"item_armlet", "item_travel_boots",
 			},
         },
     },
@@ -81,7 +82,7 @@ local HeroBuild = {
             ['talent'] = {
 				[1] = {
 					['t25'] = {0, 10},
-					['t20'] = {10, 0},
+					['t20'] = {0, 10},
 					['t15'] = {10, 0},
 					['t10'] = {10, 0},
 				}
@@ -91,31 +92,31 @@ local HeroBuild = {
             },
             ['buy_list'] = {
 				"item_tango",
+				"item_double_branches",
+				"item_double_gauntlets",
 				"item_quelling_blade",
-				"item_gauntlets",
-				"item_magic_stick",
-				"item_branches",
 			
-				"item_bracer",
 				"item_magic_wand",
 				"item_phase_boots",
+				"item_armlet",
 				"item_radiance",--
-				"item_assault",--
 				"item_blink",
 				"item_black_king_bar",--
-				"item_basher",
+				"item_assault",--
+				"item_abyssal_blade",--
 				"item_travel_boots",
 				"item_overwhelming_blink",--
-				"item_abyssal_blade",--
 				"item_travel_boots_2",--
 				"item_moon_shard",
 				"item_aghanims_shard",
 				"item_ultimate_scepter_2",
 			},
             ['sell_list'] = {
-				"item_quelling_blade",
-				"item_bracer",
-				"item_magic_wand",
+				"item_gauntlets", "item_radiance",
+				"item_gauntlets", "item_blink",
+				"item_quelling_blade", "item_black_king_bar",
+				"item_magic_wand", "item_assault",
+				"item_armlet", "item_travel_boots",
 			},
         },
     },

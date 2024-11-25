@@ -48,27 +48,24 @@ local HeroBuild = {
                 "item_double_branches",
             
                 "item_bottle",
-                "item_arcane_boots",
                 "item_magic_wand",
+                "item_arcane_boots",
                 "item_phylactery",
                 "item_ultimate_scepter",
                 "item_octarine_core",--
-                "item_blink",
                 "item_black_king_bar",--
-                "item_travel_boots",
                 "item_cyclone",
+                "item_angels_demise",--
                 "item_sheepstick",--
                 "item_ultimate_scepter_2",
-                "item_arcane_blink",--
                 "item_wind_waker",--
                 "item_travel_boots_2",--
                 "item_aghanims_shard",
                 "item_moon_shard",
             },
             ['sell_list'] = {
-                "item_bottle",
-                "item_magic_wand",
-                "item_phylactery",
+                "item_magic_wand", "item_black_king_bar",
+                "item_bottle", "item_cyclone",
             },
         },
     },
@@ -109,20 +106,19 @@ local HeroBuild = {
                 "item_aether_lens",
                 "item_blink",
                 "item_ancient_janggo",
-                "item_aghanims_shard",
                 "item_force_staff",--
                 "item_boots_of_bearing",--
                 "item_ultimate_scepter",
-                "item_cyclone",
-                "item_sheepstick",--
+                "item_aghanims_shard",
                 "item_wind_waker",--
-                "item_ethereal_blade",--
-                "item_arcane_blink",--
+                "item_sheepstick",--
                 "item_ultimate_scepter_2",
+                "item_arcane_blink",--
+                "item_ethereal_blade",--
                 "item_moon_shard",
             },
             ['sell_list'] = {
-                "item_magic_wand",
+                "item_magic_wand", "item_ancient_janggo",
             },
         },
     },
@@ -151,20 +147,19 @@ local HeroBuild = {
                 "item_aether_lens",
                 "item_blink",
                 "item_mekansm",
-                "item_aghanims_shard",
                 "item_force_staff",--
                 "item_guardian_greaves",--
                 "item_ultimate_scepter",
-                "item_cyclone",
-                "item_sheepstick",--
+                "item_aghanims_shard",
                 "item_wind_waker",--
-                "item_ethereal_blade",--
-                "item_arcane_blink",--
+                "item_sheepstick",--
                 "item_ultimate_scepter_2",
+                "item_arcane_blink",--
+                "item_ethereal_blade",--
                 "item_moon_shard",
             },
             ['sell_list'] = {
-                "item_magic_wand",
+                "item_magic_wand", "item_mekansm",
             },
         },
     },

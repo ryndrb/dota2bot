@@ -79,12 +79,12 @@ local HeroBuild = {
 				"item_ultimate_scepter",
 				"item_lotus_orb",--
 				"item_refresher",--
-				"item_assault",--
 				"item_ultimate_scepter_2",
+				"item_assault",--
 				"item_moon_shard",
 			},
             ['sell_list'] = {
-				"item_magic_wand",
+				"item_magic_wand", "item_ultimate_scepter",
 			},
         },
     },
@@ -115,12 +115,12 @@ local HeroBuild = {
 				"item_ultimate_scepter",
 				"item_lotus_orb",--
 				"item_refresher",--
-				"item_assault",--
 				"item_ultimate_scepter_2",
+				"item_assault",--
 				"item_moon_shard",
 			},
             ['sell_list'] = {
-				"item_magic_wand",
+				"item_magic_wand", "item_ultimate_scepter",
 			},
         },
     },

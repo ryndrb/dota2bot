@@ -50,23 +50,23 @@ local HeroBuild = {
                 "item_boots",
                 "item_magic_wand",
                 "item_spirit_vessel",
-                "item_travel_boots",
                 "item_dagon_2",
+                "item_travel_boots",
                 "item_octarine_core",--
                 "item_black_king_bar",--
-                "item_sheepstick",--
                 "item_dagon_5",--
-                "item_ultimate_scepter",
-                "item_travel_boots_2",--
-                "item_ultimate_scepter_2",
-                "item_wind_waker",--
                 "item_aghanims_shard",
+                "item_sheepstick",--
+                "item_ultimate_scepter",
+                "item_wind_waker",--
+                "item_ultimate_scepter_2",
+                "item_travel_boots_2",--
                 "item_moon_shard",
             },
             ['sell_list'] = {
-                "item_null_talisman",
-                "item_magic_wand",
-                "item_spirit_vessel",
+                "item_magic_wand", "item_black_king_bar",
+                "item_null_talisman", "item_sheepstick",
+                "item_spirit_vessel", "item_ultimate_scepter",
             },
         },
     },
@@ -98,19 +98,19 @@ local HeroBuild = {
             ['buy_list'] = {
                 "item_double_tango",
                 "item_faerie_fire",
-                "item_clarity",
                 "item_blood_grenade",
             
                 "item_tranquil_boots",
                 "item_solar_crest",--
                 "item_glimmer_cape",--
-                "item_boots_of_bearing",--
+                "item_ancient_janggo",
                 "item_cyclone",
+                "item_boots_of_bearing",--
                 "item_lotus_orb",--
                 "item_sheepstick",--
                 "item_wind_waker",--
-                "item_aghanims_shard",
                 "item_ultimate_scepter_2",
+                "item_aghanims_shard",
                 "item_moon_shard",
             },
             ['sell_list'] = {},
@@ -132,18 +132,19 @@ local HeroBuild = {
             ['buy_list'] = {
                 "item_double_tango",
                 "item_faerie_fire",
-                "item_clarity",
                 "item_blood_grenade",
             
                 "item_arcane_boots",
                 "item_solar_crest",--
                 "item_glimmer_cape",--
+                "item_mekansm",
+                "item_cyclone",
                 "item_guardian_greaves",--
                 "item_lotus_orb",--
                 "item_sheepstick",--
                 "item_wind_waker",--
-                "item_aghanims_shard",
                 "item_ultimate_scepter_2",
+                "item_aghanims_shard",
                 "item_moon_shard",
             },
             ['sell_list'] = {},

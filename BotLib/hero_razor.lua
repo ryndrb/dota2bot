@@ -40,17 +40,17 @@ local HeroBuild = {
 				"item_manta",--
 				"item_black_king_bar",--
 				"item_aghanims_shard",
-				"item_butterfly",--
 				"item_satanic",--
+				"item_butterfly",--
 				"item_assault",--
 				"item_refresher",--
 				"item_moon_shard",
 				"item_ultimate_scepter_2",
 			},
             ['sell_list'] = {
-				"item_quelling_blade",
-				"item_power_treads",
-				"item_magic_wand",
+				"item_quelling_blade", "item_butterfly",
+				"item_magic_wand", "item_assault",
+				"item_power_treads", "item_refresher",
 			},
         },
     },
@@ -79,18 +79,18 @@ local HeroBuild = {
 				"item_manta",--
 				"item_black_king_bar",--
 				"item_aghanims_shard",
-				"item_butterfly",--
 				"item_satanic",--
+				"item_butterfly",--
 				"item_assault",--
 				"item_refresher",--
 				"item_moon_shard",
 				"item_ultimate_scepter_2",
 			},
             ['sell_list'] = {
-				"item_quelling_blade",
-				"item_bottle",
-				"item_power_treads",
-				"item_magic_wand",
+				"item_quelling_blade", "item_satanic",
+				"item_magic_wand", "item_butterfly",
+				"item_bottle", "item_assault",
+				"item_power_treads", "item_refresher",
 			},
         },
     },
@@ -112,9 +112,8 @@ local HeroBuild = {
 				"item_double_branches",
 				"item_double_circlet",
 			
-				"item_double_wraith_band",
-				"item_boots",
 				"item_magic_wand",
+				"item_double_wraith_band",
 				"item_power_treads",
 				"item_manta",--
 				"item_black_king_bar",--
@@ -127,9 +126,10 @@ local HeroBuild = {
 				"item_ultimate_scepter_2",
 			},
             ['sell_list'] = {
-				"item_wraith_band",
-				"item_magic_wand",
-				"item_power_treads",
+				"item_magic_wand", "item_heavens_halberd",
+				"item_wraith_band", "item_shivas_guard",
+				"item_wraith_band", "item_assault",
+				"item_power_treads", "item_satanic",
 			},
         },
     },

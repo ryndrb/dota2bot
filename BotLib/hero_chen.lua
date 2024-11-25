@@ -86,8 +86,8 @@ local HeroBuild = {
 				"item_moon_shard",
 			},
             ['sell_list'] = {
-                "item_circlet",
-                "item_magic_wand",
+                "item_circlet", "item_glimmer_cape",
+                "item_magic_wand", "item_solar_crest",
             },
         },
     },
@@ -125,8 +125,8 @@ local HeroBuild = {
 				"item_moon_shard",
 			},
             ['sell_list'] = {
-                "item_circlet",
-                "item_magic_wand",
+                "item_circlet", "item_glimmer_cape",
+                "item_magic_wand", "item_solar_crest",
             },
         },
     },

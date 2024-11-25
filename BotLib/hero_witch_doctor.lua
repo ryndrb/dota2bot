@@ -75,7 +75,7 @@ local HeroBuild = {
 				"item_magic_wand",
 				"item_glimmer_cape",--
 				"item_aghanims_shard",
-				"item_force_staff",--
+				"item_force_staff",
 				"item_ultimate_scepter",
 				"item_boots_of_bearing",--
 				"item_cyclone",
@@ -83,10 +83,11 @@ local HeroBuild = {
 				"item_wind_waker",--
 				"item_black_king_bar",--
 				"item_ultimate_scepter_2",
+				"item_hurricane_pike",--
 				"item_moon_shard",
 			},
             ['sell_list'] = {
-				"item_magic_wand",
+				"item_magic_wand", "item_ultimate_scepter",
 			},
         },
     },
@@ -113,7 +114,7 @@ local HeroBuild = {
 				"item_magic_wand",
 				"item_glimmer_cape",--
 				"item_aghanims_shard",
-				"item_force_staff",--
+				"item_force_staff",
 				"item_ultimate_scepter",
 				"item_guardian_greaves",--
 				"item_cyclone",
@@ -121,10 +122,11 @@ local HeroBuild = {
 				"item_wind_waker",--
 				"item_black_king_bar",--
 				"item_ultimate_scepter_2",
+				"item_hurricane_pike",--
 				"item_moon_shard",
 			},
             ['sell_list'] = {
-				"item_magic_wand",
+				"item_magic_wand", "item_ultimate_scepter",
 			},
         },
     },

@@ -37,11 +37,11 @@ local HeroBuild = {
 				"item_circlet",
 			
 				"item_wraith_band",
+				"item_magic_wand",
 				"item_phase_boots",
 				"item_maelstrom",
-				"item_magic_wand",
 				"item_black_king_bar",--
-				"item_gungir",--
+				"item_mjollnir",--
 				"item_basher",
 				"item_aghanims_shard",
 				"item_butterfly",--
@@ -52,10 +52,10 @@ local HeroBuild = {
 				"item_ultimate_scepter_2",
 			},
             ['sell_list'] = {
-				"item_quelling_blade",
-				"item_wraith_band",
-				"item_phase_boots",
-				"item_magic_wand",
+				"item_quelling_blade", "item_basher",
+				"item_magic_wand", "item_butterfly",
+				"item_wraith_band", "item_skadi",
+				"item_phase_boots", "item_monkey_king_bar",
 			},
         },
     },
@@ -80,11 +80,11 @@ local HeroBuild = {
 				"item_circlet",
 			
 				"item_wraith_band",
+				"item_magic_wand",
 				"item_phase_boots",
 				"item_maelstrom",
-				"item_magic_wand",
 				"item_black_king_bar",--
-				"item_gungir",--
+				"item_mjollnir",--
 				"item_basher",
 				"item_aghanims_shard",
 				"item_butterfly",--
@@ -96,10 +96,9 @@ local HeroBuild = {
 				"item_ultimate_scepter_2",
 			},
             ['sell_list'] = {
-				"item_quelling_blade",
-				"item_wraith_band",
-				"item_phase_boots",
-				"item_magic_wand",
+				"item_quelling_blade", "item_basher",
+				"item_magic_wand", "item_butterfly",
+				"item_wraith_band", "item_sheepstick",
 			},
         },
     },
@@ -138,9 +137,10 @@ local HeroBuild = {
 				"item_ultimate_scepter_2",
 			},
             ['sell_list'] = {
-				"item_quelling_blade",
-				"item_wraith_band",
-				"item_magic_wand",
+				"item_quelling_blade", "item_black_king_bar",
+				"item_magic_wand", sUtilityItem,
+				"item_wraith_band", "item_heavens_halberd",
+				"item_wraith_band", "item_basher",
 			},
         },
     },

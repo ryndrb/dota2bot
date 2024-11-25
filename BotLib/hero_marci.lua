@@ -36,23 +36,23 @@ local HeroBuild = {
                 "item_magic_stick",
                 "item_faerie_fire",
 
-                "item_power_treads",
                 "item_magic_wand",
+                "item_power_treads",
                 "item_bfury",--
                 "item_lesser_crit",
                 "item_ultimate_scepter",
                 "item_basher",
                 "item_black_king_bar",--
                 "item_greater_crit",--
+                "item_abyssal_blade",--
                 "item_monkey_king_bar",--
                 "item_ultimate_scepter_2",
-                "item_abyssal_blade",--
                 "item_travel_boots_2",--
-                "item_aghanims_shard",
                 "item_moon_shard",
+                "item_aghanims_shard",
             },
             ['sell_list'] = {
-                "item_magic_wand",
+                "item_magic_wand", "item_black_king_bar",
             },
         },
     },
@@ -75,24 +75,24 @@ local HeroBuild = {
                 "item_faerie_fire",
 
                 "item_bottle",
-                "item_power_treads",
                 "item_magic_wand",
+                "item_power_treads",
                 "item_bfury",--
                 "item_lesser_crit",
                 "item_ultimate_scepter",
                 "item_basher",
                 "item_black_king_bar",--
                 "item_greater_crit",--
+                "item_abyssal_blade",--
                 "item_monkey_king_bar",--
                 "item_ultimate_scepter_2",
-                "item_abyssal_blade",--
                 "item_travel_boots_2",--
-                "item_aghanims_shard",
                 "item_moon_shard",
+                "item_aghanims_shard",
             },
             ['sell_list'] = {
-                "item_magic_wand",
-                "item_bottle",
+                "item_magic_wand", "item_basher",
+                "item_bottle", "item_black_king_bar",
             },
         },
     },
@@ -116,8 +116,8 @@ local HeroBuild = {
                 "item_magic_stick",
 
                 "item_bracer",
-                "item_phase_boots",
                 "item_magic_wand",
+                "item_phase_boots",
                 "item_bfury",--
                 "item_crimson_guard",--
                 "item_black_king_bar",--
@@ -130,8 +130,8 @@ local HeroBuild = {
                 "item_aghanims_shard",
             },
             ['sell_list'] = {
-                "item_bracer",
-                "item_magic_wand",
+                "item_magic_wand", "item_lesser_crit",
+                "item_bracer", "item_assault",
             },
         },
     },

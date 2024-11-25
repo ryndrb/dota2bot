@@ -73,9 +73,10 @@ local HeroBuild = {
 				"item_moon_shard",
 			},
             ['sell_list'] = {
-				"item_quelling_blade",
-				"item_bracer",
-				"item_magic_wand",
+				"item_quelling_blade", "item_pipe",
+				"item_bracer", sUtilityItem,
+                "item_bracer", "item_shivas_guard",
+				"item_magic_wand", "item_black_king_bar"
 			},
         },
     },

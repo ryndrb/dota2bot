@@ -58,9 +58,9 @@ local HeroBuild = {
 				"item_double_branches",
 				"item_quelling_blade",
 			
+				"item_magic_wand",
 				"item_bracer",
 				"item_phase_boots",
-				"item_magic_wand",
 				"item_blade_mail",
 				"item_blink",
 				"item_crimson_guard",--
@@ -69,15 +69,15 @@ local HeroBuild = {
 				"item_greater_crit",--
 				"item_overwhelming_blink",--
 				"item_travel_boots_2",--
-				"item_moon_shard",
-				"item_aghanims_shard",
 				"item_ultimate_scepter_2",
+				"item_aghanims_shard",
+				"item_moon_shard",
 			},
             ['sell_list'] = {
-				"item_quelling_blade",
-				"item_bracer",
-				"item_magic_wand",
-				"item_blade_mail",
+				"item_quelling_blade", "item_crimson_guard",
+				"item_magic_wand", "item_black_king_bar",
+				"item_bracer", sUtilityItem,
+				"item_blade_mail", "item_greater_crit",
 			},
         },
     },

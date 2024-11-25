@@ -49,28 +49,26 @@ local HeroBuild = {
             
                 "item_null_talisman",
                 "item_bottle",
-                "item_boots",
                 "item_magic_wand",
                 "item_power_treads",
                 "item_witch_blade",
-                "item_cyclone",
                 "item_blink",
+                "item_cyclone",
+                "item_black_king_bar",--
                 "item_devastator",--
                 "item_aghanims_shard",
-                "item_maelstrom",
                 "item_ultimate_scepter",
                 "item_mjollnir",--
-                nBkBSphere,--
+                "item_ultimate_scepter_2",
                 "item_overwhelming_blink",--
-                "item_travel_boots",
                 "item_wind_waker",--
                 "item_travel_boots_2",--
-                "item_ultimate_scepter_2",
                 "item_moon_shard",
             },
             ['sell_list'] = {
-                "item_bottle",
-                "item_magic_wand",
+                "item_magic_wand", "item_cyclone",
+                "item_bottle", "item_black_king_bar",
+                "item_null_talisman", "item_ultimate_scepter",
             },
         },
     },

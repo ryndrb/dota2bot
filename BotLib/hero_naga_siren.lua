@@ -37,8 +37,8 @@ local HeroBuild = {
 				"item_circlet",
 			
 				"item_wraith_band",
-				"item_power_treads",
 				"item_magic_wand",
+				"item_power_treads",
 				"item_manta",--
 				"item_orchid",
 				"item_heart",--
@@ -51,9 +51,9 @@ local HeroBuild = {
 				"item_ultimate_scepter_2",
 			},
             ['sell_list'] = {
-				"item_quelling_blade",
-				"item_wraith_band",
-				"item_magic_wand",
+				"item_quelling_blade", "item_heart",
+				"item_magic_wand", "item_magic_wand",
+				"item_wraith_band", "item_skadi",
 			},
         },
     },

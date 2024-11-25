@@ -72,9 +72,8 @@ local HeroBuild = {
 				"item_blood_grenade",
 			
 				"item_ring_of_basilius",
-				"item_boots",
 				"item_magic_wand",
-				"item_arcane_boots",
+				"item_tranquil_boots",
 				"item_aether_lens",--
 				"item_glimmer_cape",--
 				"item_ancient_janggo",
@@ -82,13 +81,13 @@ local HeroBuild = {
 				"item_boots_of_bearing",--
 				"item_aghanims_shard",
 				"item_ultimate_scepter",
-				"item_refresher",--
 				"item_sheepstick",--
 				"item_ultimate_scepter_2",
+				"item_refresher",--
 				"item_moon_shard",
 			},
             ['sell_list'] = {
-				"item_ring_of_basilius",
+				"item_ring_of_basilius", "item_glimmer_cape"
 			},
         },
     },
@@ -112,7 +111,6 @@ local HeroBuild = {
 				"item_blood_grenade",
 			
 				"item_ring_of_basilius",
-				"item_boots",
 				"item_magic_wand",
 				"item_arcane_boots",
 				"item_aether_lens",--
@@ -122,9 +120,9 @@ local HeroBuild = {
 				"item_guardian_greaves",--
 				"item_aghanims_shard",
 				"item_ultimate_scepter",
-				"item_refresher",--
 				"item_sheepstick",--
 				"item_ultimate_scepter_2",
+				"item_refresher",--
 				"item_moon_shard",
 			},
             ['sell_list'] = {},

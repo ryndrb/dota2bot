@@ -55,7 +55,6 @@ local HeroBuild = {
 
 				"item_null_talisman",
 				"item_bottle",
-				"item_boots",
 				"item_magic_wand",
 				"item_power_treads",
 				"item_orchid",
@@ -73,9 +72,9 @@ local HeroBuild = {
 				"item_moon_shard",
 			},
             ['sell_list'] = {
-				"item_null_talisman",
-				"item_bottle",
-				"item_magic_wand",
+				"item_magic_wand", "item_kaya",
+				"item_bottle", "item_black_king_bar",
+				"item_null_talisman", "item_ultimate_scepter",
 			},
         },
     },

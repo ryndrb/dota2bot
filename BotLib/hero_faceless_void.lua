@@ -35,8 +35,8 @@ local HeroBuild = {
 				"item_quelling_blade",
 			
 				"item_wraith_band",
-				"item_power_treads",
 				"item_magic_wand",
+				"item_power_treads",
 				"item_mjollnir",--
 				"item_black_king_bar",--
 				"item_skadi",--
@@ -49,9 +49,9 @@ local HeroBuild = {
 				"item_ultimate_scepter_2",
 			},
             ['sell_list'] = {
-				"item_quelling_blade",
-				"item_wraith_band",
-				"item_magic_wand",
+				"item_quelling_blade", "item_skadi",
+				"item_magic_wand", "item_butterfly",
+				"item_wraith_band", "item_refresher",
 			},
         },
     },

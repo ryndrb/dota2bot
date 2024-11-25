@@ -83,12 +83,13 @@ local HeroBuild = {
                 "item_sheepstick",--
                 "item_wind_waker",--
                 "item_ethereal_blade",--
-                "item_moon_shard",
                 "item_ultimate_scepter_2",
+                "item_hurricane_pike",
+                "item_moon_shard",
             },
             ['sell_list'] = {
-                "item_circlet",
-                "item_magic_wand",
+                "item_circlet", "item_ancient_janggo",
+                "item_magic_wand", "item_force_staff",
             },
         },
     },
@@ -122,12 +123,13 @@ local HeroBuild = {
                 "item_sheepstick",--
                 "item_wind_waker",--
                 "item_ethereal_blade",--
-                "item_moon_shard",
                 "item_ultimate_scepter_2",
+                "item_hurricane_pike",
+                "item_moon_shard",
             },
             ['sell_list'] = {
-                "item_circlet",
-                "item_magic_wand",
+                "item_circlet", "item_mekansm",
+                "item_magic_wand", "item_force_staff",
             },
         },
     },

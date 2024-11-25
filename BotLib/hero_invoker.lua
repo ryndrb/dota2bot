@@ -47,17 +47,17 @@ local HeroBuild = {
                 "item_double_branches",
                 "item_double_circlet",
             
-                "item_bracer",
-                "item_wraith_band",
+                "item_double_wraith_band",
                 "item_urn_of_shadows",
-                "item_boots",
                 "item_magic_wand",
+                "item_boots",
                 "item_spirit_vessel",
                 "item_hand_of_midas",
                 "item_orchid",
                 "item_travel_boots",
                 "item_aghanims_shard",
                 "item_black_king_bar",--
+                "item_dragon_lance",--
                 "item_hurricane_pike",--
                 "item_bloodthorn",--
                 "item_ultimate_scepter",
@@ -68,11 +68,11 @@ local HeroBuild = {
                 "item_moon_shard",
             },
             ['sell_list'] = {
-                "item_bracer",
-                "item_wraith_band",
-                "item_magic_wand",
-                "item_spirit_vessel",
-                "item_hand_of_midas",
+                "item_magic_wand", "item_orchid",
+                "item_wraith_band", "item_black_king_bar",
+                "item_wraith_band", "item_dragon_lance",
+                "item_hand_of_midas", "item_ultimate_scepter",
+                "item_spirit_vessel", "item_sheepstick",
             },
         },
     },

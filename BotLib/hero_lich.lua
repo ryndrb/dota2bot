@@ -69,7 +69,7 @@ local HeroBuild = {
 				"item_double_tango",
 				"item_double_branches",
 				"item_blood_grenade",
-				"item_double_enchanted_mango",
+				"item_enchanted_mango",
 			
 				"item_boots",
 				"item_magic_wand",
@@ -86,7 +86,7 @@ local HeroBuild = {
 				"item_moon_shard"
 			},
             ['sell_list'] = {
-				"item_magic_wand",
+				"item_magic_wand", "item_boots_of_bearing",
 			},
         },
     },
@@ -107,7 +107,7 @@ local HeroBuild = {
 				"item_double_tango",
 				"item_double_branches",
 				"item_blood_grenade",
-				"item_double_enchanted_mango",
+				"item_enchanted_mango",
 			
 				"item_boots",
 				"item_magic_wand",
@@ -124,7 +124,7 @@ local HeroBuild = {
 				"item_moon_shard"
 			},
             ['sell_list'] = {
-				"item_magic_wand",
+				"item_magic_wand", "item_guardian_greaves",
 			},
         },
     },

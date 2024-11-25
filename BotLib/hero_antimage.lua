@@ -49,9 +49,9 @@ local HeroBuild = {
 				"item_aghanims_shard",
 			},
             ['sell_list'] = {
-				"item_wraith_band",
-				"item_magic_wand",
-				"item_power_treads",
+				"item_magic_wand", "item_skadi",
+				"item_wraith_band", "item_basher",
+				"item_power_treads", "item_monkey_king_bar",
 			},
         },
     },
@@ -90,21 +90,23 @@ local HeroBuild = {
 				"item_magic_wand",
 				"item_vanguard",
 				"item_power_treads",
-				"item_diffusal_blade",--
+				"item_diffusal_blade",
 				"item_crimson_guard",--
 				"item_manta",--
 				"item_heavens_halberd",--
 				"item_disperser",--
+				"item_basher",
+				"item_heart",--
 				"item_abyssal_blade",--
 				"item_moon_shard",
 				"item_ultimate_scepter_2",
 				"item_aghanims_shard",
 			},
             ['sell_list'] = {
-				"item_wraith_band",
-				"item_orb_of_corrosion",
-				"item_magic_wand",
-				"item_power_treads",
+				"item_magic_wand", "item_manta",
+				"item_wraith_band", "item_heavens_halberd",
+				"item_orb_of_corrosion", "item_basher",
+				"item_power_treads", "item_heart",
 			},
         },
     },

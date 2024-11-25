@@ -84,6 +84,22 @@
 -- ActionImmediate_SellItem( hItem )
 
 -- Command a bot to sell the specified item
+local o_ActionImmediate_SellItem = CDOTA_Bot_Script.ActionImmediate_SellItem
+function CDOTA_Bot_Script:ActionImmediate_SellItem(hItem)
+    if hItem == nil then
+        if self:DistanceFromSecretShop() <= 500 then
+            self.secret_shop_succesful = false
+        end
+        print('Trace: ', debug.traceback())
+        return
+    else
+        if self:DistanceFromSecretShop() <= 500 then
+            self.secret_shop_succesful = true
+        end
+        return o_ActionImmediate_SellItem(self, hItem)
+    end
+end
+
 -- ActionImmediate_DisassembleItem( hItem )
 
 -- Command a bot to disassemble the specified item

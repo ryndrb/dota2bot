@@ -72,7 +72,6 @@ local HeroBuild = {
                 "item_blood_grenade",
                 "item_wind_lace",
             
-                "item_boots",
                 "item_magic_wand",
                 "item_tranquil_boots",
                 "item_solar_crest",--
@@ -87,7 +86,7 @@ local HeroBuild = {
                 "item_moon_shard",
             },
             ['sell_list'] = {
-                "item_magic_wand",
+                "item_magic_wand", "item_force_staff",
             },
         },
     },
@@ -127,8 +126,8 @@ local HeroBuild = {
                 "item_moon_shard",
             },
             ['sell_list'] = {
-                "item_wind_lace",
-                "item_magic_wand",
+                "item_wind_lace", "item_force_staff",
+                "item_magic_wand", "item_lotus_orb",
             },
         },
     },

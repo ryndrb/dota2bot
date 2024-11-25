@@ -48,19 +48,17 @@ local HeroBuild = {
 				"item_circlet",
 			
 				"item_bottle",
-				"item_null_talisman",
-				"item_boots",
 				"item_magic_wand",
+				"item_null_talisman",
 				"item_power_treads",
 				"item_witch_blade",
 				"item_kaya",
 				"item_aghanims_shard",
-				"item_ultimate_scepter",
 				"item_black_king_bar",--
-				"item_kaya_and_sange",--
+				"item_ultimate_scepter",
+				"item_yasha_and_kaya",--
 				"item_shivas_guard",--
 				"item_devastator",--
-				"item_travel_boots",
 				"item_cyclone",
 				"item_ultimate_scepter_2",
 				"item_wind_waker",--
@@ -68,9 +66,9 @@ local HeroBuild = {
 				"item_moon_shard",
 			},
             ['sell_list'] = {
-				"item_bottle",
-				"item_null_talisman",
-				"item_magic_wand",
+				"item_magic_wand", "item_black_king_bar",
+				"item_bottle", "item_ultimate_scepter",
+				"item_null_talisman", "item_shivas_guard",
 			},
         },
     },

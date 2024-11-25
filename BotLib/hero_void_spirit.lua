@@ -48,17 +48,16 @@ local HeroBuild = {
 				"item_gauntlets",
 			
 				"item_bottle",
-				"item_bracer",
-				"item_boots",
 				"item_magic_wand",
+				"item_bracer",
 				"item_power_treads",
 				"item_manta",--
 				"item_ultimate_scepter",
 				"item_lesser_crit",
 				"item_black_king_bar",--
-				"item_travel_boots",
-				"item_greater_crit",--
 				"item_bloodthorn",--
+				"item_greater_crit",--
+				"item_travel_boots",
 				"item_shivas_guard",--
 				"item_ultimate_scepter_2",
 				"item_travel_boots_2",--
@@ -66,9 +65,9 @@ local HeroBuild = {
 				"item_aghanims_shard",
 			},
             ['sell_list'] = {
-				"item_bottle",
-				"item_bracer",
-				"item_magic_wand",
+				"item_magic_wand", "item_lesser_crit",
+				"item_bottle", "item_black_king_bar",
+				"item_bracer", "item_bloodthorn",
 			},
         },
 		[2] = {
@@ -90,9 +89,8 @@ local HeroBuild = {
 				"item_circlet",
 			
 				"item_bottle",
-				"item_bracer",
-				"item_boots",
 				"item_magic_wand",
+				"item_bracer",
 				"item_power_treads",
 				"item_orchid",
 				"item_kaya",
@@ -102,17 +100,17 @@ local HeroBuild = {
 				"item_kaya_and_sange",--
 				"item_travel_boots",
 				"item_bloodthorn",--
-				"item_ultimate_scepter_2",
 				"item_shivas_guard",--
+				"item_ultimate_scepter_2",
 				"item_travel_boots_2",--
 				"item_moon_shard",
 				"item_aghanims_shard",
 			},
             ['sell_list'] = {
-				"item_quelling_blade",
-				"item_bottle",
-				"item_bracer",
-				"item_magic_wand",
+				"item_quelling_blade", "item_kaya",
+				"item_magic_wand", "item_ultimate_scepter",
+				"item_bottle", "item_black_king_bar",
+				"item_bracer", "item_devastator",
 			},
         },
     },

@@ -68,17 +68,16 @@ local HeroBuild = {
 				"item_black_king_bar",--
 				sUtilityItem,--
 				"item_shivas_guard",--
-                "item_travel_boots",
 				"item_overwhelming_blink",--
-                "item_travel_boots_2",
+                "item_travel_boots_2",--
 				"item_ultimate_scepter_2",
 				"item_aghanims_shard",
 				"item_moon_shard",
 			},
             ['sell_list'] = {
-                "item_bracer",
-				"item_magic_wand",
-                "item_soul_ring",
+				"item_magic_wand", "item_black_king_bar",
+                "item_soul_ring", sUtilityItem,
+                "item_bracer", "item_shivas_guard",
 			},
         },
     },

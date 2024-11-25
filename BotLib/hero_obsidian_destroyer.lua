@@ -51,25 +51,25 @@ local HeroBuild = {
                 "item_faerie_fire",
             
                 "item_double_null_talisman",
-                "item_power_treads",
                 "item_magic_wand",
+                "item_power_treads",
                 "item_witch_blade",
-                "item_blink",
                 "item_force_staff",
                 "item_black_king_bar",--
                 "item_hurricane_pike",--
                 "item_aghanims_shard",
                 "item_devastator",--
-                "item_travel_boots",
                 "item_sheepstick",--
-                "item_arcane_blink",--
+                "item_shivas_guard",--
+                "item_travel_boots",
                 "item_travel_boots_2",--
                 "item_ultimate_scepter_2",
                 "item_moon_shard",
             },
             ['sell_list'] = {
-                "item_null_talisman",
-                "item_magic_wand",
+                "item_magic_wand", "item_black_king_bar",
+                "item_null_talisman", "item_sheepstick",
+                "item_null_talisman", "item_shivas_guard",
             },
         },
     },

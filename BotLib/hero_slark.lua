@@ -36,9 +36,9 @@ local HeroBuild = {
 				"item_slippers",
 				"item_circlet",
 			
+				"item_magic_wand",
 				"item_wraith_band",
 				"item_power_treads",
-				"item_magic_wand",
 				"item_diffusal_blade",
 				"item_yasha",
 				"item_ultimate_scepter",
@@ -46,18 +46,18 @@ local HeroBuild = {
 				"item_aghanims_shard",
 				"item_sange_and_yasha",--
 				"item_skadi",--
-				"item_basher",
 				"item_disperser",--
-				"item_bloodthorn",--
-				"item_abyssal_blade",--
+				"item_basher",
 				"item_ultimate_scepter_2",
+				"item_abyssal_blade",--
+				"item_bloodthorn",--
 				"item_moon_shard",
 			},
             ['sell_list'] = {
-				"item_quelling_blade",
-				"item_wraith_band",
-				"item_power_treads",
-				"item_magic_wand",
+				"item_quelling_blade", "item_ultimate_scepter",
+				"item_magic_wand", "item_black_king_bar",
+				"item_wraith_band", "item_skadi",
+				"item_power_treads", "item_bloodthorn",
 			},
         },
     },
@@ -93,9 +93,9 @@ local HeroBuild = {
 				"item_slippers",
 				"item_circlet",
 			
+				"item_magic_wand",
 				"item_wraith_band",
 				"item_power_treads",
-				"item_magic_wand",
 				"item_diffusal_blade",
 				"item_heavens_halberd",--
 				"item_black_king_bar",--
@@ -103,17 +103,17 @@ local HeroBuild = {
 				"item_basher",
 				"item_ultimate_scepter",
 				"item_disperser",--
-				"item_sheepstick",--
-				"item_satanic",--
 				"item_abyssal_blade",--
+				"item_sheepstick",--
 				"item_ultimate_scepter_2",
+				"item_satanic",--
 				"item_moon_shard",
 			},
             ['sell_list'] = {
-				"item_quelling_blade",
-				"item_wraith_band",
-				"item_power_treads",
-				"item_magic_wand",
+				"item_quelling_blade", "item_black_king_bar",
+				"item_magic_wand", "item_basher",
+				"item_wraith_band", "item_ultimate_scepter",
+				"item_power_treads", "item_satanic",
 			},
         },
     },

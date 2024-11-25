@@ -50,30 +50,28 @@ local HeroBuild = {
             ['buy_list'] = {
                 "item_tango",
                 "item_double_branches",
-                "item_magic_stick",
             
                 "item_bracer",
                 "item_bottle",
-                "item_phase_boots",
                 "item_magic_wand",
+                "item_phase_boots",
                 "item_blade_mail",
-                "item_bloodstone",--
                 "item_ultimate_scepter",
-                "item_kaya_and_sange",--
+                "item_bloodstone",--
                 "item_black_king_bar",--
                 "item_shivas_guard",--
-                "item_travel_boots",
-                "item_ultimate_scepter_2",
                 "item_heart",--
+                "item_heavens_halberd",--
+                "item_ultimate_scepter_2",
                 "item_travel_boots_2",--
                 "item_aghanims_shard",
                 "item_moon_shard",
             },
             ['sell_list'] = {
-                "item_bracer",
-                "item_bottle",
-                "item_magic_wand",
-                "item_blade_mail",
+                "item_magic_wand", "item_bloodstone",
+                "item_bottle", "item_black_king_bar",
+                "item_bracer", "item_shivas_guard",
+                "item_blade_mail", "item_heavens_halberd",
             },
         },
     },
@@ -96,27 +94,27 @@ local HeroBuild = {
                 "item_magic_stick",
                 "item_ring_of_protection",
             
+                "item_magic_wand",
                 "item_double_bracer",
                 "item_boots",
-                "item_magic_wand",
                 "item_phase_boots",
-                "item_pipe",--
                 "item_ultimate_scepter",
-                "item_blink",
-                sUtilityItem,--
-                "item_shivas_guard",--
+                "item_pipe",--
                 "item_black_king_bar",--
-                "item_travel_boots",
-                "item_overwhelming_blink",--
+                sUtilityItem,--
+                "item_blink",
+                "item_shivas_guard",--
                 "item_ultimate_scepter_2",
+                "item_overwhelming_blink",--
                 "item_travel_boots_2",--
                 "item_aghanims_shard",
                 "item_moon_shard",
             },
             ['sell_list'] = {
-                "item_ring_of_protection",
-                "item_bracer",
-                "item_magic_wand",
+                "item_ring_of_protection", "item_pipe",
+                "item_magic_wand", "item_black_king_bar",
+                "item_bracer", sUtilityItem,
+                "item_bracer", "item_blink",
             },
         },
     },
@@ -135,18 +133,21 @@ local HeroBuild = {
             },
             ['buy_list'] = {
                 "item_tango",
-                "item_flask",
+                "item_double_branches",
                 "item_enchanted_mango",
                 "item_wind_lace",
                 "item_blood_grenade",
             
                 "item_tranquil_boots",
                 "item_magic_wand",
-                "item_aether_lens",--
-                "item_blink",
                 "item_force_staff",--
+                "item_blink",
+                "item_ancient_janggo",
+                "item_veil_of_discord",
                 "item_boots_of_bearing",--
-                "item_lotus_orb",--
+                "item_heart",--
+                "item_shivas_guard",--
+                "item_cyclone",
                 "item_overwhelming_blink",--
                 "item_wind_waker",--
                 "item_aghanims_shard",
@@ -154,7 +155,7 @@ local HeroBuild = {
                 "item_moon_shard",
             },
             ['sell_list'] = {
-                "item_magic_wand",
+                "item_magic_wand", "item_ancient_janggo",
             },
         },
     },
@@ -173,18 +174,21 @@ local HeroBuild = {
             },
             ['buy_list'] = {
                 "item_tango",
-                "item_flask",
+                "item_double_branches",
                 "item_enchanted_mango",
                 "item_wind_lace",
                 "item_blood_grenade",
             
                 "item_arcane_boots",
                 "item_magic_wand",
-                "item_aether_lens",--
-                "item_blink",
                 "item_force_staff",--
+                "item_blink",
+                "item_mekansm",
+                "item_veil_of_discord",
                 "item_guardian_greaves",--
-                "item_lotus_orb",--
+                "item_heart",--
+                "item_shivas_guard",--
+                "item_cyclone",
                 "item_overwhelming_blink",--
                 "item_wind_waker",--
                 "item_aghanims_shard",
@@ -192,7 +196,7 @@ local HeroBuild = {
                 "item_moon_shard",
             },
             ['sell_list'] = {
-                "item_magic_wand",
+                "item_magic_wand", "item_mekansm",
             },
         },
     },

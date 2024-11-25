@@ -448,9 +448,10 @@ function ItemPurchaseThink()
 		end
 	end
 
+	-- don't buy in late game to avoid clutter, since there's no inventory management currently
+
 	-- Observer and Sentry Wards
-	if (J.GetPosition(bot) == 4)
-	then
+	if (J.GetPosition(bot) == 4) and not J.IsLateGame() then
 		local wardType = 'item_ward_sentry'
 
 		if not J.HasItemInInventory('item_dust')
@@ -483,6 +484,7 @@ function ItemPurchaseThink()
 
 	-- Smoke of Deceit
 	if  (J.GetPosition(bot) == 4 or J.GetPosition(bot) == 5)
+	and not J.IsLateGame()
 	and GetItemStockCount('item_smoke_of_deceit') > 1
 	and botGold >= GetItemCost('item_smoke_of_deceit')
 	and Item.GetEmptyInventoryAmount(bot) >= 3
@@ -611,9 +613,9 @@ function ItemPurchaseThink()
 
 
 
-	if ( GetGameMode() ~= 23 and botLevel > 6 and currentTime > fullInvCheck + 1.0
+	if ( GetGameMode() ~= 23 and botLevel >= 6 and currentTime > fullInvCheck + 1.0
 		and (bot:DistanceFromFountain() <= 200 or bot:DistanceFromSecretShop() <= 200 ))
-		or ( GetGameMode() == 23 and botLevel > 9 and currentTime > fullInvCheck + 1.0 )
+		or ( GetGameMode() == 23 and botLevel >= 6 and currentTime > fullInvCheck + 1.0 )
 	then
 		local emptySlot = Item.GetEmptyInventoryAmount( bot )
 		local slotToSell = nil
@@ -634,21 +636,16 @@ function ItemPurchaseThink()
 			end
 		end
 
-
-		if botWorth > 9999 
-			and bot:GetItemInSlot( 6 ) ~= nil
-			and bot:GetItemInSlot( 7 ) ~= nil
-		then
-			local wand = bot:FindItemSlot( "item_magic_wand" )
-			local assitItem = bot:FindItemSlot( "item_infused_raindrop" )
-			if assitItem < 0 then assitItem = bot:FindItemSlot( "item_bracer" ) end
-			if assitItem < 0 then assitItem = bot:FindItemSlot( "item_null_talisman" ) end
-			if assitItem < 0 then assitItem = bot:FindItemSlot( "item_wraith_band" ) end
-			if assitItem >= 0
-				and wand >= 6
-				and wand <= 8
-			then
-				slotToSell = assitItem
+		if slotToSell == nil and GetGameMode() == 23 and not J.IsInLaningPhase() then
+			for i = 1, #Item['tEarlyItem']
+			do
+				local itemName = Item['tEarlyItem'][i]
+				local itemSlot = bot:FindItemSlot( itemName )
+				if itemSlot >= 6 and itemSlot <= 8
+				then
+					slotToSell = itemSlot
+					break
+				end
 			end
 		end
 
@@ -661,29 +658,22 @@ function ItemPurchaseThink()
 		fullInvCheck = currentTime
 	end
 
-	--出售过度装备
 	if currentTime > sell_time + 0.5
-		and ( bot:GetItemInSlot( 6 ) ~= nil or bot:GetItemInSlot( 7 ) ~= nil or bot:GetItemInSlot( 8 ) ~= nil )
-		and ( J.IsModeTurbo() or (bot:DistanceFromFountain() <= 100 or bot:DistanceFromSecretShop() <= 100 ))
+	and ((( bot:GetItemInSlot( 6 ) ~= nil or bot:GetItemInSlot( 7 ) ~= nil or bot:GetItemInSlot( 8 ) ~= nil )
+			and (bot:DistanceFromFountain() <= 100 or bot:DistanceFromSecretShop() <= 100 ))
+		or J.IsModeTurbo()
+		)
 	then
 		sell_time = currentTime
 
-		-- for i = 2 , #sItemSellList, 2
-		-- do
-		-- 	local nNewSlot = bot:FindItemSlot( sItemSellList[i - 1] )
-		-- 	local nOldSlot = bot:FindItemSlot( sItemSellList[i] )
-		-- 	if nNewSlot >= 0 and nOldSlot >= 0
-		-- 	then
-		-- 		bot:ActionImmediate_SellItem( bot:GetItemInSlot( nOldSlot ) )
-		-- 		return
-		-- 	end
-		-- end
-		for i = 1 , #sItemSellList, 1
-		do
-			local slot = bot:FindItemSlot( sItemSellList[i] )
-			if slot == 6 or slot == 7 or slot == 8
+		for i = #sItemSellList , 2, -2 do
+			local nItemToSellSlot = bot:FindItemSlot( sItemSellList[i - 1] )
+			local nItemToCheckSlot = bot:FindItemSlot( sItemSellList[i] )
+			if nItemToCheckSlot >= 0 and nItemToSellSlot >= 0
 			then
-				bot:ActionImmediate_SellItem( bot:GetItemInSlot( slot ) )
+				bot:ActionImmediate_SellItem( bot:GetItemInSlot( nItemToSellSlot ) )
+				table.remove(sItemSellList, i)
+				table.remove(sItemSellList, i - 1)
 				return
 			end
 		end
@@ -704,7 +694,8 @@ function ItemPurchaseThink()
 		if  Item.HasItem(bot, 'item_mask_of_madness')
 		and Item.HasItem(bot, 'item_satanic')
 		then
-			bot:ActionImmediate_SellItem(bot:GetItemInSlot(bot:FindItemSlot('item_mask_of_madness')))
+			local slot = bot:FindItemSlot('item_mask_of_madness')
+			bot:ActionImmediate_SellItem(bot:GetItemInSlot(slot))
 			return
 		end
 	end

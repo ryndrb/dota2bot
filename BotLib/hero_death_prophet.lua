@@ -49,8 +49,8 @@ local HeroBuild = {
 			
 				"item_bottle",
 				"item_null_talisman",
-				"item_arcane_boots",
 				"item_magic_wand",
+				"item_arcane_boots",
 				"item_cyclone",
 				"item_kaya",
 				"item_octarine_core",--
@@ -64,9 +64,9 @@ local HeroBuild = {
 				"item_moon_shard",
 			},
             ['sell_list'] = {
-				"item_bottle",
-				"item_null_talisman",
-				"item_magic_wand",
+				"item_magic_wand", "item_octarine_core",
+				"item_bottle", "item_black_king_bar",
+				"item_null_talisman", "item_shivas_guard",
 			},
         },
     },
@@ -90,8 +90,8 @@ local HeroBuild = {
 				"item_magic_stick",
 			
 				"item_null_talisman",
-				"item_arcane_boots",
 				"item_magic_wand",
+				"item_arcane_boots",
 				"item_pipe",--
 				"item_shivas_guard",--
 				"item_black_king_bar",--
@@ -104,8 +104,8 @@ local HeroBuild = {
 				"item_moon_shard",
 			},
             ['sell_list'] = {
-				"item_null_talisman",
-				"item_magic_wand",
+				"item_magic_wand", sUtilityItem,
+				"item_null_talisman", "item_sheepstick",
 			},
         },
     },

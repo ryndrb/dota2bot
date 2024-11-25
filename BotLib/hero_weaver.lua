@@ -35,9 +35,9 @@ local HeroBuild = {
                 "item_faerie_fire",
             
                 "item_wraith_band",
+                "item_magic_wand",
                 "item_falcon_blade",
                 "item_power_treads",
-                "item_magic_wand",
                 "item_maelstrom",
                 "item_dragon_lance",
                 "item_gungir",--
@@ -45,16 +45,16 @@ local HeroBuild = {
                 "item_greater_crit",--
                 "item_aghanims_shard",
                 "item_satanic",--
-                "item_butterfly",--
                 "item_hurricane_pike",--
+                "item_butterfly",--
                 "item_moon_shard",
                 "item_ultimate_scepter_2",
             },
             ['sell_list'] = {
-                "item_wraith_band",
-                "item_falcon_blade",
-                "item_power_treads",
-                "item_magic_wand",
+                "item_magic_wand", "item_black_king_bar",
+                "item_wraith_band", "item_greater_crit",
+                "item_falcon_blade", "item_satanic",
+                "item_power_treads", "item_butterfly",
             },
         },
     },
@@ -101,21 +101,23 @@ local HeroBuild = {
                 "item_faerie_fire",
                 "item_circlet",
             
-                "item_spirit_vessel",--
                 "item_magic_wand",
+                "item_spirit_vessel",
                 "item_rod_of_atos",
                 "item_heavens_halberd",--
                 "item_boots_of_bearing",--
                 "item_gungir",--
                 "item_sheepstick",--
                 "item_greater_crit",--
+                "item_monkey_king_bar",--
                 "item_ultimate_scepter_2",
                 "item_aghanims_shard",
                 "item_moon_shard",
             },
             ['sell_list'] = {
-                "item_circlet",
-                "item_magic_wand",
+                "item_circlet", "item_heavens_halberd",
+                "item_magic_wand", "item_boots_of_bearing",
+                "item_spirit_vessel", "item_monkey_king_bar",
             },
         },
     },
@@ -138,21 +140,23 @@ local HeroBuild = {
                 "item_faerie_fire",
                 "item_circlet",
             
-                "item_spirit_vessel",--
                 "item_magic_wand",
+                "item_spirit_vessel",--
                 "item_rod_of_atos",
                 "item_heavens_halberd",--
                 "item_guardian_greaves",--
                 "item_gungir",--
                 "item_sheepstick",--
                 "item_greater_crit",--
+                "item_monkey_king_bar",--
                 "item_ultimate_scepter_2",
                 "item_aghanims_shard",
                 "item_moon_shard",
             },
             ['sell_list'] = {
-                "item_circlet",
-                "item_magic_wand",
+                "item_circlet", "item_heavens_halberd",
+                "item_magic_wand", "item_guardian_greaves",
+                "item_spirit_vessel", "item_monkey_king_bar",
             },
         },
     },

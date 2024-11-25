@@ -108,7 +108,13 @@ Item['item_assault'] = {
 	['npc_dota_hero_templar_assassin'] = true,
 }
 
+local bDoneBestItem = false
+local hItemName = ''
 function X.GetBestUtilityItem(itemTable)
+	if bDoneBestItem == true and hItemName ~= '' then
+		return hItemName
+	end
+
 	local nItemList = {}
 	for i = 1, #itemTable
 	do
@@ -164,6 +170,7 @@ function X.GetBestUtilityItem(itemTable)
 		end
 	end
 
+	bDoneBestItem = true
 	if sBestItem == '' then return itemTable[1] end
 	return sBestItem
 end
@@ -178,7 +185,7 @@ function X.GetAltItem(hItemName1, hItemName2)
 		if Item[hItemName2][hName]
 		and i <= 3
 		then
-			sChosenItem = hItemName1
+			sChosenItem = hItemName2
 			break
 		end
 	end

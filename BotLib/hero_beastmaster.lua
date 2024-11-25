@@ -68,13 +68,14 @@ local HeroBuild = {
 				sUtilityItem,--
 				"item_aghanims_shard",
 				"item_overwhelming_blink",--
-				"item_travel_boots_2",--
 				"item_ultimate_scepter_2",
+				"item_travel_boots_2",--
 				"item_moon_shard",
 			},
             ['sell_list'] = {
-				"item_circlet",
-				"item_magic_wand",
+				"item_circlet", "item_crimson_guard",
+                "item_circlet", "item_black_king_bar",
+				"item_magic_wand", sUtilityItem,
 			},
         },
         [2] = { --non zoo
@@ -96,8 +97,8 @@ local HeroBuild = {
 				"item_double_circlet",
 			
                 "item_double_bracer",
-				"item_arcane_boots",
 				"item_magic_wand",
+				"item_arcane_boots",
                 "item_ultimate_scepter",
 				"item_blink",
                 "item_crimson_guard",--
@@ -111,8 +112,9 @@ local HeroBuild = {
 				"item_moon_shard",
 			},
             ['sell_list'] = {
-				"item_bracer",
-				"item_magic_wand",
+				"item_magic_wand", "item_crimson_guard",
+                "item_bracer", "item_black_king_bar",
+                "item_bracer", sUtilityItem,
 			},
         },
     },

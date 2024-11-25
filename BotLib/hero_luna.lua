@@ -22,7 +22,7 @@ local HeroBuild = {
 				[1] = {
 					['t25'] = {10, 0},
 					['t20'] = {0, 10},
-					['t15'] = {0, 10},
+					['t15'] = {10, 0},
 					['t10'] = {0, 10},
 				}
             },
@@ -35,8 +35,8 @@ local HeroBuild = {
 				"item_quelling_blade",
 			
 				"item_wraith_band",
-				"item_power_treads",
 				"item_magic_wand",
+				"item_power_treads",
 				"item_lifesteal",
 				"item_manta",--
 				"item_black_king_bar",--
@@ -49,9 +49,9 @@ local HeroBuild = {
 				"item_ultimate_scepter_2",
 			},
             ['sell_list'] = {
-				"item_quelling_blade",
-				"item_wraith_band",
-				"item_magic_wand",
+				"item_quelling_blade", "item_black_king_bar",
+				"item_magic_wand", "item_angels_demise",
+				"item_wraith_band", "item_butterfly",
 			},
         },
 		[2] = {
@@ -59,7 +59,7 @@ local HeroBuild = {
 				[1] = {
 					['t25'] = {10, 0},
 					['t20'] = {0, 10},
-					['t15'] = {0, 10},
+					['t15'] = {10, 0},
 					['t10'] = {0, 10},
 				}
             },
@@ -87,9 +87,9 @@ local HeroBuild = {
 				"item_ultimate_scepter_2",
 			},
             ['sell_list'] = {
-				"item_quelling_blade",
-				"item_wraith_band",
-				"item_magic_wand",
+				"item_quelling_blade", "item_black_king_bar",
+				"item_magic_wand", "item_lesser_crit",
+				"item_wraith_band", "item_butterfly",
 			},
         },
     },

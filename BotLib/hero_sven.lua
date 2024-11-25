@@ -35,28 +35,27 @@ local HeroBuild = {
 				"item_quelling_blade",
 			
 				"item_bracer",
-				"item_power_treads",
 				"item_magic_wand",
+				"item_power_treads",
 				"item_mask_of_madness",
 				"item_echo_sabre",
 				"item_blink",
 				"item_black_king_bar",--
-				"item_lesser_crit",
-				"item_harpoon",--
 				"item_greater_crit",--
+				"item_harpoon",--
+				"item_swift_blink",--
 				"item_satanic",--
 				"item_bloodthorn",--
-				"item_swift_blink",--
 				"item_moon_shard",
 				"item_aghanims_shard",
 				"item_ultimate_scepter_2",
 			},
             ['sell_list'] = {
-				"item_quelling_blade",
-				"item_bracer",
+				"item_quelling_blade", "item_blink",
+				"item_magic_wand", "item_black_king_bar",
+				"item_mask_of_madness", "item_satanic",
+				"item_bracer", "item_greater_crit",
 				"item_power_treads",
-				"item_magic_wand",
-				"item_mask_of_madness",
 			},
         },
     },

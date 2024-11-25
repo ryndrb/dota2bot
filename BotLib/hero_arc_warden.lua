@@ -52,9 +52,9 @@ local HeroBuild = {
 				"item_ultimate_scepter_2",
 			},
             ['sell_list'] = {
-				"item_wraith_band",
-				"item_magic_wand",
-				"item_hand_of_midas",
+				"item_magic_wand", "item_lesser_crit",
+				"item_wraith_band", "item_skadi",
+				"item_hand_of_midas", "item_orchid",
 			},
         },
     },
@@ -87,21 +87,20 @@ local HeroBuild = {
 				"item_blink",
 				"item_octarine_core",--
 				"item_ultimate_scepter",
-				"item_orchid",
-				"item_sheepstick",--
 				"item_bloodthorn",--
 				"item_overwhelming_blink",--
+				"item_sheepstick",--
 				"item_ultimate_scepter_2",
 				"item_travel_boots_2",--
 				"item_moon_shard",
 				"item_aghanims_shard",
 			},
             ['sell_list'] = {
-				"item_circlet",
-				"item_bottle",
-				"item_magic_wand",
-				"item_urn_of_shadows",
-				"item_hand_of_midas",
+				"item_circlet", "item_gungir",
+				"item_magic_wand", "item_blink",
+				"item_bottle", "item_octarine_core",
+				"item_urn_of_shadows", "item_ultimate_scepter",
+				"item_hand_of_midas", "item_orchid",
 			},
         },
 		[2] = {
@@ -138,9 +137,9 @@ local HeroBuild = {
 				"item_ultimate_scepter_2",
 			},
             ['sell_list'] = {
-				"item_bottle",
-				"item_magic_wand",
-				"item_hand_of_midas",
+				"item_magic_wand", "item_manta",
+				"item_bottle", "item_greater_crit",
+				"item_hand_of_midas", "item_skadi",
 			},
         },
     },

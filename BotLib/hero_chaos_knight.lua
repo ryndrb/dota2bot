@@ -36,8 +36,8 @@ local HeroBuild = {
 				"item_quelling_blade",
 	
 				"item_bracer",
-				"item_power_treads",
 				"item_magic_wand",
+				"item_power_treads",
 				"item_armlet",
 				"item_orchid",
 				"item_manta",--
@@ -45,18 +45,17 @@ local HeroBuild = {
 				"item_bloodthorn",--
 				"item_heart",--
 				"item_aghanims_shard",
-				"item_blink",
+				"item_assault",--
 				"item_travel_boots",
-				"item_swift_blink",--
 				"item_travel_boots_2",--
 				"item_moon_shard",
 				"item_ultimate_scepter_2",
 			},
             ['sell_list'] = {
-				"item_quelling_blade",
-				"item_bracer",
-				"item_magic_wand",
-				"item_armlet",
+				"item_quelling_blade", "item_manta",
+				"item_magic_wand", "item_black_king_bar",
+				"item_bracer", "item_bracer",
+				"item_armlet", "item_travel_boots",
 			},
         },
     },
@@ -79,8 +78,8 @@ local HeroBuild = {
 				"item_quelling_blade",
 	
 				"item_bracer",
-				"item_power_treads",
 				"item_magic_wand",
+				"item_power_treads",
 				"item_armlet",
 				"item_orchid",
 				"item_manta",--
@@ -88,18 +87,17 @@ local HeroBuild = {
 				"item_bloodthorn",--
 				"item_heart",--
 				"item_aghanims_shard",
-				"item_blink",
+				"item_assault",--
 				"item_travel_boots",
-				"item_swift_blink",--
 				"item_travel_boots_2",--
 				"item_moon_shard",
 				"item_ultimate_scepter_2",
 			},
             ['sell_list'] = {
-				"item_quelling_blade",
-				"item_bracer",
-				"item_magic_wand",
-				"item_armlet",
+				"item_quelling_blade", "item_manta",
+				"item_magic_wand", "item_black_king_bar",
+				"item_bracer", "item_bracer",
+				"item_armlet", "item_travel_boots",
 			},
         },
     },
@@ -122,25 +120,24 @@ local HeroBuild = {
 				"item_quelling_blade",
 	
 				"item_bracer",
-				"item_power_treads",
 				"item_magic_wand",
+				"item_power_treads",
 				"item_armlet",
 				"item_crimson_guard",--
 				"item_black_king_bar",--
-				sUtilityItem,--
-				"item_blink",
+				"item_assault",--
 				"item_heart",--
+				"item_sheepstick",--
 				"item_aghanims_shard",
-				"item_overwhelming_blink",--
 				"item_travel_boots_2",--
 				"item_moon_shard",
 				"item_ultimate_scepter_2",
 			},
             ['sell_list'] = {
-				"item_quelling_blade",
-				"item_bracer",
-				"item_magic_wand",
-				"item_armlet",
+				"item_quelling_blade", "item_black_king_bar",
+				"item_magic_wand", "item_assault",
+				"item_bracer", "item_heart",
+				"item_armlet", "item_travel_boots",
 			},
         },
     },

@@ -60,8 +60,8 @@ local HeroBuild = {
 				"item_double_gauntlets",
 	
 				"item_double_bracer",
-				"item_arcane_boots",
 				"item_magic_wand",
+				"item_arcane_boots",
 				"item_soul_ring",
 				"item_mekansm",
 				"item_pipe",--
@@ -75,10 +75,11 @@ local HeroBuild = {
 				"item_moon_shard",
 			},
             ['sell_list'] = {
-				"item_quelling_blade",
-				"item_bracer",
-				"item_magic_wand",
-				"item_soul_ring",
+				"item_quelling_blade", "item_mekansm",
+				"item_magic_wand", sUtilityItem,
+				"item_soul_ring", "item_shivas_guard",
+				"item_bracer", "item_octarine_core",
+                "item_bracer", "item_sheepstick",
 			},
         },
     },

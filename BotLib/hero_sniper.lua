@@ -35,8 +35,8 @@ local HeroBuild = {
 				"item_faerie_fire",
 			
 				"item_double_wraith_band",
-				"item_power_treads",
 				"item_magic_wand",
+				"item_power_treads",
 				"item_dragon_lance",
 				"item_maelstrom",
 				"item_hurricane_pike",--
@@ -51,8 +51,9 @@ local HeroBuild = {
 				"item_moon_shard",
 			},
             ['sell_list'] = {
-				"item_wraith_band",
-				"item_magic_wand",
+				"item_magic_wand", "item_black_king_bar",
+				"item_wraith_band", "item_lesser_crit",
+				"item_wraith_band", "item_satanic",
 			},
         },
     },
@@ -75,8 +76,8 @@ local HeroBuild = {
 				"item_faerie_fire",
 			
 				"item_double_wraith_band",
-				"item_power_treads",
 				"item_magic_wand",
+				"item_power_treads",
 				"item_dragon_lance",
 				"item_maelstrom",
 				"item_hurricane_pike",--
@@ -91,8 +92,9 @@ local HeroBuild = {
 				"item_moon_shard",
 			},
             ['sell_list'] = {
-				"item_wraith_band",
-				"item_magic_wand",
+				"item_magic_wand", "item_black_king_bar",
+				"item_wraith_band", "item_lesser_crit",
+				"item_wraith_band", "item_satanic",
 			},
         },
     },

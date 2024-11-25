@@ -50,15 +50,16 @@ local HeroBuild = {
 				"item_sange_and_yasha",--
 				"item_assault",--
 				"item_aghanims_shard",
+				"item_basher",
+				"item_ultimate_scepter_2",
 				"item_abyssal_blade",--
 				"item_travel_boots_2",--
-				"item_ultimate_scepter_2",
 				"item_moon_shard",
 			},
             ['sell_list'] = {
-				"item_quelling_blade",
-				"item_bracer",
-				"item_magic_wand",
+				"item_quelling_blade", "item_black_king_bar",
+				"item_magic_wand", "item_sange_and_yasha",
+				"item_bracer", "item_assault",
 			},
         },
     },
@@ -89,8 +90,8 @@ local HeroBuild = {
 			
 				"item_bottle",
 				"item_bracer",
-				"item_arcane_boots",
 				"item_magic_wand",
+				"item_arcane_boots",
 				"item_ultimate_scepter",
 				"item_bloodstone",--
 				"item_black_king_bar",--
@@ -98,16 +99,16 @@ local HeroBuild = {
 				"item_assault",--
 				"item_aghanims_shard",
 				"item_basher",
-				"item_travel_boots_2",--
-				"item_abyssal_blade",--
 				"item_ultimate_scepter_2",
+				"item_abyssal_blade",--
+				"item_travel_boots_2",--
 				"item_moon_shard",
 			},
             ['sell_list'] = {
-				"item_quelling_blade",
-				"item_bottle",
-				"item_bracer",
-				"item_magic_wand",
+				"item_quelling_blade", "item_bloodstone",
+				"item_magic_wand", "item_black_king_bar",
+				"item_bottle", "item_sange_and_yasha",
+				"item_bracer", "item_assault",
 			},
         },
     },
@@ -130,24 +131,24 @@ local HeroBuild = {
 				"item_quelling_blade",
 			
 				"item_bracer",
-				"item_arcane_boots",
 				"item_magic_wand",
+				"item_arcane_boots",
 				"item_pipe",--
 				"item_ultimate_scepter",
 				"item_aghanims_shard",
 				"item_bloodstone",--
 				sUtilityItem,--
 				"item_sange_and_yasha",--
-				"item_travel_boots",
+				"item_cyclone",
 				"item_ultimate_scepter_2",
 				"item_wind_waker",--
 				"item_travel_boots_2",--
 				"item_moon_shard",
 			},
             ['sell_list'] = {
-				"item_quelling_blade",
-				"item_bracer",
-				"item_magic_wand",
+				"item_quelling_blade", "item_bloodstone",
+				"item_magic_wand", sUtilityItem,
+				"item_bracer", "item_sange_and_yasha",
 			},
         },
     },

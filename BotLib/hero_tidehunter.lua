@@ -59,9 +59,8 @@ local HeroBuild = {
 				"item_quelling_blade",
 				"item_double_gauntlets",
 		
-				"item_double_bracer",
-				"item_boots",
 				"item_magic_wand",
+				"item_double_bracer",
 				"item_phase_boots",
 				"item_soul_ring",
 				"item_pipe",--
@@ -71,17 +70,18 @@ local HeroBuild = {
 				"item_shivas_guard",--
 				"item_ultimate_scepter",
 				"item_refresher",--
-				"item_sheepstick",--
-				"item_overwhelming_blink",--
 				"item_ultimate_scepter_2",
+				"item_overwhelming_blink",--
+				"item_sheepstick",--
 				"item_moon_shard",
 			},
             ['sell_list'] = {
-				"item_quelling_blade",
-				"item_bracer",
-				"item_magic_wand",
-				"item_phase_boots",
-				"item_soul_ring",
+				"item_quelling_blade", "item_pipe",
+				"item_magic_wand", "item_blink",
+				"item_soul_ring", sUtilityItem,
+				"item_bracer", "item_shivas_guard",
+				"item_bracer", "item_ultimate_scepter",
+				"item_phase_boots", "item_sheepstick",
 			},
         },
     },

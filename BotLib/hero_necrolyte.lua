@@ -47,10 +47,10 @@ local HeroBuild = {
 				"item_faerie_fire",
 				"item_double_circlet",
 			
+				"item_magic_wand",
 				"item_null_talisman",
 				"item_bracer",
 				"item_boots",
-				"item_magic_wand",
 				"item_radiance",--
 				"item_travel_boots",
 				"item_aghanims_shard",
@@ -58,15 +58,15 @@ local HeroBuild = {
 				"item_shivas_guard",--
 				"item_heart",--
 				"item_ultimate_scepter",
-				"item_kaya_and_sange",--
-				"item_travel_boots_2",--
+				"item_wind_waker",--
 				"item_ultimate_scepter_2",
+				"item_travel_boots_2",--
 				"item_moon_shard",
 			},
             ['sell_list'] = {
-				"item_null_talisman",
-				"item_bracer",
-				"item_magic_wand",
+				"item_magic_wand", "item_shivas_guard",
+				"item_null_talisman", "item_heart",
+				"item_bracer", "item_ultimate_scepter",
 			},
         },
     },
@@ -89,10 +89,10 @@ local HeroBuild = {
 				"item_faerie_fire",
 				"item_double_circlet",
 			
+				"item_magic_wand",
 				"item_null_talisman",
 				"item_bracer",
 				"item_boots",
-				"item_magic_wand",
 				"item_radiance",--
 				sUtilityItem,--
 				"item_travel_boots",
@@ -101,15 +101,15 @@ local HeroBuild = {
 				"item_ultimate_scepter",
 				"item_shivas_guard",--
 				"item_cyclone",
-				"item_travel_boots_2",--
 				"item_ultimate_scepter_2",
 				"item_wind_waker",--
+				"item_travel_boots_2",--
 				"item_moon_shard",
 			},
             ['sell_list'] = {
-				"item_null_talisman",
-				"item_bracer",
-				"item_magic_wand",
+				"item_magic_wand", "item_heart",
+				"item_null_talisman", "item_ultimate_scepter",
+				"item_bracer", "item_shivas_guard",
 			},
         },
     },

@@ -50,8 +50,8 @@ local HeroBuild = {
 	
 				"item_bottle",
 				"item_double_null_talisman",
-				"item_power_treads",
 				"item_magic_wand",
+				"item_power_treads",
 				"item_witch_blade",
                 "item_force_staff",
 				"item_ultimate_scepter",
@@ -60,15 +60,17 @@ local HeroBuild = {
 				"item_hurricane_pike",--
 				"item_devastator",--
 				"item_satanic",--
+                "item_travel_boots",
+				"item_ultimate_scepter_2",
 				"item_bloodthorn",--
 				"item_travel_boots_2",--
 				"item_moon_shard",
-				"item_ultimate_scepter_2",
 			},
             ['sell_list'] = {
-				"item_bottle",
-				"item_null_talisman",
-				"item_magic_wand",
+				"item_magic_wand", "item_force_staff",
+				"item_bottle", "item_ultimate_scepter",
+				"item_null_talisman", "item_black_king_bar",
+                "item_null_talisman", "item_satanic",
 			},
         },
     },

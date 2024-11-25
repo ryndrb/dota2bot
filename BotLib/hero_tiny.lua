@@ -14,7 +14,6 @@ local RI = require(GetScriptDirectory()..'/FunLib/util_role_item')
 
 local sUtility = {"item_pipe", "item_heavens_halberd", "item_lotus_orb"}
 local sUtilityItem = RI.GetBestUtilityItem(sUtility)
-local sBlinkUpgrade = RandomInt(1, 2) == 1 and "item_swift_blink" or "item_overwhelming_blink"
 
 local HeroBuild = {
     ['pos_1'] = {
@@ -51,9 +50,9 @@ local HeroBuild = {
 				"item_ultimate_scepter_2",
 			},
             ['sell_list'] = {
-				"item_quelling_blade",
-				"item_wraith_band",
-				"item_magic_wand",
+				"item_quelling_blade", "item_black_king_bar",
+				"item_magic_wand", "item_assault",
+				"item_wraith_band", "item_satanic",
 			},
         },
     },
@@ -77,26 +76,24 @@ local HeroBuild = {
 				"item_quelling_blade",
 			
 				"item_bottle",
-				"item_power_treads",
 				"item_magic_wand",
+				"item_power_treads",
 				"item_blink",
 				"item_phylactery",
 				"item_black_king_bar",--
-				"item_aghanims_shard",
 				"item_angels_demise",--
+				"item_aghanims_shard",
 				"item_assault",--
-				"item_harpoon",--
-				"item_travel_boots",
-				"item_moon_shard",
-				sBlinkUpgrade,--
+				"item_octarine_core",--
+				"item_overwhelming_blink",--
 				"item_travel_boots_2",--
+				"item_moon_shard",
 				"item_ultimate_scepter_2",
 			},
             ['sell_list'] = {
-				"item_quelling_blade",
-				"item_bottle",
-				"item_magic_wand",
-				"item_echo_sabre",
+				"item_quelling_blade", "item_black_king_bar",
+				"item_magic_wand", "item_assault",
+				"item_bottle", "item_octarine_core",
 			},
         },
     },
@@ -119,7 +116,6 @@ local HeroBuild = {
 				"item_quelling_blade",
 			
 				"item_double_bracer",
-				"item_boots",
 				"item_magic_wand",
 				"item_power_treads",
 				"item_blink",
@@ -127,18 +123,17 @@ local HeroBuild = {
 				"item_black_king_bar",--
 				sUtilityItem,--
 				"item_assault",--
-				"item_aghanims_shard",
-				"item_travel_boots",
 				"item_overwhelming_blink",--
+				"item_aghanims_shard",
 				"item_travel_boots_2",--
 				"item_moon_shard",
 				"item_ultimate_scepter_2",
 			},
             ['sell_list'] = {
-				"item_quelling_blade",
-				"item_bracer",
-				"item_magic_wand",
-				"item_echo_sabre",
+				"item_quelling_blade", "item_crimson_guard",
+				"item_magic_wand", "item_black_king_bar",
+				"item_bracer", sUtilityItem,
+				"item_bracer", "item_assault",
 			},
         },
     },
@@ -178,8 +173,8 @@ local HeroBuild = {
 				"item_moon_shard",
 			},
             ['sell_list'] = {
-				"item_ring_of_basilius",
-				"item_magic_wand",
+				"item_ring_of_basilius", "item_boots_of_bearing",
+				"item_magic_wand", "item_cyclone",
 			},
         },
     },
@@ -219,7 +214,7 @@ local HeroBuild = {
 				"item_moon_shard",
 			},
             ['sell_list'] = {
-				"item_magic_wand",
+				"item_magic_wand", "item_guardian_greaves",
 			},
         },
     },

@@ -73,16 +73,17 @@ local HeroBuild = {
                 "item_pipe",--
                 "item_shivas_guard",--
                 "item_refresher",--
-                "item_travel_boots",
+                "item_ultimate_scepter",
                 "item_overwhelming_blink",--
+                "item_travel_boots",--
+                "item_ultimate_scepter_2",
                 "item_travel_boots_2",--
                 "item_aghanims_shard",
-                "item_ultimate_scepter_2",
                 "item_moon_shard",
             },
             ['sell_list'] = {
-                "item_bracer",
-                "item_magic_wand",
+                "item_magic_wand", "item_shivas_guard",
+                "item_bracer", "item_bracer",
             },
         },
     },
@@ -120,8 +121,8 @@ local HeroBuild = {
                 "item_moon_shard",
             },
             ['sell_list'] = {
-                "item_bracer",
-                "item_magic_wand",
+                "item_magic_wand", "item_blink",
+                "item_bracer", "item_boots_of_bearing",
             },
         },
     },
@@ -160,8 +161,8 @@ local HeroBuild = {
                 "item_moon_shard",
             },
             ['sell_list'] = {
-                "item_bracer",
-                "item_magic_wand",
+                "item_magic_wand", "item_blink",
+                "item_bracer", "item_guardian_greaves",
             },
         },
     },

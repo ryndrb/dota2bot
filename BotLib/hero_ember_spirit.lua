@@ -61,16 +61,16 @@ local HeroBuild = {
 				"item_ultimate_scepter",
 				"item_travel_boots",
 				"item_octarine_core",--
-				"item_aghanims_shard",
 				"item_ultimate_scepter_2",
+				"item_aghanims_shard",
 				"item_travel_boots_2",--
 				"item_moon_shard",
 			},
             ['sell_list'] = {
-				"item_quelling_blade",
-				"item_bottle",
-				"item_magic_wand",
-				"item_mage_slayer",
+				"item_quelling_blade", "item_kaya",
+				"item_magic_wand", "item_black_king_bar",
+				"item_bottle", "item_shivas_guard",
+				"item_mage_slayer", "item_octarine_core",
 			},
         },
         [2] = {-- physical
@@ -102,15 +102,13 @@ local HeroBuild = {
                 "item_greater_crit",--
 				"item_aghanims_shard",
 				"item_skadi",--
-				"item_ultimate_scepter",
-				"item_travel_boots",
 				"item_ultimate_scepter_2",
 				"item_travel_boots_2",--
 				"item_moon_shard",
 			},
             ['sell_list'] = {
-				"item_bottle",
-				"item_magic_wand",
+				"item_magic_wand", "item_greater_crit",
+				"item_bottle", "item_skadi",
 			},
         },
     },

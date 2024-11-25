@@ -37,10 +37,9 @@ local HeroBuild = {
                 "item_quelling_blade",
             
                 "item_wraith_band",
-                "item_boots_of_elves",
                 "item_magic_wand",
                 "item_power_treads",
-                "item_lifesteal",
+                "item_vladmir",
                 "item_manta",--
                 "item_black_king_bar",--
                 "item_angels_demise",--
@@ -52,10 +51,11 @@ local HeroBuild = {
                 "item_ultimate_scepter_2",
             },
             ['sell_list'] = {
-                "item_quelling_blade",
-                "item_wraith_band",
-                "item_power_treads",
-                "item_magic_wand",
+                "item_quelling_blade", "item_black_king_bar",
+                "item_magic_wand", "item_angels_demise",
+                "item_wraith_band", "item_butterfly",
+                "item_vladmir", "item_satanic",
+                "item_power_treads", "item_skadi",
             },
         },
         [1] = {
@@ -75,9 +75,9 @@ local HeroBuild = {
                 "item_double_branches",
                 "item_double_circlet",
             
-                "item_power_treads",
-                "item_lifesteal",
                 "item_magic_wand",
+                "item_power_treads",
+                "item_vladmir",
                 "item_manta",--
                 "item_black_king_bar",--
                 "item_greater_crit",--
@@ -89,9 +89,11 @@ local HeroBuild = {
                 "item_ultimate_scepter_2",
             },
             ['sell_list'] = {
-                "item_circlet",
-                "item_power_treads",
-                "item_magic_wand",
+                "item_circlet", "item_black_king_bar",
+                "item_circlet", "item_greater_crit",
+                "item_magic_wand", "item_butterfly",
+                "item_vladmir", "item_satanic",
+                "item_power_treads", "item_skadi",
             },
         },
     },
@@ -113,12 +115,11 @@ local HeroBuild = {
                 "item_double_branches",
                 "item_faerie_fire",
             
-                "item_wraith_band",
                 "item_bottle",
                 "item_magic_wand",
-                "item_boots_of_elves",
+                "item_wraith_band",
                 "item_power_treads",
-                "item_lifesteal",
+                "item_vladmir",
                 "item_manta",--
                 "item_black_king_bar",--
                 "item_angels_demise",--
@@ -130,10 +131,11 @@ local HeroBuild = {
                 "item_ultimate_scepter_2",
             },
             ['sell_list'] = {
-                "item_wraith_band",
-                "item_bottle",
-                "item_power_treads",
-                "item_magic_wand",
+                "item_magic_wand", "item_black_king_bar",
+                "item_bottle", "item_angels_demise",
+                "item_wraith_band", "item_butterfly",
+                "item_vladmir", "item_satanic",
+                "item_power_treads", "item_disperser",
             },
         },
         [2] = {
@@ -154,10 +156,10 @@ local HeroBuild = {
                 "item_double_circlet",
             
                 "item_bottle",
+                "item_magic_wand",
                 "item_power_treads",
                 "item_double_wraith_band",
-                "item_magic_wand",
-                "item_lifesteal",
+                "item_vladmir",
                 "item_manta",--
                 "item_black_king_bar",--
                 "item_greater_crit",--
@@ -169,10 +171,12 @@ local HeroBuild = {
                 "item_ultimate_scepter_2",
             },
             ['sell_list'] = {
-                "item_bottle",
-                "item_power_treads",
-                "item_wraith_band",
-                "item_magic_wand",
+                "item_magic_wand", "item_manta",
+                "item_bottle", "item_black_king_bar",
+                "item_wraith_band", "item_greater_crit",
+                "item_wraith_band", "item_butterfly",
+                "item_vladmir", "item_satanic",
+                "item_power_treads", "item_disperser",
             },
         },
     },

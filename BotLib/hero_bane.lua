@@ -61,16 +61,17 @@ local HeroBuild = {
 				"item_kaya_and_sange",--
 				"item_travel_boots",
 				"item_hurricane_pike",--
+				"item_ultimate_scepter_2",
 				"item_sheepstick",--
 				"item_travel_boots_2",--
-				"item_ultimate_scepter_2",
 				"item_moon_shard",
 			},
             ['sell_list'] = {
-				"item_circlet",
-				"item_bottle",
-				"item_magic_wand",
-				"item_hand_of_midas",
+				"item_circlet", "item_hand_of_midas",
+				"item_circlet", "item_ultimate_scepter",
+				"item_magic_wand", "item_force_staff",
+				"item_bottle", "item_kaya",
+				"item_hand_of_midas", "item_black_king_bar",
 			},
         },
     },
@@ -119,8 +120,8 @@ local HeroBuild = {
 				"item_moon_shard",
 			},
             ['sell_list'] = {
-				"item_circlet",
-				"item_magic_wand",
+				"item_circlet", "item_aether_lens",
+				"item_magic_wand", "item_glimmer_cape",
 			},
         },
     },
@@ -157,8 +158,8 @@ local HeroBuild = {
 				"item_moon_shard",
 			},
             ['sell_list'] = {
-				"item_circlet",
-				"item_magic_wand",
+				"item_circlet", "item_aether_lens",
+				"item_magic_wand", "item_glimmer_cape",
 			},
         },
     },

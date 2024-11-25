@@ -47,25 +47,27 @@ local HeroBuild = {
 				"item_tango",
 			
 				"item_bottle",
-				"item_arcane_boots",
 				"item_magic_wand",
+				"item_arcane_boots",
 				"item_aether_lens",
 				"item_dagon_2",
+				"item_veil_of_discord",
 				"item_kaya",
-				"item_octarine_core",--
 				"item_black_king_bar",--
 				"item_kaya_and_sange",--
 				"item_dagon_5",--
+				"item_shivas_guard",--
 				"item_travel_boots",
-				"item_ethereal_blade",--
+				"item_sheepstick",--
 				"item_travel_boots_2",--
 				"item_ultimate_scepter_2",
 				"item_aghanims_shard",
 				"item_moon_shard",
 			},
             ['sell_list'] = {
-				"item_bottle",
-				"item_magic_wand",
+				"item_magic_wand", "item_kaya",
+				"item_bottle", "item_black_king_bar",
+				"item_aether_lens", "item_sheepstick",
 			},
         },
     },
@@ -114,7 +116,7 @@ local HeroBuild = {
 				"item_moon_shard",
 			},
             ['sell_list'] = {
-				"item_magic_wand",
+				"item_magic_wand", "item_boots_of_bearing",
 			},
         },
     },
@@ -151,7 +153,7 @@ local HeroBuild = {
 				"item_moon_shard",
 			},
             ['sell_list'] = {
-				"item_magic_wand",
+				"item_magic_wand", "item_guardian_greaves",
 			},
         },
     },

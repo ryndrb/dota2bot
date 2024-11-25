@@ -48,9 +48,9 @@ local HeroBuild = {
 				"item_enchanted_mango",
 			
 				"item_bottle",
+				"item_magic_wand",
 				"item_power_treads",
 				"item_double_null_talisman",
-				"item_magic_wand",
 				"item_witch_blade",
 				"item_force_staff",
 				"item_black_king_bar",--
@@ -58,16 +58,16 @@ local HeroBuild = {
 				"item_hurricane_pike",--
 				"item_devastator",--
 				"item_bloodthorn",--
-				"item_travel_boots",
 				"item_sheepstick",--
 				"item_travel_boots_2",--
 				"item_moon_shard",
 				"item_ultimate_scepter_2",
 			},
             ['sell_list'] = {
-				"item_bottle",
-				"item_null_talisman",
-				"item_magic_wand",
+				"item_magic_wand", "item_force_staff",
+				"item_bottle", "item_black_king_bar",
+				"item_null_talisman", "item_bloodthorn",
+				"item_null_talisman", "item_sheepstick",
 			},
         },
     },
@@ -102,9 +102,9 @@ local HeroBuild = {
 				"item_blood_grenade",
 				"item_double_circlet",
 			
+				"item_magic_wand",
 				"item_boots",
 				"item_double_null_talisman",
-				"item_magic_wand",
 				"item_tranquil_boots",
 				"item_force_staff",
 				"item_glimmer_cape",--
@@ -118,7 +118,9 @@ local HeroBuild = {
 				"item_ultimate_scepter_2",
 			},
             ['sell_list'] = {
-				"item_magic_wand",
+				"item_magic_wand", "item_glimmer_cape",
+				"item_null_talisman", "item_boots_of_bearing",
+				"item_null_talisman", "item_boots_of_bearing",
 			},
         },
     },
@@ -141,9 +143,9 @@ local HeroBuild = {
 				"item_blood_grenade",
 				"item_double_circlet",
 			
+				"item_magic_wand",
 				"item_boots",
 				"item_double_null_talisman",
-				"item_magic_wand",
 				"item_arcane_boots",
 				"item_force_staff",
 				"item_glimmer_cape",--
@@ -157,7 +159,9 @@ local HeroBuild = {
 				"item_ultimate_scepter_2",
 			},
             ['sell_list'] = {
-				"item_magic_wand",
+				"item_magic_wand", "item_glimmer_cape",
+				"item_null_talisman", "item_guardian_greaves",
+				"item_null_talisman", "item_guardian_greaves",
 			},
         },
     },

@@ -47,27 +47,27 @@ local HeroBuild = {
 				"item_double_circlet",
 			
 				"item_bottle",
+				"item_magic_wand",
 				"item_double_bracer",
 				"item_phase_boots",
-				"item_magic_wand",
 				"item_ultimate_scepter",
 				"item_blink",
-				"item_cyclone",
-				"item_kaya",
-				"item_black_king_bar",--
-				"item_kaya_and_sange",--
 				"item_shivas_guard",--
-				"item_travel_boots",
-				"item_wind_waker",--
+				"item_black_king_bar",--
+				"item_cyclone",
+				"item_octarine_core",--
 				"item_ultimate_scepter_2",
 				"item_overwhelming_blink",--
+				"item_wind_waker",--
 				"item_travel_boots_2",--
 				"item_aghanims_shard",
 				"item_moon_shard",
 			},
             ['sell_list'] = {
-				"item_bracer",
-				"item_magic_wand",
+				"item_magic_wand", "item_blink",
+				"item_bottle", "item_shivas_guard",
+				"item_bracer", "item_black_king_bar",
+				"item_bracer", "item_cyclone",
 			},
         },
     },
@@ -89,26 +89,25 @@ local HeroBuild = {
 				"item_double_branches",
 				"item_double_circlet",
 			
-				"item_double_bracer",
-				"item_phase_boots",
 				"item_magic_wand",
+				"item_double_bracer",
+				"item_arcane_boots",
 				"item_blink",
-				"item_bloodstone",--
 				sUtilityItem,--
 				"item_ultimate_scepter",
-				"item_cyclone",
 				"item_shivas_guard",--
-				"item_travel_boots",
-				"item_wind_waker",--
-				"item_travel_boots_2",--
+				"item_black_king_bar",--
 				"item_overwhelming_blink",--
+				"item_wind_waker",--
 				"item_ultimate_scepter_2",
+				"item_travel_boots_2",--
 				"item_aghanims_shard",
 				"item_moon_shard",
 			},
             ['sell_list'] = {
-				"item_bracer",
-				"item_magic_wand",
+				"item_magic_wand", "item_ultimate_scepter",
+				"item_bracer", "item_shivas_guard",
+				"item_bracer", "item_black_king_bar",
 			},
         },
     },

@@ -54,26 +54,27 @@ local HeroBuild = {
                 "item_enchanted_mango",
             
                 "item_bottle",
-                "item_double_bracer",
                 "item_magic_wand",
+                "item_double_bracer",
                 "item_boots",
                 "item_vladmir",--
                 "item_orchid",
                 "item_ultimate_scepter",
                 "item_assault",--
                 "item_black_king_bar",--
-                "item_travel_boots",
+                "item_aghanims_shard",
                 "item_bloodthorn",--
-                "item_travel_boots_2",--
+                "item_travel_boots",
                 "item_sheepstick",--
                 "item_ultimate_scepter_2",
-                "item_aghanims_shard",
+                "item_travel_boots_2",--
                 "item_moon_shard",
             },
             ['sell_list'] = {
-                "item_bottle",
-                "item_bracer",
-                "item_magic_wand",
+                "item_magic_wand", "item_orchid",
+                "item_bottle", "item_ultimate_scepter",
+                "item_bracer", "item_assault",
+                "item_bracer", "item_black_king_bar",
             },
         },
     },
@@ -102,8 +103,8 @@ local HeroBuild = {
                 "item_double_circlet",
                 "item_enchanted_mango",
             
-                "item_double_bracer",
                 "item_magic_wand",
+                "item_double_bracer",
                 "item_boots",
                 "item_vladmir",--
                 sUtilityItem,--
@@ -111,16 +112,16 @@ local HeroBuild = {
                 "item_ultimate_scepter",
                 "item_assault",--
                 "item_black_king_bar",--
-                "item_travel_boots",
-                "item_bloodthorn",--
-                "item_travel_boots_2",--
                 "item_ultimate_scepter_2",
                 "item_aghanims_shard",
+                "item_bloodthorn",--
+                "item_travel_boots_2",--
                 "item_moon_shard",
             },
             ['sell_list'] = {
-                "item_bracer",
-                "item_magic_wand",
+                "item_magic_wand", "item_orchid",
+                "item_bracer", "item_ultimate_scepter",
+                "item_bracer", "item_assault",
             },
         },
     },

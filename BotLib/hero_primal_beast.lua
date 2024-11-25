@@ -48,13 +48,12 @@ local HeroBuild = {
                 "item_quelling_blade",
             
                 "item_bottle",
-                "item_phase_boots",
                 "item_magic_wand",
+                "item_phase_boots",
                 "item_blade_mail",
-                "item_radiance",--accelerate
+                "item_radiance",--
                 "item_black_king_bar",--
                 "item_blink",
-                "item_veil_of_discord",
                 "item_shivas_guard",--
                 "item_heart",--
                 "item_travel_boots",
@@ -62,14 +61,13 @@ local HeroBuild = {
                 "item_travel_boots_2",--
                 "item_aghanims_shard",
                 "item_moon_shard",
-                "item_ultimate_scepter",
                 "item_ultimate_scepter_2",
             },
             ['sell_list'] = {
-                "item_quelling_blade",
-                "item_bottle",
-                "item_magic_wand",
-                "item_blade_mail",
+                "item_quelling_blade", "item_black_king_bar",
+                "item_magic_wand", "item_blink",
+                "item_bottle", "item_shivas_guard",
+                "item_blade_mail", "item_travel_boots",
             },
         },
     },
@@ -96,23 +94,22 @@ local HeroBuild = {
                 "item_magic_wand",
                 "item_phase_boots",
                 "item_blade_mail",
-                "item_radiance",--accelerate
+                "item_radiance",--
                 "item_veil_of_discord",
                 "item_crimson_guard",--
                 "item_black_king_bar",--
                 sUtilityItem,--
                 "item_shivas_guard",--
-                "item_travel_boots",
                 "item_aghanims_shard",
                 "item_travel_boots_2",--
                 "item_moon_shard",
                 "item_ultimate_scepter_2",
             },
             ['sell_list'] = {
-                "item_quelling_blade",
-                "item_bracer",
-                "item_magic_wand",
-                "item_blade_mail",
+                "item_quelling_blade", "item_veil_of_discord",
+                "item_magic_wand", "item_crimson_guard",
+                "item_bracer", "item_black_king_bar",
+                "item_blade_mail", sUtilityItem,
             },
         },
     },

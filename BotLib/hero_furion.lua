@@ -37,10 +37,11 @@ local HeroBuild = {
             
                 "item_power_treads",
                 "item_magic_wand",
-                "item_gungir",--
-                "item_black_king_bar",--
-                "item_aghanims_shard",
+                "item_maelstrom",
                 "item_orchid",
+                "item_black_king_bar",--
+                "item_mjollnir",--
+                "item_aghanims_shard",
                 "item_assault",--
                 "item_satanic",--
                 "item_bloodthorn",--
@@ -49,9 +50,9 @@ local HeroBuild = {
                 "item_ultimate_scepter_2",
             },
             ['sell_list'] = {
-                "item_blight_stone",
-                "item_power_treads",
-                "item_magic_wand",
+                "item_magic_wand", "item_assault",
+                "item_blight_stone", "item_satanic",
+                "item_power_treads", "item_monkey_king_bar",
             },
         },
     },
@@ -75,12 +76,13 @@ local HeroBuild = {
                 "item_double_circlet",
             
                 "item_bottle",
-                "item_power_treads",
                 "item_magic_wand",
-                "item_gungir",--
-                "item_black_king_bar",--
-                "item_aghanims_shard",
+                "item_power_treads",
+                "item_maelstrom",
                 "item_orchid",
+                "item_black_king_bar",--
+                "item_gungir",--
+                "item_aghanims_shard",
                 "item_assault",--
                 "item_satanic",--
                 "item_bloodthorn",--
@@ -89,8 +91,11 @@ local HeroBuild = {
                 "item_ultimate_scepter_2",
             },
             ['sell_list'] = {
-                "item_power_treads",
-                "item_magic_wand",
+                "item_circlet", "item_orchid",
+                "item_circlet", "item_black_king_bar",
+                "item_magic_wand", "item_assault",
+                "item_bottle", "item_satanic",
+                "item_power_treads", "item_sheepstick",
             },
         },
     },
@@ -126,9 +131,9 @@ local HeroBuild = {
                 "item_ultimate_scepter_2",
             },
             ['sell_list'] = {
-                "item_blight_stone",
-                "item_power_treads",
-                "item_magic_wand",
+                "item_magic_wand", "item_satanic",
+                "item_blight_stone", "item_sheepstick",
+                "item_power_treads", "item_nullifier",
             },
         },
     },
@@ -156,19 +161,23 @@ local HeroBuild = {
                 "item_urn_of_shadows",
                 "item_solar_crest",--
                 "item_aghanims_shard",
-                "item_spirit_vessel",--
+                "item_ancient_janggo",
+                "item_spirit_vessel",
                 "item_boots_of_bearing",--
                 "item_ultimate_scepter",
                 "item_orchid",
                 "item_heavens_halberd",--
                 "item_bloodthorn",--
-                "item_sheepstick",--
                 "item_ultimate_scepter_2",
+                "item_sheepstick",--
+                "item_monkey_king_bar",--
                 "item_moon_shard",
             },
             ['sell_list'] = {
-                "item_circlet",
-                "item_magic_wand",
+                "item_circlet", "item_solar_crest",
+                "item_circlet", "item_ancient_janggo",
+                "item_magic_wand", "item_boots_of_bearing",
+                "item_spirit_vessel", "item_monkey_king_bar",
             },
         },
     },
@@ -196,19 +205,23 @@ local HeroBuild = {
                 "item_urn_of_shadows",
                 "item_solar_crest",--
                 "item_aghanims_shard",
+                "item_mekansm",
                 "item_spirit_vessel",--
                 "item_guardian_greaves",--
                 "item_ultimate_scepter",
                 "item_orchid",
                 "item_heavens_halberd",--
                 "item_bloodthorn",--
-                "item_sheepstick",--
                 "item_ultimate_scepter_2",
+                "item_sheepstick",--
+                "item_monkey_king_bar",--
                 "item_moon_shard",
             },
             ['sell_list'] = {
-                "item_circlet",
-                "item_magic_wand",
+                "item_circlet", "item_solar_crest",
+                "item_circlet", "item_mekansm",
+                "item_magic_wand", "item_guardian_greaves",
+                "item_spirit_vessel", "item_monkey_king_bar",
             },
         },
     },

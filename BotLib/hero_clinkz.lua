@@ -55,9 +55,9 @@ local HeroBuild = {
 				"item_ultimate_scepter_2",
 			},
             ['sell_list'] = {
-				"item_quelling_blade",
-				"item_magic_wand",
-				"item_power_treads",
+				"item_quelling_blade", "item_black_king_bar",
+				"item_magic_wand", "item_greater_crit",
+				"item_power_treads", "item_butterfly",
 			},
         },
     },
@@ -81,7 +81,7 @@ local HeroBuild = {
 			
 				"item_bottle",
 				"item_magic_wand",
-				"item_power_treads",
+				"item_arcane_boots",
 				"item_desolator",--
 				"item_orchid",
 				"item_dragon_lance",
@@ -95,9 +95,9 @@ local HeroBuild = {
 				"item_ultimate_scepter_2",
 			},
             ['sell_list'] = {
-				"item_bottle",
-				"item_magic_wand",
-				"item_power_treads",
+				"item_magic_wand", "item_black_king_bar",
+				"item_bottle", "item_sheepstick",
+				"item_arcane_boots", "item_butterfly",
 			},
         },
     },
@@ -148,7 +148,7 @@ local HeroBuild = {
 				"item_moon_shard",
 			},
             ['sell_list'] = {
-				"item_magic_wand",
+				"item_magic_wand", "item_boots_of_bearing",
 			},
         },
     },
@@ -187,7 +187,7 @@ local HeroBuild = {
 				"item_moon_shard",
 			},
             ['sell_list'] = {
-				"item_magic_wand",
+				"item_magic_wand", "item_boots_of_bearing",
 			},
         },
     },

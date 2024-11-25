@@ -58,16 +58,17 @@ local HeroBuild = {
 				"item_angels_demise",--
 				"item_assault",--
 				"item_travel_boots",
-				"item_wind_waker",--
+				"item_cyclone",
 				"item_ultimate_scepter_2",
+				"item_wind_waker",--
 				"item_travel_boots_2",--
 				"item_moon_shard",
 				"item_aghanims_shard",
 			},
             ['sell_list'] = {
-				"item_quelling_blade",
-				"item_magic_wand",
-				"item_bottle",
+				"item_quelling_blade", "item_octarine_core",
+				"item_magic_wand", "item_black_king_bar",
+				"item_bottle", "item_assault",
 			},
         },
     },
@@ -94,21 +95,19 @@ local HeroBuild = {
 				"item_magic_wand",
 				"item_phase_boots",
 				"item_phylactery",
-				"item_pipe",
+				"item_pipe",--
 				"item_black_king_bar",--
 				sUtilityItem,--
 				"item_angels_demise",--
 				"item_assault",--
-				"item_travel_boots",
-				"item_wind_waker",--
-				"item_ultimate_scepter_2",
 				"item_travel_boots_2",--
+				"item_ultimate_scepter_2",
 				"item_moon_shard",
 				"item_aghanims_shard",
 			},
             ['sell_list'] = {
-				"item_quelling_blade",
-				"item_magic_wand",
+				"item_quelling_blade", sUtilityItem,
+				"item_magic_wand", "item_assault"
 			},
         },
     },
@@ -146,8 +145,8 @@ local HeroBuild = {
 				"item_moon_shard",
 			},
             ['sell_list'] = {
-				"item_orb_of_venom",
-				"item_magic_wand",
+				"item_magic_wand", "item_boots_of_bearing",
+				"item_orb_of_venom", "item_force_staff",
 			},
         },
     },
@@ -185,8 +184,8 @@ local HeroBuild = {
 				"item_moon_shard",
 			},
             ['sell_list'] = {
-				"item_orb_of_venom",
-				"item_magic_wand",
+				"item_magic_wand", "item_boots_of_bearing",
+				"item_orb_of_venom", "item_force_staff",
 			},
         },
     },

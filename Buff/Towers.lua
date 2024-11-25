@@ -15,32 +15,34 @@ function T.HandleTowerBuff(nTeam)
 
     for _, tower in pairs(hBuildings) do
         if tower ~= nil and tower:IsAlive() and tower:GetTeam() == nTeam then
-            local hUnitList = T.GetNonHeroAttackingUnit(tower)
-            local nAdd = 0
+            local sTowerName = tower:GetUnitName()
+            local bTierFourTower = string.find(sTowerName, 'tower4')
+            local bRax = string.find(sTowerName, 'rax')
+            local bAncient = string.find(sTowerName, 'fort')
 
-            if string.find(tower:GetUnitName(), 'tower1') then
-                nAdd = 10
-            elseif string.find(tower:GetUnitName(), 'tower2') then
-                nAdd = 12
-            elseif string.find(tower:GetUnitName(), 'tower3') then
-                nAdd = 14
-            elseif string.find(tower:GetUnitName(), 'tower4') then
-                nAdd = 16
-            elseif string.find(tower:GetUnitName(), 'rax') then
-                nAdd = 18
-            elseif string.find(tower:GetUnitName(), 'fort') then
-                nAdd = 20
+            if bTierFourTower or bRax or bAncient then
+                local hUnitList = T.GetNonHeroAttackingUnit(tower)
+                local nAdd = 0
+
+                -- only these three
+                if bTierFourTower then
+                    nAdd = 16
+                elseif bRax then
+                    nAdd = 18
+                elseif bAncient then
+                    nAdd = 20
+                end
+
+                local fRegen = T.GetAverageUnitsDamage(hUnitList) + nAdd
+
+                if tower:IsBarracks() then
+                    fRegen = fRegen * 1.25
+                elseif tower:IsFort() then
+                    fRegen = fRegen * 1.5
+                end
+
+                tower:SetBaseHealthRegen(fRegen)
             end
-
-            local fRegen = T.GetAverageUnitsDamage(hUnitList) + nAdd
-
-            if tower:IsBarracks() then
-                fRegen = fRegen * 1.25
-            elseif tower:IsFort() then
-                fRegen = fRegen * 1.5
-            end
-
-            tower:SetBaseHealthRegen(fRegen)
         end
     end
 end

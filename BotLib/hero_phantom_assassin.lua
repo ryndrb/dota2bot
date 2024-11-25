@@ -34,22 +34,22 @@ local HeroBuild = {
 				"item_double_branches",
 				"item_quelling_blade",
 			
-				"item_power_treads",
 				"item_magic_wand",
+				"item_power_treads",
 				"item_bfury",--
 				"item_black_king_bar",--
 				"item_desolator",--
 				"item_aghanims_shard",
 				"item_basher",
 				"item_satanic",--
-				"item_monkey_king_bar",--
 				"item_abyssal_blade",--
+				"item_monkey_king_bar",--
 				"item_moon_shard",
 				"item_ultimate_scepter_2",
 			},
             ['sell_list'] = {
-				"item_power_treads",
-				'item_magic_wand',
+				'item_magic_wand', "item_satanic",
+				"item_power_treads", "item_monkey_king_bar",
 			},
         },
     },

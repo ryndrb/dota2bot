@@ -34,28 +34,29 @@ local HeroBuild = {
 				"item_double_branches",
 				"item_quelling_blade",
 			
+				"item_magic_wand",
 				"item_double_wraith_band",
 				"item_power_treads",
-				"item_magic_wand",
+				"item_maelstrom",
 				"item_diffusal_blade",
 				"item_manta",--
-				"item_lesser_crit",
+				"item_mjollnir",--
 				"item_ultimate_scepter",
 				"item_greater_crit",--
-				"item_basher",
-				"item_sphere",--
 				"item_disperser",--
-				"item_abyssal_blade",--
+				"item_basher",
 				"item_ultimate_scepter_2",
+				"item_abyssal_blade",--
 				"item_butterfly",--
 				"item_moon_shard",
 				"item_aghanims_shard",
 			},
             ['sell_list'] = {
-				"item_quelling_blade",
-				"item_wraith_band",
-				"item_power_treads",
-				"item_magic_wand",
+				"item_quelling_blade", "item_diffusal_blade",
+				"item_magic_wand", "item_manta",
+				"item_wraith_band", "item_ultimate_scepter",
+				"item_wraith_band", "item_greater_crit",
+				"item_power_treads", "item_butterfly"
 			},
         },
     },
@@ -80,15 +81,15 @@ local HeroBuild = {
 				"item_circlet",
 			
 				"item_bottle",
+				"item_magic_wand",
 				"item_wraith_band",
 				"item_power_treads",
-				"item_magic_wand",
+				"item_maelstrom",
 				"item_diffusal_blade",
 				"item_manta",--
+				"item_mjollnir",--
 				"item_ultimate_scepter",
 				"item_greater_crit",--
-				"item_basher",
-				"item_sphere",--
 				"item_disperser",--
 				"item_nullifier",--
 				"item_ultimate_scepter_2",
@@ -97,11 +98,11 @@ local HeroBuild = {
 				"item_aghanims_shard",
 			},
             ['sell_list'] = {
-				"item_bottle",
-				"item_quelling_blade",
-				"item_wraith_band",
-				"item_power_treads",
-				"item_magic_wand",
+				"item_quelling_blade", "item_diffusal_blade",
+				"item_magic_wand", "item_manta",
+				"item_bottle", "item_ultimate_scepter",
+				"item_wraith_band", "item_greater_crit",
+				"item_power_treads", "item_basher",
 			},
         },
     },

@@ -35,25 +35,24 @@ local HeroBuild = {
 				"item_tango",
 				"item_double_branches",
 				"item_faerie_fire",
-				"item_double_enchanted_mango",
 				
-				"item_power_treads",
 				"item_magic_wand",
+				"item_power_treads",
+				"item_lifesteal",
 				"item_dragon_lance",
 				"item_lesser_crit",
 				"item_black_king_bar",--
 				"item_butterfly",--
+				"item_greater_crit",--
 				"item_hurricane_pike",--
 				"item_aghanims_shard",
-				"item_greater_crit",--
 				"item_satanic",--
-				"item_travel_boots",
 				"item_moon_shard",
 				"item_travel_boots_2",--
 				"item_ultimate_scepter_2",
 			},
             ['sell_list'] = {
-				"item_magic_wand",
+				"item_magic_wand", "item_butterfly",
 			},
         },
     },
@@ -74,27 +73,26 @@ local HeroBuild = {
 				"item_tango",
 				"item_double_branches",
 				"item_faerie_fire",
-				"item_double_enchanted_mango",
 				
 				"item_bottle",
-				"item_power_treads",
 				"item_magic_wand",
+				"item_power_treads",
+				"item_lifesteal",
 				"item_dragon_lance",
 				"item_lesser_crit",
 				"item_black_king_bar",--
 				"item_butterfly",--
+				"item_greater_crit",--
 				"item_hurricane_pike",--
 				"item_aghanims_shard",
-				"item_greater_crit",--
 				"item_satanic",--
-				"item_travel_boots",
 				"item_moon_shard",
 				"item_travel_boots_2",--
 				"item_ultimate_scepter_2",
 			},
             ['sell_list'] = {
-				"item_bottle",
-				"item_magic_wand",
+				"item_magic_wand", "item_black_king_bar",
+				"item_bottle", "item_butterfly",
 			},
         },
 		[2] = {

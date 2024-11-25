@@ -86,7 +86,7 @@ local HeroBuild = {
                 "item_moon_shard",
             },
             ['sell_list'] = {
-                "item_bracer",
+                "item_bracer", "item_heart",
             },
         },
     },
@@ -124,7 +124,7 @@ local HeroBuild = {
                 "item_moon_shard",
             },
             ['sell_list'] = {
-                "item_bracer",
+                "item_bracer", "item_heart",
             },
         },
     },

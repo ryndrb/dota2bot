@@ -35,16 +35,14 @@ local HeroBuild = {
                 "item_quelling_blade",
                 
                 "item_wraith_band",
-                "item_boots",
                 "item_magic_wand",
                 "item_power_treads",
-                "item_gungir",--
+                "item_maelstrom",
                 "item_black_king_bar",--
+                "item_mjollnir",--
                 "item_lesser_crit",
-                "item_basher",
                 "item_skadi",--
                 "item_greater_crit",--
-                "item_travel_boots",
                 "item_abyssal_blade",--
                 "item_travel_boots_2",--
                 "item_moon_shard",
@@ -52,9 +50,9 @@ local HeroBuild = {
                 "item_ultimate_scepter_2",
             },
             ['sell_list'] = {
-                "item_quelling_blade",
-                "item_wraith_band",
-                "item_magic_wand",
+                "item_quelling_blade", "item_lesser_crit",
+                "item_magic_wand", "item_skadi",
+                "item_wraith_band", "item_abyssal_blade",
             },
         },
         [2] = {
@@ -75,16 +73,14 @@ local HeroBuild = {
                 "item_quelling_blade",
                 
                 "item_wraith_band",
-                "item_boots",
                 "item_magic_wand",
                 "item_power_treads",
                 "item_bfury",--
                 "item_black_king_bar",--
                 "item_lesser_crit",
-                "item_basher",
                 "item_butterfly",--
+                "item_basher",
                 "item_greater_crit",--
-                "item_travel_boots",
                 "item_abyssal_blade",--
                 "item_travel_boots_2",--
                 "item_moon_shard",
@@ -92,8 +88,8 @@ local HeroBuild = {
                 "item_ultimate_scepter_2",
             },
             ['sell_list'] = {
-                "item_wraith_band",
-                "item_magic_wand",
+                "item_magic_wand", "item_butterfly",
+                "item_wraith_band", "item_basher",
             },
         },
     },
@@ -117,15 +113,14 @@ local HeroBuild = {
                 "item_orb_of_venom",
             
                 "item_bottle",
-                "item_power_treads",
                 "item_magic_wand",
                 "item_orb_of_corrosion",
-                "item_gungir",--
+                "item_power_treads",
                 "item_black_king_bar",--
+                "item_mjollnir",--
                 "item_lesser_crit",
                 "item_basher",
                 "item_greater_crit",--
-                "item_travel_boots",
                 "item_abyssal_blade",--
                 "item_refresher",--
                 "item_travel_boots_2",--
@@ -134,10 +129,10 @@ local HeroBuild = {
                 "item_aghanims_shard",
             },
             ['sell_list'] = {
-                "item_quelling_blade",
-                "item_bottle",
-                "item_orb_of_corrosion",
-                "item_magic_wand",
+                "item_quelling_blade", "item_black_king_bar",
+                "item_magic_wand", "item_lesser_crit",
+                "item_bottle", "item_basher",
+                "item_orb_of_corrosion", "item_refresher",
             },
         },
     },

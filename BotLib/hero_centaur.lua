@@ -48,27 +48,28 @@ local HeroBuild = {
 			
                 "item_bottle",
                 "item_double_bracer",
-				"item_phase_boots",
 				"item_magic_wand",
+				"item_phase_boots",
                 "item_blade_mail",
                 "item_blink",
                 "item_kaya",
-                "item_aghanims_shard",--
+                "item_aghanims_shard",
                 "item_heart",--
                 "item_kaya_and_sange",--
                 "item_shivas_guard",--
-                "item_travel_boots",
                 "item_overwhelming_blink",--
+                "item_wind_waker",--
                 "item_travel_boots_2",--
 				"item_moon_shard",
 				"item_ultimate_scepter_2",
 			},
             ['sell_list'] = {
-                "item_ring_of_protection",
-                "item_bottle",
-                "item_bracer",
-				"item_magic_wand",
-                "item_blade_mail",
+                "item_ring_of_protection", "item_blade_mail",
+				"item_magic_wand", "item_blink",
+                "item_bottle", "item_kaya",
+                "item_bracer", "item_heart",
+                "item_bracer", "item_shivas_guard",
+                "item_blade_mail", "item_cyclone",
 			},
         },
     },
@@ -91,8 +92,8 @@ local HeroBuild = {
 				"item_ring_of_protection",
 			
                 "item_double_bracer",
-				"item_phase_boots",
 				"item_magic_wand",
+				"item_phase_boots",
                 "item_blade_mail",
                 "item_blink",
                 "item_crimson_guard",--
@@ -100,17 +101,17 @@ local HeroBuild = {
 				"item_aghanims_shard",
                 "item_shivas_guard",--
                 "item_heart",--
-                "item_travel_boots",
                 "item_overwhelming_blink",--
                 "item_travel_boots_2",--
 				"item_moon_shard",
 				"item_ultimate_scepter_2",
 			},
             ['sell_list'] = {
-				"item_ring_of_protection",
-                "item_bracer",
-				"item_magic_wand",
-                "item_blade_mail",
+				"item_ring_of_protection", "item_blink",
+				"item_magic_wand", "item_crimson_guard",
+                "item_bracer", sUtilityItem,
+                "item_bracer", "item_shivas_guard",
+                "item_blade_mail", "item_heart",
 			},
         },
     },

@@ -48,28 +48,27 @@ local HeroBuild = {
 				"item_mantle",
 			
 				"item_bottle",
-				"item_null_talisman",
 				"item_magic_wand",
+				"item_null_talisman",
 				"item_arcane_boots",
 				"item_kaya",
 				"item_blink",
-				"item_kaya_and_sange",--
+				"item_ultimate_scepter",
+				"item_yasha_and_kaya",--
 				"item_shivas_guard",--
 				"item_cyclone",
-				"item_ultimate_scepter",
 				"item_aghanims_shard",
-				"item_wind_waker",--
-				"item_ultimate_scepter_2",
-				"item_sheepstick",--
-				"item_travel_boots",
 				"item_overwhelming_blink",--
+				"item_sheepstick",--
+				"item_ultimate_scepter_2",
+				"item_wind_waker",--
 				"item_travel_boots_2",--
 				"item_moon_shard"
 			},
             ['sell_list'] = {
-				"item_bottle",
-				"item_null_talisman",
-				"item_magic_wand",
+				"item_magic_wand", "item_ultimate_scepter",
+				"item_null_talisman", "item_shivas_guard",
+				"item_bottle", "item_cyclone",
 			},
         },
     },
@@ -97,7 +96,7 @@ local HeroBuild = {
 				"item_pipe",--
 				"item_shivas_guard",--
 				sUtilityItem,--
-				"item_kaya_and_sange",--
+				"item_yasha_and_kaya",--
 				"item_ultimate_scepter",
 				"item_travel_boots",
 				"item_wind_waker",--
@@ -107,8 +106,8 @@ local HeroBuild = {
 				"item_moon_shard"
 			},
             ['sell_list'] = {
-				"item_bracer",
-				"item_magic_wand",
+				"item_magic_wand", sUtilityItem,
+				"item_bracer", "item_ultimate_scepter",
 			},
         },
     },

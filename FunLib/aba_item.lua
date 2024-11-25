@@ -326,23 +326,13 @@ do
 end
 
 Item['tEarlyItem'] = {
-	 'item_clarity',
-	 'item_faerie_fire',
-	 'item_tango',
-	 'item_flask',
-	 'item_infused_raindrop',
-	 -- 'item_magic_stick',
-	 -- 'item_orb_of_venom',
-	 'item_bracer',
-	 'item_wraith_band',
-	 'item_null_talisman',
-	 'item_bottle',
-	 'item_soul_ring',
-	 -- 'item_magic_wand',
-	 -- 'item_ancient_janggo',
-	--  'item_refresher_shard',
-	--  'item_cheese',
-	 'item_blood_grenade',
+	'item_faerie_fire',
+	'item_tango',
+	'item_blood_grenade',
+	'item_clarity',
+	'item_enchanted_mango',
+	'item_flask',
+	'item_infused_raindrop',
 }
 
 Item['tEarlyBoots'] = {

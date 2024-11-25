@@ -48,25 +48,26 @@ local HeroBuild = {
                 "item_double_circlet",
             
                 "item_bottle",
-                "item_double_null_talisman",
                 "item_magic_wand",
+                "item_double_null_talisman",
                 "item_blink",
+                "item_yasha_and_kaya",--
                 "item_ultimate_scepter",
+                "item_black_king_bar",--
                 "item_arcane_blink",--
                 "item_shivas_guard",--
-                "item_sphere",--
                 "item_octarine_core",--
                 "item_cyclone",
-                "item_sheepstick",--
-                "item_wind_waker",--
                 "item_ultimate_scepter_2",
+                "item_wind_waker",--
                 "item_aghanims_shard",
                 "item_moon_shard",
             },
             ['sell_list'] = {
-                "item_magic_wand",
-                "item_bottle",
-                "item_null_talisman",
+                "item_magic_wand", "item_ultimate_scepter",
+                "item_bottle", "item_black_king_bar",
+                "item_null_talisman", "item_octarine_core",
+                "item_null_talisman", "item_cyclone",
             },
         },
     },
@@ -102,8 +103,8 @@ local HeroBuild = {
                 "item_blood_grenade",
 
                 "item_double_null_talisman",
-                "item_boots",
                 "item_magic_wand",
+                "item_boots",
                 "item_holy_locket",--
                 "item_ancient_janggo",
                 "item_glimmer_cape",--
@@ -111,14 +112,15 @@ local HeroBuild = {
                 "item_aether_lens",
                 "item_veil_of_discord",
                 "item_sheepstick",--
-                "item_ethereal_blade",--
                 "item_shivas_guard",--
+                "item_ethereal_blade",--
                 "item_aghanims_shard",
                 "item_ultimate_scepter_2",
                 "item_moon_shard",
             },
             ['sell_list'] = {
-                "item_null_talisman",
+                "item_null_talisman", "item_veil_of_discord",
+                "item_null_talisman", "item_sheepstick",
             },
         },
     },
@@ -142,8 +144,8 @@ local HeroBuild = {
                 "item_blood_grenade",
 
                 "item_double_null_talisman",
-                "item_boots",
                 "item_magic_wand",
+                "item_boots",
                 "item_holy_locket",--
                 "item_mekansm",
                 "item_glimmer_cape",--
@@ -151,14 +153,15 @@ local HeroBuild = {
                 "item_aether_lens",
                 "item_veil_of_discord",
                 "item_sheepstick",--
-                "item_ethereal_blade",--
                 "item_shivas_guard",--
+                "item_ethereal_blade",--
                 "item_aghanims_shard",
                 "item_ultimate_scepter_2",
                 "item_moon_shard",
             },
             ['sell_list'] = {
-                "item_null_talisman",
+                "item_null_talisman", "item_veil_of_discord",
+                "item_null_talisman", "item_sheepstick",
             },
         },
     },

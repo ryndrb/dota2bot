@@ -50,9 +50,10 @@ local HeroBuild = {
                 "item_ultimate_scepter_2",
             },
             ['sell_list'] = {
-                "item_wraith_band",
-                "item_magic_wand",
-                "item_orb_of_corrosion",
+                "item_magic_wand", "item_black_king_bar",
+                "item_wraith_band", "item_skadi",
+                "item_orb_of_corrosion", "item_bloodthorn",
+                "item_phase_boots", "item_travel_boots",
             }
         },
     },
@@ -76,8 +77,8 @@ local HeroBuild = {
                 "item_circlet",
 
                 "item_bottle",
-                "item_wraith_band",
                 "item_magic_wand",
+                "item_wraith_band",
                 "item_orb_of_corrosion",
                 "item_phase_boots",
                 "item_echo_sabre",
@@ -95,10 +96,11 @@ local HeroBuild = {
                 "item_moon_shard",
             },
             ['sell_list'] = {
-                "item_bottle",
-                "item_wraith_band",
-                "item_magic_wand",
-                "item_orb_of_corrosion",
+                "item_magic_wand", "item_manta",
+                "item_wraith_band", "item_assault",
+                "item_bottle", "item_basher",
+                "item_orb_of_corrosion", "item_heart",
+                "item_phase_boots", "item_travel_boots",
             }
         },
     },
@@ -129,16 +131,18 @@ local HeroBuild = {
                 "item_assault",--
                 sUtilityItem,--
                 "item_ultimate_scepter",
+                "item_travel_boots",
                 "item_heart",--
-                "item_travel_boots_2",--
                 "item_ultimate_scepter_2",
+                "item_travel_boots_2",--
                 "item_aghanims_shard",
                 "item_moon_shard",
             },
             ['sell_list'] = {
-                "item_quelling_blade",
-                "item_magic_wand",
-                "item_orb_of_corrosion",
+                "item_quelling_blade", "item_assault",
+                "item_magic_wand", sUtilityItem,
+                "item_orb_of_corrosion", "item_ultimate_scepter",
+                "item_phase_boots", "item_travel_boots",
             }
         },
     },
@@ -175,7 +179,7 @@ local HeroBuild = {
                 "item_moon_shard"
             },
             ['sell_list'] = {
-                "item_circlet",
+                "item_circlet", "item_solar_crest",
             }
         },
     },
@@ -212,7 +216,7 @@ local HeroBuild = {
                 "item_moon_shard"
             },
             ['sell_list'] = {
-                "item_circlet",
+                "item_circlet", "item_solar_crest",
             }
         },
     },

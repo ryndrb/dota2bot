@@ -72,23 +72,24 @@ local HeroBuild = {
 				"item_blood_grenade",
 			
 				"item_null_talisman",
-				"item_tranquil_boots",
 				"item_magic_wand",
+				"item_tranquil_boots",
 				"item_rod_of_atos",
-				"item_aether_lens",--
+				"item_force_staff",
 				"item_aghanims_shard",
 				"item_glimmer_cape",--
 				"item_boots_of_bearing",--
 				"item_ultimate_scepter",
 				"item_octarine_core",--
 				"item_sheepstick",--
-				"item_gungir",--
 				"item_ultimate_scepter_2",
+				"item_gungir",--
+				"item_hurricane_pike",--
 				"item_moon_shard",
 			},
             ['sell_list'] = {
-				"item_null_talisman",
-				"item_magic_wand",
+				"item_null_talisman", "item_force_staff",
+				"item_magic_wand", "item_glimmer_cape",
 			},
         },
     },
@@ -112,23 +113,24 @@ local HeroBuild = {
 				"item_blood_grenade",
 			
 				"item_null_talisman",
-				"item_arcane_boots",
 				"item_magic_wand",
+				"item_arcane_boots",
 				"item_rod_of_atos",
-				"item_aether_lens",--
+				"item_force_staff",
 				"item_aghanims_shard",
 				"item_glimmer_cape",--
 				"item_guardian_greaves",--
 				"item_ultimate_scepter",
 				"item_octarine_core",--
 				"item_sheepstick",--
-				"item_gungir",--
 				"item_ultimate_scepter_2",
+				"item_gungir",--
+				"item_hurricane_pike",--
 				"item_moon_shard",
 			},
             ['sell_list'] = {
-				"item_null_talisman",
-				"item_magic_wand",
+				"item_null_talisman", "item_force_staff",
+				"item_magic_wand", "item_glimmer_cape",
 			},
         },
     },

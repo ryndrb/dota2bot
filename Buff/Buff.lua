@@ -99,7 +99,7 @@ local function CheckBotCount()
     end
 end
 
-local bTowerBuff = false -- enable tower buff
+local bTowerBuff = true -- enable tower buff
 local hBotTeams = {false, false} -- buff this script
 
 local function CheckBots()

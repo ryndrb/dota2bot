@@ -92,8 +92,8 @@ local HeroBuild = {
                 "item_ultimate_scepter_2",
             },
             ['sell_list'] = {
-                "item_circlet",
-                "item_magic_wand",
+                "item_circlet", "item_solar_crest",
+                "item_magic_wand", "item_lotus_orb",
             },
         },
     },
@@ -136,8 +136,8 @@ local HeroBuild = {
                 "item_ultimate_scepter_2",
             },
             ['sell_list'] = {
-                "item_circlet",
-                "item_magic_wand",
+                "item_circlet", "item_solar_crest",
+                "item_magic_wand", "item_lotus_orb",
             },
         },
     },

@@ -35,27 +35,25 @@ local HeroBuild = {
                 "item_quelling_blade",
             
                 "item_wraith_band",
-                "item_boots",
                 "item_magic_wand",
                 "item_power_treads",
                 "item_diffusal_blade",
                 "item_blink",
                 "item_ultimate_scepter",
                 "item_aghanims_shard",
-                "item_disperser",--
                 "item_skadi",--
+                "item_disperser",--
                 "item_basher",
+                "item_swift_blink",--
                 "item_sheepstick",--
                 "item_ultimate_scepter_2",
                 "item_abyssal_blade",--
-                "item_swift_blink",--
-                "item_travel_boots_2",--
                 "item_moon_shard",
             },
             ['sell_list'] = {
-                "item_quelling_blade",
-                "item_wraith_band",
-                "item_magic_wand",
+                "item_quelling_blade", "item_ultimate_scepter",
+                "item_magic_wand", "item_skadi",
+                "item_wraith_band", "item_basher",
             },
         },
     },
@@ -78,26 +76,24 @@ local HeroBuild = {
                 "item_quelling_blade",
             
                 "item_wraith_band",
-                "item_boots",
                 "item_magic_wand",
                 "item_power_treads",
                 "item_diffusal_blade",
                 "item_blink",
                 "item_ultimate_scepter",
                 "item_aghanims_shard",
-                "item_disperser",--
                 "item_skadi",--
                 "item_sheepstick",--
+                "item_disperser",--
                 "item_ultimate_scepter_2",
-                "item_swift_blink",--
                 "item_bloodthorn",--
-                "item_travel_boots_2",--
+                "item_swift_blink",--
                 "item_moon_shard",
             },
             ['sell_list'] = {
-                "item_quelling_blade",
-                "item_wraith_band",
-                "item_magic_wand",
+                "item_quelling_blade", "item_ultimate_scepter",
+                "item_magic_wand", "item_skadi",
+                "item_wraith_band", "item_sheepstick",
             },
         },
     },

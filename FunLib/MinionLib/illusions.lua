@@ -44,7 +44,8 @@ function X.Think(ownerBot, hMinionUnit)
     -- Default
     if bot:IsAlive()
     then
-        hMinionUnit:Action_MoveToLocation(bot:GetLocation())
+        local vFaceEndLocation = J.GetFaceTowardDistanceLocation(bot, 450)
+        hMinionUnit:Action_MoveToLocation(vFaceEndLocation)
     else
         hMinionUnit:Action_MoveToLocation(GetLaneFrontLocation(GetTeam(), LANE_MID, 0))
     end

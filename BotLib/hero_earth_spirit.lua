@@ -53,19 +53,19 @@ local HeroBuild = {
 				"item_faerie_fire",
 				"item_quelling_blade",
 			
-				"item_double_bracer",
 				"item_bottle",
 				"item_magic_wand",
+				"item_double_bracer",
 				"item_urn_of_shadows",
-				"item_boots",
+				"item_power_treads",
 				"item_veil_of_discord",
 				"item_spirit_vessel",
 				"item_blade_mail",
 				"item_kaya",
 				"item_black_king_bar",--
-				"item_heart",--
-				"item_kaya_and_sange",--
 				"item_shivas_guard",--
+				"item_kaya_and_sange",--
+				"item_heart",--
 				"item_ultimate_scepter",
 				"item_sheepstick",--
 				"item_ultimate_scepter_2",
@@ -74,12 +74,13 @@ local HeroBuild = {
 				"item_moon_shard",
 			},
             ['sell_list'] = {
-				"item_quelling_blade",
-				"item_bracer",
-				"item_bottle",
-				"item_magic_wand",
-				"item_spirit_vessel",
-				"item_blade_mail",
+				"item_quelling_blade", "item_power_treads",
+				"item_magic_wand", "item_veil_of_discord",
+				"item_bottle", "item_bottle",
+				"item_bracer", "item_kaya",
+				"item_bracer", "item_black_king_bar",
+				"item_spirit_vessel", "item_heart",
+				"item_blade_mail", "item_sheepstick",
 			},
         },
     },
@@ -109,19 +110,20 @@ local HeroBuild = {
 				"item_blade_mail",
 				"item_crimson_guard",--
 				"item_black_king_bar",--
-				"item_heart",--
 				sUtilityItem,--
 				"item_shivas_guard",--
+				"item_heart",--
 				"item_travel_boots_2",--
 				"item_aghanims_shard",
 				"item_moon_shard",
 				"item_ultimate_scepter_2",
 			},
             ['sell_list'] = {
-				"item_quelling_blade",
-				"item_bracer",
-				"item_magic_wand",
-				"item_blade_mail",
+				"item_quelling_blade", "item_blade_mail",
+				"item_magic_wand", "item_crimson_guard",
+				"item_bracer", "item_black_king_bar",
+				"item_bracer", sUtilityItem,
+				"item_blade_mail", "item_travel_boots",
 			},
         },
     },
@@ -158,8 +160,8 @@ local HeroBuild = {
 				"item_moon_shard",
 			},
             ['sell_list'] = {
-				"item_circlet",
-				"item_magic_wand",
+				"item_circlet", "item_boots_of_bearing",
+				"item_magic_wand", "item_black_king_bar",
 			},
         },
     },
@@ -196,8 +198,8 @@ local HeroBuild = {
 				"item_moon_shard",
 			},
             ['sell_list'] = {
-				"item_circlet",
-				"item_magic_wand",
+				"item_circlet", "item_boots_of_bearing",
+				"item_magic_wand", "item_black_king_bar",
 			},
         },
     },

@@ -88,8 +88,8 @@ local HeroBuild = {
                 "item_moon_shard",
             },
             ['sell_list'] = {
-                "item_null_talisman",
-                "item_magic_wand",
+                "item_magic_wand", "item_aether_lens",
+                "item_null_talisman", "item_octarine_core",
             },
         },
     },
@@ -129,8 +129,8 @@ local HeroBuild = {
                 "item_moon_shard",
             },
             ['sell_list'] = {
-                "item_null_talisman",
-                "item_magic_wand",
+                "item_magic_wand", "item_aether_lens",
+                "item_null_talisman", "item_octarine_core",
             },
         },
     },

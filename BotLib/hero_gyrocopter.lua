@@ -49,8 +49,8 @@ local HeroBuild = {
                 "item_aghanims_shard",
             },
             ['sell_list'] = {
-                "item_branches",
-                "item_falcon_blade",
+                "item_branches", "item_greater_crit",
+                "item_falcon_blade", "item_skadi",
             },
         },
     },
@@ -70,7 +70,6 @@ local HeroBuild = {
             ['buy_list'] = {
                 "item_tango",
                 "item_double_branches",
-                "item_branches",
             
                 "item_bottle",
                 "item_power_treads",
@@ -88,8 +87,8 @@ local HeroBuild = {
                 "item_aghanims_shard",
             },
             ['sell_list'] = {
-                "item_bottle",
-                "item_magic_wand",
+                "item_magic_wand", "item_satanic",
+                "item_bottle", "item_skadi",
             },
         },
     },
@@ -127,19 +126,20 @@ local HeroBuild = {
                 "item_ring_of_basilius",
                 "item_magic_wand",
                 "item_tranquil_boots",
-                "item_aghanims_shard",
                 "item_glimmer_cape",--
                 "item_boots_of_bearing",--
-                "item_force_staff",--
+                "item_aghanims_shard",
+                "item_force_staff",
                 "item_lotus_orb",--
                 "item_black_king_bar",--
-                "item_shivas_guard",--
+                "item_greater_crit",--
+                "item_hurricane_pike",--
                 "item_ultimate_scepter_2",
                 "item_moon_shard",
             },
             ['sell_list'] = {
-                "item_ring_of_basilius",
-                "item_magic_wand",
+                "item_ring_of_basilius", "item_boots_of_bearing",
+                "item_magic_wand", "item_force_staff",
             },
         },
     },
@@ -165,18 +165,19 @@ local HeroBuild = {
                 "item_ring_of_basilius",
                 "item_magic_wand",
                 "item_arcane_boots",
-                "item_aghanims_shard",
                 "item_glimmer_cape",--
                 "item_guardian_greaves",--
-                "item_force_staff",--
+                "item_aghanims_shard",
+                "item_force_staff",
                 "item_lotus_orb",--
                 "item_black_king_bar",--
-                "item_shivas_guard",--
+                "item_greater_crit",--
+                "item_hurricane_pike",--
                 "item_ultimate_scepter_2",
                 "item_moon_shard",
             },
             ['sell_list'] = {
-                "item_magic_wand",
+                "item_magic_wand", "item_guardian_greaves",
             },
         },
     },

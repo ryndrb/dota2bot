@@ -32,30 +32,31 @@ local HeroBuild = {
             ['buy_list'] = {
                 "item_tango",
                 "item_branches",
-                "item_faerie_fire",
                 "item_quelling_blade",
                 "item_double_gauntlets",
             
+                "item_magic_wand",
                 "item_orb_of_corrosion",
                 "item_phase_boots",
                 "item_armlet",
-                RI.GetAltItem("item_desolator", "item_radiance"),--
+                "item_radiance",--
                 "item_sange_and_yasha",--
                 "item_aghanims_shard",
                 "item_basher",
-                "item_nullifier",--
-                "item_abyssal_blade",--
                 "item_bloodthorn",--
+                "item_abyssal_blade",--
+                "item_skadi",--
                 "item_travel_boots_2",--
                 "item_moon_shard",
                 "item_ultimate_scepter_2",
             },
             ['sell_list'] = {
-                "item_branches",
-                "item_quelling_blade",
-                "item_gauntlets",
-                "item_orb_of_corrosion",
-                "item_armlet",
+                "item_gauntlets", "item_armlet",
+                "item_gauntlets", "item_radiance",
+                "item_quelling_blade", "item_sange_and_yasha",
+                "item_magic_wand", "item_basher",
+                "item_orb_of_corrosion", "item_bloodthorn",
+                "item_armlet", "item_travel_boots"
             },
         },
     },

@@ -67,8 +67,7 @@ local HeroBuild = {
                 [1] = {1,2,3,2,2,6,2,1,1,1,6,3,3,3,6},
             },
             ['buy_list'] = {
-				"item_tango",
-				"item_tango",
+				"item_double_tango",
 				"item_double_branches",
 				"item_faerie_fire",
 				"item_enchanted_mango",
@@ -88,7 +87,7 @@ local HeroBuild = {
 				"item_moon_shard",
 			},
             ['sell_list'] = {
-				"item_magic_wand",
+				"item_magic_wand", "item_solar_crest",
 			},
         },
     },
@@ -106,7 +105,7 @@ local HeroBuild = {
                 [1] = {1,2,3,2,2,6,2,1,1,1,6,3,3,3,6},
             },
             ['buy_list'] = {
-				"item_tango",
+				"item_double_tango",
 				"item_double_branches",
 				"item_faerie_fire",
 				"item_enchanted_mango",
@@ -126,7 +125,7 @@ local HeroBuild = {
 				"item_moon_shard",
 			},
             ['sell_list'] = {
-				"item_magic_wand",
+				"item_magic_wand", "item_solar_crest",
 			},
         },
     },

@@ -46,10 +46,10 @@ local HeroBuild = {
                 "item_double_branches",
                 "item_magic_stick",
             
-                "item_double_bracer",
                 "item_bottle",
-                "item_phase_boots",
+                "item_double_bracer",
                 "item_magic_wand",
+                "item_phase_boots",
                 "item_hand_of_midas",
                 "item_veil_of_discord",
                 "item_blink",
@@ -65,10 +65,11 @@ local HeroBuild = {
                 "item_moon_shard",
             },
             ['sell_list'] = {
-                "item_bracer",
-                "item_bottle",
-                "item_magic_wand",
-                "item_hand_of_midas",
+                "item_magic_wand", "item_veil_of_discord",
+                "item_bottle", "item_blink",
+                "item_bracer", "item_black_king_bar",
+                "item_bracer", "item_octarine_core",
+                "item_hand_of_midas", "item_refresher",
             },
         },
     },
@@ -107,9 +108,10 @@ local HeroBuild = {
                 "item_moon_shard",
             },
             ['sell_list'] = {
-                "item_bracer",
-                "item_magic_wand",
-                "item_hand_of_midas",
+                "item_magic_wand", "item_blink",
+                "item_bracer", "item_black_king_bar",
+                "item_bracer", "item_octarine_core",
+                "item_hand_of_midas", "item_refresher",
             },
         },
         [2] = {
@@ -138,7 +140,6 @@ local HeroBuild = {
                 "item_blink",
                 sUtilityItem,--
                 "item_shivas_guard",--
-                "item_travel_boots",
                 "item_overwhelming_blink",--
                 "item_travel_boots_2",--
                 "item_aghanims_shard",
@@ -146,9 +147,10 @@ local HeroBuild = {
                 "item_moon_shard",
             },
             ['sell_list'] = {
-                "item_bracer",
-                "item_magic_wand",
-                "item_hand_of_midas",
+                "item_magic_wand", "item_black_king_bar",
+                "item_bracer", "item_blink",
+                "item_bracer", sUtilityItem,
+                "item_hand_of_midas", "item_shivas_guard",
             },
         },
     },

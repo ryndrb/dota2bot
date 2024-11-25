@@ -47,9 +47,9 @@ local HeroBuild = {
 				"item_quelling_blade",
 			
 				"item_bottle",
+				"item_magic_wand",
 				"item_double_bracer",
 				"item_phase_boots",
-				"item_magic_wand",
 				"item_blade_mail",
 				"item_aghanims_shard",
 				"item_ultimate_scepter",
@@ -58,17 +58,18 @@ local HeroBuild = {
 				"item_octarine_core",--
 				"item_travel_boots",
 				"item_heart",--
-				"item_sheepstick",--
 				"item_ultimate_scepter_2",
+				"item_sheepstick",--
 				"item_travel_boots_2",--
 				"item_moon_shard"
 			},
             ['sell_list'] = {
-				"item_quelling_blade",
-				"item_bottle",
-				"item_bracer",
-				"item_magic_wand",
-				"item_blade_mail",
+				"item_quelling_blade", "item_blade_mail",
+				"item_magic_wand", "item_ultimate_scepter",
+				"item_bottle", "item_black_king_bar",
+				"item_bracer", "item_shivas_guard",
+				"item_bracer", "item_octarine_core",
+				"item_blade_mail", "item_sheepstick",
 			},
         },
     },
@@ -90,9 +91,9 @@ local HeroBuild = {
 				"item_double_branches",
 				"item_quelling_blade",
 			
+				"item_magic_wand",
 				"item_double_bracer",
 				"item_phase_boots",
-				"item_magic_wand",
 				"item_blade_mail",
 				"item_crimson_guard",--
 				"item_aghanims_shard",
@@ -100,17 +101,17 @@ local HeroBuild = {
 				sUtilityItem,--
 				"item_black_king_bar",--
 				"item_shivas_guard",--
-				"item_travel_boots",
+				"item_ultimate_scepter_2",
 				"item_heart",--
 				"item_travel_boots_2",--
-				"item_ultimate_scepter_2",
 				"item_moon_shard",
 			},
             ['sell_list'] = {
-				"item_quelling_blade",
-				"item_bracer",
-				"item_magic_wand",
-				"item_blade_mail",
+				"item_quelling_blade", "item_crimson_guard",
+				"item_magic_wand", "item_ultimate_scepter",
+				"item_bracer", sUtilityItem,
+				"item_bracer", "item_black_king_bar",
+				"item_blade_mail", "item_heart",
 			},
         },
     },

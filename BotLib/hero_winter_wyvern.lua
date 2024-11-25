@@ -47,27 +47,25 @@ local HeroBuild = {
                 "item_double_circlet",
             
                 "item_bottle",
-                "item_bracer",
-                "item_wraith_band",
                 "item_magic_wand",
-                "item_boots",
-                "item_mage_slayer",--
+                "item_double_bracer",
+                "item_power_treads",
                 "item_witch_blade",
                 "item_ultimate_scepter",
                 "item_bloodthorn",--
+                "item_black_king_bar",--
                 "item_devastator",--
-                "item_travel_boots",
-                "item_kaya_and_sange",--
                 "item_hurricane_pike",--
-                "item_travel_boots_2",--
+                "item_sphere",--
                 "item_ultimate_scepter_2",
+                "item_travel_boots_2",--
                 "item_moon_shard",
             },
             ['sell_list'] = {
-                "item_bottle",
-                "item_bracer",
-                "item_wraith_band",
-                "item_magic_wand",
+                "item_magic_wand", "item_ultimate_scepter",
+                "item_bottle", "item_bloodthorn",
+                "item_bracer", "item_black_king_bar",
+                "item_bracer", "item_hurricane_pike",
             },
         },
     },
@@ -89,26 +87,23 @@ local HeroBuild = {
                 "item_double_branches",
                 "item_double_circlet",
             
-                "item_bracer",
-                "item_wraith_band",
                 "item_magic_wand",
-                "item_boots",
-                "item_mage_slayer",--
-                "item_witch_blade",
+                "item_double_bracer",
+                "item_power_treads",
                 sUtilityItem,--
                 "item_ultimate_scepter",
                 "item_bloodthorn",--
-                "item_devastator",--
-                "item_travel_boots",
-                "item_kaya_and_sange",--
-                "item_travel_boots_2",--
+                "item_black_king_bar",--
+                "item_hurricane_pike",--
+                "item_sphere",--
                 "item_ultimate_scepter_2",
+                "item_travel_boots_2",--
                 "item_moon_shard",
             },
             ['sell_list'] = {
-                "item_bracer",
-                "item_wraith_band",
-                "item_magic_wand",
+                "item_magic_wand", "item_bloodthorn",
+                "item_bracer", "item_black_king_bar",
+                "item_bracer", "item_hurricane_pike",
             },
         },
     },
@@ -147,8 +142,9 @@ local HeroBuild = {
                 "item_ultimate_scepter_2",
             },
             ['sell_list'] = {
-                "item_circlet",
-                "item_magic_wand",
+                "item_circlet", "item_aether_lens",
+                "item_circlet", "item_aether_lens",
+                "item_magic_wand", "item_boots_of_bearing",
             },
         },
     },
@@ -187,8 +183,9 @@ local HeroBuild = {
                 "item_ultimate_scepter_2",
             },
             ['sell_list'] = {
-                "item_circlet",
-                "item_magic_wand",
+                "item_circlet", "item_aether_lens",
+                "item_circlet", "item_aether_lens",
+                "item_magic_wand", "item_guardian_greaves",
             },
         },
     },

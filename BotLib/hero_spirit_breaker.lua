@@ -47,8 +47,8 @@ local HeroBuild = {
                 "item_double_branches",
             
                 "item_double_bracer",
-                "item_wind_lace",
                 "item_magic_wand",
+                "item_wind_lace",
                 "item_phase_boots",
                 "item_blade_mail",
                 "item_cyclone",
@@ -56,18 +56,19 @@ local HeroBuild = {
                 "item_octarine_core",--
                 "item_ultimate_scepter",
                 "item_yasha_and_kaya",--
-                "item_shivas_guard",--
                 "item_wind_waker",--
-                "item_travel_boots",
+                "item_shivas_guard",--
                 "item_ultimate_scepter_2",
                 "item_aghanims_shard",
                 "item_travel_boots_2",--
                 "item_moon_shard",
             },
             ['sell_list'] = {
-                "item_quelling_blade",
-                "item_bracer",
-                "item_magic_wand",
+                "item_quelling_blade", "item_blade_mail",
+                "item_magic_wand", "item_black_king_bar",
+                "item_bracer", "item_octarine_core",
+                "item_bracer", "item_ultimate_scepter",
+                "item_blade_mail", "item_yasha_and_kaya",
             },
         },
     },
@@ -90,26 +91,26 @@ local HeroBuild = {
                 "item_double_branches",
             
                 "item_double_bracer",
-                "item_wind_lace",
                 "item_magic_wand",
+                "item_wind_lace",
                 "item_phase_boots",
                 "item_heavens_halberd",--
                 "item_black_king_bar",--
                 sUtilityItem,--
                 "item_ultimate_scepter",
                 "item_cyclone",
-                "item_ultimate_scepter_2",
                 "item_yasha_and_kaya",--
+                "item_ultimate_scepter_2",
                 "item_wind_waker",--
-                "item_travel_boots",
-                "item_aghanims_shard",
                 "item_travel_boots_2",--
+                "item_aghanims_shard",
                 "item_moon_shard",
             },
             ['sell_list'] = {
-                "item_quelling_blade",
-                "item_bracer",
-                "item_magic_wand",
+                "item_quelling_blade", "item_heavens_halberd",
+                "item_magic_wand", "item_black_king_bar",
+                "item_bracer", sUtilityItem,
+                "item_bracer", "item_ultimate_scepter",
             },
         },
     },
@@ -150,7 +151,7 @@ local HeroBuild = {
                 "item_moon_shard",
             },
             ['sell_list'] = {
-                "item_magic_wand",
+                "item_magic_wand", "item_cyclone",
             },
         },
     },
@@ -191,7 +192,7 @@ local HeroBuild = {
                 "item_moon_shard",
             },
             ['sell_list'] = {
-                "item_magic_wand",
+                "item_magic_wand", "item_cyclone",
             },
         },
     },

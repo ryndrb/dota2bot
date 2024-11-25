@@ -62,20 +62,22 @@ local HeroBuild = {
                 "item_bracer",
                 "item_power_treads",
                 "item_magic_wand",
-                "item_mage_slayer",--
+                "item_mage_slayer",
                 "item_pipe",--
                 "item_force_staff",
-                "item_hurricane_pike",--
                 sUtilityItem,--
+                "item_hurricane_pike",--
                 "item_assault",--
                 "item_moon_shard",
+                "item_monkey_king_bar",--
                 "item_travel_boots_2",--
                 "item_aghanims_shard",
                 "item_ultimate_scepter_2",
             },
             ['sell_list'] = {
-                "item_bracer",
-                "item_magic_wand",
+                "item_magic_wand", sUtilityItem,
+                "item_bracer", "item_assault",
+                "item_mage_slayer", "item_monkey_king_bar",
             },
         },
     },
@@ -102,19 +104,23 @@ local HeroBuild = {
                 "item_double_bracer",
                 "item_boots",
                 "item_force_staff",
+                "item_ancient_janggo",
                 "item_hurricane_pike",--
-                "item_aghanims_shard",
-                "item_mage_slayer",--
                 "item_boots_of_bearing",--
-                "item_moon_shard",
+                "item_aghanims_shard",
+                "item_mage_slayer",
                 "item_bloodthorn",--
                 "item_sheepstick",--
                 "item_assault",--
+                "item_monkey_king_bar",--
+                "item_moon_shard",
                 "item_ultimate_scepter_2",
             },
             ['sell_list'] = {
-                "item_magic_wand",
-                "item_bracer",
+                "item_magic_wand", "item_ancient_janggo",
+                "item_bracer", "item_mage_slayer",
+                "item_bracer", "item_orchid",
+                "item_mage_slayer", "item_orchid",
             },
         },
     },
@@ -141,19 +147,23 @@ local HeroBuild = {
                 "item_double_bracer",
                 "item_boots",
                 "item_force_staff",
+                "item_mekansm",
                 "item_hurricane_pike",--
-                "item_aghanims_shard",
-                "item_mage_slayer",--
                 "item_guardian_greaves",--
-                "item_moon_shard",
+                "item_aghanims_shard",
+                "item_mage_slayer",
                 "item_bloodthorn",--
                 "item_sheepstick",--
                 "item_assault",--
+                "item_monkey_king_bar",--
+                "item_moon_shard",
                 "item_ultimate_scepter_2",
             },
             ['sell_list'] = {
-                "item_magic_wand",
-                "item_bracer",
+                "item_magic_wand", "item_ancient_janggo",
+                "item_bracer", "item_mage_slayer",
+                "item_bracer", "item_orchid",
+                "item_mage_slayer", "item_orchid",
             },
         },
     },

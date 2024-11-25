@@ -35,17 +35,16 @@ local HeroBuild = {
                 "item_faerie_fire",
                 "item_double_circlet",
             
+                "item_magic_wand",
                 "item_double_bracer",
                 "item_power_treads",
-                "item_magic_wand",
                 "item_maelstrom",
                 "item_black_king_bar",--
-                "item_gungir",--
                 "item_lesser_crit",
-                "item_manta",--
+                "item_mjollnir",--
+                "item_satanic",--
                 "item_greater_crit",--
                 "item_ultimate_scepter",
-                "item_travel_boots",
                 "item_monkey_king_bar",--
                 "item_ultimate_scepter_2",
                 "item_travel_boots_2",--
@@ -53,8 +52,9 @@ local HeroBuild = {
                 "item_moon_shard",
             },
             ['sell_list'] = {
-                "item_bracer",
-                "item_magic_wand",
+                "item_magic_wand", "item_lesser_crit",
+                "item_bracer", "item_satanic",
+                "item_bracer", "item_ultimate_scepter",
             },
         },
     },
@@ -78,28 +78,26 @@ local HeroBuild = {
                 "item_double_circlet",
             
                 "item_bottle",
-                "item_double_bracer",
-                "item_power_treads",
                 "item_magic_wand",
+                "item_double_null_talisman",
+                "item_power_treads",
                 "item_maelstrom",
-                "item_dragon_lance",
                 "item_black_king_bar",--
                 "item_gungir",--
                 "item_greater_crit",--
-                "item_ultimate_scepter",
+                "item_aghanims_shard",
                 "item_sheepstick",--
-                "item_travel_boots",
+                "item_ultimate_scepter",
                 "item_monkey_king_bar",--
                 "item_ultimate_scepter_2",
                 "item_travel_boots_2",--
-                "item_aghanims_shard",
                 "item_moon_shard",
             },
             ['sell_list'] = {
-                "item_bottle",
-                "item_bracer",
-                "item_magic_wand",
-                "item_dragon_lance",
+                "item_magic_wand", "item_black_king_bar",
+                "item_bottle", "item_greater_crit",
+                "item_bracer", "item_sheepstick",
+                "item_bracer", "item_ultimate_scepter",
             },
         },
     },
@@ -128,19 +126,19 @@ local HeroBuild = {
                 "item_maelstrom",
                 "item_black_king_bar",--
                 "item_heavens_halberd",--
+                "item_aghanims_shard",
                 "item_gungir",--
                 "item_ultimate_scepter",
                 "item_sheepstick",--
-                "item_travel_boots",
+                "item_nullifier",--
                 "item_ultimate_scepter_2",
-                "item_monkey_king_bar",--
                 "item_travel_boots_2",--
-                "item_aghanims_shard",
                 "item_moon_shard",
             },
             ['sell_list'] = {
-                "item_bracer",
-                "item_magic_wand",
+                "item_magic_wand", "item_heavens_halberd",
+                "item_bracer", "item_ultimate_scepter",
+                "item_bracer", "item_sheepstick",
             },
         },
     },
@@ -164,22 +162,22 @@ local HeroBuild = {
                 "item_double_branches",
                 "item_blood_grenade",
             
-                "item_tranquil_boots",
                 "item_magic_wand",
+                "item_tranquil_boots",
                 "item_solar_crest",--
                 "item_orchid",
                 "item_aghanims_shard",
                 "item_force_staff",
                 "item_boots_of_bearing",--
                 "item_lotus_orb",--
-                "item_gungir",--
                 "item_bloodthorn",--
+                "item_sheepstick",--
                 "item_hurricane_pike",--
                 "item_ultimate_scepter_2",
                 "item_moon_shard",
             },
             ['sell_list'] = {
-                "item_magic_wand",
+                "item_magic_wand", "item_force_staff",
             },
         },
     },
@@ -211,14 +209,14 @@ local HeroBuild = {
                 "item_force_staff",
                 "item_guardian_greaves",--
                 "item_lotus_orb",--
-                "item_gungir",--
                 "item_bloodthorn",--
+                "item_sheepstick",--
                 "item_hurricane_pike",--
                 "item_ultimate_scepter_2",
                 "item_moon_shard",
             },
             ['sell_list'] = {
-                "item_magic_wand",
+                "item_magic_wand", "item_force_staff",
             },
         },
     },

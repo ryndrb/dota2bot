@@ -68,7 +68,7 @@ local HeroBuild = {
             ['buy_list'] = {
                 "item_double_tango",
                 "item_double_branches",
-                "item_double_enchanted_mango",
+                "item_enchanted_mango",
                 "item_blood_grenade",
             
                 "item_tranquil_boots",
@@ -78,15 +78,15 @@ local HeroBuild = {
                 "item_boots_of_bearing",--
                 "item_blink",
                 "item_lotus_orb",--
-                "item_sheepstick",--
                 "item_heart",--
+                "item_sheepstick",--
                 "item_overwhelming_blink",--
                 "item_ultimate_scepter_2",
-                "item_aghanims_shard",
                 "item_moon_shard",
+                "item_aghanims_shard",
             },
             ['sell_list'] = {
-                "item_magic_wand",
+                "item_magic_wand", "item_lotus_orb",
             },
         },
     },
@@ -112,7 +112,7 @@ local HeroBuild = {
             ['buy_list'] = {
                 "item_double_tango",
                 "item_double_branches",
-                "item_double_enchanted_mango",
+                "item_enchanted_mango",
                 "item_blood_grenade",
             
                 "item_arcane_boots",
@@ -122,15 +122,15 @@ local HeroBuild = {
                 "item_guardian_greaves",--
                 "item_blink",
                 "item_lotus_orb",--
-                "item_sheepstick",--
                 "item_heart",--
+                "item_sheepstick",--
                 "item_overwhelming_blink",--
                 "item_ultimate_scepter_2",
-                "item_aghanims_shard",
                 "item_moon_shard",
+                "item_aghanims_shard",
             },
             ['sell_list'] = {
-                "item_magic_wand",
+                "item_magic_wand", "item_lotus_orb",
             },
         },
     },

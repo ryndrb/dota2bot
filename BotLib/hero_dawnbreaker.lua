@@ -58,21 +58,21 @@ local HeroBuild = {
 				"item_black_king_bar",--
                 "item_basher",
 				"item_aghanims_shard",
-                "item_shivas_guard",--
 				"item_harpoon",--
-                "item_wind_waker",--
 				"item_abyssal_blade",--
+                "item_shivas_guard",--
+                "item_wind_waker",--
 				"item_moon_shard",
 				"item_ultimate_scepter_2",
 			},
             ['sell_list'] = {
-				"item_quelling_blade",
-				"item_bracer",
-                "item_bottle",
-				"item_magic_wand",
-				"item_soul_ring",
-				"item_phase_boots",
-				"item_blade_mail",
+				"item_quelling_blade", "item_blade_mail",
+				"item_magic_wand", "item_echo_sabre",
+				"item_soul_ring", "item_desolator",
+                "item_bottle", "item_black_king_bar",
+				"item_bracer", "item_basher",
+				"item_phase_boots", "item_shivas_guard",
+				"item_blade_mail", "item_wind_waker",
 			},
         },
     },
@@ -105,19 +105,19 @@ local HeroBuild = {
 				"item_black_king_bar",--
 				sUtilityItem,--
 				"item_aghanims_shard",
-				"item_assault",--
 				"item_harpoon",--
+				"item_assault",--
 				"item_abyssal_blade",--
 				"item_moon_shard",
 				"item_ultimate_scepter_2",
 			},
             ['sell_list'] = {
-				"item_quelling_blade",
-				"item_bracer",
-				"item_magic_wand",
-				"item_soul_ring",
-				"item_phase_boots",
-				"item_blade_mail",
+				"item_quelling_blade", "item_echo_sabre",
+				"item_magic_wand", "item_crimson_guard",
+				"item_soul_ring", "item_black_king_bar",
+				"item_bracer", sUtilityItem,
+				"item_phase_boots", "item_assault",
+				"item_blade_mail", "item_abyssal_blade",
 			},
         },
     },
@@ -142,9 +142,8 @@ local HeroBuild = {
 				"item_blood_grenade",
 			
 				"item_boots",
-				"item_magic_stick",
-				"item_tranquil_boots",
 				"item_magic_wand",
+				"item_tranquil_boots",
 				"item_pavise",
 				"item_solar_crest",--
 				"item_ultimate_scepter",
@@ -181,9 +180,8 @@ local HeroBuild = {
 				"item_blood_grenade",
 			
 				"item_boots",
-				"item_magic_stick",
-				"item_arcane_boots",
 				"item_magic_wand",
+				"item_arcane_boots",
 				"item_pavise",
 				"item_guardian_greaves",--
 				"item_solar_crest",--

@@ -36,25 +36,23 @@ local HeroBuild = {
                 "item_circlet",
 
                 "item_null_talisman",
-                "item_magic_wand",
                 "item_power_treads",
+                "item_magic_wand",
                 "item_maelstrom",
                 "item_dragon_lance",
-                "item_gungir",--
+                "item_mjollnir",--
                 "item_hurricane_pike",--
                 "item_black_king_bar",--
-                "item_lesser_crit",
                 "item_aghanims_shard",
                 "item_greater_crit",--
                 "item_satanic",--
-                "item_travel_boots",
                 "item_moon_shard",
                 "item_travel_boots_2",--
                 "item_ultimate_scepter_2",
             },
             ['sell_list'] = {
-                "item_magic_wand",
-                "item_null_talisman",
+                "item_magic_wand", "item_greater_crit",
+                "item_null_talisman", "item_satanic",
             },
         },
     },

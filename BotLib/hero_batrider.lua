@@ -58,16 +58,17 @@ local HeroBuild = {
 				"item_octarine_core",--
 				"item_ultimate_scepter",
 				"item_refresher",--
-				"item_overwhelming_blink",--
 				"item_ultimate_scepter_2",
+				"item_overwhelming_blink",--
 				"item_travel_boots_2",--
 				"item_aghanims_shard",
 				"item_moon_shard",
 			},
             ['sell_list'] = {
-				"item_bottle",
-                "item_null_talisman",
-				"item_magic_wand",
+                "item_null_talisman", "item_black_king_bar",
+                "item_null_talisman", "item_shivas_guard",
+				"item_magic_wand", "item_octarine_core",
+				"item_bottle", "item_ultimate_scepter"
 			},
         },
     },
@@ -103,17 +104,17 @@ local HeroBuild = {
 				"item_shivas_guard",--
 				"item_ultimate_scepter",
 				"item_refresher",--
-				"item_overwhelming_blink",--
 				"item_ultimate_scepter_2",
+				"item_overwhelming_blink",--
 				"item_travel_boots_2",--
 				"item_aghanims_shard",
 				"item_moon_shard",
 			},
             ['sell_list'] = {
-                "item_bracer",
-                "item_null_talisman",
-				"item_magic_wand",
-                "item_wind_lace",
+				"item_magic_wand", "item_pipe",
+                "item_null_talisman", "item_black_king_bar",
+                "item_wind_lace", "item_travel_boots",
+                "item_bracer", "item_ultimate_scepter",
 			},
         },
     },
@@ -151,8 +152,8 @@ local HeroBuild = {
 				"item_moon_shard",
 			},
             ['sell_list'] = {
-				"item_circlet",
-				"item_magic_wand",
+				"item_circlet", "item_force_staff",
+				"item_magic_wand", "item_black_king_bar",
 			},
         },
     },
@@ -190,8 +191,8 @@ local HeroBuild = {
 				"item_moon_shard",
 			},
             ['sell_list'] = {
-				"item_circlet",
-				"item_magic_wand",
+				"item_circlet", "item_force_staff",
+				"item_magic_wand", "item_black_king_bar",
 			},
         },
     },

@@ -73,9 +73,9 @@ local HeroBuild = {
                 -- "item_aghanims_shard",--alt cast bug..
             },
             ['sell_list'] = {
-                "item_quelling_blade",
-                "item_wind_lace",
-                "item_magic_wand",
+                "item_quelling_blade", "item_crimson_guard",
+                "item_magic_wand", "item_black_king_bar",
+                "item_wind_lace", "item_assault",
             },
         },
     },
@@ -112,7 +112,7 @@ local HeroBuild = {
                 "item_moon_shard",
             },
             ['sell_list'] = {
-                "item_magic_wand",
+                "item_magic_wand", "item_vladmir",
             },
         },
     },
@@ -149,8 +149,8 @@ local HeroBuild = {
                 "item_moon_shard",
             },
             ['sell_list'] = {
-                "item_wind_lace",
-                "item_magic_wand",
+                "item_wind_lace", "item_guardian_greaves",
+                "item_magic_wand", "item_vladmir",
             },
         },
     },

@@ -12,7 +12,7 @@ then
 
 local RI = require(GetScriptDirectory()..'/FunLib/util_role_item')
 
-local sUtility = {"item_lotus_orb", "item_pipe"}
+local sUtility = {"item_pipe", "item_lotus_orb"}
 local sUtilityItem = RI.GetBestUtilityItem(sUtility)
 
 local HeroBuild = {
@@ -49,13 +49,13 @@ local HeroBuild = {
                 "item_faerie_fire",
             
                 "item_bottle",
+                "item_magic_wand",
                 "item_null_talisman",
                 "item_arcane_boots",
-                "item_magic_wand",
                 "item_kaya",
                 "item_bloodstone",--
-                "item_kaya_and_sange",--
                 "item_black_king_bar",--
+                "item_kaya_and_sange",--
                 "item_cyclone",
                 "item_shivas_guard",--
                 "item_aghanims_shard",
@@ -66,9 +66,9 @@ local HeroBuild = {
                 "item_moon_shard",
             },
             ['sell_list'] = {
-                "item_bottle",
-                "item_null_talisman",
-                "item_magic_wand",
+                "item_magic_wand", "item_black_king_bar",
+                "item_bottle", "item_cyclone",
+                "item_null_talisman", "item_shivas_guard",
             },
         },
     },
@@ -91,8 +91,8 @@ local HeroBuild = {
                 "item_enchanted_mango",
             
                 "item_null_talisman",
-                "item_arcane_boots",
                 "item_magic_wand",
+                "item_arcane_boots",
                 "item_kaya",
                 "item_bloodstone",--
                 sUtilityItem,--
@@ -105,8 +105,8 @@ local HeroBuild = {
                 "item_moon_shard",
             },
             ['sell_list'] = {
-                "item_null_talisman",
-                "item_magic_wand",
+                "item_magic_wand", "item_black_king_bar",
+                "item_null_talisman", "item_shivas_guard",
             },
         },
     },
