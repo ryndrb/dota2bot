@@ -481,12 +481,12 @@ function Think()
 	end
 	
 		
-	if hLaneCreepList ~= nil and #hLaneCreepList > 0 then
+	if J.IsValid(hLaneCreepList[1]) then
 		local farmTarget = J.Site.GetFarmLaneTarget(hLaneCreepList);
 		local nSearchRange = bot:GetAttackRange() + 180
 		if nSearchRange > 1600 then nSearchRange = 1600 end
 		local nNeutrals = bot:GetNearbyNeutralCreeps(nSearchRange);
-		if farmTarget ~= nil and #nNeutrals == 0 then
+		if J.IsValid(farmTarget) and #nNeutrals == 0 then
 						
 			if farmTarget:GetTeam() == bot:GetTeam() 
 			   and J.IsInAllyArea(farmTarget)
@@ -567,12 +567,12 @@ function Think()
 			end
 
 			local farmTarget = J.Site.FindFarmNeutralTarget(nNeutrals)
-			if farmTarget ~= nil 
+			if J.IsValid(farmTarget)
 			then
 				bot:SetTarget(farmTarget);
 				bot:Action_AttackUnit(farmTarget, true);
 				return;
-			else
+			elseif J.IsValid(nNeutrals[1]) then
 				bot:SetTarget(nNeutrals[1]);
 				bot:Action_AttackUnit(nNeutrals[1], true);
 				return;
@@ -627,9 +627,7 @@ function Think()
 					end					
 				end
 				
-				if hLaneCreepList[1] ~= nil 
-				   and not hLaneCreepList[1]:IsNull() 
-				   and hLaneCreepList[1]:IsAlive() 
+				if J.IsValid(hLaneCreepList[1])
 				then
 					bot:Action_MoveToLocation( hLaneCreepList[1]:GetLocation() );
 					return;
@@ -649,7 +647,7 @@ function Think()
 				farmState = 1;
 				
 				local farmTarget = J.Site.FindFarmNeutralTarget(neutralCreeps)
-				if farmTarget ~= nil 
+				if J.IsValid(farmTarget)
 				then
 					bot:SetTarget(farmTarget);
 					bot:Action_AttackUnit(farmTarget, true);
@@ -666,7 +664,7 @@ function Think()
 
 
 					local farmTarget = J.Site.FindFarmNeutralTarget(neutralCreeps)
-					if farmTarget ~= nil 
+					if J.IsValid(farmTarget)
 					then
 						bot:SetTarget(farmTarget);
 						bot:Action_AttackUnit(farmTarget, true);
@@ -675,7 +673,7 @@ function Think()
 			else
 			
 				local farmTarget = J.Site.FindFarmNeutralTarget(neutralCreeps)
-				if farmTarget ~= nil 
+				if J.IsValid(farmTarget)
 				then
 					bot:SetTarget(farmTarget);
 					bot:Action_AttackUnit(farmTarget, true);
@@ -979,17 +977,6 @@ function X.ShouldRun(bot)
 				return 3;
 			end
 		end	
-		
-		if J.IsValid(enemy)
-		and not J.WeAreStronger(bot, 800)
-		then
-			-- and enemy:GetUnitName() == "npc_dota_hero_necrolyte"
-			-- and enemy:GetMana() >= 200
-			-- and J.GetHP(bot) < 0.45
-			-- and enemy:IsFacingLocation(bot:GetLocation(),20)
-			return 3;
-		end
-		
 	end	
 	
 	

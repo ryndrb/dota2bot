@@ -177,32 +177,37 @@ end
 --友军生物数量
 function J.GetUnitAllyCountAroundEnemyTarget( target, nRadius )
 
-	local targetLoc = target:GetLocation()
-	local heroCount = J.GetNearbyAroundLocationUnitCount( false, true, nRadius, targetLoc )
-	local creepCount = J.GetNearbyAroundLocationUnitCount( false, false, nRadius, targetLoc )
-
-	return heroCount + creepCount
-
+	if J.IsValid(target) then
+		local targetLoc = target:GetLocation()
+		local heroCount = J.GetNearbyAroundLocationUnitCount( false, true, nRadius, targetLoc )
+		local creepCount = J.GetNearbyAroundLocationUnitCount( false, false, nRadius, targetLoc )
+	
+		return heroCount + creepCount
+	end
+	return 0
 end
 
 
 --敌军生物数量
 function J.GetAroundTargetEnemyUnitCount( target, nRadius )
 
-	local targetLoc = target:GetLocation()
-	local heroCount = J.GetNearbyAroundLocationUnitCount( true, true, nRadius, targetLoc )
-	local creepCount = J.GetNearbyAroundLocationUnitCount( true, false, nRadius, targetLoc )
-
-	return heroCount + creepCount
-
+	if J.IsValid(target) then
+		local targetLoc = target:GetLocation()
+		local heroCount = J.GetNearbyAroundLocationUnitCount( true, true, nRadius, targetLoc )
+		local creepCount = J.GetNearbyAroundLocationUnitCount( true, false, nRadius, targetLoc )
+	
+		return heroCount + creepCount
+	end
+	return 0
 end
 
 
 --敌军英雄数量
 function J.GetAroundTargetEnemyHeroCount( target, nRadius )
-
-	return J.GetNearbyAroundLocationUnitCount( true, true, nRadius, target:GetLocation() )
-
+	if J.IsValid(target) then
+		return J.GetNearbyAroundLocationUnitCount( true, true, nRadius, target:GetLocation() )
+	end
+	return 0
 end
 
 
@@ -267,8 +272,9 @@ function J.GetVulnerableWeakestUnit( bot, bHero, bEnemy, nRadius )
 
 	for _, u in pairs( unitList )
 	do
-		if u:GetHealth() < weakestHP
-			and J.CanCastOnNonMagicImmune( u )
+		if J.IsValid(u)
+		and u:GetHealth() < weakestHP
+		and J.CanCastOnNonMagicImmune( u )
 		then
 			weakest = u
 			weakestHP = u:GetHealth()
@@ -295,7 +301,8 @@ function J.GetVulnerableUnitNearLoc( bot, bHero, bEnemy, nCastRange, nRadius, vL
 
 	for _, u in pairs( unitList )
 	do
-		if GetUnitToLocationDistance( u, vLoc ) < nRadius
+		if J.IsValid(u)
+		and GetUnitToLocationDistance( u, vLoc ) < nRadius
 			and u:GetHealth() < weakestHP
 			and J.CanCastOnNonMagicImmune( u )
 		then
@@ -319,8 +326,9 @@ function J.GetAoeEnemyHeroLocation( bot, nCastRange, nRadius, nCount )
 		local nTrueCount = 0
 		for _, enemy in pairs( nEnemyHeroList )
 		do
-			if GetUnitToLocationDistance( enemy, nAoe.targetloc ) <= nRadius
-				and not enemy:IsMagicImmune()
+			if J.IsValidHero(enemy)
+			and GetUnitToLocationDistance( enemy, nAoe.targetloc ) <= nRadius
+			and not enemy:IsMagicImmune()
 			then
 				nTrueCount = nTrueCount + 1
 			end
@@ -372,7 +380,7 @@ end
 
 function J.IsAllyCanKill( target )
 
-	if target:GetHealth() / target:GetMaxHealth() > 0.38
+	if J.IsValid(target) and (target:GetHealth() / target:GetMaxHealth() > 0.38)
 	then
 		return false
 	end
@@ -405,7 +413,8 @@ end
 
 function J.IsOtherAllyCanKillTarget( bot, target )
 
-	if target:GetHealth() / target:GetMaxHealth() > 0.38
+	if not J.IsValid(target)
+	or target:GetHealth() / target:GetMaxHealth() > 0.38
 	then
 		return false
 	end
@@ -499,7 +508,8 @@ function J.IsAllyHeroBetweenAllyAndEnemy( hAlly, hEnemy, vLoc, nRadius )
 	local heroList = hAlly:GetNearbyHeroes( 1600, false, BOT_MODE_NONE )
 	for i, hero in pairs( heroList )
 	do
-		if hero ~= hAlly
+		if J.IsValidHero(hero)
+		and hero ~= hAlly
 		then
 			local tResult = PointToLineDistance( vStart, vEnd, hero:GetLocation() )
 			if tResult ~= nil
@@ -514,7 +524,8 @@ function J.IsAllyHeroBetweenAllyAndEnemy( hAlly, hEnemy, vLoc, nRadius )
 	heroList = hEnemy:GetNearbyHeroes( 1600, true, BOT_MODE_NONE )
 	for i, hero in pairs( heroList )
 	do
-		if hero ~= hAlly
+		if J.IsValidHero(hero)
+		and hero ~= hAlly
 		then
 			local tResult = PointToLineDistance( vStart, vEnd, hero:GetLocation() )
 			if tResult ~= nil
@@ -822,7 +833,7 @@ end
 
 function J.CanKillTarget( npcTarget, dmg, dmgType )
 
-	return npcTarget:GetActualIncomingDamage( dmg, dmgType ) >= npcTarget:GetHealth()
+	return J.IsValid(npcTarget) and npcTarget:GetActualIncomingDamage( dmg, dmgType ) >= npcTarget:GetHealth()
 
 end
 
@@ -830,82 +841,92 @@ end
 --未计算技能增强
 function J.WillKillTarget( npcTarget, dmg, dmgType, nDelay )
 
-	local targetHealth = npcTarget:GetHealth() + npcTarget:GetHealthRegen() * nDelay + 0.8
+	if J.IsValid(npcTarget) then
+		
+		local targetHealth = npcTarget:GetHealth() + npcTarget:GetHealthRegen() * nDelay + 0.8
+	
+		local nRealBonus = J.GetTotalAttackWillRealDamage( npcTarget, nDelay )
+	
+		local nTotalDamage = npcTarget:GetActualIncomingDamage( dmg, dmgType ) + nRealBonus
+	
+		return nTotalDamage > targetHealth and nRealBonus < targetHealth - 1
+	end
 
-	local nRealBonus = J.GetTotalAttackWillRealDamage( npcTarget, nDelay )
-
-	local nTotalDamage = npcTarget:GetActualIncomingDamage( dmg, dmgType ) + nRealBonus
-
-	return nTotalDamage > targetHealth and nRealBonus < targetHealth - 1
-
+	return false
 end
 
 
 --未计算技能增强
 function J.WillMixedDamageKillTarget( npcTarget, nPhysicalDamge, nMagicalDamage, nPureDamage, nDelay )
 
-	local targetHealth = npcTarget:GetHealth() + npcTarget:GetHealthRegen() * nDelay + 0.8
+	if J.IsValid(npcTarget) then
+		local targetHealth = npcTarget:GetHealth() + npcTarget:GetHealthRegen() * nDelay + 0.8
 
-	local nRealBonus = J.GetTotalAttackWillRealDamage( npcTarget, nDelay )
+		local nRealBonus = J.GetTotalAttackWillRealDamage( npcTarget, nDelay )
+	
+		local nRealPhysicalDamge = npcTarget:GetActualIncomingDamage( nPhysicalDamge, DAMAGE_TYPE_PHYSICAL )
+	
+		local nRealMagicalDamge = npcTarget:GetActualIncomingDamage( nMagicalDamage, DAMAGE_TYPE_MAGICAL )
+	
+		local nRealPureDamge = npcTarget:GetActualIncomingDamage( nPureDamage, DAMAGE_TYPE_PURE )
+	
+		local nTotalDamage = nRealPhysicalDamge + nRealMagicalDamge + nRealPureDamge + nRealBonus
+	
+		return nTotalDamage > targetHealth and nRealBonus < targetHealth - 1
+	end
 
-	local nRealPhysicalDamge = npcTarget:GetActualIncomingDamage( nPhysicalDamge, DAMAGE_TYPE_PHYSICAL )
-
-	local nRealMagicalDamge = npcTarget:GetActualIncomingDamage( nMagicalDamage, DAMAGE_TYPE_MAGICAL )
-
-	local nRealPureDamge = npcTarget:GetActualIncomingDamage( nPureDamage, DAMAGE_TYPE_PURE )
-
-	local nTotalDamage = nRealPhysicalDamge + nRealMagicalDamge + nRealPureDamge + nRealBonus
-
-	return nTotalDamage > targetHealth and nRealBonus < targetHealth - 1
+	return false
 
 end
 
 --计算了技能增强
 function J.WillMagicKillTarget( bot, npcTarget, dmg, nDelay )
 
-	local nDamageType = DAMAGE_TYPE_MAGICAL
-
-	local MagicResistReduce = 1 - npcTarget:GetMagicResist()
-
-	if MagicResistReduce < 0.05 then MagicResistReduce = 0.05 end
-
-	local HealthBack = npcTarget:GetHealthRegen() * nDelay
-
-	local EstDamage = dmg * ( 1 + bot:GetSpellAmp() ) - HealthBack / MagicResistReduce
-
-	if npcTarget:HasModifier( "modifier_medusa_mana_shield" )
-	then
-		local EstDamageMaxReduce = EstDamage * 0.98
-		if npcTarget:GetMana() * 2.8 >= EstDamageMaxReduce
+	if J.IsValid(npcTarget) then
+		local nDamageType = DAMAGE_TYPE_MAGICAL
+	
+		local MagicResistReduce = 1 - npcTarget:GetMagicResist()
+	
+		if MagicResistReduce < 0.05 then MagicResistReduce = 0.05 end
+	
+		local HealthBack = npcTarget:GetHealthRegen() * nDelay
+	
+		local EstDamage = dmg * ( 1 + bot:GetSpellAmp() ) - HealthBack / MagicResistReduce
+	
+		if npcTarget:HasModifier( "modifier_medusa_mana_shield" )
 		then
-			EstDamage = EstDamage * 0.04
-		else
-			EstDamage = EstDamage * 0.02 + EstDamageMaxReduce - npcTarget:GetMana() * 2.8
+			local EstDamageMaxReduce = EstDamage * 0.98
+			if npcTarget:GetMana() * 2.8 >= EstDamageMaxReduce
+			then
+				EstDamage = EstDamage * 0.04
+			else
+				EstDamage = EstDamage * 0.02 + EstDamageMaxReduce - npcTarget:GetMana() * 2.8
+			end
 		end
+	
+		if npcTarget:GetUnitName() == "npc_dota_hero_bristleback"
+			and not npcTarget:IsFacingLocation( bot:GetLocation(), 120 )
+		then
+			EstDamage = EstDamage * 0.7
+		end
+	
+		if npcTarget:HasModifier( "modifier_kunkka_ghost_ship_damage_delay" )
+		then
+			local buffTime = J.GetModifierTime( npcTarget, "modifier_kunkka_ghost_ship_damage_delay" )
+			if buffTime >= nDelay then EstDamage = EstDamage * 0.55 end
+		end
+	
+		if npcTarget:HasModifier( "modifier_templar_assassin_refraction_absorb" )
+		then
+			local buffTime = J.GetModifierTime( npcTarget, "modifier_templar_assassin_refraction_absorb" )
+			if buffTime >= nDelay then EstDamage = 0 end
+		end
+	
+		local nRealDamage = npcTarget:GetActualIncomingDamage( EstDamage, nDamageType )
+	
+		return nRealDamage >= npcTarget:GetHealth() --, nRealDamage
 	end
-
-	if npcTarget:GetUnitName() == "npc_dota_hero_bristleback"
-		and not npcTarget:IsFacingLocation( bot:GetLocation(), 120 )
-	then
-		EstDamage = EstDamage * 0.7
-	end
-
-	if npcTarget:HasModifier( "modifier_kunkka_ghost_ship_damage_delay" )
-	then
-		local buffTime = J.GetModifierTime( npcTarget, "modifier_kunkka_ghost_ship_damage_delay" )
-		if buffTime >= nDelay then EstDamage = EstDamage * 0.55 end
-	end
-
-	if npcTarget:HasModifier( "modifier_templar_assassin_refraction_absorb" )
-	then
-		local buffTime = J.GetModifierTime( npcTarget, "modifier_templar_assassin_refraction_absorb" )
-		if buffTime >= nDelay then EstDamage = 0 end
-	end
-
-	local nRealDamage = npcTarget:GetActualIncomingDamage( EstDamage, nDamageType )
-
-	return nRealDamage >= npcTarget:GetHealth() --, nRealDamage
-
+	return false
 end
 
 
@@ -1238,11 +1259,13 @@ function J.GetLeastHpUnit( unitList )
 
 	for _, unit in pairs( unitList )
 	do
-		local uHp = unit:GetHealth()
-		if uHp < minHP
-		then
-			leastHpUnit = unit
-			minHP = uHp
+		if J.IsValid(unit) then
+			local uHp = unit:GetHealth()
+			if uHp < minHP
+			then
+				leastHpUnit = unit
+				minHP = uHp
+			end
 		end
 	end
 
@@ -1864,7 +1887,7 @@ end
 
 
 function J.GetAroundTargetAllyHeroCount( target, nRadius )
-
+	if not J.IsValid(target) then return 0 end
 	local heroList = J.GetAlliesNearLoc( target:GetLocation(), nRadius )
 
 	return #heroList
@@ -1873,7 +1896,7 @@ end
 
 
 function J.GetAroundTargetOtherAllyHeroCount( bot, target, nRadius )
-
+	if not J.IsValid(target) then return 0 end
 	local heroList = J.GetAlliesNearLoc( target:GetLocation(), nRadius )
 
 	if GetUnitToUnitDistance( bot, target ) <= nRadius
@@ -1906,7 +1929,7 @@ end
 
 
 function J.GetAllyUnitCountAroundEnemyTarget( bot, target, nRadius )
-
+	if not J.IsValid(target) then return 0 end
 	local heroList = J.GetAlliesNearLoc( target:GetLocation(), nRadius )
 	local creepList = J.GetAllyCreepNearLoc( bot, target:GetLocation(), nRadius )
 
@@ -2034,6 +2057,7 @@ end
 
 
 function J.GetCastLocation( bot, npcTarget, nCastRange, nRadius )
+	if not J.IsValid(npcTarget) then return nil end
 
 	local nDistance = GetUnitToUnitDistance( bot, npcTarget )
 
@@ -2263,6 +2287,7 @@ end
 
 
 function J.IsOtherAllysTarget( unit )
+	if not J.IsValid(unit) then return false end
 
 	local bot = GetBot()
 	local hAllyList = bot:GetNearbyHeroes( 800, false, BOT_MODE_NONE )
@@ -2287,6 +2312,7 @@ end
 
 
 function J.IsAllysTarget( unit )
+	if not J.IsValid(unit) then return false end
 
 	local bot = GetBot()
 	local hAllyList = bot:GetNearbyHeroes( 800, false, BOT_MODE_NONE )
@@ -2413,7 +2439,8 @@ end
 
 function J.IsChasingTarget( bot, nTarget )
 
-	if J.IsRunning( bot )
+	if J.IsValid(nTarget)
+	and J.IsRunning( bot )
 		and J.IsRunning( nTarget )
 		and bot:IsFacingLocation( nTarget:GetLocation(), 20 )
 		and not nTarget:IsFacingLocation( bot:GetLocation(), 150 )
@@ -2787,23 +2814,20 @@ end
 
 
 function J.GetHP( bot )
-	local nCurHealth = bot:GetHealth()
-    local nMaxHealth = bot:GetMaxHealth()
+	if J.IsValid(bot) then
+		return bot:GetHealth() / bot:GetMaxHealth()
+	end
 
-	-- if bot:GetUnitName() == 'npc_dota_hero_medusa'
-    -- then
-    --     nCurHealth = nCurHealth + bot:GetMana()
-    --     nMaxHealth = nMaxHealth + bot:GetMaxMana()
-    -- end
-
-	return nCurHealth / nMaxHealth
+	return 0
 end
 
 
 function J.GetMP( bot )
+	if J.IsValid(bot) then
+		return bot:GetMana() / bot:GetMaxMana()
+	end
 
-	return bot:GetMana() / bot:GetMaxMana()
-
+	return 0
 end
 
 
@@ -3371,7 +3395,7 @@ function J.GetProperCastRange(bIgnore, hUnit, abilityCR)
 end
 
 function J.IsValidTarget(npcTarget)
-	return J.IsValidHero(npcTarget) -- supposed to be the same.. 🙄
+	return J.IsValidHero(npcTarget)
 end
 
 function J.GetLowestHPUnit(tUnits, bIgnoreImmune)
@@ -3379,10 +3403,12 @@ function J.GetLowestHPUnit(tUnits, bIgnoreImmune)
 	local lowestUnit = nil; 
 	for _,unit in pairs(tUnits)
 	do
-		local hp = unit:GetHealth()
-		if hp < lowestHP and ( bIgnoreImmune or ( not bNotMagicImmune and not unit:IsMagicImmune() ) ) then
-			lowestHP   = hp;
-			lowestUnit = unit;
+		if J.IsValid(unit) then
+			local hp = unit:GetHealth()
+			if hp < lowestHP and ( bIgnoreImmune or ( not bNotMagicImmune and not unit:IsMagicImmune() ) ) then
+				lowestHP   = hp;
+				lowestUnit = unit;
+			end
 		end
 	end
 	return lowestUnit;
@@ -3398,8 +3424,10 @@ function J.CountVulnerableUnit(tUnits, locAOE, nRadius, nUnits)
 	if locAOE.count >= nUnits then
 		for _,unit in pairs(tUnits)
 		do
-			if GetUnitToLocationDistance(unit, locAOE.targetloc) <= nRadius and not unit:IsInvulnerable() then
-				count = count + 1;
+			if J.IsValid(unit) then
+				if GetUnitToLocationDistance(unit, locAOE.targetloc) <= nRadius and not unit:IsInvulnerable() then
+					count = count + 1;
+				end
 			end
 		end
 	end
@@ -3418,8 +3446,10 @@ function J.CountNotStunnedUnits(tUnits, locAOE, nRadius, nUnits)
 	if locAOE.count >= nUnits then
 		for _,unit in pairs(tUnits)
 		do
-			if GetUnitToLocationDistance(unit, locAOE.targetloc) <= nRadius and not unit:IsInvulnerable() and not J.IsDisabled(unit) then
-				count = count + 1;
+			if J.IsValid(unit) then
+				if GetUnitToLocationDistance(unit, locAOE.targetloc) <= nRadius and not unit:IsInvulnerable() and not J.IsDisabled(unit) then
+					count = count + 1;
+				end
 			end
 		end
 	end
@@ -3430,8 +3460,10 @@ function J.CountInvUnits(pierceImmune, units)
 	local nUnits = 0;
 	if units ~= nil then
 		for _,u in pairs(units) do
-			if ( pierceImmune and J.CanCastOnMagicImmune(u) ) or ( not pierceImmune and J.CanCastOnNonMagicImmune(u) )  then
-				nUnits = nUnits + 1;
+			if J.IsValid(u) then
+				if ( pierceImmune and J.CanCastOnMagicImmune(u) ) or ( not pierceImmune and J.CanCastOnNonMagicImmune(u) )  then
+					nUnits = nUnits + 1;
+				end
 			end
 		end
 	end
@@ -3443,12 +3475,14 @@ function J.GetMostHPPercent(listUnits, magicImmune)
 	local mostPHPUnit = nil;
 	for _,unit in pairs(listUnits)
 	do
-		local uPHP = unit:GetHealth() / unit:GetMaxHealth()
-		if ( ( magicImmune and J.CanCastOnMagicImmune(unit) ) or ( not magicImmune and J.CanCastOnNonMagicImmune(unit) ) ) 
-			and uPHP > mostPHP  
-		then
-			mostPHPUnit = unit;
-			mostPHP = uPHP;
+		if J.IsValid(unit) then
+			local uPHP = unit:GetHealth() / unit:GetMaxHealth()
+			if ( ( magicImmune and J.CanCastOnMagicImmune(unit) ) or ( not magicImmune and J.CanCastOnNonMagicImmune(unit) ) ) 
+				and uPHP > mostPHP  
+			then
+				mostPHPUnit = unit;
+				mostPHP = uPHP;
+			end
 		end
 	end
 	return mostPHPUnit;
@@ -3462,10 +3496,12 @@ function J.GetCanBeKilledUnit(units, nDamage, nDmgType, magicImmune)
 	local target = nil
 	for _,unit in pairs(units)
 	do
-		if ((magicImmune and J.CanCastOnMagicImmune(unit) ) or ( not magicImmune and J.CanCastOnNonMagicImmune(unit)))
-			   and J.CanKillTarget(unit, nDamage, nDmgType)
-		then
-			target = unit
+		if J.IsValid(unit) then
+			if ((magicImmune and J.CanCastOnMagicImmune(unit) ) or ( not magicImmune and J.CanCastOnNonMagicImmune(unit)))
+				   and J.CanKillTarget(unit, nDamage, nDmgType)
+			then
+				target = unit
+			end
 		end
 	end
 	return target
@@ -3473,7 +3509,7 @@ end
 
 function J.GetClosestUnit(units)
 	local target = nil;
-	if units ~= nil and #units >= 1 then
+	if J.IsValid(units[1]) then
 		return units[1];
 	end
 	return target;
@@ -3584,7 +3620,7 @@ function J.GetUnitWithMinDistanceToLoc(hUnit, hUnits, cUnits, fMinDist, vLoc)
 	local minVal = fMinDist;
 	
 	for i=1, #hUnits do
-		if hUnits[i] ~= nil and hUnits[i] ~= hUnit and J.CanCastOnNonMagicImmune(hUnits[i]) 
+		if J.IsValid(hUnits[i]) and hUnits[i] ~= hUnit and J.CanCastOnNonMagicImmune(hUnits[i]) 
 		then
 			local dist = GetUnitToLocationDistance(hUnits[i], vLoc);
 			if dist < minVal then
@@ -3602,7 +3638,7 @@ function J.GetUnitWithMaxDistanceToLoc(hUnit, hUnits, cUnits, fMinDist, vLoc)
 	local maxVal = fMinDist
 	
 	for i=1, #hUnits do
-		if hUnits[i] ~= nil and hUnits[i] ~= hUnit and J.CanCastOnNonMagicImmune(hUnits[i])
+		if J.IsValid(hUnits[i]) and hUnits[i] ~= hUnit and J.CanCastOnNonMagicImmune(hUnits[i])
 		then
 			local dist = GetUnitToLocationDistance(hUnits[i], vLoc)
 			if dist > maxVal then
@@ -3911,8 +3947,7 @@ function J.IsUnitBetweenMeAndLocation(hSource, hTarget, vTargetLoc, nRadius)
 
 	for _, unit in pairs(GetUnitList(UNIT_LIST_ALL))
 	do
-		if unit ~= nil
-		and unit:CanBeSeen()
+		if J.IsValid(unit)
 		and GetUnitToUnitDistance(GetBot(), unit) <= 1600
 		and not unit:IsBuilding()
 		and not string.find(unit:GetUnitName(), 'ward')
@@ -3934,7 +3969,7 @@ function J.IsHeroBetweenMeAndLocation(hSource, vLoc, nRadius)
 	local nAllyHeroes = hSource:GetNearbyHeroes(1600, false, BOT_MODE_NONE)
 	for _, allyHero in pairs(nAllyHeroes)
     do
-		if allyHero ~= hSource
+		if J.IsValidHero(allyHero) and allyHero ~= hSource
 		then
 			local tResult = PointToLineDistance(vStart, vEnd, allyHero:GetLocation())
 			if  tResult ~= nil and tResult.within and tResult.distance < nRadius then return true end
@@ -3944,7 +3979,7 @@ function J.IsHeroBetweenMeAndLocation(hSource, vLoc, nRadius)
 	local nEnemyHeroes = hSource:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
 	for _, enemyHero in pairs(nEnemyHeroes)
     do
-		if enemyHero ~= hSource
+		if J.IsValidHero(enemyHero) and enemyHero ~= hSource
 		then
 			local tResult = PointToLineDistance(vStart, vEnd, enemyHero:GetLocation())
 			if  tResult ~= nil and tResult.within and tResult.distance < nRadius then return true end
@@ -3961,7 +3996,7 @@ function J.IsEnemyBetweenMeAndLocation(hSource, vLoc, nRadius)
 	local nEnemyHeroes = hSource:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
 	for _, enemyHero in pairs(nEnemyHeroes)
     do
-		if enemyHero ~= hSource
+		if J.IsValidHero(enemyHero) and enemyHero ~= hSource
 		then
 			local tResult = PointToLineDistance(vStart, vEnd, enemyHero:GetLocation())
 			if  tResult ~= nil and tResult.within and tResult.distance < nRadius then return true end
@@ -3978,7 +4013,7 @@ function J.IsHeroBetweenMeAndTarget(hSource, hTarget, vLoc, nRadius)
 	local nAllyHeroes = hSource:GetNearbyHeroes(1600, false, BOT_MODE_NONE)
 	for _, allyHero in pairs(nAllyHeroes)
     do
-		if allyHero ~= hTarget and allyHero ~= hSource
+		if J.IsValidHero(allyHero) and allyHero ~= hTarget and allyHero ~= hSource
 		then
 			local tResult = PointToLineDistance(vStart, vEnd, allyHero:GetLocation())
 			if  tResult ~= nil and tResult.within == true and tResult.distance < nRadius then return true end
@@ -3988,7 +4023,7 @@ function J.IsHeroBetweenMeAndTarget(hSource, hTarget, vLoc, nRadius)
 	local nEnemyHeroes = hSource:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
 	for _, enemyHero in pairs(nEnemyHeroes)
     do
-		if enemyHero ~= hTarget and enemyHero ~= hSource
+		if J.IsValidHero(enemyHero) and enemyHero ~= hTarget and enemyHero ~= hSource
 		then
 			local tResult = PointToLineDistance(vStart, vEnd, enemyHero:GetLocation())
 			if  tResult ~= nil and tResult.within and tResult.distance < nRadius then return true end
@@ -4006,16 +4041,19 @@ function J.IsCreepBetweenMeAndLocation(hSource, vLoc, nRadius)
 	local nAllyLaneCreeps = bot:GetNearbyCreeps(1600, false)
 	for _, creep in pairs(nAllyLaneCreeps)
     do
-		local tResult = PointToLineDistance(vStart, vEnd, creep:GetLocation())
-		if  tResult ~= nil and tResult.within and tResult.distance < nRadius then return true end
+		if J.IsValid(creep) then
+			local tResult = PointToLineDistance(vStart, vEnd, creep:GetLocation())
+			if  tResult ~= nil and tResult.within and tResult.distance < nRadius then return true end
+		end
 	end
 
 	local nEnemyLaneCreeps = bot:GetNearbyCreeps(1600, true)
 	for _, creep in pairs(nEnemyLaneCreeps)
     do
-		local tResult = PointToLineDistance(vStart, vEnd, creep:GetLocation())
-
-		if  tResult ~= nil and tResult.within and tResult.distance < nRadius then return true end
+		if J.IsValid(creep) then
+			local tResult = PointToLineDistance(vStart, vEnd, creep:GetLocation())
+			if  tResult ~= nil and tResult.within and tResult.distance < nRadius then return true end
+		end
 	end
 
 	return false
@@ -4066,15 +4104,19 @@ function J.IsEnemyCreepBetweenMeAndTarget(hSource, hTarget, vLoc, nRadius)
 	local nEnemyCreeps = hSource:GetNearbyCreeps(1600, true)
 	for _, creep in pairs(nEnemyCreeps)
 	do
-		local tResult = PointToLineDistance(vStart, vEnd, creep:GetLocation())
-		if tResult ~= nil and tResult.within and tResult.distance < nRadius then return true end
+		if J.IsValid(creep) then
+			local tResult = PointToLineDistance(vStart, vEnd, creep:GetLocation())
+			if tResult ~= nil and tResult.within and tResult.distance < nRadius then return true end
+		end
 	end
 
 	local nTargetAllyCreeps = hTarget:GetNearbyCreeps(1600, false)
 	for _, creep in pairs(nTargetAllyCreeps)
 	do
-		local tResult = PointToLineDistance(vStart, vEnd, creep:GetLocation())
-		if tResult ~= nil and tResult.within and tResult.distance < nRadius then return true end
+		if J.IsValid(creep) then
+			local tResult = PointToLineDistance(vStart, vEnd, creep:GetLocation())
+			if tResult ~= nil and tResult.within and tResult.distance < nRadius then return true end
+		end
 	end
 
 	return false
@@ -4087,18 +4129,22 @@ function J.IsAllyCreepBetweenMeAndTarget(hSource, hTarget, vLoc, nRadius)
 	local nAllyCreeps = hSource:GetNearbyCreeps(1600, false)
 	for _, creep in pairs(nAllyCreeps)
 	do
-		local tResult = PointToLineDistance(vStart, vEnd, creep:GetLocation())
-		if tResult ~= nil and tResult.within and tResult.distance < nRadius then
-			return true
+		if J.IsValid(creep) then
+			local tResult = PointToLineDistance(vStart, vEnd, creep:GetLocation())
+			if tResult ~= nil and tResult.within and tResult.distance < nRadius then
+				return true
+			end
 		end
 	end
 
 	local nTargetEnemyCreeps = hTarget:GetNearbyCreeps(1600, true)
 	for _, creep in pairs(nTargetEnemyCreeps)
 	do
-		local tResult = PointToLineDistance(vStart, vEnd, creep:GetLocation())
-		if tResult ~= nil and tResult.within and tResult.distance < nRadius then
-			return true
+		if J.IsValid(creep) then
+			local tResult = PointToLineDistance(vStart, vEnd, creep:GetLocation())
+			if tResult ~= nil and tResult.within and tResult.distance < nRadius then
+				return true
+			end
 		end
 	end
 
@@ -4112,7 +4158,7 @@ function J.IsAllyHeroBetweenMeAndTarget(hSource, hTarget, vLoc, nRadius)
 	local nAllyHeroes = hSource:GetNearbyHeroes(1600, false, BOT_MODE_NONE)
 	for _, allyHero in pairs(nAllyHeroes)
 	do
-		if allyHero ~= hSource
+		if J.IsValidHero(allyHero) and allyHero ~= hSource
 		then
 			local tResult = PointToLineDistance(vStart, vEnd, allyHero:GetLocation())
 			if tResult ~= nil and tResult.within and tResult.distance <= nRadius + 50 then return true end
@@ -4122,7 +4168,7 @@ function J.IsAllyHeroBetweenMeAndTarget(hSource, hTarget, vLoc, nRadius)
 	local nEnemyHeroes = hTarget:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
 	for _, enemyHero in pairs(nEnemyHeroes)
 	do
-		if enemyHero ~= hSource
+		if J.IsValidHero(enemyHero) and enemyHero ~= hSource
 		then
 			local tResult = PointToLineDistance(vStart, vEnd, enemyHero:GetLocation())
 			if tResult ~= nil and tResult.within and tResult.distance <= nRadius + 50 then return true end
@@ -4532,13 +4578,15 @@ function J.GetTotalEstimatedDamageToTarget(nUnits, target)
 
 	for _, unit in pairs(nUnits)
 	do
-		local bCurrentlyAvailable = true
-		if unit:GetTeam() ~= GetBot():GetTeam()
-		then
-			bCurrentlyAvailable = false
+		if J.IsValid(unit) then
+			local bCurrentlyAvailable = true
+			if unit:GetTeam() ~= GetBot():GetTeam()
+			then
+				bCurrentlyAvailable = false
+			end
+	
+			dmg = dmg + unit:GetEstimatedDamageToTarget(bCurrentlyAvailable, target, 5, DAMAGE_TYPE_ALL)
 		end
-
-		dmg = dmg + unit:GetEstimatedDamageToTarget(bCurrentlyAvailable, target, 5, DAMAGE_TYPE_ALL)
 	end
 
 	return dmg

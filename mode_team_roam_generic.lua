@@ -169,16 +169,14 @@ function GetDesire()
 	if J.Role['bStopAction'] then return 2.0 end
 
 	if not J.IsFarming(bot)
-	or not J.IsPushing(bot)
-	or not J.IsDefending(bot)
-	or not J.IsDoingRoshan(bot)
-	or not J.IsDoingTormentor(bot)
-	or bot:GetActiveMode() ~= BOT_MODE_RUNE
-	or bot:GetActiveMode() ~= BOT_MODE_SECRET_SHOP
-	or bot:GetActiveMode() ~= BOT_MODE_EVASIVE_MANEUVERS
-	or bot:GetActiveMode() ~= BOT_MODE_OUTPOST
-	or bot:GetActiveMode() ~= BOT_MODE_WARD
-	or (J.IsRetreating(bot) and bot:GetActiveModeDesire() > 0.85)
+	and not J.IsPushing(bot)
+	and not J.IsDefending(bot)
+	and not J.IsDoingRoshan(bot)
+	and not J.IsDoingTormentor(bot)
+	and bot:GetActiveMode() ~= BOT_MODE_RUNE
+	and bot:GetActiveMode() ~= BOT_MODE_SECRET_SHOP
+	and bot:GetActiveMode() ~= BOT_MODE_OUTPOST
+	and bot:GetActiveMode() ~= BOT_MODE_WARD
 	then
 		if IsHeroCore
 		then
@@ -1289,7 +1287,7 @@ end
 
 function X.IsLastHitCreep(nCreep,nDamage)
 	
-	if nCreep ~= nil and nCreep:IsAlive()
+	if X.CanBeAttacked(nCreep)
 	then
 		
 		nDamage = nDamage * 1;
@@ -1308,7 +1306,7 @@ end
 
 function X.GetLastHitHealth(bot,nCreep)
 	
-	if nCreep ~= nil and nCreep:IsAlive()
+	if X.CanBeAttacked(nCreep)
 	then
 	   
        local nDamage = X.GetAttackDamageToCreep(bot) * 1

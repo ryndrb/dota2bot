@@ -629,44 +629,48 @@ function X.IsCourierTargetedByUnit( courier )
 	local nEnemysHeroesCanSeen = GetUnitList( UNIT_LIST_ENEMY_HEROES )
 	for _, enemy in pairs( nEnemysHeroesCanSeen )
 	do
-		if GetUnitToUnitDistance( enemy, courier ) <= 700 + botLV * 15
-		then
-			local nNearCourierAllyList = J.GetAlliesNearLoc( enemy:GetLocation(), 600 )
-			if #nNearCourierAllyList == 0
-				or enemy:GetAttackTarget() == courier
+		if J.IsValidHero(enemy) then
+			if GetUnitToUnitDistance( enemy, courier ) <= 700 + botLV * 15
+			then
+				local nNearCourierAllyList = J.GetAlliesNearLoc( enemy:GetLocation(), 600 )
+				if #nNearCourierAllyList == 0
+					or enemy:GetAttackTarget() == courier
+				then
+					return true
+				end
+			end
+	
+			if enemy:GetUnitName() == 'npc_dota_hero_sniper'
+				and GetUnitToUnitDistance( enemy, courier ) <= 1100 + botLV * 30
 			then
 				return true
 			end
-		end
-
-		if enemy:GetUnitName() == 'npc_dota_hero_sniper'
-			and GetUnitToUnitDistance( enemy, courier ) <= 1100 + botLV * 30
-		then
-			return true
-		end
-
-		if GetUnitToUnitDistance( enemy, courier ) <= enemy:GetAttackRange() + 88
-		then
-			return true
+	
+			if GetUnitToUnitDistance( enemy, courier ) <= enemy:GetAttackRange() + 88
+			then
+				return true
+			end
 		end
 	end
 
 	local nEnemysHeroes = bot:GetNearbyHeroes( 1600, true, BOT_MODE_NONE )
 	for _, enemy in pairs( nEnemysHeroes )
 	do
-		if GetUnitToUnitDistance( enemy, courier ) <= 700 + botLV * 15
-		then
-			local nNearCourierAllyList = J.GetAlliesNearLoc( enemy:GetLocation(), 800 )
-			if #nNearCourierAllyList == 0
-				or enemy:GetAttackTarget() == courier
+		if J.IsValidHero(enemy) then
+			if GetUnitToUnitDistance( enemy, courier ) <= 700 + botLV * 15
+			then
+				local nNearCourierAllyList = J.GetAlliesNearLoc( enemy:GetLocation(), 800 )
+				if #nNearCourierAllyList == 0
+					or enemy:GetAttackTarget() == courier
+				then
+					return true
+				end
+			end
+	
+			if GetUnitToUnitDistance( enemy, courier ) <= enemy:GetAttackRange() + 100
 			then
 				return true
 			end
-		end
-
-		if GetUnitToUnitDistance( enemy, courier ) <= enemy:GetAttackRange() + 100
-		then
-			return true
 		end
 	end
 
@@ -675,11 +679,13 @@ function X.IsCourierTargetedByUnit( courier )
 	local nNearCourierAllyCount = #nNearCourierAllyList
 	for _, creep in pairs( nAllEnemyCreeps )
 	do
-		if GetUnitToUnitDistance( courier, creep ) <= 800
+		if J.IsValid(creep) then
+			if GetUnitToUnitDistance( courier, creep ) <= 800
 			and ( creep:GetAttackTarget() == courier or botLV > 10 )
 			and ( nNearCourierAllyCount == 0 or creep:GetAttackTarget() == courier )
 		then
 			return true
+		end
 		end
 	end
 
@@ -826,7 +832,8 @@ end
 
 function X.IsWithoutSpellShield( npcEnemy )
 
-	return not npcEnemy:HasModifier( "modifier_item_sphere_target" )
+	return J.IsValid(npcEnemy)
+			and not npcEnemy:HasModifier( "modifier_item_sphere_target" )
 			and not npcEnemy:HasModifier( "modifier_antimage_spell_shield" )
 			and not npcEnemy:HasModifier( "modifier_item_lotus_orb_active" )
 
@@ -1013,7 +1020,7 @@ X.ConsiderItemDesire["item_arcane_boots"] = function( hItem )
 	local nNeedMPCount = 0
 	for _, npcAlly in pairs( hNearbyAllyList )
 	do
-		if npcAlly ~= nil and npcAlly:IsAlive()
+		if J.IsValidHero(npcAlly)
 			and npcAlly:GetMaxMana()- npcAlly:GetMana() > 180
 		then
 			nNeedMPCount = nNeedMPCount + 1
@@ -1607,8 +1614,9 @@ X.ConsiderItemDesire["item_crimson_guard"] = function( hItem )
 	then
 		for _, npcAlly in pairs( hNearbyAllyList )
 		do
-			if npcAlly:WasRecentlyDamagedByAnyHero( 2.0 )
-				and not npcAlly:HasModifier( "modifier_item_crimson_guard_nostack" )
+			if J.IsValidHero(npcAlly)
+			and npcAlly:WasRecentlyDamagedByAnyHero( 2.0 )
+			and not npcAlly:HasModifier( "modifier_item_crimson_guard_nostack" )
 			then
 				hEffectTarget = npcAlly
 				sCastMotive = '保护队友:'..J.Chat.GetNormName( hEffectTarget )
@@ -2050,7 +2058,7 @@ X.ConsiderItemDesire["item_force_staff"] = function( hItem )
 	local hAllyList = J.GetAlliesNearLoc( bot:GetLocation(), 600 )
 	for _, npcAlly in pairs( hAllyList )
 	do
-		if npcAlly ~= nil and npcAlly:IsAlive()
+		if J.IsValidHero(npcAlly)
 			and J.CanCastOnNonMagicImmune( npcAlly )
 		then
 			local nNearAllysEnemyList = npcAlly:GetNearbyHeroes( 1200, true, BOT_MODE_NONE )
@@ -2095,7 +2103,7 @@ X.ConsiderItemDesire["item_force_staff"] = function( hItem )
 
 	for _, npcAlly in pairs( hAllyList )
 	do
-		if npcAlly ~= nil and npcAlly:IsAlive()
+		if J.IsValidHero(npcAlly)
 			and npcAlly:GetUnitName() == "npc_dota_hero_crystal_maiden"
 			and J.CanCastOnNonMagicImmune( npcAlly )
 			and ( npcAlly:IsInvisible() or npcAlly:GetHealth() / npcAlly:GetMaxHealth() > 0.8 )
@@ -2287,7 +2295,7 @@ X.ConsiderItemDesire["item_guardian_greaves"] = function( hItem )
 	local hAllyList = J.GetAllyList( bot, nCastRange )
 	for _, npcAlly in pairs( hAllyList ) 
 	do
-		if npcAlly ~= nil and npcAlly:IsAlive()
+		if J.IsValidHero(npcAlly)
 			and J.GetHP( npcAlly ) < 0.45
 			and #hNearbyEnemyHeroList > 0
 		then
@@ -2300,7 +2308,7 @@ X.ConsiderItemDesire["item_guardian_greaves"] = function( hItem )
 	local needHPCount = 0
 	for _, npcAlly in pairs( hAllyList )
 	do
-		if npcAlly ~= nil
+		if J.IsValidHero(npcAlly)
 			and npcAlly:GetMaxHealth()- npcAlly:GetHealth() > 400
 		then
 			needHPCount = needHPCount + 1
@@ -2335,7 +2343,7 @@ X.ConsiderItemDesire["item_guardian_greaves"] = function( hItem )
 	local nNeedMPCount = 0
 	for _, npcAlly in pairs( hAllyList )
 	do
-		if npcAlly ~= nil
+		if J.IsValidHero(npcAlly)
 			and npcAlly:GetMaxMana()- npcAlly:GetMana() > 400
 		then
 			nNeedMPCount = nNeedMPCount + 1
@@ -2636,7 +2644,7 @@ X.ConsiderItemDesire["item_hurricane_pike"] = function( hItem )
 	local hAllyList = bot:GetNearbyHeroes( nCastRange, false, BOT_MODE_NONE )
 	for _, npcAlly in pairs( hAllyList )
 	do
-		if npcAlly ~= nil and npcAlly:IsAlive()
+		if J.IsValidHero(npcAlly)
 			and npcAlly:GetUnitName() == "npc_dota_hero_crystal_maiden"
 			and J.CanCastOnNonMagicImmune( npcAlly )
 			and X.IsWithoutSpellShield( npcAlly )
@@ -3251,7 +3259,7 @@ X.ConsiderItemDesire["item_moon_shard"] = function( hItem )
 	for i = 1, 5
 	do
 		local member = GetTeamMember( i )
-		if member ~= nil and member:IsAlive()
+		if J.IsValidHero(member)
 		 and member:GetAttackDamage() > targetDamage
 		 and not member:HasModifier( "modifier_item_moon_shard_consumed" )
 		then
@@ -3588,7 +3596,7 @@ X.ConsiderItemDesire["item_quelling_blade"] = function( hItem )
 		local theMonkeyKing = nil
 		for _, enemy in pairs( hNearbyEnemyHeroList )
 		do
-			if enemy:IsAlive()
+			if J.IsValidHero(enemy)
 				and enemy:GetUnitName() == "npc_dota_hero_monkey_king"
 			then
 				theMonkeyKing = enemy
@@ -4079,7 +4087,8 @@ X.ConsiderItemDesire["item_sphere"] = function( hItem )
 			local targetDistance = 9999
 			for _, npcAlly in pairs( nNearAllyList )
 			do
-				if npcAlly ~= bot
+				if J.IsValidHero(npcAlly)
+					and npcAlly ~= bot
 					and not npcAlly:IsIllusion()
 					and J.IsInRange( npcAlly, botTarget, targetDistance )
 					and not npcAlly:HasModifier( "modifier_item_sphere_target" )
@@ -4132,7 +4141,8 @@ X.ConsiderItemDesire["item_tango"] = function( hItem )
 			local hAllyList = bot:GetNearbyHeroes( 800, false, BOT_MODE_NONE )
 			for _, npcAlly in pairs( hAllyList )
 			do
-				if npcAlly ~= bot
+				if J.IsValidHero(npcAlly)
+				and npcAlly ~= bot
 				then
 					local tangoSlot = npcAlly:FindItemSlot( 'item_tango' )
 					if tangoSlot == -1
@@ -4380,7 +4390,7 @@ function X.CanJuke()
 
 	local allyTowers = bot:GetNearbyTowers( 350, false )
 
-	if allyTowers[1] ~= nil
+	if J.IsValidBuilding(allyTowers[1])
 		and allyTowers[1]:DistanceFromFountain() > bot:DistanceFromFountain() + 100
 		and J.GetEnemyCount( bot, 700 ) == 0
 	then return true end
@@ -4501,7 +4511,7 @@ function X.IsBaseTowerDestroyed()
 	do
 		local tower = GetTower( GetTeam(), i )
 		if tower == nil
-			or tower:GetHealth() / tower:GetMaxHealth() < 0.99
+			or (J.IsValidBuilding(tower) and (tower:GetHealth() / tower:GetMaxHealth() < 0.99))
 		then
 			return true
 		end
@@ -4783,8 +4793,7 @@ X.ConsiderItemDesire["item_tpscroll"] = function( hItem )
 		and nEnemyCount == 0
 	then
 		local target = bot:GetTarget()
-		if target ~= nil
-			and target:IsHero()
+		if J.IsValidHero(target)
 			and GetUnitToUnitDistance( bot, target ) > nMinTPDistance
 		then
 			local bestTpLoc = J.GetNearbyLocationToTp( target:GetLocation() )
@@ -5473,11 +5482,12 @@ end
 
 function X.HasInvisibilityOrItem( npcEnemy )
 
-	if npcEnemy:HasInvisibility( false )
+	if J.IsValidHero(npcEnemy)
+	and (npcEnemy:HasInvisibility( false )
 		or J.HasItem( npcEnemy, "item_shadow_amulet" )
 		or J.HasItem( npcEnemy, "item_glimmer_cape" )
 		or J.HasItem( npcEnemy, "item_invis_sword" )
-		or J.HasItem( npcEnemy, "item_silver_edge" )
+		or J.HasItem( npcEnemy, "item_silver_edge" ))
 	then
 		return true
 	end
@@ -6476,7 +6486,7 @@ X.ConsiderItemDesire["item_seeds_of_serenity"] = function(hItem)
 		if J.IsAttacking(bot)
 		then
 			local nNeutralCreeps = bot:GetNearbyNeutralCreeps(nRadius)
-			if nNeutralCreeps ~= nil
+			if J.IsValid(nNeutralCreeps[1])
 			and ((#nNeutralCreeps >= 3)
 				or (#nNeutralCreeps >= 2 and nNeutralCreeps[1]:IsAncientCreep()))
 			then
@@ -6895,7 +6905,7 @@ X.ConsiderItemDesire["item_havoc_hammer"] = function(hItem)
 	then
 		local nInRangeEnemy = J.GetEnemiesNearLoc(bot:GetLocation(), 1000)
 
-		if nInRangeEnemy ~= nil and #nInRangeEnemy >= 2
+		if J.IsValidHero(nInRangeEnemy[1]) and #nInRangeEnemy >= 2 
         then
             local realEnemyCount = J.GetEnemiesNearLoc(bot:GetLocation(), nRadius)
 

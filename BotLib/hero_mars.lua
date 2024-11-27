@@ -610,6 +610,7 @@ function X.ConsiderBulwark()
 	end
 
 	if J.IsGoingOnSomeone(bot)
+	and J.IsValidHero(botTarget)
 	and J.IsInRange(bot, botTarget, nRange)
 	then
 		if bot:HasScepter()

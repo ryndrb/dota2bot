@@ -486,7 +486,7 @@ function X.ConsiderQ()
         and J.IsAttacking(bot)
 		and not botTarget:HasModifier( "modifier_sniper_shrapnel_slow" )
 		then
-			return BOT_ACTION_DESIRE_HIGH
+			return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation()
 		end
 	end
 

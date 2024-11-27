@@ -54,7 +54,7 @@ local HeroBuild = {
             ['sell_list'] = {
 				"item_quelling_blade", "item_manta",
 				"item_magic_wand", "item_black_king_bar",
-				"item_bracer", "item_bracer",
+				"item_bracer", "item_heart",
 				"item_armlet", "item_travel_boots",
 			},
         },
@@ -96,7 +96,7 @@ local HeroBuild = {
             ['sell_list'] = {
 				"item_quelling_blade", "item_manta",
 				"item_magic_wand", "item_black_king_bar",
-				"item_bracer", "item_bracer",
+				"item_bracer", "item_heart",
 				"item_armlet", "item_travel_boots",
 			},
         },
