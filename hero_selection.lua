@@ -120,7 +120,7 @@ local sHeroList = {										-- pos  1, 2, 3, 4, 5
 	{name = 'npc_dota_hero_shadow_demon', 				role = {0, 0, 0, 100, 100}},
 	{name = 'npc_dota_hero_shadow_shaman', 				role = {0, 0, 0, 100, 100}},
 	{name = 'npc_dota_hero_shredder', 					role = {0, 100, 100, 0, 0}},
-	{name = 'npc_dota_hero_silencer', 					role = {0, 80, 0, 100, 100}},
+	{name = 'npc_dota_hero_silencer', 					role = {80, 80, 0, 100, 100}},
 	{name = 'npc_dota_hero_skeleton_king', 				role = {100, 0, 40, 0, 0}},
 	{name = 'npc_dota_hero_skywrath_mage', 				role = {0, 0, 0, 100, 100}},
 	{name = 'npc_dota_hero_slardar', 					role = {0, 50, 100, 0, 0}},

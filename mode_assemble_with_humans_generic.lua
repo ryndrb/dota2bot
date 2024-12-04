@@ -419,27 +419,31 @@ function X.GetTotalAttackDamage(tUnits, nTime)
 	for _, unit in pairs(tUnits)
 	do
 		if J.IsValid(unit) then
-            dmg = dmg + unit:GetAttackDamage() * unit:GetAttackSpeed() * nTime
+            local nAttackDamage = unit:GetAttackDamage()
 
             if J.IsSuspiciousIllusion(unit) then
                 local unitName = unit:GetUnitName()
                 -- just consider the highest level damage
                 if string.find(unitName, 'phantom_lancer') then
-                    dmg = dmg * 0.19
+                    nAttackDamage = nAttackDamage * 0.19
                 elseif string.find(unitName, 'naga_siren') then
-                    dmg = dmg * 0.4
+                    nAttackDamage = nAttackDamage * 0.4
                 elseif string.find(unitName, 'terrorblade') then
                     if X.IsEnemyTerrorbladeNear(unit, 1200) then
-                        dmg = dmg * (0.6 + 0.25)
+                        nAttackDamage = nAttackDamage * (0.6 + 0.25)
                     else
-                        dmg = dmg * (0.6 - 0.50)
+                        nAttackDamage = nAttackDamage * (0.6 - 0.50)
                     end
                 elseif unit:HasModifier('modifier_darkseer_wallofreplica_illusion') then
-                    dmg = dmg * 0.9
+                    nAttackDamage = nAttackDamage * 0.9
+                elseif unit:HasModifier('modifier_grimstroke_scepter_buff') then
+                    nAttackDamage = nAttackDamage * 1.5
                 else
-                    dmg = dmg * 0.33
+                    nAttackDamage = nAttackDamage * 0.33
                 end
             end
+
+            dmg = dmg + nAttackDamage * unit:GetAttackSpeed() * nTime
 		end
 	end
 

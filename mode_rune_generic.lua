@@ -31,7 +31,7 @@ local timeInMin = 0
 
 function GetDesire()
     if not bot:IsAlive()
-	or (DotaTime() > 2 * 60 and DotaTime() < 6 * 60 and GetUnitToLocationDistance(bot, GetRuneSpawnLocation(RUNE_POWERUP_2)) < 150)
+	or (DotaTime() > 2 * 60 and DotaTime() < 6 * 60 and GetUnitToLocationDistance(bot, GetRuneSpawnLocation(RUNE_POWERUP_2)) < 80)
 	then
         return 0
     end
@@ -112,38 +112,47 @@ function GetDesire()
 	if ClosestRune ~= -1 and ClosestDistance < 6000 then
 		local botPos = J.GetPosition(bot)
 		local nRuneType = GetRuneType(ClosestRune)
-        nRuneStatus = GetRuneStatus(ClosestRune)
-
-		if X.IsEnemyPickRune(ClosestRune) then return 0 end
 
         if ClosestRune == RUNE_BOUNTY_1 or ClosestRune == RUNE_BOUNTY_2 then
+			nRuneStatus = GetRuneStatus(ClosestRune)
+
             if nRuneStatus == RUNE_STATUS_AVAILABLE then
-				if botPos == 1 and DotaTime() > 2 * 60 and DotaTime() < 4 * 60 then
-					return X.GetScaledDesire(BOT_MODE_DESIRE_MODERATE, ClosestDistance, 1200)
+				if ((botPos == 1 or botPos == 3) and J.IsInLaningPhase() and ClosestDistance > 2000)
+				or X.IsEnemyPickRune(ClosestRune)
+				then
+					return BOT_MODE_DESIRE_NONE
 				end
 
                 return X.GetScaledDesire(BOT_MODE_DESIRE_HIGH, ClosestDistance, 3500)
             elseif nRuneStatus == RUNE_STATUS_UNKNOWN
+				and ClosestDistance <= MAX_DIST * 1.5
                 and DotaTime() > 2 * 60 + 50
                 and ((minute % 3 == 0) or (minute % 3 == 2 and second > 45))
             then
-				if botPos == 1 and DotaTime() > 2 * 60 and DotaTime() < 4 * 60 then
-					return X.GetScaledDesire(BOT_MODE_DESIRE_MODERATE, ClosestDistance, MAX_DIST / 2)
+				if ((botPos == 1 or botPos == 3) and J.IsInLaningPhase() and ClosestDistance > 2500) then
+					return BOT_MODE_DESIRE_NONE
 				end
 
-                return X.GetScaledDesire(BOT_MODE_DESIRE_HIGH, ClosestDistance, MAX_DIST)
+                return X.GetScaledDesire(BOT_MODE_DESIRE_MODERATE, ClosestDistance, MAX_DIST)
             elseif nRuneStatus == RUNE_STATUS_MISSING
+				and ClosestDistance <= MAX_DIST * 1.5
                 and DotaTime() > 2 * 60
                 and (minute % 3 == 2 and second > 52)
             then
-				if botPos == 1 and DotaTime() > 2 * 60 and DotaTime() < 4 * 60 then
-					return X.GetScaledDesire(BOT_MODE_DESIRE_MODERATE, ClosestDistance, MAX_DIST / 2)
+				if ((botPos == 1 or botPos == 3) and J.IsInLaningPhase() and ClosestDistance > 2500) then
+					return BOT_MODE_DESIRE_NONE
 				end
 
                 return X.GetScaledDesire(BOT_MODE_DESIRE_MODERATE, ClosestDistance, MAX_DIST * 2)
             end
         else
+			nRuneStatus = GetRuneStatus(ClosestRune)
+
             if nRuneStatus == RUNE_STATUS_AVAILABLE then
+				if X.IsEnemyPickRune(ClosestRune) then
+					return BOT_MODE_DESIRE_NONE
+				end
+
 				if nRuneType == RUNE_WATER and (bBottle or (J.GetHP(bot) < 0.6) or J.GetMP(bot) < 0.5) then
 					return X.GetScaledDesire(BOT_MODE_DESIRE_HIGH, ClosestDistance, 3200)
 				else
