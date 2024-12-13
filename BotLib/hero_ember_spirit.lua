@@ -656,7 +656,7 @@ function X.ConsiderActivateFireRemnant()
             then
                 if J.IsInLaningPhase()
                 then
-                    if botTarget:GetHealth() <= J.GetTotalEstimatedDamageToTarget(nInRangeAlly, botTarget)
+                    if botTarget:GetHealth() <= J.GetTotalEstimatedDamageToTarget(nInRangeAlly, botTarget, 6.0)
                     then
                         return BOT_ACTION_DESIRE_HIGH, closestRemnantToTarget:GetLocation()
                     end
@@ -767,7 +767,7 @@ function X.ConsiderFireRemnant()
 
 			if J.IsInLaningPhase()
             then
-                if botTarget:GetHealth() <= J.GetTotalEstimatedDamageToTarget(nAllyHeroes, botTarget)
+                if botTarget:GetHealth() <= J.GetTotalEstimatedDamageToTarget(nAllyHeroes, botTarget, 6.0)
                 then
                     return BOT_ACTION_DESIRE_HIGH, J.GetCorrectLoc(botTarget, nDelay)
                 end

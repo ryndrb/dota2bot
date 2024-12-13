@@ -660,7 +660,7 @@ function X.ConsiderBlastOff()
                 then
                     if  J.GetHP(bot) < 0.5
                     and J.CanCastOnNonMagicImmune(enemyHero)
-                    and bot:GetHealth() < J.GetTotalEstimatedDamageToTarget(nInRangeEnemy, bot)
+                    and bot:GetHealth() < J.GetTotalEstimatedDamageToTarget(nInRangeEnemy, bot, 5.5)
                     then
                         return BOT_ACTION_DESIRE_HIGH, enemyHero:GetLocation()
                     else

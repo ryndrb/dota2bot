@@ -39,7 +39,14 @@ function GetDesire()
 			for i = #sItemSellList , 2, -2 do
 				local nItemToSellSlot = bot:FindItemSlot( sItemSellList[i - 1] )
 				local nItemToCheckSlot = bot:FindItemSlot( sItemSellList[i] )
-				if nItemToCheckSlot >= 0 and nItemToSellSlot >= 0
+
+				local nItemToCheckSlot_lastComponent = -1
+				local tItemComponent = GetItemComponents(sItemSellList[i])[1]
+				if tItemComponent ~= nil then
+					nItemToCheckSlot_lastComponent = bot:FindItemSlot(tItemComponent[#tItemComponent])
+				end
+
+				if (nItemToCheckSlot >= 0 or nItemToCheckSlot_lastComponent >= 0) and nItemToSellSlot >= 0
 				then
 					itemSlotFromSellList = {nItemToSellSlot, i}
 					return RemapValClamped(GetUnitToLocationDistance(bot, preferedShop), 6000, 0, 0.75, 0.95 );

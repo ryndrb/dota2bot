@@ -741,7 +741,7 @@ function X.ConsiderEtherealJaunt()
                             then
                                 if  nTargetInRangeTower ~= nil
                                 and (#nTargetInRangeTower == 0
-                                    or (#nTargetInRangeTower >= 1 and J.GetTotalEstimatedDamageToTarget(nTargetInRangeEnemy, botTarget)))
+                                    or (#nTargetInRangeTower >= 1 and J.GetTotalEstimatedDamageToTarget(nTargetInRangeEnemy, botTarget, 6.0)))
                                 then
                                     if J.IsChasingTarget(bot, botTarget)
                                     then
@@ -768,7 +768,7 @@ function X.ConsiderEtherealJaunt()
                                 then
                                     if  nTargetInRangeTower ~= nil
                                     and (#nTargetInRangeTower == 0
-                                        or (#nTargetInRangeTower >= 1 and J.GetTotalEstimatedDamageToTarget(nTargetInRangeEnemy, botTarget)))
+                                        or (#nTargetInRangeTower >= 1 and J.GetTotalEstimatedDamageToTarget(nTargetInRangeEnemy, botTarget, 6.0)))
                                     then
                                         if J.IsChasingTarget(bot, botTarget)
                                         then

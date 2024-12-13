@@ -302,7 +302,7 @@ function X.ConsiderBlink()
 				then
 					local nEnemysTowers = botTarget:GetNearbyTowers(700, false)
 					if nEnemysTowers ~= nil and #nEnemysTowers == 0
-					or (bot:GetHealth() > J.GetTotalEstimatedDamageToTarget(nInRangeEnemy, bot)
+					or (bot:GetHealth() > J.GetTotalEstimatedDamageToTarget(nInRangeEnemy, bot, 6.0)
 						and J.WillKillTarget(botTarget, bot:GetAttackDamage() * 3, DAMAGE_TYPE_PHYSICAL, 2))
 					then
 						bot:SetTarget(botTarget)

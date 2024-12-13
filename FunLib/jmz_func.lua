@@ -1009,13 +1009,10 @@ function J.IsDisabled( npcTarget )
 				or J.IsTaunted( npcTarget )
 				or npcTarget:HasModifier('modifier_enigma_black_hole_pull')
 				or npcTarget:HasModifier('modifier_faceless_void_chronosphere_freeze')
+				or npcTarget:HasModifier('modifier_eul_cyclone')
+				or npcTarget:HasModifier('modifier_brewmaster_storm_cyclone')
+				or npcTarget:HasModifier('modifier_naga_siren_song_of_the_siren')
 	else
-
-		if npcTarget:HasModifier('modifier_enigma_black_hole_pull')
-		or npcTarget:HasModifier('modifier_faceless_void_chronosphere_freeze')
-		then
-			return true
-		end
 
 		if npcTarget:IsStunned() and J.GetRemainStunTime( npcTarget ) > 0.8
 		then
@@ -1033,6 +1030,11 @@ function J.IsDisabled( npcTarget )
 				or npcTarget:IsHexed()
 				or npcTarget:IsNightmared()
 				or J.IsTaunted( npcTarget )
+				or npcTarget:HasModifier('modifier_enigma_black_hole_pull')
+				or npcTarget:HasModifier('modifier_faceless_void_chronosphere_freeze')
+				or npcTarget:HasModifier('modifier_eul_cyclone')
+				or npcTarget:HasModifier('modifier_brewmaster_storm_cyclone')
+				or npcTarget:HasModifier('modifier_naga_siren_song_of_the_siren')
 
 	end
 
@@ -4573,19 +4575,17 @@ function J.GetUnderlordPortal()
 	return nil
 end
 
-function J.GetTotalEstimatedDamageToTarget(nUnits, target)
+function J.GetTotalEstimatedDamageToTarget(tUnitList, hTarget, fDuration)
 	local dmg = 0
-
-	for _, unit in pairs(nUnits)
-	do
+	for _, unit in pairs(tUnitList) do
 		if J.IsValid(unit) then
 			local bCurrentlyAvailable = true
 			if unit:GetTeam() ~= GetBot():GetTeam()
 			then
 				bCurrentlyAvailable = false
 			end
-	
-			dmg = dmg + unit:GetEstimatedDamageToTarget(bCurrentlyAvailable, target, 5, DAMAGE_TYPE_ALL)
+
+			dmg = dmg + unit:GetEstimatedDamageToTarget(bCurrentlyAvailable, hTarget, fDuration, DAMAGE_TYPE_ALL)
 		end
 	end
 

@@ -1372,7 +1372,7 @@ function X.ConsiderForgeSpirit()
 
             if J.IsInLaningPhase()
             then
-                if botTarget:GetHealth() <= J.GetTotalEstimatedDamageToTarget(nInRangeAlly, botTarget)
+                if botTarget:GetHealth() <= J.GetTotalEstimatedDamageToTarget(nInRangeAlly, botTarget, 7.0)
                 then
                     return BOT_ACTION_DESIRE_HIGH
                 end

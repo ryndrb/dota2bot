@@ -51,8 +51,8 @@ function GetDesire()
 		and not J.IsMeepoClone(bot)
 		and not bot:HasModifier('modifier_arc_warden_tempest_double') then
 			if DotaTime() < wisdomRuneInfo[1] + 3.0 then
-				if not bot:WasRecentlyDamagedByAnyHero(3.0) then
-					return BOT_MODE_DESIRE_ABSOLUTE
+				if GetUnitToLocationDistance(bot, wisdomRuneSpots[wisdomRuneInfo[2]]) < 80 then
+					return 0
 				end
 			else
 				wisdomRuneInfo[1] = 0

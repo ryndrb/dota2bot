@@ -1238,6 +1238,7 @@ X.ConsiderItemDesire["item_blink"] = function( hItem )
 	end
 
 	if  J.IsRetreating(bot)
+	and not J.IsRealInvisible(bot)
 	and bot:GetActiveModeDesire() > BOT_MODE_DESIRE_MODERATE
 	then
 		local bLocation = J.GetLocationTowardDistanceLocation(bot, GetAncient(GetTeam()):GetLocation(), 1199)
@@ -6251,7 +6252,7 @@ X.ConsiderItemDesire['item_blood_grenade'] = function(item)
 					and nInRangeAlly[1]:GetAttackTarget() == enemyHero
 					and J.IsChasingTarget(nInRangeAlly[1], enemyHero)
 					and not nInRangeAlly[1]:IsIllusion()
-				and J.GetTotalEstimatedDamageToTarget(nInRangeAlly, enemyHero) >= enemyHero:GetHealth()
+				and J.GetTotalEstimatedDamageToTarget(nInRangeAlly, enemyHero, 5.0) >= enemyHero:GetHealth()
 				then
 					local nTargetInRangeAlly = J.GetEnemiesNearLoc(enemyHero:GetLocation(), nRadius)
 

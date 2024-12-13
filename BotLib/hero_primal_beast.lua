@@ -610,7 +610,7 @@ function X.ConsiderPulverize()
         then
             if J.IsInLaningPhase() and not J.IsInTeamFight(bot, 1600) then
                 local nAllyHeroes = J.GetAlliesNearLoc(botTarget:GetLocation(), 800)
-                if botTarget:GetHealth() <= J.GetTotalEstimatedDamageToTarget(nAllyHeroes, botTarget)
+                if botTarget:GetHealth() <= J.GetTotalEstimatedDamageToTarget(nAllyHeroes, botTarget, 6.0)
                 then
                     return BOT_ACTION_DESIRE_HIGH, botTarget
                 end

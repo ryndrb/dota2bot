@@ -252,7 +252,7 @@ function X.ConsiderTimeWalk()
 						local nInRangeAlly = bot:GetNearbyHeroes(888, false, BOT_MODE_NONE)
 						if nEnemyTowers ~= nil
                         and (#nEnemyTowers == 0 or J.IsValidBuilding(nEnemyTowers[1]) and GetUnitToLocationDistance(botTarget, loc) > 888)
-						and botTarget:GetHealth() <= J.GetTotalEstimatedDamageToTarget(nInRangeAlly, botTarget)
+						and botTarget:GetHealth() <= J.GetTotalEstimatedDamageToTarget(nInRangeAlly, botTarget, 5.0)
 						then
                             if GetUnitToLocationDistance(bot, loc) > nCastRange
                             then
