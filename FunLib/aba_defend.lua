@@ -13,9 +13,12 @@ function Defend.GetDefendDesire(bot, lane)
 		nSearchRange = 880
 	end
 
+	local botPosition = J.GetPosition(bot)
 	local nInRangeEnemy = J.GetEnemiesNearLoc(bot:GetLocation(), nSearchRange)
+	local bMyLane = bot:GetAssignedLane() == lane
+
 	if #nInRangeEnemy > 0 and GetUnitToLocationDistance(bot, GetLaneFrontLocation(GetTeam(), lane, 0)) < 1200
-	or (bot:GetAssignedLane() ~= lane and J.GetPosition(bot) == 1 and DotaTime() < 12 * 60) -- reduce carry feeds
+	or (not bMyLane and botPosition == 1 and DotaTime() < 12 * 60) -- reduce carry feeds
 	or (J.IsDoingRoshan(bot) and #J.GetAlliesNearLoc(J.GetCurrentRoshanLocation(), 2800) >= 3)
 	or (J.IsDoingTormentor(bot) and #J.GetAlliesNearLoc(J.GetTormentorLocation(GetTeam()), 900) >= 2 and nEnemyAroundAncient == 0)
 	then
@@ -23,13 +26,16 @@ function Defend.GetDefendDesire(bot, lane)
 	end
 
 	local botLevel = bot:GetLevel()
-	if J.GetPosition(bot) == 1 and botLevel < 8
-	or J.GetPosition(bot) == 2 and botLevel < 6
-	or J.GetPosition(bot) == 3 and botLevel < 7
-	or J.GetPosition(bot) == 4 and botLevel < 4
-	or J.GetPosition(bot) == 5 and botLevel < 5
-	then
-		return BOT_MODE_DESIRE_NONE
+
+	if not bMyLane then
+		if botPosition == 1 and botLevel < 8
+		or botPosition == 2 and botLevel < 6
+		or botPosition == 3 and botLevel < 7
+		or botPosition == 4 and botLevel < 4
+		or botPosition == 5 and botLevel < 5
+		then
+			return BOT_MODE_DESIRE_NONE
+		end
 	end
 
 	local human, humanPing = J.GetHumanPing()
@@ -39,22 +45,23 @@ function Defend.GetDefendDesire(bot, lane)
 		if isPinged and lane == pingedLane
 		and DotaTime() < humanPing.time + pingTimeDelta
 		then
-			return BOT_MODE_DESIRE_ABSOLUTE * 0.95
-		end
-	end
-
-	if DotaTime() < 10 * 60
-	and J.IsCore(bot)
-	and bot:GetAssignedLane() ~= lane
-	and GetUnitToLocationDistance(bot, GetLaneFrontLocation(GetTeam(), lane, 0)) > 4400
-	then
-		local tpScoll = J.GetItem2(bot, 'item_tpscroll')
-		if not J.CanCastAbility(tpScoll) or J.GetMP(bot) < 0.45 then
-			return BOT_MODE_DESIRE_NONE
+			return BOT_MODE_DESIRE_ABSOLUTE * 0.95 - 0.01
 		end
 	end
 
 	local furthestBuilding = Defend.GetFurthestBuildingOnLane(lane)
+
+	if DotaTime() < 12 * 60
+	and not bMyLane
+	and GetUnitToLocationDistance(bot, GetLaneFrontLocation(GetTeam(), lane, 0)) > 4000
+	and not Defend.IsImportantBuilding(furthestBuilding)
+	then
+		local tpScoll = J.GetItem2(bot, 'item_tpscroll')
+		if not J.CanCastAbility(tpScoll) then
+			return BOT_MODE_DESIRE_NONE
+		end
+	end
+
 	if J.CanBeAttacked(furthestBuilding) and furthestBuilding ~= GetAncient(GetTeam())
 	then
 		local isOnlyCreeps = Defend.IsOnlyCreepsAroundBuilding(furthestBuilding)
@@ -76,7 +83,7 @@ function Defend.GetDefendDesire(bot, lane)
 
 	bot.laneToDefend = lane
 	local mul = Defend.GetEnemyAmountMul(lane)
-	return Clamp(GetDefendLaneDesire(lane) * mul, 0.1, 0.98)
+	return Clamp(GetDefendLaneDesire(lane) * mul, 0.1, 0.95 - 0.01)
 end
 
 function Defend.DefendThink(bot, lane)
@@ -389,6 +396,22 @@ function Defend.GetEnemiesAroundAncient(nRadius)
 	end
 
 	return nUnitCount
+end
+
+function Defend.IsImportantBuilding(hBuilding)
+	if J.IsValidBuilding(hBuilding) then
+		if hBuilding == GetTower(GetTeam(), TOWER_TOP_1)
+		or hBuilding == GetTower(GetTeam(), TOWER_MID_1)
+		or hBuilding == GetTower(GetTeam(), TOWER_BOT_1)
+		or hBuilding == GetTower(GetTeam(), TOWER_TOP_2)
+		or hBuilding == GetTower(GetTeam(), TOWER_MID_2)
+		or hBuilding == GetTower(GetTeam(), TOWER_BOT_2)
+		then
+			return false
+		end
+	end
+
+	return true
 end
 
 return Defend

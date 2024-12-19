@@ -60,7 +60,7 @@ function GetDesire()
 		return 0.222
 	end
 
-	return BOT_MODE_DESIRE_NONE
+	return BOT_MODE_DESIRE_LOW
 end
 
 if J.IsNonStableHero(botName)

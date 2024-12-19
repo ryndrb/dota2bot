@@ -16,24 +16,32 @@ function T.HandleTowerBuff(nTeam)
     for _, tower in pairs(hBuildings) do
         if tower ~= nil and tower:IsAlive() and tower:GetTeam() == nTeam then
             local sTowerName = tower:GetUnitName()
+            local bTierThreeTower = string.find(sTowerName, 'tower3')
             local bTierFourTower = string.find(sTowerName, 'tower4')
             local bRax = string.find(sTowerName, 'rax')
             local bAncient = string.find(sTowerName, 'fort')
 
-            if bTierFourTower or bRax or bAncient then
-                local hUnitList = T.GetNonHeroAttackingUnit(tower)
-                local nAdd = 0
+            if bTierThreeTower or bTierFourTower or bRax or bAncient then
+                local bEnemyInRadius = T.IsThereEnemyHeroInRadius(tower, 950)
+                local hUnitList = T.GetAttackingUnitsInRadius(tower, 1600)
+                local fAverageUnitsDmg = T.GetAverageUnitsDamage(hUnitList)
+                local fRegen = 0
 
-                -- only these three
-                if bTierFourTower then
-                    nAdd = 16
+                if bTierThreeTower or bTierFourTower then
+                    if bEnemyInRadius then
+                        fRegen = 16
+                    else
+                        fRegen = 16 + fAverageUnitsDmg
+                    end
                 elseif bRax then
-                    nAdd = 18
+                    if bEnemyInRadius then
+                        fRegen = 18
+                    else
+                        fRegen = 18 + fAverageUnitsDmg
+                    end
                 elseif bAncient then
-                    nAdd = 20
+                    fRegen = 20 + fAverageUnitsDmg
                 end
-
-                local fRegen = T.GetAverageUnitsDamage(hUnitList) + nAdd
 
                 if tower:IsBarracks() then
                     fRegen = fRegen * 1.25
@@ -47,13 +55,13 @@ function T.HandleTowerBuff(nTeam)
     end
 end
 
-function T.GetNonHeroAttackingUnit(tower)
+function T.GetAttackingUnitsInRadius(tower, nRadius)
     local hAttackingList = {}
     local hUnitList = FindUnitsInRadius(
         tower:GetTeam(),
         tower:GetAbsOrigin(),
         nil,
-        1600,
+        nRadius,
         DOTA_UNIT_TARGET_TEAM_ENEMY,
         DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_CREEP + DOTA_UNIT_TARGET_COURIER,
         DOTA_UNIT_TARGET_FLAG_NONE,
@@ -90,6 +98,28 @@ function T.GetAverageUnitsDamage(hUnitList)
     else
         return 0
     end
+end
+
+function T.IsThereEnemyHeroInRadius(tower, nRadius)
+    local hUnitList = FindUnitsInRadius(
+        tower:GetTeam(),
+        tower:GetAbsOrigin(),
+        nil,
+        nRadius,
+        DOTA_UNIT_TARGET_TEAM_ENEMY,
+        DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_CREEP + DOTA_UNIT_TARGET_COURIER,
+        DOTA_UNIT_TARGET_FLAG_NONE,
+        FIND_ANY_ORDER,
+        false
+    )
+
+    for _, unit in pairs(hUnitList) do
+        if unit ~= nil and unit:IsAlive() and unit:IsHero() and unit:GetAttackTarget() == tower then
+            return true
+        end
+    end
+
+    return false
 end
 
 return T

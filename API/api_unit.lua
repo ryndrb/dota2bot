@@ -475,6 +475,29 @@ end
 -- bool IsMagicImmune()
 
 -- Returns whether the unit is magic immune.
+local o_IsMagicImmune = CDOTA_Bot_Script.IsMagicImmune
+function CDOTA_Bot_Script:IsMagicImmune()
+    if self ~= nil and self:CanBeSeen() then
+        if o_IsMagicImmune(self)
+        or self:HasModifier('modifier_magic_immune')
+        or self:HasModifier('modifier_juggernaut_blade_fury')
+        or self:HasModifier('modifier_life_stealer_rage')
+        or self:HasModifier('modifier_black_king_bar_immune')
+        or self:HasModifier('modifier_huskar_life_break_charge')
+        or self:HasModifier('modifier_grimstroke_scepter_buff')
+        or self:HasModifier('modifier_pangolier_rollup')
+        or self:HasModifier('modifier_lion_mana_drain_immunity')
+        or self:HasModifier('modifier_dawnbreaker_fire_wreath_magic_immunity_tooltip')
+        or self:HasModifier('modifier_rattletrap_cog_immune')
+        or self:HasModifier('modifier_legion_commander_press_the_attack_immunity')
+        then
+            return true
+        end
+    end
+
+    return false
+end
+
 -- bool IsMuted()
 
 -- Returns whether the unit is item muted.

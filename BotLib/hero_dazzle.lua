@@ -153,7 +153,7 @@ local HeroBuild = {
 				"item_moon_shard"
 			},
             ['sell_list'] = {
-				"item_circlet", "item_force_staff",
+				"item_circlet", "item_solar_crest",
 				"item_magic_wand", "item_octarine_core",
 			},
         },

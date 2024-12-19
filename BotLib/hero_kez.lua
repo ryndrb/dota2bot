@@ -38,9 +38,9 @@ local HeroBuild = {
 				"item_magic_wand",
 				"item_power_treads",
                 "item_bfury",--
+                "item_ultimate_scepter",
                 "item_manta",--
                 "item_black_king_bar",--
-                "item_ultimate_scepter",
                 "item_lesser_crit",
                 "item_aghanims_shard",
                 "item_butterfly",--
@@ -50,7 +50,7 @@ local HeroBuild = {
 				"item_moon_shard",
 			},
             ['sell_list'] = {
-				"item_magic_wand", "item_ultimate_scepter",
+				"item_magic_wand", "item_black_king_bar",
 				"item_wraith_band", "item_lesser_crit",
 			},
         },
@@ -75,9 +75,9 @@ local HeroBuild = {
 				"item_magic_wand",
 				"item_power_treads",
                 "item_maelstrom",
+                "item_ultimate_scepter",
                 "item_manta",--
                 "item_black_king_bar",--
-                "item_ultimate_scepter",
                 "item_mjollnir",--
                 "item_lesser_crit",
                 "item_butterfly",--
@@ -88,8 +88,8 @@ local HeroBuild = {
 				"item_moon_shard",
 			},
             ['sell_list'] = {
-                "item_quelling_blade", "item_black_king_bar",
-				"item_magic_wand", "item_ultimate_scepter",
+                "item_quelling_blade", "item_manta",
+				"item_magic_wand", "item_black_king_bar",
 				"item_wraith_band", "item_lesser_crit",
 			},
         },
@@ -117,9 +117,9 @@ local HeroBuild = {
 				"item_magic_wand",
 				"item_power_treads",
                 "item_maelstrom",
+                "item_ultimate_scepter",
                 "item_manta",--
                 "item_black_king_bar",--
-                "item_ultimate_scepter",
                 "item_mjollnir",--
                 "item_lesser_crit",
                 "item_butterfly",--
@@ -130,10 +130,10 @@ local HeroBuild = {
 				"item_moon_shard",
 			},
             ['sell_list'] = {
-                "item_quelling_blade", "item_manta",
+                "item_quelling_blade", "item_ultimate_scepter",
 				"item_magic_wand", "item_black_king_bar",
-                "item_bottle", "item_ultimate_scepter",
-				"item_wraith_band", "item_lesser_crit",
+                "item_bottle", "item_lesser_crit",
+				"item_wraith_band", "item_butterfly",
 			},
         },
     },
@@ -654,6 +654,7 @@ function X.ConsiderFalconRush()
     end
 
     local nRushRange = FalconRush:GetSpecialValueInt('rush_range')
+    local nManaCost = FalconRush:GetManaCost()
 
     if J.IsGoingOnSomeone(bot) then
         if J.IsValidHero(botTarget)
@@ -674,7 +675,7 @@ function X.ConsiderFalconRush()
         and J.CanBeAttacked(botTarget)
         and J.IsInRange(bot, botTarget, bot:GetAttackRange() + 150)
         and J.IsAttacking(botTarget)
-        and J.GetManaAfter(botTarget) > 0.4
+        and J.GetManaAfter(nManaCost) > 0.4
         then
             return BOT_ACTION_DESIRE_HIGH
         end
@@ -685,7 +686,7 @@ function X.ConsiderFalconRush()
         and J.CanBeAttacked(botTarget)
         and J.IsInRange(bot, botTarget, 500)
         and J.IsAttacking(bot)
-        and J.GetManaAfter(botTarget) > 0.3
+        and J.GetManaAfter(nManaCost) > 0.3
         then
             return BOT_ACTION_DESIRE_HIGH
         end
@@ -695,7 +696,7 @@ function X.ConsiderFalconRush()
         if J.IsTormentor(botTarget)
         and J.IsInRange(bot, botTarget, 500)
         and J.IsAttacking(bot)
-        and J.GetManaAfter(botTarget) > 0.3
+        and J.GetManaAfter(nManaCost) > 0.3
         then
             return BOT_ACTION_DESIRE_HIGH
         end

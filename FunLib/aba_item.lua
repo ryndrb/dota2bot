@@ -330,13 +330,13 @@ Item['tEarlyItem'] = {
 	'item_tango',
 	'item_blood_grenade',
 	'item_clarity',
-	'item_enchanted_mango',
-	'item_flask',
+	-- 'item_enchanted_mango',
+	-- 'item_flask',
 	'item_infused_raindrop',
 }
 
 Item['tEarlyBoots'] = {
-	'item_boots',
+	-- 'item_boots',
 	'item_phase_boots',
 	'item_power_treads',
 	'item_tranquil_boots',

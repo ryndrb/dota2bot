@@ -23,7 +23,7 @@ bot.SecretShop = false
 
 
 local sPurchaseList = BotBuild['sBuyList']
-local sItemSellList = BotBuild['sSellList']
+bot.sItemSellList = BotBuild['sSellList']
 
 
 for i = 1, #sPurchaseList
@@ -68,16 +68,6 @@ local function GeneralPurchase()
 		bot:SetNextItemPurchaseValue( GetItemCost( bot.currentComponentToBuy ) )
 		bPurchaseFromSecret = IsItemPurchasedFromSecretShop( bot.currentComponentToBuy )
 		itemCost = GetItemCost( bot.currentComponentToBuy )
-	end
-
-	if bot.currentComponentToBuy == "item_infused_raindrop"
-		or bot.currentComponentToBuy == "item_tome_of_knowledge"
-		or bot.currentComponentToBuy == "item_flask"
-	then
-		if GetItemStockCount( bot.currentComponentToBuy ) <= 0
-		then
-			return	
-		end
 	end
 
 	local cost = itemCost
@@ -232,15 +222,6 @@ local function TurboModeGeneralPurchase()
 		lastItemToBuy = bot.currentComponentToBuy
 	end
 
-	if bot.currentComponentToBuy == "item_infused_raindrop"
-		or bot.currentComponentToBuy == "item_tome_of_knowledge"
-	then
-		if GetItemStockCount( bot.currentComponentToBuy ) <= 0
-		then
-			return
-		end
-	end
-
 	local cost = itemCost
 
 	if lastItemToBuy == 'item_boots'
@@ -316,6 +297,24 @@ function ItemPurchaseThink()
 	then
 		bot.itemToBuy = {}
 		return
+	end
+
+	if bot.currentComponentToBuy == "item_infused_raindrop"
+		or bot.currentComponentToBuy == "item_tome_of_knowledge"
+		or bot.currentComponentToBuy == "item_flask"
+		or bot.currentComponentToBuy == "item_enchanted_mango"
+		or bot.currentComponentToBuy == "item_ward_observer"
+		or bot.currentComponentToBuy == "item_ward_sentry"
+		or bot.currentComponentToBuy == "item_blood_grenade"
+		or bot.currentComponentToBuy == "item_clarity"
+		or bot.currentComponentToBuy == "item_smoke_of_deceit"
+		or bot.currentComponentToBuy == "item_tango"
+		or bot.currentComponentToBuy == "item_dust"
+	then
+		if GetItemStockCount( bot.currentComponentToBuy ) <= 0
+		then
+			return
+		end
 	end
 
 	--------*******----------------*******----------------*******--------
@@ -666,22 +665,24 @@ function ItemPurchaseThink()
 	then
 		sell_time = currentTime
 
-		for i = #sItemSellList , 2, -2 do
-			local nItemToSellSlot = bot:FindItemSlot( sItemSellList[i - 1] )
-			local nItemToCheckSlot = bot:FindItemSlot( sItemSellList[i] )
+		if bot.sItemSellList ~= nil then
+			for i = #bot.sItemSellList , 2, -2 do
+				local nItemToSellSlot = bot:FindItemSlot( bot.sItemSellList[i - 1] )
+				local nItemToCheckSlot = bot:FindItemSlot( bot.sItemSellList[i] )
 
-			local nItemToCheckSlot_lastComponent = -1
-			local tItemComponent = GetItemComponents(sItemSellList[i])[1]
-			if tItemComponent ~= nil then
-				nItemToCheckSlot_lastComponent = bot:FindItemSlot(tItemComponent[#tItemComponent])
-			end
+				local nItemToCheckSlot_lastComponent = -1
+				local tItemComponent = GetItemComponents(bot.sItemSellList[i])[1]
+				if tItemComponent ~= nil then
+					nItemToCheckSlot_lastComponent = bot:FindItemSlot(tItemComponent[#tItemComponent])
+				end
 
-			if (nItemToCheckSlot >= 0 or nItemToCheckSlot_lastComponent >= 0) and nItemToSellSlot >= 0
-			then
-				bot:ActionImmediate_SellItem( bot:GetItemInSlot( nItemToSellSlot ) )
-				table.remove(sItemSellList, i)
-				table.remove(sItemSellList, i - 1)
-				return
+				if (nItemToCheckSlot >= 0 or nItemToCheckSlot_lastComponent >= 0) and nItemToSellSlot >= 0
+				then
+					bot:ActionImmediate_SellItem( bot:GetItemInSlot( nItemToSellSlot ) )
+					table.remove(bot.sItemSellList, i)
+					table.remove(bot.sItemSellList, i - 1)
+					return
+				end
 			end
 		end
 
@@ -704,6 +705,14 @@ function ItemPurchaseThink()
 			local slot = bot:FindItemSlot('item_mask_of_madness')
 			bot:ActionImmediate_SellItem(bot:GetItemInSlot(slot))
 			return
+		end
+
+		if J.IsLateGame() then
+			local smokeSlot = bot:FindItemSlot('item_smoke_of_deceit')
+			if smokeSlot >= 6 then
+				bot:ActionImmediate_SellItem(bot:GetItemInSlot(smokeSlot))
+				return
+			end
 		end
 	end
 

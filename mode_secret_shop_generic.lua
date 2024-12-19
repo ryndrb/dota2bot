@@ -36,20 +36,22 @@ function GetDesire()
 
 	if DotaTime() > 0 and not J.IsInLaningPhase() then
 		if (bot:GetItemInSlot( 6 ) ~= nil or bot:GetItemInSlot( 7 ) ~= nil or bot:GetItemInSlot( 8 ) ~= nil) then
-			for i = #sItemSellList , 2, -2 do
-				local nItemToSellSlot = bot:FindItemSlot( sItemSellList[i - 1] )
-				local nItemToCheckSlot = bot:FindItemSlot( sItemSellList[i] )
+			if bot.sItemSellList ~= nil then
+				for i = #bot.sItemSellList , 2, -2 do
+					local nItemToSellSlot = bot:FindItemSlot( bot.sItemSellList[i - 1] )
+					local nItemToCheckSlot = bot:FindItemSlot( bot.sItemSellList[i] )
 
-				local nItemToCheckSlot_lastComponent = -1
-				local tItemComponent = GetItemComponents(sItemSellList[i])[1]
-				if tItemComponent ~= nil then
-					nItemToCheckSlot_lastComponent = bot:FindItemSlot(tItemComponent[#tItemComponent])
-				end
+					local nItemToCheckSlot_lastComponent = -1
+					local tItemComponent = GetItemComponents(bot.sItemSellList[i])[1]
+					if tItemComponent ~= nil then
+						nItemToCheckSlot_lastComponent = bot:FindItemSlot(tItemComponent[#tItemComponent])
+					end
 
-				if (nItemToCheckSlot >= 0 or nItemToCheckSlot_lastComponent >= 0) and nItemToSellSlot >= 0
-				then
-					itemSlotFromSellList = {nItemToSellSlot, i}
-					return RemapValClamped(GetUnitToLocationDistance(bot, preferedShop), 6000, 0, 0.75, 0.95 );
+					if (nItemToCheckSlot >= 0 or nItemToCheckSlot_lastComponent >= 0) and nItemToSellSlot >= 0
+					then
+						itemSlotFromSellList = {nItemToSellSlot, i}
+						return RemapValClamped(GetUnitToLocationDistance(bot, preferedShop), 6000, 0, 0.75, 0.95 );
+					end
 				end
 			end
 
@@ -76,9 +78,17 @@ function GetDesire()
 				if slot >= 6 and slot <= 8 then
 					if preferedShop ~= nil then
 						itemSlot = slot
-						return RemapValClamped(GetUnitToLocationDistance(bot, preferedShop), 6000, 0, 0.75, 0.95)
+						return RemapValClamped(GetUnitToLocationDistance(bot, preferedShop), 6000, 0, 0.75, 0.90)
 					end	
 				end
+			end
+		end
+
+		if J.IsLateGame() then
+			local smokeSlot = bot:FindItemSlot('item_smoke_of_deceit')
+			if smokeSlot >= 6 and smokeSlot <= 8 then
+				itemSlot = smokeSlot
+				return RemapValClamped(GetUnitToLocationDistance(bot, preferedShop), 6000, 0, 0.75, 0.90)
 			end
 		end
 	end
@@ -131,15 +141,17 @@ function Think()
 	end
 
 	if bot:DistanceFromSecretShop() <= 200 and DotaTime() > sell_time + 1.0 then
-		if itemSlotFromSellList[1] ~= nil and bot:GetItemInSlot(itemSlotFromSellList[1]) ~= nil then
-			bot:ActionImmediate_SellItem(bot:GetItemInSlot(itemSlotFromSellList[1]))
-			if bot.secret_shop_succesful == true then
-				table.remove(sItemSellList, itemSlotFromSellList[2])
-				table.remove(sItemSellList, itemSlotFromSellList[2] - 1)
+		if bot.sItemSellList ~= nil then
+			if itemSlotFromSellList[1] ~= nil and bot:GetItemInSlot(itemSlotFromSellList[1]) ~= nil then
+				bot:ActionImmediate_SellItem(bot:GetItemInSlot(itemSlotFromSellList[1]))
+				if bot.secret_shop_succesful == true then
+					table.remove(sItemSellList, itemSlotFromSellList[2])
+					table.remove(sItemSellList, itemSlotFromSellList[2] - 1)
+				end
+				itemSlot = nil
+				itemSlotFromSellList = {nil, -1}
+				return
 			end
-			itemSlot = nil
-			itemSlotFromSellList = {nil, -1}
-			return
 		end
 	
 		if itemSlot ~= nil and bot:GetItemInSlot(itemSlot) ~= nil then

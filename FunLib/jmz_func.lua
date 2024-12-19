@@ -4995,6 +4995,19 @@ function J.HasAbility(bot, abilityName)
 	return false, nil
 end
 
+function J.GetAbility(bot, abilityName)
+	for i = 0, 23 do
+		local ability = bot:GetAbilityInSlot(i)
+		if  ability ~= nil
+		and ability:GetName() == abilityName
+		then
+			return ability
+		end
+	end
+
+	return nil
+end
+
 function J.IsHumanInLoc(vLoc, nRadius)
 	for i = 1, 5
 	do

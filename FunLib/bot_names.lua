@@ -52,8 +52,9 @@ local tProTeams = {
         ['alias'] = 'BetBoom',
         ['rosters'] = {
             [1] = {"Nightfall", "gpk-", "Pure", "Save-", "TORONTOTOKYO"},
-            [2] = {"Nightfall", "gpk-", "MeiRo`", "Save-", "TORONTOTOKYO"},
-            [3] = {"Saika", "gpk-", "MeiRo`", "Save-", "TORONTOTOKYO"},
+            [2] = {"Nightfall", "gpk-", "MieRo`", "Save-", "TORONTOTOKYO"},
+            [3] = {"Saika", "gpk-", "MieRo`", "Save-", "TORONTOTOKYO"},
+            [4] = {"Pure", "kiyotaka", "MieRo`", "Save-", "Kataomi`"},
         }
     },
     [5] = {
@@ -177,6 +178,7 @@ local tProTeams = {
             [3] = {"Miracle-", "SumaiL", "MinD_ContRoL", "Gh", "KuroKy"},
             [4] = {"AMMAR_THE_F", "SumaiL", "MinD_ContRoL", "Gh", "KuroKy"},
             [5] = {"Miracle-", "SumaiL", "Fbz", "Gh", "KuroKy"},
+            [6] = {"Miracle-", "SumaiL", "No!ob", "OmaR", "GH"},
         }
     },
     [14] = {
@@ -270,6 +272,7 @@ local tProTeams = {
             [5] = {"MATUMBAMAN", "miCKe", "zai", "Boxi", "iNSaNiA"},
             [6] = {"miCKe", "Nisha", "zai", "Boxi", "iNSaNiA"},
             [7] = {"miCKe", "Nisha", "33", "Boxi", "iNSaNiA"},
+            [8] = {"miCKe", "Nisha", "SabeRLight", "Boxi", "iNSaNiA"},
         }
     },
     [22] = {
@@ -293,6 +296,7 @@ local tProTeams = {
             [2] = {"YATOROGOD雨", "TORONTOTOKYO", "Collapse", "Mira", "Miposhka"},
             [3] = {"Yatoro雨", "Larl", "Collapse", "Mira", "Miposhka"},
             [4] = {"Raddan", "Larl", "Collapse", "Mira", "Miposhka"},
+            [5] = {"Satanic", "Larl", "Malik", "Rue", "Miposhka"},
         }
     },
     [24] = {
@@ -333,6 +337,13 @@ local tProTeams = {
         ['alias'] = 'XG',
         ['rosters'] = {
             [1] = {"Ame", "Xm", "Xxs", "XinQ", "Dy"},
+        }
+    },
+    [38] = {
+        ['team_org'] = 'PARIVISION',
+        ['alias'] = 'PARIVISION',
+        ['rosters'] = {
+            [1] = {"Crystallis", "No[o]ne-", "DM", "9Class", "Dukalis"},
         }
     },
 }
