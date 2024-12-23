@@ -1,3 +1,5 @@
+local ndata = require('bots/Buff/script/ndata')
+
 if NeutralItems == nil
 then
     NeutralItems = {}
@@ -100,7 +102,17 @@ function NeutralItems.GiveNeutralItems(hHeroList)
         GameRules:SendCustomMessage('Bots receiving Tier 1 Neutral Items...', 0, 0)
 
         for _, h in pairs(hHeroList) do
-            NeutralItems.GiveItem(Tier1NeutralItems[RandomInt(1, #Tier1NeutralItems)], h, isTierOneDone)
+            local sItemName = ''
+            local heroData = ndata[h:GetUnitName()]
+            if heroData and heroData['TIER_1'] then
+                sItemName = NeutralItems.SelectItem(heroData['TIER_1'])
+            else
+                sItemName = Tier1NeutralItems[RandomInt(1, #Tier1NeutralItems)]
+            end
+
+            if sItemName ~= '' then
+                NeutralItems.GiveItem(sItemName, h, isTierOneDone)
+            end
         end
 
         isTierOneDone = true
@@ -113,7 +125,17 @@ function NeutralItems.GiveNeutralItems(hHeroList)
         GameRules:SendCustomMessage('Bots receiving Tier 2 Neutral Items...', 0, 0)
 
         for _, h in pairs(hHeroList) do
-            NeutralItems.GiveItem(Tier2NeutralItems[RandomInt(1, #Tier2NeutralItems)], h, isTierOneDone)
+            local sItemName = ''
+            local heroData = ndata[h:GetUnitName()]
+            if heroData and heroData['TIER_2'] then
+                sItemName = NeutralItems.SelectItem(heroData['TIER_2'])
+            else
+                sItemName = Tier2NeutralItems[RandomInt(1, #Tier2NeutralItems)]
+            end
+
+            if sItemName ~= '' then
+                NeutralItems.GiveItem(sItemName, h, isTierOneDone)
+            end
         end
 
         isTierTwoDone = true
@@ -126,7 +148,17 @@ function NeutralItems.GiveNeutralItems(hHeroList)
         GameRules:SendCustomMessage('Bots receiving Tier 3 Neutral Items...', 0, 0)
 
         for _, h in pairs(hHeroList) do
-            NeutralItems.GiveItem(Tier3NeutralItems[RandomInt(1, #Tier3NeutralItems)], h, isTierTwoDone)
+            local sItemName = ''
+            local heroData = ndata[h:GetUnitName()]
+            if heroData and heroData['TIER_3'] then
+                sItemName = NeutralItems.SelectItem(heroData['TIER_3'])
+            else
+                sItemName = Tier3NeutralItems[RandomInt(1, #Tier3NeutralItems)]
+            end
+
+            if sItemName ~= '' then
+                NeutralItems.GiveItem(sItemName, h, isTierOneDone)
+            end
         end
 
         isTierThreeDone = true
@@ -139,7 +171,17 @@ function NeutralItems.GiveNeutralItems(hHeroList)
         GameRules:SendCustomMessage('Bots receiving Tier 4 Neutral Items...', 0, 0)
 
         for _, h in pairs(hHeroList) do
-            NeutralItems.GiveItem(Tier4NeutralItems[RandomInt(1, #Tier4NeutralItems)], h, isTierThreeDone)
+            local sItemName = ''
+            local heroData = ndata[h:GetUnitName()]
+            if heroData and heroData['TIER_4'] then
+                sItemName = NeutralItems.SelectItem(heroData['TIER_4'])
+            else
+                sItemName = Tier4NeutralItems[RandomInt(1, #Tier4NeutralItems)]
+            end
+
+            if sItemName ~= '' then
+                NeutralItems.GiveItem(sItemName, h, isTierOneDone)
+            end
         end
 
         isTierFourDone = true
@@ -152,7 +194,17 @@ function NeutralItems.GiveNeutralItems(hHeroList)
         GameRules:SendCustomMessage('Bots receiving Tier 5 Neutral Items...', 0, 0)
 
         for _, h in pairs(hHeroList) do
-            NeutralItems.GiveItem(Tier5NeutralItems[RandomInt(1, #Tier5NeutralItems)], h, isTierFourDone)
+            local sItemName = ''
+            local heroData = ndata[h:GetUnitName()]
+            if heroData and heroData['TIER_5'] then
+                sItemName = NeutralItems.SelectItem(heroData['TIER_5'])
+            else
+                sItemName = Tier5NeutralItems[RandomInt(1, #Tier5NeutralItems)]
+            end
+
+            if sItemName ~= '' then
+                NeutralItems.GiveItem(sItemName, h, isTierOneDone)
+            end
         end
 
         isTierFiveDone = true
@@ -187,6 +239,35 @@ function NeutralItems.HasNeutralItem(hero)
     end
 
     return false
+end
+
+-- do a simple weighted random selection
+function NeutralItems.SelectItem(hNeutralItemList)
+    local items = {}
+    local weights = {}
+    for item, weight in pairs(hNeutralItemList) do
+        table.insert(items,item)
+        table.insert(weights,weight)
+    end
+
+    local totalWeight = 0
+    for _, weight in pairs(weights) do
+        totalWeight = totalWeight + weight
+    end
+
+    local randVal = math.random() * totalWeight
+    local accumWeight = 0
+    local selectedItem = ''
+
+    for i, weight in pairs(weights) do
+        accumWeight = accumWeight + weight
+        if randVal <= accumWeight then
+            selectedItem = items[i]
+            break
+        end
+    end
+
+    return selectedItem
 end
 
 return NeutralItems
