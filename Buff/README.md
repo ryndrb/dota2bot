@@ -14,4 +14,4 @@ Enabling this also adds `Lifestealer's missing Rage`, and `Faceless Void's missi
 Set `bTowerBuff` to `false` to disable tower buff.
 - [x] Enabled?
 
-It can be use with other bot scripts. Set `hBotTeams` to `{true, true}`, and just change some stuff accordingly, to suit whichever script. Or use fretbots.
+It can be use with other bot scripts; just change some stuff accordingly, to suit whichever script. Or use fretbots.

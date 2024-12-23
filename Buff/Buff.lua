@@ -100,45 +100,6 @@ local function CheckBotCount()
 end
 
 local bTowerBuff = true -- enable tower buff
-local hBotTeams = {false, false} -- buff this script
-
-local function CheckBots()
-    if GameRules:GetDOTATime(false, false) > 0 then
-        return
-    end
-
-    local hUnitList_rad = FindUnitsInRadius(
-        DOTA_TEAM_GOODGUYS,
-        Vector(-5568.449707, -5045.937500, 259.999023),
-        nil,
-        150,
-        DOTA_UNIT_TARGET_TEAM_FRIENDLY,
-        DOTA_UNIT_TARGET_HERO,
-        DOTA_UNIT_TARGET_FLAG_NONE,
-        FIND_ANY_ORDER,
-        false
-    )
-
-    local hUnitList_dir = FindUnitsInRadius(
-        DOTA_TEAM_BADGUYS,
-        Vector(5122.543457, 4615.339355, 264.000000),
-        nil,
-        150,
-        DOTA_UNIT_TARGET_TEAM_FRIENDLY,
-        DOTA_UNIT_TARGET_HERO,
-        DOTA_UNIT_TARGET_FLAG_NONE,
-        FIND_ANY_ORDER,
-        false
-    )
-
-    if #hUnitList_rad >= 1 and not hUnitList_rad[1]:IsPlayer() and hUnitList_rad[1]:GetTeam() == DOTA_TEAM_GOODGUYS then
-        hBotTeams[1] = true
-    end
-
-    if #hUnitList_dir >= 1 and not hUnitList_dir[1]:IsPlayer() and hUnitList_dir[1]:GetTeam() == DOTA_TEAM_BADGUYS then
-        hBotTeams[2] = true
-    end
-end
 
 function Buff:Init()
     if not BuffEnabled then
@@ -158,45 +119,32 @@ function Buff:Init()
         local TeamDire = botTable[DOTA_TEAM_BADGUYS]
         local hHeroList = {}
 
-        CheckBots()
-
         if GameRules:GetDOTATime(false, false) > 0 then
             if bTowerBuff then
-                if hBotTeams[1] then
-                    T.HandleTowerBuff(DOTA_TEAM_GOODGUYS)
-                end
-                if hBotTeams[2] then
-                    T.HandleTowerBuff(DOTA_TEAM_BADGUYS)
-                end
+                T.HandleTowerBuff(DOTA_TEAM_GOODGUYS)
+                T.HandleTowerBuff(DOTA_TEAM_BADGUYS)
             end
 
-            if hBotTeams[1] then
-                for _, h in pairs(TeamRadiant) do
-                    table.insert(hHeroList, h)
-                end
+            for _, h in pairs(TeamRadiant) do
+                table.insert(hHeroList, h)
             end
-            if hBotTeams[2] then
-                for _, h in pairs(TeamDire) do
-                    table.insert(hHeroList, h)
-                end
+            for _, h in pairs(TeamDire) do
+                table.insert(hHeroList, h)
             end
 
+            -- TODO: weighted selection from stratz
             NeutralItems.GiveNeutralItems(hHeroList)
 
             if not Helper.IsTurboMode()
             then
-                if hBotTeams[1] then
-                    for _, h in pairs(TeamRadiant) do
-                        GPM.UpdateBotGold(h, TeamRadiant)
-                        XP.UpdateXP(h, TeamRadiant)
-                    end
+                for _, h in pairs(TeamRadiant) do
+                    GPM.UpdateBotGold(h, TeamRadiant)
+                    XP.UpdateXP(h, TeamRadiant)
                 end
 
-                if hBotTeams[2] then
-                    for _, h in pairs(TeamDire) do
-                        GPM.UpdateBotGold(h, TeamDire)
-                        XP.UpdateXP(h, TeamDire)
-                    end
+                for _, h in pairs(TeamDire) do
+                    GPM.UpdateBotGold(h, TeamDire)
+                    XP.UpdateXP(h, TeamDire)
                 end
             end
         end
