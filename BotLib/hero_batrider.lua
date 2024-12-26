@@ -93,8 +93,8 @@ local HeroBuild = {
 			
 				"item_bracer",
                 "item_null_talisman",
-				"item_boots",
 				"item_magic_wand",
+				"item_arcane_boots",
 				"item_wind_lace",
 				"item_veil_of_discord",
 				"item_blink",
