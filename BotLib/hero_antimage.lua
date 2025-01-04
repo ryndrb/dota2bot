@@ -318,12 +318,11 @@ function X.ConsiderBlink()
 
 	if J.IsRetreating(bot)
 	and not J.IsRealInvisible(bot)
+	and bot:GetActiveModeDesire() > 0.65
 	then
 		for _, enemyHero in pairs(nEnemyHeroes)
         do
 			if  J.IsValidHero(enemyHero)
-			and bot:GetActiveModeDesire() > 0.5
-			and bot:DistanceFromFountain() > 600
 			and not J.IsSuspiciousIllusion(enemyHero)
 			and not J.IsDisabled(enemyHero)
 			and (bot:WasRecentlyDamagedByHero(enemyHero, 1.5) or (J.GetHP(bot) < 0.5 and J.IsChasingTarget(enemyHero, bot)))
@@ -335,28 +334,6 @@ function X.ConsiderBlink()
 
 	if J.IsLaning(bot)
 	then
-		for _, creep in pairs(nEnemyLaneCreeps)
-		do
-			if  J.IsValid(creep)
-			and J.CanBeAttacked(creep)
-			and (J.IsKeyWordUnit('ranged', creep) or J.IsKeyWordUnit('siege', creep) or J.IsKeyWordUnit('flagbearer', creep))
-			and GetUnitToUnitDistance(bot, creep) > 500
-			then
-				local nCreepInRangeHero = bot:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
-				local nCreepInRangeTower = bot:GetNearbyTowers(700, true)
-				local nDamage = bot:GetAttackDamage()
-
-				if  J.WillKillTarget(creep, nDamage, DAMAGE_TYPE_PHYSICAL, nCastPoint + nAttackPoint + 0.53)
-				and nCreepInRangeHero ~= nil and #nCreepInRangeHero == 0
-				and nCreepInRangeTower ~= nil and #nCreepInRangeTower == 0
-				and botTarget ~= creep
-				then
-					bot:SetTarget(creep)
-					return BOT_ACTION_DESIRE_HIGH, creep:GetLocation()
-				end
-			end
-		end
-
 		local nInRangeTower = bot:GetNearbyTowers(1600, true)
 		if  J.GetManaAfter(Blink:GetManaCost()) > 0.85
 		and J.IsInLaningPhase()

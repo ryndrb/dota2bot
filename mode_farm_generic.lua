@@ -356,37 +356,37 @@ function GetDesire()
 							return BOT_MODE_DESIRE_MODERATE;
 						end
 						
-						if bot:GetActiveMode() == BOT_MODE_PUSH_TOWER_BOT
-							or bot:GetActiveMode() == BOT_MODE_PUSH_TOWER_MID
-							or bot:GetActiveMode() == BOT_MODE_PUSH_TOWER_TOP
-						then
-							local enemyAncient = GetAncient(GetOpposingTeam());
-							local allies       = bot:GetNearbyHeroes(1400,false,BOT_MODE_NONE);
-							local enemyAncientDistance = GetUnitToUnitDistance(bot,enemyAncient);
-							if enemyAncientDistance < 2800
-								and enemyAncientDistance > 1600
-								and bot:GetActiveModeDesire() < BOT_MODE_DESIRE_HIGH
-								and #allies < 2
-							then
-								pushTime = DotaTime();
-								bot.farmLocation = preferedCamp.cattr.location
-								return  BOT_MODE_DESIRE_ABSOLUTE *0.93;
-							end
+						-- if bot:GetActiveMode() == BOT_MODE_PUSH_TOWER_BOT
+						-- 	or bot:GetActiveMode() == BOT_MODE_PUSH_TOWER_MID
+						-- 	or bot:GetActiveMode() == BOT_MODE_PUSH_TOWER_TOP
+						-- then
+						-- 	local enemyAncient = GetAncient(GetOpposingTeam());
+						-- 	local allies       = bot:GetNearbyHeroes(1400,false,BOT_MODE_NONE);
+						-- 	local enemyAncientDistance = GetUnitToUnitDistance(bot,enemyAncient);
+						-- 	if enemyAncientDistance < 2800
+						-- 		and enemyAncientDistance > 1600
+						-- 		and bot:GetActiveModeDesire() < BOT_MODE_DESIRE_HIGH
+						-- 		and #allies < 2
+						-- 	then
+						-- 		pushTime = DotaTime();
+						-- 		bot.farmLocation = preferedCamp.cattr.location
+						-- 		return  BOT_MODE_DESIRE_ABSOLUTE *0.93;
+						-- 	end
 							
-							if beHighFarmer or bot:GetAttackRange() < 310
-							then
-								if  bot:GetActiveModeDesire() <= BOT_MODE_DESIRE_MODERATE 
-									and enemyAncientDistance > 1600
-									and enemyAncientDistance < 5800
-									and #allies < 2
-								then
-									pushTime = DotaTime();
-									bot.farmLocation = preferedCamp.cattr.location
-									return  BOT_MODE_DESIRE_ABSOLUTE *0.98;
-								end
-							end
+						-- 	if beHighFarmer or bot:GetAttackRange() < 310
+						-- 	then
+						-- 		if  bot:GetActiveModeDesire() <= BOT_MODE_DESIRE_MODERATE 
+						-- 			and enemyAncientDistance > 1600
+						-- 			and enemyAncientDistance < 5800
+						-- 			and #allies < 2
+						-- 		then
+						-- 			pushTime = DotaTime();
+						-- 			bot.farmLocation = preferedCamp.cattr.location
+						-- 			return  BOT_MODE_DESIRE_ABSOLUTE *0.98;
+						-- 		end
+						-- 	end
 						
-						end
+						-- end
 					end
 					
 					local farmDistance = GetUnitToLocationDistance(bot,preferedCamp.cattr.location);

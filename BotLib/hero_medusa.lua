@@ -41,7 +41,6 @@ local HeroBuild = {
 				"item_skadi",--
 				"item_ultimate_scepter",
 				"item_greater_crit",--
-				"item_diffusal_blade",
 				"item_disperser",--
 				"item_ultimate_scepter_2",
 				"item_travel_boots_2",--
@@ -51,7 +50,6 @@ local HeroBuild = {
             ['sell_list'] = {
 				"item_quelling_blade", "item_ultimate_scepter",
 				"item_magic_wand", "item_greater_crit",
-				"item_ring_of_basilius",
 			},
         },
     },

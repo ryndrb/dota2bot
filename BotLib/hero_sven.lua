@@ -53,9 +53,9 @@ local HeroBuild = {
             ['sell_list'] = {
 				"item_quelling_blade", "item_blink",
 				"item_magic_wand", "item_black_king_bar",
-				"item_mask_of_madness", "item_satanic",
 				"item_bracer", "item_greater_crit",
-				"item_power_treads",
+				"item_mask_of_madness", "item_satanic",
+				"item_power_treads", "item_bloodthorn",
 			},
         },
     },

@@ -276,15 +276,24 @@ function X.ConsiderTimeWalk()
 
 	if J.IsRetreating(bot)
     and not J.IsRealInvisible(bot)
-    and bot:WasRecentlyDamagedByAnyHero(nDamageWindow)
-	and bot:GetActiveModeDesire() > 0.8
+	and bot:GetActiveModeDesire() > 0.65
 	then
-        if  J.IsValidHero(nEnemyHeroes[1])
-        and J.IsInRange(bot, nEnemyHeroes[1], 600)
-        and (not J.IsSuspiciousIllusion(nEnemyHeroes[1]) or J.GetHP(bot) < 0.4)
-        then
-            return BOT_ACTION_DESIRE_HIGH, J.Site.GetXUnitsTowardsLocation(bot, J.GetTeamFountain(), nCastRange)
-        end
+		for _, enemy in pairs(nEnemyHeroes) do
+			if J.IsValidHero(enemy)
+			and J.IsInRange(bot, enemy, 600)
+			and bot:WasRecentlyDamagedByHero(enemy, nDamageWindow)
+			and (not J.IsSuspiciousIllusion(enemy) or (J.GetHP(bot) < 0.4 and J.IsChasingTarget(enemy, bot)))
+			then
+				return BOT_ACTION_DESIRE_HIGH, J.Site.GetXUnitsTowardsLocation(bot, J.GetTeamFountain(), nCastRange)
+			end
+		end
+
+		local nAllyHeroes = J.GetAlliesNearLoc(bot:GetLocation(), 1200)
+		if not J.IsInLaningPhase() then
+			if #nEnemyHeroes >= #nAllyHeroes + 2 then
+				return BOT_ACTION_DESIRE_HIGH, J.Site.GetXUnitsTowardsLocation(bot, J.GetTeamFountain(), nCastRange)
+			end
+		end
 	end
 
     local nEnemyLaneCreeps = bot:GetNearbyLaneCreeps(nCastRange, true)
@@ -312,26 +321,6 @@ function X.ConsiderTimeWalk()
 
 	if J.IsLaning(bot)
 	then
-		for _, creep in pairs(nEnemyLaneCreeps)
-		do
-			if  J.IsValid(creep)
-			and J.CanBeAttacked(creep)
-			and (J.IsKeyWordUnit('ranged', creep) or J.IsKeyWordUnit('siege', creep) or J.IsKeyWordUnit('flagbearer', creep))
-			and GetUnitToUnitDistance(creep, bot) > 500
-			then
-				local nTime = (GetUnitToUnitDistance(bot, creep) / nSpeed) + nCastPoint
-				local nDamage = bot:GetAttackDamage()
-
-				if  J.WillKillTarget(creep, nDamage, DAMAGE_TYPE_PHYSICAL, nTime)
-				and nEnemyHeroes ~= nil and #nEnemyHeroes == 0
-				and nEnemyTowers ~= nil and #nEnemyTowers == 0
-				then
-					bot:SetTarget(creep)
-					return BOT_ACTION_DESIRE_HIGH, creep:GetLocation()
-				end
-			end
-		end
-
 		if  J.GetManaAfter(TimeWalk:GetManaCost()) > 0.85
 		and bot:DistanceFromFountain() > 100
 		and bot:DistanceFromFountain() < 6000

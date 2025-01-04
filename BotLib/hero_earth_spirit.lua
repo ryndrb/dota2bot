@@ -629,20 +629,22 @@ function X.ConsiderRollingBoulder()
 
 	if J.IsRetreating(bot)
     and not J.IsRealInvisible(bot)
-	and bot:WasRecentlyDamagedByAnyHero(3.0)
 	then
 		local vLocation = J.GetTeamFountain()
-		if J.IsValidHero(nEnemyHeroes[1])
-		and J.IsChasingTarget(nEnemyHeroes[1], bot)
-		then
-			if nStone >= 1 then
-				if J.IsInRange(bot, nEnemyHeroes[1], 700) then
-					return BOT_ACTION_DESIRE_HIGH, vLocation, true
-				else
+		for _, enemy in pairs(nEnemyHeroes) do
+			if J.IsValidHero(enemy)
+			and not J.IsSuspiciousIllusion(enemy)
+			and (bot:WasRecentlyDamagedByHero(enemy, 3.0) or (J.GetHP(bot) < 0.5 and J.IsChasingTarget(enemy, bot)))
+			then
+				if nStone >= 1 then
+					if J.IsInRange(bot, enemy, 700) then
+						return BOT_ACTION_DESIRE_HIGH, vLocation, true
+					else
+						return BOT_ACTION_DESIRE_HIGH, vLocation, false
+					end
+				elseif nStone == 0 then
 					return BOT_ACTION_DESIRE_HIGH, vLocation, false
 				end
-			elseif nStone == 0 then
-				return BOT_ACTION_DESIRE_HIGH, vLocation, false
 			end
 		end
 
@@ -651,8 +653,15 @@ function X.ConsiderRollingBoulder()
         and J.IsRunning(bot)
         and bot:GetActiveModeDesire() > 0.7
         then
-            return BOT_ACTION_DESIRE_HIGH, J.Site.GetXUnitsTowardsLocation(bot, J.GetTeamFountain(), nDistance), false
+            return BOT_ACTION_DESIRE_HIGH, vLocation, false
         end
+
+		local nAllyHeroes = J.GetAlliesNearLoc(bot:GetLocation(), 1200)
+		if not J.IsInLaningPhase() then
+			if #nEnemyHeroes >= #nAllyHeroes + 2 then
+				return BOT_ACTION_DESIRE_HIGH, vLocation, false
+			end
+		end
 	end
 
 	if  J.GetMP(bot) > 0.88
@@ -690,6 +699,13 @@ function X.ConsiderRollingBoulder()
 			then
 				return BOT_ACTION_DESIRE_HIGH, location, false
 			end
+		end
+	end
+
+	if DotaTime() > 0 and bot:GetActiveMode() == BOT_MODE_RUNE then
+		if J.IsRunning(bot) and bot:GetMovementDirectionStability() >= 0.9 then
+
+			return BOT_ACTION_DESIRE_HIGH, J.GetFaceTowardDistanceLocation(bot, nDistance), false
 		end
 	end
 
