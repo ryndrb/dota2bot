@@ -132,7 +132,6 @@ function Buff:Init()
                 table.insert(hHeroList, h)
             end
 
-            -- TODO: weighted selection from stratz
             NeutralItems.GiveNeutralItems(hHeroList)
 
             if not Helper.IsTurboMode()

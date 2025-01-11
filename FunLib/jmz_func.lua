@@ -28,8 +28,8 @@ local nEnemyTotalKill = 0
 local nEnemyAverageLevel = 1
 
 
-local RB = Vector( -6619, -6336, 384 )
-local DB = Vector( 6928, 6372, 392 )
+local RB = Vector(-7184.360840, -6689.084961, 392.750000)
+local DB = Vector(6996.191895, 6414.104004, 392.000000)
 local roshanRadiantLoc  = Vector(7625, -7511, 1092)
 local roshanDireLoc = Vector(-7549, 7562, 1107)
 local RadiantTormentorLoc = Vector(-8075, -1148, 1000)
@@ -1086,6 +1086,7 @@ function J.IsRetreating( bot )
 		 or ( mode == BOT_MODE_EVASIVE_MANEUVERS and bDamagedByAnyHero )
 		 or ( bot:HasModifier( 'modifier_bloodseeker_rupture' ) and bDamagedByAnyHero )
 		 or ( mode == BOT_MODE_FARM and modeDesire > BOT_MODE_DESIRE_ABSOLUTE )
+		 or ( mode == BOT_MODE_ASSEMBLE_WITH_HUMANS and modeDesire > BOT_MODE_DESIRE_HIGH and bot:DistanceFromFountain() > 0 )
 		
 end
 

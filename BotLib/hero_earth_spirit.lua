@@ -76,7 +76,7 @@ local HeroBuild = {
             ['sell_list'] = {
 				"item_quelling_blade", "item_power_treads",
 				"item_magic_wand", "item_veil_of_discord",
-				"item_bottle", "item_bottle",
+				"item_bottle", "item_blade_mail",
 				"item_bracer", "item_kaya",
 				"item_bracer", "item_black_king_bar",
 				"item_spirit_vessel", "item_heart",

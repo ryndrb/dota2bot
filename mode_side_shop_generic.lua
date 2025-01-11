@@ -172,7 +172,7 @@ function Think()
                     return
                 end
 
-                if canDoTormentor and (DotaTime() > tormentorMessageTime + 15) then
+                if J.GetFirstBotInTeam() == bot and canDoTormentor and (DotaTime() > tormentorMessageTime + 15) then
                     tormentorMessageTime = DotaTime()
                     bot:ActionImmediate_Chat("Let's try Tormentor?", false)
 					bot:ActionImmediate_Ping(c:GetLocation().x, c:GetLocation().y, true)

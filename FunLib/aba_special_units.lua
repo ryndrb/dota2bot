@@ -19,19 +19,21 @@ function X.GetDesire(bot__)
     local botLocation = bot:GetLocation()
 	local botAttackRange = bot:GetAttackRange()
     local botLevel = bot:GetLevel()
+    local bMagicImmune = bot:IsMagicImmune()
 
     local tAllyHeroes = J.GetAlliesNearLoc(bot:GetLocation(), 1600)
 	local tEnemyHeroes = J.GetEnemiesNearLoc(bot:GetLocation(), 1600)
 
     local tAllyHeroes_all = bot:GetNearbyHeroes(1600, false, BOT_MODE_NONE)
     local tEnemyHeroes_all = bot:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
+    local bOutnumbered = #tEnemyHeroes > #tAllyHeroes
 
     for _, unit in pairs(GetUnitList(UNIT_LIST_ALL))
 	do
 		if J.IsValid(unit)
         and J.IsInRange(bot, unit, 1600)
 		then
-            targetUnit = unit
+            bot.special_unit_target = unit
             local unitName = unit:GetUnitName()
             local botAttackDamage = X.GetUnitAttackDamageWithinTime(bot, 8.0)
             local unitHP = J.GetHP(unit)
@@ -108,7 +110,7 @@ function X.GetDesire(bot__)
                     end
                 end
 
-                if string.find(unitName, 'pugna_nether_ward')
+                if string.find(unitName, 'pugna_nether_ward') and not bOutnumbered
                 then
                     if J.IsInRange(bot, unit, botAttackRange + 150) then
                         if J.IsGoingOnSomeone(bot) and (not X.IsHeroWithinRadius(tEnemyHeroes, 450) or not X.IsBeingAttackedByHero(bot)) then
@@ -218,9 +220,9 @@ function X.GetDesire(bot__)
 
                     if not J.IsInTeamFight(bot, 1200)
                     and withinAttackRange
-                    and botAttackDamage > totalUnitHP and unitAttackDamage < botHealth
+                    and unitAttackDamage * 1.5 < botHealth
                     then
-                        return RemapValClamped(botLevel, 4, 10, 0.35, 0.8)
+                        return RemapValClamped(botLevel, 4, 10, 0.35, 0.91)
                     end
                 end
 
@@ -234,7 +236,7 @@ function X.GetDesire(bot__)
                     end
                 end
 
-                if string.find(unitName, 'phoenix_sun')
+                if string.find(unitName, 'phoenix_sun') and not bOutnumbered
                 then
                     if (#tAllyHeroes >= #tEnemyHeroes or J.WeAreStronger(bot, 1600))
                     and not bot:HasModifier('modifier_phoenix_fire_spirit_burn')
@@ -245,7 +247,19 @@ function X.GetDesire(bot__)
                     end
                 end
 
-                if string.find(unitName, 'tombstone')
+                if string.find(unitName, 'ice_spire') and not bOutnumbered
+                then
+                    if (#tAllyHeroes >= #tEnemyHeroes or J.WeAreStronger(bot, 1600))
+                    and (botHP > 0.80 or bMagicImmune)
+                    and not J.IsRetreating(bot)
+                    and not X.IsBeingAttackedByHero(bot)
+                    then
+                        if J.IsInRange(bot, unit, botAttackRange + 300) then return 0.95 end
+                        return 0.7
+                    end
+                end
+
+                if string.find(unitName, 'tombstone') and not bOutnumbered
                 then
                     if #tAllyHeroes_all >= #tEnemyHeroes_all and not J.IsRetreating(bot)
                     then
@@ -254,7 +268,7 @@ function X.GetDesire(bot__)
                     end
                 end
 
-                if string.find(unitName, 'warlock_golem')
+                if string.find(unitName, 'warlock_golem') and not bOutnumbered
                 then
                     botAttackDamage = X.GetUnitAttackDamageWithinTime(bot, 5)
                     local unitAttackDamage = X.GetUnitAttackDamageWithinTime(unit, 5)

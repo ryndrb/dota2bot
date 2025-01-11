@@ -43,13 +43,13 @@ function U.CantAttack(unit)
             )
 end
 
-function U.GetWeakestHero(nRadius, thisUnit)
-    if U.IsValidUnit(thisUnit)
+function U.GetWeakestHero(nRadius, hMinionUnit)
+    if U.IsValidUnit(hMinionUnit)
     then
-        local nEnemyHeroes = thisUnit:GetNearbyHeroes(nRadius * 0.5, true, BOT_MODE_NONE)
+        local nEnemyHeroes = hMinionUnit:GetNearbyHeroes(nRadius * 0.5, true, BOT_MODE_NONE)
         if #nEnemyHeroes == 0
         then
-            nEnemyHeroes = thisUnit:GetNearbyHeroes(nRadius, true, BOT_MODE_NONE)
+            nEnemyHeroes = hMinionUnit:GetNearbyHeroes(nRadius, true, BOT_MODE_NONE)
         end
 
         return U.GetWeakest(nEnemyHeroes)

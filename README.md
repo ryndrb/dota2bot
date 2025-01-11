@@ -37,9 +37,9 @@ If you’ve come across this script or is using it, good feedback is always welc
         - (Turbo, only if I'm testing spell and item usage/synergy; All Pick otherwise)
         - `Enable Cheats`
         - Type: `sv_cheats 1` in console.
-        - Type: `host_timescale 2` or `host_timescale 4` in console.
+        - Type: `host_force_frametime_to_equal_tick_interval 1` in console.
+        - Type: `host_timescale 4` in console for speedup. `host_timescale 0` to pause.
         - Type: `script_reload_code bots/Buff/buff` in console (pick phase).
-        - Type: `host_timescale 0` in console to pause.
 
 - ***Key Scripts***
     - BOT Experiment (by Furiouspuppy)

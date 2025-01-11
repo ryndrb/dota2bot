@@ -52,7 +52,7 @@ local HeroBuild = {
 			},
             ['sell_list'] = {
 				"item_quelling_blade", "item_heart",
-				"item_magic_wand", "item_magic_wand",
+				"item_magic_wand", "item_butterfly",
 				"item_wraith_band", "item_skadi",
 			},
         },

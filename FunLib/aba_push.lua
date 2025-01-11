@@ -268,6 +268,7 @@ function Push.PushThink(bot, lane)
     end
 
     local nCreeps = bot:GetNearbyLaneCreeps(math.min(700 + botAttackRange, 1600), true)
+    nCreeps = Push.GetSpecialUnitsNearby(bot, nCreeps, math.min(700 + botAttackRange, 1600))
     if  nCreeps ~= nil and #nCreeps > 0
     and J.CanBeAttacked(nCreeps[1])
     then
@@ -334,6 +335,31 @@ function Push.IsInDangerWithinTower(hUnit, fThreshold, fDuration)
 
     local hUnitHealth = hUnit:GetHealth()
     return (totalDamage / hUnitHealth * 1.2) > fThreshold
+end
+
+function Push.GetSpecialUnitsNearby(bot, hUnitList, nRadius)
+    local hCreepList = hUnitList
+    for _, unit in pairs(GetUnitList(UNIT_LIST_ENEMIES)) do
+        if unit ~= nil and unit:CanBeSeen() and J.IsInRange(bot, unit, nRadius) then
+            local sUnitName = unit:GetUnitName()
+            if string.find(sUnitName, 'invoker_forge_spirit')
+            or string.find(sUnitName, 'lycan_wolf')
+            or string.find(sUnitName, 'eidolon')
+            or string.find(sUnitName, 'beastmaster_boar')
+            or string.find(sUnitName, 'beastmaster_greater_boar')
+            or string.find(sUnitName, 'furion_treant')
+            or string.find(sUnitName, 'broodmother_spiderling')
+            or string.find(sUnitName, 'skeleton_warrior')
+            or string.find(sUnitName, 'warlock_golem')
+            or unit:HasModifier('modifier_dominated')
+            or unit:HasModifier('modifier_chen_holy_persuasion')
+            then
+                table.insert(hCreepList, unit)
+            end
+        end
+    end
+
+    return hCreepList
 end
 
 local function IsValidAbility(hAbility)

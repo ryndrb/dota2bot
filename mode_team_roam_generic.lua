@@ -134,6 +134,8 @@ function GetDesire()
 		return nDesire
 	end
 
+	ShouldAttackSpecialUnit = false
+
 	-- -- Pickup Neutral Item Tokens; since removed item_generic; some overlap
 	-- nDesire = TryPickupDroppedNeutralItemTokens()
 	-- if nDesire > 0
@@ -251,7 +253,11 @@ function Think()
 
 	if ShouldAttackSpecialUnit
 	then
-		AttackSpecialUnit.Think()
+		if J.IsValid(bot.special_unit_target) then
+			bot:SetTarget(bot.special_unit_target)
+			bot:Action_AttackUnit(bot.special_unit_target, false)
+			return
+		end
 	end
 
 	if bot:HasModifier('modifier_faceless_void_chronosphere_selfbuff')

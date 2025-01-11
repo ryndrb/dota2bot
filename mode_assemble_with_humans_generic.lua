@@ -12,22 +12,20 @@ local J = require( GetScriptDirectory()..'/FunLib/jmz_func')
 
 local vTeamFountain = J.GetTeamFountain()
 
-local botTarget, botLevel, botHP, botHealth, botLocation, botAttackRange
+local botTarget, botLevel, botHP, botMP, botHealth, botLocation, botAttackRange, botName
 
 local tAllyHeroes, tAllyHeroes_real, tAllyHeroes_attacking
 local tEnemyHeroes, tEnemyHeroes_real
 
-local nChainFrostBounceDistance = 600 -- min
-
-local ShouldRetreatWhenTowerTargeted = false
 local RetreatWhenTowerTargetedTime = 0
 
 local retreatFromTormentorTime = 0
 
-bot.should_attack_move = false
-
 function GetDesire()
-    if not bot:IsAlive() or J.IsRetreating(bot) then
+    if not bot:IsAlive()
+    or (J.IsRetreating(bot) and bot:GetActiveMode() ~= BOT_MODE_ASSEMBLE_WITH_HUMANS)
+    or bot:HasModifier('modifier_skeleton_king_reincarnation_scepter_active')
+    then
         return BOT_MODE_DESIRE_NONE
     end
 
@@ -77,9 +75,11 @@ function GetDesire()
     botTarget = J.GetProperTarget(bot)
     botLevel = bot:GetLevel()
     botHP = J.GetHP(bot)
+    botMP = J.GetMP(bot)
     botHealth = bot:GetHealth()
     botLocation = bot:GetLocation()
     botAttackRange = bot:GetAttackRange()
+    botName = bot:GetUnitName()
 
     tAllyHeroes = bot:GetNearbyHeroes(1600, false, BOT_MODE_NONE)
     tAllyHeroes_attacking = bot:GetNearbyHeroes(1600, false, BOT_MODE_ATTACK)
@@ -98,57 +98,47 @@ function GetDesire()
         return nDesire
     end
 
-    ShouldRetreatWhenTowerTargeted = X.RetreatWhenTowerTargeted()
-	if ShouldRetreatWhenTowerTargeted then
-		return 0.95
+    nDesire = X.RetreatWhenTowerTargetedDesire()
+	if nDesire > 0 then
+		return nDesire
 	end
 
-    return BOT_MODE_DESIRE_NONE
+    return X.GetOtherRetreatDesire()
 end
 
 function Think()
     if J.CanNotUseAction(bot) then return end
 
-    if bot:HasModifier('modifier_lich_chainfrost_slow') then
-        local targetLoc = bot:GetLocation()
-        for _, unit in pairs(GetUnitList(UNIT_LIST_ALL))
-        do
-            if J.IsValid(unit)
-            and bot ~= unit
-            and not unit:IsBuilding()
-            and not string.find(unit:GetUnitName(), 'ward')
-            and J.IsInRange(bot, unit, nChainFrostBounceDistance)
+    local bSeparate = false
+    local vSteerLocation = Vector(0,0,0)
+    for _, unit in pairs(GetUnitList(UNIT_LIST_ALL)) do
+        if J.IsValid(unit)
+        and bot ~= unit
+        and not unit:IsBuilding()
+        and not string.find(unit:GetUnitName(), 'ward')
+        then
+            if bot:HasModifier('modifier_lich_chainfrost_slow')
+            or unit:HasModifier('modifier_lich_chainfrost_slow')
+            or unit:GetUnitName() == 'npc_dota_lich_ice_spire'
             then
-                -- ??
-                local dir = botLocation - unit:GetLocation()
-                dir = dir:Normalized() * nChainFrostBounceDistance
-                targetLoc = targetLoc + dir
+                bSeparate = true
+                if GetUnitToUnitDistance(bot, unit) < 1000 then
+                    vSteerLocation = vSteerLocation + (bot:GetLocation() - unit:GetLocation())
+                end
             end
         end
+    end
 
-        bot:Action_MoveToLocation(targetLoc)
+    if bSeparate then
+        bot:Action_MoveToLocation(bot:GetLocation() + vSteerLocation)
         return
     end
 
-	if ShouldRetreatWhenTowerTargeted then
-		bot:Action_MoveToLocation(vTeamFountain + J.RandomForwardVector(350))
-		return
-	end
-
-    if bot.should_attack_move then
-        bot:Action_AttackMove(vTeamFountain + J.RandomForwardVector(600))
+    if DotaTime() < retreatFromTormentorTime + 20 then
+        bot:Action_MoveToLocation(vTeamFountain)
     else
-        if DotaTime() < retreatFromTormentorTime + 20 then
-            bot:Action_MoveToLocation(vTeamFountain)
-        else
-            bot:Action_MoveToLocation(vTeamFountain + J.RandomForwardVector(600))
-        end
+        bot:Action_MoveToLocation(vTeamFountain + J.RandomForwardVector(600))
     end
-end
-
-function OnEnd()
-    RetreatWhenTowerTargetedTime = 0
-    bot.should_attack_move = false
 end
 
 function X.GetUnitDesire()
@@ -172,7 +162,7 @@ function X.GetUnitDesire()
                 then
                     if illusionPower > botHealth * 1.5
                     then
-                        return 0.90
+                        return 0.85
                     else
                         return 0.70
                     end
@@ -186,7 +176,7 @@ function X.GetUnitDesire()
 
                 if golemsPower > botHealth
                 then
-                    return RemapValClamped(golemsPower / botHealth, 0.8, 1.5, 0.8, 0.95)
+                    return RemapValClamped(golemsPower / botHealth, 0.8, 1.5, 0.7, 0.95)
                 end
             end
 
@@ -200,7 +190,7 @@ function X.GetUnitDesire()
 
                     if spiderlingsPower > botHealth
                     then
-                        return RemapValClamped(spiderlingsPower / botHealth, 0.8, 1.5, 0.55, 0.90)
+                        return RemapValClamped(spiderlingsPower / botHealth, 0.8, 1.5, 0.45, 0.85)
                     end
                 end
             end
@@ -215,7 +205,7 @@ function X.GetUnitDesire()
 
                     if eidolonPower > botHealth
                     then
-                        return RemapValClamped(eidolonPower / botHealth, 0.8, 1.5, 0.55, 0.90)
+                        return RemapValClamped(eidolonPower / botHealth, 0.8, 1.5, 0.45, 0.85)
                     end
                 end
             end
@@ -226,13 +216,11 @@ function X.GetUnitDesire()
 end
 
 function X.GetModifierDesire()
-    local botIsMagicImmune = false
+    local bMagicImmune = false
 
 	if bot:IsMagicImmune()
-	or bot:HasModifier('modifier_black_king_bar_immune')
-	or bot:HasModifier('modifier_life_stealer_rage')
 	then
-		botIsMagicImmune = true
+		bMagicImmune = true
 	end
 
     local canBeCloseToKillingTarget = false
@@ -244,24 +232,19 @@ function X.GetModifierDesire()
 
 	if bot:HasModifier('modifier_jakiro_macropyre_burn')
 	then
-        if botHP < 0.6 and X.IsBeingAttackedByHero(bot) and not botIsMagicImmune
+        if botHP < 0.6 and X.IsBeingAttackedByHero(bot) and not bMagicImmune
         and not canBeCloseToKillingTarget
         then
             return 0.95
         end
-	end
-
-    if bot:HasModifier('modifier_dark_seer_wall_slow')
+    elseif bot:HasModifier('modifier_dark_seer_wall_slow')
     then
         if X.IsBeingAttackedByRealHero(bot) and botHP < 0.5 then
-            bot.should_attack_move = true
             return 0.95
         end
-    end
-
-    if bot:HasModifier('modifier_lich_chainfrost_slow')
+    elseif bot:HasModifier('modifier_lich_chainfrost_slow')
     then
-        if not botIsMagicImmune and X.IsOtherUnitsInRange(bot, nChainFrostBounceDistance) and botHP < 0.5
+        if not bMagicImmune and X.IsOtherUnitsInRange(bot, 600) and botHP < 0.5
         and not canBeCloseToKillingTarget
         then
             return 0.95
@@ -269,52 +252,42 @@ function X.GetModifierDesire()
 
         if J.IsInTeamFight(bot, 1200)
         then
-            if (botHP < 0.42 or (not botIsMagicImmune and botHP < 0.65))
+            if (botHP < 0.42 or (not bMagicImmune and botHP < 0.65))
             and not canBeCloseToKillingTarget
             and not J.WeAreStronger(bot, 1200) then
                 return 0.95
             end
         end
-    end
-
-    if bot:HasModifier('modifier_windrunner_gale_force')
-    or bot:HasModifier('modifier_crystal_maiden_freezing_field_slow') then
-        if ((not botIsMagicImmune or botHP < 0.5) and not X.IsUnitTargetRealHeroInRange(botAttackRange) and not canBeCloseToKillingTarget)
+    elseif bot:HasModifier('modifier_windrunner_gale_force')
+        or bot:HasModifier('modifier_crystal_maiden_freezing_field_slow')
+    then
+        if ((not bMagicImmune or botHP < 0.5) and not X.IsUnitTargetRealHeroInRange(botAttackRange) and not canBeCloseToKillingTarget)
         or (not J.WeAreStronger(bot, 1600) and not X.IsUnitTargetRealHeroInRange(botAttackRange) and not canBeCloseToKillingTarget) then
             return 0.9
         end
-    end
-
-    if bot:HasModifier('modifier_shredder_chakram_debuff') then
+    elseif bot:HasModifier('modifier_shredder_chakram_debuff') then
         if #tEnemyHeroes_real > #tAllyHeroes_real
         or botHP < 0.2
         or (not X.IsUnitTargetRealHeroInRange(botAttackRange) and X.IsBeingAttackedByHero(bot)) then
             return 0.85
         end
-    end
-
-    if bot:HasModifier('modifier_warlock_upheaval')
-    or bot:HasModifier('modifier_skywrath_mystic_flare_aura_effect')
+    elseif bot:HasModifier('modifier_warlock_upheaval')
+        or bot:HasModifier('modifier_skywrath_mystic_flare_aura_effect')
     then
-        if botHP < 0.5 and not botIsMagicImmune and not X.IsUnitTargetRealHeroInRange(botAttackRange) then
+        if botHP < 0.5 and not bMagicImmune and not X.IsUnitTargetRealHeroInRange(botAttackRange) then
             return 0.85
         end
-    end
-
-    if bot:HasModifier('modifier_sandking_sand_storm_slow')
+    elseif bot:HasModifier('modifier_sandking_sand_storm_slow')
     then
         if (not X.IsUnitTargetRealHeroInRange(botAttackRange) or not canBeCloseToKillingTarget)
         and not (#tAllyHeroes_real >= #tEnemyHeroes_real + 2)
         then
-            bot.should_attack_move = true
             return RemapValClamped(botHP, 0.25, 0.5, 0.95, 0.75)
         end
-    end
-
-    if bot:HasModifier('modifier_sand_king_epicenter_slow')
-    or bot:HasModifier('modifier_disruptor_static_storm')
+    elseif bot:HasModifier('modifier_sand_king_epicenter_slow')
+        or (bot:HasModifier('modifier_disruptor_static_storm') and not J.IsStuck(bot))
     then
-        if not botIsMagicImmune
+        if not bMagicImmune
         and (not X.IsUnitTargetRealHeroInRange(botAttackRange) or not canBeCloseToKillingTarget)
         and not (#tAllyHeroes_real >= #tEnemyHeroes_real + 2)
         then
@@ -325,12 +298,12 @@ function X.GetModifierDesire()
 	return BOT_MODE_DESIRE_NONE
 end
 
-function X.RetreatWhenTowerTargeted()
+function X.RetreatWhenTowerTargetedDesire()
 	if DotaTime() > 10 * 60
     or J.IsInTeamFight(bot, 1600)
     or #tAllyHeroes_attacking >= #tEnemyHeroes + 1
 	then
-		return false
+		return 0
 	end
 
 	local nEnemyTowers = bot:GetNearbyTowers(1600, true)
@@ -341,9 +314,10 @@ function X.RetreatWhenTowerTargeted()
         if J.IsGoingOnSomeone(bot)
         then
             if J.IsValidHero(botTarget)
-            and bot:GetEstimatedDamageToTarget(true, botTarget, 5.0, DAMAGE_TYPE_ALL) >= botTarget:GetHealth() * 1.2
+            and not J.IsSuspiciousIllusion(botTarget)
+            and bot:GetEstimatedDamageToTarget(true, botTarget, 5.0, DAMAGE_TYPE_ALL) * 1.2 < botTarget:GetHealth()
             then
-                return RemapValClamped(botHP, 0.5, 0.75, BOT_MODE_DESIRE_MODERATE, BOT_MODE_DESIRE_NONE)
+                return 0.7
             end
         end
 
@@ -354,7 +328,60 @@ function X.RetreatWhenTowerTargeted()
         end
 	end
 
-	return false
+	return 0
+end
+
+function X.GetOtherRetreatDesire()
+    local nDesire = RemapValClamped(botHP, 1, 0, 0, 0.95)
+
+    if bot:DistanceFromFountain() <= 3800 then
+        if (not string.find(botName, 'huskar') and botMP < 0.22 and botHP < 0.7)
+        or J.GetHP(bot) < 0.33
+        then
+            return 0.95
+        end
+    end
+
+    local nearbyEnemies = 0
+    for i, id in pairs(GetTeamPlayers(GetOpposingTeam())) do
+		if IsHeroAlive(id) then
+			local info = GetHeroLastSeenInfo(id)
+			if info ~= nil then
+				local dInfo = info[1]
+				if dInfo ~= nil
+                and J.GetLocationToLocationDistance(botLocation, dInfo.location) <= 1600
+                and dInfo.time_since_seen < 10.0
+				then
+                    if i <= 3 then
+                        nearbyEnemies = nearbyEnemies + 1
+                    else
+                        nearbyEnemies = nearbyEnemies + 0.5
+                    end
+				end
+			end
+		end
+	end
+
+    if nearbyEnemies > #tAllyHeroes_real then
+        nDesire = nDesire + (nearbyEnemies - #tAllyHeroes_real)
+                          * RemapValClamped(DotaTime(), 0, 10 * 60, 0.2, 0.5)
+                          * RemapValClamped(X.GetTotalEstimatedDamageToTarget(tEnemyHeroes_real, bot, 6.0), 0, botHealth, 0, 1)
+    end
+
+    if bot:WasRecentlyDamagedByTower(2) or bot:WasRecentlyDamagedByAnyHero(2) then
+        nDesire = nDesire + 0.1
+    end
+
+    if J.IsInTeamFight(bot, 1600) and #tAllyHeroes_real >= #tEnemyHeroes_real then
+        nDesire = nDesire * 0.9
+    end
+
+    local tEnemyTowers = bot:GetNearbyTowers(1600, true)
+    if nearbyEnemies == 0 and #tEnemyTowers == 0 then
+        nDesire = nDesire - 0.35
+    end
+
+    return Clamp(nDesire, 0, 1)
 end
 
 function X.GetUnitTypeAttackingBot(nRadius, hName)
