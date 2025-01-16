@@ -99,7 +99,27 @@ local function CheckBotCount()
     end
 end
 
-local bTowerBuff = true -- enable tower buff
+-- script flags
+local bBuffFlags = {
+    -- General
+    towers = {
+        radiant = true, -- Set to 'false' to disable Radiant towers buff.
+        dire    = true, -- Set to 'false' to disable Dire towers buff.
+    },
+    neutrals = {
+        radiant = true, -- Set to 'false' to disable Radiant bots receiving neutral items.
+        dire    = true, -- Set to 'false' to disable Dire bots receiving neutral items.
+    },
+    -- Applies to All Pick only
+    gpm = {
+        radiant = true, -- Set to 'false' to disable Radiant bots receiving a Gold boost.
+        dire    = true, -- Set to 'false' to disable Dire bots receiving a Gold boost.
+    },
+    xpm = {
+        radiant = true, -- Set to 'false' to disable Radiant bots receiving an Experience boost.
+        dire    = true, -- Set to 'false' to disable Dire bots receiving an Experience boost.
+    },
+}
 
 function Buff:Init()
     if not BuffEnabled then
@@ -120,30 +140,46 @@ function Buff:Init()
         local hHeroList = {}
 
         if GameRules:GetDOTATime(false, false) > 0 then
-            if bTowerBuff then
+            -- Towers
+            if bBuffFlags.towers.radiant then
                 T.HandleTowerBuff(DOTA_TEAM_GOODGUYS)
+            end
+            if bBuffFlags.towers.dire then
                 T.HandleTowerBuff(DOTA_TEAM_BADGUYS)
             end
 
-            for _, h in pairs(TeamRadiant) do
-                table.insert(hHeroList, h)
+            -- Neutral Items
+            if bBuffFlags.neutrals.radiant then
+                for _, h in pairs(TeamRadiant) do
+                    table.insert(hHeroList, h)
+                end
             end
-            for _, h in pairs(TeamDire) do
-                table.insert(hHeroList, h)
+            if bBuffFlags.neutrals.dire then
+                for _, h in pairs(TeamDire) do
+                    table.insert(hHeroList, h)
+                end
             end
 
             NeutralItems.GiveNeutralItems(hHeroList)
 
-            if not Helper.IsTurboMode()
-            then
+            -- Gold and Experience
+            if not Helper.IsTurboMode() then
                 for _, h in pairs(TeamRadiant) do
-                    GPM.UpdateBotGold(h, TeamRadiant)
-                    XP.UpdateXP(h, TeamRadiant)
+                    if bBuffFlags.gpm.radiant then
+                        GPM.UpdateBotGold(h, TeamRadiant)
+                    end
+                    if bBuffFlags.xpm.radiant then
+                        XP.UpdateXP(h, TeamRadiant)
+                    end
                 end
 
                 for _, h in pairs(TeamDire) do
-                    GPM.UpdateBotGold(h, TeamDire)
-                    XP.UpdateXP(h, TeamDire)
+                    if bBuffFlags.gpm.dire then
+                        GPM.UpdateBotGold(h, TeamDire)
+                    end
+                    if bBuffFlags.xpm.dire then
+                        XP.UpdateXP(h, TeamDire)
+                    end
                 end
             end
         end

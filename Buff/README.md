@@ -11,7 +11,4 @@ I also added a functionality for bots to get neutral items.
 
 Enabling this also adds `Lifestealer's missing Rage`, and `Faceless Void's missing Chronosphere` from patch 7.37.
 
-Set `bTowerBuff` to `false` to disable tower buff.
-- [x] Enabled?
-
 It can be use with other bot scripts; just change some stuff accordingly, to suit whichever script. Or use fretbots.
