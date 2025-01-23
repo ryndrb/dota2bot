@@ -32,7 +32,7 @@ function X.Think(ownerBot, hMinionUnit)
         hMinionUnit.cast_desire, hMinionUnit.cast_location = X.ConsiderWaveOfTerror(hMinionUnit, hMinionUnit.abilities[2])
         if hMinionUnit.cast_desire > 0
         then
-            hMinionUnit:Action_UseAbilityOnEntity(hMinionUnit.abilities[2], hMinionUnit.cast_location)
+            hMinionUnit:Action_UseAbilityOnLocation(hMinionUnit.abilities[2], hMinionUnit.cast_location)
             return
         end
     end
