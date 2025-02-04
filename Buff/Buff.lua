@@ -40,6 +40,27 @@ function Buff:AddBotsToTable()
                 end
 
                 table.insert(botTable[team], hero)
+                if string.find(hero:GetUnitName(), 'lone_druid') then
+                    local bear = Entities:FindByName(nil, 'npc_dota_lone_druid_bear1')
+                    if bear then
+                        table.insert(botTable[team], bear)
+                    else
+                        bear = Entities:FindByName(nil, 'npc_dota_lone_druid_bear2')
+                        if bear then
+                            table.insert(botTable[team], bear)
+                        else
+                            bear = Entities:FindByName(nil, 'npc_dota_lone_druid_bear3')
+                            if bear then
+                                table.insert(botTable[team], bear)
+                            else
+                                bear = Entities:FindByName(nil, 'npc_dota_lone_druid_bear4')
+                                if bear then
+                                    table.insert(botTable[team], bear)
+                                end
+                            end
+                        end
+                    end
+                end
             end
         end
     end

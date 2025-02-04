@@ -58,6 +58,7 @@ local courier = nil
 local t3AlreadyDamaged = false
 local t3Check = -90
 local hasBuyShard = true
+local isBear = false
 
 local function GeneralPurchase()
 
@@ -167,6 +168,7 @@ local function GeneralPurchase()
 	--达到金钱需要时购物
 	if bot:GetGold() >= cost
 		and bot:GetItemInSlot( 14 ) == nil
+		and not isBear
 	then
 
 		if courier == nil
@@ -258,6 +260,7 @@ local function TurboModeGeneralPurchase()
 
 	if bot:GetGold() >= cost
 		and bot:GetItemInSlot( 14 ) == nil
+		and not isBear
 	then
 		if bot:ActionImmediate_PurchaseItem( bot.currentComponentToBuy ) == PURCHASE_ITEM_SUCCESS
 		then
@@ -297,6 +300,23 @@ function ItemPurchaseThink()
 	then
 		bot.itemToBuy = {}
 		return
+	end
+
+	isBear = bot:GetUnitName() == 'npc_dota_hero_lone_druid_bear'
+	if isBear and math.floor(DotaTime()) % 5 == 0 then
+		for i = 1, 5 do
+			local member = GetTeamMember(i)
+			if member ~= nil and member:GetUnitName() == 'npc_dota_hero_lone_druid' then
+				if member.bearItems == nil then member.bearItems = {[0]='',[1]='',[2]='',[3]='',[4]='',[5]='',[6]='',[7]='',[8]=''} end
+				for j = 0, 8 do
+					local hItem = bot:GetItemInSlot(j)
+					if hItem ~= nil then
+						member.bearItems[j] = hItem:GetName()
+					end
+				end
+				break
+			end
+		end
 	end
 
 	if bot.currentComponentToBuy == "item_infused_raindrop"
@@ -339,7 +359,7 @@ function ItemPurchaseThink()
 	end
 
 	--辅助定位英雄购买辅助物品
-	if not J.IsCore(bot)
+	if not J.IsCore(bot) and not isBear
 	then
 		if currentTime > 30 and not hasBuyClarity
 			and botGold >= GetItemCost( "item_clarity" )
@@ -364,7 +384,7 @@ function ItemPurchaseThink()
 	end
 
 	-- Init Healing Items in Lane; works for now
-	if J.IsInLaningPhase()
+	if J.IsInLaningPhase() and not isBear
 	then
 		if  botLevel < 6
 		and bot:IsAlive()
@@ -450,7 +470,7 @@ function ItemPurchaseThink()
 	-- don't buy in late game to avoid clutter, since there's no inventory management currently
 
 	-- Observer and Sentry Wards
-	if (J.GetPosition(bot) == 4) and not J.IsLateGame() then
+	if (J.GetPosition(bot) == 4) and not J.IsLateGame() and not isBear then
 		local wardType = 'item_ward_sentry'
 
 		if not J.HasItemInInventory('item_dust')
@@ -466,7 +486,7 @@ function ItemPurchaseThink()
 		end
 	end
 
-	if (J.GetPosition(bot) == 5)
+	if (J.GetPosition(bot) == 5) and not isBear
 	then
 		local wardType = 'item_ward_observer'
 
@@ -483,6 +503,7 @@ function ItemPurchaseThink()
 
 	-- Smoke of Deceit
 	if  (J.GetPosition(bot) == 4 or J.GetPosition(bot) == 5)
+	and not isBear
 	and not J.IsLateGame()
 	and GetItemStockCount('item_smoke_of_deceit') > 1
 	and botGold >= GetItemCost('item_smoke_of_deceit')
@@ -522,6 +543,7 @@ function ItemPurchaseThink()
 
 	-- Blood Grenade
 	if  J.IsInLaningPhase()
+	and not isBear
 	and (J.GetPosition(bot) == 4 or J.GetPosition(bot) == 5)
 	and GetItemStockCount('item_blood_grenade') > 0
 	and botLevel < 6
@@ -536,6 +558,7 @@ function ItemPurchaseThink()
 
 	--为自己购买魔晶
 	if not hasBuyShard
+	and not isBear
 		and GetItemStockCount( "item_aghanims_shard" ) > 0
 		and botGold >= 1400
 	then
@@ -557,7 +580,8 @@ function ItemPurchaseThink()
 
 
 	--死前如果会损失金钱则购买额外TP
-	if botGold >= GetItemCost( "item_tpscroll" )
+	if not isBear
+		and botGold >= GetItemCost( "item_tpscroll" )
 		and bot:IsAlive()
 		and not J.IsMeepoClone(bot)
 		and botGold < ( GetItemCost( "item_tpscroll" ) + botWorth / 40 )
@@ -716,7 +740,7 @@ function ItemPurchaseThink()
 		end
 	end
 
-	if bot:GetLevel() >= 6
+	if bot:GetLevel() >= 6 and not isBear
 	then
 		if botGold >= GetItemCost( "item_tpscroll" )
 		and bot:IsAlive()

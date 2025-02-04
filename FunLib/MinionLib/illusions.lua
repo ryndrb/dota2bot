@@ -29,7 +29,7 @@ function X.Think(ownerBot, hMinionUnit)
         hMinionUnit.move_desire, hMinionUnit.move_location = X.ConsiderMove(hMinionUnit)
         if hMinionUnit.move_desire > 0 then
             hMinionUnit:Action_MoveToLocation(hMinionUnit.move_location)
-            fNextMovementTime = DotaTime() + math.random(0.02, 1.0)
+            fNextMovementTime = DotaTime() + math.random(0.1, 0.5)
             return
         end
 
@@ -40,7 +40,7 @@ function X.Think(ownerBot, hMinionUnit)
         else
             hMinionUnit:Action_MoveToLocation(J.GetClosestTeamLane(hMinionUnit))
         end
-        fNextMovementTime = DotaTime() + math.random(0.02, 1.0)
+        fNextMovementTime = DotaTime() + math.random(0.1, 0.5)
     end
 end
 

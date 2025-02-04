@@ -1019,6 +1019,11 @@ end
 function Item.IsItemInHero( sItemName )
 
 	local bot = GetBot()
+	if bot:GetUnitName() == 'npc_dota_hero_lone_druid' and bot.bearItems ~= nil then
+		for i = 0, 8 do
+			if bot.bearItems[i] == sItemName then return true end
+		end
+	end
 	
 	--7.33
 	if sItemName == 'item_double_flask'

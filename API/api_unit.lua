@@ -147,6 +147,14 @@ end
 -- string GetUnitName()
 
 -- Gets the name of the unit. Note that this is the under-the-hood name, not the normal (localized) name that you'd see for the unit.
+local o_GetUnitName = CDOTA_Bot_Script.GetUnitName
+function CDOTA_Bot_Script:GetUnitName()
+    if self ~= nil and self:CanBeSeen() and string.find(o_GetUnitName(self), 'lone_druid_bear') then
+        return 'npc_dota_hero_lone_druid_bear'
+    end
+    return o_GetUnitName(self)
+end
+
 -- int GetPlayerID()
 
 -- Gets the Player ID of the unit, used in functions that refer to a player rather than a specific unit.

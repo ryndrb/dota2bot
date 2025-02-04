@@ -17,8 +17,9 @@ function Push.GetPushDesire(bot, lane)
     local nMaxDesire = 0.95 - 0.02
     local bMyLane = bot:GetAssignedLane() == lane
 
-	if (not bMyLane and J.GetPosition(bot) == 1 and DotaTime() < 12 * 60) -- reduce carry feeds
+	if (not bMyLane and J.GetPosition(bot) == 1 and (DotaTime() < 12 * 60 and bot:GetNetWorth() <= 5000)) -- reduce carry feeds
     or (J.IsDoingRoshan(bot) and #J.GetAlliesNearLoc(J.GetCurrentRoshanLocation(), 2800) >= 3)
+    or (#J.GetAlliesNearLoc(J.GetTormentorLocation(GetTeam()), 1600) >= 3)
 	then
 		return BOT_MODE_DESIRE_NONE
 	end

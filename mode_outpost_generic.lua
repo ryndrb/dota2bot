@@ -28,6 +28,33 @@ local ShouldHeroMoveOutsideFountain = false
 
 local fDissimilateTime = 0
 
+local fNextMovementTime = 0
+local LoneDruid = {}
+local hBearItemList = {
+	"item_quelling_blade",
+	"item_phase_boots",--bear
+	"item_maelstrom",
+	"item_desolator",
+	"item_diffusal_blade",
+	"item_assault",--bear
+	"item_ultimate_scepter",
+
+	"item_hyperstone",
+	"item_recipe_mjollnir",
+	-- "item_mjollnir",--bear
+
+	"item_eagle",
+	"item_recipe_disperser",
+	-- "item_disperser",--bear
+
+	"item_basher",
+	"item_recipe_ultimate_scepter_2",
+
+	"item_vanguard",
+	"item_recipe_abyssal_blade",
+	-- "item_abyssal_blade",--bear
+}
+
 function GetDesire()
 	if not IsEnemyTier2Down
 	then
@@ -38,6 +65,8 @@ function GetDesire()
 			IsEnemyTier2Down = true
 		end
 	end
+
+	LoneDruid = J.CheckLoneDruid()
 
 	-- 7.37 change
 	-- if bot:GetUnitName() == 'npc_dota_hero_broodmother'
@@ -349,6 +378,52 @@ function GetDesire()
 	if ShouldMoveCloseTowerForEdict
 	then
 		return BOT_ACTION_DESIRE_ABSOLUTE
+	end
+
+	if J.IsValid(LoneDruid.hero) and J.IsValid(LoneDruid.bear) and bot == LoneDruid.hero and J.IsInRange(bot, LoneDruid.bear, 1600) then
+		local nEnemyHeroes = J.GetEnemiesNearLoc(bot:GetLocation(), 1200)
+		if not J.IsInTeamFight(bot, 1600) and #nEnemyHeroes == 0 then
+			for i = 0, 8 do
+				local hItem = bot:GetItemInSlot(i)
+				if hItem ~= nil then
+					for _, itemName in pairs(hBearItemList) do
+						local hItemName = hItem:GetName()
+						if hItemName == itemName then
+							if itemName == 'item_hyperstone' then
+								if J.HasItem(LoneDruid.bear, 'item_assault') then
+									bot.dropItem = hItem
+									bot.isGiveItem = true
+									return BOT_MODE_DESIRE_ABSOLUTE
+								end
+							else
+								bot.dropItem = hItem
+								bot.isGiveItem = true
+								return BOT_MODE_DESIRE_ABSOLUTE
+							end
+						end
+					end
+				end
+			end
+		else
+			bot.isGiveItem = false
+		end
+	end
+
+	if J.IsValid(LoneDruid.bear) and J.IsValid(LoneDruid.hero) and bot == LoneDruid.bear then
+		bot:SetTarget(J.GetProperTarget(LoneDruid.hero))
+		if LoneDruid.hero.dropItem ~= nil then
+			return BOT_MODE_DESIRE_ABSOLUTE
+		end
+
+		if not J.IsInRange(bot, LoneDruid.hero, 1100)
+		or (J.IsInRange(bot, LoneDruid.hero, 1100) and not J.IsRetreating(bot))
+		then
+			if J.IsInLaningPhase() --[[or J.IsInTeamFight(bot, 1200)]] then
+				return 0.88
+			else
+				return 2
+			end
+		end
 	end
 
 	----------
@@ -687,6 +762,113 @@ function Think()
 
 	if J.CanNotUseAction(bot) then return end
 
+	-- Lone Druid Bear
+	if J.IsValid(LoneDruid.hero) and J.IsValid(LoneDruid.bear) then
+		if bot.dropItem ~= nil and bot == LoneDruid.hero  then
+			if GetUnitToUnitDistance(bot, LoneDruid.bear) > 80 then
+				bot:Action_MoveDirectly(LoneDruid.bear:GetLocation())
+				return
+			else
+				bot:Action_DropItem(bot.dropItem, LoneDruid.bear:GetLocation())
+				LoneDruid.hero.isGiveItem = false
+				return
+			end
+		end
+
+		if bot == LoneDruid.bear then
+			if LoneDruid.hero.isGiveItem == true then
+				bot:Action_MoveDirectly(LoneDruid.hero:GetLocation())
+				return
+			else
+				for _, droppedItem in pairs(GetDroppedItemList()) do
+					if droppedItem ~= nil and droppedItem.owner == LoneDruid.hero then
+						if droppedItem.item == LoneDruid.hero.dropItem then
+							bot:Action_PickUpItem(LoneDruid.hero.dropItem)
+							LoneDruid.hero.dropItem = nil
+							return
+						end
+					end
+				end
+			end
+
+			if not J.IsInRange(bot, LoneDruid.hero, 1100) then
+				bot:Action_MoveToLocation(LoneDruid.hero:GetLocation())
+				return
+			end
+
+			local nInRangeEnemy = J.GetEnemiesNearLoc(bot:GetLocation(), 1600)
+			local botTarget = J.GetProperTarget(LoneDruid.hero)
+
+			if J.IsGoingOnSomeone(LoneDruid.hero)
+			or (J.IsInTeamFight(LoneDruid.hero, 1600) or J.IsInTeamFight(bot, 1600))
+			or (J.IsRetreating(LoneDruid.hero) and (#nInRangeEnemy == 1 or J.WeAreStronger(bot, 1200)))
+			-- or (J.IsInLaningPhase() and bot:WasRecentlyDamagedByAnyHero(2.0) and not bot:WasRecentlyDamagedByTower(2.0) and #nInRangeEnemy == 1)
+			then
+				botTarget = J.GetSetNearbyTarget(bot, nInRangeEnemy)
+				if J.IsValidHero(botTarget) then
+					bot:SetTarget(botTarget)
+					bot:Action_AttackUnit(botTarget, false)
+					return
+				end
+			end
+
+			if J.IsFarming(LoneDruid.hero)
+			or J.IsPushing(LoneDruid.hero)
+			or (J.IsLaning(LoneDruid.hero) and not bot:WasRecentlyDamagedByAnyHero(2.0) and not bot:WasRecentlyDamagedByCreep(1.0) and #nInRangeEnemy == 0)
+			or (J.IsDefending(LoneDruid.hero) and #nInRangeEnemy == 0)
+			or J.IsDoingRoshan(LoneDruid.hero)
+			or J.IsDoingTormentor(LoneDruid.hero)
+			or #nInRangeEnemy == 0
+			then
+				local targetHP = 99999
+				local nEnemyCreeps = bot:GetNearbyCreeps(1600, true)
+				for _, creep in pairs(nEnemyCreeps) do
+					if J.IsValid(creep)
+					and J.CanBeAttacked(creep)
+					and J.IsInRange(creep, LoneDruid.hero, 1100)
+					then
+						local creepHP = creep:GetHealth()
+						if creepHP < targetHP then
+							targetHP = creepHP
+							botTarget = creep
+						end
+					end
+				end
+
+				if botTarget ~= nil and botTarget:IsCreep() then
+					bot:Action_AttackUnit(botTarget, false)
+					return
+				end
+			end
+
+			local buildingTarget = J.GetProperTarget(LoneDruid.hero)
+			if J.IsValidBuilding(buildingTarget) and not bot:WasRecentlyDamagedByTower(1.5) then
+				bot:Action_AttackUnit(buildingTarget, false)
+				return
+			end
+
+			-- TODO: retreat better, specially in lane
+
+			if DotaTime() >= fNextMovementTime then
+				if J.IsInLaningPhase() and #nInRangeEnemy > 0 then
+					local heroLocation = LoneDruid.hero:GetLocation()
+					local tempRadians = LoneDruid.hero:GetFacing() * math.pi / 180
+					local rightVector = Vector(math.sin(tempRadians), -math.cos(tempRadians), 0)
+					bot:Action_MoveToLocation(heroLocation + 300 * rightVector)
+					-- bot:Action_MoveToLocation(J.GetRandomLocationWithinDist(bot:GetLocation(), 150, 600))
+				else
+					if J.IsInTeamFight(bot, 1200) then
+						bot:Action_MoveToLocation(J.GetRandomLocationWithinDist(bot:GetLocation(), 150, 600))
+					else
+						bot:Action_MoveToLocation(J.GetFaceTowardDistanceLocation(LoneDruid.hero, 600))
+					end
+				end
+				fNextMovementTime = DotaTime() + math.random(0.2, 0.5)
+				return
+			end
+		end
+	end
+
 	-- Huskar
 	if ShouldHuskarMoveOutsideFountain
 	then
@@ -763,6 +945,7 @@ function Think()
 				if  J.Item.GetItemCharges(bot, 'item_tpscroll') <= 1
 				and not J.IsMeepoClone(bot)
 				and bot:GetGold() >= GetItemCost('item_tpscroll')
+				and not string.find(bot:GetUnitName(), 'bear')
 				then
 					bot:ActionImmediate_PurchaseItem('item_tpscroll')
 					return

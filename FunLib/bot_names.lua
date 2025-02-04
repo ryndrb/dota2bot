@@ -55,6 +55,7 @@ local tProTeams = {
             [2] = {"Nightfall", "gpk-", "MieRo`", "Save-", "TORONTOTOKYO"},
             [3] = {"Saika", "gpk-", "MieRo`", "Save-", "TORONTOTOKYO"},
             [4] = {"Pure", "kiyotaka", "MieRo`", "Save-", "Kataomi`"},
+            [5] = {"Pure", "gpk-", "MieRo`", "Save-", "Kataomi`"},
         }
     },
     [5] = {
@@ -141,6 +142,7 @@ local tProTeams = {
         ['rosters'] = {
             [1] = {"dyrachyo", "BOOM", "Ace", "tOfu", "Seleri"},
             [2] = {"dyrachyo", "Quinn", "Ace", "tOfu", "Seleri"},
+            [3] = {"医者watson`", "Quinn", "Ace", "tOfu", "Seleri"},
         }
     },
     [11] = {
@@ -149,6 +151,7 @@ local tProTeams = {
         ['rosters'] = {
             [1] = {"K1", "4nalog <01", "Davai Lama", "Scofield", "KJ"},
             [2] = {"ɹǝʞɹɐd", "4nalog <01", "Davai Lama", "Scofield", "KJ"},
+            [2] = {"Yuma", "4nalog", "Wisper", "Scofield", "KJ"},
         }
     },
     [12] = {
@@ -244,6 +247,7 @@ local tProTeams = {
         ['rosters'] = {
             [1] = {"23savage", "Mikoto", "kpii", "Q", "Hyde"},
             [2] = {"23savage", "Mikoto", "Jabz", "Q", "Oli"},
+            [3] = {"Natsumi", "Mikoto", "Ws", "Jhocam", "Kuku"},
         }
     },
     [35] = {
@@ -307,6 +311,8 @@ local tProTeams = {
             [2] = {"skiter", "Nine", "33", "Saksa", "Sneyking"},
             [3] = {"skiter", "Topson", "33", "Nine", "Sneyking"},
             [4] = {"Pure~", "Topson", "RAMZES666", "9Class", "Whitemon"},
+            [5] = {"Nightfall", "lorenof", "33", "Saksa", "Whitemon"},
+            [6] = {"dyrachyo", "bzm", "33", "Saksa", "Whitemon"},
         }
     },
     [25] = {
@@ -344,6 +350,14 @@ local tProTeams = {
         ['alias'] = 'PARIVISION',
         ['rosters'] = {
             [1] = {"Crystallis", "No[o]ne-", "DM", "9Class", "Dukalis"},
+            [2] = {"Satanic", "No[o]ne-", "DM", "9Class", "Dukalis"},
+        }
+    },
+    [39] = {
+        ['team_org'] = 'AVULUS',
+        ['alias'] = 'AVULUS',
+        ['rosters'] = {
+            [1] = {"Smiling Knight", "Stormstormer", "Xibbe", "Ekki", "SoNNeikO"},
         }
     },
 }

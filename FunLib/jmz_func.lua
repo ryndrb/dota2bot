@@ -5110,7 +5110,7 @@ function J.IsNonStableHero(hName)
 		['npc_dota_hero_elder_titan'] = true,
 		['npc_dota_hero_hoodwink'] = true,
 		['npc_dota_hero_kez'] = true,
-		['npc_dota_hero_lone_druid'] = true,
+		-- ['npc_dota_hero_lone_druid'] = true,
 		['npc_dota_hero_marci'] = true,
 		['npc_dota_hero_muerta'] = true,
 		['npc_dota_hero_primal_beast'] = true,
@@ -5315,6 +5315,114 @@ end
 
 function J.DotProduct(A, B)
 	return A.x * B.x + A.y * B.y + A.z * B.z
+end
+
+function J.CheckLoneDruid()
+	local ld = {hero=nil,bear=nil}
+	for _, unit in pairs(GetUnitList(UNIT_LIST_ALL)) do
+		if J.IsValid(unit) and not J.IsSuspiciousIllusion(unit) then
+			local unitName = unit:GetUnitName()
+			if unitName == 'npc_dota_hero_lone_druid' then
+				ld.hero = unit
+			elseif unitName == 'npc_dota_hero_lone_druid_bear' then
+				ld.bear = unit
+			end
+		end
+	end
+	return ld
+end
+
+-- test for a while
+-- TODO: hero specifics in the context of how bots play
+local targetTime = 0
+local target = nil
+function J.GetSetNearbyTarget(bot, tUnits)
+    if J.IsValidHero(target)
+	and J.CanBeAttacked(target)
+	and not J.IsSuspiciousIllusion(target)
+	and not target:HasModifier('modifier_abaddon_borrowed_time')
+	and not target:HasModifier('modifier_necrolyte_reapers_scythe')
+	and not target:HasModifier('modifier_necrolyte_sadist_active')
+	and not target:HasModifier('modifier_skeleton_king_reincarnation_scepter_active')
+	and not target:HasModifier('modifier_troll_warlord_battle_trance')
+	and not target:HasModifier('modifier_ursa_enrage')
+	and not target:HasModifier('modifier_item_blade_mail_reflect')
+	and not target:HasModifier('modifier_item_aeon_disk_buff')
+	and DotaTime() < targetTime + 5
+	then
+		return target
+	else
+		targetTime = 0
+	end
+
+    local __target = nil
+    local targetScore = 0
+    for _, enemy in pairs(tUnits) do
+        if J.IsValidHero(enemy)
+        and not J.IsSuspiciousIllusion(enemy)
+		and not enemy:HasModifier('modifier_abaddon_borrowed_time')
+		and not enemy:HasModifier('modifier_necrolyte_reapers_scythe')
+		and not enemy:HasModifier('modifier_skeleton_king_reincarnation_scepter_active')
+		and not enemy:HasModifier('modifier_troll_warlord_battle_trance')
+		and not enemy:HasModifier('modifier_ursa_enrage')
+		and not enemy:HasModifier('modifier_item_blade_mail_reflect')
+		and not enemy:HasModifier('modifier_item_aeon_disk_buff')
+        and J.CanBeAttacked(enemy) then
+            local enemyName = enemy:GetUnitName()
+			local mul = 1
+
+            if enemyName == 'npc_dota_hero_sniper' then
+				mul = 4
+			elseif enemyName == 'npc_dota_hero_drow_ranger' then
+				mul = 2
+			elseif enemyName == 'npc_dota_hero_crystal_maiden' and not X.IsModifierInRadius('modifier_crystal_maiden_freezing_field_slow', 1600) then
+				mul = 2
+			elseif enemyName == 'npc_dota_hero_jakiro' and not X.IsModifierInRadius('modifier_jakiro_macropyre_burn', 1600) then
+				mul = 2.5
+			elseif enemyName == 'npc_dota_hero_lina' then
+				mul = 3
+			elseif enemyName == 'npc_dota_hero_nevermore' then
+				mul = 3
+			elseif enemyName == 'npc_dota_hero_bristleback' and not enemy:IsFacingLocation(bot:GetLocation(), 90) then
+				mul = 0.5
+			elseif enemyName == 'npc_dota_hero_enchantress' and enemy:GetLevel() >= 6 then
+				mul = 0.5
+            end
+
+			if enemyName ~= 'npc_dota_hero_bristleback' then
+				if J.IsCore(enemy) then
+					mul = mul * 1.5
+				else
+					mul = mul * 0.5
+				end
+			end
+
+            local enemyScore = (Min(1, bot:GetAttackRange() / GetUnitToUnitDistance(bot, enemy)))
+								* ((1-J.GetHP(enemy)) * bot:GetEstimatedDamageToTarget(true, enemy, 10.0, DAMAGE_TYPE_ALL))
+								* mul
+            if enemyScore > targetScore then
+                targetScore = enemyScore
+                __target = enemy
+				-- print(botName, enemyName, enemyScore)
+            end
+        end
+    end
+
+	target = __target
+	targetTime = DotaTime()
+	return __target
+end
+
+function J.IsModifierInRadius(sModifierName, nRadius)
+	for _, unit in pairs(GetUnitList(UNIT_LIST_ALL)) do
+		if J.IsValid(unit)
+		and J.IsInRange(bot, unit, nRadius)
+		and unit:HasModifier(sModifierName) then
+			return true
+		end
+	end
+
+	return false
 end
 
 function J.ConsolePrintActiveMode(bot)

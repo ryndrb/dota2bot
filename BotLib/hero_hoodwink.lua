@@ -632,7 +632,7 @@ function X.ConsiderBushwhack()
                 for _, tree in pairs(nTrees) do
                     if tree then
                         if GetUnitToLocationDistance(nEnemyCreeps[1], GetTreeLocation(tree))  <= nRadius then
-                            return nLocationAoE.targetloc, false
+                            return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc, false
                         end
                     end
                 end
@@ -663,7 +663,7 @@ function X.ConsiderBushwhack()
                 for _, tree in pairs(nTrees) do
                     if tree then
                         if GetUnitToLocationDistance(nEnemyCreeps[1], GetTreeLocation(tree))  <= nRadius then
-                            return nLocationAoE.targetloc, false
+                            return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc, false
                         end
                     end
                 end
