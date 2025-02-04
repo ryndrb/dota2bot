@@ -1,4 +1,4 @@
-# DotA 2 Bot Script: Tinkering ABo(u)t [7.37]
+# DotA 2 Bot Script: Tinkering ABo(u)t [7.37] (ryndrb)
 
 This is a DotA 2 Bot Script based on [Beginner:AI NEW](https://steamcommunity.com/sharedfiles/filedetails/?id=1627071163); it's mainly for personal use.
 This is where I update this script. I very rarely, if ever, update the Steam Workshop page.
@@ -45,16 +45,15 @@ If you’ve come across this script or is using it, good feedback is always welc
     - BOT Experiment (by Furiouspuppy)
     - ExtremePush (https://github.com/insraq/dota2bots)
 
-# Tinkering ABo(u)t (ryndrb)
 - ***Heroes (Pos: 1,2,3,4,5)***
-    - <ins>Heroes Implemented Count:</ins> **125** / 126
-    - ***Bugged (due to Valve; some will be selected)***
-        - [x] Dark Willow
-        - [x] Elder Titan
-        - [x] Hoodwink
-        - [x] IO
-        - [x] Kez
-        - [ ] Lone Druid
-        - [x] Marci
-        - [x] Muerta
-        - [x] Primal Beast
+    - <ins>Heroes Implemented Count:</ins> **126** / 126
+    - Bugged (due to Valve; some can be relatively weak)
+        - Dark Willow
+        - Elder Titan
+        - Hoodwink
+        - IO
+        - Kez
+        - Lone Druid
+        - Marci
+        - Muerta
+        - Primal Beast
