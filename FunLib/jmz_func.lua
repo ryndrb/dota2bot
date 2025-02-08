@@ -5375,9 +5375,9 @@ function J.GetSetNearbyTarget(bot, tUnits)
 				mul = 4
 			elseif enemyName == 'npc_dota_hero_drow_ranger' then
 				mul = 2
-			elseif enemyName == 'npc_dota_hero_crystal_maiden' and not X.IsModifierInRadius('modifier_crystal_maiden_freezing_field_slow', 1600) then
+			elseif enemyName == 'npc_dota_hero_crystal_maiden' and not J.IsModifierInRadius('modifier_crystal_maiden_freezing_field_slow', 1600) then
 				mul = 2
-			elseif enemyName == 'npc_dota_hero_jakiro' and not X.IsModifierInRadius('modifier_jakiro_macropyre_burn', 1600) then
+			elseif enemyName == 'npc_dota_hero_jakiro' and not J.IsModifierInRadius('modifier_jakiro_macropyre_burn', 1600) then
 				mul = 2.5
 			elseif enemyName == 'npc_dota_hero_lina' then
 				mul = 3
