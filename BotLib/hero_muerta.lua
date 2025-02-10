@@ -624,7 +624,8 @@ function X.ConsiderPierceTheVeil()
 
     if J.IsDoingRoshan(bot) or J.IsDoingTormentor(bot)
     then
-        if J.IsRoshan(botTarget) or J.IsTormentor(botTarget)
+        if (J.IsRoshan(botTarget) or J.IsTormentor(botTarget))
+        and J.IsInRange(bot, botTarget, 700)
         and J.GetHP(bot) < 0.17
         and J.IsAttacking(bot)
         then

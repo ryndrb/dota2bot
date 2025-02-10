@@ -9,18 +9,13 @@ local thisBotMoveLocation = nil
 
 local botAttackRange, botHP, botMP, botHealth, botAttackDamage, botAttackSpeed, botActiveModeDesire, botTarget
 
--- TODO: persist, laning phase (can feed if not in mid), supports
--- rely in retreat mode instead of checking hp too much
-
-local retreatTime = 0
+local dontEngageTime = 0
+local lastAttackTime = 0
+local attackCooldown = 2.0 -- seconds
 
 function GetDesire()
-    if DotaTime() < retreatTime + 2.5 and not J.IsInTeamFight(bot, 3200) then
+    if DotaTime() < dontEngageTime + 2.5 then
         return 0
-    end
-
-    if J.IsRetreating(bot) and not J.IsInTeamFight(bot, 2000) then
-        retreatTime = DotaTime()
     end
 
     botAttackRange = bot:GetAttackRange() + bot:GetBoundingRadius()
@@ -29,6 +24,7 @@ function GetDesire()
     botHP = J.GetHP(bot)
     botMP = J.GetMP(bot)
     botHealth = bot:GetHealth()
+    local botLevel = bot:GetLevel()
 
     botAttackDamage = bot:GetAttackDamage()
     botAttackSpeed = bot:GetAttackSpeed()
@@ -41,8 +37,37 @@ function GetDesire()
     local tEnemyHeroes_real = J.GetEnemiesNearLoc(bot:GetLocation(), 1200)
     local tEnemyLaneCreeps = bot:GetNearbyLaneCreeps(1200, true)
 
-    if IsEnemyStrongerInTime(tEnemyHeroes, tAllyHeroes, 8.0) and not J.IsInTeamFight(bot, 3000)
-    or (J.IsInLaningPhase() and botHP < 0.4 and not J.IsInTeamFight(bot, 800))
+    if     botLevel >= 18 then attackCooldown = 10.0
+    elseif botLevel >= 16 then attackCooldown = 8.0
+    elseif botLevel >= 14 then attackCooldown = 7.5
+    elseif botLevel >= 12 then attackCooldown = 7.0
+    elseif botLevel >= 10 then attackCooldown = 6.0
+    elseif botLevel >= 8  then attackCooldown = 5.0
+    end
+
+    if (J.IsRetreating(bot) and botActiveModeDesire > 0.9 and not J.IsInTeamFight(bot, 3200))
+    or (J.IsLaning(bot) and #tEnemyLaneCreeps >= 2 and (bot:WasRecentlyDamagedByCreep(1.5) or bot:WasRecentlyDamagedByAnyHero(2.0) or bot:WasRecentlyDamagedByTower(2.0)))
+    then
+        dontEngageTime = DotaTime()
+    end
+
+    if DotaTime() < lastAttackTime + attackCooldown and #tEnemyHeroes_real > 0 then
+        local hTarget = GetTarget(tEnemyHeroes_real)
+        bot:SetTarget(hTarget)
+        return 1.0
+    end
+
+    if J.IsInTeamFight(bot, 2200)
+    or IsAllyGoingOnSomeone()
+    or (J.IsGoingOnSomeone(bot)
+        and (not J.IsInLaningPhase()
+        or (J.IsInLaningPhase() and #tEnemyLaneCreeps <= 1 and J.IsValidHero(botTarget) and GetAllDamageAttacking(botTarget, 800, 5.0) > botTarget:GetHealth() * 1.2)))
+    then
+        lastAttackTime = DotaTime()
+    end
+
+    if IsEnemyStrongerInTime(tEnemyHeroes_real, tAllyHeroes, 8.0) and not J.IsInTeamFight(bot, 3000)
+    or (J.IsInLaningPhase() and botHP < 0.4 and not J.IsInTeamFight(bot, 800) and bot:WasRecentlyDamagedByAnyHero(2.0))
     or (#tEnemyHeroes_real > #tAllyHeroes_real + 1 and not J.IsInTeamFight(bot, 3000))
     then
         return 0
@@ -59,8 +84,10 @@ function GetDesire()
         local botTargetHealth = botTarget:GetHealth()
 
         if J.IsInLaningPhase() then
-            local tEnemyTowers = bot:GetNearbyTowers(1200, true)
-            if J.IsValidBuilding(tEnemyTowers[1]) and GetAllDamageAttacking(botTarget, 800, 2.0) < botTargetHealth then
+            local tEnemyTowers = bot:GetNearbyTowers(1600, true)
+            if (J.IsValidBuilding(tEnemyTowers[1]) or botTarget:HasModifier('modifier_tower_aura') or botTarget:HasModifier('modifier_tower_aura_bonus'))
+            and GetAllDamageAttacking(botTarget, 800, 2.0) < botTargetHealth
+            then
                 return 0
             end
         end
@@ -103,7 +130,7 @@ function GetDesire()
             local member = GetTeamMember(i)
             if J.IsValidHero(member) and member ~= bot
             and J.IsGoingOnSomeone(member)
-            and J.IsInRange(bot, member, 4400)
+            and J.IsInRange(bot, member, 3200)
             then
                 local target = member:GetAttackTarget()
                 if J.IsValidHero(target) then
@@ -154,7 +181,7 @@ function GetDesire()
     --     end
     -- end
 
-    local hTarget = GetTarget(tEnemyHeroes)
+    local hTarget = GetTarget(tEnemyHeroes_real)
     if J.IsValidHero(hTarget) then
         if #tAllyHeroes_real > 1 then
             local fAllyDamage = 0
@@ -375,6 +402,22 @@ function IsEnemyStrongerInTime(tEnemyHeroes, tAllyHeroes, fDuration)
     end
 
     return fDamage > nTotalAllyHealth * 2 and nTotalAllyHealth > 500
+end
+
+function IsAllyGoingOnSomeone()
+    for i = 1, 5 do
+        local member = GetTeamMember(i)
+        if J.IsValidHero(member) and member ~= bot
+        and J.IsGoingOnSomeone(member)
+        and J.IsInRange(bot, member, 2200)
+        then
+            if J.IsValidHero(member:GetAttackTarget()) then
+                bot:SetTarget(member:GetAttackTarget())
+                return true
+            end
+        end
+    end
+    return false
 end
 
 end

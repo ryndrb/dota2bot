@@ -118,6 +118,7 @@ function GetHarassTarget(hEnemyList)
 	return nil
 end
 
+local fNextMovementTime = 0
 function Think()
 	if not bot:IsAlive() or J.CanNotUseAction(bot) then
 		clearMode = true
@@ -210,7 +211,10 @@ function Think()
 		target_loc = GetLaneFrontLocation(GetOpposingTeam(), botAssignedLane, -nFurthestEnemyAttackRange)
 	end
 
-	bot:Action_MoveToLocation(target_loc + RandomVector(50))
+	if DotaTime() >= fNextMovementTime then
+		bot:Action_MoveToLocation(target_loc)
+		fNextMovementTime = DotaTime() + math.random(0.05, 0.2)
+	end
 end
 
 function GetFurthestEnemyAttackRange()

@@ -332,7 +332,7 @@ function X.RetreatWhenTowerTargetedDesire()
 end
 
 function X.GetOtherRetreatDesire()
-    local nDesire = RemapValClamped(botHP, 1, 0, 0, 0.95)
+    local nDesire = RemapValClamped(botHP, 1, 0, 0, 0.8)
 
     if bot:DistanceFromFountain() <= 3800 then
         if (not string.find(botName, 'huskar') and botMP < 0.22 and botHP < 0.7)
@@ -381,7 +381,7 @@ function X.GetOtherRetreatDesire()
         nDesire = nDesire - 0.35
     end
 
-    return Clamp(nDesire, 0, 1)
+    return Clamp(nDesire, 0, 0.8)
 end
 
 function X.GetUnitTypeAttackingBot(nRadius, hName)
