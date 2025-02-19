@@ -55,7 +55,7 @@ local HeroBuild = {
 				"item_maelstrom",
 				"item_kaya",
 				"item_black_king_bar",--
-				"item_gungir",--
+				"item_mjollnir",--
 				"item_kaya_and_sange",--
 				"item_shivas_guard",--
 				"item_ultimate_scepter",

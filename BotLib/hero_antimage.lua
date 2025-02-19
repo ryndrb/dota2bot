@@ -82,7 +82,7 @@ local HeroBuild = {
             },
             ['buy_list'] = {
 				"item_tango",
-				"item_orb_of_venom",
+				"item_orb_of_frost",
 				"item_double_branches",
 	
 				"item_wraith_band",

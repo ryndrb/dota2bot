@@ -40,7 +40,7 @@ local HeroBuild = {
 				"item_boots",
 				"item_magic_wand",
 				"item_hand_of_midas",
-				"item_gungir",--
+				"item_mjollnir",--
 				"item_travel_boots",
 				"item_manta",--
 				"item_greater_crit",--
@@ -82,7 +82,7 @@ local HeroBuild = {
 				"item_urn_of_shadows",
 				"item_boots",
 				"item_hand_of_midas",
-				"item_gungir",--
+				"item_mjollnir",--
 				"item_travel_boots",
 				"item_blink",
 				"item_octarine_core",--
@@ -96,7 +96,7 @@ local HeroBuild = {
 				"item_aghanims_shard",
 			},
             ['sell_list'] = {
-				"item_circlet", "item_gungir",
+				"item_circlet", "item_mjollnir",
 				"item_magic_wand", "item_blink",
 				"item_bottle", "item_octarine_core",
 				"item_urn_of_shadows", "item_ultimate_scepter",
@@ -124,7 +124,7 @@ local HeroBuild = {
 				"item_magic_wand",
 				"item_boots",
 				"item_hand_of_midas",
-				"item_gungir",--
+				"item_mjollnir",--
 				"item_travel_boots",
 				"item_orchid",
 				"item_manta",--

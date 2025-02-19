@@ -54,7 +54,7 @@ local HeroBuild = {
 			
 				"item_boots",
 				"item_armlet",
-				"item_sange",
+				"item_vanguard",
 				"item_black_king_bar",--
 				"item_heavens_halberd",--
 				"item_ultimate_scepter",
@@ -94,7 +94,7 @@ local HeroBuild = {
 				"item_double_bracer",
 				"item_boots",
 				"item_armlet",
-				"item_sange",
+				"item_vanguard",
 				"item_black_king_bar",--
 				"item_heavens_halberd",--
 				sUtilityItem,--

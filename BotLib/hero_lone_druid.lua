@@ -57,7 +57,7 @@ local HeroBuild = {
 
                 "item_aghanims_shard",
 
-                "item_vanguard",
+                "item_sange",
                 "item_recipe_abyssal_blade",
                 -- "item_abyssal_blade",--bear
 
@@ -117,7 +117,7 @@ local HeroBuild = {
 
                 "item_aghanims_shard",
 
-                "item_vanguard",
+                "item_sange",
                 "item_recipe_abyssal_blade",
                 -- "item_abyssal_blade",--bear
 

@@ -30,10 +30,10 @@ local nEnemyAverageLevel = 1
 
 local RB = Vector(-7184.360840, -6689.084961, 392.750000)
 local DB = Vector(6996.191895, 6414.104004, 392.000000)
-local roshanRadiantLoc  = Vector(7625, -7511, 1092)
-local roshanDireLoc = Vector(-7549, 7562, 1107)
-local RadiantTormentorLoc = Vector(-8075, -1148, 1000)
-local DireTormentorLoc = Vector(8132, 1102, 1000)
+local roshanRadiantLoc  = Vector(2787.287354, -2752.223877, 13.998048)
+local roshanDireLoc = Vector(-2909.122559, 2185.981689, 13.998047)
+local RadiantTormentorLoc = Vector(7499.061523, -7847.331055, 256.000000)
+local DireTormentorLoc = Vector(-7229.757324, 7933.152832, 256.000000)
 local fKeepManaPercent = 0.39
 
 
@@ -4469,11 +4469,13 @@ function J.GetCurrentRoshanLocation()
 end
 
 function J.GetTormentorLocation(team)
-	if team == TEAM_RADIANT
+	local timeOfDay = J.CheckTimeOfDay()
+
+	if timeOfDay == 'day'
 	then
-		return RadiantTormentorLoc
-	else
 		return DireTormentorLoc
+	else
+		return RadiantTormentorLoc
 	end
 end
 
@@ -5101,7 +5103,7 @@ function J.IsPingCloseToValidTower(team, humanPing)
 end
 
 function J.IsRoshanCloseToChangingSides()
-    return DotaTime() % 300 >= 300 - 30
+    return DotaTime() > 15 * 60 and DotaTime() % 300 >= 300 - 30
 end
 
 function J.IsNonStableHero(hName)

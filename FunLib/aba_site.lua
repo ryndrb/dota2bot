@@ -86,7 +86,7 @@ Site["dire_base"] = Vector( 7137, 6548 )
 
 
 local visionRad = 2000 --假眼查重范围
-local trueSightRad = 1000 --真眼查重范围
+local trueSightRad = 1050 --真眼查重范围
 
 
 local RADIANT_RUNE_WARD = Vector( 2606, -1547, 0 )

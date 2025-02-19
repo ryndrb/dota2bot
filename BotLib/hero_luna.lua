@@ -40,7 +40,7 @@ local HeroBuild = {
 				"item_lifesteal",
 				"item_manta",--
 				"item_black_king_bar",--
-				"item_angels_demise",--
+				"item_greater_crit",--
 				"item_satanic",--
 				"item_butterfly",--
 				"item_travel_boots_2",--
@@ -50,7 +50,7 @@ local HeroBuild = {
 			},
             ['sell_list'] = {
 				"item_quelling_blade", "item_black_king_bar",
-				"item_magic_wand", "item_angels_demise",
+				"item_magic_wand", "item_greater_crit",
 				"item_wraith_band", "item_butterfly",
 			},
         },

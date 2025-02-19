@@ -19,7 +19,7 @@ function GetDesire()
     local tInRangeEnemy = bot:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
     local nAliveAlly = J.GetNumOfAliveHeroes(false)
 
-    local nTormentorSpawnTime = J.IsModeTurbo() and 10 or 20
+    local nTormentorSpawnTime = J.IsModeTurbo() and 7.5 or 15
 
     local nHumanCountInLoc = 0
     local nCoreCountInLoc = 0
@@ -94,9 +94,15 @@ function GetDesire()
         return BOT_MODE_DESIRE_NONE
     end
 
+    local tEnemyInTormentorLocation = J.GetEnemiesNearLoc(TormentorLocation, 1600)
+    if #tEnemyInTormentorLocation > #tAllyInTormentorLocation then
+        return BOT_MODE_DESIRE_NONE
+    end
+
     nAveCoreLevel = nAveCoreLevel / 3
     nAveSuppLevel = nAveSuppLevel / 2
 
+    -- TODO: reduce wasting time waiting for someone as the location is very far now
     -- Someone go check Tormentor
     if DotaTime() >= nTormentorSpawnTime * 60 and (DotaTime() - bot.tormentor_kill_time) >= (nTormentorSpawnTime / 2) * 60 then
         if not X.IsTormentorAlive() then

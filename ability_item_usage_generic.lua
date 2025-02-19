@@ -29,8 +29,8 @@ local bDeafaultAbilityHero = BotBuild['bDeafaultAbility']
 local bDeafaultItemHero = BotBuild['bDeafaultItem']
 local sAbilityLevelUpList = BotBuild['sSkillList']
 
-local roshanRadiantLoc  = Vector(7625, -7511, 1092)
-local roshanDireLoc     = Vector(-7549, 7562, 1107)
+local roshanRadiantLoc  = Vector(2787.287354, -2752.223877, 13.998048)
+local roshanDireLoc = Vector(-2909.122559, 2185.981689, 13.998047)
 local RadiantFountain = Vector(-6619, -6336, 384)
 local DireFountain = Vector(6928, 6372, 392)
 local roshDeathTime = 0
@@ -4684,13 +4684,14 @@ X.ConsiderItemDesire["item_tpscroll"] = function( hItem )
 		or not J.IsGoingOnSomeone(bot)
 		or not J.IsDefending(bot))
 	then
-		local loc = J.GetTormentorLocation(GetTeam())
-
-		hEffectTarget = J.GetNearbyLocationToTp(loc)
+		local tormentorLocation = J.GetTormentorLocation(GetTeam())
+		local tpLocation = J.GetNearbyLocationToTp(tormentorLocation)
+		local distToTPLocation = GetUnitToLocationDistance(bot, tpLocation)
+		local distToTormentor = GetUnitToLocationDistance(bot, tormentorLocation)
+		local distTPLocationToTormentor = J.GetLocationToLocationDistance(tpLocation, tormentorLocation)
 		sCastMotive = 'tormentor'
 
-		if J.GetLocationToLocationDistance(bot:GetLocation(), hEffectTarget) > 4400
-		then
+		if distToTPLocation > 4400 and distToTormentor > distTPLocationToTormentor then
 			if bot:GetUnitName() == 'npc_dota_hero_furion'
 			then
 				local Teleportation = bot:GetAbilityByName('furion_teleportation')
@@ -4698,12 +4699,12 @@ X.ConsiderItemDesire["item_tpscroll"] = function( hItem )
 				and Teleportation:IsFullyCastable()
 				then
 					bot.useProphetTP = true
-					bot.ProphetTPLocation = hEffectTarget
+					bot.ProphetTPLocation = tpLocation
 					return BOT_ACTION_DESIRE_NONE
 				end
 			end
 
-			return BOT_ACTION_DESIRE_HIGH, hEffectTarget, sCastType, sCastMotive
+			return BOT_ACTION_DESIRE_HIGH, tpLocation, sCastType, sCastMotive
 		end
 	end
 
@@ -7136,7 +7137,7 @@ X.ConsiderItemDesire["item_seer_stone"] = function(hItem)
 
 	-- For Roshan Scout
 	local nInSightEnemy = 0
-	for _, enemyHero in pairs(GetUnitList(UNIT_LIST_ALLIED_HEROES))
+	for _, enemyHero in pairs(GetUnitList(UNIT_LIST_ENEMY_HEROES))
 	do
 		if  J.IsValidHero(enemyHero)
 		and not J.IsSuspiciousIllusion(enemyHero)

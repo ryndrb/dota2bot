@@ -42,7 +42,7 @@ local HeroBuild = {
                 "item_vladmir",
                 "item_manta",--
                 "item_black_king_bar",--
-                "item_angels_demise",--
+                "item_greater_crit",--
                 "item_butterfly",--
                 "item_aghanims_shard",
                 "item_satanic",--
@@ -52,7 +52,7 @@ local HeroBuild = {
             },
             ['sell_list'] = {
                 "item_quelling_blade", "item_black_king_bar",
-                "item_magic_wand", "item_angels_demise",
+                "item_magic_wand", "item_greater_crit",
                 "item_wraith_band", "item_butterfly",
                 "item_vladmir", "item_satanic",
                 "item_power_treads", "item_skadi",
@@ -122,7 +122,7 @@ local HeroBuild = {
                 "item_vladmir",
                 "item_manta",--
                 "item_black_king_bar",--
-                "item_angels_demise",--
+                "item_greater_crit",--
                 "item_butterfly",--
                 "item_aghanims_shard",
                 "item_satanic",--
@@ -132,7 +132,7 @@ local HeroBuild = {
             },
             ['sell_list'] = {
                 "item_magic_wand", "item_black_king_bar",
-                "item_bottle", "item_angels_demise",
+                "item_bottle", "item_greater_crit",
                 "item_wraith_band", "item_butterfly",
                 "item_vladmir", "item_satanic",
                 "item_power_treads", "item_disperser",

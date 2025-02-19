@@ -81,7 +81,7 @@ local HeroBuild = {
                 "item_maelstrom",
                 "item_orchid",
                 "item_black_king_bar",--
-                "item_gungir",--
+                "item_mjollnir",--
                 "item_aghanims_shard",
                 "item_assault",--
                 "item_satanic",--
