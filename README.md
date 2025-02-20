@@ -1,4 +1,4 @@
-# DotA 2 Bot Script: Tinkering ABo(u)t [7.37] (ryndrb)
+# DotA 2 Bot Script: Tinkering ABo(u)t [7.38] (ryndrb)
 
 This is a DotA 2 Bot Script based on [Beginner:AI NEW](https://steamcommunity.com/sharedfiles/filedetails/?id=1627071163); it's mainly for personal use.
 This is where I update this script. I very rarely, if ever, update the Steam Workshop page.

@@ -171,6 +171,8 @@ local OvergrowthDesire
 
 local BlinkOvergrowthDesire, BlinkLocation
 
+local bLeechSeedGround = false
+
 function X.SkillsComplement()
 	if J.CanNotUseAbility(bot) then return end
 
@@ -207,7 +209,13 @@ function X.SkillsComplement()
     LeechSeedDesire, LeechSeedTarget = X.ConsiderLeechSeed()
     if LeechSeedDesire > 0
     then
-        bot:Action_UseAbilityOnEntity(LeechSeed, LeechSeedTarget)
+        if bLeechSeedGround then
+            bot:Action_UseAbilityOnLocation(LeechSeed, LeechSeedTarget)
+            bLeechSeedGround = false
+            return
+        else
+            bot:Action_UseAbilityOnEntity(LeechSeed, LeechSeedTarget)
+        end
         return
     end
 
@@ -371,10 +379,23 @@ function X.ConsiderLeechSeed()
     end
 
     local nCastRange = J.GetProperCastRange(false, bot, LeechSeed:GetCastRange())
+    local nRadius = LeechSeed:GetSpecialValueInt('radius')
     local botTarget = J.GetProperTarget(bot)
 
     if J.IsGoingOnSomeone(bot)
 	then
+        bLeechSeedGround = false
+        if J.IsValidHero(botTarget)
+        and J.CanCastOnNonMagicImmune(botTarget)
+        and not J.IsChasingTarget(bot, botTarget)
+        then
+            local nLocationAoE = bot:FindAoELocation(true, true, botTarget:GetLocation(), 0, nRadius, 0, 0)
+            if nLocationAoE.count >= 2 and GetUnitToLocationDistance(bot, nLocationAoE.targetloc) <= nCastRange then
+                bLeechSeedGround = true
+                return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc
+            end
+        end
+
         local nInRangeEnemy = bot:GetNearbyHeroes(1200, true, BOT_MODE_NONE)
         local target = nil
         local dmg = 0
@@ -440,7 +461,8 @@ function X.ConsiderLeechSeed()
         and J.IsInRange(bot, botTarget, 500)
         and J.IsAttacking(bot)
         then
-            return BOT_ACTION_DESIRE_HIGH, botTarget
+            bLeechSeedGround = true
+            return BOT_ACTION_DESIRE_HIGH, bot:GetLocation()
         end
     end
 
@@ -450,7 +472,8 @@ function X.ConsiderLeechSeed()
         and J.IsInRange(bot, botTarget, 500)
         and J.IsAttacking(bot)
         then
-            return BOT_ACTION_DESIRE_HIGH, botTarget
+            bLeechSeedGround = true
+            return BOT_ACTION_DESIRE_HIGH, bot:GetLocation()
         end
     end
 

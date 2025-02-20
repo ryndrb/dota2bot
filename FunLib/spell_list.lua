@@ -96,6 +96,7 @@ X['spells'] = {
         ['bristleback_quill_spray'] = {weight = 1},
         ['bristleback_bristleback'] = {weight = 0.9},
         ['bristleback_hairball'] = {weight = 0.5},
+        ['bristleback_warpath'] = {weight = 1},
     },
     
     ['npc_dota_hero_broodmother'] = {
@@ -712,6 +713,7 @@ X['spells'] = {
         ['shredder_chakram_2'] = {weight = 0.5},
         ['shredder_return_chakram_2'] = {weight = 1},
         ['shredder_flamethrower'] = {weight = 0.5},
+        ['shredder_twisted_chakram'] = {weight = 0.5},
     },
 
     ['npc_dota_hero_silencer'] = {
@@ -827,7 +829,7 @@ X['spells'] = {
 
     ['npc_dota_hero_tidehunter'] = {
         ['tidehunter_gush'] = {weight = 0.5},
-        ['tidehunter_kraken_shell'] = {weight = 1},
+        ['tidehunter_kraken_shell'] = {weight = 0.4},
         ['tidehunter_anchor_smash'] = {weight = 0.5},
         [ 'tidehunter_dead_in_the_water' ] = {weight = 0.1},
         ['tidehunter_ravage'] = {weight = 0.1},
@@ -874,7 +876,8 @@ X['spells'] = {
         ['tusk_ice_shards'] = {weight = 0.6},
         ['tusk_snowball'] = {weight = 0.8},
         ['tusk_launch_snowball'] = {weight = 1},
-        ['tusk_tag_team'] = {weight = 0.8},
+        ['tusk_tag_team'] = {weight = 0.5},
+        ['tusk_drinking_buddies'] = {weight = 0.5},
         ['tusk_walrus_kick'] = {weight = 1},
         ['tusk_walrus_punch'] = {weight = 0.4},
     },

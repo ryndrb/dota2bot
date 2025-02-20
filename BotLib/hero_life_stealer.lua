@@ -447,7 +447,7 @@ function X.ConsiderInfest()
 
                 local nEnemyCreeps = bot:GetNearbyCreeps(777, true)
                 for _, creep in pairs(nEnemyCreeps) do
-                    if J.IsValid(creep) then
+                    if J.IsValid(creep) and not creep:IsAncientCreep() then
                         bot.infest_target = 'creep'
                         return BOT_ACTION_DESIRE_HIGH, creep
                     end
