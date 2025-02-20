@@ -299,8 +299,8 @@ function X.SkillsComplement()
 		if CanRemnantRollCombo
 		then
 			bot:Action_ClearActions(false)
-			bot:ActionQueue_UseAbilityOnLocation(RollingBoulder, RollingBoulderLocation)
 			bot:ActionQueue_UseAbilityOnLocation(StoneRemnant, bot:GetLocation())
+			bot:ActionQueue_UseAbilityOnLocation(RollingBoulder, RollingBoulderLocation)
 			return
 		else
 			bot:Action_UseAbilityOnLocation(RollingBoulder, RollingBoulderLocation)
@@ -321,8 +321,8 @@ function X.SkillsComplement()
 		if CanRemnantSmashCombo
 		then
 			bot:Action_ClearActions(false)
-			bot:ActionQueue_UseAbilityOnLocation(BoulderSmash, BoulderSmashLocation)
 			bot:ActionQueue_UseAbilityOnLocation(StoneRemnant, bot:GetLocation())
+			bot:ActionQueue_UseAbilityOnLocation(BoulderSmash, BoulderSmashLocation)
 			return
 		else
 			if CanKickNearby
