@@ -201,11 +201,13 @@ end
 local Bloodrage = bot:GetAbilityByName('bloodseeker_bloodrage')
 local Bloodrite = bot:GetAbilityByName('bloodseeker_blood_bath')
 local BloodMist = bot:GetAbilityByName('bloodseeker_blood_mist')
+local Thirst = bot:GetAbilityByName('bloodseeker_thirst')
 local Rupture = bot:GetAbilityByName('bloodseeker_rupture')
 
 local BloodrageDesire, BloodrageTarget
 local BloodriteDesire, BloodriteLocation
 local BloodMistDesire
+local ThirstDesire
 local RuptureDesire, RuptureTarget
 
 function X.SkillsComplement()
@@ -214,6 +216,7 @@ function X.SkillsComplement()
 	Bloodrage = bot:GetAbilityByName('bloodseeker_bloodrage')
 	Bloodrite = bot:GetAbilityByName('bloodseeker_blood_bath')
 	BloodMist = bot:GetAbilityByName('bloodseeker_blood_mist')
+	Thirst = bot:GetAbilityByName('bloodseeker_thirst')
 	Rupture = bot:GetAbilityByName('bloodseeker_rupture')
 
 	BloodMistDesire = X.ConsiderBloodMist()
@@ -237,6 +240,12 @@ function X.SkillsComplement()
 	then
 		J.SetQueuePtToINT( bot, false )
 		bot:ActionQueue_UseAbilityOnEntity( Bloodrage, BloodrageTarget )
+		return
+	end
+
+	ThirstDesire = X.ConsiderThirst()
+	if ThirstDesire > 0 then
+		bot:Action_UseAbility(Thirst)
 		return
 	end
 
@@ -503,6 +512,72 @@ function X.ConsiderBloodMist()
 		and J.CanCastOnNonMagicImmune(botTarget)
 		then
 			return BOT_ACTION_DESIRE_HIGH
+		end
+	end
+
+	return BOT_ACTION_DESIRE_NONE
+end
+
+function X.ConsiderThirst()
+	if not J.CanCastAbility(Thirst) then
+		return BOT_ACTION_DESIRE_NONE
+	end
+
+	local botTarget = J.GetProperTarget(bot)
+
+	local bSomeoneUnhealthy = false
+	for _, enemy in pairs(GetUnitList(UNIT_LIST_ENEMY_HEROES)) do
+		if J.IsValidHero(enemy)
+		and not J.IsSuspiciousIllusion(enemy)
+		and J.GetHP(enemy) < 0.9
+		then
+			bSomeoneUnhealthy = true
+			break
+		end
+	end
+
+	if bSomeoneUnhealthy then
+		if J.IsGoingOnSomeone(bot) then
+			if J.IsValidHero(botTarget)
+			and J.CanBeAttacked(botTarget)
+			and J.IsInRange(bot, botTarget, 900)
+			and not botTarget:HasModifier('modifier_abaddon_borrowed_time')
+			and not botTarget:HasModifier('modifier_faceless_void_chronosphere_freeze')
+			and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
+			and not botTarget:HasModifier('modifier_troll_warlord_battle_trance')
+			and not botTarget:HasModifier('modifier_ursa_enrage')
+			then
+				return BOT_ACTION_DESIRE_HIGH
+			end
+		end
+
+		local nAllyHeroes = bot:GetNearbyHeroes(1600, false, BOT_MODE_NONE)
+		local nEnemyHeroes = bot:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
+		local botHP = J.GetHP(bot)
+
+		if J.IsRetreating(bot) and J.CanBeAttacked(bot) and not J.IsRealInvisible(bot) then
+			for _, enemyHero in pairs(nEnemyHeroes) do
+				if J.IsValidHero(enemyHero) and J.IsInRange(bot, enemyHero, 750) and J.IsChasingTarget(enemyHero, bot) then
+					if (botHP < 0.5 and bot:WasRecentlyDamagedByAnyHero(3.0))
+					or (#nEnemyHeroes > #nAllyHeroes)
+					then
+						return BOT_ACTION_DESIRE_HIGH
+					end
+				end
+			end
+		end
+
+		if (J.IsFarming(bot) and #nEnemyHeroes == 0) or (J.IsLaning(bot) and not bot:WasRecentlyDamagedByAnyHero(2.0)) then
+			local attackTarget = bot:GetAttackTarget()
+			if J.IsValid(attackTarget)
+			and attackTarget:IsCreep()
+			and J.CanBeAttacked(attackTarget)
+			and J.IsAttacking(bot)
+			and botHP < 0.3
+			and attackTarget:GetHealth() < bot:GetAttackDamage() * 1.5
+			then
+				return BOT_ACTION_DESIRE_HIGH
+			end
 		end
 	end
 

@@ -72,6 +72,7 @@ X['spells'] = {
         ['bloodseeker_bloodrage'] = {weight = 1},
         ['bloodseeker_blood_bath'] = {weight = 0.9},
         ['bloodseeker_blood_mist'] = {weight = 1},
+        ['bloodseeker_thirst'] = {weight = 0.9},
         ['bloodseeker_rupture'] = {weight = 0.3},
     },
     
@@ -260,6 +261,7 @@ X['spells'] = {
         ['faceless_void_time_dilation'] = {weight = 0.8},
         ['faceless_void_time_walk_reverse'] = {weight = 1},
         ['faceless_void_chronosphere'] = {weight = 0.1},
+        ['faceless_void_time_zone'] = {weight = 0.1},
     },
     
     ['npc_dota_hero_furion'] = {
@@ -501,6 +503,7 @@ X['spells'] = {
         ['naga_siren_mirror_image'] = {weight = 0.9},
         ['naga_siren_ensnare'] = {weight = 0.2},
         ['naga_siren_rip_tide'] = {weight = 1},
+        ['naga_siren_deluge'] = {weight = 1},
         ['naga_siren_reel_in' ] = {weight = 1},
         ['naga_siren_song_of_the_siren'] = {weight = 0.5},
         [ 'naga_siren_song_of_the_siren_cancel' ] = {weight = 1},

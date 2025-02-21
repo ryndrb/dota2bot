@@ -132,11 +132,13 @@ local TimeWalk 			= bot:GetAbilityByName('faceless_void_time_walk')
 local TimeDilation 		= bot:GetAbilityByName('faceless_void_time_dilation')
 local TimeWalkReverse 	= bot:GetAbilityByName('faceless_void_time_walk_reverse')
 local Chronosphere 		= bot:GetAbilityByName('faceless_void_chronosphere')
+local Timezone   		= bot:GetAbilityByName('faceless_void_time_zone')
 
 local TimeWalkDesire, TimeWalkLocation
 local TimeDilationDesire
 local ChronosphereDesire, ChronosphereLocation
 local TimeWalkReverseDesire
+local TimezoneDesire, TimezoneLocation
 
 local TimeWalkPrevLocation
 
@@ -149,6 +151,7 @@ function X.SkillsComplement()
     TimeDilation 		= bot:GetAbilityByName('faceless_void_time_dilation')
     TimeWalkReverse 	= bot:GetAbilityByName('faceless_void_time_walk_reverse')
     Chronosphere 		= bot:GetAbilityByName('faceless_void_chronosphere')
+	Timezone   			= bot:GetAbilityByName('faceless_void_time_zone')
 
 	botTarget = J.GetProperTarget(bot)
 
@@ -180,6 +183,13 @@ function X.SkillsComplement()
     if ChronosphereDesire > 0
 	then
 		bot:Action_UseAbilityOnLocation(Chronosphere, ChronosphereLocation)
+		return
+	end
+
+	TimezoneDesire, TimezoneLocation = X.ConsiderTimezone()
+    if TimezoneDesire > 0
+	then
+		bot:Action_UseAbilityOnLocation(Timezone, TimezoneLocation)
 		return
 	end
 end
@@ -631,6 +641,41 @@ function X.ConsiderChronosphere()
                 end
             end
         end
+	end
+
+	return BOT_ACTION_DESIRE_NONE, 0
+end
+
+function X.ConsiderTimezone()
+	if not J.CanCastAbility(Timezone) then
+		return BOT_ACTION_DESIRE_NONE, 0
+	end
+
+	local nCastRange = J.GetProperCastRange(false, bot, Timezone:GetCastRange())
+	local nRadius = TimeDilation:GetSpecialValueInt('radius')
+
+	if J.IsInTeamFight(bot, 1600) then
+		local nLocationAoE = bot:FindAoELocation(true, true, bot:GetLocation(), nCastRange, nRadius, 0, 0)
+		local nAllyHeroes = J.GetAlliesNearLoc(nLocationAoE.targetloc, nRadius)
+		local nEnemyHeroes = J.GetEnemiesNearLoc(nLocationAoE.targetloc, nRadius)
+		if (#nAllyHeroes >= 2 and #nEnemyHeroes >= 2) then
+			local nGoodEnemies = 0
+			for _, enemyHero in pairs(nEnemyHeroes) do
+				if J.IsValidHero(enemyHero)
+				and not J.IsSuspiciousIllusion(enemyHero)
+				and J.GetHP(enemyHero) > 0.25
+				and J.CanBeAttacked(enemyHero)
+				and not enemyHero:HasModifier('modifier_abaddon_borrowed_time')
+				and not enemyHero:HasModifier('modifier_necrolyte_reapers_scythe')
+				then
+					nGoodEnemies = nGoodEnemies + 1
+				end
+			end
+
+			if nGoodEnemies >= 2 then
+				return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc
+			end
+		end
 	end
 
 	return BOT_ACTION_DESIRE_NONE, 0

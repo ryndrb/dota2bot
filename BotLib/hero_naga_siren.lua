@@ -171,15 +171,17 @@ local abilityQ = bot:GetAbilityByName('naga_siren_mirror_image')
 local abilityW = bot:GetAbilityByName('naga_siren_ensnare')
 local abilityE = bot:GetAbilityByName('naga_siren_rip_tide')
 local ReelIn = bot:GetAbilityByName( 'naga_siren_reel_in' )
+local Deluge = bot:GetAbilityByName( 'naga_siren_deluge' )
 local abilityR = bot:GetAbilityByName('naga_siren_song_of_the_siren')
 local abilitySR = bot:GetAbilityByName( 'naga_siren_song_of_the_siren_cancel' )
 
 local castQDesire, castQTarget
 local castWDesire, castWTarget
 local castEDesire, castETarget
+local ReelInDesire
+local DelugeDesire
 local castRDesire, castRTarget
 local castSRDesire, castSRTarget
-local ReelInDesire
 
 local nKeepMana,nMP,nHP,nLV,hEnemyList,hAllyList,botTarget,sMotive;
 local aetherRange = 0
@@ -193,6 +195,7 @@ function X.SkillsComplement()
 	abilityW = bot:GetAbilityByName('naga_siren_ensnare')
 	abilityE = bot:GetAbilityByName('naga_siren_rip_tide')
 	ReelIn = bot:GetAbilityByName( 'naga_siren_reel_in' )
+	Deluge = bot:GetAbilityByName( 'naga_siren_deluge' )
 	abilityR = bot:GetAbilityByName('naga_siren_song_of_the_siren')
 	abilitySR = bot:GetAbilityByName( 'naga_siren_song_of_the_siren_cancel' )
 	
@@ -256,6 +259,12 @@ function X.SkillsComplement()
 		bot:Action_UseAbility( abilitySR )
 		return;
 	
+	end
+
+	DelugeDesire = X.ConsiderDeluge()
+	if DelugeDesire > 0 then
+		bot:Action_UseAbility(Deluge)
+		return
 	end
 
 end
@@ -656,6 +665,47 @@ function X.ConsiderReelIn()
 		and #nInRangeAllyList >= #nInRangeEnemyList
 		then
 			return BOT_ACTION_DESIRE_HIGH
+		end
+	end
+
+	return BOT_ACTION_DESIRE_NONE
+end
+
+function X.ConsiderDeluge()
+	if not J.CanCastAbility(Deluge) then
+		return BOT_ACTION_DESIRE_NONE
+	end
+
+	local nRadius = Deluge:GetSpecialValueInt('radius')
+
+	if J.IsGoingOnSomeone(bot) then
+		if J.IsValidHero(botTarget)
+		and J.CanBeAttacked(botTarget)
+		and J.CanCastOnNonMagicImmune(botTarget)
+		and J.IsInRange(bot, botTarget, nRadius)
+		and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
+		then
+			return BOT_ACTION_DESIRE_HIGH
+		end
+	end
+
+	local nAllyHeroes = bot:GetNearbyHeroes(1200, false, BOT_MODE_NONE)
+	local nEnemyHeroes = bot:GetNearbyHeroes(nRadius, true, BOT_MODE_NONE)
+
+	if J.IsRetreating(bot)
+	and not J.IsRealInvisible(bot)
+	and bot:WasRecentlyDamagedByAnyHero(3.0)
+	then
+		for _, enemy in pairs(nEnemyHeroes) do
+			if J.IsValidHero(enemy)
+			and J.CanCastOnNonMagicImmune(enemy)
+			and J.IsChasingTarget(enemy, bot)
+			and not enemy:IsDisarmed()
+			then
+				if J.GetHP(bot) < 0.5 or (#nEnemyHeroes > #nAllyHeroes) then
+					return BOT_ACTION_DESIRE_HIGH
+				end
+			end
 		end
 	end
 

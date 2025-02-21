@@ -766,6 +766,9 @@ local function ItemUsageComplement()
 	then aetherRange = 225 else aetherRange = 0 end
 
 	local nItemSlot = { 5, 4, 3, 2, 1, 0, 15, 16 }
+	if bot:GetUnitName() == 'npc_dota_hero_lone_druid' then
+		nItemSlot = { 2, 1, 0, 15, 16 }
+	end
 
 	for _, nSlot in pairs( nItemSlot )
 	do

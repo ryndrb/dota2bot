@@ -142,7 +142,7 @@ local sHeroList = {										-- pos  1, 2, 3, 4, 5
 	{name = 'npc_dota_hero_tusk', 						role = {0, 5, 100, 100, 5}},
 	{name = 'npc_dota_hero_undying', 					role = {0, 0, 0, 0, 100}},
 	{name = 'npc_dota_hero_ursa', 						role = {100, 0, 50, 0, 0}},
-	{name = 'npc_dota_hero_vengefulspirit', 			role = {0, 0, 0, 100, 100}},
+	{name = 'npc_dota_hero_vengefulspirit', 			role = {50, 80, 0, 100, 100}},
 	{name = 'npc_dota_hero_venomancer', 				role = {0, 0, 0, 100, 100}},
 	{name = 'npc_dota_hero_viper', 						role = {0, 100, 100, 0, 0}},
 	{name = 'npc_dota_hero_visage', 					role = {0, 50, 100, 0, 0}},

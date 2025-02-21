@@ -155,7 +155,8 @@ function X.GetSkillList( sAbilityList, nAbilityBuildList, sTalentList, nTalentBu
 						[23] = sTalentList[nTalentBuildList[8]],
 					}
 
-	if GetBot():GetUnitName() == 'npc_dota_hero_meepo'
+	--default
+	if GetBot():GetUnitName() == 'npc_dota_hero_meepo' and #nAbilityBuildList == 16
 	then
 		sSkillList = {
 						[1] = sAbilityList[nAbilityBuildList[1]],

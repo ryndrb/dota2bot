@@ -534,41 +534,65 @@ function X.ConsiderDeathPact()
 
     local nCastRange = J.GetProperCastRange(false, bot, DeathPact:GetCastRange())
     local nMaxLevel = DeathPact:GetSpecialValueInt('creep_level')
-    local nCreeps = bot:GetNearbyCreeps(nCastRange, true)
+    local nEnemyCreeps = bot:GetNearbyCreeps(nCastRange, true)
+    local bRooted = bot:IsRooted()
 
-    local nEnemyHeroes = bot:GetNearbyHeroes(1600, false, BOT_MODE_NONE)
+    local nEnemyHeroes = bot:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
 
-    if J.IsInLaningPhase()
-    then
-        if J.IsLaning(bot)
-        then
-            local nEnemyLaneCreeps = bot:GetNearbyLaneCreeps(nCastRange, true)
+    if not bot:HasModifier('modifier_clinkz_death_pact') then
+        if J.IsInLaningPhase() then
+            if J.IsLaning(bot) then
+                local nEnemyLaneCreeps = bot:GetNearbyLaneCreeps(nCastRange, true)
 
-            for _, creep in pairs(nEnemyLaneCreeps)
-            do
-                if  J.IsValid(creep)
-                and J.CanBeAttacked(creep)
-                and J.IsKeyWordUnit('ranged', creep) or J.IsKeyWordUnit('siege', creep)
-                and creep:GetLevel() <= nMaxLevel
-                then
-                    if J.IsValidHero(nEnemyHeroes[1])
-                    and GetUnitToUnitDistance(creep, nEnemyHeroes[1]) < 600
-                    and botTarget ~= creep
-                    and not bot:HasModifier('modifier_clinkz_death_pact')
+                local targetCreep = nil
+                local targetCreepRange = 0
+                for _, creep in pairs(nEnemyLaneCreeps)
+                do
+                    if  J.IsValid(creep)
+                    and J.CanBeAttacked(creep)
+                    and creep:GetLevel() <= nMaxLevel
                     then
+                        local creepRange = creep:GetAttackRange()
+                        if creepRange > targetCreepRange then
+                            targetCreep = creep
+                            targetCreepRange = creepRange
+                        end
+                    end
+                end
+
+                if targetCreep ~= nil then
+                    if #nEnemyHeroes == 0
+                    or (J.IsValidHero(nEnemyHeroes[1]) and (GetUnitToUnitDistance(targetCreep, nEnemyHeroes[1]) > 500 or bRooted))
+                    then
+                        return BOT_ACTION_DESIRE_HIGH, targetCreep
+                    end
+                end
+            end
+        else
+            local creep = X.GetMostHPCreepLevel(nEnemyCreeps, nMaxLevel)
+            if J.IsValid(creep) and (#nEnemyHeroes == 0 or (J.IsValidHero(nEnemyHeroes[1]) and (GetUnitToUnitDistance(creep, nEnemyHeroes[1]) > 500 or bRooted)))
+            then
+                return BOT_ACTION_DESIRE_HIGH, creep
+            end
+        end
+    end
+
+    if not bRooted and J.IsRetreating(bot) and not J.IsRealInvisible(bot) and J.CanBeAttacked(bot) then
+        local nAllyHeroes = bot:GetNearbyHeroes(1600, false, BOT_MODE_NONE)
+        for _, enemy in pairs(nEnemyHeroes) do
+            if J.IsValidHero(enemy)
+            and J.IsInRange(bot, enemy, 800)
+            and J.IsChasingTarget(enemy, bot)
+            then
+                if (bot:WasRecentlyDamagedByAnyHero(3.0) and not J.IsSuspiciousIllusion(enemy))
+                or (#nAllyHeroes + 2 <= #nEnemyHeroes)
+                then
+                    local creep = X.GetBestRetreatDeathPatchCreep(nEnemyCreeps, nCastRange)
+                    if J.IsValid(creep) then
                         return BOT_ACTION_DESIRE_HIGH, creep
                     end
                 end
             end
-        end
-    else
-        local creep = X.GetMostHPCreepLevel(nCreeps, nMaxLevel)
-        if creep ~= nil and creep:CanBeSeen() and creep:IsAlive()
-        and J.CanBeAttacked(creep)
-        and not bot:HasModifier('modifier_clinkz_death_pact')
-        and not creep:IsAncientCreep()
-        then
-            return BOT_ACTION_DESIRE_HIGH, creep
         end
     end
 
@@ -823,29 +847,54 @@ function X.ConsiderSkeletonWalk()
     return BOT_ACTION_DESIRE_NONE
 end
 
--- Helper Funcs
-function X.GetMostHPCreepLevel(creeList, level)
-	local mostHpCreep = nil
-	local maxHP = 0
+function X.GetMostHPCreepLevel(hCreepList, nLevel)
+	local hTarget = nil
+	local creepMaxHealth = 0
 
-	for _, creep in pairs(creeList)
-	do
-        if J.IsValid(creep)
-        then
-            local uHp = creep:GetHealth()
-            local lvl = creep:GetLevel()
+	for _, creep in pairs(hCreepList) do
+        if J.IsValid(creep) and J.CanBeAttacked(creep) and not creep:IsAncientCreep() and not J.IsKeyWordUnit("flagbearer", creep) then
+            local creepHealth = creep:GetHealth()
+            local creepLevel = creep:GetLevel()
 
-            if uHp > maxHP
-            and lvl <= level
-            and not J.IsKeyWordUnit("flagbearer", creep)
-            then
-                mostHpCreep = creep
-                maxHP = uHp
+            if creepHealth > creepMaxHealth and creepLevel <= nLevel then
+                hTarget = creep
+                creepMaxHealth = creepHealth
             end
         end
 	end
 
-	return mostHpCreep
+	return hTarget
+end
+
+function X.GetBestRetreatDeathPatchCreep(nEnemyCreeps, nRadius)
+    local bestRetreatCreep = nil
+	local bestRetreatCreepDist = 0
+	local bestRetreatCreepFountainDist = 100000
+
+    local vTeamFountain = J.GetTeamFountain()
+	local botLoc = bot:GetLocation()
+    local vToFountain = (vTeamFountain - botLoc):Normalized()
+
+    for i = #nEnemyCreeps, 1, -1 do
+		if J.IsValid(nEnemyCreeps[i]) and not nEnemyCreeps[i]:IsAncientCreep() and not J.IsInRange(bot, nEnemyCreeps[1], nRadius * 0.4) then
+			local vCreepLoc = nEnemyCreeps[i]:GetLocation()
+
+            local currDist1 = GetUnitToLocationDistance(bot, vCreepLoc)
+            local currDist2 = J.GetDistance(vTeamFountain, vCreepLoc)
+            local vToTree = (vCreepLoc - botLoc):Normalized()
+            local fDot = J.DotProduct(vToTree, vToFountain)
+
+            if fDot >= math.cos(45)
+            and currDist1 > bestRetreatCreepDist
+            and currDist2 < bestRetreatCreepFountainDist then
+                bestRetreatCreepDist = currDist1
+                bestRetreatCreepFountainDist = currDist2
+                bestRetreatCreep = nEnemyCreeps[i]
+            end
+		end
+	end
+
+	return bestRetreatCreep
 end
 
 return X
