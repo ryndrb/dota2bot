@@ -49,7 +49,7 @@ function GetDesire()
     end
 
     if (DotaTime() > 25 and DotaTime() < RetreatWhenTowerTargetedTime + 5)
-    or (bot:GetUnitName() == 'npc_dota_hero_lone_druid' and DotaTime() < 25 and DotaTime() < retreatFromRoshanTime + 6.5)
+    or (bot:GetUnitName() == 'npc_dota_hero_lone_druid' and DotaTime() > 25 and DotaTime() < retreatFromRoshanTime + 6.5)
     then
         return BOT_MODE_DESIRE_ABSOLUTE
     end
