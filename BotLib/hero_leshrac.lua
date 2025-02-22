@@ -482,19 +482,19 @@ function X.ConsiderDiabolicEdict()
         end
     end
 
-    if J.IsPushing(bot) and J.GetManaAfter(nManaCost) > 0.25 then
-        local nEnemyTowers = bot:GetNearbyTowers(800, true)
-        local nEnemyBarracks = bot:GetNearbyBarracks(800, true)
-        local hEnemyAncient = GetAncient(GetOpposingTeam())
-        if (   J.IsValidBuilding(nEnemyTowers[1]) and J.CanBeAttacked(nEnemyTowers[1])
-            or J.IsValidBuilding(nEnemyBarracks[1]) and J.CanBeAttacked(nEnemyBarracks[1])
-            or J.IsValidBuilding(hEnemyAncient) and J.CanBeAttacked(hEnemyAncient)
-        )
-        and #nEnemyCreeps <= 2
-        then
-            return BOT_ACTION_DESIRE_HIGH
-        end
-    end
+    -- if J.IsPushing(bot) and J.GetManaAfter(nManaCost) > 0.25 then
+    --     local nEnemyTowers = bot:GetNearbyTowers(800, true)
+    --     local nEnemyBarracks = bot:GetNearbyBarracks(800, true)
+    --     local hEnemyAncient = GetAncient(GetOpposingTeam())
+    --     if (   J.IsValidBuilding(nEnemyTowers[1]) and J.CanBeAttacked(nEnemyTowers[1])
+    --         or J.IsValidBuilding(nEnemyBarracks[1]) and J.CanBeAttacked(nEnemyBarracks[1])
+    --         or J.IsValidBuilding(hEnemyAncient) and J.CanBeAttacked(hEnemyAncient)
+    --     )
+    --     and #nEnemyCreeps <= 2
+    --     then
+    --         return BOT_ACTION_DESIRE_HIGH
+    --     end
+    -- end
 
     if J.IsDoingRoshan(bot) then
         if  J.IsRoshan(botTarget)

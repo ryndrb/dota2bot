@@ -171,6 +171,10 @@ local FunhouseMirror        = bot:GetAbilityByName('ringmaster_funhouse_mirror')
 local StrongmanTonic        = bot:GetAbilityByName('ringmaster_strongman_tonic')
 local WhoopeeCushion        = bot:GetAbilityByName('ringmaster_whoopee_cushion')
 
+local CrystalBall           = bot:GetAbilityByName('ringmaster_crystal_ball')
+local WeightedPie           = bot:GetAbilityByName("ringmaster_weighted_pie")
+local Unicycle              = bot:GetAbilityByName("ringmaster_summon_unicycle")
+
 local TameTheBeastsDesire, TameTheBeastsLocation
 local TameTheBeastsCrackDesire
 local EscapeActDesire, EscapeActTarget
@@ -182,13 +186,20 @@ local FunhouseMirrorDesire
 local StrongmanTonicDesire, StrongmanTonicTarget
 local WhoopeeCushionDesire
 
+local CrystalBallDesire, CrystalBallLocation
+local WeightedPieDesire, WeightedPieTarget
+local UnicyleDesire
+
 local TameTheBeastsCastTime
 
 local botTarget, botLevel
 
+local fCrystallBallRoshCastTime = 0
+
 function X.SkillsComplement()
 	if J.CanNotUseAbility(bot) then return end
 
+    if bot:GetUnitName() == 'npc_dota_hero_rubick' then
     TameTheBeasts         = bot:GetAbilityByName('ringmaster_tame_the_beasts')
     TameTheBeastsCrack    = bot:GetAbilityByName('ringmaster_tame_the_beasts_crack')
     EscapeAct             = bot:GetAbilityByName('ringmaster_the_box')
@@ -200,6 +211,11 @@ function X.SkillsComplement()
     FunhouseMirror        = bot:GetAbilityByName('ringmaster_funhouse_mirror')
     StrongmanTonic        = bot:GetAbilityByName('ringmaster_strongman_tonic')
     WhoopeeCushion        = bot:GetAbilityByName('ringmaster_whoopee_cushion')
+
+    CrystalBall           = bot:GetAbilityByName('ringmaster_crystal_ball')
+    WeightedPie           = bot:GetAbilityByName("ringmaster_weighted_pie")
+    Unicycle              = bot:GetAbilityByName("ringmaster_summon_unicycle")
+    end
 
     botTarget = J.GetProperTarget(bot)
     botLevel = bot:GetLevel()
@@ -259,6 +275,18 @@ function X.SkillsComplement()
         bot:ActionQueue_UseAbilityOnLocation(ImpalementArts, ImpalementArtsLocation)
     end
 
+    WeightedPieDesire, WeightedPieTarget = X.ConsiderWeightedPie()
+    if WeightedPieDesire > 0 then
+        bot:Action_UseAbilityOnEntity(WeightedPie, WeightedPieTarget)
+        return
+    end
+
+    UnicyleDesire = X.ConsiderUnicycle()
+    if UnicyleDesire > 0 then
+        bot:Action_UseAbility(Unicycle)
+        return
+    end
+
     StrongmanTonicDesire, StrongmanTonicTarget = X.ConsiderStrongmanTonic()
     if StrongmanTonicDesire > 0
     then
@@ -278,6 +306,12 @@ function X.SkillsComplement()
     if FunhouseMirrorDesire > 0
     then
         bot:Action_UseAbility(FunhouseMirror)
+        return
+    end
+
+    CrystalBallDesire, CrystalBallLocation = X.ConsiderCrystallBall()
+    if CrystalBallDesire > 0 then
+        bot:Action_UseAbilityOnLocation(CrystalBall, CrystalBallLocation)
         return
     end
 end
@@ -1070,6 +1104,155 @@ function X.ConsiderWhoopeeCushion()
             end
         end
     end
+
+    return BOT_ACTION_DESIRE_NONE
+end
+
+function X.ConsiderCrystallBall()
+    if not J.CanCastAbility(CrystalBall) then
+        return BOT_ACTION_DESIRE_NONE, 0
+    end
+
+    if (DotaTime() > (J.IsModeTurbo() and 15 * 60 or 20 * 60)) and DotaTime() > fCrystallBallRoshCastTime + 90 and J.IsRoshanAlive() then
+        local nMissingEnemyCount = 0
+        for _, id in pairs(GetTeamPlayers(GetOpposingTeam())) do
+            if IsHeroAlive(id) then
+                local info = GetHeroLastSeenInfo(id)
+                if info ~= nil then
+                    local dInfo = info[1]
+                    if dInfo ~= nil and dInfo.time_since_seen > 10 then
+                        nMissingEnemyCount = nMissingEnemyCount + 1
+                    end
+                end
+            end
+        end
+
+        local vRoshanLocation = J.GetCurrentRoshanLocation()
+        local nAllyInLocation = J.GetAlliesNearLoc(vRoshanLocation, 2500)
+
+        if nMissingEnemyCount >= 4
+        and (not J.IsDoingRoshan(bot) or (J.IsDoingRoshan(bot) and GetUnitToLocationDistance(bot, vRoshanLocation) > 2500 and #nAllyInLocation == 0))
+        then
+            fCrystallBallRoshCastTime = DotaTime()
+            J.SetBotPing(CrystalBallLocation)
+            return BOT_ACTION_DESIRE_HIGH, vRoshanLocation
+        end
+    else
+        -- Roll the others
+        if J.IsGoingOnSomeone(bot) then
+            if J.IsValidHero(botTarget)
+            and J.CanBeAttacked(botTarget)
+            and J.IsInRange(bot, botTarget, 800)
+            and not J.IsChasingTarget(botTarget)
+            and not botTarget:HasModifier('modifier_enigma_black_hole_pull')
+            and not botTarget:HasModifier('modifier_faceless_void_chronosphere_freeze')
+            and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
+            then
+                return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation()
+            end
+        end
+    end
+
+    -- TODO: other objectives [cast inside those mode files]
+
+    return BOT_ACTION_DESIRE_NONE, 0
+end
+
+function X.ConsiderWeightedPie()
+    if not J.CanCastAbility(WeightedPie) then
+        return BOT_ACTION_DESIRE_NONE, nil
+    end
+
+    local nCastRange = J.GetProperCastRange(false, bot, WeightedPie:GetCastRange())
+
+    if J.IsGoingOnSomeone(bot) then
+        if J.IsValidHero(botTarget)
+        and J.CanCastOnNonMagicImmune(botTarget)
+        and J.CanCastOnTargetAdvanced(botTarget)
+        and J.IsInRange(bot, botTarget, nCastRange * 0.8)
+        and not J.IsChasingTarget(botTarget)
+        and not botTarget:HasModifier('modifier_enigma_black_hole_pull')
+        and not botTarget:HasModifier('modifier_faceless_void_chronosphere_freeze')
+        and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
+        and not botTarget:HasModifier('modifier_eul_cyclone')
+        then
+            return BOT_ACTION_DESIRE_HIGH, botTarget
+        end
+    end
+
+    local nAllyHeroes = bot:GetNearbyHeroes(1600, false, BOT_MODE_NONE)
+    local nEnemyHeroes = bot:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
+
+    if J.IsRetreating(bot) and not J.IsRealInvisible(bot) and bot:GetActiveModeDesire() > 0.9 then
+        for _, enemyHero in pairs(nEnemyHeroes) do
+            if  J.IsValidHero(enemyHero)
+            and J.CanCastOnNonMagicImmune(enemyHero)
+            and J.CanCastOnTargetAdvanced(enemyHero)
+            and J.IsInRange(bot, enemyHero, nCastRange)
+            and J.IsChasingTarget(enemyHero, bot)
+            and not J.IsDisabled(enemyHero)
+            and not enemyHero:HasModifier('modifier_necrolyte_reapers_scythe')
+            then
+                if (J.GetHP(bot) < 0.5 and bot:WasRecentlyDamagedByAnyHero(3.0))
+                or (#nEnemyHeroes > #nAllyHeroes)
+                then
+                    return BOT_ACTION_DESIRE_HIGH, enemyHero
+                end
+            end
+        end
+	end
+
+    for _, allyHero in pairs(nAllyHeroes) do
+        if  J.IsValidHero(allyHero)
+        and not allyHero:IsIllusion()
+        and J.IsRetreating(allyHero)
+        and allyHero:GetActiveModeDesire() > 0.9
+        and allyHero:WasRecentlyDamagedByAnyHero(3)
+        then
+            local nAllyInRangeEnemy = J.GetEnemiesNearLoc(allyHero:GetLocation(), nCastRange)
+            if J.IsValidHero(nAllyInRangeEnemy[1])
+            and J.CanCastOnNonMagicImmune(nAllyInRangeEnemy[1])
+            and J.CanCastOnTargetAdvanced(nAllyInRangeEnemy[1])
+            and J.IsChasingTarget(nAllyInRangeEnemy[1], allyHero)
+            and not J.IsDisabled(nAllyInRangeEnemy[1])
+            and not nAllyInRangeEnemy[1]:HasModifier('modifier_necrolyte_reapers_scythe')
+            then
+                local allyHP = J.GetHP(allyHero)
+                if (allyHP < 0.5 and #nEnemyHeroes > #nAllyHeroes) or allyHP < 0.3 then
+                    return BOT_ACTION_DESIRE_HIGH, nAllyInRangeEnemy[1]
+                end
+            end
+        end
+    end
+
+    return BOT_ACTION_DESIRE_NONE, nil
+end
+
+function X.ConsiderUnicycle()
+    if not J.CanCastAbility(Unicycle)
+    or bot:HasModifier('modifier_bloodseeker_rupture')
+    or bot:IsRooted()
+    then
+        return BOT_ACTION_DESIRE_NONE
+    end
+
+    local nAllyHeroes = bot:GetNearbyHeroes(1600, false, BOT_MODE_NONE)
+    local nEnemyHeroes = bot:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
+
+    if J.IsRetreating(bot) and not J.IsRealInvisible(bot) and bot:IsFacingLocation(J.GetTeamFountain(), 45) then
+        for _, enemyHero in pairs(nEnemyHeroes) do
+            if  J.IsValidHero(enemyHero)
+            and J.IsInRange(bot, enemyHero, 1200)
+            and J.IsChasingTarget(enemyHero, bot)
+            then
+                if (J.GetHP(bot) < 0.75 and bot:WasRecentlyDamagedByAnyHero(3.0))
+                or (#nEnemyHeroes > #nAllyHeroes)
+                then
+                    return BOT_ACTION_DESIRE_HIGH
+                end
+            end
+        end
+	end
 
     return BOT_ACTION_DESIRE_NONE
 end

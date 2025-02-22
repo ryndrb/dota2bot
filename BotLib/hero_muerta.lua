@@ -133,12 +133,16 @@ local Deadshot      = bot:GetAbilityByName('muerta_dead_shot')
 local TheCalling    = bot:GetAbilityByName('muerta_the_calling')
 local Gunslinger    = bot:GetAbilityByName('muerta_gunslinger')
 local PartingShot   = bot:GetAbilityByName('muerta_parting_shot')
+local Ofrenda       = bot:GetAbilityByName('muerta_ofrenda')
+local OfrendaDestroy = bot:GetAbilityByName('muerta_ofrenda_destroy')
 local PierceTheVeil = bot:GetAbilityByName('muerta_pierce_the_veil')
 
 local DeadshotDesire, DeadshotTarget
 local TheCallingDesire, TheCallingLocation
 local GunslingerDesire
 local PartingShotDesire, PartingShotTarget
+local OfrendaDesire, OfrendaLocation
+local OfrendaDestroyDesire
 local PierceTheVeilDesire
 
 local botTarget
@@ -190,6 +194,8 @@ function X.SkillsComplement()
         bot:Action_UseAbility(Gunslinger)
         return
     end
+
+    -- OfrendaDesire, OfrendaLocation = X.ConsiderOfrenda()
 end
 
 function X.ConsiderDeadshot()

@@ -161,6 +161,7 @@ end
 
 local abilityQ = bot:GetAbilityByName('crystal_maiden_crystal_nova')
 local abilityW = bot:GetAbilityByName('crystal_maiden_frostbite')
+local ArcaneAura = bot:GetAbilityByName('crystal_maiden_brilliance_aura')
 local CrystalClone = bot:GetAbilityByName('crystal_maiden_crystal_clone')
 local abilityR = bot:GetAbilityByName('crystal_maiden_freezing_field')
 
@@ -171,6 +172,12 @@ local castRDesire
 
 function X.SkillsComplement()
 	if J.CanNotUseAbility( bot ) or bot:IsInvisible() then return end
+
+	abilityQ = bot:GetAbilityByName('crystal_maiden_crystal_nova')
+	abilityW = bot:GetAbilityByName('crystal_maiden_frostbite')
+	ArcaneAura = bot:GetAbilityByName('crystal_maiden_brilliance_aura')
+	CrystalClone = bot:GetAbilityByName('crystal_maiden_crystal_clone')
+	abilityR = bot:GetAbilityByName('crystal_maiden_freezing_field')
 
 	CrystalCloneDesire, CrystalCloneLocation = X.ConsiderCrystalClone()
 	if CrystalCloneDesire > 0
@@ -202,7 +209,10 @@ function X.SkillsComplement()
 	if ( castRDesire > 0 )
 	then
 		J.SetQueuePtToINT( bot, false )
-        J.SetQueueToInvisible(bot)
+		if J.CanCastAbility(ArcaneAura) and bot:GetMana() > abilityR:GetManaCost() * 1.65 then
+			bot:ActionQueue_UseAbility(ArcaneAura)
+		end
+		J.SetQueueToInvisible(bot)
 		bot:ActionQueue_UseAbility( abilityR )
 		return
 	end

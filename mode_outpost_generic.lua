@@ -395,12 +395,12 @@ function GetDesire()
 		return bot:GetActiveModeDesire() + 0.1
 	end
 
-	-- Leshrac
-	ShouldMoveCloseTowerForEdict = ConsiderLeshracEdictTower()
-	if ShouldMoveCloseTowerForEdict
-	then
-		return BOT_ACTION_DESIRE_ABSOLUTE
-	end
+	-- -- Leshrac
+	-- ShouldMoveCloseTowerForEdict = ConsiderLeshracEdictTower()
+	-- if ShouldMoveCloseTowerForEdict
+	-- then
+	-- 	return BOT_ACTION_DESIRE_ABSOLUTE
+	-- end
 
 	-- facet fix
 	if J.IsValid(LoneDruid.hero) and J.IsValid(LoneDruid.bear) and bot == LoneDruid.hero then
