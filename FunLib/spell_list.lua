@@ -142,6 +142,7 @@ X['spells'] = {
     ['npc_dota_hero_crystal_maiden'] = {
         ['crystal_maiden_crystal_nova'] = {weight = 0.6},
         ['crystal_maiden_frostbite'] = {weight = 0.5},
+        ['crystal_maiden_brilliance_aura'] = {weight = 1},
         ['crystal_maiden_crystal_clone'] = {weight = 1},
         ['crystal_maiden_freezing_field'] = {weight = 0.1},
     },
@@ -186,6 +187,7 @@ X['spells'] = {
         ['disruptor_thunder_strike'] = {weight = 0.6},
         ['disruptor_glimpse'] = {weight = 0.3},
         ['disruptor_kinetic_field'] = {weight = 0.3},
+        ['disruptor_kinetic_fence'] = {weight = 0.3},
         ['disruptor_static_storm'] = {weight = 0.1},
     },
     
@@ -495,6 +497,8 @@ X['spells'] = {
         ['muerta_dead_shot'] = {weight = 0.8},
         ['muerta_the_calling'] = {weight = 0.5},
         ['muerta_gunslinger'] = {weight = 1},
+        ['muerta_ofrenda'] = {weight = 1},
+        ['muerta_ofrenda_destroy'] = {weight = 1},
         ['muerta_parting_shot'] = {weight = 0.5},
         ['muerta_pierce_the_veil'] = {weight = 0.9},
     },
@@ -682,6 +686,9 @@ X['spells'] = {
         ['ringmaster_funhouse_mirror'] = {weight = 0.8},
         ['ringmaster_strongman_tonic'] = {weight = 0.2},
         ['ringmaster_whoopee_cushion'] = {weight = 0.2},
+        ['ringmaster_crystal_ball'] = {weight = 1},
+        ['ringmaster_weighted_pie'] = {weight = 0.2},
+        ['ringmaster_summon_unicycle'] = {weight = 0.5},
     },
 
     ['npc_dota_hero_sand_king'] = {
