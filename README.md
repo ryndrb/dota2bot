@@ -24,6 +24,7 @@ If you’ve come across this script or is using it, good feedback is always welc
             - It's meant to play itself as it's built that way.
         - The `Server Location` must be `Local Host`.
         - Click OK, and it should be good to go. Bot names should be: `(team.name.(kanji)TA)`.
+            - Note: All playing humans should only play on one team.
             - The lobby has 5 slots:
                 -  1st is for Position 2 (Mid Lane)
                 -  2nd is for Position 3 (Off Lane)

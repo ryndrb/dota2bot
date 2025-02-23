@@ -193,6 +193,7 @@ function X.GetSkillList( sAbilityList, nAbilityBuildList, sTalentList, nTalentBu
 	end
 
 	if GetBot():GetUnitName() == 'npc_dota_hero_night_stalker'
+	or GetBot():GetUnitName() == 'npc_dota_hero_magnataur'
 	then
 		sSkillList = {
 						[1] = sAbilityList[nAbilityBuildList[1]],

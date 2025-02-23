@@ -295,8 +295,10 @@ function ItemPurchaseThink()
 	if ( GetGameState() ~= GAME_STATE_PRE_GAME and GetGameState() ~= GAME_STATE_GAME_IN_PROGRESS )
 	then return	end
 
-	if bot:HasModifier( 'modifier_arc_warden_tempest_double' )
+	if bot:HasModifier('modifier_arc_warden_tempest_double')
 	or (DotaTime() > 0 and J.IsMeepoClone(bot))
+	or bot:HasModifier('modifier_dazzle_nothl_projection_soul_debuff')
+	or bot:HasModifier('modifier_dazzle_nothl_projection_physical_body_debuff')
 	then
 		bot.itemToBuy = {}
 		return

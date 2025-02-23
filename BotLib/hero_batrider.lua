@@ -342,6 +342,13 @@ function X.ConsiderStickyNapalm()
 
     if (J.IsDefending(bot) or J.IsPushing(bot))
     then
+        if J.IsValidBuilding(botTarget)
+        and J.CanBeAttacked(botTarget)
+        and J.IsInRange(bot, botTarget, nCastRange)
+        then
+            return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation()
+        end
+
         local nLocationAoE = bot:FindAoELocation(true, false, bot:GetLocation(), nCastRange, nRadius, 0, 0)
 
         if  nEnemyLaneCreeps ~= nil and #nEnemyLaneCreeps >= 4

@@ -280,7 +280,7 @@ function X.ConsiderStaticRemnant()
 			and J.IsInRange(bot, enemyHero, nCastRange)
 			and J.CanCastOnNonMagicImmune(enemyHero)
 			then
-				local bTargetChasing = J.IsChasingTarget(botTarget, bot)
+				local bTargetChasing = J.IsChasingTarget(enemyHero, bot)
 				if (bTargetChasing and #nAllyHeroes < #nEnemyHeroes and J.GetHP(bot) < 0.75) or (J.GetHP(bot) < 0.5 and bot:WasRecentlyDamagedByHero(enemyHero, 3.0)) then
 					return BOT_ACTION_DESIRE_HIGH, enemyHero:GetLocation()
 				end

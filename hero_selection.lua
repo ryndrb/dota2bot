@@ -37,7 +37,7 @@ local sHeroList = {										-- pos  1, 2, 3, 4, 5
 	{name = 'npc_dota_hero_axe',	 					role = {0, 50, 100, 0, 0}},
 	{name = 'npc_dota_hero_bane', 						role = {0, 10, 0, 100, 100}},
 	{name = 'npc_dota_hero_batrider', 					role = {0, 25, 5, 100, 100}},
-	{name = 'npc_dota_hero_beastmaster', 				role = {0, 0, 100, 0, 0}},
+	{name = 'npc_dota_hero_beastmaster', 				role = {0, 100, 100, 0, 0}},
 	{name = 'npc_dota_hero_bloodseeker', 				role = {100, 25, 50, 0, 0}},
 	{name = 'npc_dota_hero_bounty_hunter', 				role = {0, 50, 10, 100, 5}},
 	{name = 'npc_dota_hero_brewmaster', 				role = {0, 0, 100, 0, 0}},
@@ -439,8 +439,8 @@ function Think()
 	-- So a human must always pick last in Turbo. <^ This isn't the case in All Pick.
 
 	-- Alternate; Cores pick firsts
-	if #nOwnTeam <= #nEnmTeam
-	then
+	-- if #nOwnTeam <= #nEnmTeam -- 7.38 bug with a bot not getting assigned a name, so this fails; will change below later
+	-- then
 		for i, id in pairs(nIDs)
 		do
 			sSelectHero = X.GetNotRepeatHero(tSelectPoolList[i])
@@ -501,7 +501,7 @@ function Think()
 				break
 			end
 		end
-	end
+	-- end
 end
 
 function X.GetBestHeroFromPool(i, nTeamList)

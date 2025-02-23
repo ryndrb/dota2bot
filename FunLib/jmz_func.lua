@@ -140,11 +140,11 @@ function J.CanNotUseAction( bot )
 
 	return not bot:IsAlive()
 			or J.HasQueuedAction( bot )
-			or (bot:IsInvulnerable() and not bot:HasModifier('modifier_fountain_invulnerability')) -- stop getting stuck in fountain when issuing command
+			or (bot:IsInvulnerable() and not bot:HasModifier('modifier_fountain_invulnerability') and not bot:HasModifier('modifier_dazzle_nothl_projection_soul_debuff'))
 			or bot:IsCastingAbility()
 			or bot:IsUsingAbility()
 			or bot:IsChanneling()
-			or bot:IsStunned()
+			or (bot:IsStunned() and not bot:HasModifier('modifier_dazzle_nothl_projection_soul_debuff'))
 			or bot:IsNightmared()
 			or bot:HasModifier( 'modifier_ringmaster_the_box_buff' )
 			or bot:HasModifier( 'modifier_item_forcestaff_active' )
@@ -157,7 +157,7 @@ function J.CanNotUseAbility( bot )
 
 	return not bot:IsAlive()
 			or J.HasQueuedAction( bot )
-			or (bot:IsInvulnerable() and not bot:HasModifier('modifier_fountain_invulnerability')) -- stop getting stuck in fountain when issuing command
+			or (bot:IsInvulnerable() and not bot:HasModifier('modifier_fountain_invulnerability') and not bot:HasModifier('modifier_dazzle_nothl_projection_soul_debuff'))
 			or bot:IsCastingAbility()
 			or bot:IsUsingAbility()
 			or bot:IsChanneling()

@@ -126,11 +126,7 @@ function GetDesire()
 		return nDesire
 	end
 
-    if bot:GetUnitName() == 'npc_dota_hero_lone_druid' then
-        return X.GetOtherRetreatDesire()
-    else
-        return 0
-    end
+    return X.GetOtherRetreatDesire()
 end
 
 function Think()

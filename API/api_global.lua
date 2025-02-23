@@ -9,62 +9,31 @@
 local o_GetTeamPlayers = GetTeamPlayers
 function GetTeamPlayers(nTeam)
 	local nIDs = o_GetTeamPlayers(nTeam)
-	if nTeam == TEAM_DIRE
-	then
-		local sHuman = {}
-		for _, id in pairs(nIDs)
-		do
-			if not IsPlayerBot(id)
-			then
-				table.insert(sHuman, id)
+
+	-- All humans should only be on one team.
+	-- Since bot IDs assignment are all over the place in 7.38, having humans on either side can't be fixed without a proper call to get their slot IDs.
+	if nTeam == TEAM_DIRE then
+		local hHumanTable = {}
+		for _, id in pairs(nIDs) do
+			if not IsPlayerBot(id) and id < 5 then
+				table.insert(hHumanTable, id)
 			end
 		end
-
-		if #sHuman > 0
-		then
-			local nBotIDs = {5, 6, 7, 8, 9}
+		if #hHumanTable > 0 then
 			nIDs = {}
-
-			for i = 1, #nBotIDs do table.insert(nIDs, nBotIDs[i]) end
-
-			-- Map it directly
-			for i = 1, #sHuman
-			do
-				for j = 1, 5
-				do
-					if sHuman[i] + 5 == nBotIDs[j]
-					then
-						nIDs[j] = sHuman[i]
-					end
+			for _, id in pairs(o_GetTeamPlayers(TEAM_DIRE)) do
+				if IsPlayerBot(id) and GetTeamForPlayer(id) == TEAM_DIRE then
+					table.insert(nIDs, id)
 				end
 			end
 
-			-- "Shift" > 4
-			for i = #nIDs, 1, -1
-			do
-				local hCount = 0
-				if nIDs[i] > 4
-				then
-					for j = 1, #nIDs
-					do
-						if  nIDs[j + i] ~= nil
-						and nIDs[j + i] < 5
-						then
-							hCount = hCount + 1
-						end
-					end
-
-					nIDs[i] = nIDs[i] + hCount
-				end
+			for _, id in pairs(hHumanTable) do
+				if id < 5 then table.insert(nIDs, id + 1, id) end
 			end
-
-			return nIDs
-		else
-			return nIDs
 		end
-	else
-		return nIDs
 	end
+
+	return nIDs
 end
 
 -- hUnit GetTeamMember( nPlayerNumberOnTeam )

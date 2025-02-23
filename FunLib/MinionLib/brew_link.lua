@@ -87,7 +87,7 @@ X.ConsiderBrewLinkSpell['brewmaster_earth_hurl_boulder'] = function (hMinionUnit
             end
 
             if  J.CanKillTarget(enemyHero, nDamage, DAMAGE_TYPE_PHYSICAL)
-            and J.IsInRange(hMinionUnit, enemyHero, nCastRange) + 150
+            and J.IsInRange(hMinionUnit, enemyHero, nCastRange)
             and not enemyHero:HasModifier('modifier_abaddon_borrowed_time')
             and not enemyHero:HasModifier('modifier_dazzle_shallow_grave')
             and not enemyHero:HasModifier('modifier_necrolyte_reapers_scythe')

@@ -461,7 +461,7 @@ function X.ConsiderWaveOfTerror()
             and J.IsChasingTarget(enemyHero, bot)
             then
                 if #nEnemyHeroes > #nAllyHeroes or (J.GetHP(bot) < 0.55 and bot:WasRecentlyDamagedByAnyHero(3.0)) then
-                    return BOT_ACTION_DESIRE_HIGH
+                    return BOT_ACTION_DESIRE_HIGH, enemyHero:GetLocation()
                 end
             end
         end
@@ -591,7 +591,6 @@ function X.ConsiderNetherSwap()
                 and not J.IsDisabled(enemyHero)
                 and not enemyHero:HasModifier('modifier_legion_commander_duel')
                 and not enemyHero:HasModifier('modifier_necrolyte_reapers_scythe')
-                and not enemyHero:WasRecentlyDamagedByAnyHero(2)
                 then
                     local nInRangeAlly = enemyHero:GetNearbyHeroes(1200, true, BOT_MODE_NONE)
                     local nTargetInRangeAlly = enemyHero:GetNearbyHeroes(1200, false, BOT_MODE_NONE)

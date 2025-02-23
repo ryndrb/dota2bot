@@ -65,6 +65,7 @@ X['spells'] = {
     ['npc_dota_hero_beastmaster'] = {
         ['beastmaster_wild_axes'] = {weight = 0.4},
         ['beastmaster_call_of_the_wild_boar'] = {weight = 1},
+        ['beastmaster_inner_beast'] = {weight = 1},
         ['beastmaster_call_of_the_wild_hawk'] = {weight = 1},
     },
     
@@ -174,6 +175,8 @@ X['spells'] = {
         ['dazzle_shallow_grave'] = {weight = 0.1},
         ['dazzle_shadow_wave'] = {weight = 0.6},
         ['dazzle_bad_juju'] = {weight = 0.8},
+        ['dazzle_nothl_projection'] = {weight = 1},
+        ['dazzle_nothl_projection_end'] = {weight = 1},
     },
     
     ['npc_dota_hero_death_prophet'] = {
@@ -446,6 +449,7 @@ X['spells'] = {
         ['marci_grapple'] = {weight = 0.2},
         ['marci_companion_run'] = {weight = 0.7},
         ['marci_guardian'] = {weight = 0.5},
+        ['marci_bodyguard'] = {weight = 0.5},
         ['marci_unleash'] = {weight = 0.8},
     },
 
