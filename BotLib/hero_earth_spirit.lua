@@ -236,6 +236,8 @@ end
 
 end
 
+local bReadyToRoll = true
+
 local BoulderSmash = bot:GetAbilityByName( "earth_spirit_boulder_smash" )
 local RollingBoulder = bot:GetAbilityByName( "earth_spirit_rolling_boulder" )
 local GeomagneticGrip = bot:GetAbilityByName( "earth_spirit_geomagnetic_grip" )
@@ -558,6 +560,13 @@ function X.ConsiderRollingBoulder()
 				)
             then
                 local vLocation = J.GetCorrectLoc(enemyHero, (GetUnitToUnitDistance(bot, enemyHero) / nSpeed) + nDelay)
+
+				if bReadyToRoll then
+					if X.ShouldRollThroughAlly(bot, enemyHero, enemyHero:GetLocation(), nRadius, 600) then
+						return BOT_ACTION_DESIRE_HIGH, vLocation, false
+					end
+				end
+
 				if X.IsStoneInPath(bot:GetLocation(), vLocation, nRadius)
 				then
 					return BOT_ACTION_DESIRE_HIGH, vLocation, false
@@ -598,6 +607,12 @@ function X.ConsiderRollingBoulder()
 		and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
         then
             local vLocation = J.GetCorrectLoc(botTarget, (GetUnitToUnitDistance(bot, botTarget) / nSpeed) + nDelay)
+			if bReadyToRoll then
+				if X.ShouldRollThroughAlly(bot, botTarget, botTarget:GetLocation(), nRadius, 600) then
+					return BOT_ACTION_DESIRE_HIGH, vLocation, false
+				end
+			end
+
 			if X.IsStoneInPath(bot:GetLocation(), vLocation, nRadius) and J.IsInRange(bot, botTarget, nNearbyEnemySearchRange)
 			then
 				if not J.IsEnemyBlackHoleInLocation(vLocation) and not J.IsEnemyChronosphereInLocation(vLocation) then
@@ -1008,6 +1023,23 @@ function X.IsBeingAttackedByRealHero(unit)
     end
 
     return false
+end
+
+function X.ShouldRollThroughAlly(hSource, hTarget, vLocation, nRadius, nAllyRadius)
+	if J.IsValidHero(hTarget) then
+		local nAllyHeroes = hSource:GetNearbyHeroes(nAllyRadius, false, BOT_MODE_NONE)
+		for _, allyHero in pairs(nAllyHeroes) do
+			if allyHero ~= hSource
+			and J.IsValidHero(allyHero)
+			and (not J.IsRunning(allyHero) or J.IsChasingTarget(allyHero, hTarget))
+			then
+				local tResult = PointToLineDistance(hSource:GetLocation(), vLocation, allyHero:GetLocation())
+				if tResult ~= nil and tResult.within and tResult.distance <= nRadius then return true end
+			end
+		end
+	end
+
+	return false
 end
 
 return X

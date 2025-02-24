@@ -480,6 +480,18 @@ end
 -- bool IsInvulnerable()
 
 -- Returns whether the unit is invulnerable to damage.
+local o_IsInvulnerable = CDOTA_Bot_Script.IsInvulnerable
+function CDOTA_Bot_Script:IsInvulnerable()
+    if self ~= nil and self:CanBeSeen() then
+        -- some dazzle fix idk, but he moves
+        if self == GetBot() and self:HasModifier('modifier_dazzle_nothl_projection_soul_debuff') then
+            return false
+        end
+    end
+
+    return o_IsInvulnerable(self)
+end
+
 -- bool IsMagicImmune()
 
 -- Returns whether the unit is magic immune.

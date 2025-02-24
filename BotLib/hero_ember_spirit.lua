@@ -55,7 +55,7 @@ local HeroBuild = {
 				"item_maelstrom",
 				"item_kaya",
 				"item_black_king_bar",--
-				"item_gungir",--
+				"item_mjollnir",--
 				"item_kaya_and_sange",--
 				"item_shivas_guard",--
 				"item_ultimate_scepter",
@@ -268,7 +268,7 @@ function X.ConsiderSearingChains()
 	do
 		if  J.IsValidHero(enemyHero)
 		and J.CanCastOnNonMagicImmune(enemyHero)
-		and J.IsInRange(bot, enemyHero, nRadius)
+		and (J.IsInRange(bot, enemyHero, nRadius) or X.IsWithinRemnant(enemyHero, nRadius))
 		and not J.IsDisabled(enemyHero)
 		then
 			if enemyHero:IsChanneling() or J.IsCastingUltimateAbility(enemyHero)
@@ -290,7 +290,7 @@ function X.ConsiderSearingChains()
 	if J.IsGoingOnSomeone(bot)
 	then
 		if J.IsValidHero(botTarget)
-		and J.IsInRange(bot, botTarget, nRadius)
+		and (J.IsInRange(bot, botTarget, nRadius) or X.IsWithinRemnant(botTarget, nRadius))
 		and J.CanCastOnNonMagicImmune(botTarget )
         and not botTarget:IsAttackImmune()
 		and not J.IsDisabled(botTarget)
@@ -322,16 +322,19 @@ function X.ConsiderSearingChains()
 	end
 
 	if J.IsRetreating(bot)
-    and not J.IsRealInvisible(bot)
+	and not J.IsRealInvisible(bot)
+	and bot:WasRecentlyDamagedByAnyHero(3.0)
 	then
-        if J.IsValidHero(nEnemyHeroes[1])
-        and J.CanCastOnNonMagicImmune(nEnemyHeroes[1])
-        and not J.IsDisabled(nEnemyHeroes[1])
-        and not nEnemyHeroes[1]:IsDisarmed()
-        and bot:WasRecentlyDamagedByAnyHero(3.5)
-        then
-            return BOT_ACTION_DESIRE_HIGH
-        end
+		for _, enemy in pairs(nEnemyHeroes) do
+			if J.IsValidHero(enemy)
+			and J.CanCastOnNonMagicImmune(enemy)
+			and (J.IsInRange(bot, enemy, nRadius) or (not J.IsInRange(bot, enemy, nRadius) and X.IsWithinRemnant(enemy, nRadius)))
+			and J.IsChasingTarget(enemy, bot)
+			and not enemy:IsDisarmed()
+			then
+				return BOT_ACTION_DESIRE_HIGH
+			end
+		end
 	end
 
 	if J.IsDoingRoshan(bot)
@@ -424,7 +427,13 @@ function X.ConsiderSleightOfFist()
 		and not botTarget:HasModifier('modifier_faceless_void_chronosphere_freeze')
         and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
 		then
-            return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation()
+			if SearingChains ~= nil and SearingChains:IsTrained() and SearingChains:GetCooldownTimeRemaining() < 3.0
+			and J.IsChasingTarget(bot, botTarget) and not J.IsInRange(bot, botTarget, nCastRange * 0.5) and not botTarget:IsRooted()
+			then
+				return 0, 0
+			else
+				return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation()
+			end
 		end
 	end
 
@@ -848,6 +857,21 @@ function X.CanDoSleightChains()
     end
 
     return false
+end
+
+function X.IsWithinRemnant(hTarget, nRadius)
+	if J.IsValid(hTarget) then
+		for _, unit in pairs(GetUnitList(UNIT_LIST_ALLIES)) do
+			if  unit ~= nil
+			and unit:GetUnitName() == 'npc_dota_ember_spirit_remnant'
+			and GetUnitToUnitDistance(hTarget, unit) < nRadius
+			then
+				return true
+			end
+		end
+	end
+
+	return false
 end
 
 return X

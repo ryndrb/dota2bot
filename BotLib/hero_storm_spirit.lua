@@ -148,7 +148,7 @@ local ElectricVortex 	= bot:GetAbilityByName( "storm_spirit_electric_vortex" )
 local Overload 			= bot:GetAbilityByName( "storm_spirit_overload" )
 local BallLightning 	= bot:GetAbilityByName( "storm_spirit_ball_lightning" )
 
-local StaticRemnantDesire
+local StaticRemnantDesire, StaticRemnantLocation
 local ElectricVortexDesire, ElectricVortexTarget
 local OverloadDesire
 local BallLightningDesire, BallLightningLoc
@@ -203,11 +203,11 @@ function X.SkillsComplement()
 		end
 	end
 
-	StaticRemnantDesire = X.ConsiderStaticRemnant()
+	StaticRemnantDesire, StaticRemnantLocation = X.ConsiderStaticRemnant()
 	if StaticRemnantDesire > 0
 	then
 		J.SetQueuePtToINT(bot, true)
-		bot:ActionQueue_UseAbility(StaticRemnant)
+		bot:ActionQueue_UseAbilityOnLocation(StaticRemnant, StaticRemnantLocation)
 		return
 	end
 
@@ -222,37 +222,36 @@ end
 function X.ConsiderStaticRemnant()
 	if not J.CanCastAbility(StaticRemnant)
 	then
-		return BOT_ACTION_DESIRE_NONE
+		return BOT_ACTION_DESIRE_NONE, 0
 	end
 
+	local nCastRange = 800
 	local nRadius = StaticRemnant:GetSpecialValueInt('static_remnant_radius')
 	local nAbilityLevel = StaticRemnant:GetLevel()
-	local nManaCost = StaticRemnant:GetManaCost()
+	local nManaAfter = J.GetManaAfter(StaticRemnant:GetManaCost())
+	local nDamage = StaticRemnant:GetSpecialValueInt('static_remnant_damage')
 	local nAttackRange = bot:GetAttackRange()
 	local botTarget = J.GetProperTarget(bot)
 
-	local nOverloadDamage = 0
-	if Overload ~= nil and Overload:IsTrained()
-	then
-		nOverloadDamage = Overload:GetSpecialValueInt('overload_damage')
-	end
-
+	local nAllyHeroes = bot:GetNearbyHeroes(1600, false, BOT_MODE_NONE)
 	local nEnemyHeroes = bot:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
 
 	for _, enemyHero in pairs(nEnemyHeroes)
 	do
 		if  J.IsValidHero(enemyHero)
 		and J.CanCastOnNonMagicImmune(enemyHero)
-		and J.IsInRange(bot, enemyHero, nAttackRange)
-		and J.CanKillTarget(enemyHero, nOverloadDamage, DAMAGE_TYPE_MAGICAL)
+		and J.IsInRange(bot, enemyHero, nCastRange)
+		and J.CanKillTarget(enemyHero, nDamage, DAMAGE_TYPE_MAGICAL)
 		and not enemyHero:HasModifier('modifier_abaddon_aphotic_shield')
 		and not enemyHero:HasModifier('modifier_abaddon_borrowed_time')
 		and not enemyHero:HasModifier('modifier_dazzle_shallow_grave')
 		and not enemyHero:HasModifier('modifier_oracle_false_promise')
 		and not enemyHero:HasModifier('modifier_templar_assassin_refraction_absorb')
 		then
-			bot:SetTarget(enemyHero)
-			return BOT_ACTION_DESIRE_HIGH
+			local bChasingTarget = J.IsChasingTarget(bot, enemyHero)
+			if not bChasingTarget or (bChasingTarget and J.IsInRange(bot, enemyHero, nAttackRange)) then
+				return BOT_ACTION_DESIRE_HIGH, enemyHero:GetLocation()
+			end
 		end
 	end
 
@@ -260,81 +259,54 @@ function X.ConsiderStaticRemnant()
 	then
 		if  J.IsValidTarget(botTarget)
 		and J.CanCastOnNonMagicImmune(botTarget)
-		and J.IsInRange(bot, botTarget, nAttackRange)
+		and J.IsInRange(bot, botTarget, nCastRange)
 		and not J.IsSuspiciousIllusion(botTarget)
 		and not botTarget:HasModifier('modifier_abaddon_borrowed_time')
 		and not botTarget:HasModifier('modifier_dazzle_shallow_grave')
+		and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
+		and not botTarget:HasModifier('modifier_oracle_false_promise_timer')
 		and not botTarget:HasModifier('modifier_templar_assassin_refraction_absorb')
 		then
-			return BOT_ACTION_DESIRE_HIGH
-		end
-	end
-
-	if J.IsRetreating(bot)
-	and not J.IsRealInvisible(bot)
-	then
-		if J.IsValidHero(nEnemyHeroes[1])
-		and J.IsInRange(bot, nEnemyHeroes[1], nRadius * 2 + 150)
-		and J.CanCastOnNonMagicImmune(nEnemyHeroes[1])
-		and J.IsChasingTarget(nEnemyHeroes[1], bot)
-		and not J.IsDisabled(nEnemyHeroes[1])
-		then
-			return BOT_ACTION_DESIRE_HIGH
-		end
-	end
-
-	local nCreeps = bot:GetNearbyCreeps(1200, true)
-
-	if  J.IsFarming(bot)
-	and nAbilityLevel >= 2
-	and J.GetManaAfter(nManaCost) > 0.25
-	and J.IsAttacking(bot)
-	then
-		local isRangedCamp = false
-
-		for _, creep in pairs(nCreeps)
-		do
-			if J.IsValid(creep)
-			and creep:GetAttackRange() > nRadius
-			then
-				isRangedCamp = true
-				break
+			local bChasingTarget = J.IsChasingTarget(bot, botTarget)
+			if not bChasingTarget or (bChasingTarget and J.IsInRange(bot, botTarget, nAttackRange)) then
+				return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation()
 			end
 		end
+	end
 
-		if isRangedCamp
-		then
-			nCreeps = bot:GetNearbyCreeps(nAttackRange, true)
-		else
-			nCreeps = bot:GetNearbyCreeps(nRadius, true)
-		end
-
-		if J.CanBeAttacked(nCreeps[1])
-		and (#nCreeps >= 2 or #nCreeps == 1 and nCreeps[1]:IsAncientCreep())
-		then
-			return BOT_ACTION_DESIRE_HIGH
+	if J.IsRetreating(bot) and not J.IsRealInvisible(bot) then
+		for _, enemyHero in pairs(nEnemyHeroes) do
+			if J.IsValidHero(enemyHero)
+			and J.IsInRange(bot, enemyHero, nCastRange)
+			and J.CanCastOnNonMagicImmune(enemyHero)
+			then
+				local bTargetChasing = J.IsChasingTarget(enemyHero, bot)
+				if (bTargetChasing and #nAllyHeroes < #nEnemyHeroes and J.GetHP(bot) < 0.75) or (J.GetHP(bot) < 0.5 and bot:WasRecentlyDamagedByHero(enemyHero, 3.0)) then
+					return BOT_ACTION_DESIRE_HIGH, enemyHero:GetLocation()
+				end
+			end
 		end
 	end
 
-	if  J.IsLaning(bot)
-	and J.GetManaAfter(nManaCost) > 0.3
+	local nEnemyCreeps = bot:GetNearbyCreeps(1200, true)
+	if  J.IsFarming(bot)
+	and nAbilityLevel >= 2
+	and nManaAfter > 0.25
+	and J.IsAttacking(bot)
 	then
-		local nEnemyLaneCreeps = bot:GetNearbyLaneCreeps(nAttackRange + 300, true)
+		if J.CanBeAttacked(nEnemyCreeps[1]) and not J.IsRunning(nEnemyCreeps[1]) then
+			local nLocationAoE = bot:FindAoELocation(true, false, nEnemyCreeps[1]:GetLocation(), 0, nRadius, 0, 0)
+			if nLocationAoE.count >= 2 or (nLocationAoE.count == 1 and nEnemyCreeps[1]:IsAncientCreep()) then
+				return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc
+			end
+		end
+	end
 
-		for _, creep in pairs(nEnemyLaneCreeps)
-		do
-			if  J.IsValid(creep)
-			and J.CanBeAttacked(creep)
-			and (J.IsKeyWordUnit('ranged', creep) or J.IsKeyWordUnit('siege', creep) or J.IsKeyWordUnit('flagbearer', creep))
-			and creep:GetHealth() <= nOverloadDamage
-			and Overload ~= nil and Overload:IsTrained()
-			then
-				if J.IsValidHero(nEnemyHeroes[1])
-				and GetUnitToUnitDistance(creep, nEnemyHeroes[1]) < 680
-				then
-					bot:SetTarget(creep)
-					return BOT_ACTION_DESIRE_HIGH
-				end
+	if (J.IsPushing(bot) or J.IsDefending(bot)) and nManaAfter > 0.25 then
+		if J.CanBeAttacked(nEnemyCreeps[1]) and not J.IsRunning(nEnemyCreeps[1]) then
+			local nLocationAoE = bot:FindAoELocation(true, false, nEnemyCreeps[1]:GetLocation(), 0, nRadius, 0, 0)
+			if nLocationAoE.count >= 3 then
+				return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc
 			end
 		end
 	end
@@ -343,43 +315,35 @@ function X.ConsiderStaticRemnant()
     then
         if  J.IsRoshan(botTarget)
         and J.CanCastOnNonMagicImmune(botTarget)
-        and J.IsInRange(bot, botTarget, nAttackRange)
+        and J.IsInRange(bot, botTarget, nCastRange)
         and J.IsAttacking(bot)
         then
-            return BOT_ACTION_DESIRE_HIGH
+            return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation()
         end
     end
 
     if J.IsDoingTormentor(bot)
     then
         if  J.IsTormentor(botTarget)
-        and J.IsInRange(bot, botTarget, nAttackRange)
+        and J.IsInRange(bot, botTarget, nCastRange)
         and J.IsAttacking(bot)
         then
-            return BOT_ACTION_DESIRE_HIGH
+            return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation()
         end
     end
 
-	nCreeps = bot:GetNearbyCreeps(nRadius, true)
-	if  (J.IsDefending(bot) or J.IsPushing(bot))
-	and nAbilityLevel >= 3
-	and J.GetManaAfter(nManaCost) > 0.4
-	then
-		if #nCreeps >= 3
-		and J.CanBeAttacked(nCreeps[1])
-		then
-			return BOT_ACTION_DESIRE_HIGH
+	local nLocationAoE = bot:FindAoELocation(true, false, bot:GetLocation(), nCastRange, nRadius, 0, nDamage)
+	if J.IsInLaningPhase() then
+		if nLocationAoE.count >= 2 then
+			return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc
+		end
+	else
+		if nLocationAoE.count >= 3 then
+			return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc
 		end
 	end
 
-	if J.IsValidHero(nEnemyHeroes[1])
-	and J.IsInRange(bot, nEnemyHeroes[1], nRadius)
-	and J.CanBeAttacked(nEnemyHeroes[1])
-	then
-		return BOT_ACTION_DESIRE_HIGH
-	end
-
-	return BOT_ACTION_DESIRE_NONE
+	return BOT_ACTION_DESIRE_NONE, 0
 end
 
 function X.ConsiderElectricVortex()
@@ -524,20 +488,20 @@ function X.ConsiderBallLightning()
 		end
 	end
 
-	if  J.IsFarming(bot)
-	and J.IsAttacking(bot)
-	and nMana > 0.7
-	then
-		local nCreeps = bot:GetNearbyCreeps(900, true)
+	-- if  J.IsFarming(bot)
+	-- and J.IsAttacking(bot)
+	-- and nMana > 0.7
+	-- then
+	-- 	local nCreeps = bot:GetNearbyCreeps(900, true)
 
-		if J.CanBeAttacked(nCreeps[1])
-		and not J.IsRunning(nCreeps[1])
-		and (#nCreeps >= 2 or #nCreeps == 1 and nCreeps[1]:IsAncientCreep())
-		and GetUnitToLocationDistance(bot, J.GetCenterOfUnits(nCreeps)) > 300
-		then
-			return BOT_ACTION_DESIRE_HIGH, J.GetCenterOfUnits(nCreeps)
-		end
-	end
+	-- 	if J.CanBeAttacked(nCreeps[1])
+	-- 	and not J.IsRunning(nCreeps[1])
+	-- 	and (#nCreeps >= 2 or #nCreeps == 1 and nCreeps[1]:IsAncientCreep())
+	-- 	and GetUnitToLocationDistance(bot, J.GetCenterOfUnits(nCreeps)) > 300
+	-- 	then
+	-- 		return BOT_ACTION_DESIRE_HIGH, J.GetCenterOfUnits(nCreeps)
+	-- 	end
+	-- end
 
 	return BOT_ACTION_DESIRE_NONE, 0
 end

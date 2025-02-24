@@ -65,6 +65,7 @@ X['spells'] = {
     ['npc_dota_hero_beastmaster'] = {
         ['beastmaster_wild_axes'] = {weight = 0.4},
         ['beastmaster_call_of_the_wild_boar'] = {weight = 1},
+        ['beastmaster_inner_beast'] = {weight = 1},
         ['beastmaster_call_of_the_wild_hawk'] = {weight = 1},
     },
     
@@ -72,6 +73,7 @@ X['spells'] = {
         ['bloodseeker_bloodrage'] = {weight = 1},
         ['bloodseeker_blood_bath'] = {weight = 0.9},
         ['bloodseeker_blood_mist'] = {weight = 1},
+        ['bloodseeker_thirst'] = {weight = 0.9},
         ['bloodseeker_rupture'] = {weight = 0.3},
     },
     
@@ -96,6 +98,7 @@ X['spells'] = {
         ['bristleback_quill_spray'] = {weight = 1},
         ['bristleback_bristleback'] = {weight = 0.9},
         ['bristleback_hairball'] = {weight = 0.5},
+        ['bristleback_warpath'] = {weight = 1},
     },
     
     ['npc_dota_hero_broodmother'] = {
@@ -140,6 +143,7 @@ X['spells'] = {
     ['npc_dota_hero_crystal_maiden'] = {
         ['crystal_maiden_crystal_nova'] = {weight = 0.6},
         ['crystal_maiden_frostbite'] = {weight = 0.5},
+        ['crystal_maiden_brilliance_aura'] = {weight = 1},
         ['crystal_maiden_crystal_clone'] = {weight = 1},
         ['crystal_maiden_freezing_field'] = {weight = 0.1},
     },
@@ -171,6 +175,8 @@ X['spells'] = {
         ['dazzle_shallow_grave'] = {weight = 0.1},
         ['dazzle_shadow_wave'] = {weight = 0.6},
         ['dazzle_bad_juju'] = {weight = 0.8},
+        ['dazzle_nothl_projection'] = {weight = 1},
+        ['dazzle_nothl_projection_end'] = {weight = 1},
     },
     
     ['npc_dota_hero_death_prophet'] = {
@@ -184,6 +190,7 @@ X['spells'] = {
         ['disruptor_thunder_strike'] = {weight = 0.6},
         ['disruptor_glimpse'] = {weight = 0.3},
         ['disruptor_kinetic_field'] = {weight = 0.3},
+        ['disruptor_kinetic_fence'] = {weight = 0.3},
         ['disruptor_static_storm'] = {weight = 0.1},
     },
     
@@ -259,6 +266,7 @@ X['spells'] = {
         ['faceless_void_time_dilation'] = {weight = 0.8},
         ['faceless_void_time_walk_reverse'] = {weight = 1},
         ['faceless_void_chronosphere'] = {weight = 0.1},
+        ['faceless_void_time_zone'] = {weight = 0.1},
     },
     
     ['npc_dota_hero_furion'] = {
@@ -441,6 +449,7 @@ X['spells'] = {
         ['marci_grapple'] = {weight = 0.2},
         ['marci_companion_run'] = {weight = 0.7},
         ['marci_guardian'] = {weight = 0.5},
+        ['marci_bodyguard'] = {weight = 0.5},
         ['marci_unleash'] = {weight = 0.8},
     },
 
@@ -492,6 +501,8 @@ X['spells'] = {
         ['muerta_dead_shot'] = {weight = 0.8},
         ['muerta_the_calling'] = {weight = 0.5},
         ['muerta_gunslinger'] = {weight = 1},
+        ['muerta_ofrenda'] = {weight = 1},
+        ['muerta_ofrenda_destroy'] = {weight = 1},
         ['muerta_parting_shot'] = {weight = 0.5},
         ['muerta_pierce_the_veil'] = {weight = 0.9},
     },
@@ -500,6 +511,7 @@ X['spells'] = {
         ['naga_siren_mirror_image'] = {weight = 0.9},
         ['naga_siren_ensnare'] = {weight = 0.2},
         ['naga_siren_rip_tide'] = {weight = 1},
+        ['naga_siren_deluge'] = {weight = 1},
         ['naga_siren_reel_in' ] = {weight = 1},
         ['naga_siren_song_of_the_siren'] = {weight = 0.5},
         [ 'naga_siren_song_of_the_siren_cancel' ] = {weight = 1},
@@ -678,6 +690,9 @@ X['spells'] = {
         ['ringmaster_funhouse_mirror'] = {weight = 0.8},
         ['ringmaster_strongman_tonic'] = {weight = 0.2},
         ['ringmaster_whoopee_cushion'] = {weight = 0.2},
+        ['ringmaster_crystal_ball'] = {weight = 1},
+        ['ringmaster_weighted_pie'] = {weight = 0.2},
+        ['ringmaster_summon_unicycle'] = {weight = 0.5},
     },
 
     ['npc_dota_hero_sand_king'] = {
@@ -712,6 +727,7 @@ X['spells'] = {
         ['shredder_chakram_2'] = {weight = 0.5},
         ['shredder_return_chakram_2'] = {weight = 1},
         ['shredder_flamethrower'] = {weight = 0.5},
+        ['shredder_twisted_chakram'] = {weight = 0.5},
     },
 
     ['npc_dota_hero_silencer'] = {
@@ -827,7 +843,7 @@ X['spells'] = {
 
     ['npc_dota_hero_tidehunter'] = {
         ['tidehunter_gush'] = {weight = 0.5},
-        ['tidehunter_kraken_shell'] = {weight = 1},
+        ['tidehunter_kraken_shell'] = {weight = 0.4},
         ['tidehunter_anchor_smash'] = {weight = 0.5},
         [ 'tidehunter_dead_in_the_water' ] = {weight = 0.1},
         ['tidehunter_ravage'] = {weight = 0.1},
@@ -874,7 +890,8 @@ X['spells'] = {
         ['tusk_ice_shards'] = {weight = 0.6},
         ['tusk_snowball'] = {weight = 0.8},
         ['tusk_launch_snowball'] = {weight = 1},
-        ['tusk_tag_team'] = {weight = 0.8},
+        ['tusk_tag_team'] = {weight = 0.5},
+        ['tusk_drinking_buddies'] = {weight = 0.5},
         ['tusk_walrus_kick'] = {weight = 1},
         ['tusk_walrus_punch'] = {weight = 0.4},
     },

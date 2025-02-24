@@ -20,6 +20,7 @@ local tEnemyHeroes, tEnemyHeroes_real
 local RetreatWhenTowerTargetedTime = 0
 
 local retreatFromTormentorTime = 0
+local retreatFromRoshanTime = 0
 
 function GetDesire()
     if not bot:IsAlive()
@@ -47,14 +48,36 @@ function GetDesire()
         end
     end
 
-    if DotaTime() > 25 and DotaTime() < RetreatWhenTowerTargetedTime + 5 then
+    if (DotaTime() > 25 and DotaTime() < RetreatWhenTowerTargetedTime + 5)
+    or (bot:GetUnitName() == 'npc_dota_hero_lone_druid' and DotaTime() > 25 and DotaTime() < retreatFromRoshanTime + 6.5)
+    then
         return BOT_MODE_DESIRE_ABSOLUTE
+    end
+
+    local vRoshanLocation = J.GetCurrentRoshanLocation()
+
+    if bot:GetUnitName() == 'npc_dota_hero_lone_druid'
+    and bot:GetActiveMode() == BOT_MODE_ITEM
+    and GetUnitToLocationDistance(bot, vRoshanLocation) < 1200
+    and IsLocationVisible(vRoshanLocation)
+    then
+        for _, droppedItem in pairs(GetDroppedItemList()) do
+            if droppedItem ~= nil
+            and droppedItem.item:GetName() == 'item_aegis'
+            and GetUnitToLocationDistance(bot, droppedItem.location) < 1200
+            then
+                retreatFromRoshanTime = DotaTime()
+                return 3.33
+            end
+        end
     end
 
     -- when roshan dies, every desire sometimes drops to 0 somehow and it lingers in Roshan mode (which is also 0)
     if bot:GetActiveMode() == BOT_MODE_ROSHAN
     and not J.IsRoshanAlive()
-    and GetUnitToLocationDistance(bot, J.GetCurrentRoshanLocation()) < 1200 then
+    and GetUnitToLocationDistance(bot, vRoshanLocation) < 1200
+    and IsLocationVisible(vRoshanLocation)
+    then
         local bAegisNearby = false
         for _, droppedItem in pairs(GetDroppedItemList()) do
             if droppedItem ~= nil

@@ -30,10 +30,10 @@ local nEnemyAverageLevel = 1
 
 local RB = Vector(-7184.360840, -6689.084961, 392.750000)
 local DB = Vector(6996.191895, 6414.104004, 392.000000)
-local roshanRadiantLoc  = Vector(7625, -7511, 1092)
-local roshanDireLoc = Vector(-7549, 7562, 1107)
-local RadiantTormentorLoc = Vector(-8075, -1148, 1000)
-local DireTormentorLoc = Vector(8132, 1102, 1000)
+local roshanRadiantLoc  = Vector(2787.287354, -2752.223877, 13.998048)
+local roshanDireLoc = Vector(-2909.122559, 2185.981689, 13.998047)
+local RadiantTormentorLoc = Vector(7499.061523, -7847.331055, 256.000000)
+local DireTormentorLoc = Vector(-7229.757324, 7933.152832, 256.000000)
 local fKeepManaPercent = 0.39
 
 
@@ -140,11 +140,11 @@ function J.CanNotUseAction( bot )
 
 	return not bot:IsAlive()
 			or J.HasQueuedAction( bot )
-			or (bot:IsInvulnerable() and not bot:HasModifier('modifier_fountain_invulnerability')) -- stop getting stuck in fountain when issuing command
+			or (bot:IsInvulnerable() and not bot:HasModifier('modifier_fountain_invulnerability') and not bot:HasModifier('modifier_dazzle_nothl_projection_soul_debuff'))
 			or bot:IsCastingAbility()
 			or bot:IsUsingAbility()
 			or bot:IsChanneling()
-			or bot:IsStunned()
+			or (bot:IsStunned() and not bot:HasModifier('modifier_dazzle_nothl_projection_soul_debuff'))
 			or bot:IsNightmared()
 			or bot:HasModifier( 'modifier_ringmaster_the_box_buff' )
 			or bot:HasModifier( 'modifier_item_forcestaff_active' )
@@ -157,7 +157,7 @@ function J.CanNotUseAbility( bot )
 
 	return not bot:IsAlive()
 			or J.HasQueuedAction( bot )
-			or (bot:IsInvulnerable() and not bot:HasModifier('modifier_fountain_invulnerability')) -- stop getting stuck in fountain when issuing command
+			or (bot:IsInvulnerable() and not bot:HasModifier('modifier_fountain_invulnerability') and not bot:HasModifier('modifier_dazzle_nothl_projection_soul_debuff'))
 			or bot:IsCastingAbility()
 			or bot:IsUsingAbility()
 			or bot:IsChanneling()
@@ -4469,11 +4469,13 @@ function J.GetCurrentRoshanLocation()
 end
 
 function J.GetTormentorLocation(team)
-	if team == TEAM_RADIANT
+	local timeOfDay = J.CheckTimeOfDay()
+
+	if timeOfDay == 'day'
 	then
-		return RadiantTormentorLoc
-	else
 		return DireTormentorLoc
+	else
+		return RadiantTormentorLoc
 	end
 end
 
@@ -5101,7 +5103,7 @@ function J.IsPingCloseToValidTower(team, humanPing)
 end
 
 function J.IsRoshanCloseToChangingSides()
-    return DotaTime() % 300 >= 300 - 30
+    return DotaTime() > 15 * 60 and DotaTime() % 300 >= 300 - 30
 end
 
 function J.IsNonStableHero(hName)
@@ -5375,9 +5377,9 @@ function J.GetSetNearbyTarget(bot, tUnits)
 				mul = 4
 			elseif enemyName == 'npc_dota_hero_drow_ranger' then
 				mul = 2
-			elseif enemyName == 'npc_dota_hero_crystal_maiden' and not J.IsModifierInRadius('modifier_crystal_maiden_freezing_field_slow', 1600) then
+			elseif enemyName == 'npc_dota_hero_crystal_maiden' and not J.IsModifierInRadius(bot, 'modifier_crystal_maiden_freezing_field_slow', 1600) then
 				mul = 2
-			elseif enemyName == 'npc_dota_hero_jakiro' and not J.IsModifierInRadius('modifier_jakiro_macropyre_burn', 1600) then
+			elseif enemyName == 'npc_dota_hero_jakiro' and not J.IsModifierInRadius(bot, 'modifier_jakiro_macropyre_burn', 1600) then
 				mul = 2.5
 			elseif enemyName == 'npc_dota_hero_lina' then
 				mul = 3
@@ -5413,7 +5415,7 @@ function J.GetSetNearbyTarget(bot, tUnits)
 	return __target
 end
 
-function J.IsModifierInRadius(sModifierName, nRadius)
+function J.IsModifierInRadius(bot, sModifierName, nRadius)
 	for _, unit in pairs(GetUnitList(UNIT_LIST_ALL)) do
 		if J.IsValid(unit)
 		and J.IsInRange(bot, unit, nRadius)

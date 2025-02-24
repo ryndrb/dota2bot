@@ -55,7 +55,7 @@ local HeroBuild = {
                 "item_rod_of_atos",
                 "item_travel_boots",
                 "item_lesser_crit",
-                "item_gungir",--
+                "item_mjollnir",--
                 "item_black_king_bar",--
                 "item_force_staff",
                 "item_greater_crit",--

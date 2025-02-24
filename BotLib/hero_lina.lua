@@ -39,7 +39,7 @@ local HeroBuild = {
 				"item_maelstrom",
 				"item_dragon_lance",
 				"item_black_king_bar",--
-				"item_gungir",--
+				"item_mjollnir",--
 				"item_greater_crit",--
 				"item_travel_boots",
 				"item_hurricane_pike",--
@@ -119,7 +119,7 @@ local HeroBuild = {
 				"item_maelstrom",
 				"item_dragon_lance",
 				"item_black_king_bar",--
-				"item_gungir",--
+				"item_mjollnir",--
 				"item_greater_crit",--
 				"item_travel_boots",
 				"item_hurricane_pike",--

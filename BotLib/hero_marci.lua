@@ -187,11 +187,15 @@ end
 local Dispose   = bot:GetAbilityByName('marci_grapple')
 local Rebound   = bot:GetAbilityByName('marci_companion_run')
 local Sidekick  = bot:GetAbilityByName('marci_guardian')
+local Bodyguard  = bot:GetAbilityByName('marci_bodyguard')
+local SpecialDelivery  = bot:GetAbilityByName('marci_special_delivery')
 local Unleash   = bot:GetAbilityByName('marci_unleash')
 
 local DisposeDesire, DisposeTaret
 local ReboundDesire, ReboundTarget
 local SidekickDesire, SidekickTarget
+local BodyguardDesire, BodyguardTarget
+local SpecialDeliveryDesire
 local UnleashDesire
 
 function X.SkillsComplement()
@@ -228,6 +232,15 @@ function X.SkillsComplement()
         bot:ActionQueue_UseAbilityOnEntity(Sidekick, SidekickTarget)
         return
     end
+
+    BodyguardDesire, BodyguardTarget = X.ConsiderBodyguard()
+    if BodyguardDesire > 0 then
+        J.SetQueuePtToINT(bot, false)
+        bot:ActionQueue_UseAbilityOnEntity(Bodyguard, BodyguardTarget)
+        return
+    end
+
+    -- SpecialDeliveryDesire = X.ConsiderSpecialDelivery()
 end
 
 function X.ConsiderDispose()
@@ -468,6 +481,53 @@ function X.ConsiderSidekick()
     end
 
     local nCastRange = J.GetProperCastRange(false, bot, Sidekick:GetCastRange())
+    local botTarget = J.GetProperTarget(bot)
+
+    local tEnemyLaneCreeps = bot:GetNearbyLaneCreeps(1200, true)
+
+    if J.IsGoingOnSomeone(bot)
+    or J.IsPushing(bot)
+    or J.IsDefending(bot)
+    or (J.IsLaning(bot) and #tEnemyLaneCreeps >= 3)
+    or (J.IsDoingRoshan(bot) and J.IsRoshan(botTarget) and J.IsInRange(bot, botTarget, 800) and J.IsAttacking(bot) and J.CanBeAttacked(botTarget))
+    or (J.IsDoingTormentor(bot) and J.IsTormentor(botTarget) and J.IsInRange(bot, botTarget, 800) and J.IsAttacking(bot) and J.CanBeAttacked(botTarget))
+    then
+        local nAllyHeroes = bot:GetNearbyHeroes(nCastRange, false, BOT_MODE_NONE)
+
+        local target = nil
+        local targetAttackDamage = 0
+        for _, ally in pairs(nAllyHeroes) do
+            if J.IsValidHero(ally)
+            and bot ~= ally
+            and J.IsInRange(bot, ally, nCastRange)
+            and not ally:IsIllusion()
+            and not J.IsMeepoClone(ally)
+            and not ally:HasModifier('modifier_faceless_void_chronosphere_freeze')
+            and not ally:HasModifier('modifier_marci_guardian_buff')
+            and not ally:HasModifier('modifier_necrolyte_reapers_scythe')
+            then
+                local allyAttackDamage = ally:GetAttackDamage() * ally:GetAttackSpeed()
+                if allyAttackDamage > targetAttackDamage then
+                    targetAttackDamage = allyAttackDamage
+                    target = ally
+                end
+            end
+        end
+
+        if target ~= nil then
+            return BOT_ACTION_DESIRE_HIGH, target
+        end
+    end
+
+    return BOT_ACTION_DESIRE_NONE, nil
+end
+
+function X.ConsiderBodyguard()
+    if not J.CanCastAbility(Bodyguard) then
+        return BOT_ACTION_DESIRE_NONE, nil
+    end
+
+    local nCastRange = J.GetProperCastRange(false, bot, Bodyguard:GetCastRange())
     local botTarget = J.GetProperTarget(bot)
 
     local tEnemyLaneCreeps = bot:GetNearbyLaneCreeps(1200, true)

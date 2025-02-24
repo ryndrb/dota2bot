@@ -20,8 +20,8 @@ local nRuneList = {
 	RUNE_POWERUP_2,
 }
 
-local radiantWRLocation = Vector(-8134.554688, -310.884827, 256)
-local direWRLocation = Vector(8324.925781, 258.564606, 256)
+local radiantWRLocation = Vector(-7988.583008, 423.058716, 256.000000)
+local direWRLocation = Vector(8244.062500, -1026.568848, 256.000000)
 local wisdomRuneSpots = {
 	[1] = radiantWRLocation,
 	[2] = direWRLocation,
@@ -50,10 +50,13 @@ function GetDesire()
 		if DotaTime() >= 7 * 60
 		and not J.IsMeepoClone(bot)
 		and not bot:HasModifier('modifier_arc_warden_tempest_double') then
-			if DotaTime() < wisdomRuneInfo[1] + 3.0 then
-				if GetUnitToLocationDistance(bot, wisdomRuneSpots[wisdomRuneInfo[2]]) < 80 then
-					return 0
+			if DotaTime() < wisdomRuneInfo[1] + 3.5 then
+				if not bot:WasRecentlyDamagedByAnyHero(3.0) then --back
+					return BOT_MODE_DESIRE_ABSOLUTE
 				end
+				-- if GetUnitToLocationDistance(bot, wisdomRuneSpots[wisdomRuneInfo[2]]) < 80 then
+				-- 	return 0
+				-- end
 			else
 				wisdomRuneInfo[1] = 0
 				wisdomRuneInfo[3] = false
@@ -126,8 +129,8 @@ function GetDesire()
                 return X.GetScaledDesire(BOT_MODE_DESIRE_HIGH, ClosestDistance, 3500)
             elseif nRuneStatus == RUNE_STATUS_UNKNOWN
 				and ClosestDistance <= MAX_DIST * 1.5
-                and DotaTime() > 2 * 60 + 50
-                and ((minute % 3 == 0) or (minute % 3 == 2 and second > 45))
+                and DotaTime() > 3 * 60 + 50
+                and ((minute % 4 == 0) or (minute % 4 == 2 and second > 45))
             then
 				if ((botPos == 1 or botPos == 3) and J.IsInLaningPhase() and ClosestDistance > 2500) then
 					return BOT_MODE_DESIRE_NONE
@@ -136,8 +139,8 @@ function GetDesire()
                 return X.GetScaledDesire(BOT_MODE_DESIRE_MODERATE, ClosestDistance, MAX_DIST)
             elseif nRuneStatus == RUNE_STATUS_MISSING
 				and ClosestDistance <= MAX_DIST * 1.5
-                and DotaTime() > 2 * 60
-                and (minute % 3 == 2 and second > 52)
+                and DotaTime() > 3 * 60
+                and (minute % 4 == 2 and second > 52)
             then
 				if ((botPos == 1 or botPos == 3) and J.IsInLaningPhase() and ClosestDistance > 2500) then
 					return BOT_MODE_DESIRE_NONE
@@ -218,7 +221,7 @@ function Think()
 			bot.wisdom[timeInMin][wisdomRuneInfo[2]] = true
 		end
 
-		bot:Action_MoveDirectly(wisdomRuneSpots[wisdomRuneInfo[2]] + RandomVector(25)) -- can fail since pick up is up to valve
+		bot:Action_MoveDirectly(wisdomRuneSpots[wisdomRuneInfo[2]])
 		return
 	end
 

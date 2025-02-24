@@ -40,7 +40,7 @@ local HeroBuild = {
                 "item_power_treads",
                 "item_maelstrom",
                 "item_dragon_lance",
-                "item_gungir",--
+                "item_mjollnir",--
                 "item_black_king_bar",--
                 "item_greater_crit",--
                 "item_aghanims_shard",

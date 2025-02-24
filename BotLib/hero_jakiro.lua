@@ -55,7 +55,7 @@ local HeroBuild = {
 				"item_black_king_bar",--
 				"item_shivas_guard",--
 				"item_aghanims_shard",
-				"item_gungir",--
+				"item_mjollnir",--
 				"item_yasha_and_kaya",--
 				"item_devastator",--
 				"item_travel_boots_2",--

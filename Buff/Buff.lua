@@ -18,48 +18,30 @@ local botTable = {
 }
 
 function Buff:AddBotsToTable()
-    local playerCount = PlayerResource:GetPlayerCount()
+    -- with 7.38, player IDs are not 9<= anymore; when no human on either side
+    -- 2 rad, 3 dire
+    for _, team in pairs({DOTA_TEAM_GOODGUYS, DOTA_TEAM_BADGUYS}) do
+        local playerCount = PlayerResource:GetPlayerCountForTeam(team)
+        for j = 1, playerCount do
+            local playerID = PlayerResource:GetNthPlayerIDOnTeam(team, j)
+            local player = PlayerResource:GetPlayer(playerID)
+            if player then
+                local hero = player:GetAssignedHero()
+                -- just do how we're counting bots from below
+                if hero and PlayerResource:GetSteamID(playerID) == PlayerResource:GetSteamID(playerCount + 1) then
+                    -- -- check if these heroes do not have the specified spell
+                    -- -- valve fixed this a while ago
+                    -- if string.find(hero:GetUnitName(), 'life_stealer') then
+                    --     if not hero:HasAbility('life_stealer_rage') then
+                    --         AddAbilityToHero(hero, 'life_stealer_rage')
+                    --     end
+                    -- elseif string.find(hero:GetUnitName(), 'faceless_void') then
+                    --     if not hero:HasAbility('faceless_void_chronosphere') then
+                    --         AddAbilityToHero(hero, 'faceless_void_chronosphere')
+                    --     end
+                    -- end
 
-    for playerID = 0, playerCount - 1 do
-        local player = PlayerResource:GetPlayer(playerID)
-        local hero = player:GetAssignedHero()
-        local team = player:GetTeam()
-
-        if hero then
-            -- just do how we're counting bots from below
-            if PlayerResource:GetSteamID(playerID) == PlayerResource:GetSteamID(playerCount + 1) then
-                -- check if these heroes do not have the specified spell
-                if string.find(hero:GetUnitName(), 'life_stealer') then
-                    if not hero:HasAbility('life_stealer_rage') then
-                        AddAbilityToHero(hero, 'life_stealer_rage')
-                    end
-                elseif string.find(hero:GetUnitName(), 'faceless_void') then
-                    if not hero:HasAbility('faceless_void_chronosphere') then
-                        AddAbilityToHero(hero, 'faceless_void_chronosphere')
-                    end
-                end
-
-                table.insert(botTable[team], hero)
-                if string.find(hero:GetUnitName(), 'lone_druid') then
-                    local bear = Entities:FindByName(nil, 'npc_dota_lone_druid_bear1')
-                    if bear then
-                        table.insert(botTable[team], bear)
-                    else
-                        bear = Entities:FindByName(nil, 'npc_dota_lone_druid_bear2')
-                        if bear then
-                            table.insert(botTable[team], bear)
-                        else
-                            bear = Entities:FindByName(nil, 'npc_dota_lone_druid_bear3')
-                            if bear then
-                                table.insert(botTable[team], bear)
-                            else
-                                bear = Entities:FindByName(nil, 'npc_dota_lone_druid_bear4')
-                                if bear then
-                                    table.insert(botTable[team], bear)
-                                end
-                            end
-                        end
-                    end
+                    table.insert(botTable[team], hero)
                 end
             end
         end

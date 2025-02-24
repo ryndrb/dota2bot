@@ -110,7 +110,7 @@ local HeroBuild = {
                 "item_tango",
                 "item_double_branches",
                 "item_quelling_blade",
-                "item_orb_of_venom",
+                "item_orb_of_frost",
             
                 "item_bottle",
                 "item_magic_wand",

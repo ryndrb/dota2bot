@@ -210,6 +210,7 @@ modifier_skeleton_king_reincarnation_scepter_active
 
 local abilityQ = bot:GetAbilityByName('skeleton_king_hellfire_blast')
 local abilityW = bot:GetAbilityByName('skeleton_king_bone_guard')
+local SpectralBlade = bot:GetAbilityByName('skeleton_king_spectral_blade')
 local abilityE = bot:GetAbilityByName('skeleton_king_mortal_strike')
 local abilityR = bot:GetAbilityByName('skeleton_king_reincarnation')
 local talent5 = bot:GetAbilityByName( sTalentList[5] )
@@ -227,7 +228,7 @@ function X.SkillsComplement()
 	if J.CanNotUseAbility( bot ) or bot:IsInvisible() then return end
 
 	abilityQ = bot:GetAbilityByName('skeleton_king_hellfire_blast')
-	abilityW = bot:GetAbilityByName('skeleton_king_bone_guard')
+	-- abilityW = bot:GetAbilityByName('skeleton_king_bone_guard')
 	abilityR = bot:GetAbilityByName('skeleton_king_reincarnation')
 
 	nKeepMana = 160

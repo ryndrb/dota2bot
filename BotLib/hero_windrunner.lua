@@ -83,7 +83,7 @@ local HeroBuild = {
                 "item_power_treads",
                 "item_maelstrom",
                 "item_black_king_bar",--
-                "item_gungir",--
+                "item_mjollnir",--
                 "item_greater_crit",--
                 "item_aghanims_shard",
                 "item_sheepstick",--
@@ -127,7 +127,7 @@ local HeroBuild = {
                 "item_black_king_bar",--
                 "item_heavens_halberd",--
                 "item_aghanims_shard",
-                "item_gungir",--
+                "item_mjollnir",--
                 "item_ultimate_scepter",
                 "item_sheepstick",--
                 "item_nullifier",--

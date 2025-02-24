@@ -210,11 +210,13 @@ local ViscousNasalGoo = bot:GetAbilityByName('bristleback_viscous_nasal_goo')
 local QuillSpray = bot:GetAbilityByName('bristleback_quill_spray')
 local Bristleback = bot:GetAbilityByName('bristleback_bristleback')
 local Hairball = bot:GetAbilityByName('bristleback_hairball')
+local Warpath = bot:GetAbilityByName('bristleback_warpath')
 
 local ViscousNasalGooDesire, ViscousNasalGooTarget
 local QuillSprayDesire
 local HairballDesire, HairballTarget
 local BristlebackDesire, BristlebackLocation
+local WarpathDesire
 
 function X.SkillsComplement()
 	if J.CanNotUseAbility( bot ) then return end
@@ -223,6 +225,7 @@ function X.SkillsComplement()
 	QuillSpray = bot:GetAbilityByName('bristleback_quill_spray')
 	Bristleback = bot:GetAbilityByName('bristleback_bristleback')
 	Hairball = bot:GetAbilityByName('bristleback_hairball')
+	Warpath = bot:GetAbilityByName('bristleback_warpath')
 
 	HairballDesire, HairballTarget = X.ConsiderHairball()
 	if HairballDesire > 0
@@ -247,6 +250,12 @@ function X.SkillsComplement()
         bot:ActionQueue_UseAbilityOnEntity(ViscousNasalGoo, ViscousNasalGooTarget)
         return
     end
+
+	WarpathDesire = X.ConsiderWarpath()
+	if WarpathDesire > 0 then
+		bot:Action_UseAbility(Warpath)
+		return
+	end
 
 	QuillSprayDesire = X.ConsiderQuillSpray()
 	if QuillSprayDesire > 0
@@ -596,6 +605,35 @@ function X.ConsiderHairball()
     end
 
     return BOT_ACTION_DESIRE_NONE, 0
+end
+
+function X.ConsiderWarpath()
+	if not J.CanCastAbility(Warpath) then
+		return BOT_ACTION_DESIRE_NONE
+	end
+
+	local nEnemyHeroes = J.GetEnemiesNearLoc(bot:GetLocation(), 800)
+	local nAllyHeroes = J.GetEnemiesNearLoc(bot:GetLocation(), 1200)
+
+	if J.IsInTeamFight(bot, 1200) then
+		if #nEnemyHeroes > #nAllyHeroes or (J.GetHP(bot) < 0.5 and bot:WasRecentlyDamagedByAnyHero(2.0)) then
+			return BOT_ACTION_DESIRE_HIGH
+		end
+	end
+
+	if J.IsRetreating(bot) and not J.IsRealInvisible(bot) then
+		for _, enemyHero in pairs(nEnemyHeroes) do
+			if J.IsValidHero(enemyHero) and J.IsInRange(bot, enemyHero, 500) and J.IsChasingTarget(enemyHero, bot) then
+				if (J.GetTotalEstimatedDamageToTarget(nEnemyHeroes, bot, 8.0) > bot:GetHealth() * 1.15)
+				or (#nEnemyHeroes > #nAllyHeroes and J.GetHP(bot) < 0.4)
+				then
+					return BOT_ACTION_DESIRE_HIGH
+				end
+			end
+		end
+	end
+
+	return BOT_ACTION_DESIRE_NONE
 end
 
 return X
