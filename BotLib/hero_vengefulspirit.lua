@@ -452,7 +452,7 @@ function X.ConsiderWaveOfTerror()
 
 	if J.IsRetreating(bot) and not J.IsRealInvisible(bot)
 	then
-        local nAllyHeroes = bot:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
+        local nAllyHeroes = bot:GetNearbyHeroes(1600, false, BOT_MODE_NONE)
         for _, enemyHero in pairs(nEnemyHeroes)
         do
             if  J.IsValidHero(enemyHero)

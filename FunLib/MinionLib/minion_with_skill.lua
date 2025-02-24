@@ -919,4 +919,217 @@ X.ConsiderSpellUsage['centaur_khan_war_stomp'] = function (hMinionUnit, ability)
     return BOT_ACTION_DESIRE_NONE, nil, ''
 end
 
+-- Heal
+X.ConsiderSpellUsage['forest_troll_high_priest_heal'] = function (hMinionUnit, ability)
+    local nCastRange = ability:GetSpecialValueInt('AbilityCastRange')
+
+    for _, allyHero in pairs(nAllyHeroes) do
+        if J.IsValidHero(allyHero)
+        and J.IsInRange(hMinionUnit, allyHero, nCastRange)
+        and not allyHero:IsIllusion()
+        and J.GetHP(allyHero) < 0.5
+        then
+            return BOT_ACTION_DESIRE_HIGH, allyHero, 'unit'
+        end
+    end
+
+    return BOT_ACTION_DESIRE_NONE, nil, ''
+end
+
+-- Water Bubble (Small)
+X.ConsiderSpellUsage['frogmen_water_bubble_small'] = function (hMinionUnit, ability)
+    local nCastRange = ability:GetSpecialValueInt('AbilityCastRange')
+
+    for _, allyHero in pairs(nAllyHeroes) do
+        if J.IsValidHero(allyHero)
+        and J.IsInRange(hMinionUnit, allyHero, nCastRange)
+        and not allyHero:IsIllusion()
+        and not allyHero:IsMagicImmune()
+        then
+            local nAllyInRangeEnemy = J.GetEnemiesNearLoc(allyHero:GetLocation(), 800)
+            if allyHero:WasRecentlyDamagedByAnyHero(2.0) and J.IsValidHero(nAllyInRangeEnemy[1]) then
+                return BOT_ACTION_DESIRE_HIGH, allyHero, 'unit'
+            end
+
+            if J.IsStunProjectileIncoming(allyHero, 400)
+            or J.IsUnitTargetProjectileIncoming(allyHero, 400)
+            or (not allyHero:HasModifier('modifier_sniper_assassinate') and J.IsWillBeCastUnitTargetSpell(bot, 400))
+            then
+                return BOT_ACTION_DESIRE_HIGH, allyHero, 'unit'
+            end
+        end
+    end
+
+    return BOT_ACTION_DESIRE_NONE, nil, ''
+end
+
+-- Water Bubble (Medium)
+X.ConsiderSpellUsage['frogmen_water_bubble_medium'] = function (hMinionUnit, ability)
+    return X.ConsiderSpellUsage['frogmen_water_bubble_small'](hMinionUnit, ability)
+end
+
+-- Water Bubble (Large)
+X.ConsiderSpellUsage['frogmen_water_bubble_large'] = function (hMinionUnit, ability)
+    return X.ConsiderSpellUsage['frogmen_water_bubble_small'](hMinionUnit, ability)
+end
+
+-- Arm of the Deep
+X.ConsiderSpellUsage['frogmen_arm_of_the_deep'] = function (hMinionUnit, ability)
+    local nDamage = ability:GetSpecialValueInt('damage')
+    local nCastRange = ability:GetSpecialValueInt('range')
+    local nRadius = ability:GetSpecialValueInt('projectile_width')
+
+    for _, enemyHero in pairs(nEnemyHeroes) do
+        if J.IsValidHero(enemyHero)
+        and J.CanCastOnNonMagicImmune(enemyHero)
+        and J.IsInRange(bot, enemyHero, nCastRange)
+        then
+            if enemyHero:HasModifier('modifier_teleporting') then
+                return BOT_ACTION_DESIRE_HIGH, enemyHero:GetLocation(), 'point'
+            end
+
+            if J.CanKillTarget(enemyHero, nDamage, DAMAGE_TYPE_MAGICAL)
+            and not enemyHero:HasModifier('modifier_abaddon_borrowed_time')
+            and not enemyHero:HasModifier('modifier_dazzle_shallow_grave')
+            and not enemyHero:HasModifier('modifier_necrolyte_reapers_scythe')
+            and not enemyHero:HasModifier('modifier_oracle_false_promise_timer')
+            then
+                return BOT_ACTION_DESIRE_HIGH, enemyHero:GetLocation(), 'point'
+            end
+        end
+    end
+
+    if J.IsGoingOnSomeone(bot) then
+        if J.IsValidTarget(botTarget)
+        and J.CanCastOnNonMagicImmune(botTarget)
+        and J.IsInRange(hMinionUnit, botTarget, nCastRange)
+        and not J.IsDisabled(botTarget)
+        and not botTarget:HasModifier('modifier_abaddon_borrowed_time')
+        and not botTarget:HasModifier('modifier_dazzle_shallow_grave')
+        and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
+        then
+            return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation(), 'point'
+        end
+    end
+
+    if J.IsRetreating(bot) and not J.IsRealInvisible(bot) and bot:WasRecentlyDamagedByAnyHero(3.0) then
+        for _, enemy in pairs(nEnemyHeroes) do
+            if J.IsValidHero(enemy)
+            and J.CanCastOnNonMagicImmune(enemy)
+            and J.IsChasingTarget(enemy, bot)
+            and J.IsInRange(hMinionUnit, enemy, nCastRange)
+            and not J.IsDisabled(enemy)
+            then
+                return BOT_ACTION_DESIRE_HIGH, enemy:GetLocation(), 'point'
+            end
+        end
+    end
+
+    for _, allyHero in pairs(nAllyHeroes) do
+        if J.IsValidHero(allyHero)
+        and J.IsRetreating(allyHero)
+        and not J.IsRealInvisible(allyHero)
+        and not allyHero:IsIllusion()
+        then
+            local nAllyInRangeEnemy = hMinionUnit:GetNearbyHeroes(nCastRange, true, BOT_MODE_NONE)
+            if  J.IsValidHero(nAllyInRangeEnemy[1])
+            and J.CanCastOnNonMagicImmune(nAllyInRangeEnemy[1])
+            and J.IsChasingTarget(nAllyInRangeEnemy[1], allyHero)
+            and not J.IsDisabled(nAllyInRangeEnemy[1])
+            then
+                return BOT_ACTION_DESIRE_HIGH, nAllyInRangeEnemy[1]:GetLocation(), 'point'
+            end
+        end
+    end
+
+    local nLocationAoE = bot:FindAoELocation(true, true, hMinionUnit:GetLocation(), nCastRange, nRadius, 0, 0)
+    local nInRangeEnemy = J.GetEnemiesNearLoc(nLocationAoE.targetloc, nRadius)
+    if #nInRangeEnemy >= 2 then
+        return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc, 'point'
+    end
+
+    return BOT_ACTION_DESIRE_NONE, 0, ''
+end
+
+-- Tendrils of the Deep
+X.ConsiderSpellUsage['frogmen_tendrils_of_the_deep'] = function (hMinionUnit, ability)
+    return X.ConsiderSpellUsage['frogmen_arm_of_the_deep'](hMinionUnit, ability)
+end
+
+-- Congregations of the Deep
+X.ConsiderSpellUsage['frogmen_congregation_of_the_deep'] = function (hMinionUnit, ability)
+    local nDamage = ability:GetSpecialValueInt('damage')
+    local nRadius = ability:GetSpecialValueInt('range')
+
+    for _, enemyHero in pairs(nEnemyHeroes) do
+        if J.IsValidHero(enemyHero)
+        and J.CanCastOnNonMagicImmune(enemyHero)
+        and J.IsInRange(bot, enemyHero, nRadius)
+        then
+            if enemyHero:HasModifier('modifier_teleporting') then
+                return BOT_ACTION_DESIRE_HIGH, nil, 'none'
+            end
+
+            if J.CanKillTarget(enemyHero, nDamage, DAMAGE_TYPE_MAGICAL)
+            and not enemyHero:HasModifier('modifier_abaddon_borrowed_time')
+            and not enemyHero:HasModifier('modifier_dazzle_shallow_grave')
+            and not enemyHero:HasModifier('modifier_necrolyte_reapers_scythe')
+            and not enemyHero:HasModifier('modifier_oracle_false_promise_timer')
+            then
+                return BOT_ACTION_DESIRE_HIGH, nil, 'none'
+            end
+        end
+    end
+
+    if J.IsGoingOnSomeone(bot) then
+        if J.IsValidTarget(botTarget)
+        and J.CanCastOnNonMagicImmune(botTarget)
+        and J.IsInRange(hMinionUnit, botTarget, nRadius)
+        and not J.IsDisabled(botTarget)
+        and not botTarget:HasModifier('modifier_abaddon_borrowed_time')
+        and not botTarget:HasModifier('modifier_dazzle_shallow_grave')
+        and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
+        then
+            return BOT_ACTION_DESIRE_HIGH, nil, 'none'
+        end
+    end
+
+    if J.IsRetreating(bot) and not J.IsRealInvisible(bot) and bot:WasRecentlyDamagedByAnyHero(3.0) then
+        for _, enemy in pairs(nEnemyHeroes) do
+            if J.IsValidHero(enemy)
+            and J.CanCastOnNonMagicImmune(enemy)
+            and J.IsChasingTarget(enemy, bot)
+            and J.IsInRange(hMinionUnit, enemy, nRadius)
+            and not J.IsDisabled(enemy)
+            then
+                return BOT_ACTION_DESIRE_HIGH, nil, 'none'
+            end
+        end
+    end
+
+    for _, allyHero in pairs(nAllyHeroes) do
+        if J.IsValidHero(allyHero)
+        and J.IsRetreating(allyHero)
+        and not J.IsRealInvisible(allyHero)
+        and not allyHero:IsIllusion()
+        then
+            local nAllyInRangeEnemy = hMinionUnit:GetNearbyHeroes(nRadius, true, BOT_MODE_NONE)
+            if  J.IsValidHero(nAllyInRangeEnemy[1])
+            and J.CanCastOnNonMagicImmune(nAllyInRangeEnemy[1])
+            and J.IsChasingTarget(nAllyInRangeEnemy[1], allyHero)
+            and not J.IsDisabled(nAllyInRangeEnemy[1])
+            then
+                return BOT_ACTION_DESIRE_HIGH, nil, 'none'
+            end
+        end
+    end
+
+    local nInRangeEnemy = J.GetEnemiesNearLoc(hMinionUnit:GetLocation(), nRadius)
+    if #nInRangeEnemy >= 2 then
+        return BOT_ACTION_DESIRE_HIGH, nil, 'none'
+    end
+
+    return BOT_ACTION_DESIRE_NONE, nil, ''
+end
+
 return X

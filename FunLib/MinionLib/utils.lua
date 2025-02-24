@@ -330,6 +330,7 @@ function U.IsMinionWithNoSkill(unit)
 		or unit_name == "npc_dota_creep_goodguys_ranged_upgraded"
 		or unit_name == "npc_dota_goodguys_siege"
 		or unit_name == "npc_dota_goodguys_siege_upgraded"
+		or unit_name == "npc_dota_neutral_tadpole"
 end
 
 function U.IsMinionWithSkill(unit)
@@ -354,6 +355,12 @@ function U.IsMinionWithSkill(unit)
 		or unit_name == "npc_dota_necronomicon_archer_2"
 		or unit_name == "npc_dota_necronomicon_archer_3"
 		or unit_name == "npc_dota_neutral_warpine_raider"
+		or unit_name == "npc_dota_neutral_froglet_mage"
+		or unit_name == "npc_dota_neutral_froglet"
+		or unit_name == "npc_dota_neutral_grown_frog_mage"
+		or unit_name == "npc_dota_neutral_grown_frog"
+		or unit_name == "npc_dota_neutral_ancient_frog_mage"
+		or unit_name == "npc_dota_neutral_ancient_frog"
 end
 
 function U.IsFrozeSigil(unit)
