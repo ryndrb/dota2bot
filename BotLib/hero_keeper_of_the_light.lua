@@ -711,11 +711,11 @@ function X.ConsiderRecall()
 
                 if J.IsPushing(bot)
                 and GetUnitToUnitDistance(bot, allyHero) > 4000
-                and not J.IsFarming(bot)
-                and not J.IsLaning(bot)
-                and not J.IsDoingRoshan(bot)
-                and not J.IsDoingTormentor(bot)
-                and not J.IsDefending(bot)
+                and not J.IsFarming(allyHero)
+                and not J.IsLaning(allyHero)
+                and not J.IsDoingRoshan(allyHero)
+                and not J.IsDoingTormentor(allyHero)
+                and not J.IsDefending(allyHero)
                 then
                     local nInRangeAlly = J.GetAlliesNearLoc(bot:GetLocation(), 1600)
                     if #nInRangeAlly >= 2 then
