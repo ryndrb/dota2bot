@@ -7379,8 +7379,8 @@ X.ConsiderItemDesire["item_gale_guard"] = function( hItem )
 
     if J.IsFarming(bot) then
         local nEnemyCreeps = bot:GetNearbyCreeps(1600, true)
-        if  J.IsValid(nCreeps[1])
-        and J.CanBeAttacked(nCreeps[1])
+        if  J.IsValid(nEnemyCreeps[1])
+        and J.CanBeAttacked(nEnemyCreeps[1])
         and J.GetHP(bot) < 0.25
         and J.IsAttacking(bot)
         then
