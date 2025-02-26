@@ -30,23 +30,24 @@ function GetDesire()
         return BOT_MODE_DESIRE_NONE
     end
 
-    -- retreat from tormentor if can die
-    if DotaTime() > (J.IsModeTurbo() and (10 * 60) or (20 * 60)) then
-        local TormentorLocation = J.GetTormentorLocation(GetTeam())
-        if DotaTime() < retreatFromTormentorTime + 20 then
-            if not bot:HasModifier('modifier_fountain_aura_buff') or J.GetHP(bot) < 0.5 then
-                return BOT_MODE_DESIRE_ABSOLUTE
-            else
-                retreatFromTormentorTime = 0
-            end
-        end
+    -- -- tormentor is too far now
+    -- -- retreat from tormentor if can die
+    -- if DotaTime() > (J.IsModeTurbo() and (10 * 60) or (20 * 60)) then
+    --     local TormentorLocation = J.GetTormentorLocation(GetTeam())
+    --     if DotaTime() < retreatFromTormentorTime + 20 then
+    --         if not bot:HasModifier('modifier_fountain_aura_buff') or J.GetHP(bot) < 0.5 then
+    --             return BOT_MODE_DESIRE_ABSOLUTE
+    --         else
+    --             retreatFromTormentorTime = 0
+    --         end
+    --     end
 
-        if GetUnitToLocationDistance(bot, TormentorLocation) < 1200
-        and J.GetHP(bot) < 0.25
-        and bot.tormentor_state == true then
-            retreatFromTormentorTime = DotaTime()
-        end
-    end
+    --     if GetUnitToLocationDistance(bot, TormentorLocation) < 1200
+    --     and J.GetHP(bot) < 0.25
+    --     and bot.tormentor_state == true then
+    --         retreatFromTormentorTime = DotaTime()
+    --     end
+    -- end
 
     if (DotaTime() > 25 and DotaTime() < RetreatWhenTowerTargetedTime + 5)
     or (bot:GetUnitName() == 'npc_dota_hero_lone_druid' and DotaTime() > 25 and DotaTime() < retreatFromRoshanTime + 6.5)
@@ -126,7 +127,11 @@ function GetDesire()
 		return nDesire
 	end
 
-    return X.GetOtherRetreatDesire()
+    if string.find(botName, 'lone_druid') then
+        return X.GetOtherRetreatDesire()
+    else
+        return 0
+    end
 end
 
 function Think()
@@ -355,7 +360,7 @@ function X.RetreatWhenTowerTargetedDesire()
 end
 
 function X.GetOtherRetreatDesire()
-    local nDesire = RemapValClamped(botHP, 1, 0, 0, 0.8)
+    local nDesire = RemapValClamped(botHP, 1, 0, 0, 0.5)
 
     if bot:DistanceFromFountain() <= 3800 then
         if (not string.find(botName, 'huskar') and botMP < 0.22 and botHP < 0.7)

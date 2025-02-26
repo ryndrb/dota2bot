@@ -214,14 +214,21 @@ function Think()
 
 	-- Wisdom Rune
 	if wisdomRuneInfo[3] then
-		if GetUnitToLocationDistance(bot, wisdomRuneSpots[wisdomRuneInfo[2]]) < 75 then
+		local vWisdomSpot = wisdomRuneSpots[wisdomRuneInfo[2]]
+		local nInRangeEnemy = J.GetEnemiesNearLoc(vWisdomSpot, 1600)
+		if J.IsValidHero(nInRangeEnemy[1]) and (not nInRangeEnemy[1]:IsBot() or (GetUnitToLocationDistance(nInRangeEnemy[1], vWisdomSpot) < GetUnitToLocationDistance(bot, vWisdomSpot)))
+		then
+			bot.wisdom[timeInMin][wisdomRuneInfo[2]] = true
+		end
+
+		if GetUnitToLocationDistance(bot, vWisdomSpot) < 75 then
 			if bot.wisdom[timeInMin][wisdomRuneInfo[2]] == false then
 				wisdomRuneInfo[1] = DotaTime()
 			end
 			bot.wisdom[timeInMin][wisdomRuneInfo[2]] = true
 		end
 
-		bot:Action_MoveDirectly(wisdomRuneSpots[wisdomRuneInfo[2]])
+		bot:Action_MoveDirectly(vWisdomSpot)
 		return
 	end
 

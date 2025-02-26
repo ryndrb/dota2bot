@@ -199,7 +199,7 @@ function X.GetDesire(bot__)
                     end
                 end
 
-                if string.find(unitName, 'lone_druid_bear')
+                if string.find(unitName, 'lone_druid_bear') and botLevel >= 6
                 then
                     if #tAllyHeroes >= 2 and #tAllyHeroes_all > #tEnemyHeroes_all
                     then

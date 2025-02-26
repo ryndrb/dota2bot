@@ -16,9 +16,10 @@ function GetDesire()
     TormentorLocation = J.GetTormentorLocation(GetTeam())
 
     local tAllyInTormentorLocation = J.GetAlliesNearLoc(TormentorLocation, 900)
-    local tInRangeEnemy = bot:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
+    local tInRangeEnemy = J.GetEnemiesNearLoc(bot:GetLocation(), 1600)
     local nAliveAlly = J.GetNumOfAliveHeroes(false)
 
+    local nTormentorSpawnInterval = J.IsModeTurbo() and 5 or 10
     local nTormentorSpawnTime = J.IsModeTurbo() and 7.5 or 15
 
     local nHumanCountInLoc = 0
@@ -37,13 +38,13 @@ function GetDesire()
             if member:IsAlive() then
                 table.insert(tAliveAllies, member)
 
-                if not member:IsBot() and GetUnitToLocationDistance(member, TormentorLocation) <= 1000 then
+                if not member:IsBot() and GetUnitToLocationDistance(member, TormentorLocation) <= 1600 then
                     nHumanCountInLoc = nHumanCountInLoc + 1
                 end
 
                 -- attacking tormentor count
                 local memberTarget = J.GetProperTarget(member)
-                if J.IsTormentor(memberTarget) and J.IsAttacking(member) and bot ~= member then
+                if J.IsTormentor(memberTarget) and J.IsAttacking(member) then
                     nAttackingTormentorCount = nAttackingTormentorCount + 1
                 end
             end
@@ -104,7 +105,7 @@ function GetDesire()
 
     -- TODO: reduce wasting time waiting for someone as the location is very far now
     -- Someone go check Tormentor
-    if DotaTime() >= nTormentorSpawnTime * 60 and (DotaTime() - bot.tormentor_kill_time) >= (nTormentorSpawnTime / 2) * 60 then
+    if DotaTime() >= nTormentorSpawnTime * 60 and (DotaTime() - bot.tormentor_kill_time) >= nTormentorSpawnInterval * 60 then
         if not X.IsTormentorAlive() then
             if not J.IsCore(bot) and GetUnitToUnitDistance(bot, hEnemyAncient) > 4000 then
                 local ally = nil
@@ -133,7 +134,7 @@ function GetDesire()
 
     if bot.tormentor_state == true
     and nAveCoreLevel >= 13
-    and nAveSuppLevel >= 10
+    and nAveSuppLevel >= 11
     and (  (bot.tormentor_kill_time == 0 and nAliveAlly >= 5)
         or (bot.tormentor_kill_time > 0 and nAliveAlly >= 3 and J.GetAliveAllyCoreCount() >= 2)
         or (nAttackingTormentorCount >= 2)

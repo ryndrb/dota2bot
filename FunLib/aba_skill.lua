@@ -126,140 +126,26 @@ function X.GetTalentBuild( tTalentTreeList )
 
 end
 
-
 function X.GetSkillList( sAbilityList, nAbilityBuildList, sTalentList, nTalentBuildList )
-
-	local sSkillList = {
-						[1] = sAbilityList[nAbilityBuildList[1]],
-						[2] = sAbilityList[nAbilityBuildList[2]],
-						[3] = sAbilityList[nAbilityBuildList[3]],
-						[4] = sAbilityList[nAbilityBuildList[4]],
-						[5] = sAbilityList[nAbilityBuildList[5]],
-						[6] = sAbilityList[nAbilityBuildList[6]],
-						[7] = sAbilityList[nAbilityBuildList[7]],
-						[8] = sAbilityList[nAbilityBuildList[8]],
-						[9] = sAbilityList[nAbilityBuildList[9]],
-						[10] = sTalentList[nTalentBuildList[1]],
-						[11] = sAbilityList[nAbilityBuildList[10]],
-						[12] = sAbilityList[nAbilityBuildList[11]],
-						[13] = sAbilityList[nAbilityBuildList[12]],
-						[14] = sAbilityList[nAbilityBuildList[13]],
-						[15] = sTalentList[nTalentBuildList[2]],
-						[16] = sAbilityList[nAbilityBuildList[14]],
-						[17] = sAbilityList[nAbilityBuildList[15]],
-						[18] = sTalentList[nTalentBuildList[3]],
-						[19] = sTalentList[nTalentBuildList[4]],
-						[20] = sTalentList[nTalentBuildList[5]],
-						[21] = sTalentList[nTalentBuildList[6]],
-						[22] = sTalentList[nTalentBuildList[7]],
-						[23] = sTalentList[nTalentBuildList[8]],
-					}
-
-	--default
-	if GetBot():GetUnitName() == 'npc_dota_hero_meepo' and #nAbilityBuildList == 16
-	then
-		sSkillList = {
-						[1] = sAbilityList[nAbilityBuildList[1]],
-						[2] = sAbilityList[nAbilityBuildList[2]],
-						[3] = sAbilityList[nAbilityBuildList[3]],
-						[4] = sAbilityList[nAbilityBuildList[4]],
-						[5] = sAbilityList[nAbilityBuildList[5]],
-						[6] = sAbilityList[nAbilityBuildList[6]],
-						[7] = sAbilityList[nAbilityBuildList[7]],
-						[8] = sAbilityList[nAbilityBuildList[8]],
-						[9] = sAbilityList[nAbilityBuildList[9]],
-						[10] = sAbilityList[nAbilityBuildList[10]],
-						[11] = sTalentList[nTalentBuildList[1]],
-						[12] = sAbilityList[nAbilityBuildList[11]],
-						[13] = sAbilityList[nAbilityBuildList[12]],
-						[14] = sAbilityList[nAbilityBuildList[13]],
-						[15] = sTalentList[nTalentBuildList[2]],
-						[16] = sAbilityList[nAbilityBuildList[14]],
-						[17] = sAbilityList[nAbilityBuildList[15]],
-						[18] = sTalentList[nTalentBuildList[3]],
-						[19] = sTalentList[nTalentBuildList[4]],
-						[20] = sTalentList[nTalentBuildList[5]],
-						[21] = sTalentList[nTalentBuildList[6]],
-						[22] = sTalentList[nTalentBuildList[7]],
-						[23] = sTalentList[nTalentBuildList[8]],
-						[24] = sAbilityList[nAbilityBuildList[16]],
-						[25] = sTalentList[nTalentBuildList[3]],
-						[26] = sTalentList[nTalentBuildList[4]],
-						[27] = sTalentList[nTalentBuildList[5]],
-						[28] = sTalentList[nTalentBuildList[6]],
-						[29] = sTalentList[nTalentBuildList[7]],
-						[30] = sTalentList[nTalentBuildList[8]],
-		}
+	-- build it to not hard code here anymore as it's annoying patch changes
+	local sSkillList = {}
+	local talent_idx = 1
+	local ability_idx = 1
+	for i = 1, #nAbilityBuildList + 8 do
+		if sSkillList[i] == nil then
+			if i >= 10 and (i % 5 == 0 or ability_idx > #nAbilityBuildList) then
+				sSkillList[i] = sTalentList[nTalentBuildList[talent_idx]]
+				talent_idx = talent_idx + 1
+			else
+				if ability_idx <= #nAbilityBuildList then
+					sSkillList[i] = sAbilityList[nAbilityBuildList[ability_idx]]
+					ability_idx = ability_idx + 1
+				end
+			end
+		end
 	end
 
-	if GetBot():GetUnitName() == 'npc_dota_hero_night_stalker'
-	or GetBot():GetUnitName() == 'npc_dota_hero_magnataur'
-	then
-		sSkillList = {
-						[1] = sAbilityList[nAbilityBuildList[1]],
-						[2] = sAbilityList[nAbilityBuildList[2]],
-						[3] = sAbilityList[nAbilityBuildList[3]],
-						[4] = sAbilityList[nAbilityBuildList[4]],
-						[5] = sAbilityList[nAbilityBuildList[5]],
-						[6] = sAbilityList[nAbilityBuildList[6]],
-						[7] = sAbilityList[nAbilityBuildList[7]],
-						[8] = sAbilityList[nAbilityBuildList[8]],
-						[9] = sAbilityList[nAbilityBuildList[9]],
-						[10] = sTalentList[nTalentBuildList[1]],
-						[11] = sAbilityList[nAbilityBuildList[10]],
-						[12] = sAbilityList[nAbilityBuildList[11]],
-						[13] = sAbilityList[nAbilityBuildList[12]],
-						[14] = sAbilityList[nAbilityBuildList[13]],
-						[15] = sTalentList[nTalentBuildList[2]],
-						[16] = sAbilityList[nAbilityBuildList[14]],
-						[17] = sAbilityList[nAbilityBuildList[15]],
-						[18] = sAbilityList[nAbilityBuildList[16]],
-						[19] = sTalentList[nTalentBuildList[3]],
-						[20] = sTalentList[nTalentBuildList[4]],
-						[21] = sTalentList[nTalentBuildList[5]],
-						[22] = sTalentList[nTalentBuildList[6]],
-						[23] = sTalentList[nTalentBuildList[7]],
-						[24] = sTalentList[nTalentBuildList[8]],
-		}
-	end
-
-	if GetBot():GetUnitName() == 'npc_dota_hero_invoker'
-	then
-		sSkillList = {
-						[1] = sAbilityList[nAbilityBuildList[1]],
-						[2] = sAbilityList[nAbilityBuildList[2]],
-						[3] = sAbilityList[nAbilityBuildList[3]],
-						[4] = sAbilityList[nAbilityBuildList[4]],
-						[5] = sAbilityList[nAbilityBuildList[5]],
-						[6] = sAbilityList[nAbilityBuildList[6]],
-						[7] = sAbilityList[nAbilityBuildList[7]],
-						[8] = sAbilityList[nAbilityBuildList[8]],
-						[9] = sAbilityList[nAbilityBuildList[9]],
-						[10] = sTalentList[nTalentBuildList[1]],
-						[11] = sAbilityList[nAbilityBuildList[10]],
-						[12] = sAbilityList[nAbilityBuildList[11]],
-						[13] = sAbilityList[nAbilityBuildList[12]],
-						[14] = sAbilityList[nAbilityBuildList[13]],
-						[15] = sTalentList[nTalentBuildList[2]],
-						[16] = sAbilityList[nAbilityBuildList[14]],
-						[17] = sAbilityList[nAbilityBuildList[15]],
-						[18] = sAbilityList[nAbilityBuildList[16]],
-						[19] = sAbilityList[nAbilityBuildList[17]],
-						[20] = sTalentList[nTalentBuildList[3]],
-						[21] = sAbilityList[nAbilityBuildList[18]],
-						[22] = sAbilityList[nAbilityBuildList[19]],
-						[23] = sAbilityList[nAbilityBuildList[20]],
-						[24] = sAbilityList[nAbilityBuildList[21]],
-						[25] = sTalentList[nTalentBuildList[4]],
-						[26] = sTalentList[nTalentBuildList[5]],
-						[27] = sTalentList[nTalentBuildList[6]],
-						[28] = sTalentList[nTalentBuildList[7]],
-						[29] = sTalentList[nTalentBuildList[8]],
-					}
-	end
-					
 	return sSkillList
-
 end
 
 
