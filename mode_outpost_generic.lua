@@ -58,7 +58,7 @@ local LoneDruid = {}
 --Bear Necessities
 local hBearItemList = {
 	"item_quelling_blade",
-	"item_phase_boots",--bear
+	"item_power_treads",--bear
 	"item_desolator",--bear
 	"item_echo_sabre",
 	"item_diffusal_blade",
@@ -403,7 +403,7 @@ function GetDesire()
 	-- end
 
 	-- facet fix
-	if J.IsValid(LoneDruid.hero) and J.IsValid(LoneDruid.bear) and bot == LoneDruid.hero then
+	if J.IsValid(LoneDruid.hero) and bot == LoneDruid.hero then
 		for i = 0, 8 do
 			local hItem = bot:GetItemInSlot(i)
 			if hItem ~= nil and i >= 3 then
@@ -413,7 +413,10 @@ function GetDesire()
 				then
 					for j = 0, 2 do
 						local hItem2 = bot:GetItemInSlot(j)
-						if hItem2 == nil or (hItem2 ~= nil and itemName == 'item_maelstrom' and hItem2:GetName() == 'item_magic_wand') then
+						if hItem2 == nil
+						or (hItem2 ~= nil and itemName == 'item_maelstrom' and hItem2:GetName() == 'item_magic_wand')
+						or (hItem2 ~= nil and itemName == 'item_lesser_crit' and hItem2:GetName() == 'item_power_treads')
+						then
 							bot:ActionImmediate_SwapItems(i, j)
 						end
 					end
@@ -439,6 +442,12 @@ function GetDesire()
 								end
 							elseif itemName == 'item_eagle' then
 								if J.HasItem(LoneDruid.hero, 'item_butterfly') then
+									bot.dropItem = hItem
+									bot.isGiveItem = true
+									return BOT_MODE_DESIRE_ABSOLUTE
+								end
+							elseif itemName == 'item_power_treads' then
+								if (J.HasItem(LoneDruid.hero, 'item_lesser_crit') or J.HasItem(LoneDruid.hero, 'item_greater_crit')) then
 									bot.dropItem = hItem
 									bot.isGiveItem = true
 									return BOT_MODE_DESIRE_ABSOLUTE
