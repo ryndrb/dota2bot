@@ -32,37 +32,66 @@ local HeroBuild = {
             ['buy_list'] = {
 				"item_double_branches",
 				"item_magic_stick",
-				"item_quelling_blade",
+				"item_blight_stone",
 
-				"item_arcane_boots",
+				"item_orb_of_corrosion",
 				"item_magic_wand",
+				"item_yasha",
+				"item_force_staff",
 				"item_manta",--
+				"item_hurricane_pike",--
 				"item_butterfly",--
 				"item_skadi",--
+				"item_aghanims_shard",
 				"item_ultimate_scepter",
 				"item_greater_crit",--
-				"item_disperser",--
 				"item_ultimate_scepter_2",
-				"item_travel_boots_2",--
+				"item_revenants_brooch",--
 				"item_moon_shard",
-				"item_aghanims_shard",
 			},
             ['sell_list'] = {
-				"item_quelling_blade", "item_ultimate_scepter",
-				"item_magic_wand", "item_greater_crit",
+				"item_magic_wand", "item_ultimate_scepter",
+				"item_orb_of_corrosion", "item_revenants_brooch",
 			},
         },
     },
     ['pos_2'] = {
         [1] = {
             ['talent'] = {
-                [1] = {},
+				[1] = {
+					['t25'] = {10, 0},
+					['t20'] = {0, 10},
+					['t15'] = {0, 10},
+					['t10'] = {0, 10},
+				}
             },
             ['ability'] = {
-                [1] = {},
+                [1] = {2,3,2,1,2,1,2,1,1,6,3,3,3,6,6},
             },
-            ['buy_list'] = {},
-            ['sell_list'] = {},
+            ['buy_list'] = {
+				"item_double_branches",
+				"item_magic_stick",
+				"item_blight_stone",
+
+				"item_orb_of_corrosion",
+				"item_magic_wand",
+				"item_yasha",
+				"item_force_staff",
+				"item_manta",--
+				"item_hurricane_pike",--
+				"item_butterfly",--
+				"item_skadi",--
+				"item_aghanims_shard",
+				"item_ultimate_scepter",
+				"item_greater_crit",--
+				"item_ultimate_scepter_2",
+				"item_revenants_brooch",--
+				"item_moon_shard",
+			},
+            ['sell_list'] = {
+				"item_magic_wand", "item_ultimate_scepter",
+				"item_orb_of_corrosion", "item_revenants_brooch",
+			},
         },
     },
     ['pos_3'] = {

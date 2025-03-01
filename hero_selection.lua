@@ -63,7 +63,7 @@ local sHeroList = {										-- pos  1, 2, 3, 4, 5
 	{name = 'npc_dota_hero_ember_spirit', 				role = {0, 100, 0, 0, 0}},
 	{name = 'npc_dota_hero_enchantress', 				role = {0, 0, 100, 0, 100}},
 	{name = 'npc_dota_hero_enigma', 					role = {0, 0, 50, 80, 100}},
-	{name = 'npc_dota_hero_faceless_void', 				role = {100, 0, 0, 0, 0}},-- Run Buff vscript to have missing Chronosphere
+	{name = 'npc_dota_hero_faceless_void', 				role = {100, 0, 0, 0, 0}},
 	{name = 'npc_dota_hero_furion', 					role = {100, 0, 100, 5, 100}},
 	{name = 'npc_dota_hero_grimstroke', 				role = {0, 0, 0, 100, 100}},
 	{name = 'npc_dota_hero_gyrocopter', 				role = {100, 100, 0, 100, 100}},
@@ -78,7 +78,7 @@ local sHeroList = {										-- pos  1, 2, 3, 4, 5
 	{name = 'npc_dota_hero_legion_commander', 			role = {0, 0, 100, 0, 0}},
 	{name = 'npc_dota_hero_leshrac', 					role = {0, 100, 50, 0, 0}},
 	{name = 'npc_dota_hero_lich', 						role = {0, 0, 0, 5, 100}},
-	{name = 'npc_dota_hero_life_stealer', 				role = {100, 0, 0, 0, 0}},-- Run Buff vscript to have missing Rage
+	{name = 'npc_dota_hero_life_stealer', 				role = {100, 0, 0, 0, 0}},
 	{name = 'npc_dota_hero_lina', 						role = {100, 100, 0, 100, 5}},
 	{name = 'npc_dota_hero_lion', 						role = {0, 0, 0, 100, 100}},
 	{name = 'npc_dota_hero_lone_druid', 				role = {100, 100, 0, 0, 0}},
@@ -87,7 +87,7 @@ local sHeroList = {										-- pos  1, 2, 3, 4, 5
 	{name = 'npc_dota_hero_magnataur', 					role = {0, 0, 100, 0, 0}},
 	{name = 'npc_dota_hero_marci',	 					role = {50, 100, 50, 0, 0}},
 	{name = 'npc_dota_hero_mars', 						role = {0, 100, 100, 0, 0}},
-	{name = 'npc_dota_hero_medusa', 					role = {100, 0, 0, 0, 0}},
+	{name = 'npc_dota_hero_medusa', 					role = {100, 50, 0, 0, 0}},
 	{name = 'npc_dota_hero_meepo', 						role = {100, 100, 0, 0, 0}},
 	{name = 'npc_dota_hero_mirana', 					role = {0, 0, 0, 50, 100}},
 	{name = 'npc_dota_hero_monkey_king', 				role = {100, 100, 0, 0, 0}},
