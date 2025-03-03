@@ -36,6 +36,13 @@ local DireFountain = Vector(6928, 6372, 392)
 local roshDeathTime = 0
 
 local refreshList = false
+-- GetAbilityPoints() is "broken" with the facet
+-- only for these levels
+local hOgreMagiLevelUpTable = {
+	[18] = true, [19] = false, [20] = true, 
+	[21] = true, [22] = true, [23] = true, [24] = false, [25] = true, 
+	[26] = false, [27] = false, [28] = false, [29] = false, [30] = true, 
+}
 local function AbilityLevelUpComplement()
 
 	if GetGameState() ~= GAME_STATE_PRE_GAME
@@ -98,12 +105,21 @@ local function AbilityLevelUpComplement()
 		end
 	end
 
+	local botLevel = bot:GetLevel()
+	local bOgreMagi = botName == 'npc_dota_hero_ogre_magi'
+
 	if bot:GetAbilityPoints() > 0
 		and #sAbilityLevelUpList >= 1
 	then
 		if DotaTime() > -40 and sAbilityLevelUpList[1] == 'generic_hidden' then -- some time for Buff to take effect; don't remove right away
 			table.remove(sAbilityLevelUpList, 1)
 			return
+		end
+
+		if bOgreMagi then
+			if botLevel >= 18 and hOgreMagiLevelUpTable[botLevel] == true then
+				return
+			end
 		end
 
 		local abilityToLevelup = bot:GetAbilityByName( sAbilityLevelUpList[1] )
@@ -145,6 +161,9 @@ local function AbilityLevelUpComplement()
 				or abilityToLevelup:GetName() == 'life_stealer_rage')
 			and abilityToLevelup:GetLevel() < abilityToLevelup:GetMaxLevel()
 			then
+				if bOgreMagi and hOgreMagiLevelUpTable[botLevel] ~= nil then
+					hOgreMagiLevelUpTable[botLevel] = true
+				end
 				bot:ActionImmediate_LevelAbility( sAbilityLevelUpList[1] )
 				table.remove( sAbilityLevelUpList, 1 )
 				return
