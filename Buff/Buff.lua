@@ -4,6 +4,7 @@ dofile('bots/Buff/GPM')
 dofile('bots/Buff/NeutralItems')
 dofile('bots/Buff/Helper')
 dofile('bots/Buff/Towers')
+dofile('bots/Buff/Facets')
 
 if Buff == nil
 then
@@ -105,6 +106,9 @@ end
 -- script flags
 local bBuffFlags = {
     -- General
+    facets = {
+        change  = true,  -- Set to 'false' to disable changing (a) facet/s (See /Facets.lua for the heroes).
+    },
     towers = {
         radiant = true, -- Set to 'false' to disable Radiant towers buff.
         dire    = true, -- Set to 'false' to disable Dire towers buff.
@@ -142,6 +146,18 @@ function Buff:Init()
         local TeamDire = botTable[DOTA_TEAM_BADGUYS]
         local hHeroList = {}
 
+        if bBuffFlags.facets.change and GameRules:GetDOTATime(false, true) < 0 then
+            for _, h in pairs(TeamRadiant) do table.insert(hHeroList, h) end
+            for _, h in pairs(TeamDire) do table.insert(hHeroList, h) end
+
+            for _, hero in pairs(hHeroList) do
+                if hero.facet_flag == nil then hero.facet_flag = false end
+                if hero.facet_flag == false then
+                    F.ChangeHeroFacet(hero)
+                end
+            end
+        end
+
         if GameRules:GetDOTATime(false, false) > 0 then
             -- Towers
             if bBuffFlags.towers.radiant then
@@ -151,6 +167,7 @@ function Buff:Init()
                 T.HandleTowerBuff(DOTA_TEAM_BADGUYS)
             end
 
+            hHeroList = {}
             -- Neutral Items
             if bBuffFlags.neutrals.radiant then
                 for _, h in pairs(TeamRadiant) do

@@ -95,8 +95,8 @@ local HeroBuild = {
 				"item_ultimate_scepter_2",
 			},
             ['sell_list'] = {
-				"item_magic_wand", "item_black_king_bar",
-				"item_bottle", "item_sheepstick",
+				"item_bottle", "item_black_king_bar",
+				"item_magic_wand", "item_sheepstick",
 				"item_arcane_boots", "item_butterfly",
 			},
         },

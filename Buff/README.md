@@ -9,6 +9,6 @@ I also added a functionality for bots to get neutral items.
 3. In Hero Selection (pick phase), open the console, and type: `sv_cheats 1` then `script_reload_code bots/Buff/buff`.
 4. The script is now running (`Buff mode enabled!` message in chat).
 
-Enabling this also adds `Lifestealer's missing Rage`, and `Faceless Void's missing Chronosphere` from patch 7.37.
+See `bBuffFlags` for the script flags.
 
 It can be use with other bot scripts; just change some stuff accordingly, to suit whichever script. Or use fretbots.

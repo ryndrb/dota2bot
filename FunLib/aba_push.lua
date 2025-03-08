@@ -258,9 +258,9 @@ function Push.PushThink(bot, lane)
         return
     end
 
-    local nAllyHeroes = J.GetAlliesNearLoc(bot:GetLocation(), 900)
-    local nEnemyHeroes = J.GetEnemiesNearLoc(bot:GetLocation(), botAttackRange + 150)
-    if #nAllyHeroes >= #nEnemyHeroes
+    local nAllyHeroes = J.GetAlliesNearLoc(bot:GetLocation(), 800)
+    local nEnemyHeroes = J.GetEnemiesNearLoc(bot:GetLocation(), 1000)
+    if #nAllyHeroes > #nEnemyHeroes
     and J.IsValidHero(nEnemyHeroes[1]) and J.CanBeAttacked(nEnemyHeroes[1])
     and (nEnemyHeroes[1]:GetAttackTarget() == bot or J.IsChasingTarget(nEnemyHeroes[1], bot))
     then
@@ -269,12 +269,19 @@ function Push.PushThink(bot, lane)
     end
 
     local nCreeps = bot:GetNearbyLaneCreeps(math.min(700 + botAttackRange, 1600), true)
+    if J.IsCore(bot) then
+        nCreeps = bot:GetNearbyCreeps(math.min(700 + botAttackRange, 1600), true)
+    end
     nCreeps = Push.GetSpecialUnitsNearby(bot, nCreeps, math.min(700 + botAttackRange, 1600))
-    if  nCreeps ~= nil and #nCreeps > 0
-    and J.CanBeAttacked(nCreeps[1])
-    then
-        bot:Action_AttackUnit(nCreeps[1], true)
-        return
+    for _, creep in pairs(nCreeps) do
+        if J.IsValid(creep)
+        and J.CanBeAttacked(creep)
+        and not J.IsTormentor(creep)
+        and not J.IsRoshan(creep)
+        then
+            bot:Action_AttackUnit(creep, true)
+            return
+        end
     end
 
     local nBarracks = bot:GetNearbyBarracks(math.min(700 + botAttackRange, 1600), true)

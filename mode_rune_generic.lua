@@ -130,9 +130,9 @@ function GetDesire()
             elseif nRuneStatus == RUNE_STATUS_UNKNOWN
 				and ClosestDistance <= MAX_DIST * 1.5
                 and DotaTime() > 3 * 60 + 50
-                and ((minute % 4 == 0) or (minute % 4 == 0 and second > 45))
+                and ((minute % 4 == 0) or (minute % 4 == 3 and second > 45))
             then
-				if ((botPos == 1 or botPos == 3) and J.IsInLaningPhase() and ClosestDistance > 2500) then
+				if J.IsCore(bot) and J.IsInLaningPhase() and ClosestDistance > 2000 then
 					return BOT_MODE_DESIRE_NONE
 				end
 
@@ -140,9 +140,9 @@ function GetDesire()
             elseif nRuneStatus == RUNE_STATUS_MISSING
 				and ClosestDistance <= MAX_DIST * 1.5
                 and DotaTime() > 3 * 60
-                and (minute % 4 == 0 and second > 52)
+                and (minute % 4 == 3 and second > 52)
             then
-				if ((botPos == 1 or botPos == 3) and J.IsInLaningPhase() and ClosestDistance > 2500) then
+				if J.IsCore(bot) and J.IsInLaningPhase() and ClosestDistance > 2000 then
 					return BOT_MODE_DESIRE_NONE
 				end
 

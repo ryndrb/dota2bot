@@ -131,7 +131,7 @@ local sHeroList = {										-- pos  1, 2, 3, 4, 5
 	{name = 'npc_dota_hero_spirit_breaker', 			role = {0, 5, 100, 100, 0}},
 	{name = 'npc_dota_hero_storm_spirit', 				role = {0, 100, 0, 0, 0}},
 	{name = 'npc_dota_hero_sven', 						role = {100, 0, 0, 0, 0}},
-	{name = 'npc_dota_hero_techies', 					role = {0, 0, 0, 100, 100}},
+	{name = 'npc_dota_hero_techies', 					role = {0, 50, 0, 100, 100}},
 	{name = 'npc_dota_hero_terrorblade', 				role = {100, 0, 0, 0, 0}},
 	{name = 'npc_dota_hero_templar_assassin', 			role = {100, 100, 0, 0, 0}},
 	{name = 'npc_dota_hero_tidehunter', 				role = {0, 0, 100, 0, 0}},

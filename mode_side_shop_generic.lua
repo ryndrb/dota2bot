@@ -12,6 +12,9 @@ local canDoTormentor = false
 if bot.tormentor_state == nil then bot.tormentor_state = false end
 if bot.tormentor_kill_time == nil then bot.tormentor_kill_time = 0 end
 
+local nCoreCountInLoc = 0
+local nSuppCountInLoc = 0
+
 function GetDesire()
     TormentorLocation = J.GetTormentorLocation(GetTeam())
 
@@ -23,8 +26,6 @@ function GetDesire()
     local nTormentorSpawnTime = J.IsModeTurbo() and 7.5 or 15
 
     local nHumanCountInLoc = 0
-    local nCoreCountInLoc = 0
-    local nSuppCountInLoc = 0
     local nAttackingTormentorCount = 0
 
     local nAveCoreLevel = 0
@@ -51,13 +52,13 @@ function GetDesire()
 
             -- get average levels
             if J.IsCore(member) then
-                if GetUnitToLocationDistance(member, TormentorLocation) <= 1000 then
+                if GetUnitToLocationDistance(member, TormentorLocation) <= 900 then
                     nCoreCountInLoc = nCoreCountInLoc + 1
                 end
 
                 nAveCoreLevel = nAveCoreLevel + member:GetLevel()
             else
-                if GetUnitToLocationDistance(member, TormentorLocation) <= 1000 then
+                if GetUnitToLocationDistance(member, TormentorLocation) <= 900 then
                     nSuppCountInLoc = nSuppCountInLoc + 1
                 end
 
@@ -136,6 +137,7 @@ function GetDesire()
     and nAveCoreLevel >= 13
     and nAveSuppLevel >= 11
     and (  (bot.tormentor_kill_time == 0 and nAliveAlly >= 5)
+        or (bot.tormentor_kill_time == 0 and nAliveAlly >= 4 and nCoreCountInLoc >= 3 and nSuppCountInLoc >= 1)
         or (bot.tormentor_kill_time > 0 and nAliveAlly >= 3 and J.GetAliveAllyCoreCount() >= 2)
         or (nAttackingTormentorCount >= 2)
     ) then
@@ -214,21 +216,18 @@ end
 
 function X.IsEnoughAllies()
     local nAllyCount = 0
-    local nCoreCountInLoc = 0
-
 	for i = 1, 5
     do
 		local member = GetTeamMember(i)
 		if member ~= nil and member:IsAlive()
 		and GetUnitToLocationDistance(member, TormentorLocation) <= 900
 		then
-            if J.IsCore(member) then
-                nCoreCountInLoc = nCoreCountInLoc + 1
-            end
-
 			nAllyCount = nAllyCount + 1
 		end
 	end
 
-	return ((((bot.tormentor_kill_time == 0 and nAllyCount >= 5) or (bot.tormentor_kill_time > 0 and nAllyCount >= 3))) and nCoreCountInLoc >= 2)
+	return ((bot.tormentor_kill_time == 0 and nAllyCount >= 5)
+         or (bot.tormentor_kill_time == 0 and nAllyCount >= 4 and nCoreCountInLoc >= 3 and nSuppCountInLoc >= 1)
+         or (bot.tormentor_kill_time > 0 and nAllyCount >= 3))
+    and nCoreCountInLoc >= 2
 end

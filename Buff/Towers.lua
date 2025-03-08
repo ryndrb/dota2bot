@@ -29,18 +29,18 @@ function T.HandleTowerBuff(nTeam)
 
                 if bTierThreeTower or bTierFourTower then
                     if bEnemyInRadius then
-                        fRegen = 16
+                        fRegen = 17
                     else
-                        fRegen = 16 + fAverageUnitsDmg
+                        fRegen = 17 + fAverageUnitsDmg
                     end
                 elseif bRax then
                     if bEnemyInRadius then
-                        fRegen = 18
+                        fRegen = 20
                     else
-                        fRegen = 18 + fAverageUnitsDmg
+                        fRegen = 20 + fAverageUnitsDmg
                     end
                 elseif bAncient then
-                    fRegen = 20 + fAverageUnitsDmg
+                    fRegen = 23 + fAverageUnitsDmg
                 end
 
                 if tower:IsBarracks() then

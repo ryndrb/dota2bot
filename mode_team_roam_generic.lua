@@ -41,6 +41,8 @@ local ShouldHelpWhenCoreIsTargeted = false
 
 local TormentorLocation
 
+local hTargetCreep = nil
+
 function GetDesire()
 	TormentorLocation = J.GetTormentorLocation(GetTeam())
 
@@ -75,7 +77,7 @@ function GetDesire()
 	then
 		beInitDone = true
 		bePvNMode = J.Role.IsPvNMode()
-		IsHeroCore = J.IsCore(bot)
+		IsHeroCore = J.GetPosition(bot) == 1
 		IsSupport = not J.IsCore(bot)
 	end
 
@@ -116,6 +118,11 @@ function GetDesire()
 	and bot.ChronoTarget ~= nil
 	then
 		return bot:GetActiveModeDesire() + 0.1
+	end
+
+	hTargetCreep = X.GetLastHitCreep()
+	if J.IsValid(hTargetCreep) and J.CanBeAttacked(hTargetCreep) then
+		return 1.5
 	end
 
 	-- nDesire = X.ConsiderHarassInLaningPhase()
@@ -248,6 +255,12 @@ function Think()
 	and harassTarget ~= nil
 	then
 		bot:Action_AttackUnit(harassTarget, true)
+		return
+	end
+
+	if hTargetCreep ~= nil then
+		bot:Action_AttackUnit(hTargetCreep, true)
+		hTargetCreep = nil
 		return
 	end
 
@@ -2077,4 +2090,38 @@ function X.ConsiderHelpWhenCoreIsTargeted()
 	end
 
 	return nil, false
+end
+
+-- some help with last hits
+function X.GetLastHitCreep()
+	if (J.IsRetreating(bot) and bot:GetActiveModeDesire() > 0.95)
+	or (not J.IsCore(bot) and J.IsThereCoreNearby(800))
+	or J.IsInTeamFight(bot, 1200)
+	then
+		return nil
+	end
+
+	local nEnemyTowers = bot:GetNearbyTowers(1600, true)
+	local nEnemyCreeps = bot:GetNearbyCreeps(1600, true)
+	for _, creep in pairs(nEnemyCreeps) do
+		if J.IsValid(creep)
+		and J.CanBeAttacked(creep)
+		and J.IsInRange(bot, creep, bot:GetAttackRange() + 300)
+		and not J.IsRoshan(creep)
+		and not J.IsTormentor(creep)
+		then
+			local nDelay = J.GetAttackProDelayTime(bot, creep)
+			if J.WillKillTarget(creep, bot:GetAttackDamage()-1, DAMAGE_TYPE_PHYSICAL, nDelay)
+			and (#nEnemyTowers == 0 or (J.IsValidBuilding(nEnemyTowers[1]) and not J.IsInRange(creep, nEnemyTowers[1], 650)))
+			then
+				local nInRangeAlly = J.GetAlliesNearLoc(creep:GetLocation(), 1000)
+				local nInRangeEnemy = J.GetEnemiesNearLoc(creep:GetLocation(), 1000)
+				if #nInRangeAlly >= #nInRangeEnemy then
+					return creep
+				end
+			end
+		end
+	end
+
+	return nil
 end

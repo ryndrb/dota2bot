@@ -5318,25 +5318,25 @@ X.ConsiderItemDesire["item_tpscroll"] = function( hItem )
 	end
 
 	--处理特殊情况一
-	if X.IsFarmingAlways( bot )
-	then
-		tpLoc = GetAncient( GetTeam() ):GetLocation()
-		sCastMotive = '处理特殊情况一'
+	-- if X.IsFarmingAlways( bot )
+	-- then
+	-- 	tpLoc = GetAncient( GetTeam() ):GetLocation()
+	-- 	sCastMotive = '处理特殊情况一'
 
-		if bot:GetUnitName() == 'npc_dota_hero_furion'
-		then
-			local Teleportation = bot:GetAbilityByName('furion_teleportation')
-			if  Teleportation:IsTrained()
-			and Teleportation:IsFullyCastable()
-			then
-				bot.useProphetTP = true
-				bot.ProphetTPLocation = tpLoc
-				return BOT_ACTION_DESIRE_NONE
-			end
-		end
+	-- 	if bot:GetUnitName() == 'npc_dota_hero_furion'
+	-- 	then
+	-- 		local Teleportation = bot:GetAbilityByName('furion_teleportation')
+	-- 		if  Teleportation:IsTrained()
+	-- 		and Teleportation:IsFullyCastable()
+	-- 		then
+	-- 			bot.useProphetTP = true
+	-- 			bot.ProphetTPLocation = tpLoc
+	-- 			return BOT_ACTION_DESIRE_NONE
+	-- 		end
+	-- 	end
 
-		return BOT_ACTION_DESIRE_HIGH, tpLoc, sCastType, sCastMotive
-	end
+	-- 	return BOT_ACTION_DESIRE_HIGH, tpLoc, sCastType, sCastMotive
+	-- end
 
 	--处理特殊情况二
 	if J.IsStuck( bot ) --and nEnemyCount == 0

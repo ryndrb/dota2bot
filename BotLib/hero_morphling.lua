@@ -34,70 +34,29 @@ local HeroBuild = {
             ['buy_list'] = {
                 "item_tango",
                 "item_double_branches",
-                "item_quelling_blade",
+                "item_double_circlet",
             
                 "item_magic_wand",
-                "item_double_bracer",
                 "item_power_treads",
                 "item_vladmir",
-                "item_maelstrom",
                 "item_sange_and_yasha",--
-                "item_mjollnir",--
                 "item_black_king_bar",--
-                "item_butterfly",--
                 "item_greater_crit",--
+                "item_butterfly",--
                 "item_aghanims_shard",
                 "item_satanic",--
+                "item_skadi",--
                 "item_moon_shard",
                 "item_ultimate_scepter_2",
             },
             ['sell_list'] = {
-                "item_quelling_blade", "item_maelstrom",
-                "item_magic_wand", "item_sange_and_yasha",
-                "item_bracer", "item_black_king_bar",
-                "item_bracer", "item_butterfly",
-                "item_power_treads", "item_greater_crit",
+                "item_circlet", "item_black_king_bar",
+                "item_circlet", "item_greater_crit",
+                "item_magic_wand", "item_butterfly",
                 "item_vladmir", "item_satanic",
+                "item_power_treads", "item_skadi",
             },
         },
-        -- [2] = {
-        --     ['talent'] = {
-        --         [1] = {
-        --             ['t25'] = {0, 10},
-        --             ['t20'] = {0, 10},
-        --             ['t15'] = {10, 0},
-        --             ['t10'] = {10, 0},
-        --         }
-        --     },
-        --     ['ability'] = {
-        --         [1] = {4,2,1,1,1,6,1,4,4,2,2,6,4,2,6},
-        --     },
-        --     ['buy_list'] = {
-        --         "item_tango",
-        --         "item_double_branches",
-        --         "item_double_circlet",
-            
-        --         "item_magic_wand",
-        --         "item_power_treads",
-        --         "item_vladmir",
-        --         "item_sange_and_yasha",--
-        --         "item_black_king_bar",--
-        --         "item_greater_crit",--
-        --         "item_butterfly",--
-        --         "item_aghanims_shard",
-        --         "item_satanic",--
-        --         "item_skadi",--
-        --         "item_moon_shard",
-        --         "item_ultimate_scepter_2",
-        --     },
-        --     ['sell_list'] = {
-        --         "item_circlet", "item_black_king_bar",
-        --         "item_circlet", "item_greater_crit",
-        --         "item_magic_wand", "item_butterfly",
-        --         "item_vladmir", "item_satanic",
-        --         "item_power_treads", "item_skadi",
-        --     },
-        -- },
     },
     ['pos_2'] = {
         [1] = {
@@ -115,75 +74,32 @@ local HeroBuild = {
             ['buy_list'] = {
                 "item_tango",
                 "item_double_branches",
-                "item_quelling_blade",
-
+                "item_double_circlet",
+            
                 "item_bottle",
                 "item_magic_wand",
-                "item_double_bracer",
                 "item_power_treads",
+                "item_double_wraith_band",
                 "item_vladmir",
-                "item_maelstrom",
                 "item_sange_and_yasha",--
-                "item_mjollnir",--
                 "item_black_king_bar",--
-                "item_butterfly",--
                 "item_greater_crit",--
+                "item_butterfly",--
                 "item_aghanims_shard",
                 "item_satanic",--
+                "item_disperser",--
                 "item_moon_shard",
                 "item_ultimate_scepter_2",
             },
             ['sell_list'] = {
-                "item_quelling_blade", "item_vladmir",
-                "item_magic_wand", "item_maelstrom",
-                "item_bottle", "item_sange_and_yasha",
-                "item_bracer", "item_black_king_bar",
-                "item_bracer", "item_butterfly",
-                "item_power_treads", "item_greater_crit",
+                "item_magic_wand", "item_manta",
+                "item_bottle", "item_black_king_bar",
+                "item_wraith_band", "item_greater_crit",
+                "item_wraith_band", "item_butterfly",
                 "item_vladmir", "item_satanic",
+                "item_power_treads", "item_disperser",
             },
         },
-        -- [2] = {
-        --     ['talent'] = {
-        --         [1] = {
-        --             ['t25'] = {0, 10},
-        --             ['t20'] = {0, 10},
-        --             ['t15'] = {10, 0},
-        --             ['t10'] = {10, 0},
-        --         }
-        --     },
-        --     ['ability'] = {
-        --         [1] = {4,2,1,1,1,6,1,4,4,2,2,6,4,2,6},
-        --     },
-        --     ['buy_list'] = {
-        --         "item_tango",
-        --         "item_double_branches",
-        --         "item_double_circlet",
-            
-        --         "item_bottle",
-        --         "item_magic_wand",
-        --         "item_power_treads",
-        --         "item_double_wraith_band",
-        --         "item_vladmir",
-        --         "item_sange_and_yasha",--
-        --         "item_black_king_bar",--
-        --         "item_greater_crit",--
-        --         "item_butterfly",--
-        --         "item_aghanims_shard",
-        --         "item_satanic",--
-        --         "item_disperser",--
-        --         "item_moon_shard",
-        --         "item_ultimate_scepter_2",
-        --     },
-        --     ['sell_list'] = {
-        --         "item_magic_wand", "item_manta",
-        --         "item_bottle", "item_black_king_bar",
-        --         "item_wraith_band", "item_greater_crit",
-        --         "item_wraith_band", "item_butterfly",
-        --         "item_vladmir", "item_satanic",
-        --         "item_power_treads", "item_disperser",
-        --     },
-        -- },
     },
     ['pos_3'] = {
         [1] = {
