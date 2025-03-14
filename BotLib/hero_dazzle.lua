@@ -682,7 +682,6 @@ function X.ConsiderR()
 	return BOT_ACTION_DESIRE_NONE
 end
 
--- unit command 'error' isn't really giving a descriptive log/msg, so it's whatever
 function X.ConsiderNothlProjection()
 	if not J.CanCastAbility(NothlProjection)
 	or bot:HasModifier('modifier_dazzle_nothl_projection_soul_debuff')
@@ -699,6 +698,38 @@ function X.ConsiderNothlProjection()
 			local nEnemyHeroes = J.GetEnemiesNearLoc(nTeamFightLocation, 1600)
 			if #nAllyHeroes >= #nEnemyHeroes then
 				return BOT_ACTION_DESIRE_HIGH, bot:GetLocation()
+			end
+		end
+	end
+
+	local botTarget = J.GetProperTarget(bot)
+	if J.IsGoingOnSomeone(bot) then
+		if J.IsValidHero(botTarget)
+		and J.IsInRange(bot, botTarget, 500)
+		and J.CanCastOnNonMagicImmune(botTarget)
+		and J.CanBeAttacked(botTarget)
+		and J.IsCore(botTarget)
+		and J.GetHP(botTarget) < 0.7
+		and not J.IsChasingTarget(bot, botTarget)
+		and not botTarget:HasModifier('modifier_abaddon_borrowed_time')
+		and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
+		and not botTarget:HasModifier('modifier_oracle_false_promise_timer')
+		then
+			local nAllyHeroes = J.GetAlliesNearLoc(botTarget:GetLocation(), 1200)
+			local nEnemyHeroes = J.GetEnemiesNearLoc(botTarget:GetLocation(), 1200)
+			local nEnemyTowers = bot:GetNearbyTowers(900, true)
+			if #nAllyHeroes >= #nEnemyHeroes
+			and not (#nAllyHeroes >= #nEnemyHeroes + 2)
+			and #nEnemyTowers == 0
+			then
+				if #nEnemyHeroes <= 1 then
+					local nDamage = bot:GetEstimatedDamageToTarget(true, botTarget, 5.0, DAMAGE_TYPE_ALL)
+					if (botTarget:GetActualIncomingDamage(nDamage, DAMAGE_TYPE_ALL) / bot:GetHealth()) >= 0.4 then
+						return BOT_ACTION_DESIRE_HIGH, bot:GetLocation()
+					end
+				else
+					return BOT_ACTION_DESIRE_HIGH, bot:GetLocation()
+				end
 			end
 		end
 	end
@@ -730,7 +761,7 @@ function X.ConsiderNothlProjectionEnd()
 		end
 
 		if (#nEnemyHeroes > #nAllyHeroes)
-		or (not J.CanCastAbility(abilityQ) and not J.CanCastAbility(abilityW) and not J.CanCastAbility(abilityE))
+		or (not J.CanCastAbility(abilityQ) and not J.CanCastAbility(abilityW) and not J.CanCastAbility(abilityE) and J.GetModifierTime(bot, 'modifier_dazzle_nothl_projection_soul_debuff') <= 5.0)
 		then
 			nEnemyHeroes = J.GetEnemiesNearLoc(hOriginal:GetLocation(), 600)
 			if #nEnemyHeroes <= 1 then

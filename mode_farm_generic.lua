@@ -178,7 +178,7 @@ function GetDesire()
 		return BOT_MODE_DESIRE_NONE;
 	end	
 	
-	if J.IsLaning(bot) then return BOT_MODE_DESIRE_NONE end
+	if J.IsInLaningPhase(bot) then return BOT_MODE_DESIRE_NONE end
 	
 	if bot:IsAlive() and bot:HasModifier('modifier_arc_warden_tempest_double') 
 	   and GetRoshanDesire() > 0.85
@@ -289,7 +289,7 @@ function GetDesire()
 	end
 	if teamTime > DotaTime() - 3.0 then return BOT_MODE_DESIRE_NONE; end;
 	
-	if beNormalFarmer 
+	if beNormalFarmer or beHighFarmer
 	then
 		if bot:GetActiveMode() == BOT_MODE_ASSEMBLE then assembleTime = DotaTime(); end
 		

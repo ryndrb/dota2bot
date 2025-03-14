@@ -901,6 +901,7 @@ function Site.IsModeSuitableToFarm( bot )
 	   and mode ~= BOT_MODE_ASSEMBLE
 	   and mode ~= BOT_MODE_TEAM_ROAM
 	   and mode ~= BOT_MODE_ROSHAN
+	   and mode ~= BOT_MODE_RETREAT
 	   and botLevel >= 8
 	then
 		return true

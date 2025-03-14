@@ -298,7 +298,6 @@ function ItemPurchaseThink()
 	if bot:HasModifier('modifier_arc_warden_tempest_double')
 	or (DotaTime() > 0 and J.IsMeepoClone(bot))
 	or bot:HasModifier('modifier_dazzle_nothl_projection_soul_debuff')
-	or bot:HasModifier('modifier_dazzle_nothl_projection_physical_body_debuff')
 	then
 		bot.itemToBuy = {}
 		return

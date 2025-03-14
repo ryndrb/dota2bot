@@ -146,10 +146,11 @@ function J.CanNotUseAction( bot )
 			or bot:IsChanneling()
 			or (bot:IsStunned() and not bot:HasModifier('modifier_dazzle_nothl_projection_soul_debuff'))
 			or bot:IsNightmared()
-			or bot:HasModifier( 'modifier_ringmaster_the_box_buff' )
-			or bot:HasModifier( 'modifier_item_forcestaff_active' )
-			or bot:HasModifier( 'modifier_phantom_lancer_phantom_edge_boost' )
-			or bot:HasModifier( 'modifier_tinker_rearm' )
+			or bot:HasModifier('modifier_ringmaster_the_box_buff')
+			or bot:HasModifier('modifier_item_forcestaff_active')
+			or bot:HasModifier('modifier_phantom_lancer_phantom_edge_boost')
+			or bot:HasModifier('modifier_tinker_rearm')
+			or bot:HasModifier('modifier_dazzle_nothl_projection_physical_body_debuff')
 
 end
 
@@ -165,10 +166,11 @@ function J.CanNotUseAbility( bot )
 			or bot:IsStunned()
 			or bot:IsHexed()
 			or bot:IsNightmared()
-			or bot:HasModifier( 'modifier_ringmaster_the_box_buff' )
-			or bot:HasModifier( "modifier_doom_bringer_doom" )
-			or bot:HasModifier( 'modifier_item_forcestaff_active' )
-			or bot:HasModifier( 'modifier_tinker_rearm' )
+			or bot:HasModifier('modifier_ringmaster_the_box_buff')
+			or bot:HasModifier("modifier_doom_bringer_doom")
+			or bot:HasModifier('modifier_item_forcestaff_active')
+			or bot:HasModifier('modifier_tinker_rearm')
+			or bot:HasModifier('modifier_dazzle_nothl_projection_physical_body_debuff')
 
 end
 
@@ -833,7 +835,7 @@ end
 
 function J.CanKillTarget( npcTarget, dmg, dmgType )
 
-	return J.IsValid(npcTarget) and npcTarget:GetActualIncomingDamage( dmg, dmgType ) >= npcTarget:GetHealth()
+	return J.IsValid(npcTarget) and J.CanBeAttacked(npcTarget) and npcTarget:GetActualIncomingDamage( dmg, dmgType ) >= npcTarget:GetHealth()
 
 end
 
@@ -841,7 +843,7 @@ end
 --未计算技能增强
 function J.WillKillTarget( npcTarget, dmg, dmgType, nDelay )
 
-	if J.IsValid(npcTarget) then
+	if J.IsValid(npcTarget) and J.CanBeAttacked(npcTarget) then
 		
 		local targetHealth = npcTarget:GetHealth() + npcTarget:GetHealthRegen() * nDelay + 0.8
 	
@@ -2808,6 +2810,7 @@ function J.CanBeAttacked( unit )
 			and not unit:HasModifier("modifier_fountain_glyph")
 			and not unit:HasModifier("modifier_dark_willow_shadow_realm_buff")
 			and not unit:HasModifier("modifier_ringmaster_the_box_buff")
+			and not unit:HasModifier("modifier_dazzle_nothl_projection_soul_debuff")
 			and (unit:GetTeam() == GetTeam() 
 					or not unit:HasModifier("modifier_crystal_maiden_frostbite") )
 			and (unit:GetTeam() ~= GetTeam() 
@@ -3957,8 +3960,9 @@ function J.IsUnitBetweenMeAndLocation(hSource, hTarget, vTargetLoc, nRadius)
 		and hSource ~= unit
 		and hTarget ~= unit
 		then
+			local nRadius__ = nRadius + unit:GetBoundingRadius()
 			local tResult = PointToLineDistance(vStart, vEnd, unit:GetLocation())
-			if tResult ~= nil and tResult.within and tResult.distance <= nRadius then return true end
+			if tResult ~= nil and tResult.within and tResult.distance <= nRadius__ then return true end
 		end
 	end
 

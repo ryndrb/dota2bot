@@ -895,6 +895,7 @@ function X.ConsiderMagnetize()
         and not botTarget:HasModifier('modifier_abaddon_borrowed_time')
         and not botTarget:HasModifier('modifier_dazzle_shallow_grave')
         and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
+		and not botTarget:HasModifier('modifier_templar_assassin_refraction_absorb')
 		then
 			local nInRangeAlly = J.GetAlliesNearLoc(botTarget:GetLocation(), 1200)
 			local nInRangeEnemy = J.GetEnemiesNearLoc(botTarget:GetLocation(), 1200)

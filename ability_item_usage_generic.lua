@@ -1142,6 +1142,9 @@ X.ConsiderItemDesire["item_black_king_bar"] = function( hItem )
 	local sCastMotive = nil
 	local nInRangeEnmyList = bot:GetNearbyHeroes( nCastRange, true, BOT_MODE_NONE )
 
+	if bot:HasModifier('modifier_dazzle_nothl_projection_soul_debuff') then
+		return BOT_ACTION_DESIRE_NONE
+	end
 
 	if #nInRangeEnmyList > 0
 		and not bot:IsMagicImmune()
@@ -1352,12 +1355,11 @@ X.ConsiderItemDesire["item_blink"] = function( hItem )
 		and not botTarget:IsAttackImmune()
 		and not botTarget:IsInvulnerable()
 		then
-			local nInRangeAlly = botTarget:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
-			local nInRangeEnemy = botTarget:GetNearbyHeroes(1600, false, BOT_MODE_NONE)
+			local nInRangeAlly = J.GetAlliesNearLoc(botTarget:GetLocation(), 1000)
+			local nInRangeEnemy = J.GetEnemiesNearLoc(botTarget:GetLocation(), 1000)
 
 			if  nInRangeAlly ~= nil and nInRangeEnemy ~= nil
-			and ((#nInRangeAlly >= #nInRangeEnemy or J.WeAreStronger(bot, 1600))
-				or (#nInRangeAlly >= #nInRangeEnemy and bot:GetStunDuration(true) > 0.8))
+			and ((#nInRangeAlly >= #nInRangeEnemy) or (#nInRangeAlly >= #nInRangeEnemy and bot:GetStunDuration(true) > 0.8))
 			then
 				local nDistance = GetUnitToUnitDistance(bot, botTarget)
 

@@ -51,9 +51,7 @@ function Defend.GetDefendDesire(bot, lane)
 
 	local furthestBuilding = Defend.GetFurthestBuildingOnLane(lane)
 
-	if DotaTime() < 12 * 60
-	and not bMyLane
-	and GetUnitToLocationDistance(bot, GetLaneFrontLocation(GetTeam(), lane, 0)) > 4000
+	if GetUnitToLocationDistance(bot, GetLocationAlongLane(lane, GetLaneFrontAmount(GetTeam(), lane, false))) > 3500
 	and not Defend.IsImportantBuilding(furthestBuilding)
 	then
 		local tpScoll = J.GetItem2(bot, 'item_tpscroll')
