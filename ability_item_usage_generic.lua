@@ -985,8 +985,8 @@ end
 --战鼓
 X.ConsiderItemDesire["item_ancient_janggo"] = function( hItem )
 
-	if ( hItem:GetCurrentCharges() <= 0 and hItem:GetName() == "item_ancient_janggo" )
-	then return BOT_ACTION_DESIRE_NONE end
+	-- if ( hItem:GetCurrentCharges() <= 0 and hItem:GetName() == "item_ancient_janggo" )
+	-- then return BOT_ACTION_DESIRE_NONE end
 
 	local nCastRange = 680
 	local sCastType = 'none'
