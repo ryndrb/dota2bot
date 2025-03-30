@@ -6,6 +6,7 @@ local bot = GetBot()
 local J = require( GetScriptDirectory()..'/FunLib/jmz_func')
 local Item = require( GetScriptDirectory()..'/FunLib/aba_item' )
 
+local hAbilityCapture = bot:GetAbilityByName('ability_capture')
 local Outposts = {}
 local DidWeGetOutpost = false
 local ClosestOutpost = nil
@@ -1044,8 +1045,11 @@ function Think()
 			bot:Action_MoveToLocation(ClosestOutpost:GetLocation())
 			return
 		else
-			bot:Action_AttackUnit(ClosestOutpost, true)
-			return
+			-- works
+			if hAbilityCapture then
+				bot:Action_UseAbilityOnEntity(hAbilityCapture, ClosestOutpost)
+				return
+			end
 		end
 	end
 end
