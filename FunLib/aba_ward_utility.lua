@@ -2,38 +2,39 @@ local X = {}
 
 local J = require(GetScriptDirectory()..'/FunLib/jmz_func')
 local U = require(GetScriptDirectory()..'/FunLib/lua_util')
+local locs = require(GetScriptDirectory()..'/bot_locations')
 
 local nVisionRadius = 1600
 
 -- Radiant Warding Spots
 -- Game Start
-local RADIANT_GAME_START_MID_1 = Vector(-250, -1089, 128)
-local RADIANT_GAME_START_MID_2 = Vector(-1936.532593, 219.070312, 128.000000)
-local RADIANT_GAME_START_MID_3 = Vector(192.359741, -1245.259888, 128.000000)
-local RADIANT_GAME_START_2 = Vector(1573.506714, -4622.163574, 256)
+local RADIANT_GAME_START_MID_1 = locs.GetLocation("RADIANT_GAME_START_MID_1")
+local RADIANT_GAME_START_MID_2 = locs.GetLocation("RADIANT_GAME_START_MID_2")
+local RADIANT_GAME_START_MID_3 = locs.GetLocation("RADIANT_GAME_START_MID_3")
+local RADIANT_GAME_START_2 = locs.GetLocation("RADIANT_GAME_START_2")
 
 -- Laning Phase
-local RADIANT_LANE_PHASE_1 = Vector(-3975.636719, 1596.444824, 256.000000)
-local RADIANT_LANE_PHASE_2 = Vector(-7801.413574, 3812.353760, 128.000000)
-local RADIANT_LANE_PHASE_3 = Vector(-1936.532593, 219.070312, 128.000000)
-local RADIANT_LANE_PHASE_4 = Vector(-138.504257, 1377.454346, 128.000000)
-local RADIANT_LANE_PHASE_5 = Vector(3107.636475, -4059.501465, 256.000000)
-local RADIANT_LANE_PHASE_6 = Vector(7938.873047, -5564.231934, 128.000000)
+local RADIANT_LANE_PHASE_1 = locs.GetLocation("RADIANT_LANE_PHASE_1")
+local RADIANT_LANE_PHASE_2 = locs.GetLocation("RADIANT_LANE_PHASE_2")
+local RADIANT_LANE_PHASE_3 = locs.GetLocation("RADIANT_LANE_PHASE_3")
+local RADIANT_LANE_PHASE_4 = locs.GetLocation("RADIANT_LANE_PHASE_4")
+local RADIANT_LANE_PHASE_5 = locs.GetLocation("RADIANT_LANE_PHASE_5")
+local RADIANT_LANE_PHASE_6 = locs.GetLocation("RADIANT_LANE_PHASE_6")
 
 -- Dire Warding Spots
 -- Game Start
-local DIRE_GAME_START_MID_1 = Vector(-491, 303, 128)
-local DIRE_GAME_START_MID_2 = Vector(1388.739624, -501.590698, 128.000000)
-local DIRE_GAME_START_MID_3 = Vector(-1123.828003, 1443.285522, 128.000000)
-local DIRE_GAME_START_2 = Vector(-1751.722900, 3574.795898, 256)
+local DIRE_GAME_START_MID_1 = locs.GetLocation("DIRE_GAME_START_MID_1")
+local DIRE_GAME_START_MID_2 = locs.GetLocation("DIRE_GAME_START_MID_2")
+local DIRE_GAME_START_MID_3 = locs.GetLocation("DIRE_GAME_START_MID_3")
+local DIRE_GAME_START_2 = locs.GetLocation("DIRE_GAME_START_2")
 
 -- Laning Phase
-local DIRE_LANE_PHASE_1 = Vector(-4278.674805, 3518.397217, 128.000000)
-local DIRE_LANE_PHASE_2 = Vector(-7044.607422, 5093.973633, 128.000000)
-local DIRE_LANE_PHASE_3 = Vector(-1546.854858, 2030.528931, 256.000000)
-local DIRE_LANE_PHASE_4 = Vector(1388.739624, -501.590698, 128.000000)
-local DIRE_LANE_PHASE_5 = Vector(4193.616699, -4767.900391, 128.000000)
-local DIRE_LANE_PHASE_6 = Vector(8394.113281, -4270.384766, 128.000000)
+local DIRE_LANE_PHASE_1 = locs.GetLocation("DIRE_LANE_PHASE_1")
+local DIRE_LANE_PHASE_2 = locs.GetLocation("DIRE_LANE_PHASE_2")
+local DIRE_LANE_PHASE_3 = locs.GetLocation("DIRE_LANE_PHASE_3")
+local DIRE_LANE_PHASE_4 = locs.GetLocation("DIRE_LANE_PHASE_4")
+local DIRE_LANE_PHASE_5 = locs.GetLocation("DIRE_LANE_PHASE_5")
+local DIRE_LANE_PHASE_6 = locs.GetLocation("DIRE_LANE_PHASE_6")
 
 local nTowerList = {
 	TOWER_TOP_1,

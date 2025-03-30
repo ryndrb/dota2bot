@@ -5,9 +5,10 @@ local J = require( GetScriptDirectory()..'/FunLib/jmz_func' )
 local killTime = 0.0
 local shouldKillRoshan = false
 local DoingRoshanMessage = DotaTime()
+local locs = require(GetScriptDirectory()..'/bot_locations')
 
-local roshanRadiantLoc  = Vector(7625, -7511, 1092)
-local roshanDireLoc     = Vector(-7549, 7562, 1107)
+local roshanRadiantLoc  = locs.GetLocation("ROSHANRADIANTLOC")
+local roshanDireLoc     = locs.GetLocation("ROSHANDIRELOC")
 
 -- local rTwinGate = nil
 -- local dTwinGate = nil

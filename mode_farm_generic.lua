@@ -5,8 +5,9 @@ end
 local bot = GetBot();
 local X = {}
 local J = require( GetScriptDirectory()..'/FunLib/jmz_func')
-local RB = Vector(-7174.000000, -6671.00000, 0.000000)
-local DB = Vector(7023.000000, 6450.000000, 0.000000)
+local locs = require(GetScriptDirectory()..'/bot_locations')
+local RB = locs.GetLocation("RB")
+local DB = locs.GetLocation("DB")
 
 local botName = bot:GetUnitName();
 local minute = 0;

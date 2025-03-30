@@ -1,5 +1,6 @@
 local X = {}
 local J = require(GetScriptDirectory()..'/FunLib/jmz_func')
+local locs = require(GetScriptDirectory()..'/bot_locations')
 
 local bot = GetBot()
 
@@ -20,8 +21,8 @@ local nRuneList = {
 	RUNE_POWERUP_2,
 }
 
-local radiantWRLocation = Vector(-7988.583008, 423.058716, 256.000000)
-local direWRLocation = Vector(8244.062500, -1026.568848, 256.000000)
+local radiantWRLocation = locs.GetLocation("RADIANTWRLOCATION")
+local direWRLocation = locs.GetLocation("DIREWRLOCATION")
 local wisdomRuneSpots = {
 	[1] = radiantWRLocation,
 	[2] = direWRLocation,

@@ -17,6 +17,7 @@ then return end
 
 local J = require( GetScriptDirectory()..'/FunLib/jmz_func' )
 local BotBuild = dofile( GetScriptDirectory().."/BotLib/"..string.gsub( bot:GetUnitName(), "npc_dota_", "" ) )
+local locs = require(GetScriptDirectory()..'/bot_locations')
 
 if BotBuild == nil then return end
 
@@ -29,10 +30,10 @@ local bDeafaultAbilityHero = BotBuild['bDeafaultAbility']
 local bDeafaultItemHero = BotBuild['bDeafaultItem']
 local sAbilityLevelUpList = BotBuild['sSkillList']
 
-local roshanRadiantLoc  = Vector(2787.287354, -2752.223877, 13.998048)
-local roshanDireLoc = Vector(-2909.122559, 2185.981689, 13.998047)
-local RadiantFountain = Vector(-6619, -6336, 384)
-local DireFountain = Vector(6928, 6372, 392)
+local roshanRadiantLoc  = locs.GetLocation("ROSHANRADIANTLOC")
+local roshanDireLoc = locs.GetLocation("ROSHANDIRELOC")
+local RadiantFountain = locs.GetLocation("RADIANTFOUNTAIN")
+local DireFountain = locs.GetLocation("DIREFOUNTAIN")
 local roshDeathTime = 0
 
 local refreshList = false

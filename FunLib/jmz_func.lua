@@ -27,13 +27,14 @@ local tEnemyHumanList = {}
 local nEnemyTotalKill = 0
 local nEnemyAverageLevel = 1
 
+local locs = require(GetScriptDirectory()..'/bot_locations')
 
-local RB = Vector(-7184.360840, -6689.084961, 392.750000)
-local DB = Vector(6996.191895, 6414.104004, 392.000000)
-local roshanRadiantLoc  = Vector(2787.287354, -2752.223877, 13.998048)
-local roshanDireLoc = Vector(-2909.122559, 2185.981689, 13.998047)
-local RadiantTormentorLoc = Vector(7499.061523, -7847.331055, 256.000000)
-local DireTormentorLoc = Vector(-7229.757324, 7933.152832, 256.000000)
+local RB = locs.GetLocation("RB")
+local DB = locs.GetLocation("DB")
+local roshanRadiantLoc  = locs.GetLocation("ROSHANRADIANTLOC")
+local roshanDireLoc = locs.GetLocation("ROSHANDIRELOC")
+local RadiantTormentorLoc = locs.GetLocation("RADIANTTORMENTORLOC")
+local DireTormentorLoc = locs.GetLocation("DIRETORMENTORLOC")
 local fKeepManaPercent = 0.39
 
 
