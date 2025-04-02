@@ -423,8 +423,8 @@ function X.ConsiderBlink()
 
     if J.IsDoingTormentor(bot)
     then
-		local TormentorLocation = J.GetTormentorLocation(GetTeam())
-        if GetUnitToLocationDistance(bot, TormentorLocation) > nCastRange
+		local TormentorLocation = J.GetTormentorWaitingLocation(GetTeam())
+        if GetUnitToLocationDistance(bot, TormentorLocation) > 1600
         then
 			local targetLoc = J.Site.GetXUnitsTowardsLocation(bot, TormentorLocation, nCastRange)
 			local nInRangeEnemy = J.GetEnemiesNearLoc(targetLoc, 1600)

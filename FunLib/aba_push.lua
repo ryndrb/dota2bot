@@ -17,9 +17,9 @@ function Push.GetPushDesire(bot, lane)
     local nMaxDesire = 0.95 - 0.02
     local bMyLane = bot:GetAssignedLane() == lane
 
-	if (not bMyLane and J.GetPosition(bot) == 1 and (DotaTime() < 12 * 60 and bot:GetNetWorth() <= 5000)) -- reduce carry feeds
+	if (not bMyLane and J.GetPosition(bot) == 1 and (J.IsInLaningPhase() and bot:GetNetWorth() <= 5000)) -- reduce carry feeds
     or (J.IsDoingRoshan(bot) and #J.GetAlliesNearLoc(J.GetCurrentRoshanLocation(), 2800) >= 3)
-    or (#J.GetAlliesNearLoc(J.GetTormentorLocation(GetTeam()), 1600) >= 3)
+    or ((#J.GetAlliesNearLoc(J.GetTormentorLocation(GetTeam()), 1600) >= 3) or #J.GetAlliesNearLoc(J.GetTormentorWaitingLocation(GetTeam()), 2500) >= 3)
 	then
 		return BOT_MODE_DESIRE_NONE
 	end
@@ -40,6 +40,13 @@ function Push.GetPushDesire(bot, lane)
 			return BOT_ACTION_DESIRE_ABSOLUTE * 0.95 - 0.01
 		end
 	end
+
+    local hEnemyAncient = GetAncient(GetOpposingTeam())
+    if hEnemyAncient then
+        if J.IsDoingTormentor(bot) and GetUnitToUnitDistance(bot, hEnemyAncient) > 4000 then
+            return BOT_MODE_DESIRE_NONE
+        end
+    end
 
     local nInRangeAlly = J.GetAlliesNearLoc(bot:GetLocation(), 1200)
     local nInRangeEnemy = J.GetEnemiesNearLoc(bot:GetLocation(), 1200)
@@ -94,10 +101,10 @@ function Push.GetPushDesire(bot, lane)
     local eAliveCoreCount = J.GetAliveCoreCount(true)
     local nPushDesire = GetPushLaneDesire(lane)
 
-    local hEnemyAncient = GetAncient(GetOpposingTeam())
     if J.IsValidBuilding(hEnemyAncient)
     and J.CanBeAttacked(hEnemyAncient)
     and GetUnitToUnitDistance(bot, hEnemyAncient) < 2000
+    and #nInRangeAlly >= 3
     then
         return BOT_MODE_DESIRE_HIGH - 0.01
     end
@@ -182,13 +189,14 @@ function Push.GetPushDesire(bot, lane)
 
             if aAliveCount >= eAliveCount
             and J.GetAverageLevel(GetTeam()) >= 12
+            -- and (DotaTime() < (J.IsModeTurbo() and 30 * 60 or 50 * 60))
             then
-                -- nPushDesire = nPushDesire * RemapValClamped(allyKills / enemyKills, 1, 2, 1, 2)
-                nPushDesire = nPushDesire + RemapValClamped(allyKills / enemyKills, 1, 2, 0.0, 1)
+                local teamNetworth, enemyNetworth = J.GetInventoryNetworth()
+                nPushDesire = nPushDesire + RemapValClamped(teamNetworth - enemyNetworth, 5000, 15000, 0.0, 1.0)
             end
 
             bot.laneToPush = lane
-            return Clamp(nPushDesire, 0, nMaxDesire)
+            return Clamp(nPushDesire, 0.1, nMaxDesire)
         end
     end
 
@@ -214,9 +222,9 @@ function Push.WhichLaneToPush(bot)
         then
             if IsHeroAlive(id)
             then
-                distanceToTop = math.max(distanceToTop, #(GetLaneFrontLocation(GetTeam(),LANE_TOP, 0) - TeamLocation[id]))
-                distanceToMid = math.max(distanceToMid, #(GetLaneFrontLocation(GetTeam(),LANE_MID, 0) - TeamLocation[id]))
-                distanceToBot = math.max(distanceToBot, #(GetLaneFrontLocation(GetTeam(),LANE_BOT, 0) - TeamLocation[id]))
+                distanceToTop = math.max(distanceToTop, #(GetLocationAlongLane(LANE_TOP, GetLaneFrontAmount(GetTeam(), LANE_TOP, false)) - TeamLocation[id]))
+                distanceToMid = math.max(distanceToMid, #(GetLocationAlongLane(LANE_MID, GetLaneFrontAmount(GetTeam(), LANE_MID, false)) - TeamLocation[id]))
+                distanceToBot = math.max(distanceToBot, #(GetLocationAlongLane(LANE_BOT, GetLaneFrontAmount(GetTeam(), LANE_BOT, false)) - TeamLocation[id]))
             end
         end
     end

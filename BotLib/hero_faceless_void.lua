@@ -372,8 +372,8 @@ function X.ConsiderTimeWalk()
     if J.IsDoingTormentor(bot)
     and bot:GetActiveModeDesire() > 0.7
     then
-		local tormentorLoc = J.GetTormentorLocation(GetTeam())
-        if GetUnitToLocationDistance(bot, tormentorLoc) > nCastRange
+		local tormentorLoc = J.GetTormentorWaitingLocation(GetTeam())
+        if GetUnitToLocationDistance(bot, tormentorLoc) > 1600
         then
 			local targetLoc = J.Site.GetXUnitsTowardsLocation(bot, tormentorLoc, nCastRange)
 

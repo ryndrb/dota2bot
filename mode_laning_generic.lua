@@ -5,13 +5,27 @@ local clearMode = false
 local botName = bot:GetUnitName()
 
 if bot.isInLanePhase == nil then bot.isInLanePhase = false end
+local fNotLaningTime = 0
 function GetDesire()
 
 	local currentTime = DotaTime()
-	local botLV = bot:GetLevel()
+	local botActiveMode = bot:GetActiveMode()
+	local botActiveModeDesire = bot:GetActiveMode()
 
-	if currentTime < 0 then
+	if currentTime < 0
+	or not bot:IsAlive()
+	or ((  botActiveMode == BOT_MODE_RUNE
+		or botActiveMode == BOT_MODE_DEFEND_ALLY
+		or botActiveMode == BOT_MODE_EVASIVE_MANEUVERS
+		or botActiveMode == BOT_MODE_WARD) and botActiveModeDesire > 0)
+	then
 		return BOT_ACTION_DESIRE_NONE
+	end
+
+	if DotaTime() > 60 and DotaTime() < fNotLaningTime + 3 then
+		return BOT_MODE_DESIRE_VERYLOW
+	else
+		fNotLaningTime = 0
 	end
 
 	if J.IsNonStableHero(botName) then
@@ -39,28 +53,51 @@ function GetDesire()
 		end
 	end
 
-	if  currentTime <= 9 * 60
-	and botLV <= 7
+	local bCore = J.IsCore(bot)
+	local botLevel = bot:GetLevel()
+	if (DotaTime() < 10 * 60) and ((bCore and bot:GetNetWorth() < 5500) or (not bCore and botLevel <= 7))
 	then
+		local nLastHits = bot:GetLastHits()
+		local nDesire = RemapValClamped(nLastHits, 50, 75, BOT_MODE_DESIRE_VERYHIGH, BOT_MODE_DESIRE_LOW)
+		local botAssignedLane = bot:GetAssignedLane()
+		local vLaneFrontLocation = GetLocationAlongLane(botAssignedLane, GetLaneFrontAmount(GetTeam(), botAssignedLane, false))
+		local nInRangeAlly = J.GetAlliesNearLoc(vLaneFrontLocation, 1200)
+		local nInRangeEnemy = J.GetEnemiesNearLoc(vLaneFrontLocation, 1200)
+		local botTarget = J.GetProperTarget(bot)
+		local bGood = DotaTime() > 10
+					and ((#nInRangeEnemy >= 1 and J.GetHP(bot) > 0.25) or (#nInRangeEnemy == 0))
+					and #nInRangeAlly >= #nInRangeEnemy
+					and not (#nInRangeAlly >= #nInRangeEnemy + 2)
+					-- and (GetUnitToLocationDistance(bot, vLaneFrontLocation) < 2000 and #nEnemyLaneCreeps > 0)
+					and not J.IsRetreating(bot)
+
 		bot.isInLanePhase = true
-		return 0.444
+
+		if J.IsGoingOnSomeone(bot) then
+			if J.IsValidHero(botTarget)
+			and J.CanBeAttacked(botTarget)
+			and J.IsInRange(bot, botTarget, Max(bot:GetAttackRange() + 200, 800))
+			and not J.IsSuspiciousIllusion(botTarget)
+			then
+				fNotLaningTime = DotaTime()
+				return BOT_MODE_DESIRE_VERYLOW
+			end
+		end
+
+		if bGood then
+			if (bCore and nLastHits < 60) or (not bCore and not J.IsThereCoreNearby(1600)) then
+				return nDesire
+			elseif not bCore then
+				return 0.444
+			end
+		else
+			return RemapValClamped(#nInRangeAlly - #nInRangeEnemy, -1, 1, 0.25, 0.5)
+		end
 	end
 
 	bot.isInLanePhase = false
 
-	if  currentTime <= 12 * 60
-	and botLV <= 11
-	then
-		if botLV <= 7 then bot.isInLanePhase = true end
-		return 0.333
-	end
-
-	if botLV <= 17
-	then
-		return 0.222
-	end
-
-	return BOT_MODE_DESIRE_LOW
+	return BOT_MODE_DESIRE_VERY_LOW
 end
 
 if J.IsNonStableHero(botName)
@@ -213,7 +250,7 @@ function Think()
 
 	if DotaTime() >= fNextMovementTime then
 		bot:Action_MoveToLocation(target_loc)
-		fNextMovementTime = DotaTime() + math.random(0.05, 0.2)
+		fNextMovementTime = DotaTime() + RandomFloat(0.05, 0.2)
 	end
 end
 

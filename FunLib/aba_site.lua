@@ -595,16 +595,18 @@ function Site.GetClosestNeutralSpwan( bot, availableCampList )
 
 	for _, camp in pairs( availableCampList )
 	do
-	   local dist = GetUnitToLocationDistance( bot, camp.cattr.location )
-	   if Site.IsEnemyCamp( camp ) then dist = dist * 1.5 end
-	  
-	   if Site.IsTheClosestOne( bot, camp.cattr.location )
-	      and dist < minDist
-		  and ( bot:GetLevel() >= 10 or not Site.IsAncientCamp( camp ) )
-	   then
-			minDist = dist
-			pCamp = camp
-	   end
+		if not Site.IsUnitAroundLocation(camp.cattr.location, 1200) then
+			local dist = GetUnitToLocationDistance( bot, camp.cattr.location )
+			if Site.IsEnemyCamp( camp ) then dist = dist * 1.5 end
+		   
+			if Site.IsTheClosestOne( bot, camp.cattr.location )
+			   and dist < minDist
+			   and ( bot:GetLevel() >= 10 or not Site.IsAncientCamp( camp ) )
+			then
+				 minDist = dist
+				 pCamp = camp
+			end
+		end
 	end
 
 	return pCamp
@@ -622,7 +624,7 @@ function Site.IsTheClosestOne( bot, loc )
 		local member = GetTeamMember( k )
 		if  member ~= nil
 			and member:IsAlive()
-			and member:GetActiveMode() == BOT_MODE_FARM
+			and (member:GetActiveMode() == BOT_MODE_FARM or Site.GetPosition(member) <= 3)
 		then
 			local memberDist = GetUnitToLocationDistance( member, loc )
 			if memberDist < minDist
@@ -700,6 +702,21 @@ function Site.GetMinHPCreep( creepList )
 
 	return targetCreep
 
+end
+
+function Site.IsUnitAroundLocation(vLoc, nRadius)
+	for _, id in pairs(GetTeamPlayers(GetOpposingTeam())) do
+		if IsHeroAlive(id) then
+			local info = GetHeroLastSeenInfo(id)
+			if info ~= nil then
+				local dInfo = info[1]
+				if dInfo ~= nil and Site.GetDistance(vLoc, dInfo.location) <= nRadius and dInfo.time_since_seen < 5.0 then
+					return true
+				end
+			end
+		end
+	end
+	return false
 end
 
 ----------------------------------
@@ -880,17 +897,17 @@ function Site.IsModeSuitableToFarm( bot )
 		end
 	end
 
-	if Site.IsShouldFarmHero( bot )
-		and botLevel >= 8
-		and botLevel <= 24
-		and Site.IsSuitableFarmMode( mode )
-		and mode ~= BOT_MODE_ROSHAN
-		and mode ~= BOT_MODE_TEAM_ROAM
-		and mode ~= BOT_MODE_LANING
-		and mode ~= BOT_MODE_WARD
-	then
-		return true
-	end
+	-- if Site.IsShouldFarmHero( bot )
+	-- 	and botLevel >= 8
+	-- 	and botLevel <= 24
+	-- 	and Site.IsSuitableFarmMode( mode )
+	-- 	and mode ~= BOT_MODE_ROSHAN
+	-- 	and mode ~= BOT_MODE_TEAM_ROAM
+	-- 	and mode ~= BOT_MODE_LANING
+	-- 	and mode ~= BOT_MODE_WARD
+	-- then
+	-- 	return true
+	-- end
 
 	if Site.IsSuitableFarmMode( mode )
 	   and mode ~= BOT_MODE_WARD
@@ -930,7 +947,7 @@ function Site.IsTimeToFarm( bot )
 		local enemyAncientDistance = GetUnitToUnitDistance( bot, enemyAncient )
 		if  enemyAncientDistance < 3800
 		    and enemyAncientDistance > 1400
-			-- and bot:GetActiveModeDesire() < BOT_MODE_DESIRE_HIGH
+			and bot:GetActiveModeDesire() < BOT_MODE_DESIRE_HIGH
 			and #allyList <= 1
 		then
 			return true
@@ -949,12 +966,7 @@ function Site.IsTimeToFarm( bot )
 	end
 
 	local carry = Site.GetCarry()
-
-	if  carry ~= nil
-	and (Site.GetPosition(bot) == 1 and bot:GetNetWorth() < 30000
-		or Site.GetPosition(bot) == 2 and carry:GetNetWorth() < 30000
-		or Site.GetPosition(bot) == 3 and carry:GetNetWorth() < 30000
-		)
+	if carry ~= nil and carry:GetNetWorth() < 4500 * 6
 	then
 		return true
 	end

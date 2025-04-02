@@ -4,43 +4,46 @@ local nEnemyAncient = GetAncient(GetOpposingTeam())
 
 function U.IsValidUnit(unit)
     return unit ~= nil
-        and not unit:IsNull()
+		and not unit:IsNull()
+		and unit:CanBeSeen()
         and unit:IsAlive()
-        and unit:CanBeSeen()
 end
 
 function U.IsValidTarget(unit)
 	return U.IsValidUnit(unit)
-	   and not unit:IsInvulnerable()
-	   and not unit:IsAttackImmune()
+		and not unit:IsInvulnerable()
+		and not unit:IsAttackImmune()
 end
 
 function U.IsBusy(unit)
-	return U.IsValidUnit(unit)
-        and (unit:IsUsingAbility()
-            or unit:IsCastingAbility()
-            or unit:IsChanneling())
+	return not U.IsValidUnit(unit)
+		or (U.IsValidUnit(unit)
+			and (unit:IsUsingAbility()
+				or unit:IsCastingAbility()
+				or unit:IsChanneling()))
 end
 
 function U.CantMove(unit)
-	return U.IsValidUnit(unit)
-        and (unit:IsStunned()
-            or unit:IsRooted()
-            or unit:IsNightmared()
-            or unit:IsInvulnerable() and not unit:HasModifier('modifier_fountain_invulnerability')
-            )
+	return not U.IsValidUnit(unit)
+		or (U.IsValidUnit(unit)
+			and (unit:IsStunned()
+				or unit:IsRooted()
+				or unit:IsNightmared()
+				or unit:IsInvulnerable() and not unit:HasModifier('modifier_fountain_invulnerability')
+				))
 end
 
 
 function U.CantAttack(unit)
-	return U.IsValidUnit(unit)
-        and (unit:IsStunned()
-            or unit:IsRooted()
-            or unit:IsNightmared()
-            or unit:IsDisarmed()
-            or unit:IsInvulnerable()
-            or unit:GetAttackDamage() <= 0
-            )
+	return not U.IsValidUnit(unit)
+		or (U.IsValidUnit(unit)
+			and (unit:IsStunned()
+				or unit:IsRooted()
+				or unit:IsNightmared()
+				or unit:IsDisarmed()
+				or unit:IsInvulnerable()
+				or unit:GetAttackDamage() <= 0
+				))
 end
 
 function U.GetWeakestHero(nRadius, hMinionUnit)
@@ -61,14 +64,33 @@ end
 function U.GetWeakestCreep(nRadius, hMinionUnit)
     if U.IsValidUnit(hMinionUnit)
     then
-        local nCreeps = hMinionUnit:GetNearbyCreeps(nRadius * 0.5, true)
+		local hCreepList = hMinionUnit:GetNearbyCreeps(nRadius, true)
+		for _, creep in pairs(GetUnitList(UNIT_LIST_ENEMIES)) do
+			if U.IsValidUnit(creep) and GetUnitToUnitDistance(creep, hMinionUnit) <= nRadius then
+				local sCreepName = creep:GetUnitName()
+				if U.IsFamiliar(creep)
+				or U.IsBrewLink(creep)
+				or creep:IsDominated()
+				or creep:HasModifier('modifier_chen_holy_persuasion')
+				or creep:HasModifier('modifier_dominated')
+				or string.find(sCreepName, 'eidolon')
+				or string.find(sCreepName, 'furion_treant')
+				or string.find(sCreepName, 'invoker_forged_spirit')
+				or string.find(sCreepName, 'broodmother_spiderling')
+				or string.find(sCreepName, 'broodmother_spiderite')
+				or string.find(sCreepName, 'warlock_golem')
+				or string.find(sCreepName, 'beastmaster_boar')
+				or string.find(sCreepName, 'beastmaster_greater_boar')
+				or string.find(sCreepName, 'lycan_wolf')
+				or string.find(sCreepName, 'necronomicon')
+				or string.find(sCreepName, 'lone_druid_bear')
+				then
+					table.insert(hCreepList, creep)
+				end
+			end
+		end
 
-        if #nCreeps == 0
-        then
-            nCreeps = hMinionUnit:GetNearbyCreeps(nRadius, true)
-        end
-
-        return U.GetWeakest(nCreeps)
+        return U.GetWeakest(hCreepList)
     end
 
     return nil
@@ -129,9 +151,12 @@ function U.IsNotAllowedToAttack(unit)
 	return unit_name == '#DOTA_OutpostName_North'
 		or unit_name == '#DOTA_OutpostName_South'
 		or unit_name == 'npc_dota_unit_twin_gate'
+		or unit_name == 'npc_dota_lantern'
 end
 
 function U.IsTargetedByHero(unit)
+	if not U.IsValidUnit(unit) then return false end
+
 	for _, enemy in pairs(GetUnitList(UNIT_LIST_ENEMY_HEROES))
 	do
 		if U.IsValidUnit(enemy)
@@ -147,6 +172,8 @@ function U.IsTargetedByHero(unit)
 end
 
 function U.IsTargetedByTower(unit)
+	if not U.IsValidUnit(unit) then return false end
+
 	for _, enemy in pairs(GetUnitList(UNIT_LIST_ENEMY_BUILDINGS))
 	do
 		if U.IsValidUnit(enemy)
@@ -162,6 +189,8 @@ function U.IsTargetedByTower(unit)
 end
 
 function U.IsTargetedByCreep(unit)
+	if not U.IsValidUnit(unit) then return false end
+
 	for _, enemy in pairs(GetUnitList(UNIT_LIST_ENEMY_CREEPS))
 	do
 		if U.IsValidUnit(enemy)
@@ -297,6 +326,8 @@ function U.IsMinionWithNoSkill(unit)
 		or unit_name == "npc_dota_lycan_wolf2"
 		or unit_name == "npc_dota_lycan_wolf3"
 		or unit_name == "npc_dota_lycan_wolf4"
+		or unit_name == "npc_dota_lycan_wolf5"
+		or unit_name == "npc_dota_lycan_wolf6"
 		or unit_name == "npc_dota_neutral_kobold"
 		or unit_name == "npc_dota_neutral_kobold_tunneler"
 		or unit_name == "npc_dota_neutral_kobold_taskmaster"

@@ -191,6 +191,12 @@ end
 -- float RandomFloat( fMin, fMax )
 
 -- Returns a random float between nMin and nMax, inclusive.
+local o_RandomFloat = RandomFloat
+local epsilon = 0.00000001
+function RandomFloat(fMin, fMax)
+	return fMin + math.random() * (fMax - fMin + epsilon)
+end
+
 -- vector RandomVector( fLength )
 
 -- Returns a vector of fLength pointing in a random direction in the X/Y axis.

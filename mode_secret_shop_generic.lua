@@ -35,7 +35,7 @@ function GetDesire()
 	end
 
 	if DotaTime() > 0 and not J.IsInLaningPhase() then
-		if (bot:GetItemInSlot( 6 ) ~= nil or bot:GetItemInSlot( 7 ) ~= nil or bot:GetItemInSlot( 8 ) ~= nil) then
+		if (bot:GetItemInSlot( 6 ) ~= nil or bot:GetItemInSlot( 7 ) ~= nil or bot:GetItemInSlot( 8 ) ~= nil) or (not J.IsModeTurbo() and bot:GetUnitName() == 'npc_dota_hero_lone_druid') then
 			if bot.sItemSellList ~= nil then
 				for i = #bot.sItemSellList , 2, -2 do
 					local nItemToSellSlot = bot:FindItemSlot( bot.sItemSellList[i - 1] )

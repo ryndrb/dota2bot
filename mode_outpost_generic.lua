@@ -921,7 +921,7 @@ function Think()
 						bot:Action_MoveToLocation(J.GetFaceTowardDistanceLocation(LoneDruid.hero, 600))
 					end
 				end
-				fNextMovementTime = DotaTime() + math.random(0.2, 0.5)
+				fNextMovementTime = DotaTime() + RandomFloat(0.2, 0.5)
 				return
 			end
 		end

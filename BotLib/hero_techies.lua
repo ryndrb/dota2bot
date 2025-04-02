@@ -621,6 +621,7 @@ end
 function X.ConsiderMineFieldSign()
     if ProximityMines ~= nil and not ProximityMines:IsTrained()
     or not J.CanCastAbility(MineFieldSign)
+    or #TechiesMines < 3
     then
         return BOT_ACTION_DESIRE_NONE, 0
     end
@@ -633,12 +634,16 @@ function X.ConsiderMineFieldSign()
     and GetUnitToLocationDistance(bot, MineLocation) <= 1600
     and not X.IsEnemyCloserToWardLocation(MineLocation, MineLocationDistance)
     then
-        for _ = 1, 50 do
-            local vLocation = J.GetRandomLocationWithinDist(MineLocation, 0, nRadius * 3 + 100)
-            if IsLocationPassable(vLocation) then
-                local hTechiesMines = X.GetTechiesMinesInLoc(vLocation, nRadius)
-                if #hTechiesMines >= 3 then
-                    return BOT_ACTION_DESIRE_HIGH, vLocation
+        -- do grid-based for structured searching to avoid a lot of (possible) redundant checks from prior
+        local stepSize = nRadius / 2
+        for dx = -nRadius, nRadius, stepSize do
+            for dy = -nRadius, nRadius, stepSize do
+                local vLocation = Vector(MineLocation.x + dx, MineLocation.y + dy, MineLocation.z)
+                if IsLocationPassable(vLocation) then
+                    local hTechiesMines = X.GetTechiesMinesInLoc(vLocation, nRadius)
+                    if #hTechiesMines >= 3 then
+                        return BOT_ACTION_DESIRE_HIGH, vLocation
+                    end
                 end
             end
         end
@@ -777,7 +782,6 @@ function X.ConsiderProximityMines()
         end
     end
 
-    -- General Mines
     if  X.IsSuitableToPlaceMine()
     and DotaTime() > MineCooldownTime + 1.2
     and nManaAfter >= 0.2
@@ -786,16 +790,20 @@ function X.ConsiderProximityMines()
 		MineLocation, MineLocationDistance = TU.GetClosestSpot(bot, nSpots)
         local nDistance = J.IsCore(bot) and 2200 or 4000
 
-		if  MineLocation ~= nil
+        if  MineLocation ~= nil
         and GetUnitToLocationDistance(bot, MineLocation) <= nDistance
 		and not X.IsEnemyCloserToWardLocation(MineLocation, MineLocationDistance)
 		then
-            for _ = 1, 100 do
-                local vLocation = J.GetRandomLocationWithinDist(MineLocation, 0, nRadius * 3 + 100)
-                if IsLocationPassable(vLocation) and not X.IsOtherMinesClose(vLocation, nRadius) then
-                    local nMineList = X.GetTechiesMinesInLoc(vLocation, nRadius * 3 + 100)
-                    if #nMineList < 3 then
-                        return BOT_ACTION_DESIRE_HIGH, vLocation
+            -- do grid-based for structured searching to avoid a lot of (possible) redundant checks from prior
+            local stepSize = nRadius
+            for dx = -nRadius, nRadius, stepSize do
+                for dy = -nRadius, nRadius, stepSize do
+                    local vLocation = Vector(MineLocation.x + dx, MineLocation.y + dy, MineLocation.z)
+                    if IsLocationPassable(vLocation) and not X.IsOtherMinesClose(vLocation, nRadius) then
+                        local nMineList = X.GetTechiesMinesInLoc(vLocation, nRadius)
+                        if #nMineList < 3 then
+                            return BOT_ACTION_DESIRE_HIGH, vLocation
+                        end
                     end
                 end
             end

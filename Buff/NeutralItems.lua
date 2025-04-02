@@ -310,6 +310,11 @@ function NeutralItems.GiveItem(itemName, hero, isTierDone, tier)
         end
 
         -- neutral item
+        if hero:HasItemInInventory('item_grisgris') or hero:HasItemInInventory('item_black_grimoire') then
+            local hItem = hero:GetItemInSlot(16)
+            if hItem then hero:RemoveItem(hItem) end
+        end
+
         if NeutralItems.HasNeutralItem(hero)
         and isTierDone
         then

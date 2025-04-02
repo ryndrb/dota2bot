@@ -683,7 +683,7 @@ function ItemPurchaseThink()
 	end
 
 	if currentTime > sell_time + 0.5
-	and ((( bot:GetItemInSlot( 6 ) ~= nil or bot:GetItemInSlot( 7 ) ~= nil or bot:GetItemInSlot( 8 ) ~= nil )
+	and ((( bot:GetItemInSlot( 6 ) ~= nil or bot:GetItemInSlot( 7 ) ~= nil or bot:GetItemInSlot( 8 ) ~= nil or (not J.IsModeTurbo() and bot:GetUnitName() == 'npc_dota_hero_lone_druid'))
 			and (bot:DistanceFromFountain() <= 100 or bot:DistanceFromSecretShop() <= 100 ))
 		or J.IsModeTurbo()
 		)

@@ -190,6 +190,18 @@ end
 -- int GetActiveMode()
 
 -- Get the bots currently active mode. This may not track modes in complete takeover bots.
+local o_GetActiveMode = CDOTA_Bot_Script.GetActiveMode
+function CDOTA_Bot_Script:GetActiveMode()
+    if self then
+        if self:GetActiveModeDesire() > 0 then
+            return o_GetActiveMode(self)
+        else
+            return BOT_MODE_NONE
+        end
+    end
+    return BOT_MODE_NONE
+end
+
 -- float GetActiveModeDesire()
 
 -- Gets the desire of the currently active mode.

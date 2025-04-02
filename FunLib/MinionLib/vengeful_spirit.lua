@@ -260,7 +260,7 @@ function X.ConsiderNetherSwap(hMinionUnit, ability)
 	for _, enemyHero in pairs(nEnemyHeroes)
 	do
 		if  J.IsValidHero(enemyHero)
-        and J.IsInRange(hMinionUnit, enemyHero)
+        and J.IsInRange(hMinionUnit, enemyHero, nCastRange)
 		and J.CanCastOnNonMagicImmune(enemyHero)
         and J.CanCastOnTargetAdvanced(enemyHero)
 		and not J.IsInRange(hMinionUnit, enemyHero, nCastRange / 2)

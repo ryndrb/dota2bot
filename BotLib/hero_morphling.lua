@@ -353,7 +353,7 @@ function X.ConsiderWaveform()
         and not enemyHero:HasModifier('modifier_necrolyte_reapers_scythe')
         and not enemyHero:HasModifier('modifier_oracle_false_promise_timer')
         then
-            local targetLoc = J.GetCorrectLoc(botTarget, (GetUnitToUnitDistance(bot, enemyHero) / nSpeed) + nCastPoint)
+            local targetLoc = J.GetCorrectLoc(enemyHero, (GetUnitToUnitDistance(bot, enemyHero) / nSpeed) + nCastPoint)
             if not J.IsInRange(bot, enemyHero, nCastRange) then
                 targetLoc = J.Site.GetXUnitsTowardsLocation(bot, targetLoc, nCastRange)
             end
@@ -487,8 +487,8 @@ function X.ConsiderWaveform()
 
     if J.IsDoingTormentor(bot) and J.GetManaAfter(Waveform:GetManaCost()) > 0.75
     then
-		local tormentorLoc = J.GetTormentorLocation(GetTeam())
-        if GetUnitToLocationDistance(bot, tormentorLoc) > nCastRange
+		local tormentorLoc = J.GetTormentorWaitingLocation(GetTeam())
+        if GetUnitToLocationDistance(bot, tormentorLoc) > 1600
         then
 			local targetLoc = J.Site.GetXUnitsTowardsLocation(bot, tormentorLoc, nCastRange)
 

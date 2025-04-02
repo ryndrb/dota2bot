@@ -106,13 +106,12 @@ function GetDesire()
 		end
 	end
 
-	-- Consider help nearby core that's being targeted; defend_ally not reliable
-	targetUnit, ShouldHelpWhenCoreIsTargeted = X.ConsiderHelpWhenCoreIsTargeted()
-	if ShouldHelpWhenCoreIsTargeted
-	then
-		bot:SetTarget(targetUnit)
-		return BOT_ACTION_DESIRE_ABSOLUTE * 0.98
-	end
+	-- -- Consider help nearby core that's being targeted; defend_ally not reliable
+	-- targetUnit, ShouldHelpWhenCoreIsTargeted = X.ConsiderHelpWhenCoreIsTargeted()
+	-- if ShouldHelpWhenCoreIsTargeted and J.IsValid(targetUnit) then
+	-- 	bot:SetTarget(targetUnit)
+	-- 	return RemapValClamped(GetUnitToUnitDistance(bot, targetUnit), 800, 3500, 0.80, 0.95)
+	-- end
 
 	if bot:HasModifier('modifier_faceless_void_chronosphere_selfbuff')
 	and bot.ChronoTarget ~= nil
@@ -124,6 +123,7 @@ function GetDesire()
 	if J.IsValid(hTargetCreep) and J.CanBeAttacked(hTargetCreep) then
 		return 1.5
 	end
+	hTargetCreep = nil
 
 	-- nDesire = X.ConsiderHarassInLaningPhase()
 	-- if nDesire > 0
@@ -260,7 +260,6 @@ function Think()
 
 	if hTargetCreep ~= nil then
 		bot:Action_AttackUnit(hTargetCreep, true)
-		hTargetCreep = nil
 		return
 	end
 

@@ -110,7 +110,7 @@ function X.MinionThink(hMinionUnit)
 		end
 
 		-- Illusions; No Spells
-		if (hMinionUnit:IsHero() and hMinionUnit:IsIllusion() and hMinionUnit:GetUnitName() ~= 'npc_dota_hero_vengefulspirit')
+		if (hMinionUnit:IsIllusion() and hMinionUnit:GetUnitName() ~= 'npc_dota_hero_vengefulspirit')
 		or U.IsMinionWithNoSkill(hMinionUnit)
 		then
 			Illusion.Think(bot, hMinionUnit)

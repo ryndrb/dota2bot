@@ -151,6 +151,11 @@ function J.CanNotUseAction( bot )
 			or bot:HasModifier('modifier_phantom_lancer_phantom_edge_boost')
 			or bot:HasModifier('modifier_tinker_rearm')
 			or bot:HasModifier('modifier_dazzle_nothl_projection_physical_body_debuff')
+			or bot:HasModifier('modifier_eul_cyclone')
+			or bot:HasModifier('modifier_brewmaster_storm_cyclone')
+			or bot:HasModifier('modifier_nevermore_requiem_fear')
+			or bot:HasModifier('modifier_dark_willow_debuff_fear')
+			or bot:HasModifier('modifier_lone_druid_savage_roar')
 
 end
 
@@ -171,6 +176,11 @@ function J.CanNotUseAbility( bot )
 			or bot:HasModifier('modifier_item_forcestaff_active')
 			or bot:HasModifier('modifier_tinker_rearm')
 			or bot:HasModifier('modifier_dazzle_nothl_projection_physical_body_debuff')
+			or bot:HasModifier('modifier_eul_cyclone')
+			or bot:HasModifier('modifier_brewmaster_storm_cyclone')
+			or bot:HasModifier('modifier_nevermore_requiem_fear')
+			or bot:HasModifier('modifier_dark_willow_debuff_fear')
+			or bot:HasModifier('modifier_lone_druid_savage_roar')
 
 end
 
@@ -4483,6 +4493,31 @@ function J.GetTormentorLocation(team)
 	end
 end
 
+local vWaitLocations = {
+	-- Radiant
+	[1] = Vector(6792.795410, -6815.032715, 256.000000),--r
+	[2] = Vector(7961.124512, -6370.323730, 256.000000),--d
+	-- Dire
+	[3] = Vector(-7970.265625, 6472.027832, 256.000000),--r
+	[4] = Vector(-6026.094727, 7997.119629, 256.000000),--d
+}
+function J.GetTormentorWaitingLocation(nTeam)
+	local timeOfday = J.CheckTimeOfDay()
+	if timeOfday == 'day' then
+		if nTeam == TEAM_RADIANT then
+			return vWaitLocations[3]
+		else
+			return vWaitLocations[4]
+		end
+	else
+		if nTeam == TEAM_RADIANT then
+			return vWaitLocations[1]
+		else
+			return vWaitLocations[2]
+		end
+	end
+end
+
 local AllyPIDs = nil
 function J.IsClosestToDustLocation(bot, loc)
 	if AllyPIDs == nil then AllyPIDs = GetTeamPlayers(GetTeam()) end
@@ -5176,9 +5211,9 @@ function J.CanBlackKingBar(bot)
 end
 
 function J.GetClosestTeamLane(unit)
-	local v_top_lane = GetLaneFrontLocation(GetTeam(), LANE_TOP, 0)
-	local v_mid_lane = GetLaneFrontLocation(GetTeam(), LANE_MID, 0)
-	local v_bot_lane = GetLaneFrontLocation(GetTeam(), LANE_BOT, 0)
+	local v_top_lane = GetLocationAlongLane(LANE_TOP, GetLaneFrontAmount(GetTeam(), LANE_TOP, false))
+	local v_mid_lane = GetLocationAlongLane(LANE_MID, GetLaneFrontAmount(GetTeam(), LANE_MID, false))
+	local v_bot_lane = GetLocationAlongLane(LANE_BOT, GetLaneFrontAmount(GetTeam(), LANE_BOT, false))
 
 	local dist_from_top = GetUnitToLocationDistance(unit, v_top_lane)
 	local dist_from_mid = GetUnitToLocationDistance(unit, v_mid_lane)
@@ -5208,45 +5243,6 @@ function J.GetFirstBotInTeam()
 			return ally
 		end
 	end
-end
-
-local SpecialUnits = {
-	['npc_dota_clinkz_skeleton_archer'] = 0.75,
-	['npc_dota_juggernaut_healing_ward'] = 0.9,
-	['npc_dota_invoker_forged_spirit'] = 0.9,
-	['npc_dota_grimstroke_ink_creature'] = 1,
-	['npc_dota_ignis_fatuus'] = 1,
-	['npc_dota_lone_druid_bear1'] = 0.9,
-	['npc_dota_lone_druid_bear2'] = 0.9,
-	['npc_dota_lone_druid_bear3'] = 0.9,
-	['npc_dota_lone_druid_bear4'] = 0.9,
-	['npc_dota_lycan_wolf_1'] = 0.75,
-	['npc_dota_lycan_wolf_2'] = 0.75,
-	['npc_dota_lycan_wolf_3'] = 0.75,
-	['npc_dota_lycan_wolf_4'] = 0.75,
-	['npc_dota_observer_wards'] = 1,
-	['npc_dota_phoenix_sun'] = 1,
-	['npc_dota_venomancer_plague_ward_1'] = 0.75,
-	['npc_dota_venomancer_plague_ward_2'] = 0.75,
-	['npc_dota_venomancer_plague_ward_3'] = 0.75,
-	['npc_dota_venomancer_plague_ward_4'] = 0.75,
-	['npc_dota_rattletrap_cog'] = 0.9,
-	['npc_dota_sentry_wards'] = 1,
-	['npc_dota_unit_tombstone1'] = 1,
-	['npc_dota_unit_tombstone2'] = 1,
-	['npc_dota_unit_tombstone3'] = 1,
-	['npc_dota_unit_tombstone4'] = 1,
-	['npc_dota_warlock_golem_1'] = 0.9,
-	['npc_dota_warlock_golem_2'] = 0.9,
-	['npc_dota_warlock_golem_3'] = 0.9,
-	['npc_dota_warlock_golem_scepter_1'] = 0.9,
-	['npc_dota_warlock_golem_scepter_2'] = 0.9,
-	['npc_dota_warlock_golem_scepter_3'] = 0.9,
-	['npc_dota_weaver_swarm'] = 0.9,
-	['npc_dota_zeus_cloud'] = 0.75,
-}
-function J.GetSpecialUnits()
-	return SpecialUnits
 end
 
 function J.GetPointsAroundVector(vCenter, nRadius, numPoints)
@@ -5398,6 +5394,57 @@ function J.IsModifierInRadius(bot, sModifierName, nRadius)
 	end
 
 	return false
+end
+
+local hAllyTeamList = {}
+local hEnemyTeamList = {}
+function J.GetInventoryNetworth()
+	local allyInventoryNet = 0
+	local enemyInventoryNet = 0
+	if math.floor(DotaTime()) % 2 == 0 then
+		for i = 1, 5 do
+			local ally = GetTeamMember(i)
+			if ally then
+				local itemsCost = 0
+				for j = 0, 8 do
+					local item = ally:GetItemInSlot(j)
+					if item then
+						itemsCost = itemsCost + GetItemCost(item:GetName())
+					end
+				end
+				local id = ally:GetPlayerID()
+				if hAllyTeamList[id] == nil then hAllyTeamList[id] = 0 end
+				if hAllyTeamList[id] < itemsCost then
+					hAllyTeamList[id] = itemsCost
+				end
+			end
+		end
+		for _, enemy in pairs(GetUnitList(UNIT_LIST_ENEMY_HEROES)) do
+			if J.IsValidHero(enemy)
+			and not J.IsSuspiciousIllusion(enemy)
+			and not enemy:HasModifier('modifier_arc_warden_tempest_double')
+			and not string.find(enemy:GetUnitName(), 'lone_druid_bear')
+			and not J.IsMeepoClone(enemy)
+			then
+				local id = enemy:GetPlayerID()
+				local itemsCost = 0
+				for i = 0, 8 do
+					local item = enemy:GetItemInSlot(i)
+					if item then
+						itemsCost = itemsCost + GetItemCost(item:GetName())
+					end
+				end
+				if hEnemyTeamList[id] == nil then hEnemyTeamList[id] = 0 end
+				if hEnemyTeamList[id] < itemsCost then
+					hEnemyTeamList[id] = itemsCost
+				end
+			end
+		end
+	end
+	for _, networth in pairs(hAllyTeamList) do allyInventoryNet = allyInventoryNet + networth end
+	for _, networth in pairs(hEnemyTeamList) do enemyInventoryNet = enemyInventoryNet + networth end
+
+	return allyInventoryNet, enemyInventoryNet
 end
 
 function J.ConsolePrintActiveMode(bot)

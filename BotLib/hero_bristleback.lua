@@ -41,25 +41,25 @@ local HeroBuild = {
 				"item_double_branches",
 				"item_quelling_blade",
 			
+				"item_magic_wand",
 				"item_bracer",
 				"item_arcane_boots",
-				"item_magic_wand",
 				"item_ultimate_scepter",
-				"item_bloodstone",--
 				"item_black_king_bar",--
-				"item_sange_and_yasha",--
-				"item_assault",--
 				"item_aghanims_shard",
+				"item_sange_and_yasha",--
 				"item_basher",
-				"item_ultimate_scepter_2",
+				"item_heart",--
 				"item_abyssal_blade",--
+				"item_satanic",--
+				"item_ultimate_scepter_2",
 				"item_travel_boots_2",--
 				"item_moon_shard",
 			},
             ['sell_list'] = {
-				"item_quelling_blade", "item_black_king_bar",
-				"item_magic_wand", "item_sange_and_yasha",
-				"item_bracer", "item_assault",
+				"item_quelling_blade", "item_sange_and_yasha",
+				"item_magic_wand", "item_basher",
+				"item_bracer", "item_heart",
 			},
         },
     },
@@ -89,26 +89,26 @@ local HeroBuild = {
 				"item_quelling_blade",
 			
 				"item_bottle",
-				"item_bracer",
 				"item_magic_wand",
+				"item_bracer",
 				"item_arcane_boots",
 				"item_ultimate_scepter",
-				"item_bloodstone",--
 				"item_black_king_bar",--
-				"item_sange_and_yasha",--
-				"item_assault",--
 				"item_aghanims_shard",
+				"item_sange_and_yasha",--
 				"item_basher",
-				"item_ultimate_scepter_2",
+				"item_heart",--
 				"item_abyssal_blade",--
+				"item_satanic",--
+				"item_ultimate_scepter_2",
 				"item_travel_boots_2",--
 				"item_moon_shard",
 			},
             ['sell_list'] = {
-				"item_quelling_blade", "item_bloodstone",
-				"item_magic_wand", "item_black_king_bar",
-				"item_bottle", "item_sange_and_yasha",
-				"item_bracer", "item_assault",
+				"item_quelling_blade", "item_black_king_bar",
+				"item_magic_wand", "item_sange_and_yasha",
+				"item_bottle", "item_basher",
+				"item_bracer", "item_heart",
 			},
         },
     },
@@ -130,25 +130,24 @@ local HeroBuild = {
 				"item_double_branches",
 				"item_quelling_blade",
 			
-				"item_bracer",
 				"item_magic_wand",
+				"item_bracer",
 				"item_arcane_boots",
 				"item_pipe",--
 				"item_ultimate_scepter",
 				"item_aghanims_shard",
-				"item_bloodstone",--
 				sUtilityItem,--
 				"item_sange_and_yasha",--
-				"item_cyclone",
-				"item_ultimate_scepter_2",
+				"item_assault",--
 				"item_wind_waker",--
+				"item_ultimate_scepter_2",
 				"item_travel_boots_2",--
 				"item_moon_shard",
 			},
             ['sell_list'] = {
-				"item_quelling_blade", "item_bloodstone",
-				"item_magic_wand", sUtilityItem,
-				"item_bracer", "item_sange_and_yasha",
+				"item_quelling_blade", sUtilityItem,
+				"item_magic_wand", "item_sange_and_yasha",
+				"item_bracer", "item_assault",
 			},
         },
     },
