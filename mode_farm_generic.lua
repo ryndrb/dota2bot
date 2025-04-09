@@ -71,7 +71,7 @@ function GetDesire()
     local bAlive = bot:IsAlive()
 
     local vTormentorLocation = J.GetTormentorLocation(GetTeam())
-	local nInRangeAlly_tormentor = J.GetAlliesNearLoc(vTormentorLocation, 800)
+	local nInRangeAlly_tormentor = J.GetAlliesNearLoc(vTormentorLocation, 1600)
 	local nInRangeAlly_roshan = J.GetAlliesNearLoc(J.GetCurrentRoshanLocation(), 1200)
     local bRoshanAlive = J.IsRoshanAlive()
     local teamNetworth, enemyNetworth = J.GetInventoryNetworth()
@@ -81,11 +81,13 @@ function GetDesire()
 	local nAliveAllyCount  = J.GetNumOfAliveHeroes(false)
 
     if J.IsInLaningPhase()
+	or J.IsDoingRoshan(bot)
+	or J.IsDoingTormentor(bot)
     or DotaTime() < 50
     or ((botActiveMode == BOT_MODE_SECRET_SHOP
 		or botActiveMode == BOT_MODE_RUNE
 		or botActiveMode == BOT_MODE_OUTPOST) and botActiveModeDesire > 0)
-    or #nInRangeAlly_tormentor >= 2
+	or (#nInRangeAlly_tormentor >= 2 and bot.tormentor_state == true)
     or (#nInRangeAlly_roshan >= 2 and bRoshanAlive and not bot:HasModifier('modifier_arc_warden_tempest_double') and not J.IsMeepoClone(bot))
     or (nAliveEnemyCount <= 1 and nAliveAllyCount >= 2)
     or (J.DoesTeamHaveAegis() and J.IsLateGame() and nAliveAllyCount >= 4)
