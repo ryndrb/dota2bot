@@ -55,7 +55,7 @@ function GetDesire()
 
 	local bCore = J.IsCore(bot)
 	local botLevel = bot:GetLevel()
-	if (DotaTime() < 10 * 60) and ((bCore and bot:GetNetWorth() < 5500) or (not bCore and botLevel <= 7))
+	if (DotaTime() < 10 * 60) and ((bCore and bot:GetNetWorth() < 5500) or (not bCore and botLevel < 6))
 	then
 		local nLastHits = bot:GetLastHits()
 		local nDesire = RemapValClamped(nLastHits, 50, 75, BOT_MODE_DESIRE_VERYHIGH, BOT_MODE_DESIRE_LOW)
