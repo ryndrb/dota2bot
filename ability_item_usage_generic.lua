@@ -107,6 +107,74 @@ local function AbilityLevelUpComplement()
 
 	local botLevel = bot:GetLevel()
 	local bOgreMagi = botName == 'npc_dota_hero_ogre_magi'
+	local abilityToLevelup = nil
+
+	if #sAbilityLevelUpList >= 1 then
+		abilityToLevelup = bot:GetAbilityByName( sAbilityLevelUpList[1] )
+
+		-- handle when in sai mode
+		if botName == 'npc_dota_hero_kez' then
+			if bot.kez_mode == 'sai' then
+				for i = 0, 6 do
+					local hAbility = bot:GetAbilityInSlot(i)
+					if hAbility ~= nil then
+						local sAbilityName = hAbility:GetName()
+						if sAbilityLevelUpList[1] == 'kez_echo_slash' and sAbilityName == 'kez_falcon_rush'
+						then
+							abilityToLevelup = hAbility
+							sAbilityLevelUpList[1] = 'kez_falcon_rush'
+						elseif sAbilityLevelUpList[1] == 'kez_grappling_claw' and sAbilityName == 'kez_talon_toss'
+						then
+							abilityToLevelup = hAbility
+							sAbilityLevelUpList[1] = 'kez_talon_toss'
+						elseif sAbilityLevelUpList[1] == 'kez_kazurai_katana' and sAbilityName == 'kez_shodo_sai'
+						then
+							abilityToLevelup = hAbility
+							sAbilityLevelUpList[1] = 'kez_shodo_sai'
+						elseif sAbilityLevelUpList[1] == 'kez_raptor_dance' and sAbilityName == 'kez_ravens_veil'
+						then
+							abilityToLevelup = hAbility
+							sAbilityLevelUpList[1] = 'kez_ravens_veil'
+						end
+					end
+				end
+			end
+		end
+
+		-- due to changing spells with vscript
+		if DotaTime() < -30 then
+			for i = 1, #sAbilityLevelUpList do
+				if botName == 'npc_dota_hero_faceless_void' then
+					if bot:GetAbilityByName('faceless_void_chronosphere') ~= nil then
+						if sAbilityLevelUpList[i] == 'faceless_void_time_zone' then
+							sAbilityLevelUpList[i] = 'faceless_void_chronosphere'
+						end
+					end
+				elseif botName == 'npc_dota_hero_disruptor' then
+					if bot:GetAbilityByName('disruptor_kinetic_field') ~= nil then
+						if sAbilityLevelUpList[i] == 'disruptor_kinetic_fence' then
+							sAbilityLevelUpList[i] = 'disruptor_kinetic_field'
+						end
+					end
+				elseif botName == 'npc_dota_hero_keeper_of_the_light' then
+					if bot:GetAbilityByName('keeper_of_the_light_radiant_bind') ~= nil then
+						if sAbilityLevelUpList[i] == 'keeper_of_the_light_recall' then
+							sAbilityLevelUpList[i] = 'keeper_of_the_light_radiant_bind'
+						end
+					end
+				elseif botName == 'npc_dota_hero_tusk' then
+					if bot:GetAbilityByName('tusk_tag_team') ~= nil then
+						if sAbilityLevelUpList[i] == 'tusk_drinking_buddies' then
+							sAbilityLevelUpList[i] = 'tusk_tag_team'
+						end
+					end
+				end
+			end
+			if botName ~= 'npc_dota_hero_kez' then
+				abilityToLevelup = bot:GetAbilityByName(sAbilityLevelUpList[1])
+			end
+		end
+	end
 
 	if bot:GetAbilityPoints() > 0
 		and #sAbilityLevelUpList >= 1
@@ -122,52 +190,17 @@ local function AbilityLevelUpComplement()
 			end
 		end
 
-		local abilityToLevelup = bot:GetAbilityByName( sAbilityLevelUpList[1] )
-
-		-- handle when in sai mode
-		if botName == 'npc_dota_hero_kez' then
-			if bot.kez_mode == 'sai' then
-				for i = 0, 6 do
-					local hAbility = bot:GetAbilityInSlot(i)
-					if hAbility ~= nil then
-						if sAbilityLevelUpList[1] == 'kez_echo_slash' and hAbility:GetName() == 'kez_falcon_rush'
-						then
-							abilityToLevelup = hAbility
-							sAbilityLevelUpList[1] = 'kez_falcon_rush'
-						elseif sAbilityLevelUpList[1] == 'kez_grappling_claw' and hAbility:GetName() == 'kez_talon_toss'
-						then
-							abilityToLevelup = hAbility
-							sAbilityLevelUpList[1] = 'kez_talon_toss'
-						elseif sAbilityLevelUpList[1] == 'kez_kazurai_katana' and hAbility:GetName() == 'kez_shodo_sai'
-						then
-							abilityToLevelup = hAbility
-							sAbilityLevelUpList[1] = 'kez_shodo_sai'
-						elseif sAbilityLevelUpList[1] == 'kez_raptor_dance' and hAbility:GetName() == 'kez_ravens_veil'
-						then
-							abilityToLevelup = hAbility
-							sAbilityLevelUpList[1] = 'kez_ravens_veil'
-						end
-					end
-				end
-			end
-		end
-
 		if abilityToLevelup ~= nil
 			and not abilityToLevelup:IsHidden() --fix kunkka bug
+			and abilityToLevelup:CanAbilityBeUpgraded()
 			and abilityToLevelup:GetLevel() < abilityToLevelup:GetMaxLevel()
 		then
-			if (abilityToLevelup:CanAbilityBeUpgraded()
-				or abilityToLevelup:GetName() == 'faceless_void_chronosphere' -- since CanAbilityBeUpgraded always return false for these two
-				or abilityToLevelup:GetName() == 'life_stealer_rage')
-			and abilityToLevelup:GetLevel() < abilityToLevelup:GetMaxLevel()
-			then
-				if bOgreMagi and hOgreMagiLevelUpTable[botLevel] ~= nil then
-					hOgreMagiLevelUpTable[botLevel] = true
-				end
-				bot:ActionImmediate_LevelAbility( sAbilityLevelUpList[1] )
-				table.remove( sAbilityLevelUpList, 1 )
-				return
+			if bOgreMagi and hOgreMagiLevelUpTable[botLevel] ~= nil then
+				hOgreMagiLevelUpTable[botLevel] = true
 			end
+			bot:ActionImmediate_LevelAbility( sAbilityLevelUpList[1] )
+			table.remove( sAbilityLevelUpList, 1 )
+			return
 		end
 	end
 
@@ -352,10 +385,14 @@ local function BuybackUsageComplement()
 
 	if bot:GetLevel() <= 15
 		or bot:HasModifier( 'modifier_arc_warden_tempest_double' )
+		or J.IsMeepoClone(bot)
 		or not J.Role.ShouldBuyBack()
+		or bot:IsIllusion()
 	then
 		return
 	end
+
+	local bCore = J.IsCore(bot)
 
 	if bot:IsAlive() and fDeathTime ~= 0
 	then
@@ -369,9 +406,9 @@ local function BuybackUsageComplement()
 
 	if not bot:HasBuyback() then return end
 
-	if bot:GetRespawnTime() < 60 then
-		return
-	end
+	-- if bot:GetRespawnTime() < 60 then
+	-- 	return
+	-- end
 
 	local nRespawnTime = X.GetRemainingRespawnTime()
 
@@ -379,7 +416,7 @@ local function BuybackUsageComplement()
 		and nRespawnTime > 80
 	then
 		local nTeamFightLocation = J.GetTeamFightLocation( bot )
-		if nTeamFightLocation ~= nil
+		if nTeamFightLocation ~= nil and J.GetDistance(J.GetTeamFountain(), nTeamFightLocation) < 3200
 		then
 			J.Role['lastbbtime'] = DotaTime()
 			bot:ActionImmediate_Buyback()
@@ -387,18 +424,34 @@ local function BuybackUsageComplement()
 		end
 	end
 
-	if nRespawnTime < 50
-	then
-		return
-	end
-
 	local ancient = GetAncient( GetTeam() )
 
-	if ancient ~= nil
+	if ancient then
+		if nRespawnTime < 50 and nRespawnTime > 15 then
+			local nInRangeEnemy = J.GetEnemiesNearLoc(ancient:GetLocation(), 3000)
+			for _, enemy in pairs(nInRangeEnemy) do
+				if J.IsValidHero(enemy)
+				and J.IsCore(enemy)
+				and (enemy:GetAttackTarget():IsBuilding() or enemy:GetAttackTarget() == ancient)
+				then
+					J.Role['lastbbtime'] = DotaTime()
+					bot:ActionImmediate_Buyback()
+					return
+				end
+			end
+		end
+	end
+
+	-- if nRespawnTime < 50
+	-- then
+	-- 	return
+	-- end
+
+	if ancient ~= nil and nRespawnTime > 15
 	then
 		local nEnemyCount = X.GetNumEnemyNearby( ancient )
 		local nAllyCount = J.GetNumOfAliveHeroes( false )
-		if nEnemyCount > 0 and nEnemyCount >= nAllyCount
+		if nEnemyCount > 0 and ((not bCore and nEnemyCount >= nAllyCount) or (bCore and nAllyCount + 1 >= nEnemyCount and not (nAllyCount + 1 >= nEnemyCount + 2)))
 		then
 			J.Role['lastbbtime'] = DotaTime()
 			bot:ActionImmediate_Buyback()
@@ -7723,8 +7776,13 @@ function ItemUsageThink()
 	ItemUsageComplement()
 end
 
+local fLastTime = 0
 function AbilityUsageThink()
-	if math.floor(DotaTime()) % 1 == 0 then X.UpdateInfoBuffer() end
+	local fCurrTime = DotaTime()
+	if fCurrTime - fLastTime >= 1.0 then
+		X.UpdateInfoBuffer()
+		fLastTime = fCurrTime
+	end
 
 	BotBuild.SkillsComplement()
 end

@@ -79,16 +79,17 @@ function GetDesire()
 
     local nAliveEnemyCount = J.GetNumOfAliveHeroes(true)
 	local nAliveAllyCount  = J.GetNumOfAliveHeroes(false)
+	local bNotClone = not bot:HasModifier('modifier_arc_warden_tempest_double') and not J.IsMeepoClone(bot)
 
     if J.IsInLaningPhase()
-	or J.IsDoingRoshan(bot)
-	or J.IsDoingTormentor(bot)
+	or (J.IsDoingRoshan(bot) and bNotClone)
+	or (J.IsDoingTormentor(bot) and bNotClone)
     or DotaTime() < 50
     or ((botActiveMode == BOT_MODE_SECRET_SHOP
 		or botActiveMode == BOT_MODE_RUNE
 		or botActiveMode == BOT_MODE_OUTPOST) and botActiveModeDesire > 0)
 	or (#nInRangeAlly_tormentor >= 2 and bot.tormentor_state == true)
-    or (#nInRangeAlly_roshan >= 2 and bRoshanAlive and not bot:HasModifier('modifier_arc_warden_tempest_double') and not J.IsMeepoClone(bot))
+    or (#nInRangeAlly_roshan >= 2 and bRoshanAlive and bNotClone)
     or (nAliveEnemyCount <= 1 and nAliveAllyCount >= 2)
     or (J.DoesTeamHaveAegis() and J.IsLateGame() and nAliveAllyCount >= 4)
     or J.IsRetreating(bot)

@@ -195,7 +195,7 @@ local remnantCastTime = -100
 local remnantCastGap  = 0.2
 
 function X.SkillsComplement()
-    if J.CanNotUseAbility(bot) then return end
+    if J.CanNotUseAbility(bot) and not bot:HasModifier('modifier_ember_spirit_sleight_of_fist_caster') then return end
 
     SearingChains 		    = bot:GetAbilityByName( "ember_spirit_searing_chains" )
     SleightOfFist 		    = bot:GetAbilityByName( "ember_spirit_sleight_of_fist" )

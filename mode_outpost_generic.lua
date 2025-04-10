@@ -855,6 +855,8 @@ function Think()
 			end
 
 			local nInRangeEnemy = J.GetEnemiesNearLoc(bot:GetLocation(), 1600)
+			local nInRangeEnemyTowers = bot:GetNearbyTowers(1600, true)
+			local nEnemyCreeps = bot:GetNearbyCreeps(1600, true)
 			local botTarget = J.GetProperTarget(LoneDruid.hero)
 
 			if J.IsGoingOnSomeone(LoneDruid.hero)
@@ -867,23 +869,35 @@ function Think()
 					bot:SetTarget(botTarget)
 					bot:Action_AttackUnit(botTarget, false)
 					return
+				else
+					if J.IsValidHero(nInRangeEnemy[1]) then
+						bot:Action_AttackUnit(botTarget, false)
+						return
+					end
 				end
 			end
 
+			local bLaningPhase = J.IsInLaningPhase()
+
 			if J.IsFarming(LoneDruid.hero)
 			or J.IsPushing(LoneDruid.hero)
-			or (J.IsLaning(LoneDruid.hero) and not bot:WasRecentlyDamagedByAnyHero(2.0) and not bot:WasRecentlyDamagedByCreep(1.0) and #nInRangeEnemy == 0)
+			or (J.IsLaning(LoneDruid.hero) and not bot:WasRecentlyDamagedByAnyHero(5.0) and not bot:WasRecentlyDamagedByCreep(3.0) and #nInRangeEnemy == 0)
 			or (J.IsDefending(LoneDruid.hero) and #nInRangeEnemy == 0)
+			or ((LoneDruid.hero:GetAttackTarget() == nil)
+				and (not bLaningPhase
+					or bLaningPhase and (#nInRangeEnemy == 0 or J.IsValidHero(nInRangeEnemy[1]) and nInRangeEnemy[1]:GetAttackTarget() ~= bot)
+									and (#nInRangeEnemyTowers == 0 or J.IsValidBuilding(nInRangeEnemyTowers[1]) and J.IsInRange(bot, nInRangeEnemyTowers[1], 888) and #nInRangeEnemyTowers[1]:GetAttackTarget() ~= bot)))
 			or J.IsDoingRoshan(LoneDruid.hero)
 			or J.IsDoingTormentor(LoneDruid.hero)
 			or #nInRangeEnemy == 0
 			then
 				local targetHP = 99999
-				local nEnemyCreeps = bot:GetNearbyCreeps(1600, true)
 				for _, creep in pairs(nEnemyCreeps) do
 					if J.IsValid(creep)
 					and J.CanBeAttacked(creep)
 					and J.IsInRange(creep, LoneDruid.hero, 1100)
+					and (not bLaningPhase
+						or (bLaningPhase and (#nInRangeEnemyTowers == 0 or J.IsValidBuilding(nInRangeEnemyTowers[1]) and not J.IsInRange(creep, nInRangeEnemyTowers[1], 700))))
 					then
 						local creepHP = creep:GetHealth()
 						if creepHP < targetHP then
@@ -897,12 +911,29 @@ function Think()
 					bot:Action_AttackUnit(botTarget, false)
 					return
 				end
+
+				botTarget = J.GetProperTarget(LoneDruid.hero)
+				if J.IsValid(botTarget) and botTarget:IsBuilding() then
+					bot:Action_AttackUnit(botTarget, false)
+					return
+				end
 			end
 
-			local buildingTarget = J.GetProperTarget(LoneDruid.hero)
-			if J.IsValidBuilding(buildingTarget) and not bot:WasRecentlyDamagedByTower(1.5) then
-				bot:Action_AttackUnit(buildingTarget, false)
-				return
+			if J.IsPushing(LoneDruid.hero) then
+				if J.IsValidBuilding(nInRangeEnemyTowers[1]) and J.IsInRange(bot, nInRangeEnemyTowers[1], 888) and J.CanBeAttacked(nInRangeEnemyTowers[1]) then
+					if nInRangeEnemyTowers[1]:GetAttackTarget() == bot then
+						for _, creep in pairs(nEnemyCreeps) do
+							if J.IsValid(creep) and J.IsInRange(creep, nInRangeEnemyTowers[1], 700) then
+								bot:Action_AttackUnit(creep, true)
+								bot:Action_ClearActions(false)
+								return
+							end
+						end
+					end
+
+					bot:Action_AttackUnit(nInRangeEnemyTowers[1], false)
+					return
+				end
 			end
 
 			-- TODO: retreat better, specially in lane
@@ -913,7 +944,6 @@ function Think()
 					local tempRadians = LoneDruid.hero:GetFacing() * math.pi / 180
 					local rightVector = Vector(math.sin(tempRadians), -math.cos(tempRadians), 0)
 					bot:Action_MoveToLocation(heroLocation + 300 * rightVector)
-					-- bot:Action_MoveToLocation(J.GetRandomLocationWithinDist(bot:GetLocation(), 150, 600))
 				else
 					if J.IsInTeamFight(bot, 1200) then
 						bot:Action_MoveToLocation(J.GetRandomLocationWithinDist(bot:GetLocation(), 150, 600))

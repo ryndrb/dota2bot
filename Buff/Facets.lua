@@ -6,24 +6,55 @@ if F == nil then F = {} end
 function F.ChangeHeroFacet(bot)
     if bot ~= nil then
         local heroName = bot:GetUnitName()
-        local hAbility_remove = nil
-        local hAbility_add = nil
 
-        -- TODO: others if there's more / possible
-        if string.find(heroName, 'morphling') then
+        -- TODO: others (if possible)
+
+        if heroName == 'npc_dota_hero_morphling' then
             if bot:HasAbility('morphling_flow') then
-                hAbility_add = 'morphling_ebb'
-                hAbility_remove = 'morphling_flow'
+                F.DoChange(bot, 'morphling_flow', 'morphling_ebb', false)
+            end
+
+        -- Comment out if not using TA bot script, as it requires some other edits (main).
+        elseif heroName == 'npc_dota_hero_faceless_void' then
+                if RandomInt(1,2) == 1 then
+                    if bot:HasAbility('faceless_void_time_zone') then
+                        F.DoChange(bot, 'faceless_void_time_zone', 'faceless_void_chronosphere', true)
+                    end
+                end
+        elseif heroName == 'npc_dota_hero_disruptor' then
+            if RandomInt(1,2) == 1 then
+                if bot:HasAbility('disruptor_kinetic_fence') then
+                    F.DoChange(bot, 'disruptor_kinetic_fence', 'disruptor_kinetic_field', true)
+                end
+            end
+        elseif heroName == 'npc_dota_hero_keeper_of_the_light' then
+            if RandomInt(1,2) == 1 then
+                if bot:HasAbility('keeper_of_the_light_recall') then
+                    F.DoChange(bot, 'keeper_of_the_light_recall', 'keeper_of_the_light_radiant_bind', true)
+                end
+            end
+        elseif heroName == 'npc_dota_hero_tusk' then
+            if RandomInt(1,2) == 1 then
+                if bot:HasAbility('tusk_drinking_buddies') then
+                    F.DoChange(bot, 'tusk_drinking_buddies', 'tusk_tag_team', true)
+                end
             end
         end
 
-        if hAbility_remove ~= nil and hAbility_add ~= nil then
-            bot:RemoveAbility(hAbility_remove)
-            bot:AddAbility(hAbility_add)
-            bot.facet_flag = true
-            print('Changed ' .. heroName .. ' facet from ' .. hAbility_remove .. ' to ' .. hAbility_add .. '!')
-        end
+        bot.facet_flag = true
     end
+end
+
+function F.DoChange(hUnit, sAbilityName1, sAbilityName2, bSwap)
+    if bSwap then
+        hUnit:AddAbility(sAbilityName2)
+        hUnit:SwapAbilities(sAbilityName1, sAbilityName2, false, true)
+    else
+        hUnit:RemoveAbility(sAbilityName1)
+        hUnit:AddAbility(sAbilityName2)
+    end
+
+    print('Changed ' .. hUnit:GetUnitName() .. ' facet/ability from ' .. sAbilityName1 .. ' to ' .. sAbilityName2 .. '!')
 end
 
 return F

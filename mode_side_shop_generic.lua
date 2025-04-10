@@ -15,6 +15,7 @@ if bot.tormentor_kill_time == nil then bot.tormentor_kill_time = 0 end
 
 local nCoreCountInLoc = 0
 local nSuppCountInLoc = 0
+local bTeamHealthy = false
 
 function GetDesire()
     TormentorLocation = J.GetTormentorLocation(GetTeam())
@@ -145,7 +146,14 @@ function GetDesire()
         bot.tormentor_state = false
     end
 
+    if bot.tormentor_state == true and not bTeamHealthy then
+        if X.IsTeamHealthy() then
+            bTeamHealthy = true
+        end
+    end
+
     if bot.tormentor_state == true
+    and bTeamHealthy
     and nAveCoreLevel >= 13
     and nAveSuppLevel >= 11
     and (  (bot.tormentor_kill_time == 0 and nAliveAlly >= 5)
@@ -173,6 +181,10 @@ function GetDesire()
         else
             return 0.8
         end
+    end
+
+    if bot.tormentor_state == false then
+        bTeamHealthy = false
     end
 
     canDoTormentor = false
@@ -289,7 +301,7 @@ function X.GetClosestBot()
     for _, unit in pairs(hUnitList) do
         if J.IsValidHero(unit) and GetUnitToLocationDistance(unit, TormentorLocation) < 2000 then
             local unitDistance = GetUnitToLocationDistance(unit, TormentorLocation)
-            if hTargetDistance > unitDistance then
+            if hTargetDistance > unitDistance * (1 - J.GetHP(unit)) then
                 hTargetDistance = unitDistance
                 hTarget = unit
             end
@@ -300,4 +312,16 @@ function X.GetClosestBot()
         return hTarget
     end
     return nil
+end
+
+function X.IsTeamHealthy()
+	local nHealthyAlly = 0
+	for i = 1, 5 do
+		local member = GetTeamMember(i)
+		if J.IsValid(member) and (J.GetHP(member) > 0.5 or not member:IsBot()) then
+			nHealthyAlly = nHealthyAlly + 1
+		end
+	end
+
+	return nHealthyAlly >= J.GetNumOfAliveHeroes(false)
 end
