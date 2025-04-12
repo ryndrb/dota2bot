@@ -2586,6 +2586,8 @@ X.ConsiderItemDesire["item_helm_of_the_dominator"] = function( hItem )
 					and ( creep:GetHealth() / creep:GetMaxHealth() ) > 0.75
 					and ( not creep:IsAncientCreep() or hItem:GetName() == "item_helm_of_the_overlord" )
 					and not (J.IsKeyWordUnit( "siege", creep ) or J.IsKeyWordUnit( "range", creep ) or J.IsKeyWordUnit( "melee", creep ) or J.IsKeyWordUnit( "flagbearer", creep ))
+					and not creep:HasModifier('modifier_dominated')
+					and not creep:HasModifier('modifier_chen_holy_persuasion')
 				then
 					hCreep = creep
 					maxHP = nCreepHP
