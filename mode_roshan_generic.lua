@@ -68,7 +68,7 @@ function GetDesire()
             and humanPing.normal_ping
             and GetUnitToLocationDistance(human, J.GetCurrentRoshanLocation()) <= 1200
             and J.GetDistance(humanPing.location, J.GetCurrentRoshanLocation()) <= 600
-            and DotaTime() < humanPing.time + 5.0
+            and GameTime() < humanPing.time + 5.0
             then
                 return 0.95
             end
