@@ -3789,7 +3789,7 @@ function J.IsRoshanAlive()
     end
 
     if GetRoshanKillTime() == 0
-	or DotaTime() - killTime > (J.IsModeTurbo() and (6 * 60) or (11 * 60))
+	or GameTime() - killTime > (J.IsModeTurbo() and (6 * 60) or (11 * 60))
     then
         return true
     end
@@ -4936,26 +4936,30 @@ function J.IsEnemyHero(hero)
 	end
 end
 
-function J.IsTier1(tower)
-	local nTower = {
-		TOWER_TOP_1,
-		TOWER_MID_1,
-		TOWER_BOT_1,
-	}
+function J.IsTier1(tower, nTeam)
+	if not J.IsValidBuilding(tower) then return false end
+	if J.IsValidBuilding(tower) and not tower:IsTower() then return false end
 
-	for i = 1, #nTower do if nTower[i] == tower then return true end end
+	if GetTower(nTeam, TOWER_TOP_1) == tower
+	or GetTower(nTeam, TOWER_MID_1) == tower
+	or GetTower(nTeam, TOWER_BOT_1) == tower
+	then
+		return true
+	end
 
 	return false
 end
 
-function J.IsTier2(tower)
-	local nTower = {
-		TOWER_TOP_2,
-		TOWER_MID_2,
-		TOWER_BOT_2,
-	}
+function J.IsTier2(tower, nTeam)
+	if not J.IsValidBuilding(tower) then return false end
+	if J.IsValidBuilding(tower) and not tower:IsTower() then return false end
 
-	for i = 1, #nTower do if nTower[i] == tower then return true end end
+	if GetTower(nTeam, TOWER_TOP_2) == tower
+	or GetTower(nTeam, TOWER_MID_2) == tower
+	or GetTower(nTeam, TOWER_BOT_2) == tower
+	then
+		return true
+	end
 
 	return false
 end
@@ -5063,55 +5067,49 @@ function J.IsT3TowerDown(team, lane)
 	return GetTower(team, t3[lane]) == nil
 end
 
-local tower_list = {
-	[TOWER_TOP_1] = {lane = LANE_TOP, isTower = true},
-	[TOWER_MID_1] = {lane = LANE_MID, isTower = true},
-	[TOWER_BOT_1] = {lane = LANE_BOT, isTower = true},
-	[TOWER_TOP_2] = {lane = LANE_TOP, isTower = true},
-	[TOWER_MID_2] = {lane = LANE_MID, isTower = true},
-	[TOWER_BOT_2] = {lane = LANE_BOT, isTower = true},
-	[TOWER_TOP_3] = {lane = LANE_TOP, isTower = true},
-	[TOWER_MID_3] = {lane = LANE_MID, isTower = true},
-	[TOWER_BOT_3] = {lane = LANE_BOT, isTower = true},
-	[TOWER_BASE_1] = {lane = LANE_MID, isTower = true},
-	[TOWER_BASE_2] = {lane = LANE_MID, isTower = true},
-	[BARRACKS_TOP_MELEE] = {lane = LANE_TOP, isTower = false},
-	[BARRACKS_TOP_RANGED] = {lane = LANE_TOP, isTower = false},
-	[BARRACKS_MID_MELEE] = {lane = LANE_MID, isTower = false},
-	[BARRACKS_MID_RANGED] = {lane = LANE_MID, isTower = false},
-	[BARRACKS_BOT_MELEE] = {lane = LANE_BOT, isTower = false},
-	[BARRACKS_BOT_RANGED] = {lane = LANE_BOT, isTower = false},
-	['ancient'] = {lane = LANE_MID, isTower = false},
-}
-function J.IsPingCloseToValidTower(team, humanPing)
-	for k, v in pairs(tower_list)
-	do
-		local building = nil
-		if k == 'ancient'
-		then
-			building = GetAncient(team)
-		elseif v.isTower
-		then
-			building = GetTower(team, k)
-		else
-			building = GetBarracks(team, k)
+function J.IsPingCloseToValidTower(nTeam, ping, nRadius, fInterval)
+	if ping and ping.location then
+		local unitList = UNIT_LIST_ALLIED_BUILDINGS
+		if nTeam == GetOpposingTeam() then
+			unitList = UNIT_LIST_ENEMY_BUILDINGS
 		end
-
-		if building ~= nil
-		and building:CanBeSeen()
-		and not building:IsInvulnerable()
-		and not building:HasModifier('modifier_backdoor_protection')
-		and not building:HasModifier('modifier_backdoor_protection_in_base')
-		and not building:HasModifier('modifier_backdoor_protection_active')
-		and J.GetDistance(building:GetLocation(), humanPing.location) <= 800
-		then
-			return true, v.lane
+		for _, unit in pairs(GetUnitList(unitList)) do
+			if unit ~= nil
+			and unit:IsAlive()
+			and unit:CanBeSeen()
+			and not unit:IsInvulnerable()
+			and not unit:HasModifier('modifier_backdoor_protection')
+			and not unit:HasModifier('modifier_backdoor_protection_in_base')
+			and not unit:HasModifier('modifier_backdoor_protection_active')
+			and not string.find(unit:GetUnitName(), 'fillers')
+			then
+				local sUnitName = unit:GetUnitName()
+				if J.GetDistance(unit:GetLocation(), ping.location) <= nRadius and GameTime() < ping.time + fInterval then
+					local nLane = LANE_MID
+					if string.find(sUnitName, '_fort') then
+						nLane = LANE_MID
+					elseif string.find(sUnitName, '_top') then
+						nLane = LANE_TOP
+					elseif string.find(sUnitName, '_mid') then
+						nLane = LANE_MID
+					elseif string.find(sUnitName, '_bot') then
+						nLane = LANE_BOT
+					end
+					return true, nLane
+				end
+			end
 		end
 	end
+
+	return false, -1
 end
 
 function J.IsRoshanCloseToChangingSides()
     return DotaTime() > 15 * 60 and DotaTime() % 300 >= 300 - 30
+end
+
+function J.IsTormentorCloseToChangingSides(fSeconds)
+    return DotaTime() > 0 and DotaTime() % 300 >= 300 - fSeconds
 end
 
 function J.IsNonStableHero(hName)
@@ -5264,21 +5262,21 @@ function J.GetPointsAroundVector(vCenter, nRadius, numPoints)
 end
 
 function J.IsEarlyGame()
-	if DotaTime() < (J.IsModeTurbo() and 8 * 60 or 15 * 60) then
+	if DotaTime() < (J.IsModeTurbo() and 10 * 60 or 15 * 60) then
 		return true
 	end
 	return false
 end
 
 function J.IsMidGame()
-	if DotaTime() > (J.IsModeTurbo() and 8 * 60 or 15 * 60) and DotaTime() < (J.IsModeTurbo() and 18 * 60 or 30 * 60) then
+	if DotaTime() > (J.IsModeTurbo() and 10 * 60 or 15 * 60) and DotaTime() < (J.IsModeTurbo() and 20 * 60 or 35 * 60) then
 		return true
 	end
 	return false
 end
 
 function J.IsLateGame()
-	if DotaTime() > (J.IsModeTurbo() and 18 * 60 or 30 * 60) then
+	if DotaTime() > (J.IsModeTurbo() and 20 * 60 or 35 * 60) then
 		return true
 	end
 	return false
@@ -5317,12 +5315,14 @@ function J.GetSetNearbyTarget(bot, tUnits)
 	and not target:HasModifier('modifier_skeleton_king_reincarnation_scepter_active')
 	and not target:HasModifier('modifier_troll_warlord_battle_trance')
 	and not target:HasModifier('modifier_ursa_enrage')
+	and not target:HasModifier('modifier_winter_wyvern_cold_embrace')
 	and not target:HasModifier('modifier_item_blade_mail_reflect')
 	and not target:HasModifier('modifier_item_aeon_disk_buff')
 	and DotaTime() < targetTime + 5
 	then
 		return target
 	else
+		target = nil
 		targetTime = 0
 	end
 
@@ -5330,12 +5330,14 @@ function J.GetSetNearbyTarget(bot, tUnits)
     local targetScore = 0
     for _, enemy in pairs(tUnits) do
         if J.IsValidHero(enemy)
+		and J.IsInRange(bot, enemy, 1200)
         and not J.IsSuspiciousIllusion(enemy)
 		and not enemy:HasModifier('modifier_abaddon_borrowed_time')
 		and not enemy:HasModifier('modifier_necrolyte_reapers_scythe')
 		and not enemy:HasModifier('modifier_skeleton_king_reincarnation_scepter_active')
 		and not enemy:HasModifier('modifier_troll_warlord_battle_trance')
 		and not enemy:HasModifier('modifier_ursa_enrage')
+		and not enemy:HasModifier('modifier_winter_wyvern_cold_embrace')
 		and not enemy:HasModifier('modifier_item_blade_mail_reflect')
 		and not enemy:HasModifier('modifier_item_aeon_disk_buff')
         and J.CanBeAttacked(enemy) then
@@ -5368,9 +5370,23 @@ function J.GetSetNearbyTarget(bot, tUnits)
 				end
 			end
 
+			if (J.IsEarlyGame() or J.IsMidGame()) then
+				local nEnemyTowers = bot:GetNearbyTowers(1600, true)
+				if J.IsValidBuilding(nEnemyTowers[1])
+				and J.IsInRange(enemy, nEnemyTowers[1], 800)
+				then
+					mul = mul * 0.5
+				end
+			end
+
+			local nInRangeAlly = J.GetAlliesNearLoc(enemy:GetLocation(), 600)
+			local nInRangeEnemy = J.GetEnemiesNearLoc(enemy:GetLocation(), 600)
+
             local enemyScore = (Min(1, bot:GetAttackRange() / GetUnitToUnitDistance(bot, enemy)))
-								* ((1-J.GetHP(enemy)) * bot:GetEstimatedDamageToTarget(true, enemy, 10.0, DAMAGE_TYPE_ALL))
+								* ((1-J.GetHP(enemy)) * bot:GetEstimatedDamageToTarget(true, enemy, 5.0, DAMAGE_TYPE_ALL))
+								* math.log(enemy:GetEstimatedDamageToTarget(false, bot, 5.0, DAMAGE_TYPE_ALL))
 								* mul
+								* RemapValClamped(#nInRangeAlly - #nInRangeEnemy, -4, 0, 0.2, 1)
             if enemyScore > targetScore then
                 targetScore = enemyScore
                 __target = enemy
@@ -5445,6 +5461,24 @@ function J.GetInventoryNetworth()
 	for _, networth in pairs(hEnemyTeamList) do enemyInventoryNet = enemyInventoryNet + networth end
 
 	return allyInventoryNet, enemyInventoryNet
+end
+
+function J.DoesUnitHaveTemporaryBuff(hUnit)
+	local sUnitName = hUnit:GetUnitName()
+	if sUnitName == 'npc_dota_hero_huskar' and J.GetHP(hUnit) < 0.6 then
+		return true
+	end
+
+	for i = 0, hUnit:NumModifiers() do
+		local sDuration = hUnit:GetModifierRemainingDuration(i)
+		if (sDuration > 0.5)
+		or (sDuration > -1 and sDuration < 0.5)
+		then
+			return true
+		end
+	end
+
+	return false
 end
 
 function J.ConsolePrintActiveMode(bot)

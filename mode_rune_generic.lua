@@ -119,7 +119,9 @@ function GetDesire()
         if ClosestRune == RUNE_BOUNTY_1 or ClosestRune == RUNE_BOUNTY_2 then
 			nRuneStatus = GetRuneStatus(ClosestRune)
 
-            if nRuneStatus == RUNE_STATUS_AVAILABLE then
+            if nRuneStatus == RUNE_STATUS_AVAILABLE
+			and (X.IsTeamMustSaveRune(ClosestRune) or DotaTime() > 585)
+			then
 				if ((botPos == 1 or botPos == 3) and J.IsInLaningPhase() and ClosestDistance > 2000)
 				or X.IsEnemyPickRune(ClosestRune)
 				then
@@ -461,7 +463,7 @@ function X.IsPingedByHumanPlayer(vLocation, nRadius)
             if ping ~= nil then
                 if not ping.normal_ping
                 and J.GetDistance(ping.location, vLocation) <= 600
-                and DotaTime() - ping.time < pingTimeDelta
+                and GameTime() - ping.time < pingTimeDelta
                 and thisBotDistFromLocation < nRadius
                 and botActiveMode == BOT_MODE_RUNE
                 then
@@ -508,7 +510,7 @@ function X.IsEnemyPickRune(nRune)
 
 	for _, enemy in pairs(nEnemyHeroes) do
         if J.IsValidHero(enemy)
-        and (enemy:IsFacingLocation(vRuneLocation, 30) or GetUnitToLocationDistance(enemy, vRuneLocation) < 600)
+        and (enemy:IsFacingLocation(vRuneLocation, 30) or enemy:IsFacingLocation(bot:GetLocation(), 30) or GetUnitToLocationDistance(enemy, vRuneLocation) < 600)
         and (GetUnitToLocationDistance(enemy, vRuneLocation) < GetUnitToLocationDistance(bot, vRuneLocation) + 300)
         then
             return true
@@ -572,6 +574,20 @@ function X.CouldBlink(vLocation)
 	end
 
 	return false
+end
+
+function X.IsTeamMustSaveRune(nRune)
+	if GetTeam() == TEAM_DIRE then
+		return nRune == RUNE_BOUNTY_1
+			or nRune == RUNE_POWERUP_2
+			or (DotaTime() > 1 * 60 + 45 and nRune == RUNE_POWERUP_1)
+			or (DotaTime() > 10 * 60 + 45 and nRune == RUNE_BOUNTY_2)
+	else
+		return nRune == RUNE_BOUNTY_2
+			or nRune == RUNE_POWERUP_1
+			or (DotaTime() > 1 * 60 + 45 and nRune == RUNE_POWERUP_2)
+			or (DotaTime() > 10 * 60 + 45 and nRune == RUNE_BOUNTY_1)
+	end
 end
 
 -- Wisdom Rune

@@ -453,7 +453,7 @@ function X.IsPingedByHumanPlayer(bot)
 				local wardSlot = member:FindItemSlot(wardType)
 
 				if  GetUnitToLocationDistance(bot, ping.location) <= 700
-                and DotaTime() - ping.time < 5
+                and GameTime() - ping.time < 5
                 and wardSlot == -1
 				and not ping.normal_ping
 				then

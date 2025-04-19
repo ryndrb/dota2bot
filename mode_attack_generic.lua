@@ -53,8 +53,10 @@ function GetDesire()
 
     if DotaTime() < lastAttackTime + attackCooldown and #tEnemyHeroes_real > 0 then
         local hTarget = GetTarget(tEnemyHeroes_real)
-        bot:SetTarget(hTarget)
-        return 1.0
+        if hTarget ~= nil then
+            bot:SetTarget(hTarget)
+            return 0.95
+        end
     end
 
     if J.IsInTeamFight(bot, 2200)
@@ -106,9 +108,9 @@ function GetDesire()
             if hTarget ~= nil then
                 bot:SetTarget(hTarget)
                 if #nInRangeAlly >= #nInRangeEnemy then
-                    return 1.0
-                else
                     return 0.95
+                else
+                    return 0.90
                 end
             else
                 for i = 1, 5 do
@@ -221,94 +223,29 @@ end
 -- end
 
 -- copy target acquire
-local target = nil
-local targetTime = 0
 function GetTarget(tUnits)
     if J.IsValidHero(botTarget) then
         return botTarget
     end
 
-    if J.IsValidHero(target)
-	and not J.IsSuspiciousIllusion(target)
-	and not target:HasModifier('modifier_abaddon_borrowed_time')
-	and not target:HasModifier('modifier_necrolyte_reapers_scythe')
-	and not target:HasModifier('modifier_necrolyte_sadist_active')
-	and not target:HasModifier('modifier_skeleton_king_reincarnation_scepter_active')
-	and not target:HasModifier('modifier_item_blade_mail_reflect')
-	and not target:HasModifier('modifier_item_aeon_disk_buff')
-	and DotaTime() < targetTime + 3.5
-	then
-		bot:SetTarget(target)
-        return target
-	end
-
-    local __target = nil
-    local targetScore = 0
-    for _, enemy in pairs(tUnits) do
-        if J.IsValidHero(enemy)
-        and not J.IsSuspiciousIllusion(enemy)
-		and not enemy:HasModifier('modifier_abaddon_borrowed_time')
-		and not enemy:HasModifier('modifier_necrolyte_reapers_scythe')
-		and not enemy:HasModifier('modifier_skeleton_king_reincarnation_scepter_active')
-		and not enemy:HasModifier('modifier_item_blade_mail_reflect')
-		and not enemy:HasModifier('modifier_item_aeon_disk_buff')
-        and J.CanBeAttacked(enemy) then
-            local enemyName = enemy:GetUnitName()
-			local mul = 1
-
-            if enemyName == 'npc_dota_hero_sniper' then
-				mul = 4
-			elseif enemyName == 'npc_dota_hero_drow_ranger' then
-				mul = 2
-			elseif enemyName == 'npc_dota_hero_crystal_maiden' and not IsModifierInRadius('modifier_crystal_maiden_freezing_field_slow', 1600) then
-				mul = 2
-			elseif enemyName == 'npc_dota_hero_jakiro' and not IsModifierInRadius('modifier_jakiro_macropyre_burn', 1600) then
-				mul = 2.5
-			elseif enemyName == 'npc_dota_hero_lina' then
-				mul = 3
-			elseif enemyName == 'npc_dota_hero_nevermore' then
-				mul = 3
-			elseif enemyName == 'npc_dota_hero_bristleback' and not enemy:IsFacingLocation(bot:GetLocation(), 90) then
-				mul = 0.5
-			elseif enemyName == 'npc_dota_hero_enchantress' then
-				mul = 0.5
-            end
-
-			if enemyName ~= 'npc_dota_hero_bristleback' then
-				if J.IsCore(enemy) then
-					mul = mul * 1.5
-				else
-					mul = mul * 0.5
-				end
-			end
-
-            local enemyScore = (Min(1, bot:GetAttackRange() / GetUnitToUnitDistance(bot, enemy)))
-								* ((1-J.GetHP(enemy)) * bot:GetEstimatedDamageToTarget(true, enemy, 5.0, DAMAGE_TYPE_ALL))
-								* mul
-            if enemyScore > targetScore then
-                targetScore = enemyScore
-                __target = enemy
-				-- print(botName, enemyName, enemyScore)
-            end
-        end
-    end
-
+    local __target = J.GetSetNearbyTarget(bot, tUnits)
 	if __target ~= nil then
 		bot:SetTarget(__target)
-		target = __target
 		return __target
 	end
 
     for i = 1, 5 do
         local member = GetTeamMember(i)
         if J.IsValidHero(member) and J.IsInRange(bot, member, 1200) then
-            target = member:GetAttackTarget()
+            local target = member:GetAttackTarget()
             if J.IsValidHero(target) then
                 bot:SetTarget(target)
                 return target
             end
         end
     end
+
+    return nil
 end
 
 function IsModifierInRadius(sModifierName, nRadius)

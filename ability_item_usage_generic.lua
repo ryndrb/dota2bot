@@ -432,11 +432,15 @@ local function BuybackUsageComplement()
 			for _, enemy in pairs(nInRangeEnemy) do
 				if J.IsValidHero(enemy)
 				and J.IsCore(enemy)
-				and (enemy:GetAttackTarget():IsBuilding() or enemy:GetAttackTarget() == ancient)
 				then
-					J.Role['lastbbtime'] = DotaTime()
-					bot:ActionImmediate_Buyback()
-					return
+					local enemyAttackTarget = enemy:GetAttackTarget()
+					if J.IsValid(enemyAttackTarget)
+					and (enemyAttackTarget:IsBuilding() or enemyAttackTarget == ancient)
+					then
+						J.Role['lastbbtime'] = DotaTime()
+						bot:ActionImmediate_Buyback()
+						return
+					end
 				end
 			end
 		end
@@ -5544,11 +5548,12 @@ X.ConsiderItemDesire["item_ward_sentry"] = function( hItem )
 				and not npcEnemy:HasModifier( "modifier_truesight" )
 				and not npcEnemy:HasModifier( "modifier_slardar_amplify_damage" )
 				and not npcEnemy:HasModifier( "modifier_item_dustofappearance" )
-				and not J.Site.IsLocationHaveTrueSight( npcEnemy:GetLocation() )
 			then
 				hEffectTarget = J.GetUnitTowardDistanceLocation( bot, npcEnemy, nCastRange )
-				sCastMotive = '插真眼针对:'..J.Chat.GetNormName( npcEnemy )
-				return BOT_ACTION_DESIRE_HIGH, hEffectTarget, sCastType, sCastMotive
+				if not J.Site.IsLocationHaveTrueSight( hEffectTarget ) then
+					sCastMotive = '插真眼针对:'..J.Chat.GetNormName( npcEnemy )
+					return BOT_ACTION_DESIRE_HIGH, hEffectTarget, sCastType, sCastMotive
+				end
 			end
 		end
 

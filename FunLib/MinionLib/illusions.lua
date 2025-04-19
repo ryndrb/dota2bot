@@ -193,6 +193,15 @@ function X.ConsiderMove(hMinionUnit)
         end
     end
 
+    if U.IsTargetedByTower(hMinionUnit)
+    and (string.find(hMinionUnitName, 'warlock_golem')
+        or hMinionUnit:HasModifier('modifier_dominated')
+        or hMinionUnit:HasModifier('modifier_chen_holy_persuasion')
+        or hMinionUnit:IsDominated())
+    then
+        return BOT_ACTION_DESIRE_HIGH, J.GetTeamFountain()
+    end
+
     if not botAlive
     or GetUnitToUnitDistance(bot, hMinionUnit) > 1600
     or bot:HasModifier('modifier_teleporting')

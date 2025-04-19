@@ -124,8 +124,6 @@ function GetDesire()
 		end
 	end
 
-	local botActiveMode = bot:GetActiveMode()
-	
 	if DotaTime() < 50 or botActiveMode == BOT_MODE_RUNE then
 		return 0.0
 	end
@@ -333,10 +331,10 @@ function GetDesire()
 						preferedCamp = nil;
 						teamTime = DotaTime();
 						return BOT_MODE_DESIRE_VERYLOW;
-				elseif farmState == 1
-				    then 
-						bot.farmLocation = preferedCamp.cattr.location
-					    return BOT_MODE_DESIRE_ABSOLUTE
+				-- elseif farmState == 1
+				--     then 
+				-- 		bot.farmLocation = preferedCamp.cattr.location
+				-- 	    return BOT_MODE_DESIRE_ABSOLUTE
 				else
 					
 					if nAliveAllyCount >= 3
@@ -784,14 +782,20 @@ function X.ShouldRun(bot)
 	if botLevel < 6
 		and DotaTime() > 30
 		and DotaTime() < 8 * 60
-		and enemyFountainDistance < 8111
 	then
-		if botTarget ~= nil and botTarget:IsHero()
-		   and J.GetHP(botTarget) > 0.35
-		   and (  not J.IsInRange(bot,botTarget,bot:GetAttackRange() + 150) 
-				  or not J.CanKillTarget(botTarget, bot:GetAttackDamage() * 2.33, DAMAGE_TYPE_PHYSICAL) )
+		local botAssignedLane = bot:GetAssignedLane()
+		if (botAssignedLane == LANE_TOP and enemyFountainDistance < (GetTeam() == TEAM_RADIANT and 12000 or 9000))
+		or (botAssignedLane == LANE_MID and enemyFountainDistance < (GetTeam() == TEAM_RADIANT and 9000 or 8000))
+		or (botAssignedLane == LANE_BOT and enemyFountainDistance < (GetTeam() == TEAM_RADIANT and 9000 or 12000))
 		then
-			return 2.88;
+			if J.IsValidHero(botTarget)
+			and not J.IsSuspiciousIllusion(botTarget)
+			   and J.GetHP(botTarget) > 0.35
+			   and (  not J.IsInRange(bot,botTarget,bot:GetAttackRange() + 150) 
+					  or not J.CanKillTarget(botTarget, bot:GetAttackDamage() * 2.33, DAMAGE_TYPE_PHYSICAL) )
+			then
+				return 2.88;
+			end
 		end
 	end
 	
@@ -811,7 +815,7 @@ function X.ShouldRun(bot)
 	   and aliveEnemyCount >= 3 
 	   and #hAllyHeroList < aliveEnemyCount + 2
 	   and not J.Role.IsPvNMode()
-	   and ( DotaTime() % 600 > 285 or DotaTime() < 18 * 60 )--处于夜间或小于18分钟
+	   and not J.IsLateGame()
 	then
 		local allyLevel = J.GetAverageLevel(false);
 		local enemyLevel = J.GetAverageLevel(true);

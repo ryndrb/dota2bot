@@ -46,12 +46,12 @@ local HeroBuild = {
 				"item_ultimate_scepter",
 				"item_greater_crit",--
 				"item_ultimate_scepter_2",
-				"item_revenants_brooch",--
+				"item_disperser",--
 				"item_moon_shard",
 			},
             ['sell_list'] = {
 				"item_magic_wand", "item_ultimate_scepter",
-				"item_orb_of_corrosion", "item_revenants_brooch",
+				"item_orb_of_corrosion", "item_disperser",
 			},
         },
     },
@@ -85,12 +85,12 @@ local HeroBuild = {
 				"item_ultimate_scepter",
 				"item_greater_crit",--
 				"item_ultimate_scepter_2",
-				"item_revenants_brooch",--
+				"item_disperser",--
 				"item_moon_shard",
 			},
             ['sell_list'] = {
 				"item_magic_wand", "item_ultimate_scepter",
-				"item_orb_of_corrosion", "item_revenants_brooch",
+				"item_orb_of_corrosion", "item_disperser",
 			},
         },
     },
