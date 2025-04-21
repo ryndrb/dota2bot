@@ -602,6 +602,14 @@ end
 -- hUnit GetTarget()
 
 -- Gets the target that's been set for a unit.
+local o_GetTarget = CDOTA_Bot_Script.GetTarget
+function CDOTA_Bot_Script:GetTarget()
+    if self ~= nil and self:CanBeSeen() and self:IsHero() then
+        return o_GetTarget(self)
+    end
+    return nil
+end
+
 -- SetNextItemPurchaseValue( nGold )
 
 -- Sets the value of the next item to purchase. Doesn't actually execute anything, just potentially useful for communicating a purchase target for modes like Farm.
