@@ -151,7 +151,7 @@ function GetDesire()
     end
 
     if botName == 'npc_dota_hero_huskar' and not bot:HasModifier('modifier_item_spirit_vessel_damage') then
-        local hAbility = bot:GetAbilityByName('huskar_burning_spear')
+        local hAbility = bot:GetAbilityByName('huskar_berserkers_blood')
         if hAbility and hAbility:IsTrained() and hAbility:GetLevel() >= 3 then
             if botHP > 0.2 and botHealthRegen > 30 then botHP = 1 end
             if botHP < 0.3 and (#nEnemyHeroes == 0 and J.HasItem(bot, 'item_armlet')) then botHP = 1 end
@@ -255,6 +255,8 @@ function GetDesire()
             local unitHealth = botHealth - bot:GetMana()
             local unitMaxHealth = bot:GetMaxHealth() - bot:GetMaxMana()
             nHealth = (unitHealth / unitMaxHealth) * 0.2 + botMP * 0.8
+        elseif botName == 'npc_dota_hero_huskar' then
+            nHealth = botHP
         else
             nHealth = botHP * 0.8 + botMP * 0.2
         end
