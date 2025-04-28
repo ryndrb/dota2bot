@@ -5,7 +5,7 @@ local clearMode = false
 local botName = bot:GetUnitName()
 
 if bot.isInLanePhase == nil then bot.isInLanePhase = false end
-local fNotLaningTime = 0
+
 function GetDesire()
 
 	local currentTime = DotaTime()
@@ -20,12 +20,6 @@ function GetDesire()
 		or botActiveMode == BOT_MODE_WARD) and botActiveModeDesire > 0)
 	then
 		return BOT_ACTION_DESIRE_NONE
-	end
-
-	if DotaTime() > 60 and DotaTime() < fNotLaningTime + 3 then
-		return BOT_MODE_DESIRE_VERYLOW
-	else
-		fNotLaningTime = 0
 	end
 
 	if J.IsNonStableHero(botName) then
@@ -58,7 +52,7 @@ function GetDesire()
 	if (DotaTime() < 10 * 60) and ((bCore and bot:GetNetWorth() < 5500) or (not bCore and botLevel < 6))
 	then
 		local nLastHits = bot:GetLastHits()
-		local nDesire = RemapValClamped(nLastHits, 50, 75, BOT_MODE_DESIRE_VERYHIGH, BOT_MODE_DESIRE_LOW)
+		local nDesire = RemapValClamped(nLastHits, 50, 75, BOT_MODE_DESIRE_HIGH, BOT_MODE_DESIRE_LOW)
 		local botAssignedLane = bot:GetAssignedLane()
 		local vLaneFrontLocation = GetLocationAlongLane(botAssignedLane, GetLaneFrontAmount(GetTeam(), botAssignedLane, false))
 		local nInRangeAlly = J.GetAlliesNearLoc(vLaneFrontLocation, 1200)
@@ -67,7 +61,7 @@ function GetDesire()
 		local bGood = DotaTime() > 10
 					and ((#nInRangeEnemy >= 1 and J.GetHP(bot) > 0.25) or (#nInRangeEnemy == 0))
 					and #nInRangeAlly >= #nInRangeEnemy
-					and not (#nInRangeAlly >= #nInRangeEnemy + 2)
+					and not (#nInRangeAlly >= #nInRangeEnemy + 1)
 					-- and (GetUnitToLocationDistance(bot, vLaneFrontLocation) < 2000 and #nEnemyLaneCreeps > 0)
 					and not J.IsRetreating(bot)
 
@@ -79,8 +73,7 @@ function GetDesire()
 			and J.IsInRange(bot, botTarget, Max(bot:GetAttackRange() + 200, 800))
 			and not J.IsSuspiciousIllusion(botTarget)
 			then
-				fNotLaningTime = DotaTime()
-				return BOT_MODE_DESIRE_VERYLOW
+				nDesire = nDesire / 2
 			end
 		end
 
@@ -97,7 +90,7 @@ function GetDesire()
 
 	bot.isInLanePhase = false
 
-	return BOT_MODE_DESIRE_VERY_LOW
+	return BOT_MODE_DESIRE_VERYLOW
 end
 
 if J.IsNonStableHero(botName)

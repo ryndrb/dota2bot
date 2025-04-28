@@ -828,7 +828,7 @@ local function ItemUsageComplement()
 		or bot:IsCastingAbility()
 		or bot:NumQueuedActions() > 0
 		or bot:HasModifier( 'modifier_teleporting' )
-		or bot:HasModifier( 'modifier_doom_bringer_doom' )
+		or bot:HasModifier( 'modifier_doom_bringer_doom_aura_enemy' )
 		or bot:HasModifier( 'modifier_phantom_lancer_phantom_edge_boost' )
 		or X.WillBreakInvisible( bot )
 	then return	BOT_ACTION_DESIRE_NONE end

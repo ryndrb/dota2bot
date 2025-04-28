@@ -293,7 +293,7 @@ function X.ConsiderTether()
         and not J.IsStuck(ally)
         and not ally:IsInvulnerable()
         and J.IsInRange(bot, ally, nCastRange)
-        and not ally:HasModifier('modifier_doom_bringer_doom')
+        and not ally:HasModifier('modifier_doom_bringer_doom_aura_enemy')
         and not ally:HasModifier('modifier_necrolyte_reapers_scythe')
         and not ally:HasModifier('modifier_skeleton_king_reincarnation_scepter_active')
         then

@@ -370,6 +370,7 @@ function ItemPurchaseThink()
 			bot:ActionImmediate_PurchaseItem( "item_clarity" )
 			return
 		elseif botLevel >= 5
+			and not J.IsLateGame()
 			and not J.HasItemInInventory('item_ward_sentry')
 			and not J.HasItemInInventory('item_gem')
 			and Role['invisEnemyExist'] == true
@@ -732,10 +733,16 @@ function ItemPurchaseThink()
 			return
 		end
 
+		-- reduce support clutter
 		if J.IsLateGame() then
 			local smokeSlot = bot:FindItemSlot('item_smoke_of_deceit')
 			if smokeSlot >= 6 then
 				bot:ActionImmediate_SellItem(bot:GetItemInSlot(smokeSlot))
+				return
+			end
+			local dustSlot = bot:FindItemSlot('item_dust')
+			if dustSlot >= 6 then
+				bot:ActionImmediate_SellItem(bot:GetItemInSlot(dustSlot))
 				return
 			end
 		end

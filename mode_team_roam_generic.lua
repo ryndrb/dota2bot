@@ -123,7 +123,6 @@ function GetDesire()
 	if J.IsValid(hTargetCreep) and J.CanBeAttacked(hTargetCreep) then
 		return 1.5
 	end
-	hTargetCreep = nil
 
 	-- nDesire = X.ConsiderHarassInLaningPhase()
 	-- if nDesire > 0
@@ -266,7 +265,6 @@ function Think()
 	if ShouldAttackSpecialUnit
 	then
 		if J.IsValid(bot.special_unit_target) then
-			bot:SetTarget(bot.special_unit_target)
 			bot:Action_AttackUnit(bot.special_unit_target, false)
 			return
 		end
@@ -375,17 +373,17 @@ function X.SupportFindTarget()
 	end		
 	
 	
-	if botMode == BOT_MODE_RETREAT
-	   and botLV > 9
-	   and not X.CanBeInVisible(bot)
-	   and X.ShouldNotRetreat(bot)
-	then
-	    nTarget = X.WeakestUnitCanBeAttacked(true, true, nAttackRange + 50, bot)
-		if nTarget ~= nil 
-		then 
-		    return nTarget,BOT_MODE_DESIRE_ABSOLUTE * 1.09; 
-		end			    
-	end
+	-- if botMode == BOT_MODE_RETREAT
+	--    and botLV > 9
+	--    and not X.CanBeInVisible(bot)
+	--    and X.ShouldNotRetreat(bot)
+	-- then
+	--     nTarget = X.WeakestUnitCanBeAttacked(true, true, nAttackRange + 50, bot)
+	-- 	if nTarget ~= nil 
+	-- 	then 
+	-- 	    return nTarget,BOT_MODE_DESIRE_ABSOLUTE * 1.09; 
+	-- 	end			    
+	-- end
 		
 	
 	local attackDamage = botBAD - 1;
@@ -697,18 +695,18 @@ function X.CarryFindTarget()
 	end		
 	
 	
-	if botMode == BOT_MODE_RETREAT
-	   and botName ~= "npc_dota_hero_bristleback"
-	   and botLV > 9
-	   and not X.CanBeInVisible(bot)
-	   and X.ShouldNotRetreat(bot)
-	then
-	    nTarget = X.WeakestUnitCanBeAttacked(true, true, nAttackRange + 50, bot)
-		if nTarget ~= nil 
-		then 
-		    return nTarget,BOT_MODE_DESIRE_ABSOLUTE * 1.09; 
-		end			    
-	end
+	-- if botMode == BOT_MODE_RETREAT
+	--    and botName ~= "npc_dota_hero_bristleback"
+	--    and botLV > 9
+	--    and not X.CanBeInVisible(bot)
+	--    and X.ShouldNotRetreat(bot)
+	-- then
+	--     nTarget = X.WeakestUnitCanBeAttacked(true, true, nAttackRange + 50, bot)
+	-- 	if nTarget ~= nil 
+	-- 	then 
+	-- 	    return nTarget,BOT_MODE_DESIRE_ABSOLUTE * 1.09; 
+	-- 	end			    
+	-- end
 		
 	
 	local cItem = J.IsItemAvailable("item_echo_sabre")
@@ -2093,7 +2091,7 @@ end
 
 -- some help with last hits
 function X.GetLastHitCreep()
-	if (J.IsRetreating(bot) and bot:GetActiveModeDesire() > 0.95)
+	if J.IsRetreating(bot)
 	or (not J.IsCore(bot) and J.IsThereCoreNearby(800))
 	or J.IsInTeamFight(bot, 1200)
 	then

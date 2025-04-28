@@ -32,26 +32,31 @@ local HeroBuild = {
             ['buy_list'] = {
 				"item_double_branches",
 				"item_magic_stick",
-				"item_blight_stone",
+				"item_double_mantle",
 
+				"item_magic_wand",
+				"item_double_null_talisman",
 				"item_orb_of_corrosion",
 				"item_magic_wand",
 				"item_yasha",
 				"item_force_staff",
 				"item_manta",--
+				"item_ultimate_scepter",
+				"item_greater_crit",--
+				"item_aghanims_shard",
 				"item_hurricane_pike",--
 				"item_butterfly",--
 				"item_skadi",--
-				"item_aghanims_shard",
-				"item_ultimate_scepter",
-				"item_greater_crit",--
+				"item_tiara_of_selemene",
 				"item_ultimate_scepter_2",
-				"item_disperser",--
+				"item_sheepstick",--
 				"item_moon_shard",
 			},
             ['sell_list'] = {
 				"item_magic_wand", "item_ultimate_scepter",
-				"item_orb_of_corrosion", "item_disperser",
+				"item_null_talisman", "item_greater_crit",
+				"item_null_talisman", "item_butterfly",
+				"item_orb_of_corrosion", "item_skadi",
 			},
         },
     },

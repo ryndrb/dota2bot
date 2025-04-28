@@ -3,10 +3,30 @@ local J = require( GetScriptDirectory()..'/FunLib/jmz_func')
 local Defend = {}
 local pingTimeDelta = 5
 
+local nTeam = GetTeam()
+local hTowerTable = {
+	[LANE_TOP] = {
+		[1] = GetTower(nTeam, TOWER_TOP_1),
+		[2] = GetTower(nTeam, TOWER_TOP_2),
+		[3] = GetTower(nTeam, TOWER_TOP_3),
+	},
+	[LANE_MID] = {
+		[1] = GetTower(nTeam, TOWER_MID_1),
+		[2] = GetTower(nTeam, TOWER_MID_2),
+		[3] = GetTower(nTeam, TOWER_MID_3),
+	},
+	[LANE_BOT] = {
+		[1] = GetTower(nTeam, TOWER_BOT_1),
+		[2] = GetTower(nTeam, TOWER_BOT_2),
+		[3] = GetTower(nTeam, TOWER_BOT_3),
+	},
+}
+
 function Defend.GetDefendDesire(bot, lane)
 	if bot.laneToDefend == nil then bot.laneToDefend = lane end
 
-	local nEnemyAroundAncient = Defend.GetEnemiesAroundAncient(2500)
+	local hTeamAncient = GetAncient(GetTeam())
+	local nEnemyAroundAncient = Defend.GetEnemiesAroundLocation(hTeamAncient:GetLocation(), 3000)
 	local botPosition = J.GetPosition(bot)
 	local botActiveMode = bot:GetActiveMode()
 	local nInRangeEnemy = J.GetEnemiesNearLoc(bot:GetLocation(), 1400)
@@ -21,7 +41,7 @@ function Defend.GetDefendDesire(bot, lane)
 	end
 
 	if #nInRangeEnemy > 0 --and GetUnitToLocationDistance(bot, GetLaneFrontLocation(GetTeam(), lane, 0)) < 1200
-	or (not bMyLane and botPosition == 1 and not J.IsInLaningPhase()) -- reduce carry feeds
+	or (not bMyLane and botPosition == 1 and J.IsInLaningPhase()) -- reduce carry feeds
 	or (J.IsDoingRoshan(bot) and #J.GetAlliesNearLoc(J.GetCurrentRoshanLocation(), 2800) >= 3)
 	or (J.IsDoingTormentor(bot) and ((#J.GetAlliesNearLoc(J.GetTormentorLocation(GetTeam()), 1600) >= 2) or #J.GetAlliesNearLoc(J.GetTormentorWaitingLocation(GetTeam()), 2500) >= 2) and nEnemyAroundAncient == 0)
 	then
@@ -42,59 +62,43 @@ function Defend.GetDefendDesire(bot, lane)
 	end
 
 	local human, humanPing = J.GetHumanPing()
-	if human ~= nil and humanPing ~= nil and DotaTime() > 0 then
+	if human ~= nil and humanPing ~= nil and not humanPing.normal_ping and DotaTime() > 0 then
 		local isPinged, pingedLane = J.IsPingCloseToValidTower(GetTeam(), humanPing, 700, 5.0)
 		if isPinged and lane == pingedLane and GameTime() < humanPing.time + pingTimeDelta then
-			return 0.96
+			return 0.9
 		end
 	end
 
 	local furthestBuilding = Defend.GetFurthestBuildingOnLane(bot, lane)
-	local bTier1_Tower = J.IsTier1(furthestBuilding, GetTeam())
-	local bTier2_Tower = J.IsTier2(furthestBuilding, GetTeam())
 
-	if GetUnitToLocationDistance(bot, GetLocationAlongLane(lane, GetLaneFrontAmount(GetTeam(), lane, false))) > 3500
-	and not Defend.IsImportantBuilding(furthestBuilding)
-	and (J.IsEarlyGame() or J.IsMidGame())
+	-- back to former from some time ago (that was inspired by phalanx when I started tinkering)
+
+	if nEnemyAroundAncient > 0 and lane == LANE_MID
+	and (  furthestBuilding == hTeamAncient
+		or furthestBuilding == GetTower(nTeam, TOWER_BASE_1)
+		or furthestBuilding == GetTower(nTeam, TOWER_BASE_2))
 	then
-		local tpScoll = J.GetItem2(bot, 'item_tpscroll')
-		if not J.CanCastAbility(tpScoll) then
-			return BOT_MODE_DESIRE_NONE
-		end
+		return BOT_MODE_DESIRE_VERYHIGH
 	end
 
-	if J.CanBeAttacked(furthestBuilding) and furthestBuilding ~= GetAncient(GetTeam())
+	local nDesire = GetDefendLaneDesire(lane)
+	local hTier1Tower = hTowerTable[lane][1]
+	local hTier2Tower = hTowerTable[lane][2]
+	local hTier3Tower = hTowerTable[lane][3]
+
+	if 	   not J.IsValidBuilding(hTier3Tower) then
+		return Clamp(nDesire * 5, 0, 0.9)
+	elseif not J.IsValidBuilding(hTier2Tower) then
+		return Clamp(nDesire * 3, 0, 0.9)
+	elseif J.IsValidBuilding(hTier1Tower) and Defend.ShouldDefend(bot, furthestBuilding, 1600)
 	then
-		local isOnlyCreeps = Defend.IsOnlyCreepsAroundBuilding(furthestBuilding, 1600)
-
-		if (bTier1_Tower and J.GetHP(furthestBuilding) <= 0.2
-			or bTier2_Tower and J.GetHP(furthestBuilding) <= 0.2)
-		and not isOnlyCreeps
-		then
-			return BOT_MODE_DESIRE_NONE
-		end
-
-		if (bTier1_Tower or bTier2_Tower)
-		and isOnlyCreeps
-		and J.IsCore(bot) and GetUnitToUnitDistance(bot, furthestBuilding) > 2200
-		then
-			return BOT_MODE_DESIRE_NONE
-		end
-
-		if (J.IsMidGame() and bTier1_Tower)
-		or (J.IsLateGame() and (bTier1_Tower or bTier2_Tower))
-		then
-			nInRangeEnemy = J.GetEnemiesNearLoc(furthestBuilding:GetLocation(), 1600)
-			if GetUnitToUnitDistance(bot, furthestBuilding) > 2000
-			or GetUnitToUnitDistance(bot, furthestBuilding) < 2000 and #nInRangeEnemy > 1
-			then
-				return BOT_MODE_DESIRE_NONE
-			end
-		end
+		return Clamp(nDesire, 0, 0.9)
+	elseif J.IsValidBuilding(hTier2Tower) and Defend.ShouldDefend(bot, furthestBuilding, 1600)
+	then
+		return Clamp(nDesire * 2, 0, 0.9)
 	end
 
-	local mul = Defend.GetEnemyAmountMul(lane)
-	return Clamp(GetDefendLaneDesire(lane) * mul, 0.1, 0.95 - 0.01)
+	return 0
 end
 
 function Defend.DefendThink(bot, lane)
@@ -143,6 +147,131 @@ function Defend.DefendThink(bot, lane)
 	bot:Action_MoveToLocation(vDefendLane + J.RandomForwardVector(1200))
 end
 
+local fTraveBootsDefendTime = 0
+function Defend.ShouldDefend(bot, hBuilding, nRadius)
+	local nEnemyHeroNearbyCount = 0
+	for _, id in pairs(GetTeamPlayers(GetOpposingTeam())) do
+		if IsHeroAlive(id) then
+			local info = GetHeroLastSeenInfo(id)
+			if info ~= nil then
+				local dInfo = info[1]
+				if dInfo ~= nil then
+					if GetUnitToLocationDistance(hBuilding, dInfo.location) <= 1600
+					and dInfo.time_since_seen <= 5.0
+					then
+						nEnemyHeroNearbyCount = nEnemyHeroNearbyCount + 1
+					end
+				end
+			end
+		end
+	end
+
+	local nEnemyCreepNearbyCount = 0
+	local unitList = GetUnitList(UNIT_LIST_ENEMIES)
+	for _, unit in pairs(unitList) do
+		if J.IsValid(unit) and GetUnitToUnitDistance(hBuilding, unit) <= nRadius then
+			local sUnitName = unit:GetUnitName()
+			if string.find(sUnitName, 'siege') and not string.find(sUnitName, 'upgraded')
+			then
+				nEnemyCreepNearbyCount = nEnemyCreepNearbyCount + 0.5
+			elseif string.find(sUnitName, 'upgraded_mega')
+			then
+				nEnemyCreepNearbyCount = nEnemyCreepNearbyCount + 0.6
+			elseif string.find(sUnitName, 'upgraded')
+			then
+				nEnemyCreepNearbyCount = nEnemyCreepNearbyCount + 0.4
+			elseif string.find(sUnitName, 'warlock_golem')
+				or string.find(sUnitName, 'shadow_shaman_ward') and bot:GetAttackDamage() >= 500
+			then
+				nEnemyCreepNearbyCount = nEnemyCreepNearbyCount + 1
+			elseif string.find(sUnitName, 'lone_druid_bear')
+			then
+				nEnemyHeroNearbyCount = nEnemyHeroNearbyCount + 1
+			elseif unit:IsCreep()
+				or unit:IsAncientCreep()
+				or unit:IsDominated()
+				or unit:HasModifier('modifier_chen_holy_persuasion')
+				or unit:HasModifier('modifier_dominated')
+			then
+				nEnemyCreepNearbyCount = nEnemyCreepNearbyCount + 0.2
+			end
+		end
+	end
+
+	nEnemyHeroNearbyCount = math.floor(nEnemyHeroNearbyCount)
+	nEnemyCreepNearbyCount = math.floor(nEnemyCreepNearbyCount)
+
+	local botPosition J.GetPosition(bot)
+	local nEnemyNearbyCount = nEnemyHeroNearbyCount + nEnemyCreepNearbyCount
+
+	if nEnemyNearbyCount == 1 then
+		if (botPosition == 2)
+		or (botPosition == Defend.GetClosestAlly({4, 5}, hBuilding:GetLocation()))
+		then
+			return true
+		end
+	elseif nEnemyNearbyCount == 2 then
+		if (botPosition == 2)
+		or (botPosition == 3)
+		or (botPosition == Defend.GetClosestAlly({4, 5}, hBuilding:GetLocation()))
+		or (botPosition == 1 and GetUnitToUnitDistance(bot, hBuilding) <= 3200)
+		then
+			return true
+		end
+	elseif nEnemyNearbyCount == 3 then
+		if (botPosition == 2)
+		or (botPosition == 3)
+		or (botPosition == 4)
+		or (botPosition == 5)
+		or (botPosition == 1 and GetUnitToUnitDistance(bot, hBuilding) <= 3200)
+		then
+			return true
+		end
+	elseif nEnemyNearbyCount >= 4 then
+		return true
+	end
+
+	if bot.travel_boots_defender == nil then bot.travel_boots_defender = false end
+
+	if DotaTime() - fTraveBootsDefendTime < 20.0 then
+		bot.travel_boots_defender = false
+	end
+
+	local function IsThereNoTeammateTravelBootsDefender()
+		for i = 1, 5 do
+			local member = GetTeamMember(i)
+			if bot ~= member and J.IsValidHero(member) and member.travel_boots_defender == true then
+				return false
+			end
+		end
+
+		return true
+	end
+
+	if (bot:GetUnitName() == 'npc_dota_hero_tinker'
+		and bot:GetLevel() >= 6
+		and J.CanCastAbility(bot:GetAbilityByName('tinker_keen_teleport'))
+		and IsThereNoTeammateTravelBootsDefender())
+	then
+		bot.travel_boots_defender = true
+		fTraveBootsDefendTime = DotaTime()
+		return true
+	end
+
+	local hItem = J.GetItem2(bot, 'item_travel_boots') or J.GetItem2(bot, 'item_travel_boots_2')
+	if J.CanCastAbility(hItem) and IsThereNoTeammateTravelBootsDefender() then
+		bot.travel_boots_defender = true
+		fTraveBootsDefendTime = DotaTime()
+		return true
+	end
+
+	if botPosition == Defend.GetClosestAlly({2,3}, hBuilding:GetLocation()) then
+		return true
+	end
+
+	return false
+end
+
 function Defend.GetFurthestBuildingOnLane(bot, lane)
 	local botTeam = GetTeam()
 	local FurthestBuilding = nil
@@ -180,6 +309,11 @@ function Defend.GetFurthestBuildingOnLane(bot, lane)
 		FurthestBuilding = GetBarracks(botTeam, BARRACKS_TOP_RANGED)
 		if J.IsValidBuilding(FurthestBuilding) then
 			return FurthestBuilding, 2.5
+		end
+
+		FurthestBuilding = GetAncient(botTeam)
+		if J.IsValidBuilding(FurthestBuilding) then
+			return GetAncient(botTeam), 3
 		end
 	end
 
@@ -268,6 +402,11 @@ function Defend.GetFurthestBuildingOnLane(bot, lane)
 		if J.IsValidBuilding(FurthestBuilding) then
 			return FurthestBuilding, 2.5
 		end
+
+		FurthestBuilding = GetAncient(botTeam)
+		if J.IsValidBuilding(FurthestBuilding) then
+			return GetAncient(botTeam), 3
+		end
 	end
 
 	return nil, 1
@@ -350,12 +489,12 @@ function Defend.IsOnlyCreepsAroundBuilding(hBuilding, nRadius)
 	return creepCount > 0 and heroCount == 0
 end
 
-function Defend.GetEnemiesAroundAncient(nRadius)
+function Defend.GetEnemiesAroundLocation(vLocation, nRadius)
 	local nUnitCount = 0
 
 	for _, unit in pairs(GetUnitList(UNIT_LIST_ENEMIES)) do
-		if J.IsValid(unit) and GetUnitToUnitDistance(unit, GetAncient(GetTeam())) <= nRadius then
-			local unitName = unit:GetUnitName()
+		if J.IsValid(unit) and GetUnitToLocationDistance(unit, vLocation) <= nRadius then
+			local sUnitName = unit:GetUnitName()
 
 			if J.IsValidHero(unit) and not J.IsSuspiciousIllusion(unit) then
 				if not J.IsCore(unit) then
@@ -363,13 +502,20 @@ function Defend.GetEnemiesAroundAncient(nRadius)
 				else
 					nUnitCount = nUnitCount + 1
 				end
-			elseif string.find(unitName, 'upgraded') then
-				nUnitCount = nUnitCount + 0.5
-			elseif string.find(unitName, 'warlock_golem') then
+			elseif string.find(sUnitName, 'upgraded_mega') then
+				nUnitCount = nUnitCount + 0.6
+			elseif string.find(sUnitName, 'upgraded') then
+				nUnitCount = nUnitCount + 0.4
+			elseif string.find(sUnitName, 'warlock_golem') then
 				nUnitCount = nUnitCount + 1
-			elseif string.find(unitName, 'lone_druid_bear') then
+			elseif string.find(sUnitName, 'lone_druid_bear') then
 				nUnitCount = nUnitCount + 1
-			elseif unit:IsCreep() then
+			elseif unit:IsCreep()
+				or unit:IsAncientCreep()
+				or unit:IsDominated()
+				or unit:HasModifier('modifier_chen_holy_persuasion')
+				or unit:HasModifier('modifier_dominated')
+			then
 				nUnitCount = nUnitCount + 0.2
 			end
 		end
@@ -390,6 +536,28 @@ function Defend.IsImportantBuilding(hBuilding)
 	end
 
 	return true
+end
+
+function Defend.GetClosestAlly(tPosList, vLocation)
+	local pos = nil
+	local allyDistance = math.huge
+	for i = 1, 5 do
+		local member = GetTeamMember(i)
+		if J.IsValidHero(member) then
+			local memberPosition = J.GetPosition(member)
+			for j = 1, #tPosList do
+				if memberPosition == tPosList[j] then
+					local memberDistance = GetUnitToLocationDistance(member, vLocation)
+					if memberDistance < allyDistance then
+						pos = memberPosition
+						allyDistance = memberDistance
+					end
+				end
+			end
+		end
+	end
+
+	return pos or tPosList[1]
 end
 
 return Defend

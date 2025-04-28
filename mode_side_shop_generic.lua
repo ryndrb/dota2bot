@@ -122,9 +122,15 @@ function GetDesire()
     and GetUnitToLocationDistance(bot, TormentorLocation) > 1600
     and (GetUnitToUnitDistance(bot, hEnemyAncient) < 4000
         and #J.GetEnemiesAroundAncient(4000) > 0
-        or J.IsDoingRoshan(bot)
+        or (J.IsDoingRoshan(bot) and bot:GetActiveModeDesire() >= BOT_MODE_DESIRE_HIGH)
         or #tInRangeEnemy > 0
     ) then
+        return BOT_MODE_DESIRE_NONE
+    end
+
+    if #J.GetEnemiesNearLoc(GetAncient(GetTeam()):GetLocation(), 2000) >= 2
+    or (GetTower(GetTeam(), TOWER_TOP_3) == nil or GetTower(GetTeam(), TOWER_MID_3) == nil or GetTower(GetTeam(), TOWER_BOT_3) == nil) -- stop when any these towers fall
+    then
         return BOT_MODE_DESIRE_NONE
     end
 
@@ -196,6 +202,7 @@ function GetDesire()
         canDoTormentor = true
 
         if J.GetHP(bot) < 0.3
+        and not bot:HasModifier('modifier_item_crimson_guard_extra')
         and J.IsTormentor(Tormentor)
         and J.GetHP(Tormentor) > 0.3 then
             return BOT_MODE_DESIRE_NONE
@@ -226,6 +233,23 @@ end
 local fStillAlive = 0
 local bTormentorAlive = false
 function Think()
+    if J.CanNotUseAction(bot) then return end
+
+    if GetUnitToLocationDistance(bot, vWaitingLocation) <= 500
+    or GetUnitToLocationDistance(bot, TormentorLocation) <= 700
+    then
+        local nEnemyCreeps = bot:GetNearbyCreeps(700, true)
+        for _, creep in pairs(nEnemyCreeps) do
+            if J.IsValid(creep)
+            and J.CanBeAttacked(creep)
+            and not string.find(creep:GetUnitName(), 'miniboss')
+            then
+                bot:Action_AttackUnit(creep, true)
+                return
+            end
+        end
+    end
+
     if bot.tormentor_state == true and not X.IsEnoughAllies(vWaitingLocation, 1600) then
         if X.GetClosestBot() == bot and DotaTime() > fStillAlive + 15.0 then
             if GetUnitToLocationDistance(bot, TormentorLocation) <= 350 then

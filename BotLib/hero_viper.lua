@@ -19,13 +19,44 @@ local HeroBuild = {
     ['pos_1'] = {
         [1] = {
             ['talent'] = {
-                [1] = {},
+				[1] = {
+					['t25'] = {10, 0},
+					['t20'] = {10, 0},
+					['t15'] = {10, 0},
+					['t10'] = {10, 0},
+				}
             },
             ['ability'] = {
-                [1] = {},
+                [1] = {1,3,1,2,1,6,1,3,2,3,6,2,3,2,6},
             },
-            ['buy_list'] = {},
-            ['sell_list'] = {},
+            ['buy_list'] = {
+				"item_tango",
+				"item_faerie_fire",
+				"item_double_branches",
+				"item_circlet",
+				"item_circlet",
+			
+				"item_magic_wand",
+				"item_boots",
+				"item_double_wraith_band",
+				"item_power_treads",
+				"item_maelstrom",
+				"item_dragon_lance",
+				"item_black_king_bar",--
+				"item_mjollnir",--
+				"item_butterfly",--
+				"item_greater_crit",--
+				"item_aghanims_shard",
+				"item_hurricane_pike",--
+				"item_ultimate_scepter_2",
+				"item_travel_boots_2",--
+				"item_moon_shard",
+			},
+            ['sell_list'] = {
+				"item_magic_wand", "item_black_king_bar",
+				"item_wraith_band", "item_butterfly",
+				"item_wraith_band", "item_greater_crit",
+			},
         },
     },
     ['pos_2'] = {

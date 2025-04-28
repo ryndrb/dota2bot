@@ -558,7 +558,7 @@ function X.ConsiderAS()
 			if J.IsValid( npcEnemy )
 				and J.CanCastOnMagicImmune( npcEnemy )
 				and npcEnemy:GetAttackTarget() == bot
-				and bot:WasRecentlyDamagedByHero( npcEnemy )
+				and bot:WasRecentlyDamagedByHero( npcEnemy, 3.0 )
 			then
 				hCastTarget = J.GetFaceTowardDistanceLocation( bot, 300 )
 				sCastMotive = 'AS-隐藏'

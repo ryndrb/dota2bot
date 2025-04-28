@@ -24,13 +24,14 @@ function GetDesire()
     botHP = J.GetHP(bot)
     botMP = J.GetMP(bot)
     botHealth = bot:GetHealth()
-    local botLevel = bot:GetLevel()
-
     botAttackDamage = bot:GetAttackDamage()
     botAttackSpeed = bot:GetAttackSpeed()
+    local botHealthRegen = bot:GetHealthRegen()
+    local botLevel = bot:GetLevel()
 
     botActiveModeDesire = bot:GetActiveModeDesire()
 
+    local bStronger = J.WeAreStronger(bot, 1600)
     local tAllyHeroes = bot:GetNearbyHeroes(1200, false, BOT_MODE_NONE)
     local tAllyHeroes_real = J.GetAlliesNearLoc(bot:GetLocation(), 1200)
     local tEnemyHeroes = bot:GetNearbyHeroes(1200, true, BOT_MODE_NONE)
@@ -51,7 +52,7 @@ function GetDesire()
         dontEngageTime = DotaTime()
     end
 
-    if DotaTime() < lastAttackTime + attackCooldown and #tEnemyHeroes_real > 0 then
+    if DotaTime() < lastAttackTime + attackCooldown and #tEnemyHeroes_real > 0 and bStronger then
         local hTarget = GetTarget(tEnemyHeroes_real)
         if hTarget ~= nil then
             bot:SetTarget(hTarget)
@@ -63,21 +64,21 @@ function GetDesire()
     or IsAllyGoingOnSomeone()
     or (J.IsGoingOnSomeone(bot)
         and (not J.IsInLaningPhase()
-        or (J.IsInLaningPhase() and #tEnemyLaneCreeps <= 1 and J.IsValidHero(botTarget) and GetAllDamageAttacking(botTarget, 800, 5.0) > botTarget:GetHealth() * 1.2)))
+            or (J.IsInLaningPhase() and #tEnemyLaneCreeps <= 1 and J.IsValidHero(botTarget) and GetAllDamageAttacking(botTarget, 800, 5.0) > botHealth * 1.2 + botHealthRegen * 5.0)))
     then
         lastAttackTime = DotaTime()
     end
 
-    if IsEnemyStrongerInTime(tEnemyHeroes_real, tAllyHeroes, 8.0) and not J.IsInTeamFight(bot, 3000)
+    if not bStronger and not J.IsInTeamFight(bot, 3000)
     or (J.IsInLaningPhase() and botHP < 0.4 and not J.IsInTeamFight(bot, 800) and bot:WasRecentlyDamagedByAnyHero(2.0))
     or (#tEnemyHeroes_real > #tAllyHeroes_real + 1 and not J.IsInTeamFight(bot, 3000))
     then
         return 0
     end
 
-    local fTotalDamageToUs = GetAllDamageAttacking(bot, 1600, 5.0)
+    local fTotalDamageToUs = GetAllDamageAttacking(bot, 1600, 5.0) + botHealthRegen * 5.0
     if fTotalDamageToUs > botHealth * 1.5 and not J.IsInTeamFight(bot, 3200)
-    or botHP < RemapValClamped(bot:GetLevel(), 1, 8, 0.4, 0.2) and #tEnemyHeroes_real > #tAllyHeroes_real then
+    or botHP < RemapValClamped(botLevel, 1, 8, 0.4, 0.2) and #tEnemyHeroes_real > #tAllyHeroes_real then
         return 0
     end
 
@@ -106,16 +107,16 @@ function GetDesire()
             local nInRangeEnemy = J.GetEnemiesNearLoc(nTeamFightLocation, 1200)
             local hTarget = GetTarget(nInRangeEnemy)
             if hTarget ~= nil then
-                bot:SetTarget(hTarget)
                 if #nInRangeAlly >= #nInRangeEnemy then
+                    bot:SetTarget(hTarget)
                     return 0.95
                 else
-                    return 0.90
+                    return 0.75
                 end
             else
                 for i = 1, 5 do
                     local member = GetTeamMember(i)
-                    if J.IsValidHero(member) and GetUnitToLocationDistance(member, nTeamFightLocation) < 4000 then
+                    if bot ~= member and J.IsValidHero(member) and GetUnitToLocationDistance(member, nTeamFightLocation) < 4000 then
                         local target = member:GetAttackTarget()
                         if J.IsValidHero(target) then
                             bot:SetTarget(target)
@@ -152,15 +153,15 @@ function GetDesire()
         end
     end
 
-    if not J.IsRetreating(bot) and J.IsGoingOnSomeone(bot) then
+    if not J.IsRetreating(bot) and J.IsGoingOnSomeone(bot) and #tAllyHeroes_real >= #tEnemyHeroes_real then
         if J.IsValidHero(botTarget) and J.CanBeAttacked(botTarget) and not J.IsSuspiciousIllusion(botTarget) then
-            bot:SetTarget(botTarget)
             if J.IsInLaningPhase() and GetUnitToLocationDistance(bot, GetLaneFrontLocation(GetTeam(), bot:GetAssignedLane(), 0)) < 2000 then
                 local nEnemyLaneCreeps = bot:GetNearbyLaneCreeps(600, true)
                 if #nEnemyLaneCreeps <= 1 then
-                    return 0.5
+                    return 0.25
                 end
             else
+                bot:SetTarget(botTarget)
                 return 0.95
             end
         end
@@ -188,7 +189,7 @@ function GetDesire()
         if #tAllyHeroes_real > 1 then
             local fAllyDamage = 0
             for _, ally in pairs(tAllyHeroes) do
-                if J.IsValid(ally) and not ally:IsIllusion() then
+                if bot ~= ally and J.IsValid(ally) and not ally:IsIllusion() then
                     fAllyDamage = fAllyDamage + ally:GetEstimatedDamageToTarget(true, hTarget, 5.0, DAMAGE_TYPE_ALL)
                 end
             end
@@ -200,16 +201,16 @@ function GetDesire()
         end
 
         local nInRangeEnemy = hTarget:GetNearbyHeroes(1200, true, BOT_MODE_NONE)
-        local fTotalEnemyDamage = GetTotalEstimatedDamageToTarget(nInRangeEnemy, bot, 5.0, DAMAGE_TYPE_ALL)
+        local fTotalEnemyDamage = GetTotalEstimatedDamageToTarget(nInRangeEnemy, bot, 5.0, DAMAGE_TYPE_ALL) - botHealthRegen * 5.0
 
-        bot:SetTarget(hTarget)
         if fTotalEnemyDamage * 2 < botHealth then
             if J.IsInLaningPhase() and GetBestLastHitCreep(tEnemyLaneCreeps) ~= nil then
                 local nEnemyLaneCreeps = bot:GetNearbyLaneCreeps(600, true)
                 if #nEnemyLaneCreeps <= 1 then
-                    return 0.5
+                    return 0.25
                 end
             else
+                bot:SetTarget(hTarget)
                 return 0.95
             end
         end

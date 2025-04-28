@@ -584,7 +584,7 @@ function X.ConsiderDoom()
             and J.CanCastOnTargetAdvanced(enemyHero)
             and not J.IsDisabled(enemyHero)
             and not J.IsHaveAegis(enemyHero)
-            and not enemyHero:HasModifier('modifier_doom_bringer_doom')
+            and not enemyHero:HasModifier('modifier_doom_bringer_doom_aura_enemy')
             and not enemyHero:HasModifier('modifier_necrolyte_reapers_scythe')
             and not enemyHero:HasModifier('modifier_oracle_false_promise_timer')
 			then
