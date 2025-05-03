@@ -47,32 +47,33 @@ local HeroBuild = {
                 "item_double_branches",
                 "item_double_circlet",
             
-                "item_double_wraith_band",
-                "item_urn_of_shadows",
+                "item_bottle",
                 "item_magic_wand",
+                "item_double_null_talisman",
+                "item_urn_of_shadows",
                 "item_boots",
-                "item_spirit_vessel",
                 "item_hand_of_midas",
+                "item_spirit_vessel",
                 "item_orchid",
-                "item_travel_boots",
-                "item_aghanims_shard",
                 "item_black_king_bar",--
-                "item_dragon_lance",--
-                "item_hurricane_pike",--
-                "item_bloodthorn",--
+                "item_travel_boots",
                 "item_ultimate_scepter",
-                "item_refresher",--
-                "item_ultimate_scepter_2",
+                "item_aghanims_shard",
                 "item_sheepstick",--
+                "item_shivas_guard",--
+                "item_bloodthorn",--
+                "item_octarine_core",--
+                "item_ultimate_scepter_2",
                 "item_travel_boots_2",--
                 "item_moon_shard",
             },
             ['sell_list'] = {
-                "item_magic_wand", "item_orchid",
-                "item_wraith_band", "item_black_king_bar",
-                "item_wraith_band", "item_dragon_lance",
-                "item_hand_of_midas", "item_ultimate_scepter",
-                "item_spirit_vessel", "item_sheepstick",
+                "item_magic_wand", "item_hand_of_midas",
+                "item_bottle", "item_orchid",
+                "item_null_talisman", "item_black_king_bar",
+                "item_null_talisman", "item_ultimate_scepter",
+                "item_hand_of_midas", "item_sheepstick",
+                "item_spirit_vessel", "item_shivas_guard",
             },
         },
     },

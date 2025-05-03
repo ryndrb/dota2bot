@@ -108,8 +108,8 @@ function Push.GetPushDesire(bot, lane)
     and not string.find(botTarget:GetUnitName(), 'tower2')
     then
         if botTarget:HasModifier('modifier_backdoor_protection')
-        and botTarget:HasModifier('modifier_backdoor_protection_in_base')
-        and botTarget:HasModifier('modifier_backdoor_protection_active')
+        or botTarget:HasModifier('modifier_backdoor_protection_in_base')
+        or botTarget:HasModifier('modifier_backdoor_protection_active')
         then
             return BOT_MODE_DESIRE_NONE
         end

@@ -243,7 +243,11 @@ function GetDesire()
             end
         end
 
-        if J.IsInLaningPhase() and J.IsValidBuilding(nAllyTowers[1]) and #nEnemyLaneCreeps <= 1 then
+        if J.IsInLaningPhase()
+        and J.IsValidBuilding(nAllyTowers[1])
+        and bot:HasModifier('modifier_tower_aura_bonus')
+        and #nEnemyLaneCreeps <= 1
+        then
             nAllyNearbyCount = nAllyNearbyCount + 1
         end
 

@@ -54,6 +54,45 @@ local HeroBuild = {
                 "item_magic_wand", "item_basher",
             },
         },
+        [2] = {
+            ['talent'] = {
+                [1] = {
+                    ['t25'] = {10, 0},
+                    ['t20'] = {10, 0},
+                    ['t15'] = {10, 0},
+                    ['t10'] = {0, 10},
+                }
+            },
+            ['ability'] = {
+                [1] = {2,4,2,5,2,6,2,5,5,5,4,6,4,4,6},
+            },
+            ['buy_list'] = {
+                "item_tango",
+                "item_double_branches",
+                "item_quelling_blade",
+            
+                "item_magic_wand",
+                "item_wraith_band",
+                "item_phase_boots",
+                "item_maelstrom",
+                "item_yasha",
+                "item_black_king_bar",--
+                "item_sange_and_yasha",--
+                "item_aghanims_shard",
+                "item_mjollnir",--
+                "item_basher",
+                "item_satanic",--
+                "item_abyssal_blade",--
+                "item_travel_boots_2",--
+                "item_moon_shard",
+                "item_ultimate_scepter_2",
+            },
+            ['sell_list'] = {
+                "item_quelling_blade", "item_black_king_bar",
+                "item_magic_wand", "item_basher",
+                "item_wraith_band", "item_satanic",
+            },
+        },
     },
     ['pos_2'] = {
         [1] = {

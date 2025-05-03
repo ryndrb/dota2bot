@@ -37,7 +37,6 @@ local HeroBuild = {
 				"item_double_wraith_band",
 				"item_magic_wand",
 				"item_power_treads",
-				"item_dragon_lance",
 				"item_maelstrom",
 				"item_hurricane_pike",--
 				"item_mjollnir",--
@@ -78,7 +77,6 @@ local HeroBuild = {
 				"item_double_wraith_band",
 				"item_magic_wand",
 				"item_power_treads",
-				"item_dragon_lance",
 				"item_maelstrom",
 				"item_hurricane_pike",--
 				"item_mjollnir",--

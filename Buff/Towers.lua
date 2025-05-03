@@ -19,9 +19,9 @@ function T.HandleTowerBuff(nTeam)
             local bTierThreeTower = string.find(sTowerName, 'tower3')
             local bTierFourTower = string.find(sTowerName, 'tower4')
             local bRax = string.find(sTowerName, 'rax')
-            -- local bAncient = string.find(sTowerName, 'fort')
+            local bAncient = string.find(sTowerName, 'fort')
 
-            if bTierThreeTower or bTierFourTower or bRax --[[or bAncient]] then
+            if bTierThreeTower or bTierFourTower or bRax or bAncient then
                 local bEnemyInRadius = T.IsThereEnemyHeroInRadius(tower, 950)
                 local hUnitList = T.GetAttackingUnitsInRadius(tower, 1600)
                 local fAverageUnitsDmg = T.GetAverageUnitsDamage(hUnitList)
@@ -39,14 +39,14 @@ function T.HandleTowerBuff(nTeam)
                     else
                         fRegen = 20 + fAverageUnitsDmg
                     end
-                -- elseif bAncient then
-                --     fRegen = 23 + fAverageUnitsDmg
+                elseif bAncient then
+                    fRegen = 23 + fAverageUnitsDmg
                 end
 
                 if tower:IsBarracks() then
                     fRegen = fRegen * 1.25
-                -- elseif tower:IsFort() then
-                --     fRegen = fRegen * 1.5
+                elseif tower:IsFort() then
+                    fRegen = fRegen * 1.5
                 end
 
                 tower:SetBaseHealthRegen(fRegen)

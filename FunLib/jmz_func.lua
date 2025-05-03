@@ -3226,9 +3226,14 @@ function J.GetNumOfAliveHeroes( bEnemy )
 
 	for i, id in pairs( GetTeamPlayers( nTeam ) )
 	do
-		if IsHeroAlive( id )
-		then
+		local member = GetTeamMember(i)
+		if not bEnemy and not IsHeroAlive(id) and member and member:GetRespawnTime() <= 8.0 then
 			count = count + 1
+		else
+			if IsHeroAlive( id )
+			then
+				count = count + 1
+			end
 		end
 	end
 

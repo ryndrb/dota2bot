@@ -35,14 +35,15 @@ local HeroBuild = {
                 "item_faerie_fire",
                 "item_double_branches",
             
-                "item_power_treads",
                 "item_magic_wand",
+                "item_null_talisman",
+                "item_power_treads",
                 "item_maelstrom",
                 "item_orchid",
-                "item_black_king_bar",--
                 "item_mjollnir",--
+                "item_black_king_bar",--
                 "item_aghanims_shard",
-                "item_assault",--
+                "item_hurricane_pike",--
                 "item_satanic",--
                 "item_bloodthorn",--
                 "item_monkey_king_bar",--
@@ -50,8 +51,9 @@ local HeroBuild = {
                 "item_ultimate_scepter_2",
             },
             ['sell_list'] = {
-                "item_magic_wand", "item_assault",
-                "item_blight_stone", "item_satanic",
+                "item_magic_wand", "item_black_king_bar",
+                "item_blight_stone", "item_hurricane_pike",
+                "item_null_talisman", "item_satanic",
                 "item_power_treads", "item_monkey_king_bar",
             },
         },
@@ -70,20 +72,21 @@ local HeroBuild = {
                 [1] = {3,1,3,2,3,6,3,2,2,2,6,1,1,1,6},
             },
             ['buy_list'] = {
+                "item_blight_stone",
                 "item_tango",
-                "item_double_branches",
                 "item_faerie_fire",
-                "item_double_circlet",
+                "item_double_branches",
             
                 "item_bottle",
                 "item_magic_wand",
+                "item_null_talisman",
                 "item_power_treads",
                 "item_maelstrom",
                 "item_orchid",
-                "item_black_king_bar",--
                 "item_mjollnir",--
+                "item_black_king_bar",--
                 "item_aghanims_shard",
-                "item_assault",--
+                "item_hurricane_pike",--
                 "item_satanic",--
                 "item_bloodthorn",--
                 "item_sheepstick",--
@@ -91,10 +94,10 @@ local HeroBuild = {
                 "item_ultimate_scepter_2",
             },
             ['sell_list'] = {
-                "item_circlet", "item_orchid",
-                "item_circlet", "item_black_king_bar",
-                "item_magic_wand", "item_assault",
-                "item_bottle", "item_satanic",
+                "item_magic_wand", "item_orchid",
+                "item_blight_stone", "item_black_king_bar",
+                "item_bottle", "item_hurricane_pike",
+                "item_null_talisman", "item_satanic",
                 "item_power_treads", "item_sheepstick",
             },
         },
@@ -118,21 +121,28 @@ local HeroBuild = {
                 "item_faerie_fire",
                 "item_double_branches",
             
-                "item_power_treads",
                 "item_magic_wand",
-                "item_gungir",--
-                "item_black_king_bar",--
+                "item_double_bracer",
+                "item_power_treads",
+                "item_rod_of_atos",
+                "item_maelstrom",
                 "item_assault",--
+                "item_black_king_bar",--
                 "item_aghanims_shard",
-                "item_satanic",--
+                "item_mjollnir",--
+                "item_hurricane_pike",--
                 "item_sheepstick",--
+                "item_nullifier",--
                 "item_nullifier",--
                 "item_moon_shard",
                 "item_ultimate_scepter_2",
             },
             ['sell_list'] = {
-                "item_magic_wand", "item_satanic",
-                "item_blight_stone", "item_sheepstick",
+                "item_magic_wand", "item_maelstrom",
+                "item_blight_stone", "item_assault",
+                "item_bracer", "item_black_king_bar",
+                "item_bracer", "item_hurricane_pike",
+                "item_rod_of_atos", "item_sheepstick",
                 "item_power_treads", "item_nullifier",
             },
         },

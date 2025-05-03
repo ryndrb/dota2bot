@@ -20,7 +20,7 @@ end
 
 require(GetScriptDirectory()..'/API/api_global')
 
-local MU   = require( GetScriptDirectory()..'/FunLib/aba_matchups' )
+local matchups = require( GetScriptDirectory()..'/Buff/script/matchups' )
 local U    = require( GetScriptDirectory()..'/FunLib/lua_util' )
 local N    = require( GetScriptDirectory()..'/FunLib/bot_names' )
 local Role = require( GetScriptDirectory()..'/FunLib/aba_role' )
@@ -389,6 +389,9 @@ function X.GetRandomNameList( sStarList )
 	return sNameList
 end
 
+local tIDs = U.shuffleWeighted({1,2,3,4,5}, {1,1.5,3,6,6})
+print(tIDs[1],tIDs[2],tIDs[3],tIDs[4],tIDs[5], GetTeam())
+print('====')
 function Think()
 	if GetGameState() == GAME_STATE_HERO_SELECTION then
 		InstallChatCallback( function ( tChat ) X.SetChatHeroBan( tChat.string ) end )
@@ -435,146 +438,66 @@ function Think()
 	local nOwnTeam = X.GetCurrentTeam(GetTeam())
 	local nEnmTeam = X.GetCurrentTeam(GetOpposingTeam())
 
-	-- If in Turbo, the game randomly picks remaining bots who's yet to pick their heroes if a human chooses their hero.
-	-- So a human must always pick last in Turbo. <^ This isn't the case in All Pick.
+	local IDMap = {
+		[1] = 3,
+		[2] = 1,
+		[3] = 2,
+		[4] = 5,
+		[5] = 4,
+	}
 
-	-- Alternate; Cores pick firsts
-	-- if #nOwnTeam <= #nEnmTeam -- 7.38 bug with a bot not getting assigned a name, so this fails; will change below later
-	-- then
-		for i, id in pairs(nIDs)
-		do
-			sSelectHero = X.GetNotRepeatHero(tSelectPoolList[i])
-			if IsPlayerBot(id) and GetSelectedHeroName(id) == ""
-			then
-				if RandomInt(1, 2) == 1 then
-					local forCounter = RandomInt(1, 2) == 1
+	if #nOwnTeam <= #nEnmTeam then
+		for i = 1, #nIDs do
+			local botID = nIDs[IDMap[tIDs[i]]]
+			local poolID = IDMap[tIDs[i]]
 
-					if #nOwnTeam == 0 and #nEnmTeam == 0
-					then
-						sSelectHero = X.GetNotRepeatHero(tSelectPoolList[i])
-					else
-						local didCounter = false
-						local didExhaust = false
+			if IsPlayerBot(botID) and GetSelectedHeroName(botID) == '' then
+				if (#nOwnTeam == 0 and #nEnmTeam == 0) then
+					sSelectHero = X.GetNotRepeatHero(tSelectPoolList[poolID])
+				else
+					local bestHero = nil
+					local bestScore = -math.huge
+					local hSelectionTable = {}
+					for _, sName in ipairs(tSelectPoolList[poolID]) do
+						if not X.IsRepeatHero(sName) then
+							local score = 0
+							if not hSelectionTable[sName] then hSelectionTable[sName] = 0 end
 
-						if  forCounter
-						and #X.GetCurrEnmCores(nEnmTeam) >= 1
-						then
-							-- Pick a random core in the current enemy comp to counter
-							local nCurrEnmCores = X.GetCurrEnmCores(nEnmTeam)
-							local nHeroToCounter = nCurrEnmCores[RandomInt(1, #nCurrEnmCores)]
-							local sPoolList = U.deepCopy(tSelectPoolList[i])
-
-							for j = 1, #tSelectPoolList[i], 1
-							do
-								local idx = RandomInt(1, #sPoolList)
-								local heroName = sPoolList[idx]
-								if  MU.IsCounter(heroName, nHeroToCounter) -- so it's not 'samey'; since bots don't really put pressure like a human would
-								and not X.IsRepeatHero(heroName)
-								then
-									print(heroName, nHeroToCounter)
-									didCounter = true
-									sSelectHero = heroName
-									break
+							for m = 1, #nEnmTeam do
+								if matchups[sName] and matchups[sName][nEnmTeam[m]] then
+									score = score + matchups[sName][nEnmTeam[m]] * -1
 								end
-
-								table.remove(sPoolList, idx)
-								if j == #tSelectPoolList[i] or #sPoolList == 0 then didExhaust = true end
 							end
-						else
-							if not forCounter
-							or (didExhaust and not didCounter)
-							then
-								local heroName = X.GetBestHeroFromPool(i, nOwnTeam)
-								if heroName ~= nil
-								then
-									sSelectHero = heroName
-								end
+
+							-- fuzz
+							score = score + (RandomInt(-50, 50) / 100)
+							hSelectionTable[sName] = score
+							if score > bestScore then
+								bestScore = score
+								bestHero = sName
 							end
 						end
 					end
+
+					sSelectHero = bestHero and bestHero or 'npc_dota_hero_tiny'
 				end
 
-				SelectHero(id, sSelectHero)
+				SelectHero(botID, sSelectHero)
 				if Role["bLobbyGame"] == false then Role["bLobbyGame"] = true end
 				fLastSlectTime = GameTime()
 				fLastRand = RandomInt( 8, 28 )/10
 				break
 			end
 		end
-	-- end
-end
-
-function X.GetBestHeroFromPool(i, nTeamList)
-	local sBestHero = ''
-	local nHeroes = {}
-
-	for j = 1, #nTeamList
-	do
-		local hName = nTeamList[j].name
-		for _, sName in pairs(tSelectPoolList[i])
-		do
-			if  (MU.IsSynergy(hName, sName) or MU.IsSynergy(sName, hName))
-			and not X.IsRepeatHero(sName)
-			then
-				if nHeroes[sName] == nil then nHeroes[sName] = {} end
-				if nHeroes[sName]['count'] == nil then nHeroes[sName]['count'] = 1 end
-				nHeroes[sName]['count'] = nHeroes[sName]['count'] + 1
-			end
-		end
 	end
-
-	local c = -1
-	for k1, v1 in pairs(nHeroes)
-	do
-		for k2, v2 in pairs(nHeroes[k1])
-		do
-			if not X.IsRepeatHero(k1)
-			then
-				if  v2 > 0 and c > 0 and v2 == c
-				and RandomInt(1, 2) == 1
-				then
-					sBestHero = k1
-				end
-
-				if v2 > c
-				then
-					c = v2
-					sBestHero = k1
-				end
-			end
-		end
-	end
-
-	if sBestHero ~= ''
-	then
-		print('synergy ', sBestHero)
-		return sBestHero
-	else
-		return X.GetNotRepeatHero(tSelectPoolList[i])
-	end
-end
-
-function X.GetCurrEnmCores(nEnmTeam)
-	local nCurrCores = {}
-	for i = 1, #nEnmTeam
-	do
-		if nEnmTeam[i].pos >= 1 and nEnmTeam[i].pos <= 3
-		then
-			table.insert(nCurrCores, nEnmTeam[i].name)
-		end
-	end
-
-	return nCurrCores
 end
 
 function X.GetCurrentTeam(nTeam)
 	local nHeroList = {}
-	for i, id in pairs(GetTeamPlayers(nTeam))
-	do
+	for _, id in pairs(GetTeamPlayers(nTeam)) do
 		local hName = GetSelectedHeroName(id)
-		if hName ~= nil and hName ~= ''
-		then
-			table.insert(nHeroList, {name=hName, pos=i}) -- since the script chooses cores first; might change in the future
+		if hName ~= nil and hName ~= '' then
+			table.insert(nHeroList, hName)
 		end
 	end
 

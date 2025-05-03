@@ -21,8 +21,8 @@ local HeroBuild = {
             ['talent'] = {
 				[1] = {
 					['t25'] = {0, 10},
-					['t20'] = {10, 0},
-					['t15'] = {0, 10},
+					['t20'] = {0, 10},
+					['t15'] = {10, 0},
 					['t10'] = {0, 10},
 				}
             },
@@ -35,18 +35,17 @@ local HeroBuild = {
                 "item_quelling_blade",
                 "item_double_circlet",
 			
-				"item_bracer",
-                "item_wraith_band",
 				"item_magic_wand",
+                "item_double_wraith_band",
+                "item_soul_ring",
 				"item_power_treads",
-				"item_soul_ring",
                 "item_orchid",
 				"item_black_king_bar",--
 				"item_aghanims_shard",
-                "item_skadi",--
-				"item_bloodthorn",--
+                "item_revenants_brooch",--
 				"item_butterfly",--
-				"item_sheepstick",--
+				"item_bloodthorn",--
+                "item_abyssal_blade",--
 				"item_travel_boots_2",--
 				"item_moon_shard",
 				"item_ultimate_scepter_2",
@@ -54,9 +53,9 @@ local HeroBuild = {
             ['sell_list'] = {
                 "item_quelling_blade", "item_orchid",
 				"item_magic_wand", "item_black_king_bar",
-				"item_bracer", "item_skadi",
-				"item_soul_ring", "item_butterfly",
-                "item_wraith_band", "item_sheepstick",
+				"item_soul_ring", "item_revenants_brooch",
+                "item_wraith_band", "item_butterfly",
+                "item_wraith_band", "item_abyssal_blade",
 			},
         },
     },
@@ -65,8 +64,8 @@ local HeroBuild = {
             ['talent'] = {
 				[1] = {
 					['t25'] = {0, 10},
-					['t20'] = {10, 0},
-					['t15'] = {0, 10},
+					['t20'] = {0, 10},
+					['t15'] = {10, 0},
 					['t10'] = {0, 10},
 				}
             },
@@ -79,17 +78,17 @@ local HeroBuild = {
                 "item_quelling_blade",
                 "item_double_circlet",
 			
-                "item_double_wraith_band",
 				"item_magic_wand",
+                "item_double_wraith_band",
+                "item_soul_ring",
 				"item_power_treads",
-				"item_soul_ring",
                 "item_orchid",
 				"item_black_king_bar",--
 				"item_aghanims_shard",
-				"item_skadi",--
-				"item_bloodthorn",--
+                "item_revenants_brooch",--
 				"item_butterfly",--
-				"item_sheepstick",--
+				"item_bloodthorn",--
+                "item_abyssal_blade",--
 				"item_travel_boots_2",--
 				"item_moon_shard",
 				"item_ultimate_scepter_2",
@@ -97,9 +96,9 @@ local HeroBuild = {
             ['sell_list'] = {
                 "item_quelling_blade", "item_orchid",
 				"item_magic_wand", "item_black_king_bar",
-				"item_soul_ring", "item_skadi",
+				"item_soul_ring", "item_revenants_brooch",
                 "item_wraith_band", "item_butterfly",
-                "item_wraith_band", "item_sheepstick",
+                "item_wraith_band", "item_abyssal_blade",
 			},
         },
     },
@@ -122,27 +121,27 @@ local HeroBuild = {
                 "item_quelling_blade",
                 "item_double_circlet",
 			
-                "item_double_bracer",
 				"item_magic_wand",
-				"item_power_treads",
+                "item_double_wraith_band",
 				"item_soul_ring",
+				"item_power_treads",
                 "item_orchid",
+                "item_assault",--
 				"item_black_king_bar",--
 				"item_aghanims_shard",
-                "item_assault",--
-				"item_bloodthorn",--
 				"item_sheepstick",--
-				"item_skadi",--
+				"item_bloodthorn",--
+                "item_abyssal_blade",--
 				"item_travel_boots_2",--
 				"item_moon_shard",
 				"item_ultimate_scepter_2",
 			},
             ['sell_list'] = {
                 "item_quelling_blade", "item_orchid",
-				"item_magic_wand", "item_black_king_bar",
-				"item_soul_ring", "item_assault",
-                "item_bracer", "item_sheepstick",
-                "item_bracer", "item_skadi",
+				"item_magic_wand", "item_assault",
+				"item_soul_ring", "item_black_king_bar",
+                "item_wraith_band", "item_sheepstick",
+                "item_wraith_band", "item_abyssal_blade",
 			},
         },
     },

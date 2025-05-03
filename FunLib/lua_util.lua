@@ -37,4 +37,21 @@ function U.tablesEqual(t1, t2)
     return t1_len == t2_len
 end
 
+function U.shuffleWeighted(items, weights)
+    local order = {}
+    for i = 1, #items do
+        -- math.random not seeded?
+        order[i] = {index = i, score = (RandomInt(0, 100) / 100) ^ (1.0 / weights[i])}
+    end
+
+    table.sort(order, function(a, b) return a.score > b.score end)
+
+    local shuffled = {}
+    for _, entry in ipairs(order) do
+        table.insert(shuffled, items[entry.index])
+    end
+
+    return shuffled
+end
+
 return U

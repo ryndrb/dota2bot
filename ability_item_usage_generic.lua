@@ -1051,6 +1051,13 @@ X.ConsiderItemDesire["item_ancient_janggo"] = function( hItem )
 	local sCastMotive = nil
 	local nInRangeEnmyList = bot:GetNearbyHeroes( nCastRange, true, BOT_MODE_NONE )
 
+	if bot:HasModifier('modifier_faceless_void_time_zone_effect') and J.IsInTeamFight(bot, 1200) then
+		local nInRangeAlly = J.GetAlliesNearLoc(bot:GetLocation(), 1200)
+		if #nInRangeAlly >= 2 and hItem:GetName() == 'item_boots_of_bearing' then
+			return BOT_ACTION_DESIRE_HIGH, bot, sCastType, sCastMotive
+		end
+	end
+
 	if bot:HasModifier('modifier_nyx_assassin_vendetta')
 	then
 		return BOT_ACTION_DESIRE_NONE
@@ -7783,18 +7790,17 @@ function ItemUsageThink()
 	ItemUsageComplement()
 end
 
-local fLastTime = 0
 function AbilityUsageThink()
+	BotBuild.SkillsComplement()
+end
+
+local fLastTime = 0
+function BuybackUsageThink()
 	local fCurrTime = DotaTime()
 	if fCurrTime - fLastTime >= 1.0 then
 		X.UpdateInfoBuffer()
 		fLastTime = fCurrTime
 	end
-
-	BotBuild.SkillsComplement()
-end
-
-function BuybackUsageThink()
 
 	-- BotBuild.SkillsComplement()
 
