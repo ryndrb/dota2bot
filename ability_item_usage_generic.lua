@@ -2090,6 +2090,11 @@ X.ConsiderItemDesire["item_flask"] = function( hItem )
 		return BOT_ACTION_DESIRE_HIGH, hEffectTarget, sCastType, sCastMotive
 	end
 
+	-- clutter
+	if J.HasItemInInventory('item_trusty_shovel') then
+		return BOT_ACTION_DESIRE_HIGH, bot, sCastType, sCastMotive
+	end
+
 	local hAllyList = J.GetAlliesNearLoc( bot:GetLocation(), 700 )
 	local hNeedHealAlly = nil
 	local nNeedHealAllyHealth = 99999
@@ -4665,6 +4670,21 @@ X.ConsiderItemDesire["item_tpscroll"] = function( hItem )
 	end
 
 	if bAnnoyingCreep then
+		return BOT_ACTION_DESIRE_NONE
+	end
+
+	local unitListAttacking = {}
+	local unitList = GetUnitList(UNIT_LIST_ALL)
+    for _, unit in pairs(unitList) do
+        if J.IsValid(unit) and GetTeam() ~= unit:GetTeam() and J.IsInRange(bot, unit, 1600) then
+			if unit:GetAttackTarget() == bot or J.IsChasingTarget(unit, bot) then
+				table.insert(unitListAttacking, unit)
+			end
+		end
+    end
+
+	local unitListAttackDamage = J.GetUnitListTotalAttackDamage(unitListAttacking, 5.0)
+	if J.WillKillTarget(bot, unitListAttackDamage, DAMAGE_TYPE_PHYSICAL, 5.0) then
 		return BOT_ACTION_DESIRE_NONE
 	end
 
