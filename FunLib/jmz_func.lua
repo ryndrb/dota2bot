@@ -2821,6 +2821,7 @@ function J.CanBeAttacked( unit )
 			and not unit:HasModifier("modifier_dark_willow_shadow_realm_buff")
 			and not unit:HasModifier("modifier_ringmaster_the_box_buff")
 			and not unit:HasModifier("modifier_dazzle_nothl_projection_soul_debuff")
+			and not unit:HasModifier("modifier_naga_siren_song_of_the_siren")
 			and (unit:GetTeam() == GetTeam() 
 					or not unit:HasModifier("modifier_crystal_maiden_frostbite") )
 			and (unit:GetTeam() ~= GetTeam() 
@@ -3655,9 +3656,9 @@ local function GetHealthMultiplier(hUnit)
 	elseif sUnitName == 'npc_dota_hero_medusa' then
 		local unitHealth = hUnit:GetHealth() - hUnit:GetMana()
 		local unitMaxHealth = hUnit:GetMaxHealth() - hUnit:GetMaxMana()
-		return RemapValClamped(unitHealth / unitMaxHealth, 0, 1, 0, 1) * 0.2 + RemapValClamped(botMP, 0, 1, 0, 1) * 0.8
+		return RemapValClamped(unitHealth / unitMaxHealth, 0, 1, 0, 1) * 0.2 + RemapValClamped(botMP, 0, 0.75, 0, 1) * 0.8
 	else
-		return RemapValClamped(botHP, 0, 1, 0, 1) * 0.8 + RemapValClamped(botMP, 0, 1, 0, 1) * 0.2
+		return RemapValClamped(botHP, 0, 0.75, 0, 1) * 0.8 + RemapValClamped(botMP, 0, 1, 0, 1) * 0.2
 	end
 end
 
@@ -3667,10 +3668,12 @@ function J.WeAreStronger(bot, nRadius)
 	local ourPower = 0
 	local ourPowerRaw = 0
 	local enemyPower = 0
+	local botHealthRegen =  bot:GetHealthRegen() * 5.0
 
 	for _, unit in pairs(GetUnitList(UNIT_LIST_ALL)) do
 		if J.IsValidHero(unit)
 		and GetUnitToUnitDistance(bot, unit) <= nRadius
+		and J.GetHP(unit) > 0.1
 		and not unit:HasModifier('modifier_necrolyte_reapers_scythe')
 		and not unit:HasModifier('modifier_dazzle_nothl_projection_physical_body_debuff')
 		and not unit:HasModifier('modifier_skeleton_king_reincarnation_scepter_active')
@@ -3679,6 +3682,7 @@ function J.WeAreStronger(bot, nRadius)
 		then
 			local sUnitName = unit:GetUnitName()
 			local fMul = GetHealthMultiplier(unit)
+			local fMul_Illusion = RemapValClamped(J.GetHP(unit), 0.25, 1, 0, 1)
 
 			if GetTeam() == unit:GetTeam() then
 				if not unit:HasModifier('modifier_arc_warden_tempest_double')
@@ -3686,8 +3690,8 @@ function J.WeAreStronger(bot, nRadius)
 				then
 					local nDamage = GetUnitAttackDamage(unit, 5.0)
 					if nDamage then
-						ourPower = ourPower + 0.5 * bot:GetActualIncomingDamage(nDamage, DAMAGE_TYPE_PHYSICAL)
-						ourPowerRaw = ourPowerRaw + 0.5 * bot:GetActualIncomingDamage(nDamage, DAMAGE_TYPE_PHYSICAL)
+						ourPower = ourPower + 0.5 * (bot:GetActualIncomingDamage(nDamage, DAMAGE_TYPE_PHYSICAL) * fMul_Illusion - botHealthRegen)
+						ourPowerRaw = ourPowerRaw + 0.5 * (bot:GetActualIncomingDamage(nDamage, DAMAGE_TYPE_PHYSICAL) * fMul_Illusion - botHealthRegen)
 					end
 				else
 					if not J.IsMeepoClone(unit)
@@ -3704,7 +3708,7 @@ function J.WeAreStronger(bot, nRadius)
 				then
 					local nDamage = GetUnitAttackDamage(unit, 5.0)
 					if nDamage then
-						enemyPower = enemyPower + 0.5 * bot:GetActualIncomingDamage(nDamage, DAMAGE_TYPE_PHYSICAL)
+						enemyPower = enemyPower + 0.5 * (bot:GetActualIncomingDamage(nDamage, DAMAGE_TYPE_PHYSICAL) * fMul_Illusion - botHealthRegen)
 					end
 				else
 					if not J.IsMeepoClone(unit)
@@ -3729,21 +3733,24 @@ function J.WeAreStronger(bot, nRadius)
 			or unit:HasModifier('modifier_dominated')
 			or unit:IsDominated()
 			then
+				local fMul_Illusion = RemapValClamped(J.GetHP(unit), 0.25, 1, 0, 1)
 				local nDamage = GetUnitAttackDamage(unit, 5.0, false)
 				if bWithTeam then
 					if nDamage then
 						if string.find(sUnitName, 'warlock_golem') then
-							ourPower = ourPower + 0.5 * bot:GetActualIncomingDamage(nDamage, DAMAGE_TYPE_PHYSICAL)
+							ourPower = ourPower + 0.5 * (bot:GetActualIncomingDamage(nDamage, DAMAGE_TYPE_PHYSICAL) * fMul_Illusion - botHealthRegen)
+							ourPowerRaw = ourPowerRaw + 0.5 * (bot:GetActualIncomingDamage(nDamage, DAMAGE_TYPE_PHYSICAL) * fMul_Illusion - botHealthRegen)
 						else
-							ourPower = ourPower + 0.1 * bot:GetActualIncomingDamage(nDamage, DAMAGE_TYPE_PHYSICAL)
+							ourPower = ourPower + 0.1 * (bot:GetActualIncomingDamage(nDamage, DAMAGE_TYPE_PHYSICAL) * fMul_Illusion - botHealthRegen)
+							ourPowerRaw = ourPowerRaw + 0.1 * (bot:GetActualIncomingDamage(nDamage, DAMAGE_TYPE_PHYSICAL) * fMul_Illusion - botHealthRegen)
 						end
 					end
 				else
 					if nDamage then
 						if string.find(sUnitName, 'warlock_golem') then
-							enemyPower = enemyPower + 0.5 * bot:GetActualIncomingDamage(nDamage, DAMAGE_TYPE_PHYSICAL)
+							enemyPower = enemyPower + 0.5 * (bot:GetActualIncomingDamage(nDamage, DAMAGE_TYPE_PHYSICAL) * fMul_Illusion - botHealthRegen)
 						else
-							enemyPower = enemyPower + 0.1 * bot:GetActualIncomingDamage(nDamage, DAMAGE_TYPE_PHYSICAL)
+							enemyPower = enemyPower + 0.1 * (bot:GetActualIncomingDamage(nDamage, DAMAGE_TYPE_PHYSICAL) * fMul_Illusion - botHealthRegen)
 						end
 					end
 				end

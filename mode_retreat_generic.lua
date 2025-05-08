@@ -173,6 +173,22 @@ function GetDesire()
         end
     end
 
+    local creepDamage = 0
+    local nEnemyCreeps = bot:GetNearbyCreeps(1200, true)
+    for _, creep in pairs(nEnemyCreeps) do
+        if J.IsValid(creep)
+        and not J.IsRoshan(creep)
+        and not J.IsTormentor(creep)
+        and creep:GetAttackTarget() == bot
+        then
+            creepDamage = creep:GetAttackDamage() * creep:GetAttackSpeed() * 5.0
+        end
+    end
+
+    if bot:GetActualIncomingDamage(creepDamage, DAMAGE_TYPE_PHYSICAL) / (botHealth + botHealthRegen * 5.0) > 0.15 then
+        return BOT_MODE_DESIRE_VERYHIGH
+    end
+
     -- should directly run
 	if bot:IsAlive() then
         -- print(fShouldRunTime, fCurrentRunTime, botName)

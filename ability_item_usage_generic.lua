@@ -1747,6 +1747,25 @@ X.ConsiderItemDesire["item_cyclone"] = function( hItem )
 		return BOT_ACTION_DESIRE_NONE
 	end
 
+	local bDontUseOnEnemy = false
+	for i = 1, 5 do
+		local member = GetTeamMember(i)
+		if J.IsValidHero(member)
+		and GetUnitToUnitDistance(bot, member)
+		then
+			local nInRangeEnemy = J.GetEnemiesNearLoc(member:GetLocation(), 1200)
+			if #nInRangeEnemy > 0
+			and (  bot:IsCastingAbility()
+				or bot:IsUsingAbility()
+				or J.HasQueuedAction(bot))
+			then
+				bDontUseOnEnemy = true
+			end
+		end
+	end
+
+	if not bDontUseOnEnemy then
+
 	if J.IsValidHero( botTarget )
 		and J.CanCastOnNonMagicImmune( botTarget )
 		and X.IsWithoutSpellShield( botTarget )
@@ -1777,6 +1796,8 @@ X.ConsiderItemDesire["item_cyclone"] = function( hItem )
 			sCastMotive = '阻止逃跑:'..J.Chat.GetNormName( hEffectTarget )
 			return BOT_ACTION_DESIRE_HIGH, hEffectTarget, sCastType, sCastMotive
 		end
+	end
+
 	end
 
 	if J.CanCastOnNonMagicImmune( bot )
@@ -4631,6 +4652,7 @@ X.ConsiderItemDesire["item_tpscroll"] = function( hItem )
 		or ( bot:HasModifier( "modifier_jakiro_macropyre_burn" ) and J.GetModifierTime( bot, "modifier_jakiro_macropyre_burn" ) >= 1.4 )
 		or ( bot:HasModifier( "modifier_arc_warden_tempest_double" ) and bot:GetRemainingLifespan() < 3.3 )
 		or (J.IsRoshanAlive() and GetUnitToLocationDistance(bot, J.GetCurrentRoshanLocation()) <= 1600)
+		or J.CanCastAbility(bot:GetAbilityByName('ancient_apparition_ice_blast_release'))
 	then return BOT_ACTION_DESIRE_NONE end
 
 	if bot:GetHealth() < 240

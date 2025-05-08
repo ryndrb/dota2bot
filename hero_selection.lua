@@ -31,7 +31,7 @@ local sHeroList = {										-- pos  1, 2, 3, 4, 5
 	{name = 'npc_dota_hero_abaddon', 					role = {10, 5, 80, 5, 100}},
 	{name = 'npc_dota_hero_abyssal_underlord', 			role = {0, 0, 100, 0, 0}},
 	{name = 'npc_dota_hero_alchemist', 					role = {100, 100, 30, 0, 0}},
-	{name = 'npc_dota_hero_ancient_apparition', 		role = {0, 5, 0, 5, 100}},
+	{name = 'npc_dota_hero_ancient_apparition', 		role = {0, 5, 0, 85, 100}},
 	{name = 'npc_dota_hero_antimage', 					role = {100, 0, 25, 0, 0}},
 	{name = 'npc_dota_hero_arc_warden', 				role = {100, 100, 0, 0, 0}},
 	{name = 'npc_dota_hero_axe',	 					role = {0, 50, 100, 0, 0}},
@@ -455,9 +455,8 @@ function Think()
 				if (#nOwnTeam == 0 and #nEnmTeam == 0) then
 					sSelectHero = X.GetNotRepeatHero(tSelectPoolList[poolID])
 				else
-					local bestHero = nil
-					local bestScore = -math.huge
 					local hSelectionTable = {}
+					local topHeroes = {}
 					for _, sName in ipairs(tSelectPoolList[poolID]) do
 						if not X.IsRepeatHero(sName) then
 							local score = 0
@@ -469,17 +468,35 @@ function Think()
 								end
 							end
 
-							-- fuzz
-							score = score + (RandomInt(-50, 50) / 100)
-							hSelectionTable[sName] = score
-							if score > bestScore then
-								bestScore = score
-								bestHero = sName
+							table.insert(topHeroes, {name = sName, score = score})
+							table.sort(topHeroes, function (a, b) return a.score > b.score end)
+							if #topHeroes > 3 then
+								table.remove(topHeroes)
 							end
 						end
 					end
 
-					sSelectHero = bestHero and bestHero or 'npc_dota_hero_tiny'
+					-- print
+					for q = 1, #topHeroes do
+						print(q, topHeroes[q].score, topHeroes[q].name)
+					end
+					print('====')
+
+					-- 'fuzz'
+					if #topHeroes >= 1 then
+						local roll = (RandomInt(0, 100) / 100)
+						if roll <= 0.5 then
+							sSelectHero = topHeroes[1].name
+						elseif roll <= 0.75 and topHeroes[2] then
+							sSelectHero = topHeroes[2].name
+						elseif topHeroes[3] then
+							sSelectHero = topHeroes[3].name
+						else
+							sSelectHero = topHeroes[1].name
+						end
+					else
+						sSelectHero = 'npc_dota_hero_tiny'
+					end
 				end
 
 				SelectHero(botID, sSelectHero)
