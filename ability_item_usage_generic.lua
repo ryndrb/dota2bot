@@ -1751,13 +1751,14 @@ X.ConsiderItemDesire["item_cyclone"] = function( hItem )
 	for i = 1, 5 do
 		local member = GetTeamMember(i)
 		if J.IsValidHero(member)
-		and GetUnitToUnitDistance(bot, member)
+		and GetUnitToUnitDistance(bot, member) < 1200
+		and member:GetUnitName() == 'npc_dota_hero_invoker'
 		then
 			local nInRangeEnemy = J.GetEnemiesNearLoc(member:GetLocation(), 1200)
 			if #nInRangeEnemy > 0
-			and (  bot:IsCastingAbility()
-				or bot:IsUsingAbility()
-				or J.HasQueuedAction(bot))
+			and (  member:IsCastingAbility()
+				or member:IsUsingAbility()
+				or J.HasQueuedAction(member))
 			then
 				bDontUseOnEnemy = true
 			end
