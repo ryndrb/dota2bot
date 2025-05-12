@@ -746,8 +746,6 @@ function X.ConsiderIceBlast()
     local nTeamFightLocation = J.GetTeamFightLocation(bot)
 
     if nTeamFightLocation ~= nil and GetUnitToLocationDistance(bot, nTeamFightLocation) > 1600 then
-        local dist = GetUnitToLocationDistance(bot, nTeamFightLocation)
-        nRadius = math.min(nMinRadius + ((dist / nSpeed) * nGrowSpeed), nMaxRadius)
         local nInRangeEnemy = J.GetEnemiesNearLoc(nTeamFightLocation, nRadius)
 
         if nInRangeEnemy ~= nil and #nInRangeEnemy >= 1 then
@@ -769,6 +767,8 @@ function X.ConsiderIceBlast()
 
             if count >= 1 then
                 local vLocation = J.GetCenterOfUnits(nInRangeEnemy)
+                local dist = GetUnitToLocationDistance(bot, vLocation)
+                nRadius = math.min(nMinRadius + ((dist / nSpeed) * nGrowSpeed), nMaxRadius)
                 return BOT_ACTION_DESIRE_HIGH, vLocation
             end
         end
