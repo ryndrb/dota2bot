@@ -19,7 +19,7 @@ function Push.GetPushDesire(bot, lane)
 		bot.laneToPush = LANE_BOT
 	end
 
-	if (not bMyLane and J.GetPosition(bot) == 1 and (J.IsInLaningPhase() and bot:GetNetWorth() <= 5000)) -- reduce carry feeds
+	if (not bMyLane and J.IsCore(bot) and J.IsInLaningPhase())
     or (J.IsDoingRoshan(bot) and #J.GetAlliesNearLoc(J.GetCurrentRoshanLocation(), 2800) >= 3)
     or ((#J.GetAlliesNearLoc(J.GetTormentorLocation(GetTeam()), 1600) >= 3) or #J.GetAlliesNearLoc(J.GetTormentorWaitingLocation(GetTeam()), 2500) >= 3)
 	then
@@ -29,6 +29,14 @@ function Push.GetPushDesire(bot, lane)
     for i = 1, 5 do
 		local member = GetTeamMember(i)
         if member ~= nil and member:GetLevel() < 6 then return BOT_MODE_DESIRE_NONE end
+
+        if member ~= nil and not J.IsCore(bot) and J.IsCore(member) then
+            if bot:GetAssignedLane() == member:GetAssignedLane() then
+                if member.isInLanePhase == true then
+                    return BOT_MODE_DESIRE_NONE
+                end
+            end
+        end
     end
 
     local nInRangeAlly = J.GetAlliesNearLoc(bot:GetLocation(), 1600)
@@ -282,10 +290,15 @@ function Push.PushThink(bot, lane)
         targetLoc = tUrgentDefend[2]
     end
 
-    if J.IsValidBuilding(nEnemyTowers[1]) and nEnemyTowers[1]:GetAttackTarget() == bot and #nAllyCreeps > 2 then
-        local vLocation = GetLaneFrontLocation(GetTeam(), lane, -1200)
-        bot:Action_MoveToLocation(vLocation)
-        return
+    if J.IsValidBuilding(nEnemyTowers[1]) and (nEnemyTowers[1]:GetAttackTarget() == bot or (nEnemyTowers[1]:GetAttackTarget() ~= bot and bot:WasRecentlyDamagedByTower(#nAllyCreeps <= 2 and 4.0 or 2.0))) then
+        local nDamage = nEnemyTowers[1]:GetAttackDamage() * nEnemyTowers[1]:GetAttackSpeed() * 5.0 - bot:GetHealthRegen() * 5.0
+        if (bot:GetActualIncomingDamage(nDamage, DAMAGE_TYPE_PHYSICAL) / bot:GetHealth() > 0.15)
+        or #nAllyCreeps > 2
+        then
+            local vLocation = GetLaneFrontLocation(GetTeam(), lane, -1200)
+            bot:Action_MoveToLocation(vLocation)
+            return
+        end
     end
 
     nAllyHeroes = J.GetAlliesNearLoc(hEnemyAncient:GetLocation(), 1600)
@@ -303,13 +316,22 @@ function Push.PushThink(bot, lane)
     local nRange = math.min(700 + botAttackRange, 1600)
 
     local nCreeps = bot:GetNearbyLaneCreeps(nRange, true)
-    if J.IsCore(bot) and bot:GetLevel() >= 15 then
+    if (J.IsCore(bot) and bot:GetLevel() >= 15) or bot:GetLevel() >= 18 then
         nCreeps = bot:GetNearbyCreeps(nRange, true)
     end
     nCreeps = Push.GetSpecialUnitsNearby(bot, nCreeps, nRange)
+
+    local vTeamFountain = J.GetTeamFountain()
+    local bTowerNearby = false
+    if J.IsValidBuilding(nEnemyTowers[1]) then
+        bTowerNearby = true
+    end
+
     for _, creep in pairs(nCreeps) do
         if J.IsValid(creep)
         and J.CanBeAttacked(creep)
+        and (not bTowerNearby
+            or (bTowerNearby and GetUnitToLocationDistance(creep, vTeamFountain) < GetUnitToLocationDistance(nEnemyTowers[1], vTeamFountain)))
         and not J.IsTormentor(creep)
         and not J.IsRoshan(creep)
         then

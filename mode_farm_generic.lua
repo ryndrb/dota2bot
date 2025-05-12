@@ -78,8 +78,8 @@ function GetDesire()
 	local bNotClone = not bot:HasModifier('modifier_arc_warden_tempest_double') and not J.IsMeepoClone(bot)
 
     if J.IsInLaningPhase()
-	or (J.IsDoingRoshan(bot) and bNotClone and botActiveModeDesire >= BOT_MODE_DESIRE_HIGH)
-	or (J.IsDoingTormentor(bot) and bNotClone and botActiveModeDesire >= BOT_MODE_DESIRE_HIGH)
+	or (J.IsDoingRoshan(bot) and bNotClone)
+	or (J.IsDoingTormentor(bot) and bNotClone)
     or DotaTime() < 50
     or ((botActiveMode == BOT_MODE_SECRET_SHOP
 		or botActiveMode == BOT_MODE_RUNE
@@ -88,7 +88,6 @@ function GetDesire()
     or (#nInRangeAlly_roshan >= 2 and bRoshanAlive and bNotClone)
     or (nAliveEnemyCount <= 1 and nAliveAllyCount >= 2)
     or (J.DoesTeamHaveAegis() and J.IsLateGame() and nAliveAllyCount >= 4)
-    or J.IsRetreating(bot)
     or not bAlive
     then
         return BOT_MODE_DESIRE_NONE
@@ -309,12 +308,12 @@ function GetDesire()
 		if J.GetDistanceFromEnemyFountain(bot) > 4000 
 		then
 			hLaneCreepList = bot:GetNearbyLaneCreeps(1600, true);
-			if #hLaneCreepList == 0	
-			   and J.IsInAllyArea( bot )
-			   and X.IsNearLaneFront( bot )
-			then
-				hLaneCreepList = bot:GetNearbyLaneCreeps(1600, false);
-			end
+			-- if #hLaneCreepList == 0	
+			--    and J.IsInAllyArea( bot )
+			--    and X.IsNearLaneFront( bot )
+			-- then
+			-- 	hLaneCreepList = bot:GetNearbyLaneCreeps(1600, false);
+			-- end
 		end;		
 		
 		if #hLaneCreepList > 0 
@@ -480,7 +479,7 @@ function Think()
 	if preferedCamp ~= nil then
 		local targetFarmLoc = preferedCamp.cattr.location;
 		local cDist = GetUnitToLocationDistance(bot, targetFarmLoc);
-		local nNeutrals = bot:GetNearbyNeutralCreeps(1600);
+		local nNeutrals = bot:GetNearbyCreeps(1600, true);
 		if #nNeutrals >= 3 and cDist <= 600 and cDist > 240
 		   and ( bot:GetLevel() >= 10 or not nNeutrals[1]:IsAncientCreep())
 		then farmState = 1 end;
@@ -571,7 +570,7 @@ function Think()
 				bot:Action_MoveToLocation(targetFarmLoc);
 				return;
 		else
-			local neutralCreeps = bot:GetNearbyNeutralCreeps(1600); 
+			local neutralCreeps = bot:GetNearbyCreeps(1600, true); 
 			
 			if #neutralCreeps >= 2 then
 				

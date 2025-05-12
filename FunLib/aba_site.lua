@@ -710,7 +710,7 @@ function Site.IsUnitAroundLocation(vLoc, nRadius)
 			local info = GetHeroLastSeenInfo(id)
 			if info ~= nil then
 				local dInfo = info[1]
-				if dInfo ~= nil and Site.GetDistance(vLoc, dInfo.location) <= nRadius and dInfo.time_since_seen < 5.0 then
+				if dInfo ~= nil and Site.GetDistance(vLoc, dInfo.location) <= nRadius and dInfo.time_since_seen < 30.0 then
 					return true
 				end
 			end

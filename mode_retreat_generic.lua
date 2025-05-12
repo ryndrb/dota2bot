@@ -58,6 +58,7 @@ function GetDesire()
 		and not unit:HasModifier('modifier_necrolyte_reapers_scythe')
 		and not unit:HasModifier('modifier_dazzle_nothl_projection_physical_body_debuff')
 		and not unit:HasModifier('modifier_skeleton_king_reincarnation_scepter_active')
+        and not unit:HasModifier('modifier_teleporting')
         and not string.find(botName, 'lone_druid_bear')
 		and unit:GetTeam() ~= TEAM_NEUTRAL
 		and unit:GetTeam() ~= TEAM_NONE
@@ -211,97 +212,103 @@ function GetDesire()
 
     local nDesire = 0
 
-    if J.IsLaning(bot) then
-        if (#nEnemyHeroes > #nAllyHeroes) and not bWeAreStronger then
+    if J.IsLaning(bot) and J.IsInLaningPhase() then
+        if (#nEnemyHeroes > #nAllyHeroes) and not bWeAreStronger
+        or (#J.GetEnemyHeroesTargetingUnit(nEnemyHeroes, bot) >= 2)
+        then
             return BOT_MODE_DESIRE_VERYHIGH
         end
-    else
-        if (#nAllyHeroes <= 1 and #nEnemyHeroes > 1) then
-            if (J.IsInLaningPhase() and #J.GetEnemyHeroesTargetingUnit(nEnemyHeroes, bot) >= 2) then
-                return BOT_MODE_DESIRE_VERYHIGH
-            end
-        end
-
-        -- fall
-        local nEnemyNearbyCount = #nEnemyHeroes
-        local nAllyNearbyCount = #nAllyHeroes
-
-        local count = 0
-        for _, id in pairs( GetTeamPlayers(GetOpposingTeam())) do
-            if IsHeroAlive(id) then
-                local info = GetHeroLastSeenInfo(id)
-                if info ~= nil then
-                    local dInfo = info[1]
-                    if dInfo ~= nil and GetUnitToLocationDistance(bot, dInfo.location) <= 2000 then
-                        count = count + 1
-                    end
-                end
-            end
-        end
-
-        if count > #nEnemyHeroes then nEnemyNearbyCount = count end
-
-        unitList = GetUnitList(UNIT_LIST_ENEMIES)
-        for _, unit in pairs(unitList) do
-            if J.IsValid(unit) and J.IsInRange(bot, unit, 1200) then
-                local sUnitName = unit:GetUnitName()
-                if string.find(sUnitName, 'warlock_golem')
-                or string.find(sUnitName, 'tombstone')
-                then
-                    nEnemyNearbyCount = nEnemyNearbyCount + 1
-                end
-                if string.find(sUnitName, 'tower') then
-                    local towerDamage = bot:GetActualIncomingDamage(unit:GetAttackDamage() * unit:GetAttackSpeed() * 5.0, DAMAGE_TYPE_PHYSICAL) - botHealthRegen * 5.0
-                    if towerDamage / botHealth >= 0.5 then
-                        nEnemyNearbyCount = nEnemyNearbyCount + 1
-                    end
-                end
-            end
-        end
-
-        if J.IsInLaningPhase()
-        and J.IsValidBuilding(nAllyTowers[1])
-        and bot:HasModifier('modifier_tower_aura_bonus')
-        and #nEnemyLaneCreeps <= 1
-        then
-            nAllyNearbyCount = nAllyNearbyCount + 1
-        end
-
-        botHP = botHP + (botHealthRegen * 5.0 / bot:GetMaxHealth())
-        botMP = botMP + (botManaRegen * 5.0 / bot:GetMaxMana())
-        local nHealth = 0
-
-        if botName == 'npc_dota_hero_medusa' then
-            local unitHealth = botHealth - bot:GetMana()
-            local unitMaxHealth = bot:GetMaxHealth() - bot:GetMaxMana()
-            nHealth = (unitHealth / unitMaxHealth) * 0.2 + botMP * 0.8
-        elseif botName == 'npc_dota_hero_huskar' then
-            nHealth = botHP
-        else
-            nHealth = botHP * 0.8 + botMP * 0.2
-        end
-
-        nDesire = RemapValClamped(nHealth, 0, 1, 1, 0)
-
-        if nEnemyNearbyCount > 0 then
-            if nEnemyNearbyCount - nAllyNearbyCount > 0 then nDesire = (nEnemyNearbyCount - nAllyNearbyCount) * 0.2 end
-            if not bWeAreStronger then nDesire = nDesire + 0.25 end
-            if nEnemyNearbyCount == 0 and #nEnemyTowers == 0 then nDesire = nDesire - 0.25 end
-        end
-
-        if bot:WasRecentlyDamagedByAnyHero(1) or (J.IsValidBuilding(nEnemyTowers[1]) and nEnemyTowers[1]:GetAttackTarget() == bot) then
-            nDesire = nDesire + 0.1
-        end
-
-        -- mulling
-        nDesire = nDesire + X.GetUnitDesire(1200)
-        nDesire = nDesire + X.RetreatWhenTowerTargetedDesire()
-        nDesire = nDesire - X.ShouldNotRetreatScore()
-
-        return Min(nDesire, 1.0)
     end
 
-    return BOT_MODE_DESIRE_NONE
+    -- if (#nAllyHeroes <= 1 and #nEnemyHeroes > 1) then
+    --     if (J.IsInLaningPhase() and #J.GetEnemyHeroesTargetingUnit(nEnemyHeroes, bot) >= 2) then
+    --         return BOT_MODE_DESIRE_VERYHIGH
+    --     end
+    -- end
+
+    -- try complete items
+    local nCompletItemDesire = X.ConsiderCompleteItem()
+    if nCompletItemDesire > 0 then
+        return nCompletItemDesire
+    end
+
+    -- fall
+    local nEnemyNearbyCount = #nEnemyHeroes
+    local nAllyNearbyCount = #nAllyHeroes
+
+    local count = 0
+    for _, id in pairs( GetTeamPlayers(GetOpposingTeam())) do
+        if IsHeroAlive(id) then
+            local info = GetHeroLastSeenInfo(id)
+            if info ~= nil then
+                local dInfo = info[1]
+                if dInfo ~= nil and GetUnitToLocationDistance(bot, dInfo.location) <= 2000 and dInfo.time_since_seen <= 5.0 then
+                    count = count + 1
+                end
+            end
+        end
+    end
+
+    if count > #nEnemyHeroes then nEnemyNearbyCount = count end
+
+    unitList = GetUnitList(UNIT_LIST_ENEMIES)
+    for _, unit in pairs(unitList) do
+        if J.IsValid(unit) and J.IsInRange(bot, unit, 1200) then
+            local sUnitName = unit:GetUnitName()
+            if string.find(sUnitName, 'warlock_golem')
+            or string.find(sUnitName, 'tombstone')
+            then
+                nEnemyNearbyCount = nEnemyNearbyCount + 1
+            end
+            if string.find(sUnitName, 'tower') then
+                local towerDamage = bot:GetActualIncomingDamage(unit:GetAttackDamage() * unit:GetAttackSpeed() * 5.0, DAMAGE_TYPE_PHYSICAL) - botHealthRegen * 5.0
+                if towerDamage / botHealth >= 0.5 then
+                    nEnemyNearbyCount = nEnemyNearbyCount + 1
+                end
+            end
+        end
+    end
+
+    if J.IsInLaningPhase()
+    and J.IsValidBuilding(nAllyTowers[1])
+    and bot:HasModifier('modifier_tower_aura_bonus')
+    and #nEnemyLaneCreeps <= 1
+    then
+        nAllyNearbyCount = nAllyNearbyCount + 1
+    end
+
+    botHP = botHP + (botHealthRegen * 5.0 / bot:GetMaxHealth())
+    botMP = botMP + (botManaRegen * 5.0 / bot:GetMaxMana())
+    local nHealth = 0
+
+    if botName == 'npc_dota_hero_medusa' then
+        local unitHealth = botHealth - bot:GetMana()
+        local unitMaxHealth = bot:GetMaxHealth() - bot:GetMaxMana()
+        nHealth = (unitHealth / unitMaxHealth) * 0.2 + botMP * 0.8
+    elseif botName == 'npc_dota_hero_huskar' then
+        nHealth = botHP
+    else
+        nHealth = botHP * 0.8 + botMP * 0.2
+    end
+
+    nDesire = RemapValClamped(nHealth, 0, 0.80, 1, 0)
+
+    if nEnemyNearbyCount > 0 then
+        if nEnemyNearbyCount - nAllyNearbyCount > 0 then nDesire = nDesire + (nEnemyNearbyCount - nAllyNearbyCount) * 0.2 end
+        if not bWeAreStronger then nDesire = nDesire + 0.25 end
+        if (nEnemyNearbyCount == 0 or count == 0) and #nEnemyTowers == 0 then nDesire = nDesire - 0.25 end
+    end
+
+    if bot:WasRecentlyDamagedByAnyHero(1) or (J.IsValidBuilding(nEnemyTowers[1]) and nEnemyTowers[1]:GetAttackTarget() == bot) then
+        nDesire = nDesire + 0.1
+    end
+
+    -- mulling
+    -- nDesire = nDesire + X.GetUnitDesire(1200)
+    nDesire = nDesire + X.RetreatWhenTowerTargetedDesire()
+    nDesire = nDesire - X.ShouldNotRetreatScore()
+
+    return Min(nDesire, 1.0)
 end
 
 function X.GetUnitDesire(nRadius)
@@ -670,4 +677,54 @@ function X.ShouldNotRetreatScore()
 	end
 
 	return 0
+end
+
+function X.ConsiderCompleteItem()
+    local nTeamFightLocation = J.GetTeamFightLocation(bot)
+    if nTeamFightLocation == nil and #nEnemyHeroes == 0 and bot:DistanceFromFountain() < 4400 and not bot:HasModifier('modifier_fountain_aura_buff') then
+        if J.Item.GetEmptyInventoryAmount(bot) == 0 then
+            -- check if stash has recipe
+            local bRecipeInStash = false
+            local sItemRecipe = ''
+            for i = 9, 14 do
+                local hStashItem = bot:GetItemInSlot(i)
+                if hStashItem then
+                    if string.find(hStashItem:GetName(), 'item_recipe') then
+                        sItemRecipe = hStashItem:GetName()
+                        bRecipeInStash = true
+                        break
+                    end
+                end
+            end
+
+            if bRecipeInStash then
+                -- check if can form ^ item
+                local sItemName = string.gsub(sItemRecipe, '_recipe', '')
+                local tItemComponents = GetItemComponents(sItemName)[1]
+                local count = 0
+                for i = 0, 14 do
+                    local hItem = bot:GetItemInSlot(i)
+                    if hItem and not hItem:IsCombineLocked() then
+                        local sItemName_ = hItem:GetName()
+                        -- there's a broken item progression (<- valve bug)
+                        if i <= 8 and string.find(sItemName_, 'recipe') then
+                            return 0
+                        end
+
+                        for j = 1, #tItemComponents do
+                            if sItemName_ == tItemComponents[j] then
+                                count = count + 1
+                            end
+                        end
+                    end
+                end
+
+                if count > 0 and count == #tItemComponents then
+                    return BOT_MODE_DESIRE_ABSOLUTE * 1.5
+                end
+            end
+        end
+    end
+
+    return 0
 end

@@ -9,6 +9,11 @@ local sRole = J.Item.GetRoleItemsBuyList( bot )
 local SPL = require( GetScriptDirectory()..'/FunLib/spell_list' )
 local M = require( GetScriptDirectory()..'/FunLib/morphling_utility' )
 
+local sSelectedBuild = {}
+local HeroBuild = {}
+local nAbilityBuildList
+local nTalentBuildList
+
 if GetBot():GetUnitName() == 'npc_dota_hero_morphling'
 then
 
@@ -17,7 +22,7 @@ local RI = require(GetScriptDirectory()..'/FunLib/util_role_item')
 local sUtility = {}
 local sUtilityItem = RI.GetBestUtilityItem(sUtility)
 
-local HeroBuild = {
+HeroBuild = {
     ['pos_1'] = {
         [1] = {
             ['talent'] = {
@@ -34,12 +39,13 @@ local HeroBuild = {
             ['buy_list'] = {
                 "item_tango",
                 "item_double_branches",
-                "item_double_circlet",
+                "item_magic_stick",
+                "item_circlet",
             
                 "item_magic_wand",
                 "item_power_treads",
                 "item_vladmir",
-                "item_sange_and_yasha",--
+                "item_manta",--
                 "item_black_king_bar",--
                 "item_greater_crit",--
                 "item_butterfly",--
@@ -50,11 +56,45 @@ local HeroBuild = {
                 "item_ultimate_scepter_2",
             },
             ['sell_list'] = {
-                "item_circlet", "item_black_king_bar",
                 "item_circlet", "item_greater_crit",
                 "item_magic_wand", "item_butterfly",
                 "item_vladmir", "item_satanic",
                 "item_power_treads", "item_skadi",
+            },
+        },
+        [2] = {
+            ['talent'] = {
+                [1] = {
+                    ['t25'] = {0, 10},
+                    ['t20'] = {10, 0},
+                    ['t15'] = {0, 10},
+                    ['t10'] = {0, 10},
+                }
+            },
+            ['ability'] = {
+                [1] = {4,2,1,1,1,6,1,4,4,2,2,6,4,2,6},
+            },
+            ['buy_list'] = {
+                "item_tango",
+                "item_branches",
+                "item_gloves",
+            
+                "item_magic_wand",
+                "item_power_treads",
+                "item_lifesteal",
+                "item_mjollnir",--
+                "item_black_king_bar",--
+                "item_butterfly",--
+                "item_aghanims_shard",
+                "item_greater_crit",--
+                "item_satanic",--
+                "item_bloodthorn",--
+                "item_moon_shard",
+                "item_ultimate_scepter_2",
+            },
+            ['sell_list'] = {
+                "item_magic_wand", "item_greater_crit",
+                "item_power_treads", "item_bloodthorn",
             },
         },
     },
@@ -74,14 +114,14 @@ local HeroBuild = {
             ['buy_list'] = {
                 "item_tango",
                 "item_double_branches",
-                "item_double_circlet",
+                "item_magic_stick",
+                "item_circlet",
             
                 "item_bottle",
                 "item_magic_wand",
                 "item_power_treads",
-                "item_double_wraith_band",
                 "item_vladmir",
-                "item_sange_and_yasha",--
+                "item_manta",--
                 "item_black_king_bar",--
                 "item_greater_crit",--
                 "item_butterfly",--
@@ -92,12 +132,48 @@ local HeroBuild = {
                 "item_ultimate_scepter_2",
             },
             ['sell_list'] = {
-                "item_magic_wand", "item_manta",
-                "item_bottle", "item_black_king_bar",
-                "item_wraith_band", "item_greater_crit",
-                "item_wraith_band", "item_butterfly",
+                "item_circlet", "item_black_king_bar",
+                "item_magic_wand", "item_greater_crit",
+                "item_bottle", "item_butterfly",
                 "item_vladmir", "item_satanic",
                 "item_power_treads", "item_disperser",
+            },
+        },
+        [2] = {
+            ['talent'] = {
+                [1] = {
+                    ['t25'] = {0, 10},
+                    ['t20'] = {10, 0},
+                    ['t15'] = {0, 10},
+                    ['t10'] = {0, 10},
+                }
+            },
+            ['ability'] = {
+                [1] = {4,2,1,1,1,6,1,4,4,2,2,6,4,2,6},
+            },
+            ['buy_list'] = {
+                "item_tango",
+                "item_branches",
+                "item_gloves",
+            
+                "item_bottle",
+                "item_magic_wand",
+                "item_power_treads",
+                "item_lifesteal",
+                "item_mjollnir",--
+                "item_black_king_bar",--
+                "item_butterfly",--
+                "item_aghanims_shard",
+                "item_greater_crit",--
+                "item_satanic",--
+                "item_bloodthorn",--
+                "item_moon_shard",
+                "item_ultimate_scepter_2",
+            },
+            ['sell_list'] = {
+                "item_magic_wand", "item_butterfly",
+                "item_bottle", "item_greater_crit",
+                "item_power_treads", "item_bloodthorn",
             },
         },
     },
@@ -139,10 +215,10 @@ local HeroBuild = {
     },
 }
 
-local sSelectedBuild = HeroBuild[sRole][RandomInt(1, #HeroBuild[sRole])]
+sSelectedBuild = HeroBuild[sRole][1]
 
-local nTalentBuildList = J.Skill.GetTalentBuild(J.Skill.GetRandomBuild(sSelectedBuild.talent))
-local nAbilityBuildList = J.Skill.GetRandomBuild(sSelectedBuild.ability)
+nTalentBuildList = J.Skill.GetTalentBuild(J.Skill.GetRandomBuild(sSelectedBuild.talent))
+nAbilityBuildList = J.Skill.GetRandomBuild(sSelectedBuild.ability)
 
 X['sBuyList'] = sSelectedBuild.buy_list
 X['sSellList'] = sSelectedBuild.sell_list
@@ -179,6 +255,10 @@ local MorphDesire, MorphTarget
 local MorphedHeroName = ''
 
 local botTarget
+local botHP, botMP
+local nAllyHeroes, nEnemyHeroes
+
+local bFlowFacet = false
 
 if bot.IsMorphling == nil then bot.IsMorphling = true end
 
@@ -223,7 +303,13 @@ function X.SkillsComplement()
     AttributeShiftAGI     = bot:GetAbilityByName('morphling_morph_agi')
     AttributeShiftSTR     = bot:GetAbilityByName('morphling_morph_str')
 
+    nAllyHeroes = bot:GetNearbyHeroes(1600, false, BOT_MODE_NONE)
+    nEnemyHeroes = bot:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
     botTarget = J.GetProperTarget(bot)
+    botHP = J.GetHP(bot)
+    botMP = J.GetMP(bot)
+
+    bFlowFacet = bot:GetPrimaryAttribute() == ATTRIBUTE_STRENGTH and true or false
 
     if bot:GetAbilityInSlot(0) == Waveform then bot.IsMorphling = true else bot.IsMorphling = false end
 
@@ -328,8 +414,7 @@ function X.SkillsComplement()
 end
 
 function X.ConsiderWaveform()
-    if not J.CanCastAbility(Waveform)
-    then
+    if not J.CanCastAbility(Waveform) then
         return BOT_ACTION_DESIRE_NONE, 0
     end
 
@@ -338,196 +423,173 @@ function X.ConsiderWaveform()
 	local nSpeed = Waveform:GetSpecialValueInt('speed')
     local nDamage = Waveform:GetSpecialValueInt('#AbilityDamage')
     local nRadius = Waveform:GetSpecialValueInt('width')
+    local nManaAfter = J.GetManaAfter(Waveform:GetManaCost())
 
-    local nEnemyHeroes = bot:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
+    local vTeamFountain = J.GetTeamFountain()
 
-	for _, enemyHero in pairs(nEnemyHeroes)
-	do
-        if  J.IsValidHero(enemyHero)
-        and J.CanCastOnNonMagicImmune(enemyHero)
-        and J.IsInRange(bot, enemyHero, nCastRange + 300)
-        and J.CanKillTarget(enemyHero, nDamage, DAMAGE_TYPE_MAGICAL)
-        and not enemyHero:HasModifier('modifier_abaddon_borrowed_time')
-        and not enemyHero:HasModifier('modifier_dazzle_shallow_grave')
-        and not enemyHero:HasModifier('modifier_faceless_void_chronosphere_freeze')
-        and not enemyHero:HasModifier('modifier_necrolyte_reapers_scythe')
-        and not enemyHero:HasModifier('modifier_oracle_false_promise_timer')
+	if J.IsStuck(bot) then
+		return BOT_ACTION_DESIRE_HIGH, J.Site.GetXUnitsTowardsLocation(bot, vTeamFountain, nCastRange)
+	end
+
+    if not J.IsRealInvisible(bot) then
+        if J.IsStunProjectileIncoming(bot, 500)
+        or J.IsUnitTargetProjectileIncoming(bot, 500)
         then
-            local targetLoc = J.GetCorrectLoc(enemyHero, (GetUnitToUnitDistance(bot, enemyHero) / nSpeed) + nCastPoint)
-            if not J.IsInRange(bot, enemyHero, nCastRange) then
-                targetLoc = J.Site.GetXUnitsTowardsLocation(bot, targetLoc, nCastRange)
-            end
+            return BOT_ACTION_DESIRE_HIGH, J.Site.GetXUnitsTowardsLocation(bot, vTeamFountain, nCastRange)
+        end
 
-            if J.IsInLaningPhase()
+        if  not bot:HasModifier('modifier_sniper_assassinate')
+        and not bot:IsMagicImmune()
+        then
+            if J.IsWillBeCastUnitTargetSpell(bot, 400)
             then
-                if not bot:HasModifier('modifier_tower_aura')
-                and not bot:HasModifier('modifier_tower_aura_bonus')
-                then
-                    return BOT_ACTION_DESIRE_HIGH, targetLoc
-                end
-            else
-                return BOT_ACTION_DESIRE_HIGH, targetLoc
+                return BOT_ACTION_DESIRE_HIGH, J.Site.GetXUnitsTowardsLocation(bot, vTeamFountain, nCastRange)
             end
         end
-	end
-
-	if J.IsStuck(bot)
-	then
-		return BOT_ACTION_DESIRE_HIGH, J.Site.GetXUnitsTowardsLocation(bot, J.GetTeamFountain(), nCastRange)
-	end
-
-	if J.IsStunProjectileIncoming(bot, 600)
-	or J.IsUnitTargetProjectileIncoming(bot, 400)
-    then
-        return BOT_ACTION_DESIRE_HIGH, J.Site.GetXUnitsTowardsLocation(bot, J.GetTeamFountain(), nCastRange)
     end
 
-	if  not bot:HasModifier('modifier_sniper_assassinate')
-	and not bot:IsMagicImmune()
-	then
-		if J.IsWillBeCastUnitTargetSpell(bot, 400)
-		then
-			return BOT_ACTION_DESIRE_HIGH, J.Site.GetXUnitsTowardsLocation(bot, J.GetTeamFountain(), nCastRange)
-		end
-	end
-
-	if J.IsGoingOnSomeone(bot)
-	then
+	if J.IsGoingOnSomeone(bot) then
 		if J.IsValidHero(botTarget)
         and J.CanBeAttacked(botTarget)
-        and J.IsInRange(bot, botTarget, nCastRange)
-        and not J.IsInRange(bot, botTarget, bot:GetAttackRange() - 200)
+        and not J.IsInRange(bot, botTarget, bot:GetAttackRange())
 		and not J.IsSuspiciousIllusion(botTarget)
         and not botTarget:HasModifier('modifier_faceless_void_chronosphere_freeze')
 		and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
 		then
-            local targetLoc = J.GetCorrectLoc(botTarget, (GetUnitToUnitDistance(bot, botTarget) / nSpeed) + nCastPoint)
-            if not J.IsInRange(bot, botTarget, nCastRange) then
-                targetLoc = J.Site.GetXUnitsTowardsLocation(bot, targetLoc, nCastRange)
-            end
+            local nInRangeAlly = J.GetAlliesNearLoc(bot:GetLocation(), 1200)
+            local nInRangeEnemy = J.GetEnemiesNearLoc(botTarget:GetLocation(), 1200)
+            local nInRangeAlly2 = J.GetAlliesNearLoc(bot:GetLocation(), 650)
+            local nInRangeEnemy2 = J.GetEnemiesNearLoc(botTarget:GetLocation(), 650)
+            local bStronger = J.WeAreStronger(bot, 1200)
 
-            if IsLocationPassable(targetLoc) then
-                if J.IsInLaningPhase()
-                then
-                    if not bot:HasModifier('modifier_tower_aura')
-                    and not bot:HasModifier('modifier_tower_aura_bonus')
-                    then
-                        return BOT_ACTION_DESIRE_HIGH, targetLoc
+            if #nInRangeAlly >= #nInRangeEnemy and #nInRangeAlly2 >= #nInRangeEnemy2 and bStronger then
+                local vLocation = J.GetCorrectLoc(botTarget, (GetUnitToUnitDistance(bot, botTarget) / nSpeed) + nCastPoint)
+                local bTowerNearby = botTarget:HasModifier('modifier_tower_aura_bonus')
+
+                if GetUnitToLocationDistance(bot, vLocation) <= nCastRange then
+                    if IsLocationPassable(vLocation) then
+                        if J.IsInLaningPhase() then
+                            if not bTowerNearby then
+                                return BOT_ACTION_DESIRE_HIGH, vLocation
+                            end
+                        else
+                            return BOT_ACTION_DESIRE_HIGH, vLocation
+                        end
                     end
-                else
-                    return BOT_ACTION_DESIRE_HIGH, targetLoc
+                end
+
+                if GetUnitToLocationDistance(bot, vLocation) > nCastRange and GetUnitToLocationDistance(bot, vLocation) < nCastRange + 350 then
+                    if IsLocationPassable(vLocation) then
+                        if J.IsInLaningPhase() then
+                            if not bTowerNearby then
+                                return BOT_ACTION_DESIRE_HIGH, vLocation
+                            end
+                        else
+                            return BOT_ACTION_DESIRE_HIGH, vLocation
+                        end
+                    end
                 end
             end
 		end
 	end
 
-	if  J.IsRetreating(bot)
-    and not J.IsRealInvisible(bot)
-    and bot:WasRecentlyDamagedByAnyHero(3.0)
-    and bot:GetActiveModeDesire() > BOT_MODE_DESIRE_MODERATE
-	then
-		for _, enemyHero in pairs(nEnemyHeroes)
-        do
-			if  J.IsValidHero(enemyHero)
-            and J.IsChasingTarget(enemyHero, bot)
-			and not J.IsSuspiciousIllusion(enemyHero)
-			then
-                return BOT_ACTION_DESIRE_HIGH, J.Site.GetXUnitsTowardsLocation(bot, J.GetTeamFountain(), nCastRange)
+	if J.IsRetreating(bot) and not J.IsRealInvisible(bot) then
+		for _, enemyHero in pairs(nEnemyHeroes) do
+			if J.IsValidHero(enemyHero)
+            and not J.IsSuspiciousIllusion(enemyHero)
+            then
+                local nInRangeAlly = J.GetAlliesNearLoc(bot:GetLocation(), 1200)
+                local nInRangeEnemy = J.GetEnemiesNearLoc(enemyHero:GetLocation(), 1000)
+
+                if ((J.IsInLaningPhase() and #nInRangeEnemy >= #nInRangeAlly + 1) or (#nInRangeEnemy > #nInRangeAlly and not J.WeAreStronger(bot, 1200)))
+                or (botHP < 0.75 and J.IsChasingTarget(enemyHero, bot) and not J.IsInTeamFight(bot, 1200))
+                then
+                    return BOT_ACTION_DESIRE_HIGH, J.Site.GetXUnitsTowardsLocation(bot, vTeamFountain, nCastRange)
+                end
+
 			end
         end
 	end
 
-	if J.IsPushing(bot) and J.IsAttacking(bot) and not J.IsThereCoreNearby(1000)
-	then
-        local nEnemyLaneCreeps = bot:GetNearbyLaneCreeps(nCastRange, true)
-        if J.CanBeAttacked(nEnemyLaneCreeps[1])
-        and not J.IsRunning(nEnemyLaneCreeps[1])
-        then
-            local nLocationAoE = bot:FindAoELocation(true, false, nEnemyLaneCreeps[1]:GetLocation(), 0, nRadius, 0, 0)
-            if nLocationAoE.count >= 4
-            and not J.IsInRange(bot, nEnemyLaneCreeps[1], 350)
-            then
-                return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc
+    local bAttacking = J.IsAttacking(bot)
+
+	if J.IsPushing(bot) and bAttacking and not J.IsThereCoreNearby(1000) and nManaAfter > 0.35 then
+        local nEnemyCreeps = bot:GetNearbyCreeps(nCastRange, true)
+        if J.CanBeAttacked(nEnemyCreeps[1]) and not J.IsRunning(nEnemyCreeps[1]) then
+            local nLocationAoE = bot:FindAoELocation(true, false, nEnemyCreeps[1]:GetLocation(), 0, nRadius, 0, 0)
+            if nLocationAoE.count >= 4 then
+                local nInRangeEnemy = J.GetEnemiesNearLoc(nLocationAoE.targetloc, 1200)
+                if #nInRangeEnemy <= 1 then
+                    return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc
+                end
             end
         end
 	end
 
-	if J.IsFarming(bot)
-    and J.IsAttacking(bot)
-    and bot:GetActiveModeDesire() > BOT_MODE_DESIRE_HIGH
-    and J.GetManaAfter(Waveform:GetManaCost()) > 0.4
-	then
+	if J.IsFarming(bot) and bAttacking and nManaAfter > 0.4 and bot:GetLevel() < 18 then
         local nEnemyCreeps = bot:GetNearbyCreeps(nCastRange, true)
         if J.CanBeAttacked(nEnemyCreeps[1])
         and not J.IsRunning(nEnemyCreeps[1])
         then
             local nLocationAoE = bot:FindAoELocation(true, false, nEnemyCreeps[1]:GetLocation(), 0, nRadius, 0, 0)
-            if (nLocationAoE.count >= 3 or (nLocationAoE.count >= 2 and nEnemyCreeps[1]:IsAncientCreep()))
-            and not J.IsInRange(bot, nEnemyCreeps[1], 350)
-            then
+            if (nLocationAoE.count >= 3 or (nLocationAoE.count >= 2 and nEnemyCreeps[1]:IsAncientCreep())) then
                 return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc
             end
         end
 	end
 
-	if J.IsDoingRoshan(bot) and J.GetManaAfter(Waveform:GetManaCost()) > 0.75
-    then
+	if J.IsDoingRoshan(bot) and nManaAfter > 0.75 then
 		local roshLoc = J.GetCurrentRoshanLocation()
-        if GetUnitToLocationDistance(bot, roshLoc) > nCastRange
-        then
+        if GetUnitToLocationDistance(bot, roshLoc) > nCastRange then
 			local targetLoc = J.Site.GetXUnitsTowardsLocation(bot, roshLoc, nCastRange)
-
-			if #nEnemyHeroes == 0
-			and IsLocationPassable(targetLoc)
-			then
+			if #nEnemyHeroes == 0 and IsLocationPassable(targetLoc) then
 				return BOT_ACTION_DESIRE_HIGH, targetLoc
 			end
         end
     end
 
-    if J.IsDoingTormentor(bot) and J.GetManaAfter(Waveform:GetManaCost()) > 0.75
-    then
+    if J.IsDoingTormentor(bot) and nManaAfter > 0.75 then
 		local tormentorLoc = J.GetTormentorWaitingLocation(GetTeam())
-        if GetUnitToLocationDistance(bot, tormentorLoc) > 1600
-        then
+        if GetUnitToLocationDistance(bot, tormentorLoc) > 1600 then
 			local targetLoc = J.Site.GetXUnitsTowardsLocation(bot, tormentorLoc, nCastRange)
-
-			if #nEnemyHeroes == 0
-			and IsLocationPassable(targetLoc)
-			then
+			if #nEnemyHeroes == 0 and IsLocationPassable(targetLoc) then
 				return BOT_ACTION_DESIRE_HIGH, targetLoc
 			end
         end
+    end
+
+    local nLocationAoE = bot:FindAoELocation(true, false, bot:GetLocation(), nCastRange, nRadius, nCastPoint, nDamage)
+    if nLocationAoE.count >= 5 and #nEnemyHeroes == 0 and nManaAfter > 0.45 then
+        return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc
     end
 
     return BOT_ACTION_DESIRE_NONE, 0
 end
 
 function X.ConsiderAdaptiveStrikeAGI()
-    if not J.CanCastAbility(AdaptiveStrikeAGI)
-    then
+    if not J.CanCastAbility(AdaptiveStrikeAGI) then
         return BOT_ACTION_DESIRE_NONE, nil
     end
 
     local nCastRange = J.GetProperCastRange(false, bot, AdaptiveStrikeAGI:GetCastRange())
+    local nCastPoint = AdaptiveStrikeAGI:GetCastPoint()
 	local nMinAGI = AdaptiveStrikeAGI:GetSpecialValueFloat('damage_min')
 	local nMaxAGI = AdaptiveStrikeAGI:GetSpecialValueFloat('damage_max')
 	local nCurrAGI = bot:GetAttributeValue(ATTRIBUTE_AGILITY)
 	local nCurrSTR = bot:GetAttributeValue(ATTRIBUTE_STRENGTH)
 	local nDamage = AdaptiveStrikeAGI:GetSpecialValueInt('damage_base')
+    local nSpeed = AdaptiveStrikeAGI:GetSpecialValueInt('projectile_speed')
     local nManaAfter = J.GetManaAfter(AdaptiveStrikeAGI:GetManaCost())
+    local nManaThreshold = (150 / bot:GetMana())
+    local bUsingMax = nCurrAGI > nCurrSTR * 1.5
 
-	if nCurrAGI > nCurrSTR * 1.5
-    then
+	if bUsingMax then
 		nDamage = nDamage + nMaxAGI * nCurrAGI
 	else
 		nDamage = nDamage + nMinAGI * nCurrAGI
 	end
 
-    local nEnemyHeroes = bot:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
-
-	for _, enemyHero in pairs(nEnemyHeroes)
-	do
+	for _, enemyHero in pairs(nEnemyHeroes) do
         if  J.IsValidHero(enemyHero)
         and J.IsInRange(bot, enemyHero, nCastRange)
         and J.CanCastOnNonMagicImmune(enemyHero)
@@ -537,7 +599,8 @@ function X.ConsiderAdaptiveStrikeAGI()
                 return BOT_ACTION_DESIRE_HIGH, enemyHero
             end
 
-            if J.CanKillTarget(enemyHero, nDamage, DAMAGE_TYPE_MAGICAL)
+            local nDelay = (GetUnitToUnitDistance(bot, enemyHero) / nSpeed) + nCastPoint
+            if J.WillKillTarget(enemyHero, nDamage, DAMAGE_TYPE_MAGICAL, nDelay)
             and not enemyHero:HasModifier('modifier_abaddon_borrowed_time')
             and not enemyHero:HasModifier('modifier_dazzle_shallow_grave')
             and not enemyHero:HasModifier('modifier_necrolyte_reapers_scythe')
@@ -549,8 +612,39 @@ function X.ConsiderAdaptiveStrikeAGI()
         end
 	end
 
-	if J.IsGoingOnSomeone(bot) and nAGIRatio > 0.5
-	then
+    if J.IsInTeamFight(bot, 1200) or J.IsGoingOnSomeone(bot) and bUsingMax then
+        local hTarget = nil
+        local hTargetDamage = 0
+        for _, enemyHero in pairs(nEnemyHeroes) do
+            if  J.IsValidHero(enemyHero)
+            and J.IsInRange(bot, enemyHero, nCastRange)
+            and J.CanCastOnNonMagicImmune(enemyHero)
+            and J.CanCastOnTargetAdvanced(enemyHero)
+            and not enemyHero:HasModifier('modifier_abaddon_borrowed_time')
+            and not enemyHero:HasModifier('modifier_dazzle_shallow_grave')
+            and not enemyHero:HasModifier('modifier_necrolyte_reapers_scythe')
+            and not enemyHero:HasModifier('modifier_oracle_false_promise_timer')
+            and not enemyHero:HasModifier('modifier_templar_assassin_refraction_absorb')
+            and not enemyHero:HasModifier('modifier_troll_warlord_battle_trance')
+            then
+                if J.IsInEtherealForm(enemyHero) then
+                    return BOT_ACTION_DESIRE_HIGH, enemyHero
+                end
+
+                local enemyHeroDamage = enemyHero:GetActualIncomingDamage(nDamage, DAMAGE_TYPE_MAGICAL)
+                if enemyHeroDamage > hTargetDamage then
+                    hTarget = enemyHero
+                    hTargetDamage = enemyHeroDamage
+                end
+            end
+        end
+
+        if hTarget then
+            return BOT_ACTION_DESIRE_HIGH, hTarget
+        end
+    end
+
+	if J.IsGoingOnSomeone(bot) and bUsingMax then
 		if  J.IsValidTarget(botTarget)
         and J.IsInRange(bot, botTarget, nCastRange)
         and J.CanCastOnNonMagicImmune(botTarget)
@@ -565,20 +659,15 @@ function X.ConsiderAdaptiveStrikeAGI()
 		end
 	end
 
-    if J.IsRetreating(bot)
-    and not J.IsRealInvisible(bot)
-	then
-        local nAllyHeroes = bot:GetNearbyHeroes(1200, false, BOT_MODE_NONE)
-		for _, enemyHero in pairs(nEnemyHeroes)
-        do
+    if J.IsRetreating(bot) and not J.IsRealInvisible(bot) and not bUsingMax then
+		for _, enemyHero in pairs(nEnemyHeroes) do
 			if  J.IsValidHero(enemyHero)
             and J.IsInRange(bot, enemyHero, nCastRange)
             and J.CanCastOnNonMagicImmune(enemyHero)
             and J.CanCastOnTargetAdvanced(enemyHero)
-			and not J.IsDisabled(enemyHero)
 			then
-                if (J.GetHP(bot) < 0.5 and bot:WasRecentlyDamagedByAnyHero(3.0))
-                or (#nEnemyHeroes > #nAllyHeroes)
+                if (botHP < 0.75 and bot:WasRecentlyDamagedByAnyHero(3.0))
+                or (J.IsChasingTarget(enemyHero, bot) and #nEnemyHeroes > #nAllyHeroes)
                 then
                     return BOT_ACTION_DESIRE_HIGH, enemyHero
                 end
@@ -586,28 +675,53 @@ function X.ConsiderAdaptiveStrikeAGI()
         end
 	end
 
-    if J.IsLaning(bot) and nManaAfter >= 0.2 then
+    if J.IsFarming(bot) and nManaAfter > nManaThreshold and (bFlowFacet or bUsingMax) then
+        local nNeutralCreeps = bot:GetNearbyNeutralCreeps(nCastRange)
+        local creepTarget = nil
+        local creepTargetDamage = 0
+        for _, creep in pairs(nNeutralCreeps) do
+            if J.IsValid(creep)
+            and J.CanBeAttacked(creep)
+            and J.GetHP(creep) > 0.4
+            then
+                local creepDamage = creep:GetActualIncomingDamage(nDamage, DAMAGE_TYPE_MAGICAL)
+                if creepDamage > creepTargetDamage then
+                    creepTarget = creep
+                    creepTargetDamage = creepDamage
+                end
+            end
+        end
+
+        if creepTarget then
+            return BOT_ACTION_DESIRE_HIGH, creepTarget
+        end
+    end
+
+    if J.IsLaning(bot) and nManaAfter > nManaThreshold then
 		local nEnemyLaneCreeps = bot:GetNearbyLaneCreeps(nCastRange, true)
 
 		for _, creep in pairs(nEnemyLaneCreeps) do
 			if  J.IsValid(creep)
             and J.CanBeAttacked(creep)
-			and (J.IsKeyWordUnit('ranged', creep) or J.IsKeyWordUnit('siege', creep) or J.IsKeyWordUnit('flagbearer', creep))
-			and J.CanKillTarget(creep, nDamage, DAMAGE_TYPE_MAGICAL)
+			and (not bFlowFacet and (J.IsKeyWordUnit('ranged', creep)
+                    or J.IsKeyWordUnit('siege', creep)
+                    or J.IsKeyWordUnit('flagbearer', creep))
+                or nManaAfter > 0.5)
 			then
-				if bot:GetAttackTarget() ~= creep then
+                local nDelay = (GetUnitToUnitDistance(bot, creep) / nSpeed) + nCastPoint
+                if J.WillKillTarget(creep, nDamage, DAMAGE_TYPE_MAGICAL, nDelay) then
                     if J.IsValidHero(nEnemyHeroes[1])
                     and not J.IsSuspiciousIllusion(nEnemyHeroes[1])
-                    and GetUnitToUnitDistance(creep, nEnemyHeroes[1]) < 500
+                    and GetUnitToUnitDistance(creep, nEnemyHeroes[1]) < 600
                     then
                         return BOT_ACTION_DESIRE_HIGH, creep
                     end
-				end
+                end
 			end
 		end
 	end
 
-	if J.IsDoingRoshan(bot) then
+	if J.IsDoingRoshan(bot) and bUsingMax then
 		if  J.IsRoshan(botTarget)
 		and J.IsInRange(bot, botTarget, nCastRange)
 		and J.CanBeAttacked(botTarget)
@@ -618,7 +732,7 @@ function X.ConsiderAdaptiveStrikeAGI()
 		end
 	end
 
-    if J.IsDoingTormentor(bot) then
+    if J.IsDoingTormentor(bot) and bUsingMax then
 		if  J.IsTormentor(botTarget)
 		and J.IsInRange(bot, botTarget, nCastRange)
         and J.IsAttacking(bot)
@@ -683,247 +797,215 @@ function X.ConsiderAtttributeShift()
         return BOT_ACTION_DESIRE_NONE
     end
 
-    local botHP = J.GetHP(bot)
     local botNetworth = bot:GetNetWorth()
-    local nAllyHeroes = J.GetAlliesNearLoc(bot:GetLocation(), 1600)
-    local nEnemyHeroes = J.GetEnemiesNearLoc(bot:GetLocation(), 1600)
+    local botAttackRange = bot:GetAttackRange()
+    local bToggleState__AGI = AttributeShiftAGI:GetToggleState()
+    local bToggleState__STR = AttributeShiftSTR:GetToggleState()
 
-    if (J.IsRetreating(bot) and not J.IsRealInvisible(bot)
-        and bot:GetActiveModeDesire() > 0.75
-        and bot:WasRecentlyDamagedByAnyHero(1.5))
-    or (bot:GetActiveMode() == BOT_MODE_ASSEMBLE_WITH_HUMANS and bot:GetActiveModeDesire() > 0.65)
-    then
-        if AttributeShiftSTR:GetToggleState() == false then
-            return BOT_ACTION_DESIRE_HIGH, 'str'
+    local nInRangeAlly = J.GetAlliesNearLoc(bot:GetLocation(), 1200)
+    local nInRangeEnemy = J.GetEnemiesNearLoc(bot:GetLocation(), 1200)
+    local nEnemyTowers = bot:GetNearbyTowers(1100, true)
+    local bStronger = J.WeAreStronger(bot, 1600)
+
+    local nCurrAGI = bot:GetAttributeValue(ATTRIBUTE_AGILITY)
+	local nCurrSTR = bot:GetAttributeValue(ATTRIBUTE_STRENGTH)
+    local nCurrAGIRatio = nCurrAGI / nCurrSTR * 1.5
+
+    local nNearbyEnemyCount = 0
+    for _, id in pairs(GetTeamPlayers(GetOpposingTeam())) do
+        if IsHeroAlive(id) then
+            local info = GetHeroLastSeenInfo(id)
+            if info ~= nil then
+                local dInfo = info[1]
+                if dInfo ~= nil and GetUnitToLocationDistance(bot, dInfo.location) < 3200 and dInfo.time_since_seen <= 5.0 then
+                    nNearbyEnemyCount = nNearbyEnemyCount + 1
+                end
+            end
+        end
+    end
+
+    if (J.IsRetreating(bot) and not J.IsRealInvisible(bot) and bot:WasRecentlyDamagedByAnyHero(4.0)) then
+        if bot:WasRecentlyDamagedByAnyHero(1.0) then
+            if bToggleState__STR == false then
+                return BOT_ACTION_DESIRE_HIGH, 'str'
+            end
+            return BOT_ACTION_DESIRE_NONE, ''
         end
 
+        if bot:HasModifier('modifier_fountain_aura_buff') and #nInRangeEnemy == 0 then
+            if nAGIRatio < 0.5 then
+                if bToggleState__AGI == false then
+                    return BOT_ACTION_DESIRE_HIGH, 'agi'
+                end
+                return BOT_ACTION_DESIRE_NONE, ''
+            else
+                if nAGIRatio > 0.5 + 0.02 then
+                    if bToggleState__STR == false then
+                        return BOT_ACTION_DESIRE_HIGH, 'str'
+                    end
+                    return BOT_ACTION_DESIRE_NONE, ''
+                end
+            end
+            return BOT_ACTION_DESIRE_NONE, ''
+        end
+
+        if bToggleState__STR == true then
+            return BOT_ACTION_DESIRE_HIGH, 'str'
+        end
         return BOT_ACTION_DESIRE_NONE, ''
     end
 
-    if J.IsGoingOnSomeone(bot) then
-        if J.IsValidHero(botTarget)
-        and (J.CanBeAttacked(botTarget) or #nEnemyHeroes > 1)
-        and J.IsInRange(bot, botTarget, bot:GetAttackRange() + 400)
-        then
-            local ratio = RemapValClamped(botNetworth, 5000, 20000, 0.5, 0.9)
-            if #nEnemyHeroes > #nAllyHeroes then
+    if bFlowFacet then
+        -- balance ratio to do some right-click damage
+        -- challenging to play around his ult (use spells), so can't take advantage of the spell amp
+
+        if botNetworth > 30000 then
+            if nCurrAGIRatio < 1.0 then
+                if bToggleState__AGI == false then
+                    return BOT_ACTION_DESIRE_HIGH, 'agi'
+                end
+                return BOT_ACTION_DESIRE_NONE, ''
+            else
+                if nCurrAGIRatio > 1.0 + 0.02 then
+                    if bToggleState__STR == false then
+                        return BOT_ACTION_DESIRE_HIGH, 'str'
+                    end
+                    return BOT_ACTION_DESIRE_NONE, ''
+                end
+            end
+        else
+            local ratio = J.IsInLaningPhase() and 0.4 or 0.6
+            if botNetworth > 20000 then
+                ratio = 0.5
+            end
+
+            if nAGIRatio < ratio then
+                if bToggleState__AGI == false then
+                    return BOT_ACTION_DESIRE_HIGH, 'agi'
+                end
+                return BOT_ACTION_DESIRE_NONE, ''
+            end
+
+            if nAGIRatio > ratio + 0.02 then
+                if bToggleState__STR == false then
+                    return BOT_ACTION_DESIRE_HIGH, 'str'
+                end
+                return BOT_ACTION_DESIRE_NONE, ''
+            end
+        end
+    else
+        if J.IsGoingOnSomeone(bot) then
+            if J.IsValidHero(botTarget)
+            and (J.CanBeAttacked(botTarget) or #nInRangeEnemy > 1)
+            and J.IsInRange(bot, botTarget, botAttackRange + 300)
+            and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
+            then
+                local ratio = RemapValClamped(botNetworth, 5000, 25000, 0.5, 0.85)
+
+                if #nInRangeEnemy > #nInRangeAlly and not bStronger then
+                    ratio = ratio * 0.75
+                end
+
+                if nAGIRatio < ratio and botHP > 0.3 then
+                    if bToggleState__AGI == false then
+                        return BOT_ACTION_DESIRE_HIGH, 'agi'
+                    end
+                    return BOT_ACTION_DESIRE_NONE, ''
+                else
+                    if nAGIRatio > ratio + 0.02 then
+                        if bToggleState__STR == false then
+                            return BOT_ACTION_DESIRE_HIGH, 'str'
+                        end
+                        return BOT_ACTION_DESIRE_NONE, ''
+                    end
+                end
+            end
+        end
+
+        if J.IsPushing(bot) then
+            local ratio = RemapValClamped(botNetworth, 5000, 20000, 0.5, 0.75)
+            if #nInRangeEnemy > #nInRangeAlly and not bStronger then
                 ratio = ratio * 0.75
             end
 
             if nAGIRatio < ratio and botHP > 0.3 then
-                if AttributeShiftAGI:GetToggleState() == false then
+                if bToggleState__AGI == false then
                     return BOT_ACTION_DESIRE_HIGH, 'agi'
                 end
-
                 return BOT_ACTION_DESIRE_NONE, ''
             else
-                if nAGIRatio > ratio + 0.1 then
-                    if AttributeShiftSTR:GetToggleState() == true then
+                if nAGIRatio > ratio + 0.02 then
+                    if bToggleState__STR == false then
                         return BOT_ACTION_DESIRE_HIGH, 'str'
                     end
-
                     return BOT_ACTION_DESIRE_NONE, ''
                 end
+            end
+        end
 
-                if AttributeShiftAGI:GetToggleState() == true then
+        if J.IsLaning(bot) and J.IsInLaningPhase() then
+            local ratio = RemapValClamped(bot:GetLevel(), 1, 6, 0.55, 0.6)
+
+            if nAGIRatio < ratio then
+                if bToggleState__AGI == false then
                     return BOT_ACTION_DESIRE_HIGH, 'agi'
                 end
-
-                if AttributeShiftSTR:GetToggleState() == true then
-                    return BOT_ACTION_DESIRE_HIGH, 'str'
-                end
-
                 return BOT_ACTION_DESIRE_NONE, ''
-            end
-        end
-
-        if AttributeShiftAGI:GetToggleState() == true then
-            return BOT_ACTION_DESIRE_HIGH, 'agi'
-        end
-    end
-
-    if J.IsPushing(bot)
-    then
-        local ratio = RemapValClamped(botNetworth, 5000, 20000, 0.55, 0.85)
-        if #nEnemyHeroes > #nAllyHeroes then
-            ratio = ratio * 0.75
-        end
-
-        if nAGIRatio < ratio and botHP > 0.3 then
-            if AttributeShiftAGI:GetToggleState() == false then
-                return BOT_ACTION_DESIRE_HIGH, 'agi'
-            end
-
-            return BOT_ACTION_DESIRE_NONE, ''
-        else
-            if nAGIRatio > ratio + 0.1 then
-                if AttributeShiftSTR:GetToggleState() == true then
-                    return BOT_ACTION_DESIRE_HIGH, 'str'
+            else
+                if nAGIRatio > ratio + 0.02 then
+                    if bToggleState__STR == false then
+                        return BOT_ACTION_DESIRE_HIGH, 'str'
+                    end
+                    return BOT_ACTION_DESIRE_NONE, ''
                 end
-
-                return BOT_ACTION_DESIRE_NONE, ''
             end
-
-            if AttributeShiftAGI:GetToggleState() == true then
-                return BOT_ACTION_DESIRE_HIGH, 'agi'
-            end
-
-            if AttributeShiftSTR:GetToggleState() == true then
-                return BOT_ACTION_DESIRE_HIGH, 'str'
-            end
-
-            return BOT_ACTION_DESIRE_NONE, ''
-        end
-    end
-
-    if  J.IsLaning(bot)
-    and J.IsInLaningPhase()
-    then
-        local nRatio = RemapValClamped(bot:GetHealth(), bot:GetMaxHealth() * 0.5, bot:GetMaxHealth(), 0.5, 0.77)
-        if nAGIRatio < nRatio then
-            if AttributeShiftAGI:GetToggleState() == false
-            then
-                return BOT_ACTION_DESIRE_HIGH, 'agi'
-            end
-
-            return BOT_ACTION_DESIRE_NONE, ''
-        else
-            if nAGIRatio > nRatio + 0.1 then
-                if AttributeShiftSTR:GetToggleState() == true then
-                    return BOT_ACTION_DESIRE_HIGH, 'str'
-                end
-
-                return BOT_ACTION_DESIRE_NONE, ''
-            end
-
-            if AttributeShiftAGI:GetToggleState() == true then
-                return BOT_ACTION_DESIRE_HIGH, 'agi'
-            end
-
-            if AttributeShiftSTR:GetToggleState() == true then
-                return BOT_ACTION_DESIRE_HIGH, 'str'
-            end
-
-            return BOT_ACTION_DESIRE_NONE, ''
-        end
-    end
-
-    if J.IsFarming(bot) and botHP > 0.3
-    then
-        local ratio = RemapValClamped(botNetworth, 5000, 20000, 0.55, 0.85)
-        if #nEnemyHeroes > #nAllyHeroes then
-            ratio = ratio * 0.75
         end
 
-        if nAGIRatio < ratio then
-            if AttributeShiftAGI:GetToggleState() == false then
-                return BOT_ACTION_DESIRE_HIGH, 'agi'
-            end
-
-            return BOT_ACTION_DESIRE_NONE, ''
-        else
-            if nAGIRatio > ratio + 0.1 then
-                if AttributeShiftSTR:GetToggleState() == true then
-                    return BOT_ACTION_DESIRE_HIGH, 'str'
-                end
-
-                return BOT_ACTION_DESIRE_NONE, ''
-            end
-
-            if AttributeShiftAGI:GetToggleState() == true then
-                return BOT_ACTION_DESIRE_HIGH, 'agi'
-            end
-
-            if AttributeShiftSTR:GetToggleState() == true then
-                return BOT_ACTION_DESIRE_HIGH, 'str'
-            end
-
-            return BOT_ACTION_DESIRE_NONE, ''
-        end
-    end
-
-    if J.IsDoingRoshan(bot) or J.IsDoingTormentor(bot)
-    then
-        if (J.IsRoshan(botTarget) or J.IsTormentor(botTarget))
-        and J.CanBeAttacked(botTarget)
-        and J.IsInRange(bot, botTarget, 1000)
-        then
+        if J.IsFarming(bot) and botHP > 0.3 then
             local ratio = RemapValClamped(botNetworth, 5000, 20000, 0.55, 0.85)
-            if #nEnemyHeroes > #nAllyHeroes then
-                ratio = ratio * 0.75
-            end
-
-            if nAGIRatio < ratio and botHP > 0.35 then
-                if AttributeShiftAGI:GetToggleState() == false then
+            if nAGIRatio < ratio then
+                if bToggleState__AGI == false then
                     return BOT_ACTION_DESIRE_HIGH, 'agi'
                 end
-
                 return BOT_ACTION_DESIRE_NONE, ''
             else
-                if nAGIRatio > ratio + 0.1 then
-                    if AttributeShiftSTR:GetToggleState() == true then
+                if nAGIRatio > ratio + 0.02 then
+                    if bToggleState__STR == false then
                         return BOT_ACTION_DESIRE_HIGH, 'str'
                     end
-
                     return BOT_ACTION_DESIRE_NONE, ''
                 end
-
-                if AttributeShiftAGI:GetToggleState() == true then
-                    return BOT_ACTION_DESIRE_HIGH, 'agi'
-                end
-
-                if AttributeShiftSTR:GetToggleState() == true then
-                    return BOT_ACTION_DESIRE_HIGH, 'str'
-                end
-
-                return BOT_ACTION_DESIRE_NONE, ''
             end
         end
-    end
 
-    if  bot:DistanceFromFountain() < 1200
-    and bot:HasModifier('modifier_fountain_aura_buff')
-    and J.GetHP(bot) > 0.2
-    and DotaTime() > 0
-    and not bot:WasRecentlyDamagedByAnyHero(1)
-    then
-
-        if nAGIRatio < 0.5
-        then
-            if AttributeShiftAGI:GetToggleState() == false
+        if J.IsDoingRoshan(bot) or J.IsDoingTormentor(bot) then
+            if (J.IsRoshan(botTarget) or J.IsTormentor(botTarget))
+            and J.CanBeAttacked(botTarget)
+            and J.IsInRange(bot, botTarget, 1000)
             then
-                return BOT_ACTION_DESIRE_HIGH, 'agi'
-            end
-        else
-            if nAGIRatio > 0.5 + 0.1 then
-                if AttributeShiftSTR:GetToggleState() == true then
-                    return BOT_ACTION_DESIRE_HIGH, 'str'
+                local ratio = RemapValClamped(botNetworth, 5000, 20000, 0.5, 0.85)
+                if nAGIRatio < ratio and botHP > 0.35 then
+                    if bToggleState__AGI == false then
+                        return BOT_ACTION_DESIRE_HIGH, 'agi'
+                    end
+                    return BOT_ACTION_DESIRE_NONE, ''
+                else
+                    if nAGIRatio > ratio + 0.02 then
+                        if bToggleState__STR == false then
+                            return BOT_ACTION_DESIRE_HIGH, 'str'
+                        end
+                        return BOT_ACTION_DESIRE_NONE, ''
+                    end
                 end
-
-                return BOT_ACTION_DESIRE_NONE, ''
             end
-
-            if AttributeShiftAGI:GetToggleState() == true then
-                return BOT_ACTION_DESIRE_HIGH, 'agi'
-            end
-
-            if AttributeShiftSTR:GetToggleState() == true then
-                return BOT_ACTION_DESIRE_HIGH, 'str'
-            end
-
-            return BOT_ACTION_DESIRE_NONE, ''
         end
-
-        return BOT_ACTION_DESIRE_NONE, ''
     end
 
-    if AttributeShiftSTR:GetToggleState() == true
-    then
+    if bToggleState__STR == true then
         return BOT_ACTION_DESIRE_HIGH, 'str'
     end
 
-    if AttributeShiftAGI:GetToggleState() == true
-    then
+    if bToggleState__AGI == true then
         return BOT_ACTION_DESIRE_HIGH, 'agi'
     end
 
@@ -999,201 +1081,37 @@ function X.SetRatios()
     local nAddedAGI = 0
     local nAddedSTR = 0
 
-    -- Iron Branches
-    if J.HasItem(bot, 'item_branches')
-    then
-        count = X.CountItemsInInventory('item_branches')
-        nAddedAGI = nAddedAGI + 1 * count
-        nAddedSTR = nAddedSTR + 1 * count
-    end
+    local primaryAttribute = bot:GetPrimaryAttribute()
 
-    -- Circlet
-    if J.HasItem(bot, 'item_circlet')
-    then
-        count = X.CountItemsInInventory('item_circlet')
-        nAddedAGI = nAddedAGI + 2 * count
-        nAddedSTR = nAddedSTR + 2 * count
-    end
-
-    -- Slippers of Agility
-    if J.HasItem(bot, 'item_slippers')
-    then
-        count = X.CountItemsInInventory('item_slippers')
-        nAddedAGI = nAddedAGI + 3 * count
-    end
-
-    -- Wraith Band
-    if J.HasItem(bot, 'item_wraith_band')
-    then
-        count = X.CountItemsInInventory('item_wraith_band')
-        nAddedAGI = nAddedAGI + count * 5
-        nAddedSTR = nAddedSTR + count * 2
-    end
-
-    -- Boots of Elves
-    if J.HasItem(bot, 'item_boots_of_elves')
-    then
-        count = X.CountItemsInInventory('item_boots_of_elves')
-        nAddedAGI = nAddedAGI + 6 * count
-    end
-
-    -- Magic Wand
-    if J.HasItem(bot, 'item_magic_wand')
-    then
-        nAddedAGI = nAddedAGI + 3
-        nAddedSTR = nAddedSTR + 3
-    end
-
-    -- Power Treads
-    if J.HasItem(bot, 'item_power_treads')
-    then
-        local hItem = J.GetItem('item_power_treads')
-        if hItem ~= nil
-        then
-            local nState = hItem:GetPowerTreadsStat()
-
-            if nState == ATTRIBUTE_AGILITY
-            then
-                nAddedAGI = nAddedAGI + 10
-            elseif nState == ATTRIBUTE_STRENGTH
-            then
-                nAddedSTR = nAddedSTR + 10
+    local itemIndex = {0,1,2,3,4,5,16,17}
+    for i = 1, #itemIndex do
+        local hItem = bot:GetItemInSlot(itemIndex[i])
+        if hItem then
+            local sItemName = hItem:GetName()
+            if string.find(sItemName, 'item_power_treads') then
+                local bonusStats = hItem:GetSpecialValueInt('bonus_stat')
+                local treadsState = hItem:GetPowerTreadsStat()
+                if treadsState == ATTRIBUTE_AGILITY then
+                    nAddedAGI = nAddedAGI + bonusStats
+                elseif treadsState == ATTRIBUTE_STRENGTH then
+                    nAddedSTR = nAddedSTR + bonusStats
+                end
             end
+
+            if string.find(sItemName, 'evolved') then
+                local primaryStat = hItem:GetSpecialValueInt('primary_stat')
+                if primaryAttribute == ATTRIBUTE_AGILITY then
+                    nAddedAGI = nAddedAGI + primaryStat
+                elseif primaryAttribute == ATTRIBUTE_STRENGTH then
+                    nAddedSTR = nAddedSTR + primaryStat
+                end
+            end
+
+            local allStats = hItem:GetSpecialValueInt('bonus_all_stats')
+
+			nAddedAGI = nAddedAGI + hItem:GetSpecialValueInt('bonus_agility') + allStats
+            nAddedSTR = nAddedSTR + hItem:GetSpecialValueInt('bonus_strength') + allStats
         end
-    end
-
-    -- Blades of Alacrity
-    if J.HasItem(bot, 'item_blade_of_alacrity')
-    then
-        count = X.CountItemsInInventory('item_blade_of_alacrity')
-        nAddedAGI = nAddedAGI + 10 * count
-    end
-
-    -- Yasha
-    if J.HasItem(bot, 'item_yasha')
-    then
-        nAddedAGI = nAddedAGI + 16
-    end
-
-    -- Manta
-    if J.HasItem(bot, 'item_manta')
-    then
-        nAddedAGI = nAddedAGI + 26
-        nAddedSTR = nAddedSTR + 10
-    end
-
-    -- Diadem
-    if J.HasItem(bot, 'item_diadem')
-    then
-        count = X.CountItemsInInventory('item_diadem')
-        nAddedAGI = nAddedAGI + 6 * count
-        nAddedSTR = nAddedSTR + 6 * count
-    end
-
-    -- Phylactery
-    if J.HasItem(bot, 'item_phylactery')
-    then
-        nAddedAGI = nAddedAGI + 7
-        nAddedSTR = nAddedSTR + 7
-    end
-
-    -- Khanda
-    if J.HasItem(bot, 'item_angels_demise')
-    then
-        nAddedAGI = nAddedAGI + 8
-        nAddedSTR = nAddedSTR + 8
-    end
-
-    -- Ogre Axe
-    if J.HasItem(bot, 'item_ogre_axe')
-    then
-        nAddedSTR = nAddedSTR + 10
-    end
-
-    -- Black King Bar
-    if J.HasItem(bot, 'item_black_king_bar')
-    then
-        nAddedSTR = nAddedSTR + 10
-    end
-
-    -- Eagle Song
-    if J.HasItem(bot, 'item_eagle')
-    then
-        nAddedAGI = nAddedAGI + 25
-    end
-
-    -- Butterfly
-    if J.HasItem(bot, 'item_butterfly')
-    then
-        nAddedAGI = nAddedAGI + 35
-    end
-
-    -- Reaver
-    if J.HasItem(bot, 'item_reaver')
-    then
-        nAddedSTR = nAddedSTR + 25
-    end
-
-    -- Satanic
-    if J.HasItem(bot, 'item_satanic')
-    then
-        nAddedSTR = nAddedSTR + 25
-    end
-
-    -- Diffusal Blade
-    if J.HasItem(bot, 'item_diffusal_blade')
-    then
-        nAddedAGI = nAddedAGI + 15
-    end
-
-    -- Disperser
-    if J.HasItem(bot, 'item_disperser')
-    then
-        nAddedAGI = nAddedAGI + 40
-    end
-
-    -- Scepter
-    if J.HasItem(bot, 'modifier_item_ultimate_scepter')
-    then
-        nAddedAGI = nAddedAGI + 10
-        nAddedSTR = nAddedSTR + 10
-    end
-
-    -- Ultimate Orb
-    if J.HasItem(bot, 'item_ultimate_orb')
-    then
-        nAddedAGI = nAddedAGI + 15
-        nAddedSTR = nAddedSTR + 15
-    end
-
-    -- Skadi
-    if J.HasItem(bot, 'item_skadi')
-    then
-        nAddedAGI = nAddedAGI + 22
-        nAddedSTR = nAddedSTR + 22
-    end
-
-    if J.HasItem(bot, 'item_gauntlets')
-    then
-        count = X.CountItemsInInventory('item_gauntlets')
-        nAddedSTR = nAddedSTR + 3
-    end
-
-    if J.HasItem(bot, 'item_belt_of_strength')
-    then
-        count = X.CountItemsInInventory('item_belt_of_strength')
-        nAddedSTR = nAddedSTR + 6
-    end
-
-    if J.HasItem(bot, 'item_sange')
-    then
-        nAddedSTR = nAddedSTR + 16
-    end
-
-    if J.HasItem(bot, 'item_sange_and_yasha')
-    then
-        nAddedAGI = nAddedAGI + 16
-        nAddedSTR = nAddedSTR + 16
     end
 
     -- Stats
@@ -1207,20 +1125,29 @@ function X.SetRatios()
     elseif bot:GetLevel() >= 17 then count = 1
     end
 
+    -- morphling's primary in flow is str
+    -- but accumulation's x3 applies to agility...
+    -- nAddedAGI = nAddedAGI + count * 3 + count * 2 -- from innate
+    -- nAddedSTR = nAddedSTR + count * 2 -- from innate
+    if primaryAttribute == ATTRIBUTE_AGILITY then
+        nAddedAGI = nAddedAGI + count * 3 + count * 2 -- from innate
+        nAddedSTR = nAddedSTR + count * 2 -- from innate
+    elseif primaryAttribute == ATTRIBUTE_STRENGTH then
+        nAddedAGI = nAddedAGI + count * 2 -- from innate
+        nAddedSTR = nAddedSTR + count * 3 + count * 2 -- from innate
+    end
+
     -- Stats Talents
-    local talent_15 = bot:GetAbilityInSlot(12)
-    local talent_25 = bot:GetAbilityInSlot(16)
+    local talent__AGI = bot:GetAbilityInSlot(14)
+	local talent__STR = bot:GetAbilityInSlot(16)
 
-    if talent_15 ~= nil and talent_15:IsTrained() then
-        nAddedAGI = nAddedAGI + 15
+    if talent__AGI ~= nil and talent__AGI:IsTrained() then
+        nAddedAGI = nAddedAGI + talent__AGI:GetSpecialValueInt('value')
     end
 
-    if talent_25 ~= nil and talent_25:IsTrained() then
-        nAddedSTR = nAddedSTR + 35
+    if talent__STR ~= nil and talent__STR:IsTrained() then
+        nAddedSTR = nAddedSTR + talent__STR:GetSpecialValueInt('value')
     end
-
-    nAddedAGI = nAddedAGI + 2 * count * 2 -- from innate
-    nAddedSTR = nAddedSTR + 2 * count * 2 -- from innate
 
     local nBaseAGI = AGI_BASE + AGI_GROWTH_RATE * (bot:GetLevel() - 1)
     local nBaseSTR = STR_BASE + STR_GROWTH_RATE * (bot:GetLevel() - 1)
@@ -1236,21 +1163,40 @@ function X.SetRatios()
 
     nAGIRatio = nEffAGI / (nEffAGI + nEffSTR)
     nSTRRatio = nEffSTR / (nEffAGI + nEffSTR)
+
+    -- if math.floor(DotaTime()) % 3 == 0 then
+    --     print(nAGIRatio, nSTRRatio)
+    --     print(nEffAGI, nEffSTR)
+    --     print(nAddedAGI, nAddedSTR)
+    --     print('===')
+    -- end
 end
 
-function X.CountItemsInInventory(itemName)
-    local count = 0
-    for i = 0, 5
-    do
-        local item = bot:GetItemInSlot(i)
-        if  item ~= nil
-        and item:GetName() == itemName
-        then
-            count = count + 1
-        end
-    end
+-- set builds
+function X.SetItemBuild()
+    bFlowFacet = bot:GetPrimaryAttribute() == ATTRIBUTE_STRENGTH and true or false
 
-	return count
+    local index = 1
+    if bFlowFacet then index = 2 end
+
+    sSelectedBuild = HeroBuild[sRole][index]
+
+    X['sBuyList'] = sSelectedBuild.buy_list
+    X['sSellList'] = sSelectedBuild.sell_list
+end
+
+function X.SetAbilityBuild()
+    bFlowFacet = bot:GetPrimaryAttribute() == ATTRIBUTE_STRENGTH and true or false
+
+    local index = 1
+    if bFlowFacet then index = 2 end
+
+    sSelectedBuild = HeroBuild[sRole][index]
+
+    nTalentBuildList = J.Skill.GetTalentBuild(J.Skill.GetRandomBuild(sSelectedBuild.talent))
+    nAbilityBuildList = J.Skill.GetRandomBuild(sSelectedBuild.ability)
+
+    X['sSkillList'] = J.Skill.GetSkillList( sAbilityList, nAbilityBuildList, sTalentList, nTalentBuildList )
 end
 
 return X

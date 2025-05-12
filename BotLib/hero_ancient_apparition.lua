@@ -209,7 +209,7 @@ local IceBlastReleaseLocation
 function X.SkillsComplement()
 	if J.CanNotUseAbility(bot) then return end
 
-    if GetBot():GetUnitName() == 'npc_dota_hero_rubick' then
+    if GetBot():GetUnitName() ~= 'npc_dota_hero_ancient_apparition' then
         ColdFeet          = bot:GetAbilityByName('ancient_apparition_cold_feet')
         IceVortex         = bot:GetAbilityByName('ancient_apparition_ice_vortex')
         ChillingTouch     = bot:GetAbilityByName('ancient_apparition_chilling_touch')
@@ -218,6 +218,7 @@ function X.SkillsComplement()
     end
 
     if bot:HasScepter()
+    and ChillingTouch ~= nil
 	and ChillingTouch:IsTrained()
     then
         if (J.IsGoingOnSomeone(bot) and J.IsValidHero(J.GetProperTarget(bot)) and J.IsInRange(bot, J.GetProperTarget(bot), 1600))

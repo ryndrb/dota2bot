@@ -2574,11 +2574,16 @@ function J.GetSpecialModeAllies( bot, nDistance, nMode )
 	do
 		local member = GetTeamMember( i )
 		if J.IsValidHero(member)
+		and GetUnitToUnitDistance(bot, member) <= nDistance
 		then
-			if member:GetActiveMode() == nMode
-				and GetUnitToUnitDistance( member, bot ) <= nDistance
-			then
-				table.insert( allyList, member )
+			if nMode == BOT_MODE_ATTACK then
+				if J.IsGoingOnSomeone(member) then
+					table.insert( allyList, member )
+				end
+			else
+				if member:GetActiveMode() == nMode then
+					table.insert( allyList, member )
+				end
 			end
 		end
 	end
@@ -3227,14 +3232,9 @@ function J.GetNumOfAliveHeroes( bEnemy )
 
 	for i, id in pairs( GetTeamPlayers( nTeam ) )
 	do
-		local member = GetTeamMember(i)
-		if not bEnemy and not IsHeroAlive(id) and member and member:GetRespawnTime() <= 8.0 then
+		if IsHeroAlive( id )
+		then
 			count = count + 1
-		else
-			if IsHeroAlive( id )
-			then
-				count = count + 1
-			end
 		end
 	end
 
@@ -3648,18 +3648,23 @@ local function GetUnitAttackDamage(unit, fInterval, bIllusion)
 end
 
 local function GetHealthMultiplier(hUnit)
+	local mul = 1
 	local sUnitName = hUnit:GetUnitName()
 	local botHP = J.GetHP(hUnit) + (hUnit:GetHealthRegen() * 5.0 / hUnit:GetMaxHealth())
 	local botMP = J.GetMP(hUnit) + (hUnit:GetManaRegen() * 5.0 / hUnit:GetMaxMana())
 	if sUnitName == 'npc_dota_hero_huskar' then
-		return RemapValClamped(botHP, 0, 0.5, 0.5, 1)
+		mul = RemapValClamped(botHP, 0, 0.5, 0.5, 1)
 	elseif sUnitName == 'npc_dota_hero_medusa' then
 		local unitHealth = hUnit:GetHealth() - hUnit:GetMana()
 		local unitMaxHealth = hUnit:GetMaxHealth() - hUnit:GetMaxMana()
-		return RemapValClamped(unitHealth / unitMaxHealth, 0, 1, 0, 1) * 0.2 + RemapValClamped(botMP, 0, 0.75, 0, 1) * 0.8
+		local nHealth = RemapValClamped(unitHealth / unitMaxHealth, 0, 1, 0, 1) * 0.2 + RemapValClamped(botMP, 0, 0.75, 0, 1) * 0.8
+		mul = RemapValClamped(nHealth, 0.5, 1, 0.5, 1)
 	else
-		return RemapValClamped(botHP, 0, 0.75, 0, 1) * 0.8 + RemapValClamped(botMP, 0, 1, 0, 1) * 0.2
+		local nHealth = RemapValClamped(botHP, 0, 0.75, 0, 1) * 0.8 + RemapValClamped(botMP, 0, 1, 0, 1) * 0.2
+		mul = RemapValClamped(nHealth, 0.5, 1, 0.5, 1)
 	end
+
+	return mul
 end
 
 function J.WeAreStronger(bot, nRadius)
@@ -3677,6 +3682,7 @@ function J.WeAreStronger(bot, nRadius)
 		and not unit:HasModifier('modifier_necrolyte_reapers_scythe')
 		and not unit:HasModifier('modifier_dazzle_nothl_projection_physical_body_debuff')
 		and not unit:HasModifier('modifier_skeleton_king_reincarnation_scepter_active')
+		and not unit:HasModifier('modifier_teleporting')
 		and unit:GetTeam() ~= TEAM_NEUTRAL
 		and unit:GetTeam() ~= TEAM_NONE
 		then
@@ -4660,17 +4666,9 @@ local vWaitLocations = {
 function J.GetTormentorWaitingLocation(nTeam)
 	local timeOfday = J.CheckTimeOfDay()
 	if timeOfday == 'day' then
-		if nTeam == TEAM_RADIANT then
-			return vWaitLocations[3]
-		else
-			return vWaitLocations[4]
-		end
+		return Vector(-7041, 6796, 256)
 	else
-		if nTeam == TEAM_RADIANT then
-			return vWaitLocations[1]
-		else
-			return vWaitLocations[2]
-		end
+		return Vector(6792.795410, -6815.032715, 256.000000)
 	end
 end
 
@@ -5538,14 +5536,15 @@ function J.GetSetNearbyTarget(bot, tUnits)
 				end
 			end
 
-			local nInRangeAlly = J.GetAlliesNearLoc(enemy:GetLocation(), 600)
-			local nInRangeEnemy = J.GetEnemiesNearLoc(enemy:GetLocation(), 600)
+			local nAllyHeroes_Attacking = J.GetSpecialModeAllies(enemy, 1200, BOT_MODE_ATTACK)
+			local nInRangeAlly = J.GetAlliesNearLoc(enemy:GetLocation(), 900)
+			local nInRangeEnemy = J.GetEnemiesNearLoc(enemy:GetLocation(), 900)
 
             local enemyScore = (Min(1, bot:GetAttackRange() / GetUnitToUnitDistance(bot, enemy)))
-								* ((1-J.GetHP(enemy)) * bot:GetEstimatedDamageToTarget(true, enemy, 5.0, DAMAGE_TYPE_ALL))
-								* math.log(enemy:GetEstimatedDamageToTarget(false, bot, 5.0, DAMAGE_TYPE_ALL))
+								* ((1-J.GetHP(enemy)) * J.GetTotalEstimatedDamageToTarget(nAllyHeroes_Attacking, enemy, 5.0))
+								-- * math.log(enemy:GetEstimatedDamageToTarget(false, bot, 5.0, DAMAGE_TYPE_ALL))
 								* mul
-								* RemapValClamped(#nInRangeAlly - #nInRangeEnemy, -4, 0, 0.2, 1)
+								* (math.exp(RemapValClamped(#nInRangeAlly - #nInRangeEnemy, -4, 4, 0, 1.6)) - 1)
             if enemyScore > targetScore then
                 targetScore = enemyScore
                 __target = enemy

@@ -10,8 +10,10 @@ function F.ChangeHeroFacet(bot)
         -- TODO: others (if possible)
 
         if heroName == 'npc_dota_hero_morphling' then
-            if bot:HasAbility('morphling_flow') then
-                F.DoChange(bot, 'morphling_flow', 'morphling_ebb', false)
+            if RandomInt(1,4) == 1 then
+                if bot:HasAbility('morphling_flow') then
+                    F.DoChange(bot, 'morphling_flow', 'morphling_ebb', false)
+                end
             end
 
         -- Comment out if not using TA bot script, as it requires some other edits (main).

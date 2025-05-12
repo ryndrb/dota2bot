@@ -83,10 +83,11 @@ function GetDesire()
 
 	local nDesire = 0
 
-	local nEnemyHeroes = J.GetEnemiesNearLoc(bot:GetLocation(), 1600)
-	if J.IsCore(bot) and J.IsGoingOnSomeone(bot) and #nEnemyHeroes >= 2 then
-		bot:SetTarget(J.GetSetNearbyTarget(bot, nEnemyHeroes))
-	end
+	-- local nAllyHeroes = J.GetSpecialModeAllies(bot, 1200, BOT_MODE_ATTACK)
+	-- local nEnemyHeroes = J.GetEnemiesNearLoc(bot:GetLocation(), 1200)
+	-- if J.IsCore(bot) and J.IsGoingOnSomeone(bot) and #nAllyHeroes >= 2 and #nEnemyHeroes >= 2 then
+	-- 	bot:SetTarget(J.GetSetNearbyTarget(bot, nEnemyHeroes))
+	-- end
 
 	-- -- Print Skills Pos
 	-- if J.GetPosition(bot) == 5 and GetTeam() == TEAM_RADIANT
@@ -179,6 +180,9 @@ function GetDesire()
 	and bot:GetActiveMode() ~= BOT_MODE_SECRET_SHOP
 	and bot:GetActiveMode() ~= BOT_MODE_OUTPOST
 	and bot:GetActiveMode() ~= BOT_MODE_WARD
+	and bot:GetActiveMode() ~= BOT_MODE_ATTACK
+	and bot:GetActiveMode() ~= BOT_MODE_DEFEND_ALLY
+	and bot:GetActiveMode() ~= BOT_MODE_ROAM
 	then
 		if IsHeroCore
 		then

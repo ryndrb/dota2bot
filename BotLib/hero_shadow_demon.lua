@@ -619,6 +619,10 @@ function X.ConsiderShadowPoisonRelease()
             if J.CanKillTarget(enemyHero, nDamage, DAMAGE_TYPE_MAGICAL) then
                 return BOT_ACTION_DESIRE_HIGH
             end
+
+            if J.GetHP(enemyHero) < 0.5 and nStacks >= 5 then
+                return BOT_ACTION_DESIRE_HIGH
+            end
         end
     end
 

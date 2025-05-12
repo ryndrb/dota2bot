@@ -64,7 +64,6 @@ function GetDesire()
                     then
                         nHumanCountInLoc = nHumanCountInLoc + 1
                     end
-
                 end
 
                 -- attacking tormentor count
@@ -77,28 +76,30 @@ function GetDesire()
                 if member.tormentor_team_healthy == true then
                     bot.tormentor_team_healthy = true
                 end
+
+                if J.IsCore(member) then
+                    if GetUnitToLocationDistance(member, TormentorLocation) <= 900
+                    or GetUnitToLocationDistance(member, vWaitingLocation) <= 900
+                    then
+                        nCoreCountInLoc = nCoreCountInLoc + 1
+                    end
+                else
+                    if GetUnitToLocationDistance(member, TormentorLocation) <= 900
+                    or GetUnitToLocationDistance(member, vWaitingLocation) <= 900
+                    then
+                        nSuppCountInLoc = nSuppCountInLoc + 1
+                    end
+                end
             end
 
             -- get average levels
             if J.IsCore(member) then
-                if GetUnitToLocationDistance(member, TormentorLocation) <= 900
-                or GetUnitToLocationDistance(member, vWaitingLocation) <= 900
-                then
-                    nCoreCountInLoc = nCoreCountInLoc + 1
-                end
-
                 if memberLevel < 13 then
                     nAveCoreLevel = 0
                 else
                     nAveCoreLevel = nAveCoreLevel + member:GetLevel()
                 end
             else
-                if GetUnitToLocationDistance(member, TormentorLocation) <= 900
-                or GetUnitToLocationDistance(member, vWaitingLocation) <= 900
-                then
-                    nSuppCountInLoc = nSuppCountInLoc + 1
-                end
-
                 if memberLevel < 11 then
                     nAveSuppLevel = 0
                 else
@@ -126,7 +127,7 @@ function GetDesire()
     end
 
     if #tAllyInTormentorLocation <= 1 and nHumanCountInLoc == 0
-    and DotaTime() > (J.IsModeTurbo() and (20 * 60) or (40 * 60)) then
+    and DotaTime() > (J.IsModeTurbo() and (25 * 60) or (40 * 60)) then
         return BOT_MODE_DESIRE_NONE
     end
 
@@ -136,20 +137,12 @@ function GetDesire()
     and (GetUnitToUnitDistance(bot, hEnemyAncient) < 4000
         and #J.GetEnemiesAroundAncient(4000) > 0
         or (J.IsDoingRoshan(bot) and bot:GetActiveModeDesire() >= BOT_MODE_DESIRE_HIGH)
-        or #tInRangeEnemy > 0
     ) then
         return BOT_MODE_DESIRE_NONE
     end
 
     if #J.GetEnemiesNearLoc(GetAncient(GetTeam()):GetLocation(), 2000) >= 2
     or (GetTower(GetTeam(), TOWER_TOP_3) == nil or GetTower(GetTeam(), TOWER_MID_3) == nil or GetTower(GetTeam(), TOWER_BOT_3) == nil) -- stop when any these towers fall
-    then
-        return BOT_MODE_DESIRE_NONE
-    end
-
-    local tEnemyInTormentorLocation = J.GetEnemiesNearLoc(TormentorLocation, 1600)
-    if #tEnemyInTormentorLocation > #tAllyInTormentorLocation
-    or (J.IsTormentorCloseToChangingSides(30.0) and nCoreCountInLoc < 3)
     then
         return BOT_MODE_DESIRE_NONE
     end
@@ -195,33 +188,6 @@ function GetDesire()
         bot.tormentor_state = false
     end
 
-    if bot.tormentor_kill_time == 0
-    and (  #tEnemyInTormentorLocation >= #tAllyInTormentorLocation + 1
-        or #tEnemyInTormentorLocation >= #tAllyInTormentorWaitLocation + 1)
-    and (not bHumanInTeam or (bHumanInTeam and not X.DidHumanPingedOrAtLocation()))
-    then
-        local count = 0
-        for _, id in pairs(GetTeamPlayers(GetOpposingTeam())) do
-            if IsHeroAlive(id) then
-                local info = GetHeroLastSeenInfo(id)
-                if info ~= nil then
-                    local dInfo = info[1]
-                    if dInfo ~= nil and dInfo.time_since_seen <= 60 then
-                        if J.GetDistance(TormentorLocation, dInfo.location) < 2000
-                        or J.GetDistance(vWaitingLocation, dInfo.location) < 2000
-                        then
-                            count = count + 1
-                        end
-                    end
-                end
-            end
-        end
-
-        if count > 0 then
-            return BOT_MODE_DESIRE_NONE
-        end
-    end
-
     if bot.tormentor_state == true
     and bGoodRightClickDamage
     and nAveCoreLevel >= 13
@@ -251,18 +217,20 @@ function GetDesire()
             return BOT_MODE_DESIRE_NONE
         end
 
-        if X.IsEnoughAllies(TormentorLocation, 900) or X.IsEnoughAllies(vWaitingLocation, 1600) then
-            return BOT_MODE_DESIRE_ABSOLUTE
-        end
+        local nDesire = 0.9
 
         if (#tAllyInTormentorLocation >= 2 or #tAllyInTormentorWaitLocation >= 2)
         or nCoreCountInLoc >= 1
         or nSuppCountInLoc >= 2
         or nHumanCountInLoc >= 1 then
-            return 0.95
+            nDesire = 0.9
         else
-            return 0.8
+            nDesire = 0.75
         end
+
+        local nInRangeEnemy = J.GetEnemiesNearLoc(bot:GetLocation(), 1200)
+
+        return nDesire - (#nInRangeEnemy * (0.9 / 5))
     end
 
     if bot.tormentor_state == false then
@@ -273,10 +241,21 @@ function GetDesire()
     return BOT_MODE_DESIRE_NONE
 end
 
+local fNextMovementTime = 0
 local fStillAlive = 0
 local bTormentorAlive = false
 function Think()
     if J.CanNotUseAction(bot) then return end
+
+    if bot.tormentor_state == true and GetUnitToLocationDistance(bot, TormentorLocation) > 800 and GetUnitToLocationDistance(bot, TormentorLocation) < 1800 then
+        local nLaneCreeps = bot:GetNearbyLaneCreeps(Min(1600, bot:GetAttackRange() + 300), true)
+        if J.IsValid(nLaneCreeps[1])
+        and J.CanBeAttacked(nLaneCreeps[1])
+        then
+            bot:Action_AttackUnit(nLaneCreeps[1], true)
+            return
+        end
+    end
 
     if bot.tormentor_state == true and not X.IsEnoughAllies(vWaitingLocation, 1600) then
         if X.GetClosestBot() == bot and DotaTime() > fStillAlive + 15.0 then
@@ -299,8 +278,11 @@ function Think()
             return
         end
 
-        bot:Action_MoveToLocation(vWaitingLocation)
-        return
+        if DotaTime() >= fNextMovementTime then
+            bot:Action_MoveToLocation(vWaitingLocation + RandomVector(300))
+            fNextMovementTime = DotaTime() + RandomFloat(0.05, 0.2)
+            return
+        end
     else
         if GetUnitToLocationDistance(bot, TormentorLocation) > bot:GetAttackRange() + 50 then
             bot:Action_MoveToLocation(TormentorLocation)

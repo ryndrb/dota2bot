@@ -15,38 +15,6 @@ local BotBuild = require( GetScriptDirectory() .. "/BotLib/" .. string.gsub( bot
 
 if BotBuild == nil then return end
 
-bot.itemToBuy = {}
-bot.currentItemToBuy = nil
-bot.currentComponentToBuy = nil
-bot.currListItemToBuy = {}
-bot.SecretShop = false
-
-
-local sPurchaseList = BotBuild['sBuyList']
-bot.sItemSellList = BotBuild['sSellList']
-
-
-for i = 1, #sPurchaseList
-do
-	bot.itemToBuy[i] = sPurchaseList[#sPurchaseList - i + 1]
-end
-
-
-
-if Role.IsBanShadow()
-then
-
-	for i = 1, #bot.itemToBuy
-	do 
-		if bot.itemToBuy[i] == "item_glimmer_cape"
-		then
-			bot.itemToBuy[i] = "item_tpscroll"
-		end
-	end
-
-end
-
-
 local sell_time = -90
 local check_time = -90
 
@@ -294,6 +262,46 @@ function ItemPurchaseThink()
 
 	if ( GetGameState() ~= GAME_STATE_PRE_GAME and GetGameState() ~= GAME_STATE_GAME_IN_PROGRESS )
 	then return	end
+
+	-- wait for buff, if set
+	if bot:GetUnitName() == 'npc_dota_hero_morphling' then
+		if J.IsModeTurbo() and DotaTime() < -50 or DotaTime() < -80 then
+			return
+		end
+	end
+
+	if bot.bInitialize == nil then bot.bInitialize = false end
+	if not bot.bInitialize then
+		if bot:GetUnitName() == 'npc_dota_hero_morphling' then
+			BotBuild = dofile( GetScriptDirectory() .. "/BotLib/" .. string.gsub( bot:GetUnitName(), "npc_dota_", "" ) )
+			BotBuild.SetItemBuild()
+		end
+
+		if BotBuild == nil then return end
+
+		bot.itemToBuy = {}
+		bot.currentItemToBuy = nil
+		bot.currentComponentToBuy = nil
+		bot.currListItemToBuy = {}
+		bot.SecretShop = false
+
+		local sPurchaseList = BotBuild['sBuyList']
+		bot.sItemSellList = BotBuild['sSellList']
+
+		for i = 1, #sPurchaseList do
+			bot.itemToBuy[i] = sPurchaseList[#sPurchaseList - i + 1]
+		end
+
+		if Role.IsBanShadow() then
+			for i = 1, #bot.itemToBuy do
+				if bot.itemToBuy[i] == "item_glimmer_cape" then
+					bot.itemToBuy[i] = "item_tpscroll"
+				end
+			end
+		end
+
+		bot.bInitialize = true
+	end
 
 	if bot:HasModifier('modifier_arc_warden_tempest_double')
 	or (DotaTime() > 0 and J.IsMeepoClone(bot))

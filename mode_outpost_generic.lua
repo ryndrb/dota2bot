@@ -505,20 +505,16 @@ function GetDesire()
 	end
 
 	ClosestOutpost, ClosestOutpostDist = GetClosestOutpost()
-	if  ClosestOutpost ~= nil and ClosestOutpostDist < 3500
-	and not IsEnemyCloserToOutpostLoc(ClosestOutpost:GetLocation(), ClosestOutpostDist)
+	if  ClosestOutpost ~= nil and ClosestOutpostDist < 2200
+	and not IsEnemyCloserToOutpostLoc(ClosestOutpost:GetLocation(), ClosestOutpostDist, 15)
 	and IsSuitableToCaptureOutpost()
 	then
-		if GetUnitToUnitDistance(bot, ClosestOutpost) < 600
-		then
-			local nInRangeEnemy = J.GetEnemiesNearLoc(bot:GetLocation(), bot:GetCurrentVisionRange())
-			if nInRangeEnemy ~= nil and #nInRangeEnemy >= 1
-			then
-				return BOT_ACTION_DESIRE_NONE
-			end
+		local nInRangeEnemy = J.GetEnemiesNearLoc(ClosestOutpost:GetLocation(), 1200)
+		if J.IsRealInvisible(bot) then
+			return BOT_MODE_DESIRE_VERYHIGH
+		else
+			return BOT_MODE_DESIRE_VERYHIGH - (#nInRangeEnemy * (0.9 / 5))
 		end
-
-		return RemapValClamped(GetUnitToUnitDistance(bot, ClosestOutpost), 3500, 0, BOT_ACTION_DESIRE_MODERATE, BOT_ACTION_DESIRE_VERYHIGH)
 	end
 
 	return BOT_ACTION_DESIRE_NONE
@@ -1104,7 +1100,7 @@ function GetClosestOutpost()
 	return closest, dist
 end
 
-function IsEnemyCloserToOutpostLoc(opLoc, botDist)
+function IsEnemyCloserToOutpostLoc(opLoc, botDist, fTime)
 	for _, id in pairs(GetTeamPlayers(GetOpposingTeam()))
 	do
 		local info = GetHeroLastSeenInfo(id)
@@ -1115,7 +1111,7 @@ function IsEnemyCloserToOutpostLoc(opLoc, botDist)
 			if dInfo ~= nil
 			then
 				if  dInfo ~= nil
-				and dInfo.time_since_seen < 5
+				and dInfo.time_since_seen < fTime
 				and J.GetDistance(dInfo.location, opLoc) < botDist
 				then
 					return true
@@ -1130,12 +1126,12 @@ end
 function IsSuitableToCaptureOutpost()
 	local botTarget = J.GetProperTarget(bot)
 
-	if (J.IsGoingOnSomeone(bot) and J.IsValidTarget(botTarget) and GetUnitToUnitDistance(bot, botTarget) < 700)
+	if (J.IsGoingOnSomeone(bot) and J.IsValidTarget(botTarget) and GetUnitToUnitDistance(bot, botTarget) < 1200)
 	or J.IsDefending(bot)
-	or (J.IsDoingTormentor(bot) and J.IsTormentor(botTarget) and J.IsAttacking(bot))
-	or (J.IsDoingRoshan(bot) and J.IsRoshan(botTarget) and J.IsAttacking(bot))
-	or (J.IsRetreating(bot) and bot:GetActiveModeDesire() > BOT_MODE_DESIRE_HIGH)
-	or bot:WasRecentlyDamagedByAnyHero(1.5)
+	or (J.IsDoingTormentor(bot) and J.IsTormentor(botTarget))
+	or (J.IsDoingRoshan(bot) and J.IsRoshan(botTarget))
+	or J.IsRetreating(bot)
+	or bot:WasRecentlyDamagedByAnyHero(5.0)
 	or bot:GetActiveMode() == BOT_MODE_DEFEND_ALLY
 	then
 		return false

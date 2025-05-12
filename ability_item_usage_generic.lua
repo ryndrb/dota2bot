@@ -35,6 +35,8 @@ local RadiantFountain = Vector(-6619, -6336, 384)
 local DireFountain = Vector(6928, 6372, 392)
 local roshDeathTime = 0
 
+local bRefreshMorphlingBuild = false
+
 local refreshList = false
 -- GetAbilityPoints() is "broken" with the facet
 -- only for these levels
@@ -49,6 +51,23 @@ local function AbilityLevelUpComplement()
 		and GetGameState() ~= GAME_STATE_GAME_IN_PROGRESS
 	then
 		return
+	end
+
+	-- wait for changes, if set (buff)
+	if bot:GetUnitName() == 'npc_dota_hero_morphling' then
+		if J.IsModeTurbo() and DotaTime() < -50 or DotaTime() < -80 then
+			return
+		end
+	end
+
+	if not bRefreshMorphlingBuild then
+		if bot:GetUnitName() == 'npc_dota_hero_morphling' then
+			BotBuild = dofile( GetScriptDirectory().."/BotLib/"..string.gsub( bot:GetUnitName(), "npc_dota_", "" ) )
+			BotBuild.SetAbilityBuild()
+			sAbilityLevelUpList = BotBuild['sSkillList']
+			bRefreshMorphlingBuild = true
+			return
+		end
 	end
 	
 	if bot:GetLevel() >= 30 
@@ -881,6 +900,7 @@ local function ItemUsageComplement()
 end
 
 function X.SetUseItem( hItem, hItemTarget, sCastType )
+	if not J.CanCastAbility(hItem) then return end
 
 	if sCastType == 'none'
 	then
@@ -4486,9 +4506,62 @@ function X.GetLaningTPLocation( bot, nMinTPDistance, botLocation )
 end
 
 function X.GetDefendTPLocation( nLane )
+	local hBuildingList = {
+		[LANE_TOP] = {
+			TOWER_TOP_1,
+			TOWER_TOP_2,
+			TOWER_TOP_3,
+			TOWER_BASE_1,
+			TOWER_BASE_2,
+			BARRACKS_TOP_MELEE,
+			BARRACKS_TOP_RANGED,
+		},
+		[LANE_MID] = {
+			TOWER_MID_1,
+			TOWER_MID_2,
+			TOWER_MID_3,
+			TOWER_BASE_1,
+			TOWER_BASE_2,
+			BARRACKS_MID_MELEE,
+			BARRACKS_MID_RANGED,
+		},
+		[LANE_BOT] = {
+			TOWER_BOT_1,
+			TOWER_BOT_2,
+			TOWER_BOT_3,
+			TOWER_BASE_1,
+			TOWER_BASE_2,
+			BARRACKS_BOT_MELEE,
+			BARRACKS_BOT_RANGED,
+		}
+	}
+
+	for i = 1, #hBuildingList[nLane] do
+		local hBuilding = nil
+		if i <= 5 then
+			hBuilding = GetTower(GetTeam(), hBuildingList[nLane][i])
+		else
+			hBuilding = GetBarracks(GetTeam(), hBuildingList[nLane][i])
+		end
+
+		if J.IsValidBuilding(hBuilding) then
+			local nInRangeAlly = J.GetAlliesNearLoc(hBuilding:GetLocation(), 1200)
+			local nInRangeEnemy = J.GetEnemiesNearLoc(hBuilding:GetLocation(), 1200)
+			if #nInRangeAlly > #nInRangeEnemy + 1 then
+				return hBuilding:GetLocation() + RandomVector(400)
+			else
+				local vLocation = J.Site.GetXUnitsTowardsLocation(hBuilding, J.GetTeamFountain(), 700)
+				return vLocation
+			end
+		end
+	end
+
+	if J.IsValidBuilding(GetAncient(GetTeam())) and J.CanBeAttacked(GetAncient(GetTeam())) then
+		local vLocation = J.Site.GetXUnitsTowardsLocation(GetAncient(GetTeam()), J.GetTeamFountain(), 700)
+		return vLocation
+	end
 
 	return GetLaneFrontLocation( GetTeam(), nLane, -950 )
-
 end
 
 function X.GetPushTPLocation( nLane )
@@ -4843,19 +4916,13 @@ X.ConsiderItemDesire["item_tpscroll"] = function( hItem )
 	--守塔
 	if J.IsDefending( bot )
 		and nModeDesire > BOT_MODE_DESIRE_MODERATE
-		-- and nEnemyCount == 0
+		and nEnemyCount == 0
 	then
 		local nDefendLane, sLane = LANE_MID, 'tower_mid'
 		if nMode == BOT_MODE_DEFEND_TOWER_TOP then nDefendLane, sLane = LANE_TOP, 'tower_top' end
 		if nMode == BOT_MODE_DEFEND_TOWER_BOT then nDefendLane, sLane = LANE_BOT, 'tower_bot' end
 
-		local botAmount = GetAmountAlongLane( nDefendLane, botLocation )
-		local laneFront = GetLaneFrontAmount( GetTeam(), nDefendLane, false )
-		if botAmount.distance > nMinTPDistance
-			or botAmount.amount < laneFront / 5
-		then
-			tpLoc = X.GetDefendTPLocation( nDefendLane )
-		end
+		tpLoc = X.GetDefendTPLocation( nDefendLane )
 
 		if tpLoc ~= nil
 			and GetUnitToLocationDistance( bot, tpLoc ) > nMinTPDistance - 500
