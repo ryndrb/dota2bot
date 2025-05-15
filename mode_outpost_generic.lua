@@ -30,7 +30,7 @@ local ShouldHeroMoveOutsideFountain = false
 
 local fDissimilateTime = 0
 
-local fNextMovementTime = 0
+local fNextMovementTime = -math.huge
 local LoneDruid = {}
 -- local hBearItemList = {
 -- 	"item_quelling_blade",
@@ -408,18 +408,15 @@ function GetDesire()
 		for i = 0, 8 do
 			local hItem = bot:GetItemInSlot(i)
 			if hItem ~= nil and i >= 3 then
-				local itemName = hItem:GetName()
-				if itemName == 'item_mjollnir' or itemName == 'item_butterfly' or itemName == 'item_greater_crit' or itemName == 'item_maelstrom'
-				or itemName == 'item_power_treads' or itemName == 'item_magic_wand' or itemName == 'item_wraith_band'
-				then
-					for j = 0, 2 do
-						local hItem2 = bot:GetItemInSlot(j)
-						if hItem2 == nil
-						or (hItem2 ~= nil and itemName == 'item_maelstrom' and hItem2:GetName() == 'item_magic_wand')
-						or (hItem2 ~= nil and itemName == 'item_lesser_crit' and hItem2:GetName() == 'item_power_treads')
-						then
-							bot:ActionImmediate_SwapItems(i, j)
-						end
+				local sItemName = hItem:GetName()
+				for j = 0, 2 do
+					local hItem2 = bot:GetItemInSlot(j)
+					if  hItem2 == nil
+					or (hItem2 ~= nil and sItemName == 'item_maelstrom' and hItem2:GetName() == 'item_magic_wand')
+					or (hItem2 ~= nil and sItemName == 'item_lesser_crit' and hItem2:GetName() == 'item_wraith_band')
+					or (hItem2 ~= nil and sItemName == 'item_greater_crit' and hItem2:GetName() == 'item_wraith_band')
+					then
+						bot:ActionImmediate_SwapItems(i, j)
 					end
 				end
 			end
@@ -467,21 +464,9 @@ function GetDesire()
 		end
 	end
 
+	-- LD Bear
 	if J.IsValid(LoneDruid.bear) and J.IsValid(LoneDruid.hero) and bot == LoneDruid.bear then
-		bot:SetTarget(J.GetProperTarget(LoneDruid.hero))
-		if LoneDruid.hero.dropItem ~= nil then
-			return BOT_MODE_DESIRE_ABSOLUTE
-		end
-
-		if not J.IsInRange(bot, LoneDruid.hero, 1100)
-		or (J.IsInRange(bot, LoneDruid.hero, 1100) and not J.IsRetreating(bot))
-		then
-			if J.IsInLaningPhase() --[[or J.IsInTeamFight(bot, 1200)]] then
-				return 0.88
-			else
-				return 2
-			end
-		end
+		return 3
 	end
 
 	----------
@@ -845,110 +830,47 @@ function Think()
 				end
 			end
 
-			if not J.IsInRange(bot, LoneDruid.hero, 1100) then
-				bot:Action_MoveToLocation(LoneDruid.hero:GetLocation())
-				return
-			end
-
-			local nInRangeEnemy = J.GetEnemiesNearLoc(bot:GetLocation(), 1600)
-			local nInRangeEnemyTowers = bot:GetNearbyTowers(1600, true)
-			local nEnemyCreeps = bot:GetNearbyCreeps(1600, true)
 			local botTarget = J.GetProperTarget(LoneDruid.hero)
 
-			if J.IsGoingOnSomeone(LoneDruid.hero)
-			or (J.IsInTeamFight(LoneDruid.hero, 1600) or J.IsInTeamFight(bot, 1600))
-			or (J.IsRetreating(LoneDruid.hero) and (#nInRangeEnemy == 1 or J.WeAreStronger(bot, 1200)))
-			-- or (J.IsInLaningPhase() and bot:WasRecentlyDamagedByAnyHero(2.0) and not bot:WasRecentlyDamagedByTower(2.0) and #nInRangeEnemy == 1)
-			then
-				botTarget = J.GetSetNearbyTarget(bot, nInRangeEnemy)
-				if J.IsValidHero(botTarget) then
-					bot:SetTarget(botTarget)
-					bot:Action_AttackUnit(botTarget, false)
-					return
-				else
-					if J.IsValidHero(nInRangeEnemy[1]) then
-						bot:Action_AttackUnit(botTarget, false)
+			local nInRangeAlly = J.GetAlliesNearLoc(LoneDruid.hero:GetLocation(), 1200)
+			local nInRangeEnemy = J.GetEnemiesNearLoc(LoneDruid.hero:GetLocation(), 1200)
+			local nEnemyCreeps = LoneDruid.hero:GetNearbyCreeps(700, true)
+
+			for _, creep in pairs(nEnemyCreeps) do
+				if J.IsValid(creep) and J.CanBeAttacked(creep) then
+					if J.WillKillTarget(creep, bot:GetAttackDamage(), DAMAGE_TYPE_PHYSICAL, GetUnitToUnitDistance(bot, creep) / bot:GetCurrentMovementSpeed()) then
+						bot:Action_AttackUnit(creep, true)
 						return
 					end
 				end
 			end
 
-			local bLaningPhase = J.IsInLaningPhase()
-
-			if J.IsFarming(LoneDruid.hero)
-			or J.IsPushing(LoneDruid.hero)
-			or (J.IsLaning(LoneDruid.hero) and not bot:WasRecentlyDamagedByAnyHero(5.0) and not bot:WasRecentlyDamagedByCreep(3.0) and #nInRangeEnemy == 0)
-			or (J.IsDefending(LoneDruid.hero) and #nInRangeEnemy == 0)
-			or ((LoneDruid.hero:GetAttackTarget() == nil)
-				and (not bLaningPhase
-					or bLaningPhase and (#nInRangeEnemy == 0 or J.IsValidHero(nInRangeEnemy[1]) and nInRangeEnemy[1]:GetAttackTarget() ~= bot)
-									and (#nInRangeEnemyTowers == 0 or J.IsValidBuilding(nInRangeEnemyTowers[1]) and J.IsInRange(bot, nInRangeEnemyTowers[1], 888) and #nInRangeEnemyTowers[1]:GetAttackTarget() ~= bot)))
-			or J.IsDoingRoshan(LoneDruid.hero)
-			or J.IsDoingTormentor(LoneDruid.hero)
-			or #nInRangeEnemy == 0
-			then
-				local targetHP = 99999
-				for _, creep in pairs(nEnemyCreeps) do
-					if J.IsValid(creep)
-					and J.CanBeAttacked(creep)
-					and J.IsInRange(creep, LoneDruid.hero, 1100)
-					and (not bLaningPhase
-						or (bLaningPhase and (#nInRangeEnemyTowers == 0 or J.IsValidBuilding(nInRangeEnemyTowers[1]) and not J.IsInRange(creep, nInRangeEnemyTowers[1], 700))))
-					then
-						local creepHP = creep:GetHealth()
-						if creepHP < targetHP then
-							targetHP = creepHP
-							botTarget = creep
+			if J.IsRetreating(LoneDruid.hero) then
+				if #nInRangeEnemy > #nInRangeAlly then
+					for _, enemy in pairs(nInRangeEnemy) do
+						if J.IsValidHero(enemy)
+						and J.IsInRange(LoneDruid.hero, enemy, 500)
+						and J.CanBeAttacked(enemy)
+						then
+							bot:Action_AttackUnit(enemy, true)
+							return
 						end
 					end
 				end
-
-				if botTarget ~= nil and botTarget:IsCreep() then
-					bot:Action_AttackUnit(botTarget, false)
-					return
-				end
-
-				botTarget = J.GetProperTarget(LoneDruid.hero)
-				if J.IsValid(botTarget) and botTarget:IsBuilding() then
-					bot:Action_AttackUnit(botTarget, false)
-					return
-				end
 			end
 
-			if J.IsPushing(LoneDruid.hero) then
-				if J.IsValidBuilding(nInRangeEnemyTowers[1]) and J.IsInRange(bot, nInRangeEnemyTowers[1], 888) and J.CanBeAttacked(nInRangeEnemyTowers[1]) then
-					if nInRangeEnemyTowers[1]:GetAttackTarget() == bot then
-						for _, creep in pairs(nEnemyCreeps) do
-							if J.IsValid(creep) and J.IsInRange(creep, nInRangeEnemyTowers[1], 700) then
-								bot:Action_AttackUnit(creep, true)
-								bot:Action_ClearActions(false)
-								return
-							end
-						end
-					end
-
-					bot:Action_AttackUnit(nInRangeEnemyTowers[1], false)
-					return
-				end
-			end
-
-			-- TODO: retreat better, specially in lane
-
-			if DotaTime() >= fNextMovementTime then
-				if J.IsInLaningPhase() and #nInRangeEnemy > 0 then
+			if J.IsValid(botTarget) and not LoneDruid.hero:IsChanneling() and J.IsInRange(bot, LoneDruid.hero, 1100) then
+				bot:Action_AttackUnit(botTarget, true)
+				return
+			else
+				if DotaTime() >= fNextMovementTime then
 					local heroLocation = LoneDruid.hero:GetLocation()
 					local tempRadians = LoneDruid.hero:GetFacing() * math.pi / 180
 					local rightVector = Vector(math.sin(tempRadians), -math.cos(tempRadians), 0)
-					bot:Action_MoveToLocation(heroLocation + 300 * rightVector)
-				else
-					if J.IsInTeamFight(bot, 1200) then
-						bot:Action_MoveToLocation(J.GetRandomLocationWithinDist(bot:GetLocation(), 150, 600))
-					else
-						bot:Action_MoveToLocation(J.GetFaceTowardDistanceLocation(LoneDruid.hero, 600))
-					end
+					bot:Action_MoveToLocation(heroLocation + 150 * rightVector)
+					fNextMovementTime = DotaTime() + RandomFloat(0.2, 0.5)
+					return
 				end
-				fNextMovementTime = DotaTime() + RandomFloat(0.2, 0.5)
-				return
 			end
 		end
 	end
