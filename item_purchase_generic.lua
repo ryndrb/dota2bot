@@ -147,8 +147,9 @@ local function GeneralPurchase()
 		--当信使购买神秘商店物品后
 		if bot.SecretShop
 			and courier ~= nil
-			and GetCourierState( courier ) == COURIER_STATE_IDLE
-			and courier:DistanceFromSecretShop() == 0
+			and (GetCourierState( courier ) == COURIER_STATE_IDLE
+				or GetCourierState( courier ) == COURIER_STATE_AT_SECRET_SHOP) -- _G
+			and courier:DistanceFromSecretShop() <= 100
 		then
 			if courier:ActionImmediate_PurchaseItem( bot.currentComponentToBuy ) == PURCHASE_ITEM_SUCCESS
 			then
@@ -286,6 +287,7 @@ function ItemPurchaseThink()
 		bot.SecretShop = false
 
 		local sPurchaseList = BotBuild['sBuyList']
+		bot.sItemBuyList = BotBuild['sBuyList']
 		bot.sItemSellList = BotBuild['sSellList']
 
 		for i = 1, #sPurchaseList do
@@ -762,6 +764,7 @@ function ItemPurchaseThink()
 		and bot:IsAlive()
 		and not J.IsMeepoClone(bot)
 		and Item.GetItemCharges( bot, 'item_tpscroll' ) <= 1
+		and bot:GetCourierValue() == 0
 		then
 			bot:ActionImmediate_PurchaseItem( "item_tpscroll" )
 			return

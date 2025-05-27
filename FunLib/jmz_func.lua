@@ -710,6 +710,7 @@ function J.IsSuspiciousIllusion( npcTarget )
 			or npcTarget:HasModifier( 'modifier_phantom_lancer_doppelwalk_illusion' )
 			or npcTarget:HasModifier( 'modifier_phantom_lancer_juxtapose_illusion' )
 			or npcTarget:HasModifier( 'modifier_skeleton_king_reincarnation_scepter_active' )
+			or npcTarget:HasModifier( 'modifier_item_helm_of_the_undying_active' )
 			or npcTarget:HasModifier( 'modifier_terrorblade_conjureimage' )
 			then
 				return true
@@ -781,6 +782,7 @@ function J.IsInEtherealForm( npcTarget )
     or npcTarget:HasModifier( "modifier_necrolyte_death_seeker" )
     or npcTarget:HasModifier( "modifier_necrolyte_sadist_active" )
     or npcTarget:HasModifier( "modifier_pugna_decrepify" )
+	or npcTarget:HasModifier( "modifier_muerta_pierce_the_veil_buff" )
 end
 
 function J.CanCastOnTargetAdvanced( npcTarget )
@@ -2819,6 +2821,7 @@ function J.CanBeAttacked( unit )
 			and unit:CanBeSeen()
 			and unit:IsAlive()
 			and not J.HasForbiddenModifier( unit )
+			and not J.IsInEtherealForm(unit)
 			and not unit:IsNull()
 			and not unit:IsAttackImmune()
 			and not unit:IsInvulnerable()
@@ -3675,6 +3678,8 @@ function J.WeAreStronger(bot, nRadius)
 	local enemyPower = 0
 	local botHealthRegen =  bot:GetHealthRegen() * 5.0
 
+	-- log the hero powers for less goofy whiplash, as they are more erratic in relative
+
 	for _, unit in pairs(GetUnitList(UNIT_LIST_ALL)) do
 		if J.IsValidHero(unit)
 		and GetUnitToUnitDistance(bot, unit) <= nRadius
@@ -3702,11 +3707,12 @@ function J.WeAreStronger(bot, nRadius)
 				else
 					if not J.IsMeepoClone(unit)
 					and not string.find(sUnitName, 'lone_druid_bear')
+					and not unit:HasModifier('modifier_item_helm_of_the_undying_active')
 					then
 						table.insert(tAllyHeroes, unit)
 					end
-					ourPower = ourPower + unit:GetOffensivePower() * fMul
-					ourPowerRaw = ourPowerRaw + unit:GetRawOffensivePower() * fMul
+					ourPower = ourPower + math.log(1 + unit:GetOffensivePower()) * fMul
+					ourPowerRaw = ourPowerRaw + math.log(1 + unit:GetRawOffensivePower()) * fMul
 				end
 			else
 				if not unit:HasModifier('modifier_arc_warden_tempest_double')
@@ -3719,10 +3725,11 @@ function J.WeAreStronger(bot, nRadius)
 				else
 					if not J.IsMeepoClone(unit)
 					and not string.find(sUnitName, 'lone_druid_bear')
+					and not unit:HasModifier('modifier_item_helm_of_the_undying_active')
 					then
 						table.insert(tEnemyHeroes, unit)
 					end
-					enemyPower = enemyPower + unit:GetRawOffensivePower() * fMul
+					enemyPower = enemyPower + math.log(1 + unit:GetRawOffensivePower()) * fMul
 				end
 			end
 		end
@@ -3770,6 +3777,12 @@ function J.WeAreStronger(bot, nRadius)
 			ourPower = ourPower * 1.20
 			ourPowerRaw = ourPowerRaw * 1.20
 		end
+	end
+
+	local nAllyTowers = bot:GetNearbyTowers(600, false)
+	if J.IsValidBuilding(nAllyTowers[1]) then
+		ourPower = ourPower + #nAllyTowers * 110
+		ourPowerRaw = ourPowerRaw + #nAllyTowers * nAllyTowers[1]:GetAttackDamage()
 	end
 
 	return ourPowerRaw > enemyPower
@@ -4633,42 +4646,61 @@ function J.GetEnemiesAroundAncient(nRadius)
 	return nUnitList
 end
 
+local bCheckNightStalker = true
+local bNightStalkerNightReign = false
+local function CheckNightStalker()
+	if bCheckNightStalker and not bNightStalkerNightReign then
+		for _, id in ipairs(GetTeamPlayers(GetTeam())) do
+			if GetSelectedHeroName(id) == 'npc_dota_hero_night_stalker' then
+				bNightStalkerNightReign = true
+				return
+			end
+		end
+		if not bNightStalkerNightReign then
+			for _, id in ipairs(GetTeamPlayers(GetOpposingTeam())) do
+				if GetSelectedHeroName(id) == 'npc_dota_hero_night_stalker' then
+					bNightStalkerNightReign = true
+					return
+				end
+			end
+		end
+	end
+
+	bCheckNightStalker = false
+end
+
 function J.GetCurrentRoshanLocation()
 	local timeOfDay = J.CheckTimeOfDay()
+	CheckNightStalker()
 
-	if timeOfDay == 'day'
-	then
-		return roshanRadiantLoc
+	if bNightStalkerNightReign then
+		return timeOfDay == 'day' and roshanDireLoc or roshanRadiantLoc
 	else
-		return roshanDireLoc
+		return timeOfDay == 'day' and roshanRadiantLoc or roshanDireLoc
 	end
 end
 
 function J.GetTormentorLocation(team)
 	local timeOfDay = J.CheckTimeOfDay()
+	CheckNightStalker()
 
-	if timeOfDay == 'day'
-	then
-		return DireTormentorLoc
+	if bNightStalkerNightReign then
+		return timeOfDay == 'day' and RadiantTormentorLoc or DireTormentorLoc
 	else
-		return RadiantTormentorLoc
+		return timeOfDay == 'day' and DireTormentorLoc or RadiantTormentorLoc
 	end
 end
 
-local vWaitLocations = {
-	-- Radiant
-	[1] = Vector(6792.795410, -6815.032715, 256.000000),--r
-	[2] = Vector(7961.124512, -6370.323730, 256.000000),--d
-	-- Dire
-	[3] = Vector(-7970.265625, 6472.027832, 256.000000),--r
-	[4] = Vector(-6026.094727, 7997.119629, 256.000000),--d
-}
+local tormentorWaitLocRadiant = Vector(6792.795410, -6815.032715, 256.000000)
+local tormentorWaitLocDire = Vector(-7041, 6796, 256)
 function J.GetTormentorWaitingLocation(nTeam)
-	local timeOfday = J.CheckTimeOfDay()
-	if timeOfday == 'day' then
-		return Vector(-7041, 6796, 256)
+	local timeOfDay = J.CheckTimeOfDay()
+	CheckNightStalker()
+
+	if bNightStalkerNightReign then
+		return timeOfDay == 'day' and tormentorWaitLocRadiant or tormentorWaitLocDire
 	else
-		return Vector(6792.795410, -6815.032715, 256.000000)
+		return timeOfDay == 'day' and tormentorWaitLocDire or tormentorWaitLocRadiant
 	end
 end
 
@@ -5765,6 +5797,16 @@ function J.GetTotalAttackDamageToUnits(nDamage, hUnitList, nDamageType)
 	end
 
 	return damage
+end
+
+function J.VectorTowards(vStart, vTowards, nDistance)
+	local vDirection = (vTowards - vStart):Normalized()
+	return vStart + (vDirection * nDistance)
+end
+
+function J.VectorAway(vStart, vTowards, nDistance)
+	local vDirection = (vStart - vTowards):Normalized()
+	return vStart + (vDirection * nDistance)
 end
 
 return J

@@ -32,7 +32,8 @@ local HeroBuild = {
             ['buy_list'] = {
             },
             ['sell_list'] = {
-                "item_quelling_blade", "item_ultimate_scepter",
+                "item_quelling_blade", "item_basher",
+                -- "item_quelling_blade", "item_ultimate_scepter",
             },
         },
     },
@@ -52,7 +53,8 @@ local HeroBuild = {
             ['buy_list'] = {
             },
             ['sell_list'] = {
-                "item_quelling_blade", "item_ultimate_scepter",
+                "item_quelling_blade", "item_basher",
+                -- "item_quelling_blade", "item_ultimate_scepter",
             },
         },
     },

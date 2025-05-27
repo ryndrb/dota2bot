@@ -163,7 +163,7 @@ local AlacrityDesire, AlacrityTarget
 local ChaosMeteorDesire, ChaosMeteorLocation
 local SunstrikeDesire, SunstrikeLocation
 local ForgeSpiritDesire
-local IceWallDesire
+local IceWallDesire, IceWallLocation
 local DeafeningBlastDesire, DeafeningBlastLocation
 
 local ColdSnapCooldownTime          = 18
@@ -195,6 +195,9 @@ local bAttacking
 
 local vRoshanLocation = J.GetCurrentRoshanLocation()
 local vTormentorLocation = J.GetTormentorLocation(GetTeam())
+
+local bCanCataclysm = false
+local bCanIceFloe = true
 
 function X.SkillsComplement()
     if J.CanNotUseAbility(bot) then return end
@@ -308,7 +311,7 @@ function X.SkillsComplement()
             InvokeSpell(Exort, Exort, Exort)
         end
 
-        if bot:HasScepter()
+        if bot:HasScepter() and bCanCataclysm
         then
             bot:ActionQueue_UseAbilityOnEntity(Sunstrike, bot)
         else
@@ -348,7 +351,7 @@ function X.SkillsComplement()
         return
     end
 
-    IceWallDesire = X.ConsiderIceWall()
+    IceWallDesire, IceWallLocation = X.ConsiderIceWall()
     if IceWallDesire > 0
     then
         J.SetQueuePtToINT(bot, false)
@@ -357,7 +360,11 @@ function X.SkillsComplement()
             InvokeSpell(Quas, Quas, Exort)
         end
 
-        bot:ActionQueue_UseAbility(IceWall)
+        if bot:HasScepter() and bCanIceFloe then
+            bot:ActionQueue_UseAbilityOnLocation(IceWall, IceWallLocation)
+        else
+            bot:ActionQueue_UseAbility(IceWall)
+        end
         IceWallCastedTime = DotaTime()
         return
     end
@@ -1271,7 +1278,7 @@ function X.ConsiderSunstrike()
         nDamage = Sunstrike:GetSpecialValueInt('damage') + (Exort:GetLevel() - 1) * 50
     end
 
-    if bot:HasScepter() then
+    if bot:HasScepter() and bCanCataclysm then
         local nTeamFightLocation = J.GetTeamFightLocation(bot)
         local nNotMovingEnemyCount = 0
         if nTeamFightLocation ~= nil then
@@ -1646,7 +1653,7 @@ function X.ConsiderIceWall()
     then
         if not J.CanCastAbility(IceWall)
         then
-            return BOT_ACTION_DESIRE_NONE
+            return BOT_ACTION_DESIRE_NONE, 0
         end
     else
         if (not Quas:IsTrained() and not Exort:IsTrained())
@@ -1655,55 +1662,115 @@ function X.ConsiderIceWall()
                 and DotaTime() < IceWallCastedTime + IceWallCooldownTime))
         or not IsAbilityActive(IceWall) and not Invoke:IsFullyCastable()
         then
-            return BOT_ACTION_DESIRE_NONE
+            return BOT_ACTION_DESIRE_NONE, 0
         end
     end
 
     local nSpawnDistance = IceWall:GetSpecialValueInt('wall_place_distance')
     local nManaAfter = J.GetManaAfter(IceWall:GetManaCost())
 
-    if J.IsInTeamFight(bot, 1200) then
-        local nLocationAoE = bot:FindAoELocation(true, true, bot:GetLocation(), nSpawnDistance, nSpawnDistance, 0, 0)
-        local nInRangeEnemy = J.GetEnemiesNearLoc(nLocationAoE.targetloc, nSpawnDistance)
-        if bot:IsFacingLocation(nLocationAoE.targetloc, 30) and #nInRangeEnemy >= 2 then
-            return BOT_ACTION_DESIRE_HIGH
+    if bot:HasScepter() and bCanIceFloe then
+        local nCastRange = 600
+        local nRadius = 150
+
+        if J.IsInTeamFight(bot, 1200) then
+            local nLocationAoE = bot:FindAoELocation(true, true, bot:GetLocation(), nCastRange, nRadius, 0, 0)
+            local nInRangeEnemy = J.GetEnemiesNearLoc(nLocationAoE.targetloc, nRadius)
+            if #nInRangeEnemy >= 2 then
+                local count = 0
+                for _, enemyHero in ipairs(nInRangeEnemy) do
+                    if J.IsValidHero(enemyHero)
+                    and not J.CanCastOnNonMagicImmune(enemyHero)
+                    and not enemyHero:HasModifier('modifier_necrolyte_reapers_scythe')
+                    and not J.IsDisabled(enemyHero)
+                    then
+                        count = count + 1
+                    end
+                end
+
+                if count >= 2 then
+                    return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc
+                end
+            end
+        end
+
+        if J.IsGoingOnSomeone(bot) then
+            if  J.IsValidTarget(botTarget)
+            and J.CanBeAttacked(botTarget)
+            and J.CanCastOnNonMagicImmune(botTarget)
+            and J.IsInRange(bot, botTarget, nCastRange)
+            and not J.IsChasingTarget(bot, botTarget)
+            and not J.IsDisabled(botTarget)
+            and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
+            then
+                local nInRangeAlly = J.GetAlliesNearLoc(botTarget:GetLocation(), 1200)
+                local nInRangeEnemy = J.GetEnemiesNearLoc(botTarget:GetLocation(), 1200)
+                if not (#nInRangeAlly >= #nInRangeEnemy + 2) and nManaAfter > 0.4 then
+                    return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation()
+                end
+            end
+        end
+
+        if J.IsRetreating(bot)
+        and not J.IsRealInvisible(bot)
+        and not J.IsInTeamFight(bot, 1200)
+        then
+            for _, enemyHero in pairs(nEnemyHeroes) do
+                if J.IsValidHero(enemyHero)
+                and J.CanCastOnNonMagicImmune(enemyHero)
+                and J.IsInRange(bot, enemyHero, 1200)
+                and not J.IsInRange(bot, enemyHero, 500)
+                and J.IsChasingTarget(enemyHero, bot)
+                and not J.IsDisabled(enemyHero)
+                then
+                    return BOT_ACTION_DESIRE_HIGH, bot:GetLocation()
+                end
+            end
+        end
+    else
+        if J.IsInTeamFight(bot, 1200) then
+            local nLocationAoE = bot:FindAoELocation(true, true, bot:GetLocation(), nSpawnDistance, nSpawnDistance, 0, 0)
+            local nInRangeEnemy = J.GetEnemiesNearLoc(nLocationAoE.targetloc, nSpawnDistance)
+            if bot:IsFacingLocation(nLocationAoE.targetloc, 30) and #nInRangeEnemy >= 2 then
+                return BOT_ACTION_DESIRE_HIGH
+            end
+        end
+
+        if J.IsGoingOnSomeone(bot) then
+            if  J.IsValidTarget(botTarget)
+            and J.CanBeAttacked(botTarget)
+            and J.CanCastOnNonMagicImmune(botTarget)
+            and J.IsInRange(bot, botTarget, nSpawnDistance)
+            and bot:IsFacingLocation(botTarget:GetLocation(), 15)
+            and not J.IsDisabled(botTarget)
+            and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
+            then
+                local nInRangeAlly = J.GetAlliesNearLoc(botTarget:GetLocation(), 1200)
+                local nInRangeEnemy = J.GetEnemiesNearLoc(botTarget:GetLocation(), 1200)
+                if not (#nInRangeAlly >= #nInRangeEnemy + 2) and nManaAfter > 0.4 then
+                    return BOT_ACTION_DESIRE_HIGH
+                end
+            end
+        end
+
+        if J.IsRetreating(bot)
+        and not J.IsRealInvisible(bot)
+        and not J.IsInTeamFight(bot, 1200)
+        then
+            for _, enemyHero in pairs(nEnemyHeroes) do
+                if J.IsValidHero(enemyHero)
+                and J.CanCastOnNonMagicImmune(enemyHero)
+                and J.IsInRange(bot, enemyHero, 600)
+                and J.IsChasingTarget(enemyHero, bot)
+                and not J.IsDisabled(enemyHero)
+                then
+                    return BOT_ACTION_DESIRE_HIGH
+                end
+            end
         end
     end
 
-	if J.IsGoingOnSomeone(bot) then
-		if  J.IsValidTarget(botTarget)
-        and J.CanBeAttacked(botTarget)
-        and J.CanCastOnNonMagicImmune(botTarget)
-        and J.IsInRange(bot, botTarget, nSpawnDistance)
-        and bot:IsFacingLocation(botTarget:GetLocation(), 15)
-        and not J.IsDisabled(botTarget)
-        and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
-		then
-            local nInRangeAlly = J.GetAlliesNearLoc(botTarget:GetLocation(), 1200)
-            local nInRangeEnemy = J.GetEnemiesNearLoc(botTarget:GetLocation(), 1200)
-            if not (#nInRangeAlly >= #nInRangeEnemy + 2) and nManaAfter > 0.4 then
-                return BOT_ACTION_DESIRE_HIGH
-            end
-		end
-	end
-
-    if J.IsRetreating(bot)
-    and not J.IsRealInvisible(bot)
-    and not J.IsInTeamFight(bot, 1200)
-	then
-        for _, enemyHero in pairs(nEnemyHeroes) do
-            if J.IsValidHero(enemyHero)
-            and J.CanCastOnNonMagicImmune(enemyHero)
-            and J.IsInRange(bot, enemyHero, 600)
-            and J.IsChasingTarget(enemyHero, bot)
-            and not J.IsDisabled(enemyHero)
-            then
-                return BOT_ACTION_DESIRE_HIGH
-            end
-        end
-	end
-
-    return BOT_ACTION_DESIRE_NONE
+    return BOT_ACTION_DESIRE_NONE, 0
 end
 
 function X.ConsiderDeafeningBlast()

@@ -1,4 +1,4 @@
-local ndata = require('bots/Buff/script/ndata')
+local neutrals_data = require('bots/Buff/script/neutrals_data')
 
 if NeutralItems == nil
 then
@@ -11,15 +11,13 @@ local isTierThreeDone = false
 local isTierFourDone  = false
 local isTierFiveDone  = false
 
--- use these for now until stratz update their stuff
-
 -- Neutrals
 
 local Tier1NeutralItems = {
-    --[[Trusty Shovel]]         "item_trusty_shovel",
+    -- --[[Trusty Shovel]]         "item_trusty_shovel",
     -- --[[Arcane Ring]]           "item_arcane_ring",
     -- --[[Fairy's Trinket]]       "item_mysterious_hat",
-    --[[Pig Pole]]              "item_unstable_wand",
+    -- --[[Pig Pole]]              "item_unstable_wand",
     -- --[[Safety Bubble]]         "item_safety_bubble",
     -- --[[Seeds of Serenity]]     "item_seeds_of_serenity",
     -- --[[Lance of Pursuit]]      "item_lance_of_pursuit",
@@ -30,10 +28,14 @@ local Tier1NeutralItems = {
     -- --[[Faded Broach]]          "item_faded_broach",
     --[[Spark Of Courage]]      "item_spark_of_courage",
     -- --[[Ironwood Tree]]         "item_ironwood_tree",
-    --[[Mana Draught]]          "item_mana_draught",
+    -- --[[Mana Draught]]          "item_mana_draught",
     --[[Polliwog Charm]]        "item_polliwog_charm",
     --[[Ripper's Lash]]         "item_rippers_lash",
-    --[[Orb of Destruction]]    "item_orb_of_destruction",
+    -- -- [[Orb of Destruction]]    "item_orb_of_destruction",
+    --[[Chipped Vest]]          "item_chipped_vest",
+    --[[Dormant Curio]]         "item_dormant_curio",
+    --[[Kobold Cup]]            "item_kobold_cup",
+    --[[Sister's Shroud]]       "item_sisters_shroud",
 }
 
 local Tier2NeutralItems = {
@@ -47,19 +49,21 @@ local Tier2NeutralItems = {
     -- --[[Specialist's Array]]    "item_specialists_array",
     -- --[[Eye of the Vizier]]     "item_eye_of_the_vizier",
     -- --[[Vampire Fangs]]         "item_vampire_fangs",
-    --[[Gossamer's Cape]]       "item_gossamer_cape",
+    -- --[[Gossamer's Cape]]       "item_gossamer_cape",
     -- --[[Light Collector]]       "item_light_collector",
-    --[[Iron Talon]]            "item_iron_talon",
+    -- --[[Iron Talon]]            "item_iron_talon",
     --[[Essence Ring]]          "item_essence_ring",
     --[[Searing Signet]]        "item_searing_signet",
     --[[Brigand's Balde]]       "item_misericorde",
     --[[Tumbler's Toy]]         "item_pogo_stick",
+    --[[Mana Draught]]          "item_mana_draught",
+    --[[Poor Man's Shield]]     "item_poor_mans_shield",
 }
 
 local Tier3NeutralItems = {
     -- --[[Defiant Shell]]         "item_defiant_shell",
     -- --[[Paladin Sword]]         "item_paladin_sword",
-    --[[Nemesis Curse]]         "item_nemesis_curse",
+    -- --[[Nemesis Curse]]         "item_nemesis_curse",
     -- --[[Vindicator's Axe]]      "item_vindicators_axe",
     -- --[[Dandelion Amulet]]      "item_dandelion_amulet",
     -- --[[Craggy Coat]]           "item_craggy_coat",
@@ -67,14 +71,15 @@ local Tier3NeutralItems = {
     -- --[[Elven Tunic]]           "item_elven_tunic",
     -- --[[Cloack of Flames]]      "item_cloak_of_flames",
     -- --[[Ceremonial Robe]]       "item_ceremonial_robe",
-    -- --[[Psychic Headband]]      "item_psychic_headband",
+    --[[Psychic Headband]]      "item_psychic_headband",
     -- --[[Doubloon]]              "item_doubloon",
     -- --[[Vambrace]]              "item_vambrace",
     --[[Whisper of the Dread]]  "item_whisper_of_the_dread",
     --[[Serrrated Shiv]]        "item_serrated_shiv",
     --[[Gale Guard]]            "item_gale_guard",
     --[[Gunpowder Gauntlet]]    "item_gunpowder_gauntlets",
-    --[[Ninja Gear]]            "item_ninja_gear",
+    -- --[[Ninja Gear]]            "item_ninja_gear",
+    --[[Jidi Pollen Bag]]       "item_jidi_pollen_bag",
 }
 
 local Tier4NeutralItems = {
@@ -87,14 +92,17 @@ local Tier4NeutralItems = {
     -- --[[Stormcrafter]]          "item_stormcrafter",
     -- --[[Ancient Guardian]]      "item_ancient_guardian",
     -- --[[Havoc Hammer]]          "item_havoc_hammer",
-    --[[Mind Breaker]]          "item_mind_breaker",
+    -- --[[Mind Breaker]]          "item_mind_breaker",
     -- --[[Martyr's Plate]]        "item_martyrs_plate",
     -- --[[Rattlecage]]            "item_rattlecage",
-    --[[Ogre Seal Totem]]       "item_ogre_seal_totem",
+    -- --[[Ogre Seal Totem]]       "item_ogre_seal_totem",
     --[[Crippling Crossbow]]    "item_crippling_crossbow",
     --[[Magnifying Monocle]]    "item_magnifying_monocle",
-    --[[Ceremonial Robe]]       "item_ceremonial_robe",
+    -- --[[Ceremonial Robe]]       "item_ceremonial_robe",
     --[[Pyrrhic Cloak]]         "item_pyrrhic_cloak",
+    --[[Dezun Bloodrite]]       "item_dezun_bloodrite",
+    --[[Giant's Maul]]          "item_giant_maul",
+    --[[Outworld Staff]]        "item_outworld_staff",
 }
 
 local Tier5NeutralItems = {
@@ -105,15 +113,26 @@ local Tier5NeutralItems = {
     -- --[[Apex]]                  "item_apex",
     --[[Book of the Dead]]      "item_demonicon",
     -- --[[Arcanist's Armor]]      "item_force_field",
-    --[[Pirate Hat]]            "item_pirate_hat",
+    -- --[[Pirate Hat]]            "item_pirate_hat",
     -- --[[Giant's Ring]]          "item_giants_ring",
     -- --[[Unwavering Condition]]  "item_unwavering_condition",
     -- --[[Book of Shadows]]       "item_book_of_shadows",
-    --[[Magic Lamp]]            "item_panic_button",
+    -- --[[Magic Lamp]]            "item_panic_button",
     --[[Fallen Sky]]            "item_fallen_sky",
     --[[Minotaur Horn]]         "item_minotaur_horn",
     --[[Spider Legs]]           "item_spider_legs",
     --[[Unrelenting Eye]]       "item_unrelenting_eye",
+    --[[Divine Regalia]]        "item_divine_regalia",
+    -- -- [[Disgraced Regalia]]     "item_divine_regalia_broken", -- what 'item_divine_regalia' turns into
+    --[[Helm of the Undying]]   "item_helm_of_the_undying",
+}
+
+local hNeutralItemsList = {
+    [1] = Tier1NeutralItems,
+    [2] = Tier2NeutralItems,
+    [3] = Tier3NeutralItems,
+    [4] = Tier4NeutralItems,
+    [5] = Tier5NeutralItems,
 }
 
 -- Enhancements
@@ -177,127 +196,95 @@ local TierEnhancements = {
     }
 }
 
--- Just give out random for now.
-function NeutralItems.GiveNeutralItems(hHeroList)
-    local isTurboMode = Helper.IsTurboMode()
-
-    -- Tier 1 Neutral Items
-    if (isTurboMode and Helper.DotaTime() >= 2.5 * 60 or Helper.DotaTime() >= 5 * 60)
-    and not isTierOneDone
-    then
-        GameRules:SendCustomMessage('Bots receiving Tier 1 Neutral Items...', 0, 0)
-
-        for _, h in pairs(hHeroList) do
-            local sItemName = ''
-            -- local heroData = ndata[h:GetUnitName()]
-            -- if heroData and heroData['TIER_1'] then
-            --     sItemName = NeutralItems.SelectItem(heroData['TIER_1'])
-            -- else
-                sItemName = Tier1NeutralItems[RandomInt(1, #Tier1NeutralItems)]
-            -- end
-
-            if sItemName ~= '' then
-                NeutralItems.GiveItem(sItemName, h, isTierOneDone, 1)
-            end
-        end
-
-        isTierOneDone = true
+local function DoGive(hero, nTier)
+    local sItemName = ''
+    local heroData = neutrals_data[hero:GetUnitName()]['neutral']
+    if heroData and heroData[nTier] then
+        sItemName = NeutralItems.SelectItem(heroData[nTier])
+    else
+        sItemName = hNeutralItemsList[nTier][RandomInt(1, #hNeutralItemsList[nTier])]
     end
 
-    -- Tier 2 Neutral Items
-    if (isTurboMode and Helper.DotaTime() >= 7.5 * 60 or Helper.DotaTime() >= 15 * 60)
-    and not isTierTwoDone
-    then
-        GameRules:SendCustomMessage('Bots receiving Tier 2 Neutral Items...', 0, 0)
-
-        for _, h in pairs(hHeroList) do
-            local sItemName = ''
-            -- local heroData = ndata[h:GetUnitName()]
-            -- if heroData and heroData['TIER_2'] then
-            --     sItemName = NeutralItems.SelectItem(heroData['TIER_2'])
-            -- else
-                sItemName = Tier2NeutralItems[RandomInt(1, #Tier2NeutralItems)]
-            -- end
-
-            if sItemName ~= '' then
-                NeutralItems.GiveItem(sItemName, h, isTierOneDone, 2)
-            end
-        end
-
-        isTierTwoDone = true
-    end
-
-    -- Tier 3 Neutral Items
-    if (isTurboMode and Helper.DotaTime() >= 12.5 * 60 or Helper.DotaTime() >= 25 * 60)
-    and not isTierThreeDone
-    then
-        GameRules:SendCustomMessage('Bots receiving Tier 3 Neutral Items...', 0, 0)
-
-        for _, h in pairs(hHeroList) do
-            local sItemName = ''
-            -- local heroData = ndata[h:GetUnitName()]
-            -- if heroData and heroData['TIER_3'] then
-            --     sItemName = NeutralItems.SelectItem(heroData['TIER_3'])
-            -- else
-                sItemName = Tier3NeutralItems[RandomInt(1, #Tier3NeutralItems)]
-            -- end
-
-            if sItemName ~= '' then
-                NeutralItems.GiveItem(sItemName, h, isTierOneDone, 3)
-            end
-        end
-
-        isTierThreeDone = true
-    end
-
-    -- Tier 4 Neutral Items
-    if (isTurboMode and Helper.DotaTime() >= 17.5 * 60 or Helper.DotaTime() >= 35 * 60)
-    and not isTierFourDone
-    then
-        GameRules:SendCustomMessage('Bots receiving Tier 4 Neutral Items...', 0, 0)
-
-        for _, h in pairs(hHeroList) do
-            local sItemName = ''
-            -- local heroData = ndata[h:GetUnitName()]
-            -- if heroData and heroData['TIER_4'] then
-            --     sItemName = NeutralItems.SelectItem(heroData['TIER_4'])
-            -- else
-                sItemName = Tier4NeutralItems[RandomInt(1, #Tier4NeutralItems)]
-            -- end
-
-            if sItemName ~= '' then
-                NeutralItems.GiveItem(sItemName, h, isTierOneDone, 4)
-            end
-        end
-
-        isTierFourDone = true
-    end
-
-    -- Tier 5 Neutral Items
-    if (isTurboMode and Helper.DotaTime() >= 30 * 60 or Helper.DotaTime() >= 60 * 60)
-    and not isTierFiveDone
-    then
-        GameRules:SendCustomMessage('Bots receiving Tier 5 Neutral Items...', 0, 0)
-
-        for _, h in pairs(hHeroList) do
-            local sItemName = ''
-            -- local heroData = ndata[h:GetUnitName()]
-            -- if heroData and heroData['TIER_5'] then
-            --     sItemName = NeutralItems.SelectItem(heroData['TIER_5'])
-            -- else
-                sItemName = Tier5NeutralItems[RandomInt(1, #Tier5NeutralItems)]
-            -- end
-
-            if sItemName ~= '' then
-                NeutralItems.GiveItem(sItemName, h, isTierOneDone, 5)
-            end
-        end
-
-        isTierFiveDone = true
+    if sItemName ~= '' then
+        NeutralItems.GiveItem(sItemName, hero, nTier)
+        -- something green
+        GameRules:SendCustomMessage("<font color='#70EA71'>"..string.gsub(hero:GetUnitName(), 'npc_dota_hero_', '').."</font>"..' recieved a Tier '..tostring(nTier)..' neutral item!', -1, 0)
+        hero.bTierDone[nTier] = true
     end
 end
 
-function NeutralItems.GiveItem(itemName, hero, isTierDone, tier)
+local bInitTimes = false
+function NeutralItems.GiveNeutralItems(hHeroList)
+    local bTurboMode = Helper.IsTurboMode()
+    local fCurrentTime = Helper.DotaTime()
+
+    if not bInitTimes and #hHeroList > 0 then
+        for _, hero in pairs(hHeroList) do
+            if hero.neutral_times == nil then
+                if bTurboMode then
+                    -- range; to feel more natural
+                    hero.neutral_times = {
+                        RandomFloat( 2.5, 4.5),
+                        RandomFloat( 7.5, 9.5),
+                        RandomFloat(12.5, 14.5),
+                        RandomFloat(17.5, 19.5),
+                        RandomFloat(30.0, 32),
+                    }
+                else
+                    hero.neutral_times = {
+                        RandomFloat( 5, 8),
+                        RandomFloat(15, 18),
+                        RandomFloat(25, 28),
+                        RandomFloat(35, 38),
+                        RandomFloat(60, 63),
+                    }
+                end
+            end
+
+            if hero.bTierDone == nil then
+                hero.bTierDone = {false, false, false, false, false}
+            end
+        end
+
+        bInitTimes = true
+    end
+
+    -- Give Neutral Items
+    for _, hero in pairs(hHeroList) do
+        if hero.bTierDone and hero.neutral_times then
+            if hero.bTierDone[1] == false and fCurrentTime >= hero.neutral_times[1] * 60 then
+                DoGive(hero, 1)
+            elseif hero.bTierDone[2] == false and fCurrentTime >= hero.neutral_times[2] * 60 then
+                DoGive(hero, 2)
+            elseif hero.bTierDone[3] == false and fCurrentTime >= hero.neutral_times[3] * 60 then
+                DoGive(hero, 3)
+            elseif hero.bTierDone[4] == false and fCurrentTime >= hero.neutral_times[4] * 60 then
+                DoGive(hero, 4)
+            elseif hero.bTierDone[5] == false and fCurrentTime >= hero.neutral_times[5] * 60 then
+                DoGive(hero, 5)
+            end
+        end
+    end
+
+    -- replace 'item_divine_regalia_broken'; right away?
+    for _, h in pairs(hHeroList) do
+        if h and h:HasItemInInventory('item_divine_regalia_broken') then
+            local sItemName = ''
+            local heroData = neutrals_data[h:GetUnitName()]['neutral']
+            if heroData and heroData[5] then
+                sItemName = NeutralItems.SelectItem(heroData[5])
+            else
+                sItemName = Tier5NeutralItems[RandomInt(1, #Tier5NeutralItems)]
+            end
+
+            if sItemName ~= '' then
+                NeutralItems.GiveItem(sItemName, h, 5)
+            end
+        end
+    end
+end
+
+function NeutralItems.GiveItem(itemName, hero, tier)
     if hero:HasRoomForItem(itemName, true, true)
     then
         local item = CreateItem(itemName, hero, hero)
@@ -310,24 +297,18 @@ function NeutralItems.GiveItem(itemName, hero, isTierDone, tier)
         end
 
         -- neutral item
-        if hero:HasItemInInventory('item_grisgris') or hero:HasItemInInventory('item_black_grimoire') then
-            local hItem = hero:GetItemInSlot(16)
-            if hItem then hero:RemoveItem(hItem) end
-        end
-
-        if NeutralItems.HasNeutralItem(hero)
-        and isTierDone
-        then
-            hero:RemoveItem(hero:GetItemInSlot(16))
-            hero:AddItem(item)
-        else
-            hero:AddItem(item)
-        end
+        hero:RemoveItem(hero:GetItemInSlot(16))
+        hero:AddItem(item)
 
         -- give some enhancement
         local eList = TierEnhancements[tier]
         if eList then
             local e = eList[RandomInt(1, #eList)]
+            local heroData = neutrals_data[hero:GetUnitName()]['enhancement']
+            if heroData and heroData[tier] then
+                e = NeutralItems.SelectItem(heroData[tier])
+            end
+
             if e ~= nil then
                 item = CreateItem(e, hero, hero)
 
@@ -355,19 +336,6 @@ function NeutralItems.GiveItem(itemName, hero, isTierDone, tier)
     end
 end
 
-function NeutralItems.HasNeutralItem(hero)
-    if not hero then
-        return false
-    end
-
-    local item = hero:GetItemInSlot(16)
-    if item then
-        return true
-    end
-
-    return false
-end
-
 -- do a simple weighted random selection
 function NeutralItems.SelectItem(hNeutralItemList)
     local items = {}
@@ -382,11 +350,11 @@ function NeutralItems.SelectItem(hNeutralItemList)
         totalWeight = totalWeight + weight
     end
 
-    local randVal = math.random() * totalWeight
+    local randVal = (RandomInt(0, 100) / 100) * totalWeight
     local accumWeight = 0
     local selectedItem = ''
 
-    for i, weight in pairs(weights) do
+    for i, weight in ipairs(weights) do
         accumWeight = accumWeight + weight
         if randVal <= accumWeight then
             selectedItem = items[i]

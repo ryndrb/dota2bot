@@ -433,6 +433,8 @@ function X.ConsiderPlagueWard()
     local nAllyHeroes = bot:GetNearbyHeroes(1600, false, BOT_MODE_NONE)
     local nEnemyHeroes = bot:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
 
+    local bCanTargetAlly = J.CheckBitfieldFlag(PlagueWard:GetBehavior(), ABILITY_BEHAVIOR_UNIT_TARGET)
+
 	if J.IsGoingOnSomeone(bot) then
 		if  J.IsValidTarget(botTarget)
         and J.CanBeAttacked(botTarget)
@@ -440,7 +442,7 @@ function X.ConsiderPlagueWard()
         and not J.IsSuspiciousIllusion(botTarget)
         and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
 		then
-            if not bot:HasModifier('modifier_venomancer_ward_counter') then
+            if bCanTargetAlly and not bot:HasModifier('modifier_venomancer_ward_counter') then
                 return BOT_ACTION_DESIRE_HIGH, bot, true
             else
                 local nEnemyTower = botTarget:GetNearbyTowers(700, false)
@@ -462,7 +464,7 @@ function X.ConsiderPlagueWard()
                 if (J.GetHP(bot) < 0.75 and bot:WasRecentlyDamagedByAnyHero(3.0))
                 or (#nAllyHeroes < #nEnemyHeroes)
                 then
-                    if J.IsInRange(bot, enemyHero, 550) and not bot:HasModifier('modifier_venomancer_ward_counter') then
+                    if bCanTargetAlly and J.IsInRange(bot, enemyHero, 550) and not bot:HasModifier('modifier_venomancer_ward_counter') then
                         return BOT_ACTION_DESIRE_HIGH, bot, true
                     else
                         return BOT_ACTION_DESIRE_HIGH, (bot:GetLocation() + enemyHero:GetLocation()) / 2, false
@@ -472,47 +474,57 @@ function X.ConsiderPlagueWard()
         end
 	end
 
-    for _, allyHero in pairs(nAllyHeroes) do
-        if J.IsValidHero(allyHero)
-        and allyHero ~= bot
-        and J.IsInRange(bot, allyHero, nCastRange)
-        and not allyHero:HasModifier('modifier_venomancer_ward_counter')
-        and not allyHero:IsIllusion()
-        then
-            if J.IsPushing(allyHero) or J.IsFarming(allyHero) then
-                return BOT_ACTION_DESIRE_HIGH, allyHero, true
-            end
-        end
-
-        if  J.IsValidHero(allyHero)
-        and allyHero ~= bot
-        and J.IsInRange(bot, allyHero, nCastRange)
-        and not allyHero:HasModifier('modifier_venomancer_ward_counter')
-        and J.IsRetreating(allyHero)
-        and allyHero:WasRecentlyDamagedByAnyHero(3.0)
-        and not allyHero:IsIllusion()
-        then
-            local nAllyInRangeEnemy = allyHero:GetNearbyHeroes(600, true, BOT_MODE_NONE)
-            for _, enemyHero in pairs(nAllyInRangeEnemy) do
-                if  J.IsValidHero(enemyHero)
-                and J.CanBeAttacked(enemyHero)
-                and J.IsChasingTarget(enemyHero, allyHero)
-                and not J.IsSuspiciousIllusion(enemyHero)
-                then
+    if bCanTargetAlly then
+        for _, allyHero in pairs(nAllyHeroes) do
+            if J.IsValidHero(allyHero)
+            and allyHero ~= bot
+            and J.IsInRange(bot, allyHero, nCastRange)
+            and not allyHero:HasModifier('modifier_venomancer_ward_counter')
+            and not allyHero:IsIllusion()
+            then
+                if J.IsPushing(allyHero) or J.IsFarming(allyHero) then
                     return BOT_ACTION_DESIRE_HIGH, allyHero, true
+                end
+            end
+
+            if  J.IsValidHero(allyHero)
+            and allyHero ~= bot
+            and J.IsInRange(bot, allyHero, nCastRange)
+            and not allyHero:HasModifier('modifier_venomancer_ward_counter')
+            and J.IsRetreating(allyHero)
+            and allyHero:WasRecentlyDamagedByAnyHero(3.0)
+            and not allyHero:IsIllusion()
+            then
+                local nAllyInRangeEnemy = allyHero:GetNearbyHeroes(600, true, BOT_MODE_NONE)
+                for _, enemyHero in pairs(nAllyInRangeEnemy) do
+                    if  J.IsValidHero(enemyHero)
+                    and J.CanBeAttacked(enemyHero)
+                    and J.IsChasingTarget(enemyHero, allyHero)
+                    and not J.IsSuspiciousIllusion(enemyHero)
+                    then
+                        return BOT_ACTION_DESIRE_HIGH, allyHero, true
+                    end
                 end
             end
         end
     end
 
-    if J.IsPushing(bot) or J.IsDefending(bot) then
+    local bPushing = J.IsPushing(bot)
+    local bDefending = J.IsDefending(bot)
+    if bPushing or bDefending then
         if not bot:HasModifier('modifier_venomancer_ward_counter') then
             local nEnemyLaneCreeps = bot:GetNearbyLaneCreeps(600, true)
             if J.CanBeAttacked(nEnemyLaneCreeps[1])
             and not J.IsRunning(nEnemyLaneCreeps[1])
             and J.GetMP(bot) > 0.5
             then
-                return BOT_ACTION_DESIRE_HIGH, bot, true
+                if bCanTargetAlly then
+                    return BOT_ACTION_DESIRE_HIGH, bot, true
+                else
+                    if (bPushing and not J.IsThereCoreNearby(800)) or bDefending then
+                        return BOT_ACTION_DESIRE_HIGH, nEnemyLaneCreeps[1]:GetLocation() + RandomVector(150), false
+                    end
+                end
             end
 
             if J.IsValidBuilding(botTarget)
@@ -520,7 +532,13 @@ function X.ConsiderPlagueWard()
             and J.IsInRange(bot, botTarget, 550)
             and J.IsAttacking(bot)
             then
-                return BOT_ACTION_DESIRE_HIGH, bot, true
+                if bCanTargetAlly then
+                    return BOT_ACTION_DESIRE_HIGH, bot, true
+                else
+                    if bPushing then
+                        return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation() + RandomVector(150), false
+                    end
+                end
             end
         end
 	end
@@ -533,7 +551,11 @@ function X.ConsiderPlagueWard()
             and J.IsInRange(bot, botTarget, 500)
             and J.IsAttacking(bot)
             then
-                return BOT_ACTION_DESIRE_HIGH, bot, true
+                if bCanTargetAlly then
+                    return BOT_ACTION_DESIRE_HIGH, bot, true
+                else
+                    return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation()+ RandomVector(150), false
+                end
             end
         end
 
@@ -543,7 +565,11 @@ function X.ConsiderPlagueWard()
             and J.IsInRange(bot, botTarget, 500)
             and J.IsAttacking(bot)
             then
-                return BOT_ACTION_DESIRE_HIGH, bot, true
+                if bCanTargetAlly then
+                    return BOT_ACTION_DESIRE_HIGH, bot, true
+                else
+                    return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation() + RandomVector(150), false
+                end
             end
         end
     end

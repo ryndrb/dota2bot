@@ -20,7 +20,7 @@ end
 
 require(GetScriptDirectory()..'/API/api_global')
 
-local matchups = require( GetScriptDirectory()..'/Buff/script/matchups' )
+local matchups = require( GetScriptDirectory()..'/Buff/script/matchups_data' )
 local U    = require( GetScriptDirectory()..'/FunLib/lua_util' )
 local N    = require( GetScriptDirectory()..'/FunLib/bot_names' )
 local Role = require( GetScriptDirectory()..'/FunLib/aba_role' )
@@ -74,7 +74,7 @@ local sHeroList = {										-- pos  1, 2, 3, 4, 5
 	{name = 'npc_dota_hero_juggernaut', 				role = {100, 0, 0, 0, 0}},
 	{name = 'npc_dota_hero_keeper_of_the_light', 		role = {0, 50, 0, 100, 25}},
 	{name = 'npc_dota_hero_kez', 						role = {50, 100, 0, 0, 0}},
-	{name = 'npc_dota_hero_kunkka', 					role = {0, 100, 100, 0, 0}},
+	{name = 'npc_dota_hero_kunkka', 					role = {50, 100, 100, 0, 0}},
 	{name = 'npc_dota_hero_legion_commander', 			role = {0, 0, 100, 0, 0}},
 	{name = 'npc_dota_hero_leshrac', 					role = {0, 100, 50, 0, 0}},
 	{name = 'npc_dota_hero_lich', 						role = {0, 0, 0, 5, 100}},
@@ -84,7 +84,7 @@ local sHeroList = {										-- pos  1, 2, 3, 4, 5
 	{name = 'npc_dota_hero_lone_druid', 				role = {75, 75, 0, 0, 0}},
 	{name = 'npc_dota_hero_luna', 						role = {100, 0, 0, 0, 0}},
 	{name = 'npc_dota_hero_lycan', 						role = {50, 100, 100, 0, 0}},
-	{name = 'npc_dota_hero_magnataur', 					role = {0, 0, 100, 0, 0}},
+	{name = 'npc_dota_hero_magnataur', 					role = {50, 75, 100, 0, 0}},
 	{name = 'npc_dota_hero_marci',	 					role = {25, 50, 25, 0, 0}},
 	{name = 'npc_dota_hero_mars', 						role = {0, 100, 100, 0, 0}},
 	{name = 'npc_dota_hero_medusa', 					role = {100, 50, 0, 0, 0}},

@@ -20,10 +20,10 @@ local HeroBuild = {
         [1] = {
             ['talent'] = {
                 [1] = {
-                    ['t25'] = {10, 0},
+                    ['t25'] = {0, 10},
 					['t20'] = {10, 0},
 					['t15'] = {0, 10},
-					['t10'] = {10, 0},
+					['t10'] = {0, 10},
                 },
             },
             ['ability'] = {
@@ -33,26 +33,23 @@ local HeroBuild = {
                 "item_double_branches",
                 "item_tango",
                 "item_quelling_blade",
-                "item_magic_stick",
-                "item_faerie_fire",
 
                 "item_magic_wand",
-                "item_power_treads",
+                "item_phase_boots",
                 "item_bfury",--
-                "item_lesser_crit",
-                "item_ultimate_scepter",
-                "item_basher",
                 "item_black_king_bar",--
+                "item_lesser_crit",
+                "item_basher",
                 "item_greater_crit",--
+                "item_satanic",--
                 "item_abyssal_blade",--
-                "item_monkey_king_bar",--
-                "item_ultimate_scepter_2",
                 "item_travel_boots_2",--
-                "item_moon_shard",
+                "item_ultimate_scepter_2",
                 "item_aghanims_shard",
+                "item_moon_shard",
             },
             ['sell_list'] = {
-                "item_magic_wand", "item_black_king_bar",
+                "item_magic_wand", "item_satanic",
             },
         },
     },
@@ -60,10 +57,10 @@ local HeroBuild = {
         [1] = {
             ['talent'] = {
                 [1] = {
-                    ['t25'] = {10, 0},
+                    ['t25'] = {0, 10},
 					['t20'] = {10, 0},
 					['t15'] = {0, 10},
-					['t10'] = {10, 0},
+					['t10'] = {0, 10},
                 },
             },
             ['ability'] = {
@@ -72,27 +69,26 @@ local HeroBuild = {
             ['buy_list'] = {
                 "item_double_branches",
                 "item_tango",
-                "item_faerie_fire",
+                "item_quelling_blade",
 
                 "item_bottle",
                 "item_magic_wand",
-                "item_power_treads",
+                "item_phase_boots",
                 "item_bfury",--
-                "item_lesser_crit",
-                "item_ultimate_scepter",
-                "item_basher",
                 "item_black_king_bar",--
+                "item_lesser_crit",
+                "item_basher",
                 "item_greater_crit",--
+                "item_satanic",--
                 "item_abyssal_blade",--
-                "item_monkey_king_bar",--
-                "item_ultimate_scepter_2",
                 "item_travel_boots_2",--
-                "item_moon_shard",
+                "item_ultimate_scepter_2",
                 "item_aghanims_shard",
+                "item_moon_shard",
             },
             ['sell_list'] = {
                 "item_magic_wand", "item_basher",
-                "item_bottle", "item_black_king_bar",
+                "item_bottle", "item_satanic",
             },
         },
     },

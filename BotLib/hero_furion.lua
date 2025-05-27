@@ -274,6 +274,8 @@ local WrathOfNatureDesire, WrathOfNatureTarget
 
 local SproutCallDesire, SproutCallTarget, SproutCallLocation
 
+local bCanSummonMultipleTreants = true
+
 function X.SkillsComplement()
     if J.CanNotUseAbility(bot) then return end
 
@@ -292,15 +294,17 @@ function X.SkillsComplement()
         return
     end
 
-    -- SproutCallDesire, SproutCallTarget, SproutCallLocation = X.ConsiderSproutCall()
-    -- if SproutCallDesire > 0
-    -- then
-    --     J.SetQueuePtToINT(bot, false)
-    --     bot:ActionQueue_UseAbilityOnEntity(Sprout, SproutCallTarget)
-    --     bot:ActionQueue_Delay(0.35 + 0.44)
-    --     bot:ActionQueue_UseAbilityOnLocation(NaturesCall, SproutCallLocation)
-    --     return
-    -- end
+    if bCanSummonMultipleTreants then
+        SproutCallDesire, SproutCallTarget, SproutCallLocation = X.ConsiderSproutCall()
+        if SproutCallDesire > 0
+        then
+            J.SetQueuePtToINT(bot, false)
+            bot:ActionQueue_UseAbilityOnEntity(Sprout, SproutCallTarget)
+            bot:ActionQueue_Delay(0.35 + 0.44)
+            bot:ActionQueue_UseAbilityOnLocation(NaturesCall, SproutCallLocation)
+            return
+        end
+    end
 
     TeleportationDesire, TeleportationLocation = X.ConsiderTeleportation()
     if TeleportationDesire > 0
@@ -323,7 +327,11 @@ function X.SkillsComplement()
     if NaturesCallDesire > 0
     then
         J.SetQueuePtToINT(bot, false)
-        bot:ActionQueue_UseAbilityOnTree(NaturesCall, NaturesCallLocation)
+        if bCanSummonMultipleTreants then
+            bot:ActionQueue_UseAbilityOnLocation(NaturesCall, GetTreeLocation(NaturesCallLocation))
+        else
+            bot:ActionQueue_UseAbilityOnTree(NaturesCall, NaturesCallLocation)
+        end
         return
     end
 

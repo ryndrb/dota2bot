@@ -265,6 +265,7 @@ function Push.PushThink(bot, lane)
     local nEnemyTowers = bot:GetNearbyTowers(1600, true)
     local nAllyCreeps = bot:GetNearbyLaneCreeps(1200, false)
     local hEnemyAncient = GetAncient(GetOpposingTeam())
+    local bHasPierceTheVeil = bot:HasModifier('modifier_muerta_pierce_the_veil_buff')
 
     local nAllyHeroes = J.GetAlliesNearLoc(bot:GetLocation(), 1600)
     local nEnemyHeroes = J.GetEnemiesNearLoc(bot:GetLocation(), 1600)
@@ -304,6 +305,7 @@ function Push.PushThink(bot, lane)
     nAllyHeroes = J.GetAlliesNearLoc(hEnemyAncient:GetLocation(), 1600)
     if  GetUnitToUnitDistance(bot, hEnemyAncient) < 1600
     and J.CanBeAttacked(hEnemyAncient)
+    and not bHasPierceTheVeil
     and (  #Push.GetAllyHeroesAttackingUnit(hEnemyAncient) >= 3
         or #Push.GetAllyCreepsAttackingUnit(hEnemyAncient) >= 4
         or hEnemyAncient:GetHealthRegen() < 20
@@ -344,6 +346,7 @@ function Push.PushThink(bot, lane)
     and (   GetTower(GetOpposingTeam(), TOWER_TOP_2) == nil
         and GetTower(GetOpposingTeam(), TOWER_MID_2) == nil
         and GetTower(GetOpposingTeam(), TOWER_BOT_2) == nil)
+    and not bHasPierceTheVeil
     then
         local hBuildingTarget = TryClearingOtherLaneHighGround(bot, targetLoc)
         if hBuildingTarget then
@@ -353,7 +356,7 @@ function Push.PushThink(bot, lane)
     end
 
     local nBarracks = bot:GetNearbyBarracks(nRange, true)
-    if J.IsValidBuilding(nBarracks[1]) and J.CanBeAttacked(nBarracks[1]) then
+    if J.IsValidBuilding(nBarracks[1]) and J.CanBeAttacked(nBarracks[1]) and not bHasPierceTheVeil then
         for _, barrack in pairs(nBarracks) do
             if J.IsValid(barrack) and string.find(barrack:GetUnitName(), 'melee') then
                 bot:Action_AttackUnit(barrack, true)
@@ -368,7 +371,7 @@ function Push.PushThink(bot, lane)
         end
     end
 
-    if J.IsValidBuilding(nEnemyTowers[1]) and J.CanBeAttacked(nEnemyTowers[1]) then
+    if J.IsValidBuilding(nEnemyTowers[1]) and J.CanBeAttacked(nEnemyTowers[1]) and not bHasPierceTheVeil then
         local hTowerTarget = nil
         local hTowerTargetDistance = math.huge
         for _, tower in pairs(nEnemyTowers) do
@@ -388,7 +391,7 @@ function Push.PushThink(bot, lane)
     end
 
     local nEnemyFillers = bot:GetNearbyFillers(nRange, true)
-    if J.IsValidBuilding(nEnemyFillers[1]) and J.CanBeAttacked(nEnemyFillers[1]) then
+    if J.IsValidBuilding(nEnemyFillers[1]) and J.CanBeAttacked(nEnemyFillers[1]) and not bHasPierceTheVeil then
         local hTowerFillerTarget = nil
         local hTowerFillerTargetDistance = math.huge
         for _, filler in pairs(nEnemyFillers) do

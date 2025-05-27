@@ -127,17 +127,26 @@ function X.GetTalentBuild( tTalentTreeList )
 end
 
 function X.GetSkillList( sAbilityList, nAbilityBuildList, sTalentList, nTalentBuildList )
-	-- build it to not hard code here anymore as it's annoying patch changes
 	local sSkillList = {}
 	local talent_idx = 1
 	local ability_idx = 1
-	for i = 1, #nAbilityBuildList + 8 do
+	local bMoreMeepoFacet = GetBot():GetUnitName() == 'npc_dota_hero_meepo' and true
+	local buildListLen = bMoreMeepoFacet and 30 or (#nAbilityBuildList + #nTalentBuildList)
+
+	for i = 1, buildListLen do
 		if sSkillList[i] == nil then
-			if i >= 10 and (i % 5 == 0 or ability_idx > #nAbilityBuildList) then
+			if (not bMoreMeepoFacet and (i >= 10 and (i % 5 == 0 or ability_idx > #nAbilityBuildList)))
+			or (bMoreMeepoFacet and ((i == 11) or (i == 15) or (i >= 18 and i <= 23) or (i >= 25 and i <= 30)))
+			then
 				sSkillList[i] = sTalentList[nTalentBuildList[talent_idx]]
 				talent_idx = talent_idx + 1
+				if bMoreMeepoFacet then
+					if talent_idx == 9 then talent_idx = 3 end
+				end
 			else
-				if ability_idx <= #nAbilityBuildList then
+				if (bMoreMeepoFacet)
+				or (not bMoreMeepoFacet and (ability_idx <= #nAbilityBuildList))
+				then
 					sSkillList[i] = sAbilityList[nAbilityBuildList[ability_idx]]
 					ability_idx = ability_idx + 1
 				end

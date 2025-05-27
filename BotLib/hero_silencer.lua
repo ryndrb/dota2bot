@@ -22,12 +22,13 @@ local HeroBuild = {
 				[1] = {
 					['t25'] = {0, 10},
 					['t20'] = {0, 10},
-					['t15'] = {0, 10},
+					['t15'] = {10, 0},
 					['t10'] = {10, 0},
 				}
             },
             ['ability'] = {
-				[1] = {2,1,2,1,2,6,2,1,1,3,6,3,3,3,6},
+				-- [1] = {2,1,2,1,2,6,2,1,1,3,6,3,3,3,6},
+				[1] = {2,1,2,1,2,6,2,3,2,1,1,6,3,3,3,6}, -- +1 Glaives of Wisdom
             },
             ['buy_list'] = {
 				"item_tango",
@@ -63,12 +64,13 @@ local HeroBuild = {
 				[1] = {
 					['t25'] = {0, 10},
 					['t20'] = {0, 10},
-					['t15'] = {0, 10},
+					['t15'] = {10, 0},
 					['t10'] = {10, 0},
 				}
             },
             ['ability'] = {
-				[1] = {2,1,2,1,2,6,2,1,1,3,6,3,3,3,6},
+				-- [1] = {2,1,2,1,2,6,2,1,1,3,6,3,3,3,6},
+				[1] = {2,1,2,1,2,6,2,3,2,1,1,6,3,3,3,6}, -- +1 Glaives of Wisdom
             },
             ['buy_list'] = {
 				"item_tango",
@@ -117,13 +119,14 @@ local HeroBuild = {
             ['talent'] = {
 				[1] = {
 					['t25'] = {10, 0},
-					['t20'] = {0, 10},
+					['t20'] = {10, 0},
 					['t15'] = {0, 10},
 					['t10'] = {0, 10},
 				}
             },
             ['ability'] = {
-				[1] = {1,2,1,3,1,6,1,3,3,3,6,2,2,2,6},
+				-- [1] = {1,2,1,3,1,6,1,3,3,3,6,2,2,2,6},
+				[1] = {1,2,1,3,1,6,1,3,3,3,6,2,2,2,2,6}, -- +1 Glaives of Wisdom
             },
             ['buy_list'] = {
 				"item_tango",
@@ -158,13 +161,14 @@ local HeroBuild = {
             ['talent'] = {
 				[1] = {
 					['t25'] = {10, 0},
-					['t20'] = {0, 10},
+					['t20'] = {10, 0},
 					['t15'] = {0, 10},
 					['t10'] = {0, 10},
 				}
             },
             ['ability'] = {
-                [1] = {1,2,1,3,1,6,1,3,3,3,6,2,2,2,6},
+                -- [1] = {1,2,1,3,1,6,1,3,3,3,6,2,2,2,6},
+				[1] = {1,2,1,3,1,6,1,3,3,3,6,2,2,2,2,6}, -- +1 Glaives of Wisdom
             },
             ['buy_list'] = {
 				"item_tango",
@@ -302,7 +306,6 @@ function X.SkillsComplement()
 	then
 
 		J.SetQueuePtToINT( bot, false )
-
 		bot:ActionQueue_UseAbilityOnEntity( abilityW, castWTarget )
 		return
 	end
@@ -609,7 +612,7 @@ function X.ConsiderW()
 		then
 			if nEnemysWeakestHerosInAttackRange:GetHealth() <= X.sil_RealDamage( nAttackDamage, nAbilityDamage, nEnemysWeakestHerosInAttackRange )
 			then
-				return BOT_ACTION_DESIRE_HIGH, WeakestEnemy
+				return BOT_ACTION_DESIRE_HIGH, nEnemysWeakestHerosInAttackRange
 			end
 		end
 	end
@@ -635,8 +638,7 @@ function X.ConsiderW()
 		if not npcTarget:IsAttackImmune()
 			and GetUnitToUnitDistance( bot, npcTarget ) < nAttackRange + 99
 		then
-			nTargetUint = npcTarget
-			return BOT_ACTION_DESIRE_HIGH, nTargetUint
+			return BOT_ACTION_DESIRE_HIGH, npcTarget
 		end
 	end
 
@@ -744,8 +746,7 @@ function X.ConsiderW()
 			and not J.IsRoshan( nNeutralCreeps[1] )
 			and ( not nNeutralCreeps[1]:IsAncientCreep() or nAttackDamage > 180 )
 		then
-			nTargetUint = nNeutralCreeps[1]
-			return BOT_ACTION_DESIRE_HIGH, nTargetUint
+			return BOT_ACTION_DESIRE_HIGH, nNeutralCreeps[1]
 		end
 
 	end
@@ -789,7 +790,7 @@ function X.ConsiderE()
 
 	local nRadius = 0
 	local bAoETalent = talent20Left ~= nil and talent20Left:IsTrained()
-	if bAoETalent then nRadius = talent20Left:GetSpecialValueInt('value') end
+	if bAoETalent then nRadius = 250 end
 
 	local nEnemyHeroes = bot:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
 	for _, enemyHero in pairs (nEnemyHeroes) do
@@ -811,7 +812,7 @@ function X.ConsiderE()
 					if nLocationAoE.count >= 2 then
 						return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc, true
 					else
-						return BOT_ACTION_DESIRE_HIGH, enemyHero, false
+						return BOT_ACTION_DESIRE_HIGH, enemyHero:GetLocation(), true
 					end
 				else
 					return BOT_ACTION_DESIRE_HIGH, enemyHero, false
@@ -852,7 +853,7 @@ function X.ConsiderE()
 				if nLocationAoE.count >= 2 then
 					return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc, true
 				else
-					return BOT_ACTION_DESIRE_HIGH, npcMostDangerousEnemy, false
+					return BOT_ACTION_DESIRE_HIGH, npcMostDangerousEnemy:GetLocation(), true
 				end
 			else
 				return BOT_ACTION_DESIRE_HIGH, npcMostDangerousEnemy, false
@@ -880,7 +881,7 @@ function X.ConsiderE()
 				if nLocationAoE.count >= 2 then
 					return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc, true
 				else
-					return BOT_ACTION_DESIRE_HIGH, botTarget, false
+					return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation(), true
 				end
 			else
 				return BOT_ACTION_DESIRE_HIGH, botTarget, false
@@ -902,7 +903,7 @@ function X.ConsiderE()
 					if nLocationAoE.count >= 2 then
 						return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc, true
 					else
-						return BOT_ACTION_DESIRE_HIGH, enemyHero, false
+						return BOT_ACTION_DESIRE_HIGH, enemyHero:GetLocation(), true
 					end
 				else
 					return BOT_ACTION_DESIRE_HIGH, enemyHero, false
@@ -917,7 +918,11 @@ function X.ConsiderE()
 		and J.IsInRange(bot, botTarget, nCastRange)
 		and J.IsAttacking(bot)
 		then
-			return BOT_ACTION_DESIRE_HIGH, botTarget, false
+			if bAoETalent then
+				return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation(), true
+			else
+				return BOT_ACTION_DESIRE_HIGH, botTarget, false
+			end
 		end
 	end
 
@@ -926,7 +931,11 @@ function X.ConsiderE()
 		and J.IsInRange(bot, botTarget, nCastRange)
 		and J.IsAttacking(bot)
 		then
-			return BOT_ACTION_DESIRE_HIGH, botTarget, false
+			if bAoETalent then
+				return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation(), true
+			else
+				return BOT_ACTION_DESIRE_HIGH, botTarget, false
+			end
 		end
 	end
 

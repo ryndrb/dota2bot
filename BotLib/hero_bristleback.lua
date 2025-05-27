@@ -368,6 +368,10 @@ function X.ConsiderQuillSpray()
 		return BOT_ACTION_DESIRE_NONE
 	end
 
+	if QuillSpray:GetAutoCastState() == true then
+		QuillSpray:ToggleAutoCast()
+	end
+
 	local nRadius = QuillSpray:GetSpecialValueInt( "radius" )
 	local nManaCost = QuillSpray:GetManaCost()
 

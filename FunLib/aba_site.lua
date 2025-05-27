@@ -967,6 +967,7 @@ function Site.IsTimeToFarm( bot )
 
 	local carry = Site.GetCarry()
 	if carry ~= nil and carry:GetNetWorth() < 4500 * 6
+	and Site.IsShouldFarmHero( bot )
 	then
 		return true
 	end

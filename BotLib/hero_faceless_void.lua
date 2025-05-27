@@ -498,7 +498,7 @@ end
 
 function X.ConsiderChronosphere()
 	if not J.CanCastAbility(Chronosphere)
-    or bot:HasModifier('modifier_faceless_void_chronosphere_selfbuff')
+	or bot:GetCurrentMovementSpeed() >= 1000
 	then
 		return BOT_ACTION_DESIRE_NONE, 0
 	end
@@ -547,7 +547,6 @@ function X.ConsiderChronosphere()
                 local targetLoc = X.GetBestChrono(nInRangeAlly, nInRangeEnemy, nRadius, nLocationAoE.targetloc)
                 if targetLoc == 0 then targetLoc = nLocationAoE.targetloc end
                 bot:SetTarget(targetHero)
-                bot.ChronoTarget = targetHero
 				return BOT_ACTION_DESIRE_HIGH, targetLoc
 			end
 
@@ -586,7 +585,6 @@ function X.ConsiderChronosphere()
 
                         if targetLoc == 0 then targetLoc = loc end
                         bot:SetTarget(botTarget)
-                        bot.ChronoTarget = botTarget
                         return BOT_ACTION_DESIRE_HIGH, targetLoc
 					end
 
@@ -597,7 +595,6 @@ function X.ConsiderChronosphere()
 
                         if targetLoc == 0 then targetLoc = loc end
                         bot:SetTarget(botTarget)
-                        bot.ChronoTarget = botTarget
                         return BOT_ACTION_DESIRE_HIGH, targetLoc
 					end
 				end
@@ -632,10 +629,8 @@ function X.ConsiderChronosphere()
                 then
                     if #nTargetLocInRangeEnemy >= 2
                     then
-                        bot.ChronoTarget = nil
                         return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc
                     else
-                        bot.ChronoTarget = nil
                         return BOT_ACTION_DESIRE_HIGH, nEnemyHeroes[1]:GetLocation()
                     end
                 end

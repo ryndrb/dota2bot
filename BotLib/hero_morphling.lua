@@ -268,7 +268,7 @@ local nSTRRatio = 1
 local AGI_BASE = 24
 local STR_BASE = 23
 local AGI_GROWTH_RATE = 3.9
-local STR_GROWTH_RATE = 3.2
+local STR_GROWTH_RATE = 2.6
 
 -- do similar thing as Rubick's
 -- TODO: Update some bot fields from select heroes to not give errors

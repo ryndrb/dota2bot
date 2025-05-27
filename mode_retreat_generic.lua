@@ -23,6 +23,7 @@ function GetDesire()
     if not bot:IsAlive()
     or bot:HasModifier('modifier_dazzle_nothl_projection_soul_clone')
     or bot:HasModifier('modifier_skeleton_king_reincarnation_scepter_active')
+    or bot:HasModifier('modifier_item_helm_of_the_undying_active')
     or (bot:GetUnitName() == 'npc_dota_hero_lone_druid' and bot:HasModifier('modifier_fountain_aura_buff') and DotaTime() < 0)
     then
         return BOT_MODE_DESIRE_NONE
@@ -57,6 +58,7 @@ function GetDesire()
 		and not unit:HasModifier('modifier_necrolyte_reapers_scythe')
 		and not unit:HasModifier('modifier_dazzle_nothl_projection_physical_body_debuff')
 		and not unit:HasModifier('modifier_skeleton_king_reincarnation_scepter_active')
+        and not unit:HasModifier('modifier_item_helm_of_the_undying_active')
         and not unit:HasModifier('modifier_teleporting')
         and not string.find(botName, 'lone_druid_bear')
 		and unit:GetTeam() ~= TEAM_NEUTRAL
@@ -145,7 +147,7 @@ function GetDesire()
     if (bot:HasModifier('modifier_doom_bringer_doom_aura_enemy') and (#nEnemyHeroes > 0 or #nEnemyHeroes > #nAllyHeroes + 1))
     or (bot:HasModifier('modifier_razor_static_link_debuff') and J.IsUnitNearby(bot ,nEnemyHeroes, 700, 'npc_dota_hero_razor', true) and #nEnemyHeroes >= #nAllyHeroes)
     or (bot:HasModifier('modifier_ursa_fury_swipes_damage_increase') and not bTeamFight and J.IsUnitNearby(bot, nEnemyHeroes, 700, 'npc_dota_hero_ursa', true))
-    or (bot:HasModifier('modifier_ice_blast') and not bTeamFight)
+    or (bot:HasModifier('modifier_ice_blast') and not bTeamFight and #nEnemyHeroes > #nAllyHeroes)
     then
         return BOT_MODE_DESIRE_ABSOLUTE
     end
@@ -173,20 +175,22 @@ function GetDesire()
         end
     end
 
-    local creepDamage = 0
-    local nEnemyCreeps = bot:GetNearbyCreeps(1200, true)
-    for _, creep in pairs(nEnemyCreeps) do
-        if J.IsValid(creep)
-        and not J.IsRoshan(creep)
-        and not J.IsTormentor(creep)
-        and creep:GetAttackTarget() == bot
-        then
-            creepDamage = creep:GetAttackDamage() * creep:GetAttackSpeed() * 5.0
+    if J.IsInLaningPhase() or botHP < 0.35 then
+        local creepDamage = 0
+        local nEnemyCreeps = bot:GetNearbyCreeps(1200, true)
+        for _, creep in pairs(nEnemyCreeps) do
+            if J.IsValid(creep)
+            and not J.IsRoshan(creep)
+            and not J.IsTormentor(creep)
+            and creep:GetAttackTarget() == bot
+            then
+                creepDamage = creepDamage + bot:GetActualIncomingDamage(creep:GetAttackDamage() * creep:GetAttackSpeed() * 3.0, DAMAGE_TYPE_PHYSICAL)
+            end
         end
-    end
 
-    if bot:GetActualIncomingDamage(creepDamage, DAMAGE_TYPE_PHYSICAL) / (botHealth + botHealthRegen * 5.0) > 0.15 then
-        return BOT_MODE_DESIRE_VERYHIGH
+        if creepDamage / (botHealth + botHealthRegen * 3.0) > 0.15 then
+            return BOT_MODE_DESIRE_VERYHIGH
+        end
     end
 
     -- should directly run
@@ -294,7 +298,21 @@ function GetDesire()
 
     if nEnemyNearbyCount > 0 then
         if nEnemyNearbyCount - nAllyNearbyCount > 0 then nDesire = nDesire + (nEnemyNearbyCount - nAllyNearbyCount) * 0.2 end
-        if not bWeAreStronger then nDesire = nDesire + 0.25 end
+        if not bWeAreStronger and nEnemyNearbyCount >= #nAllyHeroes then nDesire = nDesire + (nEnemyNearbyCount - nAllyNearbyCount) * 0.25 end
+        if nAllyNearbyCount >= nEnemyNearbyCount or bWeAreStronger then
+            if bot:HasModifier('modifier_oracle_false_promise_timer') and J.GetModifierTime(bot, 'modifier_oracle_false_promise_timer') > 2.0 and J.IsUnitNearby(bot, nAllyHeroes, 1200, 'npc_dota_hero_oracle', true) then
+                nDesire = nDesire - 0.25
+            end
+            if bot:HasModifier('modifier_dazzle_shallow_grave') and J.GetModifierTime(bot, 'modifier_dazzle_shallow_grave') >= 2.0 and J.IsUnitNearby(bot, nAllyHeroes, 1200, 'npc_dota_hero_dazzle', true) then
+                nDesire = nDesire - 0.2
+            end
+            if bot:HasModifier('modifier_item_satanic_unholy') then
+                nDesire = nDesire - 0.3
+            end
+        end
+    end
+
+    if bot:DistanceFromFountain() > 4000 then
         if (nEnemyNearbyCount == 0 or count == 0) and #nEnemyTowers == 0 then nDesire = nDesire - 0.25 end
     end
 
@@ -302,10 +320,19 @@ function GetDesire()
         nDesire = nDesire + 0.1
     end
 
+    if J.IsInLaningPhase() then
+        if not bot:WasRecentlyDamagedByAnyHero(3.0)
+        and botHP > 0.25
+        and bot:DistanceFromFountain() > 4000
+        and (#J.GetEnemyHeroesTargetingUnit(nEnemyHeroes, bot) == 0)
+        then
+            nDesire = nDesire -  0.75
+        end
+    end
+
     -- mulling
     -- nDesire = nDesire + X.GetUnitDesire(1200)
     nDesire = nDesire + X.RetreatWhenTowerTargetedDesire()
-    nDesire = nDesire - X.ShouldNotRetreatScore()
 
     return Min(nDesire, 1.0)
 end
@@ -616,64 +643,6 @@ function X.ShouldRun()
 	-- 		end
 	-- 	end	
 	-- end	
-
-	return 0
-end
-
--- from mode_team_roam_generic
-function X.ShouldNotRetreatScore()
-	if (J.GetModifierTime(bot, 'modifier_item_satanic_unholy') > 3.33)
-	or (bot:HasModifier('modifier_abaddon_borrowed_time') and J.WeAreStronger(bot, 1600))
-	or (bot:GetCurrentMovementSpeed() < 240 and not bot:HasModifier('modifier_arc_warden_spark_wraith_purge'))
-	then
-		return 0.75
-	end
-
-	local nInRangeAllyAttack = J.GetSpecialModeAllies(bot, 1200, BOT_MODE_ATTACK)
-
-    if nInRangeAllyAttack ~= nil then
-        if  (bot:HasModifier('modifier_item_mask_of_madness_berserk') or bot:HasModifier('modifier_oracle_false_promise_timer'))
-        and (#nInRangeAllyAttack > 1 or botHP > 0.6)
-        then
-            return 0.25
-        end
-    end
-
-    local nInRangeAlly = J.GetAlliesNearLoc(bot:GetLocation(), 800)
-
-	if (botName == 'npc_dota_hero_medusa' or bot:FindItemSlot('item_abyssal_blade') >= 0)
-    and #nInRangeAlly >= 3 and #nInRangeAllyAttack >= 1
-	then
-		return 0.5
-	end
-
-	if  botName == 'npc_dota_hero_skeleton_king'
-	and botLevel >= 6 and #nInRangeAllyAttack >= 1
-	then
-		local Reincarnation = bot:GetAbilityByName('skeleton_king_reincarnation')
-		if  Reincarnation:GetCooldownTimeRemaining() <= 1.0
-        and bot:GetMana() > 180
-		then
-            if #nAllyHeroes >= #nEnemyHeroes then
-                return 0.75
-            else
-                return 0.3
-            end
-		end
-	end
-
-	for _, allyHero in pairs(nInRangeAlly) do
-		if J.IsValidHero(allyHero) and allyHero ~= bot then
-			if (J.GetHP(allyHero) > 0.88 and allyHero:GetLevel() >= 10 and not J.IsRetreating(allyHero))
-            or (allyHero:IsMagicImmune())
-            or (allyHero:HasModifier('modifier_item_mask_of_madness_berserk') and allyHero:GetAttackTarget() ~= nil)
-            or (J.GetModifierTime(allyHero, 'modifier_item_satanic_unholy') > 3.33)
-            or allyHero:HasModifier('modifier_oracle_false_promise_timer')
-			then
-				return 0.4
-			end
-		end
-	end
 
 	return 0
 end

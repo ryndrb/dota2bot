@@ -17,66 +17,65 @@ local sUtilityItem = RI.GetBestUtilityItem(sUtility)
 
 local HeroBuild = {
     ['pos_1'] = {
-        -- [1] = {
-        --     ['talent'] = {
-        --         [1] = {
-        --             ['t25'] = {10, 0},
-        --             ['t20'] = {10, 0},
-        --             ['t15'] = {10, 0},
-        --             ['t10'] = {0, 10},
-        --         }
-        --     },
-        --     ['ability'] = {
-        --         [1] = {1,2,1,2,1,2,1,2,6,3,6,3,3,3,6},
-        --     },
-        --     ['buy_list'] = {
-        --         "item_double_branches",
-        --         "item_tango",
-        --         "item_quelling_blade",
-
-        --         "item_magic_wand",
-        --         "item_phase_boots",--bear
-        --         "item_maelstrom",
-        --         "item_desolator",--bear
-        --         "item_power_treads",
-        --         "item_diffusal_blade",
-        --         "item_assault",--bear
-        --         "item_ultimate_scepter",
-        --         "item_double_wraith_band",
-
-        --         "item_hyperstone",
-        --         "item_recipe_mjollnir",
-        --         -- "item_mjollnir",--bear
-
-        --         "item_eagle",
-        --         "item_recipe_disperser",
-        --         -- "item_disperser",--bear
-
-        --         "item_basher",
-        --         "item_recipe_ultimate_scepter_2",
-
-        --         "item_aghanims_shard",
-
-        --         "item_sange",
-        --         "item_recipe_abyssal_blade",
-        --         -- "item_abyssal_blade",--bear
-
-        --         "item_black_king_bar",--ld
-        --         "item_butterfly",--ld
-        --         "item_skadi",--ld
-        --         "item_heart",--ld
-        --         "item_sheepstick",--ld
-        --         "item_moon_shard",
-        --         "item_travel_boots_2",--ld
-        --     },
-        --     ['sell_list'] = {
-        --         "item_magic_wand", "item_skadi",
-        --         "item_wraith_band", "item_heart",
-        --         "item_wraith_band", "item_sheepstick",
-        --     },
-        -- },
-        -- Bear Necessities
+        -- Beat With Me
         [1] = {
+            ['talent'] = {
+                [1] = {
+                    ['t25'] = {10, 0},
+                    ['t20'] = {10, 0},
+                    ['t15'] = {10, 0},
+                    ['t10'] = {0, 10},
+                }
+            },
+            ['ability'] = {
+                [1] = {1,2,1,2,1,2,1,2,6,3,6,3,3,3,6},
+            },
+            ['buy_list'] = {
+                "item_tango",
+                "item_double_branches",
+                "item_quelling_blade",
+
+                "item_magic_wand",
+                "item_phase_boots",--bear
+                "item_maelstrom",
+                "item_diffusal_blade",
+                "item_power_treads",
+                "item_assault",--bear
+                "item_ultimate_scepter",
+                "item_black_king_bar",--ld
+
+                "item_hyperstone",
+                "item_recipe_mjollnir",
+                -- "item_mjollnir",--bear
+
+                "item_eagle",
+                "item_recipe_disperser",
+                -- "item_disperser",--bear
+
+                "item_basher",
+                "item_recipe_ultimate_scepter_2",
+
+                "item_bloodthorn",--bear
+
+                "item_sange",
+                "item_recipe_abyssal_blade",
+                -- "item_abyssal_blade",--bear
+
+                "item_vladmir",--ld
+                "item_butterfly",--ld
+                "item_nullifier",--ld
+                "item_sheepstick",--ld
+                "item_moon_shard",
+                "item_moon_shard",
+                "item_travel_boots_2",--ld
+                "item_aghanims_shard",
+            },
+            ['sell_list'] = {
+                "item_magic_wand", "item_sheepstick",
+            },
+        },
+        -- Bear Necessities
+        [2] = {
             ['talent'] = {
                 [1] = {
                     ['t25'] = {0, 10},
@@ -129,66 +128,64 @@ local HeroBuild = {
     },
     ['pos_2'] = {
         --Bear With Me
-        -- [1] = {
-        --     ['talent'] = {
-        --         [1] = {
-        --             ['t25'] = {10, 0},
-        --             ['t20'] = {10, 0},
-        --             ['t15'] = {10, 0},
-        --             ['t10'] = {0, 10},
-        --         }
-        --     },
-        --     ['ability'] = {
-        --         [1] = {1,2,1,2,1,2,1,2,6,3,6,3,3,3,6},
-        --     },
-        --     ['buy_list'] = {
-        --         "item_double_branches",
-        --         "item_tango",
-        --         "item_quelling_blade",
-
-        --         "item_magic_wand",
-        --         "item_phase_boots",--bear
-        --         "item_maelstrom",
-        --         "item_desolator",
-        --         "item_power_treads",
-        --         "item_diffusal_blade",
-        --         "item_assault",--bear
-        --         "item_ultimate_scepter",
-        --         "item_double_wraith_band",
-
-        --         "item_hyperstone",
-        --         "item_recipe_mjollnir",
-        --         -- "item_mjollnir",--bear
-
-        --         "item_eagle",
-        --         "item_recipe_disperser",
-        --         -- "item_disperser",--bear
-
-        --         "item_basher",
-        --         "item_recipe_ultimate_scepter_2",
-
-        --         "item_aghanims_shard",
-
-        --         "item_sange",
-        --         "item_recipe_abyssal_blade",
-        --         -- "item_abyssal_blade",--bear
-
-        --         "item_black_king_bar",--ld
-        --         "item_butterfly",--ld
-        --         "item_skadi",--ld
-        --         "item_heart",--ld
-        --         "item_sheepstick",--ld
-        --         "item_moon_shard",
-        --         "item_travel_boots_2",--ld
-        --     },
-        --     ['sell_list'] = {
-        --         "item_magic_wand", "item_skadi",
-        --         "item_wraith_band", "item_heart",
-        --         "item_wraith_band", "item_sheepstick",
-        --     },
-        -- },
-        --Bear Necessities
         [1] = {
+            ['talent'] = {
+                [1] = {
+                    ['t25'] = {10, 0},
+                    ['t20'] = {10, 0},
+                    ['t15'] = {10, 0},
+                    ['t10'] = {0, 10},
+                }
+            },
+            ['ability'] = {
+                [1] = {1,2,1,2,1,2,1,2,6,3,6,3,3,3,6},
+            },
+            ['buy_list'] = {
+                "item_tango",
+                "item_double_branches",
+                "item_quelling_blade",
+
+                "item_magic_wand",
+                "item_phase_boots",--bear
+                "item_maelstrom",
+                "item_diffusal_blade",
+                "item_power_treads",
+                "item_assault",--bear
+                "item_ultimate_scepter",
+                "item_black_king_bar",--ld
+
+                "item_hyperstone",
+                "item_recipe_mjollnir",
+                -- "item_mjollnir",--bear
+
+                "item_eagle",
+                "item_recipe_disperser",
+                -- "item_disperser",--bear
+
+                "item_basher",
+                "item_recipe_ultimate_scepter_2",
+
+                "item_bloodthorn",--bear
+
+                "item_sange",
+                "item_recipe_abyssal_blade",
+                -- "item_abyssal_blade",--bear
+
+                "item_vladmir",--ld
+                "item_butterfly",--ld
+                "item_nullifier",--ld
+                "item_sheepstick",--ld
+                "item_moon_shard",
+                "item_moon_shard",
+                "item_travel_boots_2",--ld
+                "item_aghanims_shard",
+            },
+            ['sell_list'] = {
+                "item_magic_wand", "item_sheepstick",
+            },
+        },
+        --Bear Necessities
+        [2] = {
             ['talent'] = {
                 [1] = {
                     ['t25'] = {0, 10},
@@ -276,8 +273,15 @@ local HeroBuild = {
         },
     },
 }
-HeroBuild['pos_1'] = HeroBuild['pos_2']
-local sSelectedBuild = HeroBuild[sRole][RandomInt(1, #HeroBuild[sRole])]
+
+local sSelectedBuild = {}
+
+GLOBAL_bHaveBearNecessitiesFacet = false
+if GLOBAL_bHaveBearNecessitiesFacet then
+    sSelectedBuild = HeroBuild[sRole][2]
+else
+    sSelectedBuild = HeroBuild[sRole][1]
+end
 
 local nTalentBuildList = J.Skill.GetTalentBuild(J.Skill.GetRandomBuild(sSelectedBuild.talent))
 local nAbilityBuildList = J.Skill.GetRandomBuild(sSelectedBuild.ability)
@@ -449,5 +453,56 @@ function X.ConsiderTrueForm()
 
     return BOT_ACTION_DESIRE_NONE
 end
+
+-- Items to give
+-- Bear With Me
+GLOBAL_hBearItemList_BearWithMe = {
+	"item_quelling_blade",
+	"item_phase_boots",--bear
+	"item_maelstrom",
+	"item_diffusal_blade",
+	"item_assault",--bear
+	"item_ultimate_scepter",
+
+	"item_hyperstone",
+	"item_recipe_mjollnir",
+	"item_mjollnir",--bear
+
+	"item_eagle",
+	"item_recipe_disperser",
+	"item_disperser",--bear
+
+	"item_basher",
+	"item_recipe_ultimate_scepter_2",
+
+	"item_bloodthorn",--bear
+
+	"item_sange",
+	"item_recipe_abyssal_blade",
+	"item_abyssal_blade",--bear
+
+	"item_moon_shard",
+}
+--Bear Necessities
+GLOBAL_hBearItemList_BearNecessities = {
+	"item_quelling_blade",
+	"item_power_treads",--bear
+	"item_desolator",--bear
+	"item_echo_sabre",
+	"item_diffusal_blade",
+	"item_assault",--bear
+	"item_ultimate_scepter",
+
+	"item_diadem",
+	"item_recipe_harpoon",
+	"item_harpoon",--bear
+
+	"item_eagle",
+	"item_recipe_disperser",
+	"item_disperser",--bear
+
+	"item_satanic",--bear
+	"item_recipe_ultimate_scepter_2",
+}
 
 return X

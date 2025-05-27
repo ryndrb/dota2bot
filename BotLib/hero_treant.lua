@@ -222,7 +222,7 @@ function X.SkillsComplement()
     EyesInTheForestDesire, EyesInTheForestTarget = X.ConsiderEyesInTheForest()
     if EyesInTheForestDesire > 0
     then
-        bot:Action_UseAbilityOnEntity(EyesInTheForest, EyesInTheForestTarget)
+        bot:Action_UseAbilityOnTree(EyesInTheForest, EyesInTheForestTarget)
         return
     end
 

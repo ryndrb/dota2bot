@@ -205,6 +205,7 @@ local abilityR = bot:GetAbilityByName('huskar_life_break')
 
 local castQDesire
 local castWDesire, castWTarget
+local BerserkersBloodDesire
 local castRDesire, castRTarget
 
 local botTarget
@@ -242,6 +243,13 @@ function X.SkillsComplement()
 	then
 		bot:Action_ClearActions( false )
 		bot:ActionQueue_UseAbilityOnEntity( abilityW, castWTarget )
+		return
+	end
+
+	BerserkersBloodDesire = X.ConsiderBerserkersBlood()
+	if BerserkersBloodDesire > 0 then
+		bot:Action_ClearActions( false )
+		bot:ActionQueue_UseAbility(abilityE)
 		return
 	end
 end
@@ -591,6 +599,29 @@ function X.ConsiderW()
 	return BOT_ACTION_DESIRE_NONE
 end
 
+function X.ConsiderBerserkersBlood()
+	if not J.CanCastAbility(abilityE) then
+		return BOT_ACTION_DESIRE_NONE
+	end
+
+	local nActivationCost = bot:GetHealth() * 0.30 -- <- should be; but in-game shows the wrong number/cost (?)
+	local nHealthAfter = J.GetHealthAfter(nActivationCost)
+
+	if nHealthAfter > 0.2 then
+		if bot:IsRooted()
+		or bot:IsDisarmed()
+		or (bot:IsSilenced() and not bot:HasModifier('modifier_item_mask_of_madness_berserk'))
+		or bot:HasModifier('modifier_item_spirit_vessel_damage')
+		or bot:HasModifier('modifier_dragonknight_breathefire_reduction')
+		or bot:HasModifier('modifier_slardar_amplify_damage')
+		or bot:HasModifier('modifier_item_dustofappearance')
+		then
+			return BOT_ACTION_DESIRE_HIGH
+		end
+	end
+
+	return BOT_ACTION_DESIRE_NONE
+end
 
 function X.ConsiderR()
 	if not J.CanCastAbility(abilityR) then return 0 end

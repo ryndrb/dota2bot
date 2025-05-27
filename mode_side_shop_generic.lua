@@ -24,10 +24,10 @@ function GetDesire()
     local tAllyInTormentorLocation = J.GetAlliesNearLoc(TormentorLocation, 900)
     local tAllyInTormentorWaitLocation = J.GetAlliesNearLoc(vWaitingLocation, 900)
     local tInRangeEnemy = J.GetEnemiesNearLoc(bot:GetLocation(), 1600)
-    local nAliveAlly = J.GetNumOfAliveHeroes(false)
+    local nAliveAlly = 0
 
     local nTormentorSpawnInterval = J.IsModeTurbo() and 5 or 10
-    local nTormentorSpawnTime = J.IsModeTurbo() and 7.5 or 15
+    local nTormentorSpawnTime = J.IsModeTurbo() and 10 or 20
 
     local nHumanCountInLoc = 0
     local nAttackingTormentorCount = 0
@@ -43,6 +43,7 @@ function GetDesire()
             local memberLevel = member:GetLevel()
 
             if member:IsAlive() then
+                nAliveAlly = nAliveAlly + 1
                 table.insert(tAliveAllies, member)
 
                 if not member:IsBot() then

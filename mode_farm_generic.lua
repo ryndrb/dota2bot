@@ -61,6 +61,7 @@ function GetDesire()
 		beVeryHighFarmer = J.GetPosition(bot) == 1
 	end
 
+	local LoneDruid = J.CheckLoneDruid()
     local botActiveMode = bot:GetActiveMode()
 	local botActiveModeDesire = bot:GetActiveModeDesire()
     local botLevel = bot:GetLevel()
@@ -296,13 +297,10 @@ function GetDesire()
 		end
 	end
 
-
 	if GetGameMode() ~= GAMEMODE_MO 
-	-- and (J.Site.IsTimeToFarm(bot) or pushTime > DotaTime() - 8.0)
-	and (J.Site.IsTimeToFarm(bot) and (J.IsCore(bot) and bot:GetLastHits() < (J.IsModeTurbo() and 400 or 200) and not J.IsDefending(bot)))
-	-- and J.Site.IsTimeToFarm(bot)
-	-- and (not J.IsHumanPlayerInTeam() or enemyKills > allyKills + 16)
-	-- and ( bot:GetNextItemPurchaseValue() > 0 or not bot:HasModifier("modifier_item_moon_shard_consumed") )
+	and J.Site.IsTimeToFarm(bot)
+	and not J.IsDefending(bot)
+	and (bot:GetUnitName() ~= 'npc_dota_hero_lone_druid_bear' or (bot:HasScepter() and not J.IsValid(LoneDruid.hero)))
 	and (DotaTime() > 8 * 60 or bot:GetLevel() >= 8 or ( bot:GetAttackRange() < 220 and bot:GetLevel() >= 6 ))
 	then
 		if J.GetDistanceFromEnemyFountain(bot) > 4000 

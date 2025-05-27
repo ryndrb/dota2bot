@@ -11,6 +11,7 @@ function GetDesire()
 	local currentTime = DotaTime()
 	local botActiveMode = bot:GetActiveMode()
 	local botActiveModeDesire = bot:GetActiveMode()
+	local botAssignedLane = bot:GetAssignedLane()
 
 	if currentTime < 0
 	or not bot:IsAlive()
@@ -22,48 +23,23 @@ function GetDesire()
 		return BOT_ACTION_DESIRE_NONE
 	end
 
-	if J.IsNonStableHero(botName) then
-		if clearMode then
-			clearMode = false
-			return 0
-		end
-
-		-- last hit
-		if J.IsInLaningPhase() then
-			local nEnemyLaneCreeps = bot:GetNearbyLaneCreeps(bot:GetAttackRange() + 150, true)
-			local hitCreep = GetBestLastHitCreep(nEnemyLaneCreeps)
-			if J.IsValid(hitCreep) then
-				local nLanePartner = J.GetLanePartner(bot)
-				if nLanePartner == nil
-				or J.IsCore(bot)
-				or (not J.IsCore(bot)
-					and J.IsCore(nLanePartner)
-					and (not nLanePartner:IsAlive()
-						or not J.IsInRange(bot, nLanePartner, 800)))
-				then
-					return 0.9
-				end
-			end
-		end
-	end
-
 	local bCore = J.IsCore(bot)
 	local botLevel = bot:GetLevel()
+	local nInRangeEnemy = J.GetEnemiesNearLoc(bot:GetLocation(), 1200)
 	if (DotaTime() < 10 * 60) and ((bCore and bot:GetNetWorth() < 5500) or (not bCore and botLevel < 6))
 	then
 		local nLastHits = bot:GetLastHits()
 		local nDesire = RemapValClamped(nLastHits, 50, 75, BOT_MODE_DESIRE_HIGH, BOT_MODE_DESIRE_LOW)
-		local botAssignedLane = bot:GetAssignedLane()
 		local vLaneFrontLocation = GetLocationAlongLane(botAssignedLane, GetLaneFrontAmount(GetTeam(), botAssignedLane, false))
+		nInRangeEnemy = J.GetEnemiesNearLoc(vLaneFrontLocation, 1200)
 		local nInRangeAlly = J.GetAlliesNearLoc(vLaneFrontLocation, 1200)
-		local nInRangeEnemy = J.GetEnemiesNearLoc(vLaneFrontLocation, 1200)
 		local botTarget = J.GetProperTarget(bot)
 		local bGood = DotaTime() > 10
 					and ((#nInRangeEnemy >= 1 and J.GetHP(bot) > 0.25) or (#nInRangeEnemy == 0))
 					and #nInRangeAlly >= #nInRangeEnemy
 					and not (#nInRangeAlly >= #nInRangeEnemy + 1)
 					-- and (GetUnitToLocationDistance(bot, vLaneFrontLocation) < 2000 and #nEnemyLaneCreeps > 0)
-					and not J.IsRetreating(bot)
+					-- and not J.IsRetreating(bot)
 
 		bot.isInLanePhase = true
 
@@ -85,6 +61,36 @@ function GetDesire()
 			end
 		else
 			return RemapValClamped(#nInRangeAlly - #nInRangeEnemy, -1, 1, 0.25, 0.5)
+		end
+	end
+
+	local nTower = TOWER_TOP_1
+	if botAssignedLane == LANE_MID then
+		nTower = TOWER_MID_1
+	elseif botAssignedLane == LANE_BOT then
+		nTower = TOWER_BOT_1
+	end
+
+	-- try stay in lane to get the farming item
+	if bot.sItemBuyList and not string.find(botName, 'lone_druid') and GetTower(GetTeam(), nTower) ~= nil then
+		local bHaveEarlyFarmingItem = false
+		local sItemName = ''
+		for i = 1, #bot.sItemBuyList do
+			if bot.sItemBuyList[i] == 'item_maelstrom'
+			or bot.sItemBuyList[i] == 'item_mjollnir'
+			or bot.sItemBuyList[i] == 'item_bfury'
+			then
+				if i <= (#bot.sItemBuyList / 2) then
+					sItemName = bot.sItemBuyList[i]
+					bHaveEarlyFarmingItem = true
+					break
+				end
+			end
+		end
+
+		if bHaveEarlyFarmingItem and not J.HasItemInInventory(sItemName) then
+			bot.isInLanePhase = true
+			return BOT_MODE_DESIRE_LOW
 		end
 	end
 
@@ -150,8 +156,7 @@ end
 
 local fNextMovementTime = 0
 function Think()
-	if not bot:IsAlive() or J.CanNotUseAction(bot) then
-		clearMode = true
+	if J.CanNotUseAction(bot) then
 		return
 	end
 
@@ -159,36 +164,29 @@ function Think()
 	local botAssignedLane = bot:GetAssignedLane()
 	local nAllyCreeps = bot:GetNearbyLaneCreeps(1200, false)
 	local nEnemyCreeps = bot:GetNearbyLaneCreeps(1200, true)
+	local tEnemyHeroes = bot:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
+	local tEnemyTowers = bot:GetNearbyTowers(1200, true)
 
 	local nFurthestEnemyAttackRange = GetFurthestEnemyAttackRange()
 
-	if bot:WasRecentlyDamagedByAnyHero(2.0)
-	or bot:WasRecentlyDamagedByTower(2.0)
+	if (bot:WasRecentlyDamagedByAnyHero(2.0) and #J.GetEnemyHeroesTargetingUnit(tEnemyHeroes, bot) >= 1)
+	or (J.IsValidBuilding(tEnemyTowers[1]) and tEnemyTowers[1]:GetAttackTarget() == bot)
 	or (bot:WasRecentlyDamagedByCreep(2.0) and not (bot:HasModifier('modifier_tower_aura') or bot:HasModifier('modifier_tower_aura_bonus')) and #nAllyCreeps > 0) then
-		nFurthestEnemyAttackRange = nFurthestEnemyAttackRange + 450
+		local safeLoc = GetLaneFrontLocation(GetTeam(), botAssignedLane, -1200)
+		bot:Action_MoveToLocation(safeLoc)
+		return
 	end
 
-	local tEnemyLaneCreeps = bot:GetNearbyLaneCreeps(1200, true)
-	local tEnemyTowers = bot:GetNearbyTowers(800, true)
-
-	if bot:WasRecentlyDamagedByTower(1.0) and #tEnemyLaneCreeps > 0 then
-		if DropTowerAggro(bot, tEnemyLaneCreeps) then
+	if bot:WasRecentlyDamagedByTower(1.0) and #nEnemyCreeps > 0 then
+		if DropTowerAggro(bot, nEnemyCreeps) then
 			return
 		end
-	elseif bot:WasRecentlyDamagedByTower(1.0) then
-		if #tEnemyTowers > 0 then
-			local dist = GetUnitToUnitDistance(bot, tEnemyTowers[1])
-			if dist < 800 then
-				bot:Action_MoveToLocation(J.GetXUnitsTowardsLocation2(bot:GetLocation(), J.GetTeamFountain(), 800 - dist))
-				return
-			end
-		end
 	end
 
-	if #tEnemyTowers > 0 then
-		local dist = GetUnitToUnitDistance(bot , tEnemyTowers[1])
-		if dist < 800 then
-			bot:Action_MoveToLocation(J.GetXUnitsTowardsLocation2(bot:GetLocation(), J.GetTeamFountain(), 800 - dist))
+	if J.IsValidBuilding(tEnemyTowers[1]) then
+		local dist = GetUnitToUnitDistance(bot, tEnemyTowers[1])
+		if dist < 800 and #nEnemyCreeps < 3 then
+			bot:Action_MoveToLocation(J.VectorAway(bot:GetLocation(), tEnemyTowers[1]:GetLocation(), 800))
 			return
 		end
 	end
@@ -220,9 +218,8 @@ function Think()
 	end
 
 	-- support harass (later ie. willow, hoodwink etc); don't strong creep aggro
-	tEnemyLaneCreeps = bot:GetNearbyLaneCreeps(600, true)
-	local tEnemyHeroes = bot:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
-	if #tEnemyLaneCreeps <= 1 and not J.IsCore(bot) then
+	nEnemyCreeps = bot:GetNearbyLaneCreeps(600, true)
+	if #nEnemyCreeps <= 1 and not J.IsCore(bot) then
 		local harassTarget = GetHarassTarget(tEnemyHeroes)
 		if J.IsValidHero(harassTarget) then
 			bot:Action_AttackUnit(harassTarget, true)
@@ -242,7 +239,7 @@ function Think()
 	end
 
 	if DotaTime() >= fNextMovementTime then
-		bot:Action_MoveToLocation(target_loc)
+		bot:Action_MoveToLocation(target_loc + RandomVector(300))
 		fNextMovementTime = DotaTime() + RandomFloat(0.05, 0.2)
 	end
 end

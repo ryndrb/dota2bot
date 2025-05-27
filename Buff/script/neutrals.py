@@ -1,100 +1,133 @@
-# simple python script to make a neutral items table for a weighted distribution selection
+# was using stratz prior, but it seems they won't update neutral item stats
+# simple python script to scrape item data from dotabuff
 # run from time to time
-import requests
 
-STRATZ_API_URL = "https://api.stratz.com/graphql"
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+from bs4 import BeautifulSoup
+from names import hero_name_table, neutral_name_table, enhancement_name_table
+import time
 
-headers = {
-    "User-Agent": "STRATZ_API",
-    "Authorization": "Bearer {KEY HERE}"
-}
+# more general as can't go by bracket
+def GetHeroItems(hero_url_name):
+    url = f"https://www.dotabuff.com/heroes/{hero_url_name}/items?date=patch_7.39"
 
-hero_query_template = """
-{
-  constants {
-    heroes {
-      id
-      name
-    }
-  }
-}
-"""
+    options = Options()
+    options.add_argument("--headless")
+    options.add_argument("--disable-gpu")
+    driver = webdriver.Chrome(options=options)
+    driver.get(url)
+    
+    time.sleep(5)
+    soup = BeautifulSoup(driver.page_source, "html.parser")
+    driver.quit()
 
-item_query_template = """
-{
-  heroStats {
-    itemNeutral(heroId: HERO_ID, bracketBasicIds: [DIVINE_IMMORTAL]) {
-      itemId
-      equippedMatchCount
-      item {
-        name
-        stat {
-          neutralItemTier
-        }
-      }
-    }
-  }
-}
-"""
+    item_table = soup.find("table", {"class": "sortable"})
+    if not item_table:
+        print(f"No item table found for {hero_url_name}.")
+        return {}
 
-# it keeps hitting the rate limit when trying to have it by positions (1+126*5) too using a default token, so it'll be just be a general one; for now anyway
-def Fetch__GraphQL(query):
-    response = requests.post(STRATZ_API_URL, json={"query": query}, headers=headers)
-    if response.status_code == 200:
-        return response.json()
-    else:
-        raise Exception(f"FAIL with status code {response.status_code}: {response.text}")
+    raw_items_data = { "neutral": {}, "enhancement": {} }
+    rows = item_table.find_all("tr")
 
-# TODO: "fix" tier 5's
-try:
-    hero_data = Fetch__GraphQL(hero_query_template)
-    heroes = hero_data["data"]["constants"]["heroes"]
+    for row in rows[1:]:
+        cols = row.find_all("td")
+        if len(cols) >= 3:
+            item_name = cols[1].get_text(strip=True)
+            matches = cols[2].get_text(strip=True).replace(",", "")
 
-    lua_table = "local hHeroList = {\n"
-
-    for hero in heroes:
-        hero_id = hero["id"]
-        hero_name = hero["name"]
-
-        print(f'At {hero_name} ..')
-
-        item_query = item_query_template.replace("HERO_ID", str(hero_id))
-        item_data = Fetch__GraphQL(item_query)
-
-        items = item_data["data"]["heroStats"]["itemNeutral"]
-        
-        tier_data = {}
-        for item in items:
-            tier = item["item"]["stat"]["neutralItemTier"]
-            if tier is None:
+            try:
+                matches = float(matches)
+            except ValueError:
                 continue
-            if tier not in tier_data:
-                tier_data[tier] = []
-            tier_data[tier].append(item)
+
+            # populate
+            for table, key in [(neutral_name_table, "neutral"), (enhancement_name_table, "enhancement")]:
+                for tier, items in table.items():
+                    for item_key, item_data in items.items():
+                        if item_data['visibleName'] == item_name:
+                            if tier not in raw_items_data[key]:
+                                raw_items_data[key][tier] = {}
+                            raw_items_data[key][tier][item_key] = matches
+
+    items_data = { "neutral": {}, "enhancement": {} }
+
+    total_matches_per_tier = {}
+    for tier, items in raw_items_data["neutral"].items():
+        total_matches_per_tier[tier] = sum(items.values())
+
+    for tier, items in raw_items_data["neutral"].items():
+        total = total_matches_per_tier[tier]
+        items_data["neutral"][tier] = {}
+        for item_key, matches in items.items():
+            items_data["neutral"][tier][item_key] = round((matches / total) * 100, 2) if total > 0 else 0
+            
+    # annoying stuff
+    for tier, items in raw_items_data["enhancement"].items():
+        items_data["enhancement"][tier] = {}
         
-        lua_table += f"  ['{hero_name}'] = {{\n"
-        
-        for tier, tier_items in sorted(tier_data.items()):
-            tier_items = sorted(tier_items, key=lambda item: item['equippedMatchCount'], reverse=True)
-        
-            total_matches = sum(item['equippedMatchCount'] for item in tier_items)
-            if total_matches > 0:
-                lua_table += f"    ['{tier}'] = {{"
-                for item in tier_items:
-                    item_name = item['item']['name']
-                    match_count = item['equippedMatchCount']
-                    pick_rate = (match_count / total_matches) * 100
-                    lua_table += f"['{item_name}']={pick_rate:.2f}, "
-                lua_table = lua_table.rstrip(", ") + "},\n"
+        # map to canonical tier as can't scrape by pos
+        item_key_to_tier_unique = {}
+        for item_key in items:
+            for name_group in enhancement_name_table.values():
+                if item_key in name_group:
+                    item_key_to_tier_unique[item_key] = name_group[item_key]["tier_unique"]
+                    break
+            else:
+                item_key_to_tier_unique[item_key] = tier
 
-        lua_table += "  },\n"
+        # as above, sum accordingly
+        tier_unique_totals = {}
+        for item_key in items:
+            tier_unique = item_key_to_tier_unique[item_key]
+            if tier_unique not in tier_unique_totals:
+                tier_unique_totals[tier_unique] = 0
+                for k, v in enhancement_name_table[tier_unique].items():
+                    if v["tier_unique"] == tier_unique and k in raw_items_data["enhancement"].get(tier_unique, {}):
+                        tier_unique_totals[tier_unique] += raw_items_data["enhancement"][tier_unique][k]
 
-    lua_table += "}\n"
-    lua_table += "return hHeroList\n"
+        for item_key, matches in items.items():
+            total = tier_unique_totals.get(item_key_to_tier_unique[item_key], 0)
+            percentage = (matches / total) * 100 if total > 0 else 0
+            items_data["enhancement"][tier][item_key] = percentage
+            
+        total = sum(items_data["enhancement"][tier].values())
+        if total > 0:
+            items_data["enhancement"][tier] = {key: round((value / total) * 100, 2) for key, value in items_data["enhancement"][tier].items()}  
 
-    with open("ndata.lua", "w") as lua_file:
-        lua_file.write(lua_table)
+    return items_data
 
-    print("'ndata.lua' has been generated!")
+items_dict = {}
+
+try:
+    # fetch
+    for internal_name, data in hero_name_table.items():
+        print(f"Fetching items for {internal_name}...")
+        items = GetHeroItems(data["urlName"])
+
+        if items:
+            items_dict[internal_name] = items
+        else:
+            print(f"No items found for {internal_name}.")
+
+    # generate lua file
+    with open("neutrals_data.lua", "w", encoding="utf-8") as lua_file:
+        lua_file.write("-----\n-- This file is generated by bots/Buff/script/neutrals.py\n-----\n\n")
+        lua_file.write("local heroList = {\n")
+        for hero, item_data in items_dict.items():
+            lua_file.write(f"    ['{hero}'] = {{\n")
+            for type, items1 in item_data.items():
+                lua_file.write(f"       ['{type}'] = {{\n")
+                for tier, items2 in items1.items():
+                    lua_file.write(f"           [{tier}] = {{")
+                    for item_name, chance in items2.items():
+                        lua_file.write(f"['{item_name}'] = {chance}, ")
+                    lua_file.write("},\n")
+                lua_file.write("        },\n")
+            lua_file.write("    },\n")
+
+        lua_file.write("}\n\nreturn heroList\n")
+
+    print("\nneutrals_data.lua has been generated!")
 except Exception as e:
     print(f"Error: {e}")

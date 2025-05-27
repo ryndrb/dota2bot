@@ -666,63 +666,61 @@ function X.ConsiderPlanarPocket()
     if not J.CanCastAbility(PlanarPocket)
     or bot:HasModifier('modifier_spirit_breaker_charge_of_darkness')
     then
-        return BOT_ACTION_DESIRE_NONE
+        return BOT_ACTION_DESIRE_NONE, nil
     end
 
+    local nCastRange = J.GetProperCastRange(false, bot, PlanarPocket:GetCastRange())
     local nRadius = PlanarPocket:GetSpecialValueInt('radius')
     local botTarget = J.GetProperTarget(bot)
+    local botHP = J.GetHP(bot)
 
-    if J.IsInTeamFight(bot, 1200)
-	then
-        local nInRangeEnemy = J.GetEnemiesNearLoc(bot:GetLocation(), nRadius)
-
-		if  nInRangeEnemy ~= nil and #nInRangeEnemy >= 2
-        and bot:WasRecentlyDamagedByAnyHero(1)
-		then
-			return BOT_ACTION_DESIRE_HIGH
-		end
-	end
-
-    if J.IsGoingOnSomeone(bot)
-	then
-		if  J.IsValidTarget(botTarget)
-        and J.CanCastOnNonMagicImmune(botTarget)
-        and J.IsInRange(bot, botTarget, 600)
-        and bot:WasRecentlyDamagedByAnyHero(1)
-        and not J.IsChasingTarget(bot, botTarget)
-        and not J.IsSuspiciousIllusion(botTarget)
-        and not J.IsDisabled(botTarget)
-		then
-            local nInRangeAlly = botTarget:GetNearbyHeroes(1200, true, BOT_MODE_NONE)
-            local nInRangeEnemy = botTarget:GetNearbyHeroes(1200, false, BOT_MODE_NONE)
-
-            if  nInRangeAlly ~= nil and nInRangeEnemy ~= nil
-            and #nInRangeAlly >= #nInRangeEnemy
-            then
-                return BOT_ACTION_DESIRE_HIGH
-            end
-		end
-	end
-
-    if J.IsRetreating(bot)
-	then
-        local nInRangeAlly = bot:GetNearbyHeroes(1200, false, BOT_MODE_NONE)
-        local nInRangeEnemy = bot:GetNearbyHeroes(1200, true, BOT_MODE_NONE)
-
-        if  nInRangeAlly ~= nil and nInRangeEnemy ~= nil
-        and J.IsValidHero(nInRangeEnemy[1])
-        and J.IsInRange(bot, nInRangeEnemy[1], 600)
-        and J.IsChasingTarget(nInRangeEnemy[1], bot)
-        and not J.IsSuspiciousIllusion(nInRangeEnemy[1])
-        and not J.IsDisabled(nInRangeEnemy[1])
+    local nAllyHeroes = bot:GetNearbyHeroes(nCastRange, false, BOT_MODE_NONE)
+    for _, allyHero in ipairs(nAllyHeroes) do
+        if J.IsValidHero(allyHero)
+        and allyHero ~= bot
+        and J.CanBeAttacked(allyHero)
+        and not J.IsSuspiciousIllusion(allyHero)
+        and not J.IsMeepoClone(allyHero)
+        and not allyHero:HasModifier('modifier_doom_bringer_doom_aura_enemy')
+        and not allyHero:HasModifier('modifier_necrolyte_reapers_scythe')
+        and (J.IsCore(allyHero)
+            or (not J.IsCore(allyHero) and J.GetHP(allyHero) > 0.25 and not J.IsThereCoreNearby(800)))
         then
-            local nTargetInRangeAlly = nInRangeEnemy[1]:GetNearbyHeroes(1200, false, BOT_MODE_NONE)
-
-            if  nTargetInRangeAlly ~= nil
-            and ((#nTargetInRangeAlly > #nInRangeAlly)
-                or (bot:WasRecentlyDamagedByAnyHero(1)))
+            local nEnemyHeroes = allyHero:GetNearbyHeroes(900, true, BOT_MODE_NONE)
+            if  #J.GetEnemyHeroesTargetingUnit(nEnemyHeroes, allyHero) >= 2
+            and #J.GetEnemyHeroesTargetingUnit(nEnemyHeroes, bot) <= 1
+            and botHP >= 0.5
             then
-		        return BOT_ACTION_DESIRE_HIGH
+                return BOT_ACTION_DESIRE_HIGH, allyHero
+            end
+
+            if botHP > 0.5 then
+                if (J.IsUnitTargetProjectileIncoming(allyHero, 400))
+                or (J.IsStunProjectileIncoming(allyHero, 400))
+                or (not allyHero:HasModifier('modifier_sniper_assassinate'))
+                then
+                    return BOT_ACTION_DESIRE_HIGH, allyHero
+                end
+            end
+
+            if botHP < 0.25 then
+                if (J.IsUnitTargetProjectileIncoming(bot, 400))
+                or (J.IsStunProjectileIncoming(bot, 400))
+                or (not bot:HasModifier('modifier_sniper_assassinate'))
+                then
+                    return BOT_ACTION_DESIRE_HIGH, allyHero
+                end
+            end
+
+            if J.IsInTeamFight(bot, 1200) and botHP < 0.65 then
+                local attackingCount = #J.GetEnemyHeroesTargetingUnit(nEnemyHeroes, bot)
+                nEnemyHeroes = J.GetEnemiesNearLoc(bot:GetLocation(), 1200)
+                if attackingCount >= 3
+                or bot:HasModifier('modifier_jakiro_macropyre_burn') and attackingCount >= 1
+                or bot:HasModifier('modifier_sand_king_epicenter_slow') and attackingCount >= 2
+                then
+                    return BOT_ACTION_DESIRE_HIGH, allyHero
+                end
             end
         end
     end

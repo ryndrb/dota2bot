@@ -32,51 +32,6 @@ local fDissimilateTime = 0
 
 local fNextMovementTime = -math.huge
 local LoneDruid = {}
--- local hBearItemList = {
--- 	"item_quelling_blade",
--- 	"item_phase_boots",--bear
--- 	"item_maelstrom",
--- 	"item_desolator",
--- 	"item_diffusal_blade",
--- 	"item_assault",--bear
--- 	"item_ultimate_scepter",
-
--- 	"item_hyperstone",
--- 	"item_recipe_mjollnir",
--- 	-- "item_mjollnir",--bear
-
--- 	"item_eagle",
--- 	"item_recipe_disperser",
--- 	-- "item_disperser",--bear
-
--- 	"item_basher",
--- 	"item_recipe_ultimate_scepter_2",
-
--- 	"item_vanguard",
--- 	"item_recipe_abyssal_blade",
--- 	-- "item_abyssal_blade",--bear
--- }
---Bear Necessities
-local hBearItemList = {
-	"item_quelling_blade",
-	"item_power_treads",--bear
-	"item_desolator",--bear
-	"item_echo_sabre",
-	"item_diffusal_blade",
-	"item_assault",--bear
-	"item_ultimate_scepter",
-
-	"item_diadem",
-	"item_recipe_harpoon",
-	-- "item_recipe_harpoon",--bear
-
-	"item_eagle",
-	"item_recipe_disperser",
-	-- "item_disperser",--bear
-
-	"item_satanic",--bear
-	"item_recipe_ultimate_scepter_2",
-}
 
 function GetDesire()
 	if not IsEnemyTier2Down
@@ -121,12 +76,12 @@ function GetDesire()
 		if cAbility:IsInAbilityPhase() or bot:IsChanneling() then
 			return BOT_MODE_DESIRE_ABSOLUTE;
 		end	
-	-- elseif botName == "npc_dota_hero_drow_ranger"
-	-- 	then
-	-- 		if cAbility == nil then cAbility = bot:GetAbilityByName( "drow_ranger_multishot" ) end;
-	-- 		if cAbility:IsInAbilityPhase() or bot:IsChanneling() then
-	-- 			return BOT_MODE_DESIRE_ABSOLUTE;
-	-- 		end	
+	elseif botName == "npc_dota_hero_drow_ranger"
+		then
+			if cAbility == nil then cAbility = bot:GetAbilityByName( "drow_ranger_multishot" ) end;
+			if cAbility:IsInAbilityPhase() or bot:IsChanneling() then
+				return BOT_MODE_DESIRE_ABSOLUTE;
+			end	
 	elseif botName == "npc_dota_hero_shadow_shaman"
 		then
 			if cAbility == nil then cAbility = bot:GetAbilityByName( "shadow_shaman_shackles" ) end;
@@ -371,11 +326,11 @@ function GetDesire()
 
 	TPScroll = J.GetItem2(bot, 'item_tpscroll')
 
-	if  ConsiderWaitInBaseToHeal()
-	and GetUnitToLocationDistance(bot, J.GetTeamFountain()) > 5500
-	then
-		return BOT_ACTION_DESIRE_ABSOLUTE
-	end
+	-- if  ConsiderWaitInBaseToHeal()
+	-- and GetUnitToLocationDistance(bot, J.GetTeamFountain()) > 5500
+	-- then
+	-- 	return BOT_ACTION_DESIRE_ABSOLUTE
+	-- end
 
 	TinkerShouldWaitInBaseToHeal = TinkerWaitInBaseAndHeal()
 	if TinkerShouldWaitInBaseToHeal
@@ -403,8 +358,9 @@ function GetDesire()
 	-- 	return BOT_ACTION_DESIRE_ABSOLUTE
 	-- end
 
+	-- Bear Necessities
 	-- facet fix
-	if J.IsValid(LoneDruid.hero) and bot == LoneDruid.hero then
+	if GLOBAL_bHaveBearNecessitiesFacet and J.IsValid(LoneDruid.hero) and bot == LoneDruid.hero then
 		for i = 0, 8 do
 			local hItem = bot:GetItemInSlot(i)
 			if hItem ~= nil and i >= 3 then
@@ -429,31 +385,56 @@ function GetDesire()
 			for i = 0, 8 do
 				local hItem = bot:GetItemInSlot(i)
 				if hItem ~= nil then
-					for _, itemName in pairs(hBearItemList) do
-						local hItemName = hItem:GetName()
-						if hItemName == itemName then
-							if itemName == 'item_hyperstone' then
-								if J.HasItem(LoneDruid.bear, 'item_assault') then
+					local hItemName = hItem:GetName()
+
+					if GLOBAL_bHaveBearNecessitiesFacet then
+						for _, itemName in pairs(GLOBAL_hBearItemList_BearNecessities) do
+							if hItemName == itemName then
+								if itemName == 'item_hyperstone' then
+									if J.HasItem(LoneDruid.bear, 'item_assault') then
+										bot.dropItem = hItem
+										bot.isGiveItem = true
+										return BOT_MODE_DESIRE_ABSOLUTE
+									end
+								elseif itemName == 'item_eagle' then
+									if J.HasItem(LoneDruid.hero, 'item_butterfly') then
+										bot.dropItem = hItem
+										bot.isGiveItem = true
+										return BOT_MODE_DESIRE_ABSOLUTE
+									end
+								elseif itemName == 'item_power_treads' then
+									if (J.HasItem(LoneDruid.hero, 'item_lesser_crit') or J.HasItem(LoneDruid.hero, 'item_greater_crit')) then
+										bot.dropItem = hItem
+										bot.isGiveItem = true
+										return BOT_MODE_DESIRE_ABSOLUTE
+									end
+								else
 									bot.dropItem = hItem
 									bot.isGiveItem = true
 									return BOT_MODE_DESIRE_ABSOLUTE
 								end
-							elseif itemName == 'item_eagle' then
-								if J.HasItem(LoneDruid.hero, 'item_butterfly') then
+							end
+						end
+					else
+						for _, itemName in pairs(GLOBAL_hBearItemList_BearWithMe) do
+							if hItemName == itemName then
+								if itemName == 'item_moon_shard' then
+									if not LoneDruid.bear:HasModifier('modifier_item_moon_shard_consumed') or not J.HasItem(LoneDruid.bear, 'item_moon_shard') then
+										bot.dropItem = hItem
+										bot.isGiveItem = true
+										return BOT_MODE_DESIRE_ABSOLUTE
+									end
+								elseif itemName == 'item_hyperstone' then
+									if J.HasItem(LoneDruid.bear, 'item_assault') then
+										bot.dropItem = hItem
+										bot.isGiveItem = true
+										return BOT_MODE_DESIRE_ABSOLUTE
+									end
+								else
 									bot.dropItem = hItem
 									bot.isGiveItem = true
 									return BOT_MODE_DESIRE_ABSOLUTE
 								end
-							elseif itemName == 'item_power_treads' then
-								if (J.HasItem(LoneDruid.hero, 'item_lesser_crit') or J.HasItem(LoneDruid.hero, 'item_greater_crit')) then
-									bot.dropItem = hItem
-									bot.isGiveItem = true
-									return BOT_MODE_DESIRE_ABSOLUTE
-								end
-							else
-								bot.dropItem = hItem
-								bot.isGiveItem = true
-								return BOT_MODE_DESIRE_ABSOLUTE
 							end
 						end
 					end

@@ -27,7 +27,7 @@ local HeroBuild = {
 				}
             },
             ['ability'] = {
-                [1] = {1,2,1,3,1,6,2,2,2,1,6,3,3,3,6},
+                [1] = {1,2,1,5,1,6,2,2,2,1,6,5,5,5,6},
             },
             ['buy_list'] = {
 				"item_tango",
@@ -163,6 +163,7 @@ modifier_phantom_assassin_coupdegrace
 local abilityQ = bot:GetAbilityByName('phantom_assassin_stifling_dagger')
 local abilityW = bot:GetAbilityByName('phantom_assassin_phantom_strike')
 local abilityE = bot:GetAbilityByName('phantom_assassin_blur')
+local Immaterial = bot:GetAbilityByName('phantom_assassin_immaterial')
 local abilityAS = bot:GetAbilityByName('phantom_assassin_fan_of_knives')
 local abilityR = bot:GetAbilityByName('phantom_assassin_coup_de_grace')
 
