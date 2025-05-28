@@ -35,7 +35,6 @@ If you’ve come across this script or is using it, good feedback is always welc
     - How I test:
         - Added in launch options: `+cl_clock_recvmargin_enable 0`
         - Bots v Bots
-        - (Turbo, only if I'm testing spell and item usage/synergy; All Pick otherwise)
         - `Enable Cheats`
         - Type: `sv_cheats 1` in console.
         - Type: `host_force_frametime_to_equal_tick_interval 1` in console.
