@@ -49,7 +49,7 @@ local sHeroList = {										-- pos  1, 2, 3, 4, 5
 	{name = 'npc_dota_hero_clinkz', 					role = {100, 50, 0, 50, 5}},
 	{name = 'npc_dota_hero_crystal_maiden', 			role = {0, 0, 0, 100, 100}},
 	{name = 'npc_dota_hero_dark_seer', 					role = {0, 0, 100, 0, 0}},
-	{name = 'npc_dota_hero_dark_willow', 				role = {0, 0, 0, 75, 25}},
+	{name = 'npc_dota_hero_dark_willow', 				role = {0, 0, 0, 75, 25}, weak = true},
 	{name = 'npc_dota_hero_dawnbreaker', 				role = {0, 5, 100, 50, 50}},
 	{name = 'npc_dota_hero_dazzle', 					role = {0, 50, 0, 100, 100}},
 	{name = 'npc_dota_hero_disruptor', 					role = {0, 0, 0, 100, 100}},
@@ -59,7 +59,7 @@ local sHeroList = {										-- pos  1, 2, 3, 4, 5
 	{name = 'npc_dota_hero_drow_ranger', 				role = {100, 80, 0, 0, 0}},
 	{name = 'npc_dota_hero_earth_spirit', 				role = {0, 100, 50, 100, 5}},
 	{name = 'npc_dota_hero_earthshaker', 				role = {0, 75, 100, 100, 0}},
-	{name = 'npc_dota_hero_elder_titan', 				role = {0, 0, 25, 25, 50}},
+	{name = 'npc_dota_hero_elder_titan', 				role = {0, 0, 25, 25, 50}, weak = true},
 	{name = 'npc_dota_hero_ember_spirit', 				role = {0, 100, 0, 0, 0}},
 	{name = 'npc_dota_hero_enchantress', 				role = {0, 0, 100, 0, 100}},
 	{name = 'npc_dota_hero_enigma', 					role = {0, 0, 50, 80, 100}},
@@ -67,13 +67,13 @@ local sHeroList = {										-- pos  1, 2, 3, 4, 5
 	{name = 'npc_dota_hero_furion', 					role = {100, 0, 100, 5, 100}},
 	{name = 'npc_dota_hero_grimstroke', 				role = {0, 0, 0, 100, 100}},
 	{name = 'npc_dota_hero_gyrocopter', 				role = {100, 100, 0, 100, 100}},
-	{name = 'npc_dota_hero_hoodwink', 					role = {0, 0, 0, 75, 25}},
+	{name = 'npc_dota_hero_hoodwink', 					role = {0, 0, 0, 75, 25}, weak = true},
 	{name = 'npc_dota_hero_huskar', 					role = {100, 100, 100, 0, 0}},
 	{name = 'npc_dota_hero_invoker', 					role = {0, 100, 0, 0, 0}},
 	{name = 'npc_dota_hero_jakiro', 					role = {0, 15, 0, 100, 100}},
 	{name = 'npc_dota_hero_juggernaut', 				role = {100, 0, 0, 0, 0}},
 	{name = 'npc_dota_hero_keeper_of_the_light', 		role = {0, 50, 0, 100, 25}},
-	{name = 'npc_dota_hero_kez', 						role = {50, 100, 0, 0, 0}},
+	{name = 'npc_dota_hero_kez', 						role = {50, 100, 0, 0, 0}, weak = true},
 	{name = 'npc_dota_hero_kunkka', 					role = {50, 100, 100, 0, 0}},
 	{name = 'npc_dota_hero_legion_commander', 			role = {0, 0, 100, 0, 0}},
 	{name = 'npc_dota_hero_leshrac', 					role = {0, 100, 50, 0, 0}},
@@ -85,14 +85,14 @@ local sHeroList = {										-- pos  1, 2, 3, 4, 5
 	{name = 'npc_dota_hero_luna', 						role = {100, 0, 0, 0, 0}},
 	{name = 'npc_dota_hero_lycan', 						role = {50, 100, 100, 0, 0}},
 	{name = 'npc_dota_hero_magnataur', 					role = {50, 75, 100, 0, 0}},
-	{name = 'npc_dota_hero_marci',	 					role = {25, 50, 25, 0, 0}},
+	{name = 'npc_dota_hero_marci',	 					role = {25, 50, 25, 0, 0}, weak = true},
 	{name = 'npc_dota_hero_mars', 						role = {0, 100, 100, 0, 0}},
 	{name = 'npc_dota_hero_medusa', 					role = {100, 50, 0, 0, 0}},
 	{name = 'npc_dota_hero_meepo', 						role = {100, 100, 0, 0, 0}},
 	{name = 'npc_dota_hero_mirana', 					role = {0, 75, 0, 50, 100}},
 	{name = 'npc_dota_hero_monkey_king', 				role = {100, 100, 0, 0, 0}},
 	{name = 'npc_dota_hero_morphling', 					role = {100, 5, 0, 0, 0}},
-	{name = 'npc_dota_hero_muerta', 				    role = {100, 0, 0, 0, 0}},
+	{name = 'npc_dota_hero_muerta', 				    role = {100, 0, 0, 0, 0}, weak = true},
 	{name = 'npc_dota_hero_naga_siren', 				role = {100, 0, 0, 0, 0}},
 	{name = 'npc_dota_hero_necrolyte', 					role = {0, 100, 100, 0, 0}},
 	{name = 'npc_dota_hero_nevermore', 					role = {100, 100, 0, 0, 0}},
@@ -106,7 +106,7 @@ local sHeroList = {										-- pos  1, 2, 3, 4, 5
 	{name = 'npc_dota_hero_phantom_lancer', 			role = {100, 0, 0, 0, 0}},
 	{name = 'npc_dota_hero_phantom_assassin', 			role = {100, 0, 0, 0, 0}},
 	{name = 'npc_dota_hero_phoenix', 					role = {0, 0, 0, 100, 100}},
-	{name = 'npc_dota_hero_primal_beast', 				role = {0, 75, 50, 0, 0}},
+	{name = 'npc_dota_hero_primal_beast', 				role = {0, 75, 50, 0, 0}, weak = true},
 	{name = 'npc_dota_hero_puck', 						role = {0, 100, 0, 0, 0}},
 	{name = 'npc_dota_hero_pudge', 						role = {0, 100, 100, 5, 5}},
 	{name = 'npc_dota_hero_pugna', 						role = {0, 50, 0, 100, 100}},
@@ -151,7 +151,7 @@ local sHeroList = {										-- pos  1, 2, 3, 4, 5
 	{name = 'npc_dota_hero_weaver', 					role = {100, 0, 0, 100, 100}},
 	{name = 'npc_dota_hero_windrunner', 				role = {80, 100, 5, 70, 5}},
 	{name = 'npc_dota_hero_winter_wyvern', 				role = {0, 25, 15, 100, 100}},
-	{name = 'npc_dota_hero_wisp', 						role = {0, 0, 0, 10, 50}},
+	{name = 'npc_dota_hero_wisp', 						role = {0, 0, 0, 10, 50}, weak = true},
 	{name = 'npc_dota_hero_witch_doctor', 				role = {0, 0, 0, 100, 100}},
 	{name = 'npc_dota_hero_zuus', 						role = {0, 100, 0, 50, 25}},
 }
@@ -468,6 +468,15 @@ function Think()
 								end
 							end
 
+							-- reduce chances of multiple weak heroes getting picked
+							for _, hero in pairs(sHeroList) do
+								if hero.name and hero.weak then
+									if hero.name == sName then
+										score = score * (1 - Min((X.CountWeakHeroesSelected() / 4), 1))
+									end
+								end
+							end
+
 							table.insert(topHeroes, {name = sName, score = score})
 							table.sort(topHeroes, function (a, b) return a.score > b.score end)
 							if #topHeroes > 3 then
@@ -519,6 +528,36 @@ function X.GetCurrentTeam(nTeam)
 	end
 
 	return nHeroList
+end
+
+function X.CountWeakHeroesSelected()
+	local count = 0
+	for _, id in pairs(GetTeamPlayers(GetTeam())) do
+		local sHeroName = GetSelectedHeroName(id)
+		if sHeroName ~= nil then
+			for _, hero in pairs(sHeroList) do
+				if hero.name and hero.weak then
+					if hero.name == sHeroName then
+						count = count + 1
+					end
+				end
+			end
+		end
+	end
+	for _, id in pairs(GetTeamPlayers(GetOpposingTeam())) do
+		local sHeroName = GetSelectedHeroName(id)
+		if sHeroName ~= nil then
+			for _, hero in pairs(sHeroList) do
+				if hero.name and hero.weak then
+					if hero.name == sHeroName then
+						count = count + 1
+					end
+				end
+			end
+		end
+	end
+
+	return count
 end
 
 function GetBotNames()

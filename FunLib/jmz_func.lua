@@ -3676,7 +3676,7 @@ function J.WeAreStronger(bot, nRadius)
 	local ourPower = 0
 	local ourPowerRaw = 0
 	local enemyPower = 0
-	local botHealthRegen =  bot:GetHealthRegen() * 5.0
+	local botHealthRegen =  bot:GetHealthRegen() * 2.0
 
 	for _, unit in pairs(GetUnitList(UNIT_LIST_ALL)) do
 		if J.IsValidHero(unit)
@@ -3697,10 +3697,10 @@ function J.WeAreStronger(bot, nRadius)
 				if not unit:HasModifier('modifier_arc_warden_tempest_double')
 				and J.IsSuspiciousIllusion(unit)
 				then
-					local nDamage = GetUnitAttackDamage(unit, 5.0)
+					local nDamage = GetUnitAttackDamage(unit, 1.0)
 					if nDamage then
-						ourPower = ourPower + 0.5 * math.log(1 + (Max(bot:GetActualIncomingDamage(nDamage, DAMAGE_TYPE_PHYSICAL) - botHealthRegen, 0) * fMul_Illusion))
-						ourPowerRaw = ourPowerRaw + 0.5 * math.log(1 + (Max(bot:GetActualIncomingDamage(nDamage, DAMAGE_TYPE_PHYSICAL) - botHealthRegen, 0) * fMul_Illusion))
+						ourPower = ourPower + 0.5 * (bot:GetActualIncomingDamage(nDamage, DAMAGE_TYPE_PHYSICAL) - botHealthRegen) * fMul_Illusion
+						ourPowerRaw = ourPowerRaw + 0.5 * (bot:GetActualIncomingDamage(nDamage, DAMAGE_TYPE_PHYSICAL) - botHealthRegen) * fMul_Illusion
 					end
 				else
 					if not J.IsMeepoClone(unit)
@@ -3709,16 +3709,16 @@ function J.WeAreStronger(bot, nRadius)
 					then
 						table.insert(tAllyHeroes, unit)
 					end
-					ourPower = ourPower + math.log(1 + unit:GetOffensivePower()) * fMul
-					ourPowerRaw = ourPowerRaw + math.log(1 + unit:GetRawOffensivePower()) * fMul
+					ourPower = ourPower + (math.log(1 + unit:GetOffensivePower())) * (unit:GetAttackDamage() * unit:GetAttackSpeed()) * fMul
+					ourPowerRaw = ourPowerRaw + (math.log(1 + unit:GetRawOffensivePower())) * (unit:GetAttackDamage() * unit:GetAttackSpeed()) * fMul
 				end
 			else
 				if not unit:HasModifier('modifier_arc_warden_tempest_double')
 				and J.IsSuspiciousIllusion(unit)
 				then
-					local nDamage = GetUnitAttackDamage(unit, 5.0)
+					local nDamage = GetUnitAttackDamage(unit, 1.0)
 					if nDamage then
-						enemyPower = enemyPower + 0.5 * math.log(1 + (Max(bot:GetActualIncomingDamage(nDamage, DAMAGE_TYPE_PHYSICAL) - botHealthRegen, 0) * fMul_Illusion))
+						enemyPower = enemyPower + 0.5 * (bot:GetActualIncomingDamage(nDamage, DAMAGE_TYPE_PHYSICAL) - botHealthRegen) * fMul_Illusion
 					end
 				else
 					if not J.IsMeepoClone(unit)
@@ -3727,7 +3727,7 @@ function J.WeAreStronger(bot, nRadius)
 					then
 						table.insert(tEnemyHeroes, unit)
 					end
-					enemyPower = enemyPower + math.log(1 + unit:GetRawOffensivePower()) * fMul
+					enemyPower = enemyPower + (math.log(1 + unit:GetRawOffensivePower())) * (unit:GetAttackDamage() * unit:GetAttackSpeed()) * fMul
 				end
 			end
 		end
@@ -3745,23 +3745,23 @@ function J.WeAreStronger(bot, nRadius)
 			or unit:IsDominated()
 			then
 				local fMul_Illusion = RemapValClamped(J.GetHP(unit), 0.25, 1, 0, 1)
-				local nDamage = GetUnitAttackDamage(unit, 5.0, false)
+				local nDamage = GetUnitAttackDamage(unit, 1.0, false)
 				if bWithTeam then
 					if nDamage then
 						if string.find(sUnitName, 'warlock_golem') then
-							ourPower = ourPower + 0.5 * math.log(1 + (Max(bot:GetActualIncomingDamage(nDamage, DAMAGE_TYPE_PHYSICAL) - botHealthRegen, 0) * fMul_Illusion))
-							ourPowerRaw = ourPowerRaw + 0.5 * math.log(1 + (Max(bot:GetActualIncomingDamage(nDamage, DAMAGE_TYPE_PHYSICAL) - botHealthRegen, 0) * fMul_Illusion))
+							ourPower = ourPower + 0.5 * (bot:GetActualIncomingDamage(nDamage, DAMAGE_TYPE_PHYSICAL) - botHealthRegen) * fMul_Illusion
+							ourPowerRaw = ourPowerRaw + 0.5 * (bot:GetActualIncomingDamage(nDamage, DAMAGE_TYPE_PHYSICAL) - botHealthRegen) * fMul_Illusion
 						else
-							ourPower = ourPower + 0.1 * math.log(1 + (Max(bot:GetActualIncomingDamage(nDamage, DAMAGE_TYPE_PHYSICAL) - botHealthRegen, 0) * fMul_Illusion))
-							ourPowerRaw = ourPowerRaw + 0.1 * math.log(1 + (Max(bot:GetActualIncomingDamage(nDamage, DAMAGE_TYPE_PHYSICAL) - botHealthRegen, 0) * fMul_Illusion))
+							ourPower = ourPower + 0.1 * (bot:GetActualIncomingDamage(nDamage, DAMAGE_TYPE_PHYSICAL) - botHealthRegen) * fMul_Illusion
+							ourPowerRaw = ourPowerRaw + 0.1 * (bot:GetActualIncomingDamage(nDamage, DAMAGE_TYPE_PHYSICAL) - botHealthRegen) * fMul_Illusion
 						end
 					end
 				else
 					if nDamage then
 						if string.find(sUnitName, 'warlock_golem') then
-							enemyPower = enemyPower + 0.5 * math.log(1 + (Max(bot:GetActualIncomingDamage(nDamage, DAMAGE_TYPE_PHYSICAL) - botHealthRegen, 0) * fMul_Illusion))
+							enemyPower = enemyPower + 0.5 * (bot:GetActualIncomingDamage(nDamage, DAMAGE_TYPE_PHYSICAL) - botHealthRegen) * fMul_Illusion
 						else
-							enemyPower = enemyPower + 0.1 * math.log(1 + (Max(bot:GetActualIncomingDamage(nDamage, DAMAGE_TYPE_PHYSICAL) - botHealthRegen, 0) * fMul_Illusion))
+							enemyPower = enemyPower + 0.1 * (bot:GetActualIncomingDamage(nDamage, DAMAGE_TYPE_PHYSICAL) - botHealthRegen) * fMul_Illusion
 						end
 					end
 				end
@@ -3771,8 +3771,8 @@ function J.WeAreStronger(bot, nRadius)
 
 	local nAllyTowers = bot:GetNearbyTowers(600, false)
 	if J.IsValidBuilding(nAllyTowers[1]) then
-		ourPower = ourPower + 0.9*math.log(1 + #nAllyTowers * nAllyTowers[1]:GetAttackDamage())
-		ourPowerRaw = ourPowerRaw + 0.9*math.log(1 + #nAllyTowers * nAllyTowers[1]:GetAttackDamage())
+		ourPower = ourPower + #nAllyTowers * nAllyTowers[1]:GetAttackDamage()
+		ourPowerRaw = ourPowerRaw + #nAllyTowers * nAllyTowers[1]:GetAttackDamage()
 	end
 
 	if not J.IsEarlyGame() and J.IsInTeamFight(bot, 1600) and #tAllyHeroes >= #tEnemyHeroes then

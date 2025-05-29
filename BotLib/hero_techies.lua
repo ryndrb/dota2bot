@@ -723,21 +723,6 @@ function X.ConsiderProximityMines()
         end
 	end
 
-	if J.IsPushing(bot) then
-		local nEnemyTowers = bot:GetNearbyTowers(1600, true)
-		if J.IsValidBuilding(nEnemyTowers[1])
-        and J.CanBeAttacked(nEnemyTowers[1])
-        and J.GetHP(nEnemyTowers[1]) > 0.2
-        and #nEnemyHeroes == 0
-        then
-            local nInRangeAlly = J.GetAlliesNearLoc(bot:GetLocation(), 800)
-            local vLocation = nEnemyTowers[1]:GetLocation() + RandomVector(500)
-            if not X.IsOtherMinesClose(vLocation, nRadius) and #nInRangeAlly >= 2 then
-                return BOT_ACTION_DESIRE_HIGH, vLocation
-            end
-		end
-	end
-
     if J.IsFarming(bot) and nManaAfter > 0.4 then
         local nEnemyCreeps = bot:GetNearbyCreeps(1600, true)
         if J.IsValid(nEnemyCreeps[1])
