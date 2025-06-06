@@ -254,19 +254,27 @@ function GetDesire()
 
     if count > #nEnemyHeroes then nEnemyNearbyCount = count end
 
-    unitList = GetUnitList(UNIT_LIST_ENEMIES)
-    for _, unit in pairs(unitList) do
+    unitList = GetUnitList(UNIT_LIST_ALL)
+    for _, unit in ipairs(unitList) do
         if J.IsValid(unit) and J.IsInRange(bot, unit, 1200) then
             local sUnitName = unit:GetUnitName()
-            if string.find(sUnitName, 'warlock_golem')
-            or string.find(sUnitName, 'tombstone')
-            then
-                nEnemyNearbyCount = nEnemyNearbyCount + 1
-            end
-            if string.find(sUnitName, 'tower') then
-                local towerDamage = bot:GetActualIncomingDamage(unit:GetAttackDamage() * unit:GetAttackSpeed() * 5.0, DAMAGE_TYPE_PHYSICAL) - botHealthRegen * 5.0
-                if towerDamage / botHealth >= 0.5 then
+
+            if bot:GetTeam() ~= unit:GetTeam() then
+                if string.find(sUnitName, 'warlock_golem')
+                or string.find(sUnitName, 'tombstone')
+                or string.find(sUnitName, 'npc_dota_phoenix_sun')
+                then
                     nEnemyNearbyCount = nEnemyNearbyCount + 1
+                end
+                if string.find(sUnitName, 'tower') then
+                    local towerDamage = bot:GetActualIncomingDamage(unit:GetAttackDamage() * unit:GetAttackSpeed() * 5.0, DAMAGE_TYPE_PHYSICAL) - botHealthRegen * 5.0
+                    if towerDamage / botHealth >= 0.5 then
+                        nEnemyNearbyCount = nEnemyNearbyCount + 1
+                    end
+                end
+            elseif bot:GetTeam() == unit:GetTeam() then
+                if string.find(sUnitName, 'npc_dota_phoenix_sun') then
+                    nAllyNearbyCount = nAllyNearbyCount + 1
                 end
             end
         end
@@ -307,6 +315,14 @@ function GetDesire()
                 nDesire = nDesire - 0.2
             end
             if bot:HasModifier('modifier_item_satanic_unholy') then
+                nDesire = nDesire - 0.3
+            end
+
+            local hAbility = bot:GetAbilityByName('slark_shadow_dance')
+            if J.CanCastAbility(hAbility)
+            or (hAbility ~= nil and hAbility:IsTrained() and hAbility:GetCooldownTimeRemaining() <= 3 and bot:GetMana() >= 150)
+            or (bot:HasModifier('modifier_slark_shadow_dance') and J.GetModifierTime(bot, 'modifier_slark_shadow_dance') > 1.5)
+            then
                 nDesire = nDesire - 0.3
             end
         end
@@ -444,7 +460,10 @@ function X.ShouldRun()
         and not enemyHero:HasModifier('modifier_necrolyte_reapers_scythe') then
             local enemyHeroAttackRange = enemyHero:GetAttackRange()
             if (enemyHero:HasModifier('modifier_muerta_pierce_the_veil_buff') and J.IsInRange(bot, enemyHero, enemyHeroAttackRange) and botHP < 0.5) then
-                return 5.5
+                local fModifierTime = J.GetModifierTime(enemyHero, 'modifier_muerta_pierce_the_veil_buff')
+                if enemyHero:GetEstimatedDamageToTarget(false, bot, fModifierTime, DAMAGE_TYPE_MAGICAL) >= (botHealth + botHealthRegen * fModifierTime) then
+                    return fModifierTime
+                end
             elseif (enemyHero:HasModifier('modifier_bristleback_active_conical_quill_spray') and J.IsInRange(bot, enemyHero, 400) and not enemyHero:IsFacingLocation(botLocation, 70)) then
                 return 3
             end
@@ -452,7 +471,6 @@ function X.ShouldRun()
     end
 
 	local nDistanceFromEnemyFountain = J.GetDistanceFromEnemyFountain(bot)
-	local hEnemyAncient = GetAncient(GetOpposingTeam())
 	local nDistanceFromEnemyAncient = GetUnitToUnitDistance(bot, hEnemyAncient)
 	local nAliveEnemyCount = J.GetNumOfAliveHeroes(true)
 	local rushEnemyTowerDistance = 250

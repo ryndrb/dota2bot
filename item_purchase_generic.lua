@@ -356,6 +356,7 @@ function ItemPurchaseThink()
 	local botWorth = bot:GetNetWorth()
 	local botMode = bot:GetActiveMode()
 	local botHP	= bot:GetHealth() / bot:GetMaxHealth()
+	local botPosition = J.GetPosition(bot)
 	--------*******----------------*******----------------*******--------
 
 	--更新敌方是否有隐身英雄或道具的状态
@@ -482,33 +483,27 @@ function ItemPurchaseThink()
 	-- don't buy in late game to avoid clutter, since there's no inventory management currently
 
 	-- Observer and Sentry Wards
-	if (J.GetPosition(bot) == 4) and not J.IsLateGame() and not isBear then
-		local wardType = 'item_ward_sentry'
-
-		if not J.HasItemInInventory('item_dust')
-		and not J.HasItemInInventory('item_gem')
-		and GetItemStockCount(wardType) > 0
-		and botGold >= GetItemCost(wardType)
+	if botPosition >= 4 and not isBear and (DotaTime() < (J.IsModeTurbo() and 30 * 60 or 60 * 60)) then
+		local sWardName = 'item_ward_observer'
+		if GetItemStockCount(sWardName) > 0
+		and botGold >= GetItemCost(sWardName)
 		and Item.GetEmptyInventoryAmount(bot) >= 1
-		and Item.GetItemCharges(bot, wardType) < 2
+		and Item.GetItemCharges(bot, sWardName) < 1
 		and bot:GetCourierValue() == 0
 		then
-			bot:ActionImmediate_PurchaseItem(wardType)
+			bot:ActionImmediate_PurchaseItem(sWardName)
 			return
 		end
-	end
 
-	if (J.GetPosition(bot) == 5) and not isBear
-	then
-		local wardType = 'item_ward_observer'
-
-		if  GetItemStockCount(wardType) > 0
-		and botGold >= GetItemCost(wardType)
+		sWardName = 'item_ward_sentry'
+		if not J.HasItemInInventory('item_gem')
+		and GetItemStockCount(sWardName) > 0
+		and botGold >= GetItemCost(sWardName)
 		and Item.GetEmptyInventoryAmount(bot) >= 1
-		and Item.GetItemCharges(bot, wardType) < 2
+		and Item.GetItemCharges(bot, sWardName) < 1
 		and bot:GetCourierValue() == 0
 		then
-			bot:ActionImmediate_PurchaseItem(wardType)
+			bot:ActionImmediate_PurchaseItem(sWardName)
 			return
 		end
 	end

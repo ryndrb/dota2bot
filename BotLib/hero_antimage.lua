@@ -76,6 +76,12 @@ local HeroBuild = {
 					['t15'] = {0, 10},
 					['t10'] = {0, 10},
 				},
+				[2] = {
+					['t25'] = {10, 0},
+					['t20'] = {0, 10},
+					['t15'] = {10, 0},
+					['t10'] = {0, 10},
+				},
             },
             ['ability'] = {
 				[1] = {1,2,1,3,2,6,2,2,1,1,6,3,3,3,6},
@@ -84,29 +90,30 @@ local HeroBuild = {
 				"item_tango",
 				"item_orb_of_frost",
 				"item_double_branches",
+				"item_quelling_blade",
 	
+				"item_magic_wand",
 				"item_wraith_band",
 				"item_orb_of_corrosion",
-				"item_magic_wand",
 				"item_vanguard",
 				"item_power_treads",
-				"item_diffusal_blade",
 				"item_crimson_guard",--
+				"item_diffusal_blade",
 				"item_manta",--
-				"item_heavens_halberd",--
+				"item_nullifier",--
 				"item_disperser",--
-				"item_basher",
-				"item_heart",--
 				"item_abyssal_blade",--
 				"item_moon_shard",
+				"item_sphere",--
 				"item_ultimate_scepter_2",
 				"item_aghanims_shard",
 			},
             ['sell_list'] = {
+				"item_quelling_blade", "item_diffusal_blade",
 				"item_magic_wand", "item_manta",
-				"item_wraith_band", "item_heavens_halberd",
-				"item_orb_of_corrosion", "item_basher",
-				"item_power_treads", "item_heart",
+				"item_wraith_band", "item_nullifier",
+				"item_orb_of_corrosion", "item_abyssal_blade",
+				"item_power_treads", "item_sphere",
 			},
         },
     },

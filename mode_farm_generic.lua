@@ -66,6 +66,7 @@ function GetDesire()
 	local botActiveModeDesire = bot:GetActiveModeDesire()
     local botLevel = bot:GetLevel()
     local bAlive = bot:IsAlive()
+	local bWeAreStronger = J.WeAreStronger(bot, 1600)
 
     local vTormentorLocation = J.GetTormentorLocation(GetTeam())
 	local nInRangeAlly_tormentor = J.GetAlliesNearLoc(vTormentorLocation, 1600)
@@ -125,7 +126,15 @@ function GetDesire()
 
     local nEnemyHeroes = J.GetEnemiesNearLoc(bot:GetLocation(), 1600)
     if #nEnemyHeroes > 0 then
-        return BOT_MODE_DESIRE_NONE
+		if not bWeAreStronger then
+			return BOT_MODE_DESIRE_NONE
+		end
+
+		for _, enemy in ipairs(nEnemyHeroes) do
+			if J.IsValidHero(enemy) and enemy:GetAttackTarget() == bot then
+				return BOT_MODE_DESIRE_NONE
+			end
+		end
     end
 
     local nAllyHeroes_attacking = {}

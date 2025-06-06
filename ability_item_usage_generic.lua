@@ -909,6 +909,14 @@ function X.SetUseItem( hItem, hItemTarget, sCastType )
 		return
 	elseif sCastType == 'ground'
 	then
+		if hItem and hItem:GetName() == 'item_ward_dispenser' then
+			if hItem:GetToggleState() == true then
+				bot:Action_UseAbilityOnEntity(hItem, bot)
+				bot:ActionQueue_UseAbilityOnLocation(hItem, hItemTarget)
+				return
+			end
+		end
+
 		bot:Action_UseAbilityOnLocation( hItem, hItemTarget )
 		return
 	elseif sCastType == 'tree'
@@ -4719,6 +4727,7 @@ X.ConsiderItemDesire["item_tpscroll"] = function( hItem )
 		or ( bot:HasModifier( "modifier_kunkka_x_marks_the_spot" ) )
 		or ( bot:HasModifier( "modifier_sniper_assassinate" ) )
 		or ( bot:HasModifier( "modifier_viper_nethertoxin" ) )
+		or ( bot:HasModifier( "modifier_item_helm_of_the_undying_active" ) )
 		or ( bot:HasModifier( "modifier_oracle_false_promise_timer" ) and J.GetModifierTime( bot, "modifier_oracle_false_promise_timer" ) <= 3.2 )
 		or ( bot:HasModifier( "modifier_jakiro_macropyre_burn" ) and J.GetModifierTime( bot, "modifier_jakiro_macropyre_burn" ) >= 1.4 )
 		or ( bot:HasModifier( "modifier_arc_warden_tempest_double" ) and bot:GetRemainingLifespan() < 3.3 )
@@ -5677,6 +5686,10 @@ X.ConsiderItemDesire["item_ward_sentry"] = function( hItem )
 
 	return BOT_ACTION_DESIRE_NONE
 
+end
+
+X.ConsiderItemDesire["item_ward_dispenser"] = function( hItem )
+	return X.ConsiderItemDesire["item_ward_sentry"]( hItem )
 end
 
 

@@ -1131,6 +1131,19 @@ function Item.GetItemCharges( bot, itemName )
 		end
 	end
 
+	if (itemName == 'item_ward_observer' or itemName == 'item_ward_sentry') and charges == 0 then
+		for i = 0, 8 do
+			local item = bot:GetItemInSlot(i)
+			if item and item:GetName() == 'item_ward_dispenser' then
+				if itemName == 'item_ward_observer' then
+					charges = charges + item:GetCurrentCharges()
+				elseif itemName == 'item_ward_sentry' then
+					charges = charges + item:GetSecondaryCharges()
+				end
+			end
+		end
+	end
+
 	return charges
 
 end

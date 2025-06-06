@@ -248,6 +248,7 @@ local tProTeams = {
             [1] = {"23savage", "Mikoto", "kpii", "Q", "Hyde"},
             [2] = {"23savage", "Mikoto", "Jabz", "Q", "Oli"},
             [3] = {"Natsumi", "Mikoto", "Ws", "Jhocam", "Kuku"},
+            [2] = {"23savage", "Mikoto", "Ws", "Jhocam", "Kuku"},
         }
     },
     [35] = {
@@ -300,7 +301,8 @@ local tProTeams = {
             [2] = {"YATOROGOD雨", "TORONTOTOKYO", "Collapse", "Mira", "Miposhka"},
             [3] = {"Yatoro雨", "Larl", "Collapse", "Mira", "Miposhka"},
             [4] = {"Raddan", "Larl", "Collapse", "Mira", "Miposhka"},
-            [5] = {"Satanic", "Larl", "Malik", "Rue", "Miposhka"},
+            [5] = {"Satanic", "Larl", "Malik", "rue", "Miposhka"},
+            [5] = {"Raddan", "Larl", "Collapse", "rue", "Miposhka"},
         }
     },
     [24] = {
@@ -313,6 +315,7 @@ local tProTeams = {
             [4] = {"Pure~", "Topson", "RAMZES666", "9Class", "Whitemon"},
             [5] = {"Nightfall", "lorenof", "33", "Saksa", "Whitemon"},
             [6] = {"dyrachyo", "bzm", "33", "Saksa", "Whitemon"},
+            [7] = {"Crystallis", "bzm", "33", "Saksa", "Whitemon"},
         }
     },
     [25] = {

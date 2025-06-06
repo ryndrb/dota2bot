@@ -25,14 +25,13 @@ function GetDesire()
 
 	local bCore = J.IsCore(bot)
 	local botLevel = bot:GetLevel()
+	local nInRangeAlly = J.GetAlliesNearLoc(bot:GetLocation(), 1200)
 	local nInRangeEnemy = J.GetEnemiesNearLoc(bot:GetLocation(), 1200)
 	if (DotaTime() < 10 * 60) and ((bCore and bot:GetNetWorth() < 5500) or (not bCore and botLevel < 6))
 	then
 		local nLastHits = bot:GetLastHits()
 		local nDesire = RemapValClamped(nLastHits, 50, 75, BOT_MODE_DESIRE_HIGH, BOT_MODE_DESIRE_LOW)
 		local vLaneFrontLocation = GetLocationAlongLane(botAssignedLane, GetLaneFrontAmount(GetTeam(), botAssignedLane, false))
-		nInRangeEnemy = J.GetEnemiesNearLoc(vLaneFrontLocation, 1200)
-		local nInRangeAlly = J.GetAlliesNearLoc(vLaneFrontLocation, 1200)
 		local botTarget = J.GetProperTarget(bot)
 		local bGood = DotaTime() > 10
 					and ((#nInRangeEnemy >= 1 and J.GetHP(bot) > 0.25) or (#nInRangeEnemy == 0))

@@ -71,9 +71,8 @@ function Defend.GetDefendDesire(bot, lane)
 
 	local furthestBuilding = Defend.GetFurthestBuildingOnLane(bot, lane)
 
-	-- back to former from some time ago (that was inspired by phalanx when I started tinkering)
-
 	if nEnemyAroundAncient > 0 and lane == LANE_MID
+	and nEnemyAroundAncient >= 2
 	and (  furthestBuilding == hTeamAncient
 		or furthestBuilding == GetTower(nTeam, TOWER_BASE_1)
 		or furthestBuilding == GetTower(nTeam, TOWER_BASE_2))

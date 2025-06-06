@@ -34,13 +34,14 @@ local HeroBuild = {
 				[1] = {
 					['t25'] = {10, 0},
 					['t20'] = {10, 0},
-					['t15'] = {10, 0},
+					['t15'] = {0, 10},
 					['t10'] = {10, 0},
 				}
             },
             ['ability'] = {
 				[1] = {3,1,3,1,3,1,1,3,2,6,6,2,2,2,6},
 				[2] = {3,2,3,1,3,6,3,2,2,2,1,1,1,6,6},
+				[3] = {3,1,1,3,2,6,1,3,3,1,6,2,2,2,6},
             },
             ['buy_list'] = {
 				"item_tango",
@@ -48,26 +49,27 @@ local HeroBuild = {
 				"item_quelling_blade",
 				"item_double_gauntlets",
 			
+				"item_bottle",
 				"item_magic_wand",
+				"item_boots",
 				"item_double_bracer",
+				"item_radiance",--
 				"item_phase_boots",
-				"item_phylactery",
-				"item_blink",
+				"item_harpoon",--
 				"item_aghanims_shard",
-				"item_black_king_bar",--
-				"item_angels_demise",--
 				"item_sange_and_yasha",--
-				"item_shivas_guard",--
-				"item_overwhelming_blink",--
-				"item_travel_boots_2",--
+				"item_bloodthorn",--
+				"item_nullifier",--
 				"item_moon_shard",
 				"item_ultimate_scepter_2",
+				"item_travel_boots_2",--
 			},
             ['sell_list'] = {
-				"item_quelling_blade", "item_blink",
-				"item_magic_wand", "item_black_king_bar",
-				"item_bracer", "item_sange_and_yasha",
-				"item_bracer", "item_shivas_guard",
+				"item_quelling_blade", "item_radiance",
+				"item_magic_wand", "item_harpoon",
+				"item_bottle", "item_sange_and_yasha",
+				"item_bracer", "item_bloodthorn",
+				"item_bracer", "item_nullifier",
 			},
         },
     },
@@ -93,19 +95,19 @@ local HeroBuild = {
 				"item_magic_wand",
 				"item_double_bracer",
 				"item_phase_boots",
+				"item_crimson_guard",--
 				"item_blink",
 				"item_aghanims_shard",
-				"item_crimson_guard",--
 				"item_black_king_bar",--
 				sUtilityItem,--
 				"item_shivas_guard",--
 				"item_overwhelming_blink",--
-				"item_travel_boots_2",--
 				"item_moon_shard",
 				"item_ultimate_scepter_2",
+				"item_travel_boots_2",--
 			},
             ['sell_list'] = {
-				"item_quelling_blade", "item_crimson_guard",
+				"item_quelling_blade", "item_blink",
 				"item_magic_wand", "item_black_king_bar",
 				"item_bracer", sUtilityItem,
 				"item_bracer", "item_shivas_guard",

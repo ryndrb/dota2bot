@@ -12,7 +12,7 @@ then
 
 local RI = require(GetScriptDirectory()..'/FunLib/util_role_item')
 
-local sUtility = {"item_crimson_guard", "item_pipe"}
+local sUtility = {"item_heavens_halberd", "item_pipe"}
 local sUtilityItem = RI.GetBestUtilityItem(sUtility)
 
 local HeroBuild = {
@@ -119,28 +119,29 @@ local HeroBuild = {
 				"item_tango",
 				"item_double_branches",
 				"item_quelling_blade",
+				"item_circlet",
+				"item_slippers",
 			
-				"item_double_wraith_band",
-				"item_boots",
 				"item_magic_wand",
+				"item_wraith_band",
 				"item_phase_boots",
-				"item_gungir",--
-				"item_black_king_bar",--
+				"item_maelstrom",
+				"item_rod_of_atos",
 				sUtilityItem,--
-				"item_heavens_halberd",--
-				"item_basher",
-				"item_travel_boots",
-				"item_abyssal_blade",--
-				"item_travel_boots_2",--
+				"item_mjollnir",--
 				"item_aghanims_shard",
-				"item_moon_shard",
+				"item_black_king_bar",--
+				"item_assault",--
+				"item_abyssal_blade",--
 				"item_ultimate_scepter_2",
+				"item_moon_shard",
+				"item_travel_boots_2",--
 			},
             ['sell_list'] = {
-				"item_quelling_blade", "item_black_king_bar",
-				"item_magic_wand", sUtilityItem,
-				"item_wraith_band", "item_heavens_halberd",
-				"item_wraith_band", "item_basher",
+				"item_quelling_blade", sUtilityItem,
+				"item_magic_wand", "item_black_king_bar",
+				"item_wraith_band", "item_assault",
+				"item_rod_of_atos", "item_abyssal_blade",
 			},
         },
     },

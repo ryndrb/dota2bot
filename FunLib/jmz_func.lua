@@ -1108,12 +1108,14 @@ end
 function J.IsGoingOnSomeone( bot )
 
 	local mode = bot:GetActiveMode()
+	local botTarget = bot:GetAttackTarget()
+	local bValidTarget = J.IsValidHero(botTarget) and not J.IsSuspiciousIllusion(botTarget) and J.IsInRange(bot, botTarget, 1600) and bot:GetTeam() ~= botTarget:GetTeam()
 
-	return mode == BOT_MODE_ROAM
-		or mode == BOT_MODE_TEAM_ROAM
-		or mode == BOT_MODE_GANK
-		or mode == BOT_MODE_ATTACK
-		or mode == BOT_MODE_DEFEND_ALLY
+	return (mode == BOT_MODE_ROAM and bValidTarget)
+	or (mode == BOT_MODE_GANK and bValidTarget)
+	or (mode == BOT_MODE_DEFEND_ALLY and bValidTarget)
+	or mode == BOT_MODE_TEAM_ROAM
+	or mode == BOT_MODE_ATTACK
 
 end
 
@@ -1164,9 +1166,9 @@ function J.IsFarming( bot )
 	local nTarget = J.GetProperTarget( bot )
 
 	return mode == BOT_MODE_FARM
-			or ( J.IsValid(nTarget)
-					and nTarget:GetTeam() == TEAM_NEUTRAL
-					and not J.IsRoshan( nTarget ) )
+			-- or ( J.IsValid(nTarget)
+			-- 		and nTarget:GetTeam() == TEAM_NEUTRAL
+			-- 		and not J.IsRoshan( nTarget ) )
 end
 
 
@@ -3650,19 +3652,26 @@ local function GetUnitAttackDamage(unit, fInterval, bIllusion)
 	return nil
 end
 
+local function GetEffectiveHealthFromArmor(nHealth, fArmor)
+    local damageMultiplier = 1 - ((0.06 * fArmor) / (1 + 0.06 * math.abs(fArmor)))
+    return nHealth / damageMultiplier
+end
+
 local function GetHealthMultiplier(hUnit)
 	local mul = 1
 	local sUnitName = hUnit:GetUnitName()
 	local botHP = J.GetHP(hUnit) + (hUnit:GetHealthRegen() * 5.0 / hUnit:GetMaxHealth())
 	local botMP = J.GetMP(hUnit) + (hUnit:GetManaRegen() * 5.0 / hUnit:GetMaxMana())
 	if sUnitName == 'npc_dota_hero_huskar' then
+		botHP = ((GetEffectiveHealthFromArmor(hUnit:GetHealth(), hUnit:GetArmor())) / hUnit:GetMaxHealth()) + (hUnit:GetHealthRegen() * 5.0 / hUnit:GetMaxHealth())
 		mul = RemapValClamped(botHP, 0, 0.5, 0.5, 1)
 	elseif sUnitName == 'npc_dota_hero_medusa' then
-		local unitHealth = hUnit:GetHealth() - hUnit:GetMana()
+		local unitHealth = GetEffectiveHealthFromArmor(hUnit:GetHealth() - hUnit:GetMana(), hUnit:GetArmor())
 		local unitMaxHealth = hUnit:GetMaxHealth() - hUnit:GetMaxMana()
 		local nHealth = RemapValClamped(unitHealth / unitMaxHealth, 0, 1, 0, 1) * 0.2 + RemapValClamped(botMP, 0, 0.75, 0, 1) * 0.8
 		mul = RemapValClamped(nHealth, 0.5, 1, 0.5, 1)
 	else
+		botHP = ((GetEffectiveHealthFromArmor(hUnit:GetHealth(), hUnit:GetArmor())) / hUnit:GetMaxHealth()) + (hUnit:GetHealthRegen() * 5.0 / hUnit:GetMaxHealth())
 		local nHealth = RemapValClamped(botHP, 0, 0.75, 0, 1) * 0.8 + RemapValClamped(botMP, 0, 1, 0, 1) * 0.2
 		mul = RemapValClamped(nHealth, 0.5, 1, 0.5, 1)
 	end
