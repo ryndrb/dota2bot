@@ -53,7 +53,6 @@ If you’ve come across this script or is using it, good feedback is always welc
         - Hoodwink
         - IO
         - Kez
-        - Lone Druid
         - Marci
         - Muerta
         - Primal Beast
