@@ -69,25 +69,24 @@ local HeroBuild = {
 				"item_tango",
 				"item_double_branches",
 				"item_blood_grenade",
+                "item_faerie_fire",
                 "item_circlet",
 			
 				"item_magic_wand",
-				"item_ring_of_basilius",
+				"item_tranquil_boots",
 				"item_vladmir",--
 				"item_ancient_janggo",
-				"item_boots",
 				"item_glimmer_cape",--
 				"item_boots_of_bearing",--
 				"item_aghanims_shard",
 				"item_solar_crest",--
+                "item_holy_locket",--
 				"item_assault",--
-				"item_lotus_orb",--
 				"item_ultimate_scepter_2",
 				"item_moon_shard",
 			},
             ['sell_list'] = {
-                "item_circlet", "item_glimmer_cape",
-                "item_magic_wand", "item_solar_crest",
+                "item_circlet", "item_holy_locket",
             },
         },
     },
@@ -108,25 +107,24 @@ local HeroBuild = {
 				"item_tango",
 				"item_double_branches",
 				"item_blood_grenade",
+                "item_faerie_fire",
                 "item_circlet",
 			
 				"item_magic_wand",
-				"item_ring_of_basilius",
+				"item_arcane_boots",
 				"item_vladmir",--
 				"item_mekansm",
-				"item_boots",
 				"item_glimmer_cape",--
 				"item_guardian_greaves",--
 				"item_aghanims_shard",
 				"item_solar_crest",--
+                "item_holy_locket",--
 				"item_assault",--
-				"item_lotus_orb",--
 				"item_ultimate_scepter_2",
 				"item_moon_shard",
 			},
             ['sell_list'] = {
-                "item_circlet", "item_glimmer_cape",
-                "item_magic_wand", "item_solar_crest",
+                "item_circlet", "item_holy_locket",
             },
         },
     },

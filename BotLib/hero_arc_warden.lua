@@ -36,25 +36,25 @@ local HeroBuild = {
 				"item_slippers",
 				"item_circlet",
 	
+				"item_magic_wand",
 				"item_wraith_band",
 				"item_boots",
-				"item_magic_wand",
 				"item_hand_of_midas",
 				"item_mjollnir",--
 				"item_travel_boots",
 				"item_manta",--
-				"item_greater_crit",--
 				"item_skadi",--
+				"item_greater_crit",--
 				"item_bloodthorn",--
-				"item_travel_boots_2",--
 				"item_moon_shard",
 				"item_aghanims_shard",
 				"item_ultimate_scepter_2",
+				"item_travel_boots_2",--
 			},
             ['sell_list'] = {
-				"item_magic_wand", "item_lesser_crit",
-				"item_wraith_band", "item_skadi",
-				"item_hand_of_midas", "item_orchid",
+				"item_magic_wand", "item_skadi",
+				"item_wraith_band", "item_greater_crit",
+				"item_hand_of_midas", "item_bloodthorn",
 			},
         },
     },
@@ -74,7 +74,7 @@ local HeroBuild = {
             ['buy_list'] = {
 				"item_tango",
 				"item_double_branches",
-				"item_circlet",
+				"item_double_circlet",
 				"item_faerie_fire",
 	
 				"item_bottle",
@@ -83,24 +83,25 @@ local HeroBuild = {
 				"item_boots",
 				"item_hand_of_midas",
 				"item_mjollnir",--
+				"item_spirit_vessel",
 				"item_travel_boots",
 				"item_blink",
-				"item_octarine_core",--
 				"item_ultimate_scepter",
-				"item_bloodthorn",--
-				"item_overwhelming_blink",--
+				"item_octarine_core",--
 				"item_sheepstick",--
 				"item_ultimate_scepter_2",
-				"item_travel_boots_2",--
+				"item_overwhelming_blink",--
+				"item_bloodthorn",--
 				"item_moon_shard",
 				"item_aghanims_shard",
+				"item_travel_boots_2",--
 			},
             ['sell_list'] = {
 				"item_circlet", "item_mjollnir",
 				"item_magic_wand", "item_blink",
-				"item_bottle", "item_octarine_core",
-				"item_urn_of_shadows", "item_ultimate_scepter",
-				"item_hand_of_midas", "item_orchid",
+				"item_bottle", "item_ultimate_scepter",
+				"item_hand_of_midas", "item_octarine_core",
+				"item_spirit_vessel", "item_bloodthorn",
 			},
         },
 		[2] = {
@@ -119,27 +120,28 @@ local HeroBuild = {
 				"item_tango",
 				"item_double_branches",
 				"item_faerie_fire",
+				"item_slippers",
+				"item_circlet",
 	
-				"item_bottle",
 				"item_magic_wand",
+				"item_wraith_band",
 				"item_boots",
 				"item_hand_of_midas",
 				"item_mjollnir",--
 				"item_travel_boots",
-				"item_orchid",
 				"item_manta",--
-				"item_greater_crit",--
 				"item_skadi",--
+				"item_greater_crit",--
 				"item_bloodthorn",--
-				"item_travel_boots_2",--
 				"item_moon_shard",
 				"item_aghanims_shard",
 				"item_ultimate_scepter_2",
+				"item_travel_boots_2",--
 			},
             ['sell_list'] = {
-				"item_magic_wand", "item_manta",
-				"item_bottle", "item_greater_crit",
-				"item_hand_of_midas", "item_skadi",
+				"item_magic_wand", "item_skadi",
+				"item_wraith_band", "item_greater_crit",
+				"item_hand_of_midas", "item_bloodthorn",
 			},
         },
     },

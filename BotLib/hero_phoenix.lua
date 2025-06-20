@@ -74,18 +74,19 @@ local HeroBuild = {
                 "item_magic_wand",
                 "item_tranquil_boots",
                 "item_cyclone",
+                "item_spirit_vessel",--
                 "item_glimmer_cape",--
                 "item_boots_of_bearing",--
+                "item_aghanims_shard",
                 "item_shivas_guard",--
                 "item_refresher",--
                 "item_sheepstick",--
                 "item_wind_waker",--
-                "item_aghanims_shard",
                 "item_ultimate_scepter_2",
                 "item_moon_shard",
             },
             ['sell_list'] = {
-                "item_magic_wand", "item_shivas_guard",
+                "item_magic_wand", "item_refresher",
             },
         },
     },
@@ -108,22 +109,22 @@ local HeroBuild = {
                 "item_blood_grenade",
                 "item_faerie_fire",
             
-                "item_boots",
                 "item_magic_wand",
                 "item_arcane_boots",
                 "item_cyclone",
+                "item_spirit_vessel",--
                 "item_glimmer_cape",--
                 "item_guardian_greaves",--
+                "item_aghanims_shard",
                 "item_shivas_guard",--
                 "item_refresher",--
                 "item_sheepstick",--
                 "item_wind_waker",--
-                "item_aghanims_shard",
                 "item_ultimate_scepter_2",
                 "item_moon_shard",
             },
             ['sell_list'] = {
-                "item_magic_wand", "item_shivas_guard",
+                "item_magic_wand", "item_refresher",
             },
         },
     },

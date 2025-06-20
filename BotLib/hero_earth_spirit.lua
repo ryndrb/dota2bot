@@ -34,13 +34,7 @@ local HeroBuild = {
 				[1] = {
 					['t25'] = {0, 10},
 					['t20'] = {0, 10},
-					['t15'] = {0, 10},
-					['t10'] = {0, 10},
-				},
-				[2] = {
-					['t25'] = {0, 10},
-					['t20'] = {0, 10},
-					['t15'] = {0, 10},
+					['t15'] = {10, 0},
 					['t10'] = {10, 0},
 				},
             },
@@ -50,36 +44,33 @@ local HeroBuild = {
             ['buy_list'] = {
 				"item_tango",
 				"item_double_branches",
-				"item_faerie_fire",
 				"item_quelling_blade",
+				"item_double_gauntlets",
 			
 				"item_bottle",
 				"item_magic_wand",
 				"item_double_bracer",
 				"item_urn_of_shadows",
 				"item_power_treads",
-				"item_veil_of_discord",
-				"item_spirit_vessel",
 				"item_blade_mail",
-				"item_kaya",
+				"item_spirit_vessel",
 				"item_black_king_bar",--
 				"item_shivas_guard",--
 				"item_kaya_and_sange",--
-				"item_heart",--
-				"item_ultimate_scepter",
-				"item_sheepstick",--
 				"item_ultimate_scepter_2",
-				"item_travel_boots_2",--
+				"item_octarine_core",--
+				"item_heart",--
 				"item_aghanims_shard",
 				"item_moon_shard",
+				"item_travel_boots_2",--
 			},
             ['sell_list'] = {
 				"item_quelling_blade", "item_power_treads",
-				"item_magic_wand", "item_veil_of_discord",
-				"item_bottle", "item_blade_mail",
-				"item_bracer", "item_kaya",
+				"item_magic_wand", "item_blade_mail",
 				"item_bracer", "item_black_king_bar",
-				"item_spirit_vessel", "item_heart",
+				"item_bracer", "item_shivas_guard",
+				"item_bottle", "item_kaya_and_sange",
+				"item_spirit_vessel", "item_octarine_core",
 				"item_blade_mail", "item_sheepstick",
 			},
         },
@@ -90,40 +81,39 @@ local HeroBuild = {
 				[1] = {
 					['t25'] = {0, 10},
 					['t20'] = {0, 10},
-					['t15'] = {0, 10},
-					['t10'] = {0, 10},
+					['t15'] = {10, 0},
+					['t10'] = {10, 0},
 				},
             },
             ['ability'] = {
                 [1] = {1,2,1,2,1,6,1,2,2,3,6,3,3,3,6},
             },
             ['buy_list'] = {
-				"item_tango",
-				"item_double_branches",
-				"item_faerie_fire",
-				"item_quelling_blade",
+                "item_tango",
+                "item_double_branches",
+                "item_quelling_blade",
+                "item_double_gauntlets",
 			
-				"item_double_bracer",
 				"item_magic_wand",
 				"item_boots",
-				"item_veil_of_discord",
+				"item_double_bracer",
 				"item_blade_mail",
 				"item_crimson_guard",--
 				"item_black_king_bar",--
 				sUtilityItem,--
 				"item_shivas_guard",--
+				"item_ultimate_scepter_2",
 				"item_heart",--
-				"item_travel_boots_2",--
 				"item_aghanims_shard",
 				"item_moon_shard",
-				"item_ultimate_scepter_2",
+				"item_travel_boots_2",--
 			},
             ['sell_list'] = {
-				"item_quelling_blade", "item_blade_mail",
-				"item_magic_wand", "item_crimson_guard",
-				"item_bracer", "item_black_king_bar",
+				"item_quelling_blade", "item_crimson_guard",
+				"item_magic_wand", "item_black_king_bar",
 				"item_bracer", sUtilityItem,
-				"item_blade_mail", "item_travel_boots",
+				"item_bracer", "item_shivas_guard",
+				"item_blade_mail", "item_travel_boots_2",
 			},
         },
     },
@@ -133,8 +123,8 @@ local HeroBuild = {
 				[1] = {
 					['t25'] = {0, 10},
 					['t20'] = {0, 10},
-					['t15'] = {0, 10},
-					['t10'] = {0, 10},
+					['t15'] = {10, 0},
+					['t10'] = {10, 0},
 				},
             },
             ['ability'] = {
@@ -145,23 +135,24 @@ local HeroBuild = {
 				"item_double_branches",
 				"item_blood_grenade",
 				"item_circlet",
+				"item_magic_stick",
 			
+				"item_boots",
 				"item_magic_wand",
 				"item_urn_of_shadows",
-				"item_boots",
-				"item_spirit_vessel",--
 				"item_force_staff",--
-				"item_boots_of_bearing",--
+				"item_spirit_vessel",--
+				"item_ancient_janggo",
 				"item_black_king_bar",--
-				"item_lotus_orb",--
+				"item_boots_of_bearing",--
 				"item_shivas_guard",--
-				"item_aghanims_shard",
+				"item_lotus_orb",--
 				"item_ultimate_scepter_2",
+				"item_aghanims_shard",
 				"item_moon_shard",
 			},
             ['sell_list'] = {
-				"item_circlet", "item_boots_of_bearing",
-				"item_magic_wand", "item_black_king_bar",
+				"item_magic_wand", "item_lotus_orb",
 			},
         },
     },
@@ -171,8 +162,8 @@ local HeroBuild = {
 				[1] = {
 					['t25'] = {0, 10},
 					['t20'] = {0, 10},
-					['t15'] = {0, 10},
-					['t10'] = {0, 10},
+					['t15'] = {10, 0},
+					['t10'] = {10, 0},
 				},
             },
             ['ability'] = {
@@ -183,23 +174,24 @@ local HeroBuild = {
 				"item_double_branches",
 				"item_blood_grenade",
 				"item_circlet",
+				"item_magic_stick",
 			
+				"item_boots",
 				"item_magic_wand",
 				"item_urn_of_shadows",
-				"item_boots",
-				"item_spirit_vessel",--
 				"item_force_staff",--
-				"item_guardian_greaves",--
+				"item_spirit_vessel",--
+				"item_mekansm",
 				"item_black_king_bar",--
-				"item_lotus_orb",--
+				"item_guardian_greaves",--
 				"item_shivas_guard",--
-				"item_aghanims_shard",
+				"item_lotus_orb",--
 				"item_ultimate_scepter_2",
+				"item_aghanims_shard",
 				"item_moon_shard",
 			},
             ['sell_list'] = {
-				"item_circlet", "item_boots_of_bearing",
-				"item_magic_wand", "item_black_king_bar",
+				"item_magic_wand", "item_lotus_orb",
 			},
         },
     },

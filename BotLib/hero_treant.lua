@@ -72,21 +72,23 @@ local HeroBuild = {
                 "item_blood_grenade",
                 "item_wind_lace",
             
+                "item_boots",
                 "item_magic_wand",
                 "item_tranquil_boots",
                 "item_solar_crest",--
                 "item_blink",
                 "item_aghanims_shard",
                 "item_boots_of_bearing",--
-                "item_force_staff",--
+                "item_orchid",--
                 "item_lotus_orb",--
                 "item_sheepstick",--
-                "item_overwhelming_blink",--
-                "item_ultimate_scepter_2",
+                "item_bloodthorn",--
                 "item_moon_shard",
+                "item_ultimate_scepter_2",
+                "item_overwhelming_blink",--
             },
             ['sell_list'] = {
-                "item_magic_wand", "item_force_staff",
+                "item_magic_wand", "item_sheepstick",
             },
         },
     },
@@ -111,23 +113,22 @@ local HeroBuild = {
                 "item_wind_lace",
             
                 "item_boots",
-                "item_ring_of_basilius",
                 "item_magic_wand",
                 "item_arcane_boots",
                 "item_solar_crest",--
                 "item_blink",
                 "item_aghanims_shard",
                 "item_guardian_greaves",--
-                "item_force_staff",--
+                "item_orchid",--
                 "item_lotus_orb",--
                 "item_sheepstick",--
-                "item_overwhelming_blink",--
-                "item_ultimate_scepter_2",
+                "item_bloodthorn",--
                 "item_moon_shard",
+                "item_ultimate_scepter_2",
+                "item_overwhelming_blink",--
             },
             ['sell_list'] = {
-                "item_wind_lace", "item_force_staff",
-                "item_magic_wand", "item_lotus_orb",
+                "item_magic_wand", "item_sheepstick",
             },
         },
     },

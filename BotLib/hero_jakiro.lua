@@ -48,25 +48,23 @@ local HeroBuild = {
 			
 				"item_bottle",
 				"item_magic_wand",
-				"item_double_null_talisman",
-				"item_maelstrom",
 				"item_power_treads",
-				"item_kaya",
-				"item_black_king_bar",--
-				"item_shivas_guard",--
-				"item_aghanims_shard",
+				"item_double_null_talisman",
 				"item_mjollnir",--
-				"item_yasha_and_kaya",--
+				"item_black_king_bar",--
+				"item_revenants_brooch",--
+				"item_aghanims_shard",
+				"item_shivas_guard",--
 				"item_devastator",--
-				"item_travel_boots_2",--
 				"item_ultimate_scepter_2",
 				"item_moon_shard",
+				"item_travel_boots_2",--
 			},
             ['sell_list'] = {
-				"item_magic_wand", "item_kaya",
-				"item_bottle", "item_black_king_bar",
-				"item_null_talisman", "item_shivas_guard",
+				"item_magic_wand", "item_black_king_bar",
 				"item_null_talisman", "item_devastator",
+				"item_null_talisman", "item_shivas_guard",
+				"item_bottle", "item_devastator",
 			},
         },
     },
@@ -96,17 +94,17 @@ local HeroBuild = {
                 [1] = {1,3,1,2,1,6,1,2,2,2,6,3,3,3,6},
             },
             ['buy_list'] = {
-				"item_double_tango",
+				"item_tango",
 				"item_double_branches",
 				"item_enchanted_mango",
 				"item_blood_grenade",
+				"item_magic_stick",
 			
-				"item_boots",
-				"item_magic_wand",
 				"item_tranquil_boots",
+				"item_magic_wand",
+				"item_glimmer_cape",--
 				"item_force_staff",
 				"item_aghanims_shard",
-				"item_glimmer_cape",--
 				"item_boots_of_bearing",--
 				"item_ultimate_scepter",
 				"item_octarine_core",--
@@ -114,11 +112,11 @@ local HeroBuild = {
 				"item_cyclone",
 				"item_ultimate_scepter_2",
 				"item_wind_waker",--
-				"item_hurricane_pike",--
 				"item_moon_shard",
+				"item_hurricane_pike",--
 			},
             ['sell_list'] = {
-				"item_magic_wand", "item_ultimate_scepter",
+				"item_magic_wand", "item_shivas_guard",
 			},
         },
     },
@@ -136,17 +134,17 @@ local HeroBuild = {
                 [1] = {1,3,1,2,1,6,1,2,2,2,6,3,3,3,6},
             },
             ['buy_list'] = {
-				"item_double_tango",
+				"item_tango",
 				"item_double_branches",
 				"item_enchanted_mango",
 				"item_blood_grenade",
+				"item_magic_stick",
 			
-				"item_boots",
-				"item_magic_wand",
 				"item_arcane_boots",
-				"item_force_staff",--
-				"item_aghanims_shard",
+				"item_magic_wand",
 				"item_glimmer_cape",--
+				"item_force_staff",
+				"item_aghanims_shard",
 				"item_guardian_greaves",--
 				"item_ultimate_scepter",
 				"item_octarine_core",--
@@ -154,11 +152,11 @@ local HeroBuild = {
 				"item_cyclone",
 				"item_ultimate_scepter_2",
 				"item_wind_waker",--
-				"item_hurricane_pike",--
 				"item_moon_shard",
+				"item_hurricane_pike",--
 			},
             ['sell_list'] = {
-				"item_magic_wand", "item_ultimate_scepter",
+				"item_magic_wand", "item_shivas_guard",
 			},
         },
     },

@@ -29,14 +29,6 @@ function Push.GetPushDesire(bot, lane)
     for i = 1, 5 do
 		local member = GetTeamMember(i)
         if member ~= nil and member:GetLevel() < 6 then return BOT_MODE_DESIRE_NONE end
-
-        if member ~= nil and not J.IsCore(bot) and J.IsCore(member) then
-            if bot:GetAssignedLane() == member:GetAssignedLane() then
-                if member.isInLanePhase == true then
-                    return BOT_MODE_DESIRE_NONE
-                end
-            end
-        end
     end
 
     local nInRangeAlly = J.GetAlliesNearLoc(bot:GetLocation(), 1600)

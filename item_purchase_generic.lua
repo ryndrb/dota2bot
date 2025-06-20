@@ -357,6 +357,7 @@ function ItemPurchaseThink()
 	local botMode = bot:GetActiveMode()
 	local botHP	= bot:GetHealth() / bot:GetMaxHealth()
 	local botPosition = J.GetPosition(bot)
+	local bHumanInTeam = J.IsHumanPlayerInTeam(GetTeam())
 	--------*******----------------*******----------------*******--------
 
 	--更新敌方是否有隐身英雄或道具的状态
@@ -485,7 +486,9 @@ function ItemPurchaseThink()
 	-- Observer and Sentry Wards
 	if botPosition >= 4 and not isBear and (DotaTime() < (J.IsModeTurbo() and 30 * 60 or 60 * 60)) then
 		local sWardName = 'item_ward_observer'
-		if GetItemStockCount(sWardName) > 0
+		local nStockCount = GetItemStockCount(sWardName)
+		if (   (DotaTime() < 0 and nStockCount > 0)
+			or (DotaTime() > 0 and nStockCount > (bHumanInTeam and 1 or 0)))
 		and botGold >= GetItemCost(sWardName)
 		and Item.GetEmptyInventoryAmount(bot) >= 1
 		and Item.GetItemCharges(bot, sWardName) < 1
@@ -496,8 +499,10 @@ function ItemPurchaseThink()
 		end
 
 		sWardName = 'item_ward_sentry'
+		nStockCount = GetItemStockCount(sWardName)
 		if not J.HasItemInInventory('item_gem')
-		and GetItemStockCount(sWardName) > 0
+		and (  (DotaTime() < 0 and nStockCount > 0)
+			or (DotaTime() > 0 and nStockCount > (bHumanInTeam and 1 or 0)))
 		and botGold >= GetItemCost(sWardName)
 		and Item.GetEmptyInventoryAmount(bot) >= 1
 		and Item.GetItemCharges(bot, sWardName) < 1

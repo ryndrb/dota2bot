@@ -12,7 +12,7 @@ then
 
 local RI = require(GetScriptDirectory()..'/FunLib/util_role_item')
 
-local sUtility = {"item_pipe", "item_heavens_halberd"}
+local sUtility = {"item_nullifier", "item_lotus_orb"}
 local sUtilityItem = RI.GetBestUtilityItem(sUtility)
 
 local HeroBuild = {
@@ -45,30 +45,31 @@ local HeroBuild = {
 				"item_tango",
 				"item_quelling_blade",
 				"item_double_branches",
+				"item_circlet",
+				"item_gauntlets",
 			
 				"item_bottle",
 				"item_magic_wand",
-				"item_double_bracer",
+				"item_bracer",
 				"item_power_treads",
 				"item_blink",
 				"item_echo_sabre",
 				"item_black_king_bar",--
 				"item_ultimate_scepter",
+				"item_aghanims_shard",
 				"item_harpoon",--
 				"item_assault",--
-				"item_overwhelming_blink",--
-				"item_aghanims_shard",
 				"item_bloodthorn",--
 				"item_ultimate_scepter_2",
-				"item_travel_boots_2",--
+				"item_overwhelming_blink",--
 				"item_moon_shard",
+				"item_travel_boots_2",--
 			},
             ['sell_list'] = {
-				"item_quelling_blade", "item_blink",
-				"item_magic_wand", "item_echo_sabre",
-				"item_bottle", "item_black_king_bar",
+				"item_quelling_blade", "item_echo_sabre",
+				"item_magic_wand", "item_black_king_bar",
 				"item_bracer", "item_ultimate_scepter",
-				"item_bracer", "item_assault",
+				"item_bottle", "item_assault",
 			},
         },
     },
@@ -87,29 +88,31 @@ local HeroBuild = {
             },
             ['buy_list'] = {
 				"item_tango",
-				"item_double_branches",
 				"item_quelling_blade",
+				"item_double_branches",
+				"item_circlet",
+				"item_gauntlets",
 			
-				"item_double_bracer",
 				"item_magic_wand",
+				"item_bracer",
 				"item_power_treads",
 				"item_blink",
 				"item_crimson_guard",--
 				"item_black_king_bar",--
-				sUtilityItem,--
 				"item_ultimate_scepter",
+				sUtilityItem,--
+				"item_aghanims_shard",
 				"item_assault",--
 				"item_ultimate_scepter_2",
-				"item_aghanims_shard",
 				"item_overwhelming_blink",--
-				"item_travel_boots_2",--
 				"item_moon_shard",
+				"item_travel_boots_2",--
 			},
             ['sell_list'] = {
-				"item_quelling_blade", "item_crimson_guard",
-				"item_magic_wand", "item_black_king_bar",
+				"item_quelling_blade", "item_black_king_bar",
+				"item_magic_wand", "item_ultimate_scepter",
+				"item_magic_wand", "item_ultimate_scepter",
 				"item_bracer", sUtilityItem,
-				"item_bracer", "item_ultimate_scepter",
 			},
         },
     },

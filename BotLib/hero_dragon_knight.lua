@@ -30,30 +30,32 @@ local HeroBuild = {
 				[1] = {1,2,1,3,3,6,3,3,1,1,6,2,2,2,6},
             },
             ['buy_list'] = {
-				"item_tango",
-				"item_double_branches",
-				"item_quelling_blade",
+                "item_tango",
+                "item_double_branches",
+                "item_quelling_blade",
+                "item_circlet",
+                "item_gauntlets",
 			
-				"item_bracer",
 				"item_magic_wand",
+				"item_bracer",
 				"item_power_treads",
 				"item_armlet",
 				"item_yasha",
 				"item_black_king_bar",--
 				"item_sange_and_yasha",--
 				"item_greater_crit",--
-				"item_satanic",--
-				"item_bloodthorn",--
-				"item_travel_boots_2",--
-				"item_ultimate_scepter_2",
-				"item_moon_shard",
 				"item_aghanims_shard",
+				"item_satanic",--
+				"item_ultimate_scepter_2",
+				"item_bloodthorn",--
+				"item_moon_shard",
+				"item_travel_boots_2",--
 			},
             ['sell_list'] = {
 				"item_quelling_blade", "item_black_king_bar",
 				"item_magic_wand", "item_greater_crit",
 				"item_bracer", "item_satanic",
-				"item_armlet", "item_travel_boots",
+				"item_armlet", "item_travel_boots_2",
 			},
         },
     },
@@ -71,32 +73,33 @@ local HeroBuild = {
 				[1] = {1,3,3,2,1,6,1,1,3,3,6,2,2,2,6},
             },
             ['buy_list'] = {
-				"item_tango",
-				"item_double_branches",
-				"item_quelling_blade",
+                "item_tango",
+                "item_double_branches",
+                "item_quelling_blade",
+                "item_circlet",
+                "item_gauntlets",
 			
 				"item_bottle",
 				"item_magic_wand",
-				"item_double_bracer",
+				"item_bracer",
 				"item_power_treads",
+				"item_maelstrom",
 				"item_dragon_lance",
 				"item_black_king_bar",--
-				"item_assault",--
-				"item_greater_crit",--
-				"item_ultimate_scepter",
-				"item_hurricane_pike",--
-				"item_satanic",--
-				"item_ultimate_scepter_2",
-				"item_travel_boots_2",--
-				"item_moon_shard",
+				"item_mjollnir",--
 				"item_aghanims_shard",
+				"item_greater_crit",--
+				"item_hurricane_pike",--
+				"item_assault",--
+				"item_ultimate_scepter_2",
+				"item_moon_shard",
+				"item_travel_boots_2",--
 			},
             ['sell_list'] = {
 				"item_quelling_blade", "item_dragon_lance",
 				"item_magic_wand", "item_black_king_bar",
-				"item_bottle", "item_assault",
 				"item_bracer", "item_greater_crit",
-				"item_bracer", "item_ultimate_scepter",
+				"item_bottle", "item_assault",
 			},
         },
     },
@@ -114,24 +117,25 @@ local HeroBuild = {
 				[1] = {1,2,3,3,3,6,3,1,1,1,6,2,2,2,6},
             },
             ['buy_list'] = {
-				"item_tango",
-				"item_double_branches",
-				"item_quelling_blade",
+                "item_tango",
+                "item_double_branches",
+                "item_quelling_blade",
+                "item_circlet",
+                "item_gauntlets",
 			
-				"item_bracer",
 				"item_magic_wand",
+				"item_bracer",
 				"item_power_treads",
 				"item_orchid",
-				"item_blink",
 				"item_crimson_guard",--
 				"item_black_king_bar",--
 				sUtilityItem,--
 				"item_aghanims_shard",
 				"item_overwhelming_blink",--
 				"item_bloodthorn",--
-				"item_travel_boots_2",--
-				"item_moon_shard",
 				"item_ultimate_scepter_2",
+				"item_moon_shard",
+				"item_travel_boots_2",--
 			},
             ['sell_list'] = {
 				"item_quelling_blade", "item_crimson_guard",

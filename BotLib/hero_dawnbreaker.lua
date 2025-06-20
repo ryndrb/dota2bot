@@ -12,7 +12,7 @@ then
 
 local RI = require(GetScriptDirectory()..'/FunLib/util_role_item')
 
-local sUtility = {"item_pipe", "item_lotus_orb", "item_heavens_halberd"}
+local sUtility = {"item_nullifier", "item_lotus_orb", "item_heavens_halberd"}
 local sUtilityItem = RI.GetBestUtilityItem(sUtility)
 
 local HeroBuild = {
@@ -45,32 +45,33 @@ local HeroBuild = {
 				"item_tango",
 				"item_double_branches",
 				"item_quelling_blade",
+                "item_circlet",
+                "item_gauntlets",
 			
-				"item_bracer",
                 "item_bottle",
-				"item_boots",
 				"item_magic_wand",
+				"item_bracer",
+				"item_boots",
 				"item_soul_ring",
 				"item_phase_boots",
 				"item_blade_mail",
-				"item_echo_sabre",
                 "item_desolator",--
 				"item_black_king_bar",--
+				"item_harpoon",--
                 "item_basher",
 				"item_aghanims_shard",
-				"item_harpoon",--
 				"item_abyssal_blade",--
                 "item_shivas_guard",--
-                "item_wind_waker",--
 				"item_moon_shard",
 				"item_ultimate_scepter_2",
+                "item_wind_waker",--
 			},
             ['sell_list'] = {
 				"item_quelling_blade", "item_blade_mail",
-				"item_magic_wand", "item_echo_sabre",
-				"item_soul_ring", "item_desolator",
-                "item_bottle", "item_black_king_bar",
-				"item_bracer", "item_basher",
+				"item_magic_wand", "item_desolator",
+				"item_bracer", "item_black_king_bar",
+				"item_soul_ring", "item_harpoon",
+                "item_bottle", "item_basher",
 				"item_phase_boots", "item_shivas_guard",
 				"item_blade_mail", "item_wind_waker",
 			},
@@ -93,28 +94,29 @@ local HeroBuild = {
 				"item_tango",
 				"item_double_branches",
 				"item_quelling_blade",
+                "item_circlet",
+                "item_gauntlets",
 			
+				"item_magic_wand",
 				"item_bracer",
 				"item_boots",
-				"item_magic_wand",
 				"item_soul_ring",
 				"item_phase_boots",
 				"item_blade_mail",
-				"item_echo_sabre",
                 "item_crimson_guard",--
 				"item_black_king_bar",--
+				"item_harpoon",--
 				sUtilityItem,--
 				"item_aghanims_shard",
-				"item_harpoon",--
 				"item_assault",--
-				"item_abyssal_blade",--
-				"item_moon_shard",
 				"item_ultimate_scepter_2",
+				"item_moon_shard",
+				"item_abyssal_blade",--
 			},
             ['sell_list'] = {
-				"item_quelling_blade", "item_echo_sabre",
-				"item_magic_wand", "item_crimson_guard",
-				"item_soul_ring", "item_black_king_bar",
+				"item_quelling_blade", "item_crimson_guard",
+				"item_magic_wand", "item_black_king_bar",
+				"item_soul_ring", "item_harpoon",
 				"item_bracer", sUtilityItem,
 				"item_phase_boots", "item_assault",
 				"item_blade_mail", "item_abyssal_blade",
@@ -136,27 +138,28 @@ local HeroBuild = {
                 [2] = {2,1,2,1,2,6,2,3,1,1,6,3,3,3,6},
             },
             ['buy_list'] = {
+				"item_tango",
 				"item_double_branches",
-				"item_double_enchanted_mango",
 				"item_faerie_fire",
 				"item_blood_grenade",
 			
-				"item_boots",
 				"item_magic_wand",
 				"item_tranquil_boots",
-				"item_pavise",
+                "item_blade_mail",
 				"item_solar_crest",--
 				"item_ultimate_scepter",
 				"item_holy_locket",--
-				"item_heavens_halberd",--
+                "item_shivas_guard",--
 				"item_boots_of_bearing",--
-				"item_assault",--
-				"item_shivas_guard",--
-				"item_ultimate_scepter_2",
 				"item_aghanims_shard",
+				"item_wind_waker",--
+				"item_ultimate_scepter_2",
+				"item_abyssal_blade",--
 				"item_moon_shard",
 			},
-            ['sell_list'] = {},
+            ['sell_list'] = {
+                "item_blade_mail", "item_abyssal_blade",
+            },
         },
     },
     ['pos_5'] = {
@@ -174,27 +177,28 @@ local HeroBuild = {
                 [2] = {2,1,2,1,2,6,2,3,1,1,6,3,3,3,6},
             },
             ['buy_list'] = {
+				"item_tango",
 				"item_double_branches",
-				"item_double_enchanted_mango",
 				"item_faerie_fire",
 				"item_blood_grenade",
 			
-				"item_boots",
 				"item_magic_wand",
 				"item_arcane_boots",
-				"item_pavise",
-				"item_guardian_greaves",--
+                "item_blade_mail",
 				"item_solar_crest",--
 				"item_ultimate_scepter",
 				"item_holy_locket",--
-				"item_heavens_halberd",--
-				"item_assault",--
-				"item_shivas_guard",--
-				"item_ultimate_scepter_2",
+                "item_shivas_guard",--
+				"item_guardian_greaves",--
 				"item_aghanims_shard",
+				"item_wind_waker",--
+				"item_ultimate_scepter_2",
+				"item_abyssal_blade",--
 				"item_moon_shard",
 			},
-            ['sell_list'] = {},
+            ['sell_list'] = {
+                "item_blade_mail", "item_abyssal_blade",
+            },
         },
     },
 }

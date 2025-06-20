@@ -22,7 +22,7 @@ local HeroBuild = {
                 [1] = {
                     ['t25'] = {10, 0},
                     ['t20'] = {10, 0},
-                    ['t15'] = {10, 0},
+                    ['t15'] = {0, 10},
                     ['t10'] = {10, 0},
                 }
             },
@@ -31,7 +31,7 @@ local HeroBuild = {
             },
             ['buy_list'] = {
                 "item_tango",
-                "item_branches",
+                "item_double_branches",
                 "item_quelling_blade",
                 "item_double_gauntlets",
             
@@ -46,9 +46,9 @@ local HeroBuild = {
                 "item_bloodthorn",--
                 "item_abyssal_blade",--
                 "item_skadi",--
-                "item_travel_boots_2",--
                 "item_moon_shard",
                 "item_ultimate_scepter_2",
+                "item_travel_boots_2",--
             },
             ['sell_list'] = {
                 "item_gauntlets", "item_armlet",
@@ -56,7 +56,7 @@ local HeroBuild = {
                 "item_quelling_blade", "item_sange_and_yasha",
                 "item_magic_wand", "item_basher",
                 "item_orb_of_corrosion", "item_bloodthorn",
-                "item_armlet", "item_travel_boots"
+                "item_armlet", "item_skadi"
             },
         },
     },

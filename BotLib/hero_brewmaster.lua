@@ -12,7 +12,7 @@ then
 
 local RI = require(GetScriptDirectory()..'/FunLib/util_role_item')
 
-local sUtility = {"item_crimson_guard", "item_lotus_orb"}
+local sUtility = {"item_pipe", "item_crimson_guard"}
 local sUtilityItem = RI.GetBestUtilityItem(sUtility)
 
 local HeroBuild = {
@@ -45,8 +45,8 @@ local HeroBuild = {
             ['talent'] = {
 				[1] = {
 					['t25'] = {10, 0},
-					['t20'] = {0, 10},
-					['t15'] = {10, 0},
+					['t20'] = {10, 0},
+					['t15'] = {0, 10},
 					['t10'] = {0, 10},
 				}
             },
@@ -56,27 +56,29 @@ local HeroBuild = {
             ['buy_list'] = {
 				"item_tango",
 				"item_double_branches",
-				"item_quelling_blade",
+				"item_double_circlet",
+                "item_faerie_fire",
 			
-				"item_double_bracer",
-				"item_boots",
 				"item_magic_wand",
+				"item_boots",
+				"item_double_bracer",
 				"item_radiance",--
-                "item_pipe",--
-				"item_black_king_bar",--
+                "item_spirit_vessel",
 				sUtilityItem,--
-				"item_aghanims_shard",
-				"item_travel_boots",
+				"item_black_king_bar",--
 				"item_shivas_guard",--
-				"item_travel_boots_2",--
-				"item_ultimate_scepter_2",
+                "item_travel_boots",
+                "item_assault",--
+                "item_aghanims_shard",
 				"item_moon_shard",
+				"item_ultimate_scepter_2",
+				"item_travel_boots_2",--
 			},
             ['sell_list'] = {
-				"item_quelling_blade", "item_pipe",
-				"item_bracer", sUtilityItem,
+				"item_magic_wand", sUtilityItem,
+				"item_bracer", "item_black_king_bar",
                 "item_bracer", "item_shivas_guard",
-				"item_magic_wand", "item_black_king_bar"
+                "item_spirit_vessel", "item_assault",
 			},
         },
     },

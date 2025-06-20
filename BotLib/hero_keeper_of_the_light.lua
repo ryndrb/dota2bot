@@ -45,23 +45,25 @@ local HeroBuild = {
                 "item_faerie_fire",
                 "item_double_branches",
                 "item_tango",
+                "item_circlet",
+                "item_mantle",
             
-                "item_null_talisman",
-                "item_boots",
                 "item_magic_wand",
+                "item_boots",
+                "item_null_talisman",
                 "item_spirit_vessel",
                 "item_dagon_2",
                 "item_travel_boots",
                 "item_octarine_core",--
                 "item_black_king_bar",--
-                "item_dagon_5",--
-                "item_aghanims_shard",
                 "item_sheepstick",--
+                "item_aghanims_shard",
                 "item_ultimate_scepter",
+                "item_dagon_5",--
                 "item_wind_waker",--
                 "item_ultimate_scepter_2",
-                "item_travel_boots_2",--
                 "item_moon_shard",
+                "item_travel_boots_2",--
             },
             ['sell_list'] = {
                 "item_magic_wand", "item_black_king_bar",
@@ -97,23 +99,29 @@ local HeroBuild = {
             },
             ['buy_list'] = {
                 "item_double_tango",
+                "item_double_branches",
                 "item_faerie_fire",
                 "item_blood_grenade",
+                "item_wind_lace",
             
+                "item_magic_wand",
                 "item_tranquil_boots",
-                "item_solar_crest",--
                 "item_glimmer_cape",--
                 "item_ancient_janggo",
-                "item_cyclone",
+                "item_solar_crest",--
+                "item_ultimate_scepter",
                 "item_boots_of_bearing",--
-                "item_lotus_orb",--
-                "item_sheepstick",--
-                "item_wind_waker",--
-                "item_ultimate_scepter_2",
                 "item_aghanims_shard",
+                "item_octarine_core",--
+                "item_sheepstick",--
+                "item_cyclone",
+                "item_ultimate_scepter_2",
+                "item_wind_waker",--
                 "item_moon_shard",
             },
-            ['sell_list'] = {},
+            ['sell_list'] = {
+                "item_magic_wand", "item_sheepstick"
+            },
         },
     },
     ['pos_5'] = {
@@ -131,23 +139,29 @@ local HeroBuild = {
             },
             ['buy_list'] = {
                 "item_double_tango",
+                "item_double_branches",
                 "item_faerie_fire",
                 "item_blood_grenade",
+                "item_wind_lace",
             
+                "item_magic_wand",
                 "item_arcane_boots",
-                "item_solar_crest",--
                 "item_glimmer_cape",--
                 "item_mekansm",
-                "item_cyclone",
+                "item_solar_crest",--
+                "item_ultimate_scepter",
                 "item_guardian_greaves",--
-                "item_lotus_orb",--
-                "item_sheepstick",--
-                "item_wind_waker",--
-                "item_ultimate_scepter_2",
                 "item_aghanims_shard",
+                "item_octarine_core",--
+                "item_sheepstick",--
+                "item_cyclone",
+                "item_ultimate_scepter_2",
+                "item_wind_waker",--
                 "item_moon_shard",
             },
-            ['sell_list'] = {},
+            ['sell_list'] = {
+                "item_magic_wand", "item_sheepstick"
+            },
         },
     },
 }

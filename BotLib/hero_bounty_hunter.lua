@@ -13,7 +13,7 @@ then
 
 local RI = require(GetScriptDirectory()..'/FunLib/util_role_item')
 
-local sUtility = {"item_crimson_guard", "item_heavens_halberd"}
+local sUtility = {"item_pipe", "item_heavens_halberd"}
 local sUtilityItem = RI.GetBestUtilityItem(sUtility)
 
 local HeroBuild = {
@@ -46,29 +46,30 @@ local HeroBuild = {
 				"item_double_branches",
 				"item_quelling_blade",
 				"item_tango",
-				"item_faerie_fire",
+				"item_circlet",
+				"item_slippers",
 			
 				"item_bottle",
-				"item_phase_boots",
 				"item_magic_wand",
-				"item_phylactery",
+				"item_phase_boots",
+				"item_wraith_band",
+				"item_maelstrom",
 				"item_ultimate_scepter",
-				"item_octarine_core",--
 				"item_black_king_bar",--
-				"item_angels_demise",--
-				"item_assault",--
-				"item_travel_boots",
-				"item_cyclone",
-				"item_ultimate_scepter_2",
-				"item_wind_waker",--
-				"item_travel_boots_2",--
-				"item_moon_shard",
+				"item_mjollnir",--
+				"item_greater_crit",--
 				"item_aghanims_shard",
+				"item_satanic",--
+				"item_bloodthorn",--
+				"item_ultimate_scepter_2",
+				"item_moon_shard",
+				"item_travel_boots_2",--
 			},
             ['sell_list'] = {
-				"item_quelling_blade", "item_octarine_core",
+				"item_quelling_blade", "item_ultimate_scepter",
 				"item_magic_wand", "item_black_king_bar",
-				"item_bottle", "item_assault",
+				"item_wraith_band", "item_greater_crit",
+				"item_bottle", "item_satanic",
 			},
         },
     },
@@ -89,25 +90,27 @@ local HeroBuild = {
 				"item_double_branches",
 				"item_quelling_blade",
 				"item_tango",
-				"item_faerie_fire",
+				"item_circlet",
+				"item_slippers",
 			
-				"item_boots",
 				"item_magic_wand",
 				"item_phase_boots",
-				"item_phylactery",
-				"item_pipe",--
-				"item_black_king_bar",--
+				"item_wraith_band",
+				"item_maelstrom",
 				sUtilityItem,--
-				"item_angels_demise",--
+				"item_black_king_bar",--
+				"item_mjollnir",--
+				"item_aghanims_shard",
 				"item_assault",--
-				"item_travel_boots_2",--
+				"item_sheepstick",--
 				"item_ultimate_scepter_2",
 				"item_moon_shard",
-				"item_aghanims_shard",
+				"item_travel_boots_2",--
 			},
             ['sell_list'] = {
-				"item_quelling_blade", sUtilityItem,
-				"item_magic_wand", "item_assault"
+				"item_quelling_blade", "item_black_king_bar",
+				"item_wraith_band", "item_assault",
+				"item_magic_wand", "item_sheepstick"
 			},
         },
     },
@@ -133,20 +136,22 @@ local HeroBuild = {
 				"item_boots",
 				"item_magic_wand",
 				"item_tranquil_boots",
+				"item_urn_of_shadows",
 				"item_ancient_janggo",
+				"item_spirit_vessel",--
 				"item_solar_crest",--
 				"item_boots_of_bearing",--
-				"item_force_staff",--
-				"item_heavens_halberd",--
-				"item_sheepstick",--
-				"item_lotus_orb",--
 				"item_aghanims_shard",
+				"item_cyclone",
+				"item_sheepstick",--
 				"item_ultimate_scepter_2",
 				"item_moon_shard",
+				"item_sphere",--
+				"item_wind_waker",--
 			},
             ['sell_list'] = {
+				"item_orb_of_venom", "item_sheepstick",
 				"item_magic_wand", "item_boots_of_bearing",
-				"item_orb_of_venom", "item_force_staff",
 			},
         },
     },
@@ -172,20 +177,22 @@ local HeroBuild = {
 				"item_boots",
 				"item_magic_wand",
 				"item_arcane_boots",
-				"item_ancient_janggo",
+				"item_urn_of_shadows",
+				"item_mekansm",
+				"item_spirit_vessel",--
 				"item_solar_crest",--
 				"item_guardian_greaves",--
-				"item_force_staff",--
-				"item_heavens_halberd",--
-				"item_sheepstick",--
-				"item_lotus_orb",--
 				"item_aghanims_shard",
+				"item_cyclone",
+				"item_sheepstick",--
 				"item_ultimate_scepter_2",
 				"item_moon_shard",
+				"item_sphere",--
+				"item_wind_waker",--
 			},
             ['sell_list'] = {
+				"item_orb_of_venom", "item_sheepstick",
 				"item_magic_wand", "item_boots_of_bearing",
-				"item_orb_of_venom", "item_force_staff",
 			},
         },
     },

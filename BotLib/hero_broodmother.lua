@@ -42,20 +42,20 @@ local HeroBuild = {
                 "item_orchid",
 				"item_black_king_bar",--
 				"item_aghanims_shard",
-                "item_revenants_brooch",--
 				"item_butterfly",--
 				"item_bloodthorn",--
                 "item_abyssal_blade",--
-				"item_travel_boots_2",--
+                "item_greater_crit",--
 				"item_moon_shard",
 				"item_ultimate_scepter_2",
+				"item_travel_boots_2",--
 			},
             ['sell_list'] = {
                 "item_quelling_blade", "item_orchid",
 				"item_magic_wand", "item_black_king_bar",
-				"item_soul_ring", "item_revenants_brooch",
                 "item_wraith_band", "item_butterfly",
                 "item_wraith_band", "item_abyssal_blade",
+				"item_soul_ring", "item_greater_crit",
 			},
         },
     },
@@ -85,20 +85,20 @@ local HeroBuild = {
                 "item_orchid",
 				"item_black_king_bar",--
 				"item_aghanims_shard",
-                "item_revenants_brooch",--
 				"item_butterfly",--
 				"item_bloodthorn",--
                 "item_abyssal_blade",--
-				"item_travel_boots_2",--
+                "item_greater_crit",--
 				"item_moon_shard",
 				"item_ultimate_scepter_2",
+				"item_travel_boots_2",--
 			},
             ['sell_list'] = {
                 "item_quelling_blade", "item_orchid",
 				"item_magic_wand", "item_black_king_bar",
-				"item_soul_ring", "item_revenants_brooch",
                 "item_wraith_band", "item_butterfly",
                 "item_wraith_band", "item_abyssal_blade",
+				"item_soul_ring", "item_greater_crit",
 			},
         },
     },
@@ -132,16 +132,16 @@ local HeroBuild = {
 				"item_sheepstick",--
 				"item_bloodthorn",--
                 "item_abyssal_blade",--
-				"item_travel_boots_2",--
 				"item_moon_shard",
 				"item_ultimate_scepter_2",
+				"item_travel_boots_2",--
 			},
             ['sell_list'] = {
                 "item_quelling_blade", "item_orchid",
 				"item_magic_wand", "item_assault",
-				"item_soul_ring", "item_black_king_bar",
+                "item_wraith_band", "item_black_king_bar",
                 "item_wraith_band", "item_sheepstick",
-                "item_wraith_band", "item_abyssal_blade",
+				"item_soul_ring", "item_abyssal_blade",
 			},
         },
     },

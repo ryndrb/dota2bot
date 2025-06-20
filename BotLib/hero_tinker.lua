@@ -50,24 +50,25 @@ local HeroBuild = {
                 "item_bottle",
                 "item_magic_wand",
                 "item_double_null_talisman",
+                "item_soul_ring",
                 "item_blink",
                 "item_yasha_and_kaya",--
                 "item_ultimate_scepter",
+                "item_shivas_guard",--
                 "item_black_king_bar",--
                 "item_arcane_blink",--
-                "item_shivas_guard",--
-                "item_octarine_core",--
-                "item_cyclone",
+                "item_aghanims_shard",
+                "item_dagon_5",--
+                "item_moon_shard",
                 "item_ultimate_scepter_2",
                 "item_wind_waker",--
-                "item_aghanims_shard",
-                "item_moon_shard",
             },
             ['sell_list'] = {
-                "item_magic_wand", "item_ultimate_scepter",
-                "item_bottle", "item_black_king_bar",
-                "item_null_talisman", "item_octarine_core",
-                "item_null_talisman", "item_cyclone",
+                "item_magic_wand", "item_yasha_and_kaya",
+                "item_bottle", "item_ultimate_scepter",
+                "item_null_talisman", "item_shivas_guard",
+                "item_null_talisman", "item_black_king_bar",
+                "item_soul_ring", "item_dagon_5",
             },
         },
     },
@@ -97,30 +98,28 @@ local HeroBuild = {
                 [1] = {2,1,2,3,2,6,2,3,3,3,6,1,1,1,6},
             },
             ['buy_list'] = {
-                "item_double_tango",
+                "item_tango",
                 "item_double_branches",
-                "item_circlet",
+                "item_double_circlet",
                 "item_blood_grenade",
 
-                "item_double_null_talisman",
                 "item_magic_wand",
-                "item_boots",
+                "item_tranquil_boots",
+                "item_double_null_talisman",
                 "item_holy_locket",--
                 "item_ancient_janggo",
                 "item_glimmer_cape",--
                 "item_boots_of_bearing",--
-                "item_aether_lens",
-                "item_veil_of_discord",
-                "item_sheepstick",--
-                "item_shivas_guard",--
-                "item_ethereal_blade",--
                 "item_aghanims_shard",
+                "item_shivas_guard",--
+                "item_sheepstick",--
+                "item_dagon_5",--
                 "item_ultimate_scepter_2",
                 "item_moon_shard",
             },
             ['sell_list'] = {
-                "item_null_talisman", "item_veil_of_discord",
                 "item_null_talisman", "item_sheepstick",
+                "item_null_talisman", "item_dagon_5",
             },
         },
     },
@@ -138,30 +137,28 @@ local HeroBuild = {
                 [1] = {2,1,2,3,2,6,2,3,3,3,6,1,1,1,6},
             },
             ['buy_list'] = {
-                "item_double_tango",
+                "item_tango",
                 "item_double_branches",
-                "item_circlet",
+                "item_double_circlet",
                 "item_blood_grenade",
 
-                "item_double_null_talisman",
                 "item_magic_wand",
-                "item_boots",
+                "item_arcane_boots",
+                "item_double_null_talisman",
                 "item_holy_locket",--
                 "item_mekansm",
                 "item_glimmer_cape",--
                 "item_guardian_greaves",--
-                "item_aether_lens",
-                "item_veil_of_discord",
-                "item_sheepstick",--
-                "item_shivas_guard",--
-                "item_ethereal_blade",--
                 "item_aghanims_shard",
+                "item_shivas_guard",--
+                "item_sheepstick",--
+                "item_dagon_5",--
                 "item_ultimate_scepter_2",
                 "item_moon_shard",
             },
             ['sell_list'] = {
-                "item_null_talisman", "item_veil_of_discord",
                 "item_null_talisman", "item_sheepstick",
+                "item_null_talisman", "item_dagon_5",
             },
         },
     },

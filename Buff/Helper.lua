@@ -32,4 +32,20 @@ function Helper.IsTurboMode()
     return false
 end
 
+function Helper.CanCastAbility(hAbility)
+	if hAbility == nil
+	or hAbility:IsNull()
+	or hAbility:GetName() == ''
+	or hAbility:IsPassive()
+	or hAbility:IsHidden()
+	or not hAbility:IsTrained()
+	or not hAbility:IsFullyCastable()
+	or not hAbility:IsActivated()
+	then
+		return false
+	end
+
+	return true
+end
+
 return Helper

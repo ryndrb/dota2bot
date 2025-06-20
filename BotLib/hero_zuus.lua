@@ -45,27 +45,31 @@ local HeroBuild = {
 				"item_tango",
 				"item_double_branches",
 				"item_faerie_fire",
+				"item_circlet",
+				"item_mantle",
 			
 				"item_bottle",
 				"item_magic_wand",
 				"item_arcane_boots",
+				"item_null_talisman",
 				"item_phylactery",
 				"item_kaya",
 				"item_ultimate_scepter",
 				"item_octarine_core",--
 				"item_black_king_bar",--
-				"item_kaya_and_sange",--
-				"item_angels_demise",--
-				"item_travel_boots",
 				"item_aghanims_shard",
-				"item_wind_waker",--
+				"item_kaya_and_sange",--
+				"item_sheepstick",--
 				"item_ultimate_scepter_2",
-				"item_travel_boots_2",--
+				"item_wind_waker",--
 				"item_moon_shard",
+				"item_travel_boots_2",--
 			},
             ['sell_list'] = {
-				"item_magic_wand", "item_octarine_core",
+				"item_magic_wand", "item_ultimate_scepter",
+				"item_null_talisman", "item_octarine_core",
 				"item_bottle", "item_black_king_bar",
+				"item_phylactery", "item_wind_waker",
 			},
         },
     },
@@ -101,24 +105,25 @@ local HeroBuild = {
 				"item_blood_grenade",
 				"item_enchanted_mango",
 			
-				"item_magic_wand",
 				"item_tranquil_boots",
+				"item_magic_wand",
 				"item_phylactery",
 				"item_aether_lens",
 				"item_force_staff",
 				"item_boots_of_bearing",--
 				"item_octarine_core",--
-				"item_sheepstick",--
 				"item_ultimate_scepter",
-				"item_angels_demise",--
+				"item_sheepstick",--
 				"item_ultimate_scepter_2",
-				"item_ethereal_blade",--
-				"item_hurricane_pike",--
 				"item_aghanims_shard",
+				"item_ethereal_blade",--
+				"item_sphere",--
 				"item_moon_shard",
+				"item_hurricane_pike",--
 			},
             ['sell_list'] = {
-				"item_magic_wand", "item_boots_of_bearing",
+				"item_magic_wand", "item_ultimate_scepter",
+				"item_phylactery", "item_sphere",
 			},
         },
     },
@@ -142,24 +147,25 @@ local HeroBuild = {
 				"item_blood_grenade",
 				"item_enchanted_mango",
 			
-				"item_magic_wand",
 				"item_arcane_boots",
+				"item_magic_wand",
 				"item_phylactery",
 				"item_aether_lens",
 				"item_force_staff",
 				"item_guardian_greaves",--
 				"item_octarine_core",--
-				"item_sheepstick",--
 				"item_ultimate_scepter",
-				"item_angels_demise",--
+				"item_sheepstick",--
 				"item_ultimate_scepter_2",
-				"item_ethereal_blade",--
-				"item_hurricane_pike",--
 				"item_aghanims_shard",
+				"item_ethereal_blade",--
+				"item_sphere",--
 				"item_moon_shard",
+				"item_hurricane_pike",--
 			},
             ['sell_list'] = {
-				"item_magic_wand", "item_guardian_greaves",
+				"item_magic_wand", "item_ultimate_scepter",
+				"item_phylactery", "item_sphere",
 			},
         },
     },

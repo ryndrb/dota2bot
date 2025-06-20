@@ -33,10 +33,11 @@ local HeroBuild = {
 				"item_tango",
 				"item_double_branches",
 				"item_faerie_fire",
+				"item_double_circlet",
 			
-				"item_double_wraith_band",
 				"item_magic_wand",
 				"item_power_treads",
+				"item_double_wraith_band",
 				"item_maelstrom",
 				"item_hurricane_pike",--
 				"item_mjollnir",--
@@ -45,9 +46,9 @@ local HeroBuild = {
 				"item_lesser_crit",
 				"item_satanic",--
 				"item_greater_crit",--
+				"item_moon_shard",
 				"item_travel_boots_2",--
 				"item_ultimate_scepter_2",
-				"item_moon_shard",
 			},
             ['sell_list'] = {
 				"item_magic_wand", "item_black_king_bar",
@@ -73,10 +74,11 @@ local HeroBuild = {
 				"item_tango",
 				"item_double_branches",
 				"item_faerie_fire",
+				"item_double_circlet",
 			
-				"item_double_wraith_band",
 				"item_magic_wand",
 				"item_power_treads",
+				"item_double_wraith_band",
 				"item_maelstrom",
 				"item_hurricane_pike",--
 				"item_mjollnir",--
@@ -85,9 +87,9 @@ local HeroBuild = {
 				"item_lesser_crit",
 				"item_satanic",--
 				"item_greater_crit",--
+				"item_moon_shard",
 				"item_travel_boots_2",--
 				"item_ultimate_scepter_2",
-				"item_moon_shard",
 			},
             ['sell_list'] = {
 				"item_magic_wand", "item_black_king_bar",

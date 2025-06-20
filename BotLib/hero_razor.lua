@@ -37,20 +37,22 @@ local HeroBuild = {
 			
 				"item_power_treads",
 				"item_magic_wand",
+				"item_falcon_blade",
 				"item_manta",--
 				"item_black_king_bar",--
 				"item_aghanims_shard",
 				"item_satanic",--
 				"item_butterfly",--
-				"item_assault",--
 				"item_refresher",--
-				"item_moon_shard",
 				"item_ultimate_scepter_2",
+				"item_moon_shard",
+				"item_skadi",--
 			},
             ['sell_list'] = {
-				"item_quelling_blade", "item_butterfly",
-				"item_magic_wand", "item_assault",
-				"item_power_treads", "item_refresher",
+				"item_quelling_blade", "item_satanic",
+				"item_magic_wand", "item_butterfly",
+				"item_falcon_blade", "item_refresher",
+				"item_power_treads", "item_skadi",
 			},
         },
     },
@@ -74,23 +76,25 @@ local HeroBuild = {
 				"item_quelling_blade",
 			
 				"item_bottle",
-				"item_power_treads",
 				"item_magic_wand",
+				"item_power_treads",
+				"item_falcon_blade",
 				"item_manta",--
 				"item_black_king_bar",--
 				"item_aghanims_shard",
 				"item_satanic",--
-				"item_butterfly",--
 				"item_assault",--
 				"item_refresher",--
-				"item_moon_shard",
 				"item_ultimate_scepter_2",
+				"item_moon_shard",
+				"item_butterfly",--
 			},
             ['sell_list'] = {
-				"item_quelling_blade", "item_satanic",
-				"item_magic_wand", "item_butterfly",
+				"item_quelling_blade", "item_black_king_bar",
+				"item_magic_wand", "item_satanic",
 				"item_bottle", "item_assault",
-				"item_power_treads", "item_refresher",
+				"item_falcon_blade", "item_refresher",
+				"item_power_treads", "item_butterfly",
 			},
         },
     },
@@ -100,7 +104,7 @@ local HeroBuild = {
 				[1] = {
 					['t25'] = {10, 0},
 					['t20'] = {10, 0},
-					['t15'] = {10, 0},
+					['t15'] = {0, 10},
 					['t10'] = {10, 0},
 				}
             },
@@ -110,26 +114,30 @@ local HeroBuild = {
             ['buy_list'] = {
 				"item_tango",
 				"item_double_branches",
+				"item_quelling_blade",
 				"item_double_circlet",
 			
 				"item_magic_wand",
-				"item_double_wraith_band",
 				"item_power_treads",
-				"item_manta",--
+				"item_double_wraith_band",
+				"item_blade_mail",
 				"item_black_king_bar",--
-				"item_heavens_halberd",--
-				"item_aghanims_shard",
 				"item_shivas_guard",--
-				"item_assault",--
+				"item_ultimate_scepter",
+				"item_aghanims_shard",
+				"item_refresher",--
 				"item_satanic",--
-				"item_moon_shard",
 				"item_ultimate_scepter_2",
+				"item_sheepstick",--
+				"item_moon_shard",
+				"item_swift_blink",--
 			},
             ['sell_list'] = {
-				"item_magic_wand", "item_heavens_halberd",
-				"item_wraith_band", "item_shivas_guard",
-				"item_wraith_band", "item_assault",
-				"item_power_treads", "item_satanic",
+				"item_quelling_blade", "item_black_king_bar",
+				"item_magic_wand", "item_shivas_guard",
+				"item_wraith_band", "item_ultimate_scepter",
+				"item_wraith_band", "item_refresher",
+				"item_blade_mail", "item_sheepstick",
 			},
         },
     },

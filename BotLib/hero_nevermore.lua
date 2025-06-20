@@ -35,6 +35,8 @@ local HeroBuild = {
 				"item_tango",
 				"item_double_branches",
 				"item_faerie_fire",
+				"item_enchanted_mango",
+				"item_quelling_blade",
 				
 				"item_magic_wand",
 				"item_power_treads",
@@ -42,16 +44,17 @@ local HeroBuild = {
 				"item_dragon_lance",
 				"item_lesser_crit",
 				"item_black_king_bar",--
-				"item_butterfly",--
-				"item_greater_crit",--
 				"item_hurricane_pike",--
 				"item_aghanims_shard",
+				"item_greater_crit",--
 				"item_satanic",--
+				"item_butterfly",--
 				"item_moon_shard",
-				"item_travel_boots_2",--
 				"item_ultimate_scepter_2",
+				"item_travel_boots_2",--
 			},
             ['sell_list'] = {
+				"item_quelling_blade", "item_black_king_bar",
 				"item_magic_wand", "item_butterfly",
 			},
         },
@@ -73,6 +76,8 @@ local HeroBuild = {
 				"item_tango",
 				"item_double_branches",
 				"item_faerie_fire",
+				"item_enchanted_mango",
+				"item_quelling_blade",
 				
 				"item_bottle",
 				"item_magic_wand",
@@ -81,16 +86,17 @@ local HeroBuild = {
 				"item_dragon_lance",
 				"item_lesser_crit",
 				"item_black_king_bar",--
-				"item_butterfly",--
-				"item_greater_crit",--
 				"item_hurricane_pike",--
 				"item_aghanims_shard",
+				"item_greater_crit",--
 				"item_satanic",--
+				"item_butterfly",--
 				"item_moon_shard",
-				"item_travel_boots_2",--
 				"item_ultimate_scepter_2",
+				"item_travel_boots_2",--
 			},
             ['sell_list'] = {
+				"item_quelling_blade", "item_lesser_crit",
 				"item_magic_wand", "item_black_king_bar",
 				"item_bottle", "item_butterfly",
 			},
@@ -111,28 +117,28 @@ local HeroBuild = {
 				"item_tango",
 				"item_double_branches",
 				"item_faerie_fire",
+				"item_enchanted_mango",
 				
 				"item_bottle",
+				"item_magic_wand",
 				"item_power_treads",
 				"item_wind_lace",
-				"item_magic_wand",
 				"item_kaya",
 				"item_blink",
-				"item_cyclone",
 				"item_black_king_bar",--
-				"item_yasha_and_kaya",--
 				"item_ultimate_scepter",
-				"item_travel_boots",
-				"item_shivas_guard",--
-				"item_wind_waker",--
-				"item_overwhelming_blink",--
-				"item_ultimate_scepter_2",
-				"item_travel_boots_2",--
 				"item_aghanims_shard",
+				"item_yasha_and_kaya",--
+				"item_shivas_guard",--
+				"item_sheepstick",
+				"item_ultimate_scepter_2",
+				"item_overwhelming_blink",--
+				"item_travel_boots_2",--
 			},
             ['sell_list'] = {
-				"item_bottle",
-				"item_magic_wand",
+				"item_magic_wand", "item_black_king_bar",
+				"item_wind_lace", "item_ultimate_scepter",
+				"item_bottle", "item_sheepstick"
 			},
         },
     },

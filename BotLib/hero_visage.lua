@@ -39,7 +39,7 @@ local HeroBuild = {
                 -- }
                 [1] = {
                     ['t25'] = {0, 10},
-                    ['t20'] = {10, 0},
+                    ['t20'] = {0, 10},
                     ['t15'] = {10, 0},
                     ['t10'] = {0, 10},
                 }
@@ -51,30 +51,32 @@ local HeroBuild = {
                 "item_tango",
                 "item_double_branches",
                 "item_double_circlet",
-                "item_enchanted_mango",
+                "item_faerie_fire",
             
                 "item_bottle",
                 "item_magic_wand",
-                "item_double_bracer",
-                "item_boots",
-                "item_vladmir",--
+                "item_null_talisman",
+                "item_bracer",
+                "item_power_treads",
+                "item_maelstrom",
+                "item_vladmir",
                 "item_orchid",
-                "item_ultimate_scepter",
-                "item_assault",--
-                "item_black_king_bar",--
+                "item_mjollnir",--
                 "item_aghanims_shard",
+                "item_black_king_bar",--
+                "item_assault",--
                 "item_bloodthorn",--
-                "item_travel_boots",
-                "item_sheepstick",--
+                "item_nullifier",--
                 "item_ultimate_scepter_2",
-                "item_travel_boots_2",--
                 "item_moon_shard",
+                "item_travel_boots_2",--
             },
             ['sell_list'] = {
-                "item_magic_wand", "item_orchid",
-                "item_bottle", "item_ultimate_scepter",
-                "item_bracer", "item_assault",
+                "item_magic_wand", "item_vladmir",
+                "item_null_talisman", "item_orchid",
                 "item_bracer", "item_black_king_bar",
+                "item_bottle", "item_assault",
+                "item_vladmir", "item_nullifier",
             },
         },
     },
@@ -101,27 +103,26 @@ local HeroBuild = {
                 "item_tango",
                 "item_double_branches",
                 "item_double_circlet",
-                "item_enchanted_mango",
             
                 "item_magic_wand",
                 "item_double_bracer",
-                "item_boots",
-                "item_vladmir",--
+                "item_arcane_boots",
+                "item_vladmir",
                 sUtilityItem,--
-                "item_orchid",
-                "item_ultimate_scepter",
                 "item_assault",--
-                "item_black_king_bar",--
-                "item_ultimate_scepter_2",
                 "item_aghanims_shard",
+                "item_black_king_bar",--
                 "item_bloodthorn",--
-                "item_travel_boots_2",--
+                "item_ultimate_scepter_2",
+                "item_shivas_guard",--
                 "item_moon_shard",
+                "item_travel_boots_2",--
             },
             ['sell_list'] = {
-                "item_magic_wand", "item_orchid",
-                "item_bracer", "item_ultimate_scepter",
-                "item_bracer", "item_assault",
+                "item_magic_wand", "item_assault",
+                "item_bracer", "item_black_king_bar",
+                "item_bracer", "item_bloodthorn",
+                "item_vladmir", "item_shivas_guard",
             },
         },
     },

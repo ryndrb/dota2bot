@@ -24,6 +24,7 @@ function GetDesire()
     or bot:HasModifier('modifier_dazzle_nothl_projection_soul_clone')
     or bot:HasModifier('modifier_skeleton_king_reincarnation_scepter_active')
     or bot:HasModifier('modifier_item_helm_of_the_undying_active')
+    or (botActiveMode == BOT_MODE_EVASIVE_MANEUVERS)
     or (bot:GetUnitName() == 'npc_dota_hero_lone_druid' and bot:HasModifier('modifier_fountain_aura_buff') and DotaTime() < 0)
     then
         return BOT_MODE_DESIRE_NONE
@@ -215,20 +216,6 @@ function GetDesire()
 
     local nDesire = 0
 
-    if J.IsLaning(bot) and J.IsInLaningPhase() then
-        if (#nEnemyHeroes > #nAllyHeroes) and not bWeAreStronger
-        or (#J.GetEnemyHeroesTargetingUnit(nEnemyHeroes, bot) >= 2)
-        then
-            return BOT_MODE_DESIRE_VERYHIGH
-        end
-    end
-
-    -- if (#nAllyHeroes <= 1 and #nEnemyHeroes > 1) then
-    --     if (J.IsInLaningPhase() and #J.GetEnemyHeroesTargetingUnit(nEnemyHeroes, bot) >= 2) then
-    --         return BOT_MODE_DESIRE_VERYHIGH
-    --     end
-    -- end
-
     -- try complete items
     local nCompletItemDesire = X.ConsiderCompleteItem()
     if nCompletItemDesire > 0 then
@@ -305,8 +292,14 @@ function GetDesire()
     nDesire = RemapValClamped(nHealth, 0, 0.80, 1, 0)
 
     if nEnemyNearbyCount > 0 then
-        if nEnemyNearbyCount - nAllyNearbyCount > 0 then nDesire = nDesire + (nEnemyNearbyCount - nAllyNearbyCount) * 0.2 end
-        if not bWeAreStronger and nEnemyNearbyCount >= #nAllyHeroes then nDesire = nDesire + (nEnemyNearbyCount - nAllyNearbyCount) * 0.25 end
+        if nEnemyNearbyCount - nAllyNearbyCount > 0 then
+            nDesire = nDesire + (nEnemyNearbyCount - nAllyNearbyCount) * (0.75 / 4)
+            if J.IsInLaningPhase() then
+                nDesire = nDesire + (#J.GetEnemyHeroesTargetingUnit(nEnemyHeroes, bot)) * (0.75 / 4)
+            end
+        end
+
+        if not bWeAreStronger and nEnemyNearbyCount >= nAllyNearbyCount then nDesire = nDesire + 0.25 end
         if nAllyNearbyCount >= nEnemyNearbyCount or bWeAreStronger then
             if bot:HasModifier('modifier_oracle_false_promise_timer') and J.GetModifierTime(bot, 'modifier_oracle_false_promise_timer') > 2.0 and J.IsUnitNearby(bot, nAllyHeroes, 1200, 'npc_dota_hero_oracle', true) then
                 nDesire = nDesire - 0.25

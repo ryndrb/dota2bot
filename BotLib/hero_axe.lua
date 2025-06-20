@@ -35,7 +35,7 @@ local HeroBuild = {
                 [1] = {
 					['t25'] = {0, 10},
 					['t20'] = {0, 10},
-					['t15'] = {0, 10},
+					['t15'] = {10, 0},
 					['t10'] = {10, 0},
 				},
             },
@@ -45,7 +45,8 @@ local HeroBuild = {
             ['buy_list'] = {
 				"item_tango",
 				"item_double_branches",
-				"item_ring_of_protection",
+				"item_magic_stick",
+				"item_quelling_blade",
 	
                 "item_bottle",
 				"item_magic_wand",
@@ -54,23 +55,22 @@ local HeroBuild = {
 				"item_blade_mail",
 				"item_blink",
 				"item_black_king_bar",--
-                "item_kaya",--
-                "item_octarine_core",--
-                "item_kaya_and_sange",--
 				"item_aghanims_shard",
+                "item_octarine_core",--
 				"item_shivas_guard",--
 				"item_overwhelming_blink",--
-				"item_travel_boots_2",--
+				"item_wind_waker",--
 				"item_ultimate_scepter_2",
 				"item_moon_shard",
+				"item_travel_boots_2",--
 			},
             ['sell_list'] = {
-				"item_ring_of_protection", "item_blade_mail",
+				"item_quelling_blade", "item_blade_mail",
 				"item_magic_wand", "item_blink",
-				"item_bottle", "item_black_king_bar",
-				"item_bracer", "item_kaya",
+				"item_bracer", "item_black_king_bar",
 				"item_bracer", "item_octarine_core",
-				"item_blade_mail", "item_shivas_guard",
+				"item_bottle", "item_shivas_guard",
+				"item_blade_mail", "item_wind_waker",
 			},
         },
     },
@@ -96,29 +96,29 @@ local HeroBuild = {
             ['buy_list'] = {
 				"item_tango",
 				"item_double_branches",
-				"item_gauntlets",
-				"item_ring_of_protection",
+				"item_magic_stick",
+				"item_quelling_blade",
 	
 				"item_bracer",
-				"item_magic_wand",
 				"item_phase_boots",
+				"item_magic_wand",
 				"item_blade_mail",
 				"item_blink",
                 "item_crimson_guard",--
 				"item_black_king_bar",--
-				sUtilityItem,--
-				"item_heart",--
-				"item_overwhelming_blink",--
-				"item_travel_boots_2",--
 				"item_aghanims_shard",
+				sUtilityItem,--
+				"item_overwhelming_blink",--
+				"item_octarine_core",--
 				"item_ultimate_scepter_2",
 				"item_moon_shard",
+				"item_travel_boots_2",--
 			},
             ['sell_list'] = {
-				"item_ring_of_protection", "item_crimson_guard",
+				"item_quelling_blade", "item_crimson_guard",
 				"item_magic_wand", "item_black_king_bar",
 				"item_bracer", sUtilityItem,
-				"item_blade_mail", "item_heart",
+				"item_blade_mail", "item_octarine_core",
 			},
         },
     },

@@ -50,24 +50,24 @@ local HeroBuild = {
                 "item_bottle",
                 "item_magic_wand",
                 "item_phase_boots",
+                "item_soul_ring",
                 "item_blade_mail",
                 "item_radiance",--
                 "item_black_king_bar",--
-                "item_blink",
-                "item_shivas_guard",--
-                "item_heart",--
-                "item_travel_boots",
-                "item_overwhelming_blink",--
-                "item_travel_boots_2",--
                 "item_aghanims_shard",
-                "item_moon_shard",
+                "item_shivas_guard",--
+                "item_overwhelming_blink",--
+                "item_heart",--
                 "item_ultimate_scepter_2",
+                "item_moon_shard",
+                "item_travel_boots_2",--
             },
             ['sell_list'] = {
-                "item_quelling_blade", "item_black_king_bar",
-                "item_magic_wand", "item_blink",
-                "item_bottle", "item_shivas_guard",
-                "item_blade_mail", "item_travel_boots",
+                "item_quelling_blade", "item_radiance",
+                "item_magic_wand", "item_black_king_bar",
+                "item_soul_ring", "item_shivas_guard",
+                "item_bottle", "item_overwhelming_blink",
+                "item_blade_mail", "item_heart",
             },
         },
     },
@@ -91,25 +91,24 @@ local HeroBuild = {
                 "item_magic_stick",
             
                 "item_bracer",
-                "item_magic_wand",
                 "item_phase_boots",
+                "item_magic_wand",
                 "item_blade_mail",
                 "item_radiance",--
-                "item_veil_of_discord",
                 "item_crimson_guard",--
                 "item_black_king_bar",--
-                sUtilityItem,--
                 "item_shivas_guard",--
                 "item_aghanims_shard",
-                "item_travel_boots_2",--
-                "item_moon_shard",
+                "item_overwhelming_blink",--
                 "item_ultimate_scepter_2",
+                "item_moon_shard",
+                "item_travel_boots_2",--
             },
             ['sell_list'] = {
-                "item_quelling_blade", "item_veil_of_discord",
+                "item_quelling_blade", "item_crimson_guard",
                 "item_magic_wand", "item_crimson_guard",
-                "item_bracer", "item_black_king_bar",
-                "item_blade_mail", sUtilityItem,
+                "item_bracer", "item_shivas_guard",
+                "item_blade_mail", "item_overwhelming_blink",
             },
         },
     },
@@ -358,7 +357,7 @@ function X.ConsiderBeginOnslaughtDesire()
 end
 
 function X.ConsiderTrample()
-    if not Trample:IsFullyCastable()
+    if not J.CanCastAbility(Trample)
     or bot:IsRooted()
     then
         return BOT_ACTION_DESIRE_NONE

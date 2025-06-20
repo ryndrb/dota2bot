@@ -39,25 +39,29 @@ local HeroBuild = {
 				"item_tango",
 				"item_double_branches",
 				"item_quelling_blade",
+                "item_double_slippers",
 			
 				"item_magic_wand",
+                "item_falcon_blade",
 				"item_power_treads",
 				"item_desolator",--
 				"item_orchid",
 				"item_dragon_lance",
 				"item_aghanims_shard",
 				"item_black_king_bar",--
-				"item_greater_crit",--
-				"item_bloodthorn",--
 				"item_hurricane_pike",--
-				"item_butterfly",--
+				"item_bloodthorn",--
+				"item_greater_crit",--
 				"item_moon_shard",
 				"item_ultimate_scepter_2",
+				"item_travel_boots_2",--
 			},
             ['sell_list'] = {
-				"item_quelling_blade", "item_black_king_bar",
-				"item_magic_wand", "item_greater_crit",
-				"item_power_treads", "item_butterfly",
+				"item_quelling_blade", "item_desolator",
+                "item_slippers", "item_orchid",
+                "item_slippers", "item_dragon_lance",
+				"item_magic_wand", "item_black_king_bar",
+                "item_falcon_blade", "item_greater_crit",
 			},
         },
     },
@@ -77,7 +81,8 @@ local HeroBuild = {
             ['buy_list'] = {
 				"item_tango",
 				"item_double_branches",
-				"item_magic_stick",
+				"item_quelling_blade",
+                "item_double_slippers",
 			
 				"item_bottle",
 				"item_magic_wand",
@@ -90,14 +95,16 @@ local HeroBuild = {
 				"item_bloodthorn",--
 				"item_hurricane_pike",--
 				"item_sheepstick",--
-				"item_butterfly",--
 				"item_moon_shard",
 				"item_ultimate_scepter_2",
+				"item_travel_boots_2",--
 			},
             ['sell_list'] = {
-				"item_bottle", "item_black_king_bar",
-				"item_magic_wand", "item_sheepstick",
-				"item_arcane_boots", "item_butterfly",
+                "item_quelling_blade", "item_desolator",
+                "item_slippers", "item_orchid",
+                "item_slippers", "item_orchid",
+				"item_magic_wand", "item_black_king_bar",
+				"item_bottle", "item_sheepstick",
 			},
         },
     },
@@ -118,9 +125,9 @@ local HeroBuild = {
             ['talent'] = {
 				[1] = {
 					['t25'] = {0, 10},
-					['t20'] = {10, 0},
+					['t20'] = {0, 10},
 					['t15'] = {10, 0},
-					['t10'] = {0, 10},
+					['t10'] = {10, 0},
 				}
             },
             ['ability'] = {
@@ -132,23 +139,24 @@ local HeroBuild = {
 				"item_blood_grenade",
 				"item_blight_stone",
 			
-				"item_boots",
 				"item_magic_wand",
 				"item_tranquil_boots",
 				"item_orchid",
+                "item_ancient_janggo",
 				"item_desolator",--
 				"item_force_staff",
 				"item_boots_of_bearing",--
+                "item_rod_of_atos",
+				"item_aghanims_shard",
 				"item_bloodthorn",--
 				"item_sheepstick",--
-				"item_hurricane_pike",--
-				"item_greater_crit",--
-				"item_aghanims_shard",
-				"item_ultimate_scepter_2",
+                "item_gungir",--
 				"item_moon_shard",
+				"item_ultimate_scepter_2",
+				"item_hurricane_pike",--
 			},
             ['sell_list'] = {
-				"item_magic_wand", "item_boots_of_bearing",
+				"item_magic_wand", "item_sheepstick",
 			},
         },
     },
@@ -157,9 +165,9 @@ local HeroBuild = {
             ['talent'] = {
 				[1] = {
 					['t25'] = {0, 10},
-					['t20'] = {10, 0},
+					['t20'] = {0, 10},
 					['t15'] = {10, 0},
-					['t10'] = {0, 10},
+					['t10'] = {10, 0},
 				}
             },
             ['ability'] = {
@@ -171,23 +179,24 @@ local HeroBuild = {
 				"item_blood_grenade",
 				"item_blight_stone",
 			
-				"item_boots",
 				"item_magic_wand",
 				"item_arcane_boots",
 				"item_orchid",
+                "item_mekansm",
 				"item_desolator",--
 				"item_force_staff",
 				"item_guardian_greaves",--
+                "item_rod_of_atos",
+				"item_aghanims_shard",
 				"item_bloodthorn",--
 				"item_sheepstick",--
-				"item_hurricane_pike",--
-				"item_greater_crit",--
-				"item_aghanims_shard",
-				"item_ultimate_scepter_2",
+                "item_gungir",--
 				"item_moon_shard",
+				"item_ultimate_scepter_2",
+				"item_hurricane_pike",--
 			},
             ['sell_list'] = {
-				"item_magic_wand", "item_boots_of_bearing",
+				"item_magic_wand", "item_sheepstick",
 			},
         },
     },

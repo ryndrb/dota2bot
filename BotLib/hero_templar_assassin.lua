@@ -35,19 +35,19 @@ local HeroBuild = {
 				"item_circlet",
 				"item_quelling_blade",
 			
-				"item_power_treads",
 				"item_magic_wand",
+				"item_power_treads",
 				"item_null_talisman",
-				"item_dragon_lance",
 				"item_desolator",--
+				"item_dragon_lance",
 				"item_blink",
 				"item_aghanims_shard",
 				"item_black_king_bar",--
 				"item_greater_crit",--
 				"item_hurricane_pike",--
 				"item_swift_blink",--
-				"item_sheepstick",--
 				"item_moon_shard",
+				"item_sheepstick",--
 				"item_ultimate_scepter_2",
 			},
             ['sell_list'] = {
@@ -81,23 +81,23 @@ local HeroBuild = {
 				"item_magic_wand",
 				"item_power_treads",
 				"item_null_talisman",
-				"item_dragon_lance",
 				"item_desolator",--
+				"item_dragon_lance",
 				"item_blink",
 				"item_aghanims_shard",
 				"item_black_king_bar",--
 				"item_greater_crit",--
 				"item_hurricane_pike",--
 				"item_swift_blink",--
-				"item_sheepstick",--
 				"item_moon_shard",
+				"item_sheepstick",--
 				"item_ultimate_scepter_2",
 			},
             ['sell_list'] = {
-				"item_quelling_blade", "item_desolator",
+				"item_quelling_blade", "item_dragon_lance",
 				"item_magic_wand", "item_blink",
-				"item_bottle", "item_black_king_bar",
-				"item_null_talisman", "item_greater_crit",
+				"item_null_talisman", "item_black_king_bar",
+				"item_bottle", "item_greater_crit",
 				"item_power_treads", "item_sheepstick",
 			},
         },

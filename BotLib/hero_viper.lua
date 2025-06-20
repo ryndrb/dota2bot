@@ -34,28 +34,27 @@ local HeroBuild = {
 				"item_faerie_fire",
 				"item_double_branches",
 				"item_circlet",
-				"item_circlet",
+				"item_slippers",
 			
 				"item_magic_wand",
-				"item_boots",
-				"item_double_wraith_band",
 				"item_power_treads",
+				"item_wraith_band",
 				"item_maelstrom",
 				"item_dragon_lance",
 				"item_black_king_bar",--
 				"item_mjollnir",--
+				"item_hurricane_pike",--
+				"item_aghanims_shard",
 				"item_butterfly",--
 				"item_greater_crit",--
-				"item_aghanims_shard",
-				"item_hurricane_pike",--
+				"item_moon_shard",
 				"item_ultimate_scepter_2",
 				"item_travel_boots_2",--
-				"item_moon_shard",
 			},
             ['sell_list'] = {
-				"item_magic_wand", "item_black_king_bar",
-				"item_wraith_band", "item_butterfly",
+				"item_magic_wand", "item_butterfly",
 				"item_wraith_band", "item_greater_crit",
+				"item_wraith_band", "item_butterfly",
 			},
         },
     },
@@ -89,17 +88,17 @@ local HeroBuild = {
 				"item_hurricane_pike",--
 				"item_aghanims_shard",
 				"item_assault",--
-				"item_shivas_guard",--
-				"item_greater_crit",--
-				"item_travel_boots_2",--
+				"item_bloodthorn",--
+				"item_skadi",--
 				"item_ultimate_scepter_2",
 				"item_moon_shard",
+				"item_travel_boots_2",--
 			},
             ['sell_list'] = {
 				"item_magic_wand", "item_manta",
-				"item_bottle", "item_assault",
-				"item_wraith_band", "item_shivas_guard",
-				"item_mage_slayer", "item_greater_crit",
+				"item_wraith_band", "item_assault",
+				"item_bottle", "item_bloodthorn",
+				"item_mage_slayer", "item_skadi",
 			},
         },
     },
@@ -123,6 +122,7 @@ local HeroBuild = {
 				"item_double_circlet",
 			
 				"item_magic_wand",
+				"item_boots",
 				"item_double_wraith_band",
 				"item_power_treads",
 				"item_mage_slayer",
@@ -132,16 +132,16 @@ local HeroBuild = {
 				"item_aghanims_shard",
 				"item_hurricane_pike",--
 				"item_sheepstick",--
-				"item_butterfly",--
-				"item_travel_boots_2",--
+				"item_shivas_guard",--
 				"item_ultimate_scepter_2",
 				"item_moon_shard",
+				"item_travel_boots_2",--
 			},
             ['sell_list'] = {
 				"item_magic_wand", sUtilityItem,
 				"item_wraith_band", "item_black_king_bar",
 				"item_wraith_band", "item_sheepstick",
-				"item_mage_slayer", "item_butterfly",
+				"item_mage_slayer", "item_shivas_guard",
 			},
         },
     },

@@ -43,31 +43,32 @@ local HeroBuild = {
             },
             ['buy_list'] = {
 				"item_tango",
-				"item_double_branches",
 				"item_double_circlet",
+				"item_quelling_blade",
+				"item_double_branches",
 			
 				"item_bottle",
 				"item_magic_wand",
 				"item_double_bracer",
-				"item_phase_boots",
-				"item_ultimate_scepter",
+				"item_arcane_boots",
 				"item_blink",
+				"item_ultimate_scepter",
 				"item_shivas_guard",--
+				"item_aghanims_shard",
 				"item_black_king_bar",--
-				"item_cyclone",
 				"item_octarine_core",--
+				"item_wind_waker",--
 				"item_ultimate_scepter_2",
 				"item_overwhelming_blink",--
-				"item_wind_waker",--
-				"item_travel_boots_2",--
-				"item_aghanims_shard",
 				"item_moon_shard",
+				"item_travel_boots_2",--
 			},
             ['sell_list'] = {
-				"item_magic_wand", "item_blink",
-				"item_bottle", "item_shivas_guard",
+				"item_quelling_blade", "item_blink",
+				"item_magic_wand", "item_ultimate_scepter",
+				"item_bracer", "item_shivas_guard",
 				"item_bracer", "item_black_king_bar",
-				"item_bracer", "item_cyclone",
+				"item_bottle", "item_octarine_core",
 			},
         },
     },
@@ -86,8 +87,9 @@ local HeroBuild = {
             },
             ['buy_list'] = {
 				"item_tango",
-				"item_double_branches",
 				"item_double_circlet",
+				"item_quelling_blade",
+				"item_double_branches",
 			
 				"item_magic_wand",
 				"item_double_bracer",
@@ -95,16 +97,17 @@ local HeroBuild = {
 				"item_blink",
 				sUtilityItem,--
 				"item_ultimate_scepter",
+				"item_aghanims_shard",
 				"item_shivas_guard",--
 				"item_black_king_bar",--
 				"item_overwhelming_blink",--
 				"item_wind_waker",--
 				"item_ultimate_scepter_2",
-				"item_travel_boots_2",--
-				"item_aghanims_shard",
 				"item_moon_shard",
+				"item_travel_boots_2",--
 			},
             ['sell_list'] = {
+				"item_quelling_blade", sUtilityItem,
 				"item_magic_wand", "item_ultimate_scepter",
 				"item_bracer", "item_shivas_guard",
 				"item_bracer", "item_black_king_bar",

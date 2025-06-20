@@ -92,7 +92,9 @@ local HeroBuild = {
 			},
             ['sell_list'] = {
 				"item_magic_wand", "item_ultimate_scepter",
-				"item_orb_of_corrosion", "item_disperser",
+				"item_null_talisman", "item_greater_crit",
+				"item_null_talisman", "item_butterfly",
+				"item_orb_of_corrosion", "item_skadi",
 			},
         },
     },

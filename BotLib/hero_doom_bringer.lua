@@ -12,20 +12,48 @@ then
 
 local RI = require(GetScriptDirectory()..'/FunLib/util_role_item')
 
-local sUtility = {"item_pipe", "item_lotus_orb", "item_heavens_halberd"}
+local sUtility = {"item_pipe", "item_lotus_orb", "item_nullifier"}
 local sUtilityItem = RI.GetBestUtilityItem(sUtility)
 
 local HeroBuild = {
     ['pos_1'] = {
         [1] = {
             ['talent'] = {
-                [1] = {},
+                [1] = {
+                    ['t25'] = {0, 10},
+                    ['t20'] = {0, 10},
+                    ['t15'] = {0, 10},
+                    ['t10'] = {10, 0},
+                }
             },
             ['ability'] = {
-                [1] = {},
+                [1] = {1,2,1,2,1,6,2,2,1,3,6,3,3,3,6},
             },
-            ['buy_list'] = {},
-            ['sell_list'] = {},
+            ['buy_list'] = {
+                "item_tango",
+                "item_double_branches",
+                "item_quelling_blade",
+                "item_circlet",
+                "item_gauntlets",
+            
+                "item_magic_wand",
+                "item_bracer",
+                "item_power_treads",
+                "item_radiance",
+                "item_black_king_bar",--
+                "item_harpoon",--
+                "item_assault",--
+                "item_aghanims_shard",
+                "item_overwhelming_blink",--
+                "item_moon_shard",
+                "item_ultimate_scepter_2",
+                "item_travel_boots_2",--
+            },
+            ['sell_list'] = {
+                "item_quelling_blade", "item_harpoon",
+                "item_magic_wand", "item_assault",
+                "item_bracer", "item_overwhelming_blink",
+            },
         },
     },
     ['pos_2'] = {
@@ -44,31 +72,31 @@ local HeroBuild = {
             ['buy_list'] = {
                 "item_tango",
                 "item_double_branches",
-                "item_magic_stick",
+                "item_quelling_blade",
+                "item_circlet",
+                "item_gauntlets",
             
                 "item_bottle",
-                "item_double_bracer",
                 "item_magic_wand",
+                "item_bracer",
                 "item_phase_boots",
                 "item_hand_of_midas",
-                "item_veil_of_discord",
                 "item_blink",
                 "item_shivas_guard",--
                 "item_black_king_bar",--
+                "item_aghanims_shard",
                 "item_octarine_core",--
                 "item_refresher",--
-                "item_travel_boots",
-                "item_overwhelming_blink",--
-                "item_travel_boots_2",--
-                "item_aghanims_shard",
+                "item_arcane_blink",--
                 "item_ultimate_scepter_2",
                 "item_moon_shard",
+                "item_travel_boots_2",--
             },
             ['sell_list'] = {
-                "item_magic_wand", "item_veil_of_discord",
-                "item_bottle", "item_blink",
+                "item_quelling_blade", "item_blink",
+                "item_magic_wand", "item_shivas_guard",
                 "item_bracer", "item_black_king_bar",
-                "item_bracer", "item_octarine_core",
+                "item_bottle", "item_octarine_core",
                 "item_hand_of_midas", "item_refresher",
             },
         },
@@ -78,7 +106,7 @@ local HeroBuild = {
             ['talent'] = {
                 [1] = {
                     ['t25'] = {0, 10},
-                    ['t20'] = {0, 10},
+                    ['t20'] = {10, 0},
                     ['t15'] = {0, 10},
                     ['t10'] = {10, 0},
                 }
@@ -99,13 +127,12 @@ local HeroBuild = {
                 "item_blink",
                 "item_black_king_bar",--
                 "item_octarine_core",--
-                "item_refresher",--
-                "item_travel_boots",
-                "item_overwhelming_blink",--
-                "item_travel_boots_2",--
                 "item_aghanims_shard",
+                "item_overwhelming_blink",--
+                "item_refresher",--
                 "item_ultimate_scepter_2",
                 "item_moon_shard",
+                "item_travel_boots_2",--
             },
             ['sell_list'] = {
                 "item_magic_wand", "item_blink",
@@ -139,12 +166,12 @@ local HeroBuild = {
                 "item_black_king_bar",--
                 "item_blink",
                 sUtilityItem,--
+                "item_aghanims_shard",
                 "item_shivas_guard",--
                 "item_overwhelming_blink",--
-                "item_travel_boots_2",--
-                "item_aghanims_shard",
                 "item_ultimate_scepter_2",
                 "item_moon_shard",
+                "item_travel_boots_2",--
             },
             ['sell_list'] = {
                 "item_magic_wand", "item_black_king_bar",

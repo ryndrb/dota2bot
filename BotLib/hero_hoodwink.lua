@@ -75,19 +75,20 @@ local HeroBuild = {
                 "item_tranquil_boots",
                 "item_rod_of_atos",
                 "item_force_staff",
+                "item_ancient_janggo",
                 "item_gungir",--
                 "item_boots_of_bearing",--
-                "item_glimmer_cape",--
+                "item_sheepstick",--
                 "item_greater_crit",--
                 "item_octarine_core",--
-                "item_hurricane_pike",--
                 "item_aghanims_shard",
                 "item_ultimate_scepter_2",
                 "item_moon_shard",
+                "item_hurricane_pike",--
             },
             ['sell_list'] = {
-                "item_magic_wand", "item_boots_of_bearing",
-                "item_blight_stone", "item_glimmer_cape",
+                "item_blight_stone", "item_greater_crit",
+                "item_magic_wand", "item_octarine_core",
             },
         },
     },
@@ -114,19 +115,20 @@ local HeroBuild = {
                 "item_arcane_boots",
                 "item_rod_of_atos",
                 "item_force_staff",
+                "item_mekansm",
                 "item_gungir",--
                 "item_guardian_greaves",--
-                "item_glimmer_cape",--
+                "item_sheepstick",--
                 "item_greater_crit",--
                 "item_octarine_core",--
-                "item_hurricane_pike",--
                 "item_aghanims_shard",
                 "item_ultimate_scepter_2",
                 "item_moon_shard",
+                "item_hurricane_pike",--
             },
             ['sell_list'] = {
-                "item_magic_wand", "item_guardian_greaves",
-                "item_blight_stone", "item_glimmer_cape",
+                "item_blight_stone", "item_greater_crit",
+                "item_magic_wand", "item_octarine_core",
             },
         },
     },

@@ -33,24 +33,25 @@ local HeroBuild = {
 				"item_tango",
 				"item_double_branches",
 				"item_quelling_blade",
+				"item_circlet",
+				"item_slippers",
 	
-				"item_wraith_band",
 				"item_magic_wand",
+				"item_wraith_band",
 				"item_power_treads",
 				"item_bfury",--
 				"item_manta",--
 				"item_butterfly",--
-				"item_skadi",--
-				"item_basher",
-				"item_monkey_king_bar",--
-				"item_abyssal_blade",--
-				"item_moon_shard",
-				"item_ultimate_scepter_2",
 				"item_aghanims_shard",
+				"item_skadi",--
+				"item_abyssal_blade",--
+				"item_ultimate_scepter_2",
+				"item_moon_shard",
+				"item_monkey_king_bar",--
 			},
             ['sell_list'] = {
 				"item_magic_wand", "item_skadi",
-				"item_wraith_band", "item_basher",
+				"item_wraith_band", "item_abyssal_blade",
 				"item_power_treads", "item_monkey_king_bar",
 			},
         },
@@ -95,18 +96,17 @@ local HeroBuild = {
 				"item_magic_wand",
 				"item_wraith_band",
 				"item_orb_of_corrosion",
-				"item_vanguard",
 				"item_power_treads",
 				"item_crimson_guard",--
 				"item_diffusal_blade",
 				"item_manta",--
 				"item_nullifier",--
+				"item_aghanims_shard",
 				"item_disperser",--
 				"item_abyssal_blade",--
+				"item_ultimate_scepter_2",
 				"item_moon_shard",
 				"item_sphere",--
-				"item_ultimate_scepter_2",
-				"item_aghanims_shard",
 			},
             ['sell_list'] = {
 				"item_quelling_blade", "item_diffusal_blade",

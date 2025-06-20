@@ -5,6 +5,7 @@ dofile('bots/Buff/NeutralItems')
 dofile('bots/Buff/Helper')
 dofile('bots/Buff/Towers')
 dofile('bots/Buff/Facets')
+dofile('bots/Buff/Spells')
 
 if Buff == nil
 then
@@ -155,6 +156,15 @@ function Buff:Init()
                 if hero.facet_flag == false then
                     F.ChangeHeroFacet(hero)
                 end
+            end
+        end
+
+        -- Spell Usage
+        for _, h in pairs(TeamRadiant) do table.insert(hHeroList, h) end
+        for _, h in pairs(TeamDire) do table.insert(hHeroList, h) end
+        for _, hero in pairs(hHeroList) do
+            if hero and S.AbilityUsageHeroList[hero:GetUnitName()] then
+                S.AbilityUsageThink(hero)
             end
         end
 

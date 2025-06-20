@@ -32,26 +32,29 @@ local HeroBuild = {
             ['buy_list'] = {
 				"item_tango",
 				"item_double_branches",
+                "item_magic_stick",
+                "item_slippers",
 			
-				"item_wraith_band",
 				"item_power_treads",
+				"item_wraith_band",
 				"item_magic_wand",
+                "item_falcon_blade",
 				"item_dragon_lance",
-                "item_lesser_crit",
+                "item_manta",--
 				"item_black_king_bar",--
 				"item_hurricane_pike",--
 				"item_ultimate_scepter",
 				"item_greater_crit",--
-				"item_butterfly",--
 				"item_aghanims_shard",
 				"item_satanic",--
 				"item_ultimate_scepter_2",
-				"item_travel_boots_2",--
 				"item_moon_shard",
+				"item_travel_boots_2",--
 			},
             ['sell_list'] = {
-				"item_magic_wand", "item_ultimate_scepter",
-				"item_wraith_band", "item_butterfly",
+				"item_magic_wand", "item_black_king_bar",
+				"item_wraith_band", "item_ultimate_scepter",
+                "item_falcon_blade", "item_greater_crit",
 			},
         },
     },
@@ -71,26 +74,29 @@ local HeroBuild = {
             ['buy_list'] = {
 				"item_tango",
 				"item_double_branches",
+                "item_magic_stick",
+                "item_slippers",
 			
-				"item_wraith_band",
 				"item_power_treads",
+				"item_wraith_band",
 				"item_magic_wand",
+                "item_falcon_blade",
 				"item_dragon_lance",
-                "item_lesser_crit",
+                "item_manta",--
 				"item_black_king_bar",--
 				"item_hurricane_pike",--
 				"item_ultimate_scepter",
 				"item_greater_crit",--
-				"item_butterfly",--
 				"item_aghanims_shard",
 				"item_satanic",--
 				"item_ultimate_scepter_2",
-				"item_travel_boots_2",--
 				"item_moon_shard",
+				"item_travel_boots_2",--
 			},
             ['sell_list'] = {
-				"item_magic_wand", "item_ultimate_scepter",
-				"item_wraith_band", "item_butterfly",
+				"item_magic_wand", "item_black_king_bar",
+				"item_wraith_band", "item_ultimate_scepter",
+                "item_falcon_blade", "item_greater_crit",
 			},
         },
     },

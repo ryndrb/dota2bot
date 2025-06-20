@@ -69,25 +69,23 @@ local HeroBuild = {
                 "item_tango",
                 "item_double_branches",
                 "item_blood_grenade",
-                "item_circlet",
+                "item_magic_stick",
+                "item_enchanted_mango",
             
+                "item_tranquil_boots",
                 "item_magic_wand",
-                "item_bracer",
-                "item_boots",
+                "item_glimmer_cape",--
                 "item_ancient_janggo",
                 "item_holy_locket",--
-                "item_glimmer_cape",--
                 "item_boots_of_bearing",--
-                "item_heart",--
-                sUtilityItem,--
-                "item_greater_crit",--
-                "item_aghanims_shard",
+                "item_solar_crest",--
+                "item_sheepstick",--
+                "item_satanic",--
                 "item_ultimate_scepter_2",
+                "item_aghanims_shard",
                 "item_moon_shard",
             },
-            ['sell_list'] = {
-                "item_bracer", "item_heart",
-            },
+            ['sell_list'] = {},
         },
     },
     ['pos_5'] = {
@@ -107,25 +105,23 @@ local HeroBuild = {
                 "item_tango",
                 "item_double_branches",
                 "item_blood_grenade",
-                "item_circlet",
+                "item_magic_stick",
+                "item_enchanted_mango",
             
+                "item_arcane_boots",
                 "item_magic_wand",
-                "item_bracer",
-                "item_boots",
+                "item_glimmer_cape",--
                 "item_mekansm",
                 "item_holy_locket",--
-                "item_glimmer_cape",--
                 "item_guardian_greaves",--
-                "item_heart",--
-                sUtilityItem,--
-                "item_greater_crit",--
-                "item_aghanims_shard",
+                "item_solar_crest",--
+                "item_sheepstick",--
+                "item_satanic",--
                 "item_ultimate_scepter_2",
+                "item_aghanims_shard",
                 "item_moon_shard",
             },
-            ['sell_list'] = {
-                "item_bracer", "item_heart",
-            },
+            ['sell_list'] = {},
         },
     },
 }

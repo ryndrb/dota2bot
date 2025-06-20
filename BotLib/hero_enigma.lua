@@ -61,29 +61,24 @@ local HeroBuild = {
             },
             ['buy_list'] = {
                 "item_tango",
-                "item_double_branches",
-                "item_blood_grenade",
+                "item_magic_stick",
+                "item_faerie_fire",
 
-                "item_bracer",
-                "item_boots",
+                "item_tranquil_boots",
                 "item_magic_wand",
-                "item_arcane_boots",
                 "item_blink",
-                "item_black_king_bar",--
                 "item_pipe",--
+                "item_black_king_bar",--
                 "item_shivas_guard",--
                 "item_refresher",--
-                "item_ultimate_scepter",
-                "item_overwhelming_blink",--
-                "item_travel_boots",--
-                "item_ultimate_scepter_2",
-                "item_travel_boots_2",--
                 "item_aghanims_shard",
+                "item_arcane_blink",--
+                "item_ultimate_scepter_2",
                 "item_moon_shard",
+                "item_travel_boots_2",--
             },
             ['sell_list'] = {
-                "item_magic_wand", "item_shivas_guard",
-                "item_bracer", "item_refresher",
+                "item_magic_wand", "item_refresher",
             },
         },
     },
@@ -103,26 +98,26 @@ local HeroBuild = {
             ['buy_list'] = {
                 "item_tango",
                 "item_double_branches",
+                "item_magic_stick",
                 "item_blood_grenade",
+                "item_faerie_fire",
 
-                "item_bracer",
-                "item_boots",
+                "item_tranquil_boots",
                 "item_magic_wand",
-                "item_ancient_janggo",
                 "item_glimmer_cape",--
+                "item_ancient_janggo",
                 "item_blink",
-                "item_boots_of_bearing",--
                 "item_black_king_bar",--
-                "item_refresher",--
-                "item_shivas_guard",--
-                "item_arcane_blink",--
+                "item_boots_of_bearing",--
                 "item_aghanims_shard",
+                "item_refresher",--
+                "item_sphere",--
+                "item_arcane_blink",--
                 "item_ultimate_scepter_2",
                 "item_moon_shard",
             },
             ['sell_list'] = {
                 "item_magic_wand", "item_blink",
-                "item_bracer", "item_boots_of_bearing",
             },
         },
     },
@@ -142,27 +137,26 @@ local HeroBuild = {
             ['buy_list'] = {
                 "item_tango",
                 "item_double_branches",
+                "item_magic_stick",
                 "item_blood_grenade",
+                "item_faerie_fire",
 
-                "item_bracer",
-                "item_boots",
-                "item_magic_wand",
-                "item_mekansm",
-                "item_glimmer_cape",--
                 "item_arcane_boots",
+                "item_magic_wand",
+                "item_glimmer_cape",--
+                "item_mekansm",
                 "item_blink",
-                "item_guardian_greaves",--
                 "item_black_king_bar",--
-                "item_refresher",--
-                "item_shivas_guard",--
-                "item_arcane_blink",--
+                "item_guardian_greaves",--
                 "item_aghanims_shard",
+                "item_refresher",--
+                "item_sphere",--
+                "item_arcane_blink",--
                 "item_ultimate_scepter_2",
                 "item_moon_shard",
             },
             ['sell_list'] = {
                 "item_magic_wand", "item_blink",
-                "item_bracer", "item_guardian_greaves",
             },
         },
     },

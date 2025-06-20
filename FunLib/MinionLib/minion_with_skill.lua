@@ -43,23 +43,27 @@ function X.Think(ownerBot, hMinionUnit)
                 end
             end
 
-            hMinionUnit.cast_desire, hMinionUnit.cast_target, hMinionUnit.cast_type = X.ConsiderSpellUsage[hMinionUnit.abilities[i]:GetName()](hMinionUnit, hMinionUnit.abilities[i])
-            if hMinionUnit.cast_desire > 0
-            then
-                if hMinionUnit.cast_type == 'unit'
+            local spellFunction = X.ConsiderSpellUsage[hMinionUnit.abilities[i]:GetName()]
+            if spellFunction then
+                hMinionUnit.cast_desire, hMinionUnit.cast_target, hMinionUnit.cast_type = spellFunction(hMinionUnit, hMinionUnit.abilities[i])
+                if hMinionUnit.cast_desire > 0
                 then
-                    hMinionUnit:Action_UseAbilityOnEntity(hMinionUnit.abilities[i], hMinionUnit.cast_target)
-                    return
-                elseif hMinionUnit.cast_type == 'point'
-                then
-                    hMinionUnit:Action_UseAbilityOnLocation(hMinionUnit.abilities[i], hMinionUnit.cast_target)
-                    return
-                elseif hMinionUnit.cast_type == 'none'
-                then
-                    hMinionUnit:Action_UseAbility(hMinionUnit.abilities[i])
-                    return
+                    if hMinionUnit.cast_type == 'unit'
+                    then
+                        hMinionUnit:Action_UseAbilityOnEntity(hMinionUnit.abilities[i], hMinionUnit.cast_target)
+                        return
+                    elseif hMinionUnit.cast_type == 'point'
+                    then
+                        hMinionUnit:Action_UseAbilityOnLocation(hMinionUnit.abilities[i], hMinionUnit.cast_target)
+                        return
+                    elseif hMinionUnit.cast_type == 'none'
+                    then
+                        hMinionUnit:Action_UseAbility(hMinionUnit.abilities[i])
+                        return
+                    end
                 end
             end
+
 		end
 	end
 

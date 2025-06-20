@@ -69,12 +69,12 @@ local HeroBuild = {
 				"item_tango",
 				"item_double_branches",
 				"item_magic_stick",
+				"item_faerie_fire",
 				"item_blood_grenade",
 			
-				"item_ring_of_basilius",
-				"item_magic_wand",
 				"item_tranquil_boots",
-				"item_aether_lens",--
+				"item_magic_wand",
+				"item_aether_lens",
 				"item_glimmer_cape",--
 				"item_ancient_janggo",
 				"item_holy_locket",--
@@ -84,6 +84,7 @@ local HeroBuild = {
 				"item_sheepstick",--
 				"item_ultimate_scepter_2",
 				"item_refresher",--
+				"item_ethereal_blade",--
 				"item_moon_shard",
 			},
             ['sell_list'] = {
@@ -108,12 +109,12 @@ local HeroBuild = {
 				"item_tango",
 				"item_double_branches",
 				"item_magic_stick",
+				"item_faerie_fire",
 				"item_blood_grenade",
 			
-				"item_ring_of_basilius",
-				"item_magic_wand",
 				"item_arcane_boots",
-				"item_aether_lens",--
+				"item_magic_wand",
+				"item_aether_lens",
 				"item_glimmer_cape",--
 				"item_mekansm",
 				"item_holy_locket",--
@@ -123,6 +124,7 @@ local HeroBuild = {
 				"item_sheepstick",--
 				"item_ultimate_scepter_2",
 				"item_refresher",--
+				"item_ethereal_blade",--
 				"item_moon_shard",
 			},
             ['sell_list'] = {},

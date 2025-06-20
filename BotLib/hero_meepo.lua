@@ -34,27 +34,28 @@ local HeroBuild = {
                 "item_tango",
                 "item_double_branches",
                 "item_quelling_blade",
+                "item_circlet",
+                "item_slippers",
             
-                "item_wraith_band",
                 "item_magic_wand",
                 "item_power_treads",
+                "item_wraith_band",
                 "item_diffusal_blade",
                 "item_blink",
                 "item_ultimate_scepter",
                 "item_aghanims_shard",
-                "item_skadi",--
                 "item_disperser",--
-                "item_basher",
-                "item_swift_blink",--
-                "item_sheepstick",--
-                "item_ultimate_scepter_2",
+                "item_skadi",--
                 "item_abyssal_blade",--
+                "item_bloodthorn",--
+                "item_ultimate_scepter_2",
+                "item_swift_blink",--
                 "item_moon_shard",
             },
             ['sell_list'] = {
                 "item_quelling_blade", "item_ultimate_scepter",
                 "item_magic_wand", "item_skadi",
-                "item_wraith_band", "item_basher",
+                "item_wraith_band", "item_abyssal_blade",
             },
         },
     },
@@ -76,10 +77,12 @@ local HeroBuild = {
                 "item_tango",
                 "item_double_branches",
                 "item_quelling_blade",
+                "item_circlet",
+                "item_slippers",
             
-                "item_wraith_band",
                 "item_magic_wand",
-                "item_power_treads",
+                "item_power_treads",--
+                "item_wraith_band",
                 "item_diffusal_blade",
                 "item_blink",
                 "item_ultimate_scepter",
@@ -87,8 +90,8 @@ local HeroBuild = {
                 "item_skadi",--
                 "item_sheepstick",--
                 "item_disperser",--
-                "item_ultimate_scepter_2",
                 "item_bloodthorn",--
+                "item_ultimate_scepter_2",
                 "item_swift_blink",--
                 "item_moon_shard",
             },

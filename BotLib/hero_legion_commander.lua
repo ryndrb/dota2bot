@@ -12,20 +12,50 @@ then
 
 local RI = require(GetScriptDirectory()..'/FunLib/util_role_item')
 
-local sUtility = {"item_pipe", "item_heavens_halberd"}
+local sUtility = {"item_nullifier", "item_heavens_halberd"}
 local sUtilityItem = RI.GetBestUtilityItem(sUtility)
 
 local HeroBuild = {
     ['pos_1'] = {
         [1] = {
             ['talent'] = {
-                [1] = {},
+				[1] = {
+					['t25'] = {0, 10},
+					['t20'] = {10, 0},
+					['t15'] = {10, 0},
+					['t10'] = {0, 10},
+				}
             },
             ['ability'] = {
-                [1] = {},
+                [1] = {1,3,1,2,1,6,1,3,3,3,6,2,2,2,6},
             },
-            ['buy_list'] = {},
-            ['sell_list'] = {},
+            ['buy_list'] = {
+				"item_tango",
+				"item_double_branches",
+				"item_quelling_blade",
+				"item_circlet",
+				"item_gauntlets",
+			
+				"item_magic_wand",
+				"item_phase_boots",
+				"item_bracer",
+				"item_bfury",--
+				"item_blade_mail",
+				"item_black_king_bar",--
+				"item_blink",
+				"item_greater_crit",--
+				"item_aghanims_shard",
+				"item_overwhelming_blink",--
+				"item_bloodthorn",--
+				"item_ultimate_scepter_2",
+				"item_moon_shard",
+				"item_travel_boots_2",--
+			},
+            ['sell_list'] = {
+				"item_magic_wand", "item_blink",
+				"item_bracer", "item_greater_crit",
+				"item_blade_mail", "item_bloodthorn",
+			},
         },
     },
     ['pos_2'] = {
@@ -57,6 +87,8 @@ local HeroBuild = {
 				"item_tango",
 				"item_double_branches",
 				"item_quelling_blade",
+				"item_circlet",
+				"item_gauntlets",
 			
 				"item_magic_wand",
 				"item_bracer",
@@ -66,12 +98,12 @@ local HeroBuild = {
 				"item_crimson_guard",--
 				"item_black_king_bar",--
 				sUtilityItem,--
+				"item_aghanims_shard",
 				"item_greater_crit",--
 				"item_overwhelming_blink",--
-				"item_travel_boots_2",--
 				"item_ultimate_scepter_2",
-				"item_aghanims_shard",
 				"item_moon_shard",
+				"item_travel_boots_2",--
 			},
             ['sell_list'] = {
 				"item_quelling_blade", "item_crimson_guard",

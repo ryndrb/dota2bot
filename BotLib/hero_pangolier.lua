@@ -49,7 +49,6 @@ local HeroBuild = {
             
                 "item_bottle",
                 "item_magic_wand",
-                "item_bracer",
                 "item_arcane_boots",
                 "item_diffusal_blade",
                 "item_blink",
@@ -58,19 +57,17 @@ local HeroBuild = {
                 "item_basher",
                 "item_octarine_core",--
                 "item_disperser",--
-                "item_travel_boots",
                 "item_shivas_guard",--
                 "item_ultimate_scepter_2",
                 "item_overwhelming_blink",--
                 "item_abyssal_blade",--
-                "item_travel_boots_2",--
                 "item_moon_shard",
+                "item_travel_boots_2",--
             },
             ['sell_list'] = {
-                "item_quelling_blade", "item_blink",
-                "item_magic_wand", "item_ultimate_scepter",
-                "item_bottle", "item_basher",
-                "item_bracer", "item_octarine_core",
+                "item_quelling_blade", "item_ultimate_scepter",
+                "item_magic_wand", "item_basher",
+                "item_bottle", "item_octarine_core",
             },
         },
     },
@@ -94,25 +91,24 @@ local HeroBuild = {
             
                 "item_magic_wand",
                 "item_arcane_boots",
-                "item_double_bracer",
+                "item_soul_ring",
                 "item_diffusal_blade",
-                sUtilityItem,--
                 "item_blink",
+                "item_assault",--
                 "item_ultimate_scepter",
                 "item_aghanims_shard",
-                "item_assault",--
                 "item_disperser",--
                 "item_shivas_guard",--
+                "item_abyssal_blade",--
                 "item_ultimate_scepter_2",
                 "item_overwhelming_blink",--
-                "item_travel_boots_2",--
                 "item_moon_shard",
+                "item_travel_boots_2",--
             },
             ['sell_list'] = {
-                "item_quelling_blade", sUtilityItem,
-                "item_magic_wand", "item_blink",
-                "item_bracer", "item_ultimate_scepter",
-                "item_bracer", "item_assault",
+                "item_quelling_blade", "item_assault",
+                "item_magic_wand", "item_ultimate_scepter",
+                "item_soul_ring", "item_shivas_guard",
             },
         },
     },

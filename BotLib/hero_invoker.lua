@@ -50,9 +50,9 @@ local HeroBuild = {
             
                 "item_bottle",
                 "item_magic_wand",
+                "item_boots",
                 "item_double_null_talisman",
                 "item_urn_of_shadows",
-                "item_boots",
                 "item_hand_of_midas",
                 "item_spirit_vessel",
                 "item_orchid",
@@ -61,20 +61,20 @@ local HeroBuild = {
                 "item_ultimate_scepter",
                 "item_aghanims_shard",
                 "item_sheepstick",--
-                "item_shivas_guard",--
                 "item_bloodthorn",--
-                "item_octarine_core",--
+                "item_shivas_guard",--
                 "item_ultimate_scepter_2",
-                "item_travel_boots_2",--
                 "item_moon_shard",
+                "item_octarine_core",--
+                "item_travel_boots_2",--
             },
             ['sell_list'] = {
                 "item_magic_wand", "item_hand_of_midas",
-                "item_bottle", "item_orchid",
+                "item_null_talisman", "item_orchid",
                 "item_null_talisman", "item_black_king_bar",
-                "item_null_talisman", "item_ultimate_scepter",
+                "item_bottle", "item_ultimate_scepter",
                 "item_hand_of_midas", "item_sheepstick",
-                "item_spirit_vessel", "item_shivas_guard",
+                "item_spirit_vessel", "item_octarine_core",
             },
         },
     },

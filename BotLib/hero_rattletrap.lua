@@ -74,18 +74,19 @@ local HeroBuild = {
                 "item_boots",
                 "item_magic_wand",
                 "item_tranquil_boots",
-                "item_solar_crest",--
                 "item_force_staff",--
+                "item_blade_mail",--
+                "item_ancient_janggo",
+                "item_solar_crest",--
                 "item_boots_of_bearing",--
                 "item_aghanims_shard",
-                "item_heavens_halberd",--
                 "item_shivas_guard",--
-                "item_sheepstick",--
+                "item_heavens_halberd",--
                 "item_ultimate_scepter_2",
                 "item_moon_shard",
             },
             ['sell_list'] = {
-                "item_magic_wand", "item_boots_of_bearing",
+                "item_magic_wand", "item_heavens_halberd",
             },
         },
     },
@@ -111,18 +112,19 @@ local HeroBuild = {
                 "item_boots",
                 "item_magic_wand",
                 "item_arcane_boots",
-                "item_solar_crest",--
                 "item_force_staff",--
-                "item_guardian_greaves",-- 
+                "item_blade_mail",--
+                "item_mekansm",
+                "item_solar_crest",--
+                "item_guardian_greaves",--
                 "item_aghanims_shard",
-                "item_heavens_halberd",--
                 "item_shivas_guard",--
-                "item_sheepstick",--
+                "item_heavens_halberd",--
                 "item_ultimate_scepter_2",
                 "item_moon_shard",
             },
             ['sell_list'] = {
-                "item_magic_wand", "item_guardian_greaves",
+                "item_magic_wand", "item_heavens_halberd",
             },
         },
     },

@@ -20,13 +20,13 @@ local HeroBuild = {
         [1] = {
             ['talent'] = {
                 [1] = {
-					['t25'] = {0, 10},
+					['t25'] = {10, 0},
 					['t20'] = {0, 10},
 					['t15'] = {10, 0},
 					['t10'] = {10, 0},
 				},
 				[2] = {
-					['t25'] = {0, 10},
+					['t25'] = {10, 0},
 					['t20'] = {0, 10},
 					['t15'] = {0, 10},
 					['t10'] = {0, 10},
@@ -49,19 +49,17 @@ local HeroBuild = {
 				"item_blink",
 				"item_black_king_bar",--
 				"item_assault",--
-				"item_basher",
-				"item_swift_blink",--
 				"item_aghanims_shard",
 				"item_abyssal_blade",--
-				"item_travel_boots",
+				"item_swift_blink",--
 				"item_moon_shard",
-				"item_travel_boots_2",--
 				"item_ultimate_scepter_2",
+				"item_travel_boots_2",--
 			},
             ['sell_list'] = {
 				"item_quelling_blade", "item_black_king_bar",
 				"item_magic_wand", "item_assault",
-				"item_soul_ring", "item_basher",
+				"item_soul_ring", "item_abyssal_blade",
 				"item_power_treads", "item_travel_boots",
 			},
         },
@@ -70,13 +68,13 @@ local HeroBuild = {
         [1] = {
             ['talent'] = {
 				[1] = {
-					['t25'] = {0, 10},
+					['t25'] = {10, 0},
 					['t20'] = {0, 10},
 					['t15'] = {10, 0},
 					['t10'] = {10, 0},
 				},
 				[2] = {
-					['t25'] = {0, 10},
+					['t25'] = {10, 0},
 					['t20'] = {0, 10},
 					['t15'] = {0, 10},
 					['t10'] = {0, 10},
@@ -98,23 +96,20 @@ local HeroBuild = {
 				"item_soul_ring",
 				"item_radiance",--
 				"item_blink",
-				"item_manta",--
 				"item_black_king_bar",--
-				"item_basher",
-				"item_swift_blink",--
 				"item_aghanims_shard",
-				"item_travel_boots",
+				"item_assault",--
 				"item_abyssal_blade",--
-				"item_travel_boots_2",--
+				"item_swift_blink",--
 				"item_moon_shard",
 				"item_ultimate_scepter_2",
+				"item_travel_boots_2",--
 			},
             ['sell_list'] = {
 				"item_quelling_blade", "item_blink",
-				"item_magic_wand", "item_manta",
-				"item_soul_ring", "item_black_king_bar",
-				"item_bottle", "item_basher",
-				"item_phase_boots", "item_travel_boots",
+				"item_magic_wand", "item_black_king_bar",
+				"item_soul_ring", "item_assault",
+				"item_bottle", "item_abyssal_blade",
 			},
         },
     },
@@ -128,7 +123,7 @@ local HeroBuild = {
 					['t10'] = {10, 0},
 				},
 				[2] = {
-					['t25'] = {0, 10},
+					['t25'] = {10, 0},
 					['t20'] = {0, 10},
 					['t15'] = {0, 10},
 					['t10'] = {0, 10},
@@ -142,9 +137,11 @@ local HeroBuild = {
 				"item_tango",
 				"item_double_branches",
 				"item_quelling_blade",
+				"item_circlet",
+				"item_gauntlets",
 	
-				"item_bracer",
 				"item_magic_wand",
+				"item_bracer",
 				"item_boots",
 				"item_soul_ring",
 				"item_phase_boots",
@@ -153,18 +150,17 @@ local HeroBuild = {
 				"item_blink",
 				sUtilityItem,--
 				"item_black_king_bar",--
-				"item_travel_boots",
-				"item_overwhelming_blink",--
-				"item_travel_boots_2",--
-				"item_moon_shard",
 				"item_aghanims_shard",
+				"item_overwhelming_blink",--
+				"item_moon_shard",
 				"item_ultimate_scepter_2",
+				"item_travel_boots_2",--
 			},
             ['sell_list'] = {
 				"item_quelling_blade", "item_crimson_guard",
 				"item_magic_wand", "item_blink",
-				"item_soul_ring", sUtilityItem,
-				"item_bracer", "item_black_king_bar",
+				"item_bracer", sUtilityItem,
+				"item_soul_ring", "item_black_king_bar",
 				"item_phase_boots", "item_travel_boots",
 			},
         },

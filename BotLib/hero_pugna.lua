@@ -33,7 +33,7 @@ local HeroBuild = {
             ['talent'] = {
 				[1] = {
 					['t25'] = {0, 10},
-					['t20'] = {10, 0},
+					['t20'] = {0, 10},
 					['t15'] = {10, 0},
 					['t10'] = {0, 10},
 				}
@@ -45,29 +45,32 @@ local HeroBuild = {
 				"item_double_branches",
 				"item_faerie_fire",
 				"item_tango",
+				"item_circlet",
+				"item_mantle",
 			
 				"item_bottle",
 				"item_magic_wand",
 				"item_arcane_boots",
+				"item_null_talisman",
 				"item_aether_lens",
-				"item_dagon_2",
-				"item_veil_of_discord",
 				"item_kaya",
-				"item_black_king_bar",--
+				"item_blink",
 				"item_kaya_and_sange",--
-				"item_dagon_5",--
+				"item_black_king_bar",--
 				"item_shivas_guard",--
-				"item_travel_boots",
-				"item_sheepstick",--
-				"item_travel_boots_2",--
 				"item_ultimate_scepter_2",
 				"item_aghanims_shard",
+				"item_octarine_core",--
+				"item_travel_boots",
+				"item_arcane_blink",--
 				"item_moon_shard",
+				"item_travel_boots_2",--
 			},
             ['sell_list'] = {
-				"item_magic_wand", "item_kaya",
-				"item_bottle", "item_black_king_bar",
-				"item_aether_lens", "item_sheepstick",
+				"item_magic_wand", "item_blink",
+				"item_null_talisman", "item_black_king_bar",
+				"item_bottle", "item_shivas_guard",
+				"item_aether_lens", "item_octarine_core",
 			},
         },
     },
@@ -90,33 +93,36 @@ local HeroBuild = {
 					['t25'] = {10, 0},
 					['t20'] = {0, 10},
 					['t15'] = {10, 0},
-					['t10'] = {10, 0},
+					['t10'] = {0, 10},
 				}
             },
             ['ability'] = {
                 [1] = {1,3,1,2,1,6,1,2,2,2,3,6,3,3,6},
             },
             ['buy_list'] = {
-				"item_double_tango",
+				"item_tango",
 				"item_double_branches",
 				"item_enchanted_mango",
+				"item_magic_stick",
 				"item_blood_grenade",
 			
 				"item_tranquil_boots",
 				"item_magic_wand",
 				"item_glimmer_cape",--
-				"item_aether_lens",--
+				"item_aether_lens",
 				"item_boots_of_bearing",--
-				"item_force_staff",--
-				"item_aghanims_shard",
-				"item_cyclone",
-				"item_lotus_orb",--
+				"item_ultimate_scepter",
+				"item_force_staff",
 				"item_wind_waker",--
+				"item_aghanims_shard",
+				"item_lotus_orb",--
 				"item_ultimate_scepter_2",
 				"item_moon_shard",
+				"item_ethereal_blade",--
+				"item_hurricane_pike",--
 			},
             ['sell_list'] = {
-				"item_magic_wand", "item_boots_of_bearing",
+				"item_magic_wand", "item_cyclone",
 			},
         },
     },
@@ -127,33 +133,36 @@ local HeroBuild = {
 					['t25'] = {10, 0},
 					['t20'] = {0, 10},
 					['t15'] = {10, 0},
-					['t10'] = {10, 0},
+					['t10'] = {0, 10},
 				}
             },
             ['ability'] = {
                 [1] = {1,3,1,2,1,6,1,2,2,2,3,6,3,3,6},
             },
             ['buy_list'] = {
-				"item_double_tango",
+				"item_tango",
 				"item_double_branches",
 				"item_enchanted_mango",
+				"item_magic_stick",
 				"item_blood_grenade",
 			
 				"item_arcane_boots",
 				"item_magic_wand",
 				"item_glimmer_cape",--
-				"item_aether_lens",--
+				"item_aether_lens",
 				"item_guardian_greaves",--
-				"item_force_staff",--
-				"item_aghanims_shard",
-				"item_cyclone",
-				"item_lotus_orb",--
+				"item_ultimate_scepter",
+				"item_force_staff",
 				"item_wind_waker",--
+				"item_aghanims_shard",
+				"item_lotus_orb",--
 				"item_ultimate_scepter_2",
 				"item_moon_shard",
+				"item_ethereal_blade",--
+				"item_hurricane_pike",--
 			},
             ['sell_list'] = {
-				"item_magic_wand", "item_guardian_greaves",
+				"item_magic_wand", "item_cyclone",
 			},
         },
     },
@@ -213,7 +222,7 @@ local hNetherWard = nil
 
 function X.SkillsComplement()
 
-	if J.CanNotUseAbility( bot ) or bot:IsInvisible() then return end
+	if (J.CanNotUseAbility( bot ) and not bot:HasModifier('modifier_pugna_life_drain')) or bot:IsInvisible() then return end
 
 	abilityQ = bot:GetAbilityByName('pugna_nether_blast')
 	abilityW = bot:GetAbilityByName('pugna_decrepify')

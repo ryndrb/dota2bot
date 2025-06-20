@@ -56,28 +56,30 @@ local HeroBuild = {
             ['buy_list'] = {
 				"item_tango",
 				"item_double_branches",
-                "item_double_gauntlets",
+                "item_quelling_blade",
                 "item_circlet",
+                "item_mantle",
 			
-                "item_bracer",
-				"item_arcane_boots",
 				"item_magic_wand",
+                "item_null_talisman",
+				"item_arcane_boots",
                 "item_soul_ring",
                 "item_pipe",--
 				"item_blink",
-				"item_black_king_bar",--
 				sUtilityItem,--
+				"item_black_king_bar",--
 				"item_shivas_guard",--
-				"item_overwhelming_blink",--
-                "item_travel_boots_2",--
-				"item_ultimate_scepter_2",
 				"item_aghanims_shard",
+				"item_overwhelming_blink",--
+				"item_ultimate_scepter_2",
 				"item_moon_shard",
+                "item_travel_boots_2",--
 			},
             ['sell_list'] = {
-				"item_magic_wand", "item_black_king_bar",
-                "item_soul_ring", sUtilityItem,
-                "item_bracer", "item_shivas_guard",
+                "item_quelling_blade", "item_blink",
+				"item_magic_wand", sUtilityItem,
+                "item_soul_ring", "item_black_king_bar",
+                "item_null_talisman", "item_shivas_guard",
 			},
         },
     },

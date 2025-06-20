@@ -66,14 +66,16 @@ local HeroBuild = {
                 [1] = {1,3,1,2,1,6,1,2,2,2,6,3,3,3,6},
             },
             ['buy_list'] = {
-                "item_double_tango",
+                "item_tango",
                 "item_double_branches",
+                "item_magic_stick",
                 "item_blood_grenade",
+                "item_enchanted_mango",
             
                 "item_tranquil_boots",
                 "item_magic_wand",
-                "item_dagon_2",
-                "item_force_staff",--
+                "item_dagon",
+                "item_cyclone",
                 "item_ancient_janggo",
                 "item_aghanims_shard",
                 "item_blink",
@@ -81,13 +83,14 @@ local HeroBuild = {
                 "item_lotus_orb",--
                 "item_ultimate_scepter",
                 "item_dagon_5",--
-                "item_swift_blink",--
-                "item_ultimate_scepter_2",
                 "item_wind_waker",--
+                "item_octarine_core",--
+                "item_ultimate_scepter_2",
                 "item_moon_shard",
+                "item_arcane_blink",--
             },
             ['sell_list'] = {
-                "item_magic_wand", "item_ancient_janggo",
+                "item_magic_wand", "item_ultimate_scepter",
             },
         },
     },
@@ -105,14 +108,16 @@ local HeroBuild = {
                 [1] = {1,3,1,2,1,6,1,2,2,2,6,3,3,3,6},
             },
             ['buy_list'] = {
-                "item_double_tango",
+                "item_tango",
                 "item_double_branches",
+                "item_magic_stick",
                 "item_blood_grenade",
+                "item_enchanted_mango",
             
                 "item_arcane_boots",
                 "item_magic_wand",
-                "item_dagon_2",
-                "item_force_staff",--
+                "item_dagon",
+                "item_cyclone",
                 "item_mekansm",
                 "item_aghanims_shard",
                 "item_blink",
@@ -120,13 +125,14 @@ local HeroBuild = {
                 "item_lotus_orb",--
                 "item_ultimate_scepter",
                 "item_dagon_5",--
-                "item_swift_blink",--
-                "item_ultimate_scepter_2",
                 "item_wind_waker",--
+                "item_octarine_core",--
+                "item_ultimate_scepter_2",
                 "item_moon_shard",
+                "item_arcane_blink",--
             },
             ['sell_list'] = {
-                "item_magic_wand", "item_mekansm",
+                "item_magic_wand", "item_ultimate_scepter",
             },
         },
     },

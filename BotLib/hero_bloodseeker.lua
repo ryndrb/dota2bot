@@ -36,8 +36,8 @@ local HeroBuild = {
 				"item_slippers",
 				"item_circlet",
 			
-				"item_wraith_band",
 				"item_magic_wand",
+				"item_wraith_band",
 				"item_phase_boots",
 				"item_maelstrom",
 				"item_black_king_bar",--
@@ -47,9 +47,9 @@ local HeroBuild = {
 				"item_butterfly",--
 				"item_abyssal_blade",--
 				"item_skadi",--
-				"item_monkey_king_bar",--
-				"item_moon_shard",
 				"item_ultimate_scepter_2",
+				"item_moon_shard",
+				"item_monkey_king_bar",--
 			},
             ['sell_list'] = {
 				"item_quelling_blade", "item_basher",
@@ -79,8 +79,8 @@ local HeroBuild = {
 				"item_slippers",
 				"item_circlet",
 			
-				"item_wraith_band",
 				"item_magic_wand",
+				"item_wraith_band",
 				"item_phase_boots",
 				"item_maelstrom",
 				"item_black_king_bar",--
@@ -88,17 +88,17 @@ local HeroBuild = {
 				"item_basher",
 				"item_aghanims_shard",
 				"item_butterfly",--
-				"item_sheepstick",--
-				"item_travel_boots",
 				"item_abyssal_blade",--
-				"item_travel_boots_2",--
-				"item_moon_shard",
+				"item_skadi",--
 				"item_ultimate_scepter_2",
+				"item_moon_shard",
+				"item_monkey_king_bar",--
 			},
             ['sell_list'] = {
 				"item_quelling_blade", "item_basher",
 				"item_magic_wand", "item_butterfly",
-				"item_wraith_band", "item_sheepstick",
+				"item_wraith_band", "item_skadi",
+				"item_phase_boots", "item_monkey_king_bar",
 			},
         },
     },
@@ -129,8 +129,8 @@ local HeroBuild = {
 				"item_rod_of_atos",
 				sUtilityItem,--
 				"item_mjollnir",--
-				"item_aghanims_shard",
 				"item_black_king_bar",--
+				"item_aghanims_shard",
 				"item_assault",--
 				"item_abyssal_blade",--
 				"item_ultimate_scepter_2",

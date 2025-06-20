@@ -66,25 +66,28 @@ local HeroBuild = {
                 [1] = {1,3,3,1,3,6,3,1,1,2,6,2,2,2,6},
             },
             ['buy_list'] = {
-				"item_double_tango",
+				"item_tango",
 				"item_double_branches",
+				"item_magic_stick",
 				"item_blood_grenade",
+				"item_enchanted_mango",
 			
 				"item_tranquil_boots",
 				"item_magic_wand",
 				"item_glimmer_cape",--
 				"item_aghanims_shard",
-				"item_force_staff",--
+				"item_force_staff",
 				"item_boots_of_bearing",--
 				"item_ultimate_scepter",
-				"item_lotus_orb",--
 				"item_refresher",--
+				"item_aeon_disk",--
 				"item_ultimate_scepter_2",
 				"item_assault",--
 				"item_moon_shard",
+				"item_hurricane_pike",--
 			},
             ['sell_list'] = {
-				"item_magic_wand", "item_ultimate_scepter",
+				"item_magic_wand", "item_aeon_disk",
 			},
         },
     },
@@ -102,25 +105,28 @@ local HeroBuild = {
                 [1] = {1,3,3,1,3,6,3,1,1,2,6,2,2,2,6},
             },
             ['buy_list'] = {
-				"item_double_tango",
+				"item_tango",
 				"item_double_branches",
+				"item_magic_stick",
 				"item_blood_grenade",
+				"item_enchanted_mango",
 			
 				"item_arcane_boots",
 				"item_magic_wand",
 				"item_glimmer_cape",--
 				"item_aghanims_shard",
-				"item_force_staff",--
+				"item_force_staff",
 				"item_guardian_greaves",--
 				"item_ultimate_scepter",
-				"item_lotus_orb",--
 				"item_refresher",--
+				"item_aeon_disk",--
 				"item_ultimate_scepter_2",
 				"item_assault",--
 				"item_moon_shard",
+				"item_hurricane_pike",--
 			},
             ['sell_list'] = {
-				"item_magic_wand", "item_ultimate_scepter",
+				"item_magic_wand", "item_aeon_disk",
 			},
         },
     },

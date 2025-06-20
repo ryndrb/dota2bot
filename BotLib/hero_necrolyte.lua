@@ -12,7 +12,7 @@ then
 
 local RI = require(GetScriptDirectory()..'/FunLib/util_role_item')
 
-local sUtility = {"item_lotus_orb", "item_heavens_halberd"}
+local sUtility = {"item_pipe", "item_lotus_orb", "item_heavens_halberd"}
 local sUtilityItem = RI.GetBestUtilityItem(sUtility)
 
 local HeroBuild = {
@@ -48,25 +48,24 @@ local HeroBuild = {
 				"item_double_circlet",
 			
 				"item_magic_wand",
-				"item_null_talisman",
-				"item_bracer",
 				"item_boots",
+				"item_double_null_talisman",
 				"item_radiance",--
 				"item_travel_boots",
-				"item_aghanims_shard",
-				"item_eternal_shroud",--
-				"item_shivas_guard",--
-				"item_heart",--
 				"item_ultimate_scepter",
+				"item_aghanims_shard",
+				"item_heart",--
+				"item_shivas_guard",--
 				"item_wind_waker",--
+				"item_octarine_core",
 				"item_ultimate_scepter_2",
-				"item_travel_boots_2",--
 				"item_moon_shard",
+				"item_travel_boots_2",--
 			},
             ['sell_list'] = {
-				"item_magic_wand", "item_shivas_guard",
-				"item_null_talisman", "item_heart",
-				"item_bracer", "item_ultimate_scepter",
+				"item_magic_wand", "item_heart",
+				"item_null_talisman", "item_shivas_guard",
+				"item_null_talisman", "item_wind_waker",
 			},
         },
     },
@@ -90,9 +89,9 @@ local HeroBuild = {
 				"item_double_circlet",
 			
 				"item_magic_wand",
+				"item_boots",
 				"item_null_talisman",
 				"item_bracer",
-				"item_boots",
 				"item_radiance",--
 				sUtilityItem,--
 				"item_travel_boots",
@@ -103,8 +102,8 @@ local HeroBuild = {
 				"item_cyclone",
 				"item_ultimate_scepter_2",
 				"item_wind_waker",--
-				"item_travel_boots_2",--
 				"item_moon_shard",
+				"item_travel_boots_2",--
 			},
             ['sell_list'] = {
 				"item_magic_wand", "item_heart",

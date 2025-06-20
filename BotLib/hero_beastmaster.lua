@@ -45,28 +45,29 @@ local HeroBuild = {
 				"item_tango",
 				"item_double_branches",
 				"item_double_circlet",
+                "item_faerie_fire",
 			
                 "item_bottle",
 				"item_magic_wand",
-                "item_double_bracer",
 				"item_phase_boots",
+                "item_double_bracer",
                 "item_ultimate_scepter",
 				"item_black_king_bar",--
                 "item_harpoon",--
 				"item_blink",
-                "item_skadi",--
-                "item_satanic",--
                 "item_aghanims_shard",
+                "item_satanic",--
+                "item_skadi",--
                 "item_ultimate_scepter_2",
                 "item_overwhelming_blink",--
-                "item_travel_boots_2",--
                 "item_moon_shard",
+                "item_travel_boots_2",--
 			},
             ['sell_list'] = {
 				"item_magic_wand", "item_black_king_bar",
-                "item_bottle", "item_harpoon",
+                "item_bracer", "item_harpoon",
                 "item_bracer", "item_blink",
-                "item_bracer", "item_skadi",
+                "item_bottle", "item_satanic",
 			},
         },
     },
@@ -87,20 +88,22 @@ local HeroBuild = {
 				"item_tango",
 				"item_double_branches",
 				"item_double_circlet",
+                "item_faerie_fire",
 			
 				"item_magic_wand",
                 "item_helm_of_the_dominator",
 				"item_boots",
-				"item_helm_of_the_overlord",--
 				"item_blink",
+				"item_helm_of_the_overlord",--
                 "item_crimson_guard",--
 				"item_black_king_bar",--
 				sUtilityItem,--
 				"item_aghanims_shard",
+                "item_ultimate_scepter",
 				"item_overwhelming_blink",--
 				"item_ultimate_scepter_2",
-				"item_travel_boots_2",--
 				"item_moon_shard",
+				"item_travel_boots_2",--
 			},
             ['sell_list'] = {
 				"item_circlet", "item_crimson_guard",
@@ -125,26 +128,27 @@ local HeroBuild = {
 				"item_tango",
 				"item_double_branches",
 				"item_double_circlet",
+                "item_faerie_fire",
 			
-                "item_double_bracer",
 				"item_magic_wand",
 				"item_arcane_boots",
+                "item_double_bracer",
                 "item_ultimate_scepter",
 				"item_blink",
                 "item_crimson_guard",--
 				"item_black_king_bar",--
-				sUtilityItem,--
-                "item_shivas_guard",--
 				"item_aghanims_shard",
+				"item_nullifier",--
+                "item_shivas_guard",--
 				"item_ultimate_scepter_2",
 				"item_overwhelming_blink",--
-				"item_travel_boots_2",--
 				"item_moon_shard",
+				"item_travel_boots_2",--
 			},
             ['sell_list'] = {
 				"item_magic_wand", "item_crimson_guard",
                 "item_bracer", "item_black_king_bar",
-                "item_bracer", sUtilityItem,
+                "item_bracer", "item_nullifier",
 			},
         },
     },

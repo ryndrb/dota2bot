@@ -46,19 +46,19 @@ HeroBuild = {
                 "item_power_treads",
                 "item_vladmir",
                 "item_manta",--
-                "item_black_king_bar",--
-                "item_greater_crit",--
                 "item_butterfly",--
+                "item_black_king_bar",--
                 "item_aghanims_shard",
                 "item_satanic",--
-                "item_skadi",--
+                "item_greater_crit",--
                 "item_moon_shard",
+                "item_skadi",--
                 "item_ultimate_scepter_2",
             },
             ['sell_list'] = {
-                "item_circlet", "item_greater_crit",
-                "item_magic_wand", "item_butterfly",
+                "item_circlet", "item_black_king_bar",
                 "item_vladmir", "item_satanic",
+                "item_magic_wand", "item_greater_crit",
                 "item_power_treads", "item_skadi",
             },
         },
@@ -122,20 +122,20 @@ HeroBuild = {
                 "item_power_treads",
                 "item_vladmir",
                 "item_manta",--
-                "item_black_king_bar",--
-                "item_greater_crit",--
                 "item_butterfly",--
+                "item_black_king_bar",--
                 "item_aghanims_shard",
                 "item_satanic",--
-                "item_disperser",--
+                "item_greater_crit",--
                 "item_moon_shard",
+                "item_disperser",--
                 "item_ultimate_scepter_2",
             },
             ['sell_list'] = {
-                "item_circlet", "item_black_king_bar",
-                "item_magic_wand", "item_greater_crit",
-                "item_bottle", "item_butterfly",
+                "item_circlet", "item_butterfly",
+                "item_magic_wand", "item_black_king_bar",
                 "item_vladmir", "item_satanic",
+                "item_bottle", "item_greater_crit",
                 "item_power_treads", "item_disperser",
             },
         },

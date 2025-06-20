@@ -66,13 +66,14 @@ local HeroBuild = {
                 [1] = {2,1,2,3,2,6,2,3,3,3,6,1,1,1,6},
             },
             ['buy_list'] = {
-				"item_double_tango",
+				"item_tango",
 				"item_double_branches",
-				"item_circlet",
+				"item_double_circlet",
 				"item_blood_grenade",
 			
-				"item_null_talisman",
 				"item_magic_wand",
+				"item_boots",
+				"item_double_null_talisman",
 				"item_tranquil_boots",
 				"item_rod_of_atos",
 				"item_force_staff",
@@ -81,15 +82,16 @@ local HeroBuild = {
 				"item_boots_of_bearing",--
 				"item_ultimate_scepter",
 				"item_octarine_core",--
+				"item_gungir",--
 				"item_sheepstick",--
 				"item_ultimate_scepter_2",
-				"item_gungir",--
 				"item_hurricane_pike",--
 				"item_moon_shard",
 			},
             ['sell_list'] = {
-				"item_null_talisman", "item_force_staff",
 				"item_magic_wand", "item_glimmer_cape",
+				"item_null_talisman", "item_ultimate_scepter",
+				"item_null_talisman", "item_octarine_core",
 			},
         },
     },
@@ -107,13 +109,14 @@ local HeroBuild = {
                 [1] = {2,1,2,3,2,6,2,3,3,3,6,1,1,1,6},
             },
             ['buy_list'] = {
-				"item_double_tango",
+				"item_tango",
 				"item_double_branches",
-				"item_circlet",
+				"item_double_circlet",
 				"item_blood_grenade",
 			
-				"item_null_talisman",
 				"item_magic_wand",
+				"item_boots",
+				"item_double_null_talisman",
 				"item_arcane_boots",
 				"item_rod_of_atos",
 				"item_force_staff",
@@ -122,15 +125,16 @@ local HeroBuild = {
 				"item_guardian_greaves",--
 				"item_ultimate_scepter",
 				"item_octarine_core",--
+				"item_gungir",--
 				"item_sheepstick",--
 				"item_ultimate_scepter_2",
-				"item_gungir",--
 				"item_hurricane_pike",--
 				"item_moon_shard",
 			},
             ['sell_list'] = {
-				"item_null_talisman", "item_force_staff",
 				"item_magic_wand", "item_glimmer_cape",
+				"item_null_talisman", "item_ultimate_scepter",
+				"item_null_talisman", "item_octarine_core",
 			},
         },
     },

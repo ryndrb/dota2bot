@@ -33,9 +33,11 @@ local HeroBuild = {
 				"item_tango",
 				"item_double_branches",
 				"item_quelling_blade",
+				"item_magic_stick",
+				"item_faerie_fire",
 			
-				"item_magic_wand",
 				"item_power_treads",
+				"item_magic_wand",
 				"item_bfury",--
 				"item_black_king_bar",--
 				"item_desolator",--
@@ -43,8 +45,8 @@ local HeroBuild = {
 				"item_basher",
 				"item_satanic",--
 				"item_abyssal_blade",--
-				"item_monkey_king_bar",--
 				"item_moon_shard",
+				"item_monkey_king_bar",--
 				"item_ultimate_scepter_2",
 			},
             ['sell_list'] = {

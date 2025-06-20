@@ -31,64 +31,24 @@ local HeroBuild = {
             },
             ['buy_list'] = {
 				"item_tango",
-				"item_double_branches",
-				"item_quelling_blade",
-			
-				"item_wraith_band",
+				"item_branches",
 				"item_magic_wand",
+			
 				"item_power_treads",
 				"item_lifesteal",
 				"item_manta",--
+				"item_butterfly",--
 				"item_black_king_bar",--
 				"item_greater_crit",--
 				"item_satanic",--
-				"item_butterfly",--
-				"item_travel_boots_2",--
 				"item_moon_shard",
 				"item_aghanims_shard",
 				"item_ultimate_scepter_2",
+				"item_travel_boots_2",--
 			},
             ['sell_list'] = {
-				"item_quelling_blade", "item_black_king_bar",
+				"item_branches", "item_black_king_bar",
 				"item_magic_wand", "item_greater_crit",
-				"item_wraith_band", "item_butterfly",
-			},
-        },
-		[2] = {
-            ['talent'] = {
-				[1] = {
-					['t25'] = {10, 0},
-					['t20'] = {0, 10},
-					['t15'] = {10, 0},
-					['t10'] = {0, 10},
-				}
-            },
-            ['ability'] = {
-				[1] = {1,3,1,3,1,6,1,3,3,2,6,2,2,2,6},
-            },
-            ['buy_list'] = {
-				"item_tango",
-				"item_double_branches",
-				"item_quelling_blade",
-			
-				"item_wraith_band",
-				"item_power_treads",
-				"item_magic_wand",
-				"item_lifesteal",
-				"item_manta",--
-				"item_black_king_bar",--
-				"item_lesser_crit",
-				"item_satanic",--
-				"item_greater_crit",--
-				"item_butterfly",--
-				"item_travel_boots_2",--
-				"item_moon_shard",
-				"item_aghanims_shard",
-				"item_ultimate_scepter_2",
-			},
-            ['sell_list'] = {
-				"item_quelling_blade", "item_black_king_bar",
-				"item_magic_wand", "item_lesser_crit",
 				"item_wraith_band", "item_butterfly",
 			},
         },

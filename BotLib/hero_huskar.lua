@@ -47,8 +47,8 @@ local HeroBuild = {
 				"item_assault",--
 				"item_ultimate_scepter_2",
 				"item_hurricane_pike",--
-				"item_travel_boots_2",--
 				"item_moon_shard",
+				"item_travel_boots_2",--
 			},
             ['sell_list'] = {
 				"item_gauntlets", "item_black_king_bar",
@@ -84,18 +84,18 @@ local HeroBuild = {
 			
 				"item_boots",
 				"item_armlet",
-				"item_vanguard",
+				"item_phase_boots",
+				"item_sange",
 				"item_black_king_bar",--
-				"item_heavens_halberd",--
+				"item_sange_and_yasha",--
 				"item_ultimate_scepter",
-				"item_travel_boots",
 				"item_satanic",--
 				"item_aghanims_shard",
 				"item_assault",--
 				"item_ultimate_scepter_2",
 				"item_hurricane_pike",--
-				"item_travel_boots_2",--
 				"item_moon_shard",
+				"item_travel_boots_2",--
 			},
             ['sell_list'] = {
 				"item_gauntlets", "item_ultimate_scepter",
@@ -120,27 +120,31 @@ local HeroBuild = {
             ['buy_list'] = {
 				"item_tango",
 				"item_faerie_fire",
+				"item_double_gauntlets",
+				"item_double_branches",
 			
+				"item_magic_wand",
 				"item_double_bracer",
 				"item_boots",
 				"item_armlet",
-				"item_vanguard",
+				"item_phase_boots",
+				"item_sange",
+				"item_crimson_guard",--
 				"item_black_king_bar",--
-				"item_heavens_halberd",--
-				sUtilityItem,--
+				"item_sange_and_yasha",--
 				"item_ultimate_scepter",
-				"item_satanic",--
+				"item_assault",--
 				"item_ultimate_scepter_2",
-				"item_travel_boots",
-				"item_sheepstick",--
-				"item_travel_boots_2",--
 				"item_aghanims_shard",
+				"item_satanic",--
 				"item_moon_shard",
+				"item_travel_boots_2",--
 			},
             ['sell_list'] = {
-				"item_bracer", sUtilityItem,
+				"item_magic_wand", "item_crimson_guard",
+				"item_bracer", "item_black_king_bar",
 				"item_bracer", "item_ultimate_scepter",
-				"item_armlet", "item_sheepstick",
+				"item_armlet", "item_travel_boots_2",
 			},
         },
     },

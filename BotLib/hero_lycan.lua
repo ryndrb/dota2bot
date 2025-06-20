@@ -12,7 +12,7 @@ then
 
 local RI = require(GetScriptDirectory()..'/FunLib/util_role_item')
 
-local sUtility = {"item_crimson_guard", "item_pipe", "item_lotus_orb", "item_heavens_halberd"}
+local sUtility = {"item_nullifier", "item_pipe", "item_lotus_orb", "item_heavens_halberd"}
 local sUtilityItem = RI.GetBestUtilityItem(sUtility)
 
 local HeroBuild = {
@@ -40,22 +40,22 @@ local HeroBuild = {
                 "item_double_wraith_band",
                 "item_power_treads",
                 "item_echo_sabre",
-                "item_manta",--
                 "item_orchid",
-                "item_harpoon",--
                 "item_black_king_bar",--
+                "item_harpoon",--
                 "item_aghanims_shard",
                 "item_bloodthorn",--
-                "item_skadi",--
-                "item_travel_boots_2",--
+                "item_satanic",--
+                "item_abyssal_blade",--
                 "item_moon_shard",
                 "item_ultimate_scepter_2",
+                "item_travel_boots_2",--
             },
             ['sell_list'] = {
-                "item_quelling_blade", "item_manta",
-                "item_magic_wand", "item_orchid",
-                "item_wraith_band", "item_black_king_bar",
-                "item_wraith_band", "item_skadi",
+                "item_quelling_blade", "item_orchid",
+                "item_magic_wand", "item_black_king_bar",
+                "item_wraith_band", "item_satanic",
+                "item_wraith_band", "item_abyssal_blade",
             },
         },
     },
@@ -80,26 +80,25 @@ local HeroBuild = {
                 "item_double_circlet",
             
                 "item_magic_wand",
-                "item_wraith_band",
-                "item_bracer",
+                "item_double_wraith_band",
                 "item_power_treads",
                 "item_echo_sabre",
-                "item_manta",--
                 "item_orchid",
-                "item_harpoon",--
                 "item_black_king_bar",--
+                "item_harpoon",--
                 "item_aghanims_shard",
                 "item_bloodthorn",--
-                "item_skadi",--
-                "item_travel_boots_2",--
+                "item_satanic",--
+                "item_abyssal_blade",--
                 "item_moon_shard",
                 "item_ultimate_scepter_2",
+                "item_travel_boots_2",--
             },
             ['sell_list'] = {
-                "item_quelling_blade", "item_manta",
-                "item_magic_wand", "item_orchid",
-                "item_wraith_band", "item_black_king_bar",
-                "item_bracer", "item_skadi",
+                "item_quelling_blade", "item_orchid",
+                "item_magic_wand", "item_black_king_bar",
+                "item_wraith_band", "item_satanic",
+                "item_wraith_band", "item_abyssal_blade",
             },
         },
     },
@@ -109,7 +108,7 @@ local HeroBuild = {
                 [1] = {
                     ['t25'] = {0, 10},
                     ['t20'] = {10, 0},
-                    ['t15'] = {10, 0},
+                    ['t15'] = {0, 10},
                     ['t10'] = {0, 10},
                 }
             },
@@ -123,25 +122,22 @@ local HeroBuild = {
                 "item_magic_stick",
                 "item_quelling_blade",
             
-                "item_magic_wand",
                 "item_helm_of_the_dominator",
-                "item_ring_of_basilius",
-                "item_helm_of_the_overlord",--
+                "item_magic_wand",
                 "item_boots",
+                "item_crimson_guard",--
+                "item_helm_of_the_overlord",--
+                "item_black_king_bar",--
                 sUtilityItem,--
                 "item_assault",--
                 "item_aghanims_shard",
-                "item_black_king_bar",--
-                "item_travel_boots",
-                "item_sheepstick",--
-                "item_travel_boots_2",--
                 "item_moon_shard",
                 "item_ultimate_scepter_2",
+                "item_travel_boots_2",--
             },
             ['sell_list'] = {
-                "item_quelling_blade", "item_assault",
-                "item_ring_of_basilius", "item_black_king_bar",
-                "item_magic_wand", "item_sheepstick",
+                "item_quelling_blade", sUtilityItem,
+                "item_magic_wand", "item_assault",
             },
         },
         [2] = {
@@ -149,7 +145,7 @@ local HeroBuild = {
                 [1] = {
                     ['t25'] = {0, 10},
                     ['t20'] = {10, 0},
-                    ['t15'] = {10, 0},
+                    ['t15'] = {0, 10},
                     ['t10'] = {0, 10},
                 }
             },
@@ -167,21 +163,21 @@ local HeroBuild = {
                 "item_double_bracer",
                 "item_power_treads",
                 "item_orchid",
-                sUtilityItem,--
-                "item_assault",--
+                "item_crimson_guard",--
                 "item_black_king_bar",--
+                "item_assault",--
                 "item_aghanims_shard",
                 "item_bloodthorn",--
-                "item_skadi",--
-                "item_travel_boots_2",--
+                "item_abyssal_blade",--
                 "item_moon_shard",
                 "item_ultimate_scepter_2",
+                "item_travel_boots_2",--
             },
             ['sell_list'] = {
-                "item_quelling_blade", sUtilityItem,
-                "item_magic_wand", "item_assault",
-                "item_bracer", "item_black_king_bar",
-                "item_bracer", "item_skadi",
+                "item_quelling_blade", "item_crimson_guard",
+                "item_magic_wand", "item_black_king_bar",
+                "item_bracer", "item_assault",
+                "item_bracer", "item_abyssal_blade",
             },
         },
     },

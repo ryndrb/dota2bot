@@ -45,11 +45,12 @@ local HeroBuild = {
 				"item_tango",
 				"item_double_branches",
 				"item_quelling_blade",
+				"item_circlet",
+				"item_gauntlets",
 			
 				"item_bottle",
 				"item_magic_wand",
-				"item_double_bracer",
-				"item_boots",
+				"item_bracer",
 				"item_phase_boots",
 				"item_desolator",--
 				"item_blink",
@@ -58,16 +59,15 @@ local HeroBuild = {
 				"item_assault",--
 				"item_satanic",--
 				"item_overwhelming_blink",--
-				"item_travel_boots_2",--
 				"item_moon_shard",
 				"item_ultimate_scepter_2",
+				"item_travel_boots_2",--
 			},
 			['sell_list'] = {
-				"item_quelling_blade", "item_desolator",
-				"item_magic_wand", "item_blink",
-				"item_bottle", "item_black_king_bar",
+				"item_quelling_blade", "item_blink",
+				"item_magic_wand", "item_black_king_bar",
 				"item_bracer", "item_assault",
-				"item_bracer", "item_satanic",
+				"item_bottle", "item_satanic",
 			},
 		}
     },
@@ -94,29 +94,30 @@ local HeroBuild = {
 				"item_tango",
 				"item_double_branches",
 				"item_quelling_blade",
+				"item_circlet",
+				"item_gauntlets",
 			
 				"item_magic_wand",
-				"item_double_bracer",
+				"item_boots",
+				"item_bracer",
 				"item_phase_boots",
 				"item_soul_ring",
 				"item_blink",
 				"item_crimson_guard",--
-				"item_cyclone",
 				"item_black_king_bar",--
 				sUtilityItem,--
 				"item_aghanims_shard",
 				"item_wind_waker",--
 				"item_overwhelming_blink",--
-				"item_travel_boots_2",--
 				"item_moon_shard",
-				"item_ultimate_scepter_2"
+				"item_ultimate_scepter_2",
+				"item_travel_boots_2",--
 			},
             ['sell_list'] = {
-				"item_quelling_blade", "item_blink",
-				"item_magic_wand", "item_crimson_guard",
-				"item_soul_ring", "item_cyclone",
-				"item_bracer", "item_black_king_bar",
+				"item_quelling_blade", "item_crimson_guard",
+				"item_magic_wand", "item_black_king_bar",
 				"item_bracer", sUtilityItem,
+				"item_soul_ring", "item_wind_waker",
 			},
         },
     },

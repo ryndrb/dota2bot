@@ -47,7 +47,7 @@ local HeroBuild = {
 				"item_greater_crit",--
 				"item_moon_shard",
 				"item_ultimate_scepter_2",
-				"item_travel_boots_2",
+				"item_travel_boots_2",--
 			},
             ['sell_list'] = {
 				"item_quelling_blade", "item_satanic",
@@ -73,6 +73,8 @@ local HeroBuild = {
 				"item_tango",
 				"item_double_branches",
 				"item_quelling_blade",
+				"item_circlet",
+				"item_gauntlets",
 			
 				"item_bottle",
 				"item_magic_wand",
@@ -84,20 +86,19 @@ local HeroBuild = {
 				"item_black_king_bar",--
 				"item_shivas_guard",--
 				"item_octarine_core",--
-				"item_travel_boots",
-				"item_heart",--
-				"item_ultimate_scepter_2",
 				"item_sheepstick",--
+				"item_ultimate_scepter_2",
+				"item_heart",--
+				"item_moon_shard",
 				"item_travel_boots_2",--
-				"item_moon_shard"
 			},
             ['sell_list'] = {
 				"item_quelling_blade", "item_blade_mail",
 				"item_magic_wand", "item_ultimate_scepter",
-				"item_bottle", "item_black_king_bar",
+				"item_bracer", "item_black_king_bar",
 				"item_bracer", "item_shivas_guard",
-				"item_bracer", "item_octarine_core",
-				"item_blade_mail", "item_sheepstick",
+				"item_bottle", "item_octarine_core",
+				"item_blade_mail", "item_heart",
 			},
         },
         [2] = {
@@ -132,7 +133,7 @@ local HeroBuild = {
 				"item_greater_crit",--
 				"item_moon_shard",
 				"item_ultimate_scepter_2",
-				"item_travel_boots_2",
+				"item_travel_boots_2",--
 			},
             ['sell_list'] = {
 				"item_quelling_blade", "item_satanic",
@@ -160,8 +161,11 @@ local HeroBuild = {
 				"item_tango",
 				"item_double_branches",
 				"item_quelling_blade",
+				"item_circlet",
+				"item_gauntlets",
 			
 				"item_magic_wand",
+				"item_boots",
 				"item_double_bracer",
 				"item_phase_boots",
 				"item_blade_mail",
@@ -172,16 +176,16 @@ local HeroBuild = {
 				"item_black_king_bar",--
 				"item_shivas_guard",--
 				"item_ultimate_scepter_2",
-				"item_heart",--
-				"item_travel_boots_2",--
+				"item_octarine_core",--
 				"item_moon_shard",
+				"item_travel_boots_2",--
 			},
             ['sell_list'] = {
 				"item_quelling_blade", "item_crimson_guard",
 				"item_magic_wand", "item_ultimate_scepter",
 				"item_bracer", sUtilityItem,
 				"item_bracer", "item_black_king_bar",
-				"item_blade_mail", "item_heart",
+				"item_blade_mail", "item_octarine_core",
 			},
         },
     },

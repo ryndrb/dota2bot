@@ -46,11 +46,13 @@ local HeroBuild = {
                 "item_tango",
                 "item_double_branches",
                 "item_faerie_fire",
+                "item_circlet",
+                "item_mantle",
             
-                "item_null_talisman",
                 "item_bottle",
                 "item_magic_wand",
                 "item_power_treads",
+                "item_null_talisman",
                 "item_witch_blade",
                 "item_blink",
                 "item_cyclone",
@@ -62,8 +64,8 @@ local HeroBuild = {
                 "item_ultimate_scepter_2",
                 "item_overwhelming_blink",--
                 "item_wind_waker",--
-                "item_travel_boots_2",--
                 "item_moon_shard",
+                "item_travel_boots_2",--
             },
             ['sell_list'] = {
                 "item_magic_wand", "item_cyclone",

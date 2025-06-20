@@ -44,32 +44,31 @@ local HeroBuild = {
             ['buy_list'] = {
 				"item_tango",
 				"item_double_branches",
-				"item_ring_of_protection",
+				"item_double_gauntlets",
 			
                 "item_bottle",
-                "item_double_bracer",
 				"item_magic_wand",
+                "item_double_bracer",
 				"item_phase_boots",
                 "item_blade_mail",
                 "item_blink",
                 "item_kaya",
                 "item_aghanims_shard",
-                "item_heart",--
-                "item_kaya_and_sange",--
                 "item_shivas_guard",--
+                "item_kaya_and_sange",--
+                "item_heart",--
                 "item_overwhelming_blink",--
                 "item_wind_waker",--
-                "item_travel_boots_2",--
-				"item_moon_shard",
 				"item_ultimate_scepter_2",
+				"item_moon_shard",
+                "item_travel_boots_2",--
 			},
             ['sell_list'] = {
-                "item_ring_of_protection", "item_blade_mail",
 				"item_magic_wand", "item_blink",
-                "item_bottle", "item_kaya",
-                "item_bracer", "item_heart",
+                "item_bracer", "item_kaya",
                 "item_bracer", "item_shivas_guard",
-                "item_blade_mail", "item_cyclone",
+                "item_bottle", "item_heart",
+                "item_blade_mail", "item_wind_waker",
 			},
         },
     },
@@ -91,20 +90,21 @@ local HeroBuild = {
 				"item_double_branches",
 				"item_ring_of_protection",
 			
-                "item_double_bracer",
 				"item_magic_wand",
-				"item_phase_boots",
+                "item_double_bracer",
+                "item_boots",
                 "item_blade_mail",
+				"item_phase_boots",
                 "item_blink",
                 "item_crimson_guard",--
                 sUtilityItem,--
 				"item_aghanims_shard",
                 "item_shivas_guard",--
-                "item_heart",--
                 "item_overwhelming_blink",--
-                "item_travel_boots_2",--
-				"item_moon_shard",
+                "item_heart",--
 				"item_ultimate_scepter_2",
+				"item_moon_shard",
+                "item_travel_boots_2",--
 			},
             ['sell_list'] = {
 				"item_ring_of_protection", "item_blink",

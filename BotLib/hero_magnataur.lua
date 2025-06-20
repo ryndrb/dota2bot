@@ -42,20 +42,20 @@ local HeroBuild = {
                 "item_tango",
                 "item_circlet",
             
-                "item_null_talisman",
                 "item_magic_wand",
+                "item_null_talisman",
                 "item_power_treads",
                 "item_echo_sabre",
                 "item_blink",
                 "item_black_king_bar",--
                 "item_aghanims_shard",
-                "item_bloodthorn",--
                 "item_harpoon",--
+                "item_bloodthorn",--
                 "item_greater_crit",--
                 "item_swift_blink",--
+                "item_ultimate_scepter_2",
                 "item_moon_shard",
                 "item_travel_boots_2",--
-                "item_ultimate_scepter_2",
             },
             ['sell_list'] = {
                 "item_quelling_blade", "item_black_king_bar",
@@ -85,26 +85,26 @@ local HeroBuild = {
                 "item_circlet",
             
                 "item_bottle",
-                "item_null_talisman",
                 "item_magic_wand",
+                "item_null_talisman",
                 "item_power_treads",
-                "item_echo_sabre",
                 "item_blink",
+                "item_echo_sabre",
                 "item_black_king_bar",--
                 "item_aghanims_shard",
                 "item_harpoon",--
                 "item_bloodthorn",--
                 "item_greater_crit",--
                 "item_swift_blink",--
+                "item_ultimate_scepter_2",
                 "item_moon_shard",
                 "item_travel_boots_2",--
-                "item_ultimate_scepter_2",
             },
             ['sell_list'] = {
-                "item_quelling_blade", "item_blink",
+                "item_quelling_blade", "item_echo_sabre",
                 "item_magic_wand", "item_black_king_bar",
-                "item_bottle", "item_bloodthorn",
-                "item_null_talisman", "item_greater_crit",
+                "item_null_talisman", "item_bloodthorn",
+                "item_bottle", "item_greater_crit",
             },
         },
     },
@@ -126,6 +126,7 @@ local HeroBuild = {
                 "item_tango",
                 "item_double_branches",
                 "item_double_circlet",
+                "item_enchanted_mango",
             
                 "item_magic_wand",
                 "item_bracer",
@@ -138,15 +139,15 @@ local HeroBuild = {
                 "item_harpoon",--
                 "item_sheepstick",--
                 "item_aghanims_shard",
-                "item_arcane_blink",--
-                "item_travel_boots_2",--
                 "item_ultimate_scepter_2",
+                "item_arcane_blink",--
                 "item_moon_shard",
+                "item_travel_boots_2",--
             },
             ['sell_list'] = {
                 "item_magic_wand", "item_black_king_bar",
                 "item_bracer", sUtilityItem,
-                "item_null_talisman", "item_sheepstick"
+                "item_null_talisman", "item_sheepstick",
             },
         },
     },

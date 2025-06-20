@@ -34,7 +34,7 @@ local HeroBuild = {
 				[1] = {
 					['t25'] = {0, 10},
 					['t20'] = {10, 0},
-					['t15'] = {10, 0},
+					['t15'] = {0, 10},
 					['t10'] = {0, 10},
 				}
             },
@@ -45,28 +45,29 @@ local HeroBuild = {
 				"item_tango",
 				"item_double_branches",
 				"item_double_circlet",
+				"item_faerie_fire",
 			
 				"item_bottle",
 				"item_magic_wand",
 				"item_arcane_boots",
 				"item_orchid",
 				"item_ultimate_scepter",
-				"item_aghanims_shard",
 				"item_black_king_bar",--
+				"item_aghanims_shard",
 				"item_octarine_core",--
-				"item_force_staff",
-				"item_bloodthorn",--
-				"item_travel_boots",
 				"item_hurricane_pike",--
-				"item_wind_waker",--
+				"item_bloodthorn",--
+				"item_sphere",--
+				"item_sheepstick",--
 				"item_ultimate_scepter_2",
-				"item_travel_boots_2",--
 				"item_moon_shard",
+				"item_travel_boots_2",--
 			},
             ['sell_list'] = {
-				"item_circlet", "item_black_king_bar",
-				"item_magic_wand", "item_octarine_core",
-				"item_bottle", "item_force_staff",
+				"item_circlet", "item_ultimate_scepter",
+				"item_circlet", "item_octarine_core",
+				"item_magic_wand", "item_hurricane_pike",
+				"item_bottle", "item_sphere",
 			},
         },
     },
@@ -99,25 +100,22 @@ local HeroBuild = {
 				"item_tango",
 				"item_double_branches",
 				"item_blood_grenade",
-				"item_circlet",
+				"item_magic_stick",
+				"item_enchanted_mango",
 			
 				"item_tranquil_boots",
 				"item_magic_wand",
 				"item_glimmer_cape",--
+				"item_solar_crest",--
 				"item_aghanims_shard",
-				"item_aether_lens",
-				"item_force_staff",--
+				"item_holy_locket",--
 				"item_boots_of_bearing",--
 				"item_octarine_core",--
 				"item_sheepstick",--
-				"item_ethereal_blade",--
 				"item_ultimate_scepter_2",
 				"item_moon_shard"
 			},
-            ['sell_list'] = {
-				"item_circlet", "item_force_staff",
-				"item_magic_wand", "item_octarine_core",
-			},
+            ['sell_list'] = {},
         },
     },
     ['pos_5'] = {
@@ -137,25 +135,22 @@ local HeroBuild = {
 				"item_tango",
 				"item_double_branches",
 				"item_blood_grenade",
-				"item_circlet",
+				"item_magic_stick",
+				"item_enchanted_mango",
 			
 				"item_arcane_boots",
 				"item_magic_wand",
 				"item_glimmer_cape",--
-				"item_aghanims_shard",
-				"item_aether_lens",
 				"item_solar_crest",--
+				"item_aghanims_shard",
+				"item_holy_locket",--
 				"item_guardian_greaves",--
 				"item_octarine_core",--
 				"item_sheepstick",--
-				"item_ethereal_blade",--
 				"item_ultimate_scepter_2",
 				"item_moon_shard"
 			},
-            ['sell_list'] = {
-				"item_circlet", "item_solar_crest",
-				"item_magic_wand", "item_octarine_core",
-			},
+            ['sell_list'] = {},
         },
     },
 }

@@ -63,18 +63,18 @@ local HeroBuild = {
                 "item_magic_wand",
                 "item_double_bracer",
                 "item_phase_boots",
-                "item_phylactery",
+                "item_echo_sabre",
                 "item_crimson_guard",--
                 "item_blink",
                 "item_aghanims_shard",
                 "item_black_king_bar",--
-                "item_angels_demise",--
                 "item_basher",
-                "item_overwhelming_blink",--
+                "item_harpoon",--
                 "item_abyssal_blade",--
-                "item_travel_boots_2",--
+                "item_overwhelming_blink",--
                 "item_moon_shard",
                 "item_ultimate_scepter_2",
+                "item_travel_boots_2",--
             },
             ['sell_list'] = {
                 "item_quelling_blade", "item_crimson_guard",

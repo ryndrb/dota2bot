@@ -49,25 +49,25 @@ local HeroBuild = {
 
 				"item_bottle",
 				"item_magic_wand",
-				"item_wraith_band",
 				"item_power_treads",
+				"item_wraith_band",
 				"item_maelstrom",
 				"item_dragon_lance",
+				"item_mjollnir",--
 				"item_black_king_bar",--
 				"item_aghanims_shard",
-				"item_mjollnir",--
 				"item_greater_crit",--
-				"item_butterfly",--
 				"item_hurricane_pike",--
 				"item_satanic",--
-				"item_ultimate_scepter_2",
 				"item_moon_shard",
+				"item_ultimate_scepter_2",
+				"item_butterfly",--
 			},
             ['sell_list'] = {
 				"item_magic_wand", "item_black_king_bar",
-				"item_bottle", "item_greater_crit",
-				"item_wraith_band", "item_butterfly",
-				"item_power_treads", "item_satanic",
+				"item_wraith_band", "item_greater_crit",
+				"item_bottle", "item_satanic",
+				"item_power_treads", "item_butterfly",
 			},
         },
     },
@@ -106,19 +106,20 @@ local HeroBuild = {
 				"item_tranquil_boots",
 				"item_ancient_janggo",
 				"item_rod_of_atos",
-				"item_glimmer_cape",--
+				"item_force_staff",
 				"item_boots_of_bearing",--
-				"item_gungir",--
-				"item_lotus_orb",--
-				"item_sheepstick",--
-				"item_wind_waker",--
 				"item_aghanims_shard",
+				"item_lotus_orb",--
+				"item_gungir",--
+				"item_sheepstick",--
+				"item_nullifier",--
 				"item_ultimate_scepter_2",
 				"item_moon_shard",
+				"item_hurricane_pike",--
 			},
             ['sell_list'] = {
-				"item_circlet", "item_rod_of_atos",
-				"item_magic_wand", "item_boots_of_bearing",
+				"item_circlet", "item_sheepstick",
+				"item_magic_wand", "item_nullifier",
 			},
         },
     },
@@ -145,19 +146,20 @@ local HeroBuild = {
 				"item_arcane_boots",
 				"item_mekansm",
 				"item_rod_of_atos",
-				"item_glimmer_cape",--
+				"item_force_staff",
 				"item_guardian_greaves",--
-				"item_gungir",--
-				"item_lotus_orb",--
-				"item_sheepstick",--
-				"item_wind_waker",--
 				"item_aghanims_shard",
+				"item_lotus_orb",--
+				"item_gungir",--
+				"item_sheepstick",--
+				"item_nullifier",--
 				"item_ultimate_scepter_2",
 				"item_moon_shard",
+				"item_hurricane_pike",--
 			},
             ['sell_list'] = {
-				"item_circlet", "item_rod_of_atos",
-				"item_magic_wand", "item_guardian_greaves",
+				"item_circlet", "item_sheepstick",
+				"item_magic_wand", "item_nullifier",
 			},
         },
     },

@@ -34,10 +34,10 @@ local HeroBuild = {
 				"item_double_branches",
 				"item_faerie_fire",
 				"item_quelling_blade",
-				"item_circlet",
+				"item_magic_stick",
 			
-				"item_magic_wand",
 				"item_phase_boots",
+				"item_magic_wand",
 				"item_bfury",--
 				"item_blink",
 				"item_basher",
@@ -46,14 +46,13 @@ local HeroBuild = {
 				"item_abyssal_blade",--
 				"item_ultimate_scepter",
 				"item_satanic",--
-				"item_swift_blink",--
 				"item_ultimate_scepter_2",
+				"item_swift_blink",--
 				"item_moon_shard",
 				"item_travel_boots_2",--
 			},
             ['sell_list'] = {
-				"item_circlet", "item_black_king_bar",
-				"item_magic_wand", "item_satanic",
+				"item_magic_wand", "item_ultimate_scepter",
 			},
         },
     },
@@ -87,10 +86,10 @@ local HeroBuild = {
 				"item_double_branches",
 				"item_faerie_fire",
 				"item_quelling_blade",
-				"item_circlet",
+				"item_magic_stick",
 			
-				"item_magic_wand",
 				"item_phase_boots",
+				"item_magic_wand",
 				"item_bfury",--
 				"item_crimson_guard",--
 				"item_blink",
@@ -104,7 +103,6 @@ local HeroBuild = {
 				"item_travel_boots_2",--
 			},
             ['sell_list'] = {
-				"item_circlet", "item_black_king_bar",
 				"item_magic_wand", "item_basher",
 			},
         },

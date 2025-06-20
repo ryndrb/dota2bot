@@ -29,48 +29,7 @@ local HeroBuild = {
         },
     },
     ['pos_2'] = {
-        [1] = {
-            ['talent'] = {
-				[1] = {
-					['t25'] = {0, 10},
-					['t20'] = {10, 0},
-					['t15'] = {10, 0},
-					['t10'] = {10, 0},
-				}
-            },
-            ['ability'] = {
-                [1] = {3,1,3,2,3,6,3,1,1,1,2,6,2,2,6},
-            },
-            ['buy_list'] = {
-				"item_tango",
-				"item_double_branches",
-				"item_circlet",
-				"item_gauntlets",
-			
-				"item_bottle",
-				"item_magic_wand",
-				"item_bracer",
-				"item_power_treads",
-				"item_manta",--
-				"item_ultimate_scepter",
-				"item_lesser_crit",
-				"item_black_king_bar",--
-				"item_bloodthorn",--
-				"item_greater_crit",--
-				"item_travel_boots",
-				"item_shivas_guard",--
-				"item_ultimate_scepter_2",
-				"item_travel_boots_2",--
-				"item_moon_shard",
-				"item_aghanims_shard",
-			},
-            ['sell_list'] = {
-				"item_magic_wand", "item_lesser_crit",
-				"item_bottle", "item_black_king_bar",
-				"item_bracer", "item_bloodthorn",
-			},
-        },
-		[2] = {
+		[1] = {
             ['talent'] = {
 				[1] = {
 					['t25'] = {0, 10},
@@ -87,30 +46,31 @@ local HeroBuild = {
 				"item_tango",
 				"item_double_branches",
 				"item_circlet",
+				"item_mantle",
 			
 				"item_bottle",
 				"item_magic_wand",
-				"item_bracer",
+				"item_null_talisman",
 				"item_power_treads",
 				"item_orchid",
 				"item_kaya",
 				"item_ultimate_scepter",
 				"item_black_king_bar",--
-				"item_devastator",--
 				"item_kaya_and_sange",--
+				"item_devastator",--
 				"item_travel_boots",
 				"item_bloodthorn",--
 				"item_shivas_guard",--
 				"item_ultimate_scepter_2",
-				"item_travel_boots_2",--
 				"item_moon_shard",
 				"item_aghanims_shard",
+				"item_travel_boots_2",--
 			},
             ['sell_list'] = {
 				"item_quelling_blade", "item_kaya",
 				"item_magic_wand", "item_ultimate_scepter",
+				"item_null_talisman", "item_black_king_bar",
 				"item_bottle", "item_black_king_bar",
-				"item_bracer", "item_devastator",
 			},
         },
     },

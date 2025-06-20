@@ -32,7 +32,7 @@ local HeroBuild = {
         [1] = {
             ['talent'] = {
                 [1] = {
-                    ['t25'] = {10, 0},
+                    ['t25'] = {0, 10},
                     ['t20'] = {10, 0},
                     ['t15'] = {10, 0},
                     ['t10'] = {0, 10},
@@ -45,29 +45,29 @@ local HeroBuild = {
                 "item_tango",
                 "item_quelling_blade",
                 "item_double_branches",
+                "item_faerie_fire",
             
                 "item_bottle",
-                "item_bracer",
                 "item_magic_wand",
-                "item_phase_boots",
+                "item_null_talisman",
+                "item_power_treads",
                 "item_blink",
                 "item_ultimate_scepter",
                 "item_aghanims_shard",
                 "item_black_king_bar",--
                 "item_octarine_core",--
-                "item_greater_crit",--
-                "item_travel_boots",
-                "item_overwhelming_blink",--`
+                "item_shivas_guard",--
+                "item_arcane_blink",--
                 "item_wind_waker",--
                 "item_ultimate_scepter_2",
-                "item_travel_boots_2",--
                 "item_moon_shard",
+                "item_travel_boots_2",--
             },
             ['sell_list'] = {
                 "item_quelling_blade", "item_ultimate_scepter",
                 "item_magic_wand", "item_black_king_bar",
-                "item_bottle", "item_octarine_core",
-                "item_bracer", "item_greater_crit",
+                "item_null_talisman", "item_octarine_core",
+                "item_bottle", "item_shivas_guard",
             },
         },
     },
@@ -94,21 +94,21 @@ local HeroBuild = {
                 "item_arcane_boots",
                 "item_blink",
                 "item_crimson_guard",--
-                "item_black_king_bar",--
+                "item_ultimate_scepter",
                 "item_aghanims_shard",
                 sUtilityItem,--
-                "item_ultimate_scepter",
+                "item_black_king_bar",--
                 "item_overwhelming_blink",--`
-                "item_sheepstick",--
+                "item_octarine_core",--
                 "item_ultimate_scepter_2",
-                "item_travel_boots_2",--
                 "item_moon_shard",
+                "item_travel_boots_2",--
             },
             ['sell_list'] = {
                 "item_quelling_blade", "item_crimson_guard",
-                "item_magic_wand", "item_black_king_bar",
+                "item_magic_wand", "item_ultimate_scepter",
                 "item_bracer", sUtilityItem,
-                "item_bracer", "item_ultimate_scepter",
+                "item_bracer", "item_black_king_bar",
             },
         },
     },
@@ -135,26 +135,25 @@ local HeroBuild = {
                 "item_double_tango",
                 "item_double_branches",
                 "item_blood_grenade",
-                "item_enchanted_mango",
+                "item_magic_stick",
             
                 "item_tranquil_boots",
                 "item_magic_wand",
                 "item_blink",
                 "item_ancient_janggo",
-                "item_aghanims_shard",
                 "item_force_staff",--
-                "item_cyclone",
-                "item_boots_of_bearing",--
                 "item_octarine_core",--
+                "item_boots_of_bearing",--
+                "item_aghanims_shard",
                 "item_ultimate_scepter",
                 "item_wind_waker",--
-                "item_overwhelming_blink",--
+                "item_arcane_blink",--
                 "item_ultimate_scepter_2",
                 "item_black_king_bar",--
                 "item_moon_shard",
             },
             ['sell_list'] = {
-                "item_magic_wand", "item_cyclone",
+                "item_magic_wand", "item_wind_waker",
             },
         },
     },
@@ -181,26 +180,25 @@ local HeroBuild = {
                 "item_double_tango",
                 "item_double_branches",
                 "item_blood_grenade",
-                "item_enchanted_mango",
+                "item_magic_stick",
             
                 "item_arcane_boots",
                 "item_magic_wand",
                 "item_blink",
                 "item_mekansm",
-                "item_aghanims_shard",
                 "item_force_staff",--
-                "item_cyclone",
-                "item_guardian_greaves",--
                 "item_octarine_core",--
+                "item_guardian_greaves",--
+                "item_aghanims_shard",
                 "item_ultimate_scepter",
                 "item_wind_waker",--
-                "item_overwhelming_blink",--
+                "item_arcane_blink",--
                 "item_ultimate_scepter_2",
                 "item_black_king_bar",--
                 "item_moon_shard",
             },
             ['sell_list'] = {
-                "item_magic_wand", "item_cyclone",
+                "item_magic_wand", "item_wind_waker",
             },
         },
     },

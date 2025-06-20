@@ -46,13 +46,13 @@ local HeroBuild = {
                 "item_hurricane_pike",--
                 "item_satanic",--
                 "item_bloodthorn",--
-                "item_monkey_king_bar",--
                 "item_moon_shard",
+                "item_greater_crit",--
                 "item_ultimate_scepter_2",
             },
             ['sell_list'] = {
-                "item_magic_wand", "item_black_king_bar",
-                "item_blight_stone", "item_hurricane_pike",
+                "item_blight_stone", "item_black_king_bar",
+                "item_magic_wand", "item_hurricane_pike",
                 "item_null_talisman", "item_satanic",
                 "item_power_treads", "item_monkey_king_bar",
             },
@@ -89,15 +89,15 @@ local HeroBuild = {
                 "item_hurricane_pike",--
                 "item_satanic",--
                 "item_bloodthorn",--
-                "item_sheepstick",--
                 "item_moon_shard",
+                "item_sheepstick",--
                 "item_ultimate_scepter_2",
             },
             ['sell_list'] = {
-                "item_magic_wand", "item_orchid",
-                "item_blight_stone", "item_black_king_bar",
-                "item_bottle", "item_hurricane_pike",
-                "item_null_talisman", "item_satanic",
+                "item_blight_stone", "item_orchid",
+                "item_magic_wand", "item_black_king_bar",
+                "item_null_talisman", "item_hurricane_pike",
+                "item_bottle", "item_satanic",
                 "item_power_treads", "item_sheepstick",
             },
         },
@@ -127,19 +127,18 @@ local HeroBuild = {
                 "item_rod_of_atos",
                 "item_maelstrom",
                 "item_assault",--
+                "item_mjollnir",--
                 "item_black_king_bar",--
                 "item_aghanims_shard",
-                "item_mjollnir",--
                 "item_hurricane_pike",--
                 "item_sheepstick",--
-                "item_nullifier",--
-                "item_nullifier",--
                 "item_moon_shard",
+                "item_nullifier",--
                 "item_ultimate_scepter_2",
             },
             ['sell_list'] = {
-                "item_magic_wand", "item_maelstrom",
-                "item_blight_stone", "item_assault",
+                "item_blight_stone", "item_maelstrom",
+                "item_magic_wand", "item_assault",
                 "item_bracer", "item_black_king_bar",
                 "item_bracer", "item_hurricane_pike",
                 "item_rod_of_atos", "item_sheepstick",
@@ -166,28 +165,26 @@ local HeroBuild = {
                 "item_blood_grenade",
                 "item_double_circlet",
             
-                "item_boots",
                 "item_magic_wand",
+                "item_tranquil_boots",
                 "item_urn_of_shadows",
                 "item_solar_crest",--
                 "item_aghanims_shard",
-                "item_ancient_janggo",
                 "item_spirit_vessel",
                 "item_boots_of_bearing",--
                 "item_ultimate_scepter",
                 "item_orchid",
-                "item_heavens_halberd",--
+                "item_nullifier",--
                 "item_bloodthorn",--
-                "item_ultimate_scepter_2",
                 "item_sheepstick",--
-                "item_monkey_king_bar",--
+                "item_ultimate_scepter_2",
+                "item_revenants_brooch",--
                 "item_moon_shard",
             },
             ['sell_list'] = {
-                "item_circlet", "item_solar_crest",
-                "item_circlet", "item_ancient_janggo",
-                "item_magic_wand", "item_boots_of_bearing",
-                "item_spirit_vessel", "item_monkey_king_bar",
+                "item_circlet", "item_orchid",
+                "item_magic_wand", "item_nullifier",
+                "item_spirit_vessel", "item_revenants_brooch",
             },
         },
     },
@@ -210,28 +207,26 @@ local HeroBuild = {
                 "item_blood_grenade",
                 "item_double_circlet",
             
-                "item_boots",
                 "item_magic_wand",
+                "item_arcane_boots",
                 "item_urn_of_shadows",
                 "item_solar_crest",--
                 "item_aghanims_shard",
-                "item_mekansm",
-                "item_spirit_vessel",--
+                "item_spirit_vessel",
                 "item_guardian_greaves",--
                 "item_ultimate_scepter",
                 "item_orchid",
-                "item_heavens_halberd",--
+                "item_nullifier",--
                 "item_bloodthorn",--
-                "item_ultimate_scepter_2",
                 "item_sheepstick",--
-                "item_monkey_king_bar",--
+                "item_ultimate_scepter_2",
+                "item_revenants_brooch",--
                 "item_moon_shard",
             },
             ['sell_list'] = {
-                "item_circlet", "item_solar_crest",
-                "item_circlet", "item_mekansm",
-                "item_magic_wand", "item_guardian_greaves",
-                "item_spirit_vessel", "item_monkey_king_bar",
+                "item_circlet", "item_orchid",
+                "item_magic_wand", "item_nullifier",
+                "item_spirit_vessel", "item_revenants_brooch",
             },
         },
     },

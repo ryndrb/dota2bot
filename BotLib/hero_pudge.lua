@@ -12,7 +12,7 @@ then
 
 local RI = require(GetScriptDirectory()..'/FunLib/util_role_item')
 
-local sUtility = {"item_crimson_guard", "item_lotus_orb"}
+local sUtility = {"item_pipe", "item_lotus_orb"}
 local sUtilityItem = RI.GetBestUtilityItem(sUtility)
 
 local HeroBuild = {
@@ -33,13 +33,7 @@ local HeroBuild = {
             ['talent'] = {
                 [1] = {
                     ['t25'] = {10, 0},
-                    ['t20'] = {0, 10},
-                    ['t15'] = {10, 0},
-                    ['t10'] = {0, 10},
-                },
-                [2] = {
-                    ['t25'] = {10, 0},
-                    ['t20'] = {0, 10},
+                    ['t20'] = {10, 0},
                     ['t15'] = {0, 10},
                     ['t10'] = {0, 10},
                 },
@@ -50,28 +44,30 @@ local HeroBuild = {
             ['buy_list'] = {
                 "item_tango",
                 "item_double_branches",
+                "item_circlet",
+                "item_gauntlets",
             
-                "item_bracer",
                 "item_bottle",
                 "item_magic_wand",
+                "item_bracer",
                 "item_phase_boots",
                 "item_blade_mail",
                 "item_ultimate_scepter",
                 "item_bloodstone",--
-                "item_black_king_bar",--
-                "item_shivas_guard",--
-                "item_heart",--
-                "item_heavens_halberd",--
-                "item_ultimate_scepter_2",
-                "item_travel_boots_2",--
                 "item_aghanims_shard",
+                "item_kaya_and_sange",--
+                "item_shivas_guard",--
+                "item_overwhelming_blink",--
+                "item_ultimate_scepter_2",
+                "item_heart",--
                 "item_moon_shard",
+                "item_travel_boots_2",--
             },
             ['sell_list'] = {
                 "item_magic_wand", "item_bloodstone",
-                "item_bottle", "item_black_king_bar",
-                "item_bracer", "item_shivas_guard",
-                "item_blade_mail", "item_heavens_halberd",
+                "item_bracer", "item_kaya_and_sange",
+                "item_bottle", "item_shivas_guard",
+                "item_blade_mail", "item_heart",
             },
         },
     },
@@ -80,7 +76,7 @@ local HeroBuild = {
             ['talent'] = {
                 [1] = {
                     ['t25'] = {10, 0},
-                    ['t20'] = {0, 10},
+                    ['t20'] = {10, 0},
                     ['t15'] = {0, 10},
                     ['t10'] = {10, 0},
                 },
@@ -94,27 +90,29 @@ local HeroBuild = {
                 "item_magic_stick",
                 "item_ring_of_protection",
             
+                "item_boots",
                 "item_magic_wand",
                 "item_double_bracer",
-                "item_boots",
                 "item_phase_boots",
+                "item_blade_mail",
+                "item_crimson_guard",--
                 "item_ultimate_scepter",
-                "item_pipe",--
-                "item_black_king_bar",--
-                sUtilityItem,--
                 "item_blink",
+                "item_aghanims_shard",
                 "item_shivas_guard",--
+                "item_heart",--
                 "item_ultimate_scepter_2",
                 "item_overwhelming_blink",--
-                "item_travel_boots_2",--
-                "item_aghanims_shard",
+                "item_sphere",--
                 "item_moon_shard",
+                "item_travel_boots_2",--
             },
             ['sell_list'] = {
-                "item_ring_of_protection", "item_pipe",
-                "item_magic_wand", "item_black_king_bar",
-                "item_bracer", sUtilityItem,
+                "item_ring_of_protection", "item_crimson_guard",
+                "item_magic_wand", "item_ultimate_scepter",
                 "item_bracer", "item_blink",
+                "item_bracer", "item_shivas_guard",
+                "item_blade_mail", "item_sphere",
             },
         },
     },
@@ -138,24 +136,23 @@ local HeroBuild = {
                 "item_wind_lace",
                 "item_blood_grenade",
             
-                "item_tranquil_boots",
                 "item_magic_wand",
-                "item_force_staff",--
-                "item_blink",
+                "item_tranquil_boots",
+                "item_solar_crest",--
                 "item_ancient_janggo",
-                "item_veil_of_discord",
+                "item_blink",
                 "item_boots_of_bearing",--
-                "item_heart",--
                 "item_shivas_guard",--
-                "item_cyclone",
+                "item_heart",--
+                "item_ultimate_scepter",
                 "item_overwhelming_blink",--
-                "item_wind_waker",--
                 "item_aghanims_shard",
-                "item_ultimate_scepter_2",
                 "item_moon_shard",
+                "item_ultimate_scepter_2",
+                "item_wind_waker",--
             },
             ['sell_list'] = {
-                "item_magic_wand", "item_ancient_janggo",
+                "item_magic_wand", "item_ultimate_scepter",
             },
         },
     },
@@ -179,24 +176,23 @@ local HeroBuild = {
                 "item_wind_lace",
                 "item_blood_grenade",
             
-                "item_arcane_boots",
                 "item_magic_wand",
-                "item_force_staff",--
-                "item_blink",
+                "item_arcane_boots",
+                "item_solar_crest",--
                 "item_mekansm",
-                "item_veil_of_discord",
+                "item_blink",
                 "item_guardian_greaves",--
-                "item_heart",--
                 "item_shivas_guard",--
-                "item_cyclone",
+                "item_heart",--
+                "item_ultimate_scepter",
                 "item_overwhelming_blink",--
-                "item_wind_waker",--
                 "item_aghanims_shard",
-                "item_ultimate_scepter_2",
                 "item_moon_shard",
+                "item_ultimate_scepter_2",
+                "item_wind_waker",--
             },
             ['sell_list'] = {
-                "item_magic_wand", "item_mekansm",
+                "item_magic_wand", "item_ultimate_scepter",
             },
         },
     },

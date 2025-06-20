@@ -67,9 +67,10 @@ local HeroBuild = {
             },
             ['buy_list'] = {
                 "item_tango",
-                "item_enchanted_mango",
                 "item_double_branches",
                 "item_blood_grenade",
+                "item_faerie_fire",
+                "item_magic_stick",
             
                 "item_tranquil_boots",
                 "item_magic_wand",
@@ -79,14 +80,14 @@ local HeroBuild = {
                 "item_ultimate_scepter",
                 "item_boots_of_bearing",--
                 "item_sheepstick",--
-                "item_solar_crest",--
-                "item_ultimate_scepter_2",
                 "item_aeon_disk",--
-                "item_ethereal_blade",--
+                "item_ultimate_scepter_2",
+                "item_octarine_core",--
                 "item_moon_shard",
+                "item_ethereal_blade",--
             },
             ['sell_list'] = {
-                "item_magic_wand", "item_ultimate_scepter",
+                "item_magic_wand", "item_aeon_disk",
             },
         },
     },
@@ -105,9 +106,10 @@ local HeroBuild = {
             },
             ['buy_list'] = {
                 "item_tango",
-                "item_enchanted_mango",
                 "item_double_branches",
                 "item_blood_grenade",
+                "item_faerie_fire",
+                "item_magic_stick",
             
                 "item_arcane_boots",
                 "item_magic_wand",
@@ -117,14 +119,14 @@ local HeroBuild = {
                 "item_ultimate_scepter",
                 "item_guardian_greaves",--
                 "item_sheepstick",--
-                "item_solar_crest",--
-                "item_ultimate_scepter_2",
                 "item_aeon_disk",--
-                "item_ethereal_blade",--
+                "item_ultimate_scepter_2",
+                "item_octarine_core",--
                 "item_moon_shard",
+                "item_ethereal_blade",--
             },
             ['sell_list'] = {
-                "item_magic_wand", "item_ultimate_scepter",
+                "item_magic_wand", "item_aeon_disk",
             },
         },
     },

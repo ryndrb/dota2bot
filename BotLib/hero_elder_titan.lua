@@ -63,19 +63,19 @@ local HeroBuild = {
                 "item_magic_wand",
                 "item_phase_boots",
                 "item_radiance",--
-                "item_vladmir",--
                 "item_crimson_guard",--
                 "item_black_king_bar",--
+                "item_harpoon",--
                 "item_assault",--
-                "item_travel_boots_2",--
-                "item_ultimate_scepter_2",
                 "item_moon_shard",
+                "item_ultimate_scepter_2",
+                "item_travel_boots_2",--
                 -- "item_aghanims_shard",--alt cast bug..
             },
             ['sell_list'] = {
-                "item_quelling_blade", "item_crimson_guard",
-                "item_magic_wand", "item_black_king_bar",
-                "item_wind_lace", "item_assault",
+                "item_quelling_blade", "item_black_king_bar",
+                "item_wind_lace", "item_harpoon",
+                "item_magic_wand", "item_assault",
             },
         },
     },
@@ -103,16 +103,17 @@ local HeroBuild = {
                 "item_ancient_janggo",
                 "item_solar_crest",--
                 "item_vladmir",--
+                "item_rod_of_atos",
                 "item_boots_of_bearing",--
                 -- "item_aghanims_shard",--alt cast bug..
                 "item_assault",--
-                "item_black_king_bar",--
                 "item_sheepstick",--
-                "item_ultimate_scepter_2",
+                "item_gungir",--
                 "item_moon_shard",
+                "item_ultimate_scepter_2",
             },
             ['sell_list'] = {
-                "item_magic_wand", "item_vladmir",
+                "item_magic_wand", "item_sheepstick",
             },
         },
     },
@@ -140,17 +141,17 @@ local HeroBuild = {
                 "item_mekansm",
                 "item_solar_crest",--
                 "item_vladmir",--
+                "item_rod_of_atos",
                 "item_guardian_greaves",--
                 -- "item_aghanims_shard",--alt cast bug..
                 "item_assault",--
-                "item_black_king_bar",--
                 "item_sheepstick",--
-                "item_ultimate_scepter_2",
+                "item_gungir",--
                 "item_moon_shard",
+                "item_ultimate_scepter_2",
             },
             ['sell_list'] = {
-                "item_wind_lace", "item_guardian_greaves",
-                "item_magic_wand", "item_vladmir",
+                "item_magic_wand", "item_sheepstick",
             },
         },
     },

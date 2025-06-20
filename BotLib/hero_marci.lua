@@ -30,11 +30,10 @@ local HeroBuild = {
                 [1] = {1,3,3,2,3,6,3,2,2,2,6,1,1,1,6},
             },
             ['buy_list'] = {
-                "item_double_branches",
                 "item_tango",
-                "item_quelling_blade",
-
                 "item_magic_wand",
+                "item_faerie_fire",
+
                 "item_phase_boots",
                 "item_bfury",--
                 "item_black_king_bar",--
@@ -43,10 +42,10 @@ local HeroBuild = {
                 "item_greater_crit",--
                 "item_satanic",--
                 "item_abyssal_blade",--
-                "item_travel_boots_2",--
                 "item_ultimate_scepter_2",
-                "item_aghanims_shard",
                 "item_moon_shard",
+                "item_aghanims_shard",
+                "item_travel_boots_2",--
             },
             ['sell_list'] = {
                 "item_magic_wand", "item_satanic",
@@ -67,12 +66,11 @@ local HeroBuild = {
                 [1] = {1,3,3,2,3,6,3,2,2,2,6,1,1,1,6},
             },
             ['buy_list'] = {
-                "item_double_branches",
                 "item_tango",
-                "item_quelling_blade",
+                "item_magic_wand",
+                "item_faerie_fire",
 
                 "item_bottle",
-                "item_magic_wand",
                 "item_phase_boots",
                 "item_bfury",--
                 "item_black_king_bar",--
@@ -81,10 +79,10 @@ local HeroBuild = {
                 "item_greater_crit",--
                 "item_satanic",--
                 "item_abyssal_blade",--
-                "item_travel_boots_2",--
                 "item_ultimate_scepter_2",
-                "item_aghanims_shard",
                 "item_moon_shard",
+                "item_aghanims_shard",
+                "item_travel_boots_2",--
             },
             ['sell_list'] = {
                 "item_magic_wand", "item_basher",
@@ -106,28 +104,23 @@ local HeroBuild = {
                 [1] = {1,3,3,2,3,6,3,2,2,2,6,1,1,1,6},
             },
             ['buy_list'] = {
-                "item_double_branches",
                 "item_tango",
-                "item_quelling_blade",
-                "item_magic_stick",
-
-                "item_bracer",
                 "item_magic_wand",
+                "item_faerie_fire",
+
                 "item_phase_boots",
                 "item_bfury",--
-                "item_crimson_guard",--
+                "item_heavens_halberd",--
                 "item_black_king_bar",--
-                "item_lesser_crit",
                 "item_assault",--
-                "item_greater_crit",--
-                "item_travel_boots_2",--
+                "item_nullifier",--
                 "item_moon_shard",
                 "item_ultimate_scepter_2",
                 "item_aghanims_shard",
+                "item_travel_boots_2",--
             },
             ['sell_list'] = {
-                "item_magic_wand", "item_lesser_crit",
-                "item_bracer", "item_assault",
+                "item_magic_wand", "item_nullifier",
             },
         },
     },

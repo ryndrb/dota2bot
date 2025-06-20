@@ -52,29 +52,32 @@ local HeroBuild = {
 				"item_tango",
 				"item_double_branches",
 				"item_faerie_fire",
+				"item_circlet",
+				"item_mantle",
 
-				"item_null_talisman",
 				"item_bottle",
 				"item_magic_wand",
+				"item_null_talisman",
 				"item_power_treads",
+				"item_soul_ring",
 				"item_orchid",
 				"item_witch_blade",
-				"item_kaya",
 				"item_black_king_bar",--
 				"item_kaya_and_sange",--
 				"item_devastator",--
 				"item_ultimate_scepter",
+				"item_aghanims_shard",
 				"item_bloodthorn",--
 				"item_shivas_guard",--
 				"item_ultimate_scepter_2",
-				"item_travel_boots_2",--
-				"item_aghanims_shard",
 				"item_moon_shard",
+				"item_travel_boots_2",--
 			},
             ['sell_list'] = {
-				"item_magic_wand", "item_kaya",
-				"item_bottle", "item_black_king_bar",
-				"item_null_talisman", "item_ultimate_scepter",
+				"item_magic_wand", "item_witch_blade",
+				"item_null_talisman", "item_black_king_bar",
+				"item_soul_ring", "item_kaya_and_sange",
+				"item_bottle", "item_ultimate_scepter",
 			},
         },
     },

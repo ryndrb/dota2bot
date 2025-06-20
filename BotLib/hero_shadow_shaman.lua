@@ -66,28 +66,30 @@ local HeroBuild = {
                 [1] = {1,3,3,2,2,6,2,2,3,3,6,1,1,1,6},
             },
             ['buy_list'] = {
-				"item_tango",
-				"item_double_branches",
-				"item_faerie_fire",
-				"item_blood_grenade",
+                "item_tango",
+                "item_double_branches",
+                "item_blood_grenade",
+                "item_magic_stick",
+                "item_enchanted_mango",
 			
 				"item_tranquil_boots",
 				"item_magic_wand",
 				"item_aether_lens",
+				"item_blink",
 				"item_ancient_janggo",
 				"item_aghanims_shard",
 				"item_glimmer_cape",--
 				"item_ultimate_scepter",
 				"item_boots_of_bearing",--
-				"item_lotus_orb",--
-				"item_black_king_bar",--
 				"item_refresher",--
+				"item_black_king_bar",--
 				"item_ultimate_scepter_2",
 				"item_ethereal_blade",--
+				"item_arcane_blink",--
 				"item_moon_shard",
 			},
             ['sell_list'] = {
-				"item_magic_wand", "item_glimmer_cape",
+				"item_magic_wand", "item_ultimate_scepter",
 			},
         },
     },
@@ -105,28 +107,30 @@ local HeroBuild = {
                 [1] = {1,3,3,2,2,6,2,2,3,3,6,1,1,1,6},
             },
             ['buy_list'] = {
-				"item_tango",
-				"item_double_branches",
-				"item_faerie_fire",
-				"item_blood_grenade",
+                "item_tango",
+                "item_double_branches",
+                "item_blood_grenade",
+                "item_magic_stick",
+                "item_enchanted_mango",
 			
 				"item_arcane_boots",
 				"item_magic_wand",
 				"item_aether_lens",
+				"item_blink",
 				"item_mekansm",
 				"item_aghanims_shard",
 				"item_glimmer_cape",--
 				"item_ultimate_scepter",
 				"item_guardian_greaves",--
-				"item_lotus_orb",--
-				"item_black_king_bar",--
 				"item_refresher",--
+				"item_black_king_bar",--
 				"item_ultimate_scepter_2",
 				"item_ethereal_blade",--
+				"item_arcane_blink",--
 				"item_moon_shard",
 			},
             ['sell_list'] = {
-				"item_magic_wand", "item_glimmer_cape",
+				"item_magic_wand", "item_ultimate_scepter",
 			},
         },
     },

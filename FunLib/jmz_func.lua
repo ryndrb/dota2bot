@@ -2832,6 +2832,9 @@ function J.CanBeAttacked( unit )
 			and not unit:HasModifier("modifier_ringmaster_the_box_buff")
 			and not unit:HasModifier("modifier_dazzle_nothl_projection_soul_debuff")
 			and not unit:HasModifier("modifier_naga_siren_song_of_the_siren")
+			and not unit:HasModifier("modifier_eul_cyclone")
+			and not unit:HasModifier("modifier_brewmaster_storm_cyclone")
+			and not unit:HasModifier("modifier_wind_waker")
 			and (unit:GetTeam() == GetTeam() 
 					or not unit:HasModifier("modifier_crystal_maiden_frostbite") )
 			and (unit:GetTeam() ~= GetTeam() 
@@ -3780,8 +3783,13 @@ function J.WeAreStronger(bot, nRadius)
 
 	local nAllyTowers = bot:GetNearbyTowers(600, false)
 	if J.IsValidBuilding(nAllyTowers[1]) then
-		ourPower = ourPower + #nAllyTowers * nAllyTowers[1]:GetAttackDamage()
-		ourPowerRaw = ourPowerRaw + #nAllyTowers * nAllyTowers[1]:GetAttackDamage()
+		if nAllyTowers[1]:HasModifier('modifier_fountain_glyph') then
+			ourPower = ourPower + #nAllyTowers * (nAllyTowers[1]:GetAttackDamage()*2)
+			ourPowerRaw = ourPowerRaw + #nAllyTowers * (nAllyTowers[1]:GetAttackDamage()*2)
+		else
+			ourPower = ourPower + #nAllyTowers * nAllyTowers[1]:GetAttackDamage()
+			ourPowerRaw = ourPowerRaw + #nAllyTowers * nAllyTowers[1]:GetAttackDamage()
+		end
 	end
 
 	if not J.IsEarlyGame() and J.IsInTeamFight(bot, 1600) and #tAllyHeroes >= #tEnemyHeroes then

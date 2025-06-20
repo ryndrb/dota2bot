@@ -179,7 +179,12 @@ function GetDesire()
                 end
 
                 if ally ~= nil and bot == ally and bot.tormentor_state == false then
-                    return 0.9
+                    local tInRangeAlly = J.GetAlliesNearLoc(bot:GetLocation(), 1200)
+                    if not J.IsRealInvisible(bot) and (#tInRangeEnemy > #tInRangeAlly) then
+                        return BOT_MODE_DESIRE_LOW
+                    else
+                        return BOT_MODE_DESIRE_VERYHIGH
+                    end
                 end
             end
         else

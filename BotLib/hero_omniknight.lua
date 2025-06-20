@@ -67,9 +67,9 @@ local HeroBuild = {
             ['sell_list'] = {
 				"item_quelling_blade", "item_radiance",
 				"item_magic_wand", "item_harpoon",
-				"item_bottle", "item_sange_and_yasha",
+				"item_bracer", "item_sange_and_yasha",
 				"item_bracer", "item_bloodthorn",
-				"item_bracer", "item_nullifier",
+				"item_bottle", "item_nullifier",
 			},
         },
     },
@@ -137,14 +137,14 @@ local HeroBuild = {
 				"item_magic_wand",
 				"item_tranquil_boots",
 				"item_solar_crest",--
+				"item_ancient_janggo",
 				"item_force_staff",--
-				"item_boots_of_bearing",--
 				"item_holy_locket",--
-				"item_ultimate_scepter",
-				"item_sheepstick",--
-				"item_wind_waker",--
-				"item_ultimate_scepter_2",
+				"item_boots_of_bearing",--
 				"item_aghanims_shard",
+				"item_sheepstick",--
+				"item_ultimate_scepter_2",
+				"item_shivas_guard",--
 				"item_moon_shard",
 			},
             ['sell_list'] = {},
@@ -173,14 +173,14 @@ local HeroBuild = {
 				"item_magic_wand",
 				"item_arcane_boots",
 				"item_solar_crest",--
+				"item_mekansm",
 				"item_force_staff",--
-				"item_guardian_greaves",--
 				"item_holy_locket",--
-				"item_ultimate_scepter",
-				"item_sheepstick",--
-				"item_wind_waker",--
-				"item_ultimate_scepter_2",
+				"item_guardian_greaves",--
 				"item_aghanims_shard",
+				"item_sheepstick",--
+				"item_ultimate_scepter_2",
+				"item_shivas_guard",--
 				"item_moon_shard",
 			},
             ['sell_list'] = {},

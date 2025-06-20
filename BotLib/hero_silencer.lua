@@ -46,15 +46,15 @@ local HeroBuild = {
 				"item_aghanims_shard",
 				"item_devastator",--
 				"item_bloodthorn",--
-				"item_monkey_king_bar",--
-				"item_travel_boots_2",--
+				"item_satanic",--
 				"item_moon_shard",
 				"item_ultimate_scepter_2",
+				"item_travel_boots_2",--
 			},
             ['sell_list'] = {
 				"item_magic_wand", "item_hurricane_pike",
 				"item_null_talisman", "item_bloodthorn",
-				"item_null_talisman", "item_monkey_king_bar",
+				"item_null_talisman", "item_satanic",
 			},
         },
     },
@@ -76,12 +76,13 @@ local HeroBuild = {
 				"item_tango",
 				"item_double_branches",
 				"item_faerie_fire",
-				"item_enchanted_mango",
+				"item_double_circlet",
 			
 				"item_bottle",
 				"item_magic_wand",
-				"item_power_treads",
+				"item_boots",
 				"item_double_null_talisman",
+				"item_power_treads",
 				"item_witch_blade",
 				"item_force_staff",
 				"item_black_king_bar",--
@@ -90,15 +91,15 @@ local HeroBuild = {
 				"item_devastator",--
 				"item_bloodthorn",--
 				"item_sheepstick",--
-				"item_travel_boots_2",--
 				"item_moon_shard",
 				"item_ultimate_scepter_2",
+				"item_travel_boots_2",--
 			},
             ['sell_list'] = {
 				"item_magic_wand", "item_force_staff",
-				"item_bottle", "item_black_king_bar",
+				"item_null_talisman", "item_black_king_bar",
 				"item_null_talisman", "item_bloodthorn",
-				"item_null_talisman", "item_sheepstick",
+				"item_bottle", "item_sheepstick",
 			},
         },
     },
@@ -141,18 +142,18 @@ local HeroBuild = {
 				"item_force_staff",
 				"item_glimmer_cape",--
 				"item_boots_of_bearing",--
-				"item_solar_crest",--
+				"item_refresher",--
 				"item_aghanims_shard",
 				"item_sheepstick",--
-				"item_refresher",--
-				"item_hurricane_pike",--
-				"item_moon_shard",
+				"item_bloodthorn",--
 				"item_ultimate_scepter_2",
+				"item_moon_shard",
+				"item_hurricane_pike",--
 			},
             ['sell_list'] = {
-				"item_magic_wand", "item_glimmer_cape",
-				"item_null_talisman", "item_boots_of_bearing",
-				"item_null_talisman", "item_boots_of_bearing",
+				"item_magic_wand", "item_refresher",
+				"item_null_talisman", "item_sheepstick",
+				"item_null_talisman", "item_bloodthorn",
 			},
         },
     },
@@ -183,18 +184,18 @@ local HeroBuild = {
 				"item_force_staff",
 				"item_glimmer_cape",--
 				"item_guardian_greaves",--
-				"item_solar_crest",--
+				"item_refresher",--
 				"item_aghanims_shard",
 				"item_sheepstick",--
-				"item_refresher",--
-				"item_hurricane_pike",--
-				"item_moon_shard",
+				"item_bloodthorn",--
 				"item_ultimate_scepter_2",
+				"item_moon_shard",
+				"item_hurricane_pike",--
 			},
             ['sell_list'] = {
-				"item_magic_wand", "item_glimmer_cape",
-				"item_null_talisman", "item_guardian_greaves",
-				"item_null_talisman", "item_guardian_greaves",
+				"item_magic_wand", "item_refresher",
+				"item_null_talisman", "item_sheepstick",
+				"item_null_talisman", "item_bloodthorn",
 			},
         },
     },

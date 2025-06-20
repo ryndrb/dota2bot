@@ -33,9 +33,9 @@ local HeroBuild = {
             ['talent'] = {
 				[1] = {
 					['t25'] = {10, 0},
-					['t20'] = {10, 0},
-					['t15'] = {0, 10},
-					['t10'] = {10, 0},
+					['t20'] = {0, 10},
+					['t15'] = {10, 0},
+					['t10'] = {0, 10},
 				}
             },
             ['ability'] = {
@@ -48,25 +48,26 @@ local HeroBuild = {
 				"item_circlet",
 			
 				"item_bottle",
-				"item_null_talisman",
 				"item_magic_wand",
+				"item_null_talisman",
 				"item_arcane_boots",
-				"item_cyclone",
-				"item_kaya",
-				"item_octarine_core",--
+				"item_spirit_vessel",--
+				"item_ultimate_scepter",
 				"item_black_king_bar",--
 				"item_shivas_guard",--
 				"item_aghanims_shard",
-				"item_kaya_and_sange",--
 				"item_wind_waker",--
-				"item_travel_boots_2",--
+				"item_kaya_and_sange",--
 				"item_ultimate_scepter_2",
+				"item_sheepstick",--
 				"item_moon_shard",
+				"item_travel_boots_2",--
 			},
             ['sell_list'] = {
-				"item_magic_wand", "item_octarine_core",
-				"item_bottle", "item_black_king_bar",
+				"item_magic_wand", "item_black_king_bar",
 				"item_null_talisman", "item_shivas_guard",
+				"item_bottle", "item_wind_waker",
+				"item_spirit_vessel", "item_sheepstick",
 			},
         },
     },
@@ -75,9 +76,9 @@ local HeroBuild = {
             ['talent'] = {
 				[1] = {
 					['t25'] = {10, 0},
-					['t20'] = {10, 0},
+					['t20'] = {0, 10},
 					['t15'] = {10, 0},
-					['t10'] = {10, 0},
+					['t10'] = {0, 10},
 				}
             },
             ['ability'] = {
@@ -89,48 +90,109 @@ local HeroBuild = {
 				"item_circlet",
 				"item_magic_stick",
 			
-				"item_null_talisman",
 				"item_magic_wand",
+				"item_null_talisman",
 				"item_arcane_boots",
+				"item_spirit_vessel",
 				"item_pipe",--
 				"item_shivas_guard",--
 				"item_black_king_bar",--
-				sUtilityItem,--
-				"item_travel_boots",
-				"item_sheepstick",--
-				"item_travel_boots_2",--
 				"item_aghanims_shard",
+				sUtilityItem,--
 				"item_ultimate_scepter_2",
+				"item_sheepstick",--
 				"item_moon_shard",
+				"item_travel_boots_2",--
 			},
             ['sell_list'] = {
-				"item_magic_wand", sUtilityItem,
-				"item_null_talisman", "item_sheepstick",
+				"item_magic_wand", "item_black_king_bar",
+				"item_null_talisman", sUtilityItem,
+				"item_spirit_vessel", "item_travel_boots_2",
 			},
         },
     },
     ['pos_4'] = {
         [1] = {
             ['talent'] = {
-                [1] = {},
+				[1] = {
+					['t25'] = {10, 0},
+					['t20'] = {0, 10},
+					['t15'] = {10, 0},
+					['t10'] = {0, 10},
+				}
             },
             ['ability'] = {
-                [1] = {},
+                [1] = {1,3,1,3,1,6,1,3,3,2,6,2,2,2,6},
             },
-            ['buy_list'] = {},
-            ['sell_list'] = {},
+            ['buy_list'] = {
+				"item_tango",
+				"item_double_branches",
+				"item_blood_grenade",
+				"item_circlet",
+				"item_ring_of_protection",
+			
+				"item_magic_wand",
+				"item_tranquil_boots",
+				"item_urn_of_shadows",
+				"item_glimmer_cape",--
+				"item_ancient_janggo",
+				"item_spirit_vessel",
+				"item_ultimate_scepter",
+				"item_boots_of_bearing",--
+				"item_aghanims_shard",
+				"item_shivas_guard",--
+				"item_sheepstick",--
+				"item_kaya_and_sange",--
+				"item_ultimate_scepter_2",
+				"item_octarine_core",--
+				"item_moon_shard",
+			},
+            ['sell_list'] = {
+				"item_magic_wand", "item_sheepstick",
+				"item_spirit_vessel", "item_octarine_core",
+			},
         },
     },
     ['pos_5'] = {
         [1] = {
             ['talent'] = {
-                [1] = {},
+				[1] = {
+					['t25'] = {10, 0},
+					['t20'] = {0, 10},
+					['t15'] = {10, 0},
+					['t10'] = {0, 10},
+				}
             },
             ['ability'] = {
-                [1] = {},
+                [1] = {1,3,1,3,1,6,1,3,3,2,6,2,2,2,6},
             },
-            ['buy_list'] = {},
-            ['sell_list'] = {},
+            ['buy_list'] = {
+				"item_tango",
+				"item_double_branches",
+				"item_blood_grenade",
+				"item_circlet",
+				"item_ring_of_protection",
+			
+				"item_magic_wand",
+				"item_arcane_boots",
+				"item_urn_of_shadows",
+				"item_glimmer_cape",--
+				"item_mekansm",
+				"item_spirit_vessel",
+				"item_ultimate_scepter",
+				"item_guardian_greaves",--
+				"item_aghanims_shard",
+				"item_shivas_guard",--
+				"item_sheepstick",--
+				"item_kaya_and_sange",--
+				"item_ultimate_scepter_2",
+				"item_octarine_core",--
+				"item_moon_shard",
+			},
+            ['sell_list'] = {
+				"item_magic_wand", "item_sheepstick",
+				"item_spirit_vessel", "item_octarine_core",
+			},
         },
     },
 }

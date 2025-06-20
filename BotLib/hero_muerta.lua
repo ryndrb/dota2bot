@@ -31,12 +31,12 @@ local HeroBuild = {
             },
             ['buy_list'] = {
                 "item_tango",
-                "item_double_branches",
-                "item_magic_stick",
-                "item_circlet",
+                "item_magic_wand",
+                "item_faerie_fire",
 
-                "item_null_talisman",
                 "item_power_treads",
+                "item_null_talisman",
+                "item_falcon_blade",
                 "item_magic_wand",
                 "item_maelstrom",
                 "item_dragon_lance",
@@ -47,12 +47,13 @@ local HeroBuild = {
                 "item_greater_crit",--
                 "item_satanic",--
                 "item_moon_shard",
-                "item_travel_boots_2",--
                 "item_ultimate_scepter_2",
+                "item_travel_boots_2",--
             },
             ['sell_list'] = {
-                "item_magic_wand", "item_greater_crit",
-                "item_null_talisman", "item_satanic",
+                "item_magic_wand", "item_black_king_bar",
+                "item_null_talisman", "item_greater_crit",
+                "item_falcon_blade", "item_satanic",
             },
         },
     },

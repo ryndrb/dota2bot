@@ -58,7 +58,7 @@ local HeroBuild = {
             ['talent'] = {
 				[1] = {
 					['t25'] = {10, 0},
-					['t20'] = {10, 0},
+					['t20'] = {0, 10},
 					['t15'] = {10, 0},
 					['t10'] = {0, 10},
 				}
@@ -67,27 +67,29 @@ local HeroBuild = {
                 [1] = {1,2,3,2,2,6,2,1,1,1,6,3,3,3,6},
             },
             ['buy_list'] = {
-				"item_double_tango",
+				"item_tango",
 				"item_double_branches",
 				"item_faerie_fire",
 				"item_enchanted_mango",
 				"item_blood_grenade",
 			
-				"item_tranquil_boots",
 				"item_magic_wand",
-				"item_ancient_janggo",
+				"item_tranquil_boots",
 				"item_glimmer_cape",--
+				"item_ancient_janggo",
 				"item_solar_crest",--
 				"item_boots_of_bearing",--
 				"item_aghanims_shard",
+				"item_ultimate_scepter",
+				"item_force_staff",
 				"item_black_king_bar",--
-				"item_force_staff",--
 				"item_sheepstick",--
 				"item_ultimate_scepter_2",
 				"item_moon_shard",
+				"item_hurricane_pike",--
 			},
             ['sell_list'] = {
-				"item_magic_wand", "item_solar_crest",
+				"item_magic_wand", "item_black_king_bar",
 			},
         },
     },
@@ -96,7 +98,7 @@ local HeroBuild = {
             ['talent'] = {
 				[1] = {
 					['t25'] = {10, 0},
-					['t20'] = {10, 0},
+					['t20'] = {0, 10},
 					['t15'] = {10, 0},
 					['t10'] = {0, 10},
 				}
@@ -105,27 +107,29 @@ local HeroBuild = {
                 [1] = {1,2,3,2,2,6,2,1,1,1,6,3,3,3,6},
             },
             ['buy_list'] = {
-				"item_double_tango",
+				"item_tango",
 				"item_double_branches",
 				"item_faerie_fire",
 				"item_enchanted_mango",
 				"item_blood_grenade",
 			
-				"item_arcane_boots",
 				"item_magic_wand",
-				"item_mekansm",
+				"item_arcane_boots",
 				"item_glimmer_cape",--
+				"item_mekansm",
 				"item_solar_crest",--
 				"item_guardian_greaves",--
 				"item_aghanims_shard",
+				"item_ultimate_scepter",
+				"item_force_staff",
 				"item_black_king_bar",--
-				"item_force_staff",--
 				"item_sheepstick",--
 				"item_ultimate_scepter_2",
 				"item_moon_shard",
+				"item_hurricane_pike",--
 			},
             ['sell_list'] = {
-				"item_magic_wand", "item_solar_crest",
+				"item_magic_wand", "item_black_king_bar",
 			},
         },
     },

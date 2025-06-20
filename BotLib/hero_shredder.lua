@@ -62,8 +62,8 @@ local HeroBuild = {
 				"item_sheepstick",--
 				"item_ultimate_scepter_2",
 				"item_wind_waker",--
+				"item_moon_shard",
 				"item_travel_boots_2",--
-				"item_moon_shard"
 			},
             ['sell_list'] = {
 				"item_magic_wand", "item_ultimate_scepter",
@@ -88,22 +88,23 @@ local HeroBuild = {
             ['buy_list'] = {
 				"item_tango",
 				"item_double_branches",
+				"item_circlet",
+				"item_gauntlets",
 			
+				"item_magic_wand",
 				"item_bracer",
 				"item_arcane_boots",
-				"item_magic_wand",
 				"item_kaya",
 				"item_pipe",--
 				"item_shivas_guard",--
 				sUtilityItem,--
 				"item_yasha_and_kaya",--
 				"item_ultimate_scepter",
-				"item_travel_boots",
-				"item_wind_waker",--
-				"item_ultimate_scepter_2",
-				"item_travel_boots_2",--
 				"item_aghanims_shard",
-				"item_moon_shard"
+				"item_overwhelming_blink",--
+				"item_ultimate_scepter_2",
+				"item_moon_shard",
+				"item_travel_boots_2",--
 			},
             ['sell_list'] = {
 				"item_magic_wand", sUtilityItem,

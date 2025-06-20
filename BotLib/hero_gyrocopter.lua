@@ -31,26 +31,29 @@ local HeroBuild = {
             },
             ['buy_list'] = {
                 "item_tango",
-                "item_blades_of_attack",
-                "item_branches",
+                "item_double_branches",
+                "item_magic_stick",
+                "item_quelling_blade",
             
                 "item_falcon_blade",
                 "item_power_treads",
+                "item_magic_wand",
                 "item_lesser_crit",
                 "item_ultimate_scepter",
                 "item_black_king_bar",--
                 "item_greater_crit",--
                 "item_satanic",--
-                "item_skadi",--
+                "item_monkey_king_bar",--
                 "item_butterfly",--
                 "item_ultimate_scepter_2",
-                "item_travel_boots_2",--
                 "item_moon_shard",
                 "item_aghanims_shard",
+                "item_travel_boots_2",--
             },
             ['sell_list'] = {
-                "item_branches", "item_greater_crit",
-                "item_falcon_blade", "item_skadi",
+                "item_quelling_blade", "item_black_king_bar",
+                "item_magic_wand", "item_satanic",
+                "item_falcon_blade", "item_monkey_king_bar",
             },
         },
     },
@@ -70,25 +73,30 @@ local HeroBuild = {
             ['buy_list'] = {
                 "item_tango",
                 "item_double_branches",
+                "item_magic_stick",
+                "item_quelling_blade",
             
                 "item_bottle",
-                "item_power_treads",
+                "item_falcon_blade",
                 "item_magic_wand",
+                "item_power_treads",
                 "item_lesser_crit",
                 "item_ultimate_scepter",
                 "item_black_king_bar",--
                 "item_greater_crit",--
                 "item_satanic",--
-                "item_skadi",--
+                "item_monkey_king_bar",--
                 "item_butterfly",--
                 "item_ultimate_scepter_2",
-                "item_travel_boots_2",--
                 "item_moon_shard",
                 "item_aghanims_shard",
+                "item_travel_boots_2",--
             },
             ['sell_list'] = {
-                "item_magic_wand", "item_satanic",
-                "item_bottle", "item_skadi",
+                "item_quelling_blade", "item_ultimate_scepter",
+                "item_magic_wand", "item_black_king_bar",
+                "item_falcon_blade", "item_satanic",
+                "item_bottle", "item_monkey_king_bar",
             },
         },
     },
@@ -118,28 +126,27 @@ local HeroBuild = {
                 [1] = {1,2,1,2,1,6,1,2,2,3,6,3,3,3,6},
             },
             ['buy_list'] = {
-                "item_double_tango",
+                "item_tango",
                 "item_double_branches",
+                "item_magic_stick",
                 "item_blood_grenade",
             
-                "item_boots",
-                "item_ring_of_basilius",
-                "item_magic_wand",
                 "item_tranquil_boots",
+                "item_magic_wand",
                 "item_glimmer_cape",--
+                "item_ancient_janggo",
+                "item_force_staff",
                 "item_boots_of_bearing",--
                 "item_aghanims_shard",
-                "item_force_staff",
                 "item_lotus_orb",--
                 "item_black_king_bar",--
-                "item_greater_crit",--
-                "item_hurricane_pike",--
+                "item_octarine_core",--
                 "item_ultimate_scepter_2",
                 "item_moon_shard",
+                "item_hurricane_pike",--
             },
             ['sell_list'] = {
-                "item_ring_of_basilius", "item_boots_of_bearing",
-                "item_magic_wand", "item_force_staff",
+                "item_magic_wand", "item_octarine_core",
             },
         },
     },
@@ -157,27 +164,27 @@ local HeroBuild = {
                 [1] = {1,2,1,2,1,6,1,2,2,3,6,3,3,3,6},
             },
             ['buy_list'] = {
-                "item_double_tango",
+                "item_tango",
                 "item_double_branches",
+                "item_magic_stick",
                 "item_blood_grenade",
             
-                "item_boots",
-                "item_ring_of_basilius",
-                "item_magic_wand",
                 "item_arcane_boots",
+                "item_magic_wand",
                 "item_glimmer_cape",--
+                "item_mekansm",
+                "item_force_staff",
                 "item_guardian_greaves",--
                 "item_aghanims_shard",
-                "item_force_staff",
                 "item_lotus_orb",--
                 "item_black_king_bar",--
-                "item_greater_crit",--
-                "item_hurricane_pike",--
+                "item_octarine_core",--
                 "item_ultimate_scepter_2",
                 "item_moon_shard",
+                "item_hurricane_pike",--
             },
             ['sell_list'] = {
-                "item_magic_wand", "item_guardian_greaves",
+                "item_magic_wand", "item_octarine_core",
             },
         },
     },
