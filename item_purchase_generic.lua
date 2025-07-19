@@ -756,6 +756,23 @@ function ItemPurchaseThink()
 				return
 			end
 		end
+
+		if DotaTime() > (J.IsModeTurbo() and 30*60 or 60*60) then
+			local sentrySlot = bot:FindItemSlot('item_ward_sentry')
+			if sentrySlot >= 0 then
+				bot:ActionImmediate_SellItem(bot:GetItemInSlot(sentrySlot))
+				return
+			end
+		end
+
+		-- if received one from tormentor; clutter
+		if math.floor(DotaTime()) % 2 == 0 then
+			local aghanimsShard = bot:FindItemSlot('item_aghanims_shard')
+			if aghanimsShard >= 0 and aghanimsShard <= 8 then
+				bot:ActionImmediate_SellItem(bot:GetItemInSlot(aghanimsShard))
+				return
+			end
+		end
 	end
 
 	if bot:GetLevel() >= 6 and not isBear

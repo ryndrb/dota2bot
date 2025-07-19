@@ -79,7 +79,7 @@ local HeroBuild = {
 				"item_force_staff",
 				"item_ultimate_scepter",
 				"item_boots_of_bearing",--
-				"item_aoen_disk",--
+				"item_aeon_disk",--
 				"item_refresher",--
 				"item_cyclone",
 				"item_ultimate_scepter_2",
@@ -119,7 +119,7 @@ local HeroBuild = {
 				"item_force_staff",
 				"item_ultimate_scepter",
 				"item_guardian_greaves",--
-				"item_aoen_disk",--
+				"item_aeon_disk",--
 				"item_refresher",--
 				"item_cyclone",
 				"item_ultimate_scepter_2",

@@ -138,6 +138,7 @@ local HeroBuild = {
 				"item_wraith_band", "item_ultimate_scepter",
 				"item_wraith_band", "item_refresher",
 				"item_blade_mail", "item_sheepstick",
+				"item_power_treads", "item_swift_blink",
 			},
         },
     },

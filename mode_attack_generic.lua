@@ -385,14 +385,14 @@ function Think()
         if botAttackRange < 330 and bot:GetUnitName() ~= 'npc_dota_hero_templar_assassin' then
             if dist < botAttackRange then
                 if not J.CanBeAttacked(__target) --[[or (bot:GetLastAttackTime() + bot:GetSecondsPerAttack()) > GameTime()]] then
-                    bot:Action_MoveToUnit(__target)
+                    bot:Action_MoveToLocation(__target:GetLocation())
                     return
                 else
                     bot:Action_AttackUnit(__target, false)
                     return
                 end
             else
-                bot:Action_MoveToUnit(__target)
+                bot:Action_MoveToLocation(__target:GetLocation())
                 return
             end
         else
@@ -417,7 +417,7 @@ function Think()
                     return
                 end
             else
-                bot:Action_MoveToUnit(__target)
+                bot:Action_MoveToLocation(__target:GetLocation())
                 return
             end
         end
