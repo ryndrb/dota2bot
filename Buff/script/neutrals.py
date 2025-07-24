@@ -13,8 +13,9 @@ def GetHeroItems(hero_url_name):
     url = f"https://www.dotabuff.com/heroes/{hero_url_name}/items?date=patch_7.39"
 
     options = Options()
-    options.add_argument("--headless")
+    options.add_argument("--headless=new")
     options.add_argument("--disable-gpu")
+    options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36")
     driver = webdriver.Chrome(options=options)
     driver.get(url)
     
@@ -22,7 +23,7 @@ def GetHeroItems(hero_url_name):
     soup = BeautifulSoup(driver.page_source, "html.parser")
     driver.quit()
 
-    item_table = soup.find("table", {"class": "sortable"})
+    item_table = soup.find("table", class_="sortable")
     if not item_table:
         print(f"No item table found for {hero_url_name}.")
         return {}
