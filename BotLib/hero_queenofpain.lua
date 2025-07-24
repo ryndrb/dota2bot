@@ -403,7 +403,7 @@ function X.ConsiderW()
 	local nCastPoint  = abilityW:GetCastPoint()
 	local nManaCost   = abilityW:GetManaCost()
 	local nDamage     = abilityW:GetAbilityDamage()
-	local ScreamOfPainDamage     = abilityE:GetAbilityDamage()
+	local ScreamOfPainDamage     = J.CanCastAbility(abilityE) and abilityE:GetAbilityDamage()
 	local nDamageType = DAMAGE_TYPE_MAGICAL
 	local nInRangeEnemyList = J.GetAroundEnemyHeroList( nCastRange )
 	local hCastTarget = nil
@@ -485,7 +485,7 @@ function X.ConsiderW()
 					
 					if bot:GetTarget() ~= nil
 					then
-						if J.CanKillTarget( bot:GetTarget(), ScreamOfPainDamage, DAMAGE_TYPE_MAGICAL ) and abilityE.IsFullyCastable()
+						if J.CanKillTarget( bot:GetTarget(), ScreamOfPainDamage, DAMAGE_TYPE_MAGICAL ) and abilityE:IsFullyCastable()
 						then
 							return BOT_ACTION_DESIRE_VERYHIGH
 						end

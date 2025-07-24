@@ -220,11 +220,11 @@ function Push.WhichLaneToPush(bot, lane)
 
     -- slight, not too strong; start mid first
     if midLaneTier < topLaneTier and midLaneTier < botLaneTier then
-        midLaneScore = midLaneScore * 0.5
+        midLaneScore = midLaneScore * RemapValClamped(midLaneTier, 1, 3, 0.2, 0.5)
     elseif topLaneTier < midLaneTier and topLaneTier < botLaneTier then
-        topLaneScore = topLaneScore * 0.5
-    elseif botLaneTier < topLaneTier and botLaneTier < midLaneTier then
-        botLaneScore = botLaneScore * 0.5
+        topLaneScore = topLaneScore * RemapValClamped(topLaneTier, 1, 3, 0.2, 0.5)
+    elseif botLaneTier < topLaneTier and botLaneTier < botLaneTier then
+        botLaneScore = botLaneScore * RemapValClamped(midLaneTier, 1, 3, 0.2, 0.5)
     end
 
     if  topLaneScore < midLaneScore
@@ -310,7 +310,7 @@ function Push.PushThink(bot, lane)
     local nRange = math.min(700 + botAttackRange, 1600)
 
     local nCreeps = bot:GetNearbyLaneCreeps(nRange, true)
-    if (J.IsCore(bot) and bot:GetLevel() >= 15) or bot:GetLevel() >= 18 then
+    if GetUnitToLocationDistance(bot, targetLoc) <= 1200 then
         nCreeps = bot:GetNearbyCreeps(nRange, true)
     end
     nCreeps = Push.GetSpecialUnitsNearby(bot, nCreeps, nRange)

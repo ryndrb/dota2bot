@@ -671,6 +671,8 @@ end
 
 function X.IsCourierTargetedByUnit( courier )
 
+	if GetGameMode() == 23 then return false end
+
 	local botLV = bot:GetLevel()
 
 	if J.GetHP( courier ) < 0.9
@@ -1480,7 +1482,7 @@ X.ConsiderItemDesire["item_blink"] = function( hItem )
 				end
 			end
 
-			if (#nInRangeAlly >= nNearbyEnemyHeroCount) or (bWeAreStronger and J.GetHP(bot) > 0.5) then
+			if (#nInRangeAlly >= nNearbyEnemyHeroCount and bWeAreStronger) then
 				local nDistance = Min(nCastRange, GetUnitToUnitDistance(bot, botTarget))
 				local vLocation = J.GetUnitTowardDistanceLocation(bot, botTarget, nDistance) + RandomVector(150)
 				if IsLocationPassable(vLocation) then
@@ -5242,7 +5244,7 @@ X.ConsiderItemDesire["item_tpscroll"] = function( hItem )
 		and not X.IsBaseTowerDestroyed()
 		and J.GetAllyCount( bot, 1600 ) <= 2
 		and J.Role.ShouldTpToFarm()
-		and not J.Role.IsAllyHaveAegis()
+		and not J.DoesTeamHaveAegis()
 		and not J.Role.CanBeSupport( bot:GetUnitName() )
 		and not J.IsEnemyHeroAroundLocation( GetAncient( GetTeam() ):GetLocation(), 3300 )
 	then
@@ -5465,6 +5467,7 @@ X.ConsiderItemDesire["item_tpscroll"] = function( hItem )
 
 	--回复状态
 	if ( botHP + botMP < 0.3 or botHP < 0.2 )
+	and J.IsRetreating(bot)
 		and bot:GetLevel() >= 6
 		and bot:GetUnitName() ~= 'npc_dota_hero_huskar'
 		and bot:GetUnitName() ~= 'npc_dota_hero_slark'

@@ -268,7 +268,6 @@ function OnEnd()
 	PickedItem = nil
 	towerTime = 0
 	towerCreepMode = false
-	bot:SetTarget(nil)
 	harassTarget = nil
 	bSomeoneInChronosphere = false
 end

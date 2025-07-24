@@ -520,7 +520,7 @@ function X.ConsiderWhirlingAxesMelee()
     local fManaAfter = J.GetManaAfter(WhirlingAxesMelee:GetManaCost())
 
     local nInRangeEnemy = bot:GetNearbyHeroes(nRadius, true, BOT_MODE_NONE)
-    local nEnemyHeroesTargetingMeCount = #J.GetEnemyHeroesTargetingUnit(nInRangeEnemy, bot)
+    local nEnemyHeroesTargetingMeCount = #J.GetHeroesTargetingUnit(nInRangeEnemy, bot)
 
     for _, enemyHero in pairs(nEnemyHeroes) do
         if  J.IsValidHero(enemyHero)
@@ -665,7 +665,7 @@ function X.ConsiderBattleTrance()
     local nInRangeAlly = J.GetAlliesNearLoc(bot:GetLocation(), 800)
     if J.IsRetreating(bot) and not bRealInvisible and bot:DistanceFromFountain() > 4500 then
         local nInRangeEnemy = J.GetEnemiesNearLoc(bot:GetLocation(), 800)
-        local nEnemyHeroesTargetingMeCount = #J.GetEnemyHeroesTargetingUnit(nInRangeEnemy, bot)
+        local nEnemyHeroesTargetingMeCount = #J.GetHeroesTargetingUnit(nInRangeEnemy, bot)
 
         if #nInRangeEnemy > #nInRangeAlly and botHP < 0.2 and nEnemyHeroesTargetingMeCount >= 2 then
             return BOT_ACTION_DESIRE_HIGH

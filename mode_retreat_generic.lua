@@ -141,8 +141,9 @@ function GetDesire()
 
     if bot:HasModifier('modifier_fountain_fury_swipes_damage_increase')
     or (not bTeamFight and J.IsTargetedByEnemyWithModifier(nEnemyHeroes, 'modifier_skeleton_king_reincarnation_scepter_active'))
+    or (not bTeamFight and J.IsTargetedByEnemyWithModifier(nEnemyHeroes, 'modifier_item_helm_of_the_undying_active'))
     then
-        return BOT_MODE_DESIRE_VERYHIGH
+        return BOT_MODE_DESIRE_ABSOLUTE
     end
 
     if (bot:HasModifier('modifier_doom_bringer_doom_aura_enemy') and (#nEnemyHeroes > 0 or #nEnemyHeroes > #nAllyHeroes + 1))
@@ -207,7 +208,6 @@ function GetDesire()
 		if fShouldRunTime ~= 0 then
 			if fCurrentRunTime == 0 then
 				fCurrentRunTime = DotaTime()
-				bot:Action_ClearActions(false)
 			end
 
 			return BOT_MODE_DESIRE_ABSOLUTE * 1.1
@@ -232,7 +232,7 @@ function GetDesire()
             local info = GetHeroLastSeenInfo(id)
             if info ~= nil then
                 local dInfo = info[1]
-                if dInfo ~= nil and GetUnitToLocationDistance(bot, dInfo.location) <= 2000 and dInfo.time_since_seen <= 5.0 then
+                if dInfo ~= nil and GetUnitToLocationDistance(bot, dInfo.location) <= 3200 and dInfo.time_since_seen <= 5.0 then
                     count = count + 1
                 end
             end
@@ -289,13 +289,13 @@ function GetDesire()
         nHealth = botHP * 0.8 + botMP * 0.2
     end
 
-    nDesire = RemapValClamped(nHealth, 0, 0.80, 1, 0)
+    nDesire = 1 - ((nHealth + 1 - (1 - nHealth) ^ 4) / 2)
 
     if nEnemyNearbyCount > 0 then
         if nEnemyNearbyCount - nAllyNearbyCount > 0 then
             nDesire = nDesire + (nEnemyNearbyCount - nAllyNearbyCount) * (0.75 / 4)
             if J.IsInLaningPhase() then
-                nDesire = nDesire + (#J.GetEnemyHeroesTargetingUnit(nEnemyHeroes, bot)) * (0.75 / 4)
+                nDesire = nDesire + (#J.GetHeroesTargetingUnit(nEnemyHeroes, bot)) * (0.75 / 4)
             end
         end
 
@@ -322,18 +322,14 @@ function GetDesire()
     end
 
     if bot:DistanceFromFountain() > 4000 then
-        if (nEnemyNearbyCount == 0 or count == 0) and #nEnemyTowers == 0 then nDesire = nDesire - 0.25 end
-    end
-
-    if bot:WasRecentlyDamagedByAnyHero(1) or (J.IsValidBuilding(nEnemyTowers[1]) and nEnemyTowers[1]:GetAttackTarget() == bot) then
-        nDesire = nDesire + 0.1
+        if (nEnemyNearbyCount == 0 and count == 0) and #nEnemyTowers == 0 then nDesire = nDesire - 0.25 end
     end
 
     if J.IsInLaningPhase() then
         if not bot:WasRecentlyDamagedByAnyHero(3.0)
         and botHP > 0.25
         and bot:DistanceFromFountain() > 4000
-        and (#J.GetEnemyHeroesTargetingUnit(nEnemyHeroes, bot) == 0)
+        and (#J.GetHeroesTargetingUnit(nEnemyHeroes, bot) == 0)
         then
             nDesire = nDesire -  0.75
         end
@@ -505,7 +501,6 @@ function X.ShouldRun()
     and #nAllyHeroes <= 1
     and bot:DistanceFromFountain() > 3000
 	then
-		bot:SetTarget(nil)
 		return 6.21
 	end
 

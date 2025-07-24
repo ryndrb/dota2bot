@@ -87,6 +87,7 @@ function GetDesire()
     or ((botActiveMode == BOT_MODE_SECRET_SHOP
 		or botActiveMode == BOT_MODE_RUNE
 		or botActiveMode == BOT_MODE_WARD
+		or botActiveMode == BOT_MODE_RETREAT
 		or botActiveMode == BOT_MODE_OUTPOST) and botActiveModeDesire > 0)
 	or (#nInRangeAlly_tormentor >= 2 and bot.tormentor_state == true)
     or (#nInRangeAlly_roshan >= 2 and bRoshanAlive and bNotClone)
@@ -222,9 +223,7 @@ function GetDesire()
         end
     end
 	
-	if not J.Role.IsAllyHaveAegis() and J.IsHaveAegis(bot) then J.Role['aegisHero'] = bot end;
-	if J.Role.IsAllyHaveAegis() and nAliveAllyCount >= 4 and J.IsLateGame()
-	then
+	if J.DoesTeamHaveAegis() and nAliveAllyCount >= 4 then
 		return BOT_MODE_DESIRE_NONE;
 	end
 		
@@ -257,7 +256,7 @@ function GetDesire()
 		end
 	
 	end
-	if allyKills > enemyKills + 20 and nAliveAllyCount >= 4 and networthAdvantage > 15000
+	if allyKills > enemyKills + 20 and nAliveAllyCount >= 4
 	then return BOT_MODE_DESIRE_NONE; end
 
 	local nAlliesCount = J.GetAllyCount(bot,1400);
@@ -313,6 +312,8 @@ function GetDesire()
 	and not J.IsDefending(bot)
 	and (bot:GetUnitName() ~= 'npc_dota_hero_lone_druid_bear' or (bot:HasScepter() and not J.IsValid(LoneDruid.hero)))
 	and (DotaTime() > 8 * 60 or bot:GetLevel() >= 8 or ( bot:GetAttackRange() < 220 and bot:GetLevel() >= 6 ))
+	and networthAdvantage < 10000
+	and not J.IsLateGame()
 	then
 		if J.GetDistanceFromEnemyFountain(bot) > 4000 
 		then
@@ -328,18 +329,16 @@ function GetDesire()
 		if #hLaneCreepList > 0 
 		then
 			bot.farmLocation = J.GetCenterOfUnits(hLaneCreepList)
-			return BOT_MODE_DESIRE_VERYHIGH
+			return BOT_MODE_DESIRE_HIGH
 		else
 			if preferedCamp == nil then preferedCamp = J.Site.GetClosestNeutralSpwan(bot, availableCamp);end
 			
 			if preferedCamp ~= nil then
 				if not J.Site.IsModeSuitableToFarm(bot) 
 				then 
-					preferedCamp = nil;
 					return BOT_MODE_DESIRE_NONE;
 				elseif bot:GetHealth() <= 200 
 					then 
-						preferedCamp = nil;
 						teamTime = DotaTime();
 						return BOT_MODE_DESIRE_VERYLOW;
 				-- elseif farmState == 1
@@ -347,41 +346,6 @@ function GetDesire()
 				-- 		bot.farmLocation = preferedCamp.cattr.location
 				-- 	    return BOT_MODE_DESIRE_ABSOLUTE
 				else
-					if nAliveAllyCount >= 3 then
-						if pushTime > DotaTime() - 8.0 then
-							if preferedCamp == nil then preferedCamp = J.Site.GetClosestNeutralSpwan(bot, availableCamp) end
-							bot.farmLocation = preferedCamp.cattr.location
-							return BOT_MODE_DESIRE_MODERATE
-						end
-
-						if J.IsPushing(bot) then
-							local enemyAncient = GetAncient(GetOpposingTeam())
-							local nAllyHeroes = J.GetAlliesNearLoc(bot:GetLocation(), 1200)
-							local enemyAncientDistance = GetUnitToUnitDistance(bot, enemyAncient)
-							if enemyAncientDistance < 2800
-							and enemyAncientDistance > 1600
-							and bot:GetActiveModeDesire() < BOT_MODE_DESIRE_HIGH
-							and #nAllyHeroes < 2
-							then
-								pushTime = DotaTime()
-								bot.farmLocation = preferedCamp.cattr.location
-								return  BOT_MODE_DESIRE_VERYHIGH
-							end
-
-							if bCore or botLevel >= 18 then
-								if bot:GetActiveModeDesire() <= BOT_MODE_DESIRE_MODERATE
-								and enemyAncientDistance > 1600
-								and enemyAncientDistance < 5800
-								and #nAllyHeroes < 2
-								then
-									pushTime = DotaTime()
-									bot.farmLocation = preferedCamp.cattr.location
-									return  BOT_MODE_DESIRE_VERYHIGH
-								end
-							end
-						end
-					end
-
 					local farmDistance = GetUnitToLocationDistance(bot,preferedCamp.cattr.location);
 					bot.farmLocation = preferedCamp.cattr.location
 					return BOT_MODE_DESIRE_VERYHIGH
@@ -405,66 +369,37 @@ function OnStart()
 end
 
 
-function OnEnd()
-	preferedCamp = nil;
-	farmState = 0;
-	hLaneCreepList  = {};
-	bot:SetTarget(nil);
-end
+-- function OnEnd()
+-- 	preferedCamp = nil;
+-- 	farmState = 0;
+-- 	hLaneCreepList  = {};
+-- 	bot:SetTarget(nil);
+-- end
 
 
 function Think()
 	if J.CanNotUseAction(bot)
 	then return end
 
+	hLaneCreepList = bot:GetNearbyLaneCreeps(900, true)
 	if J.IsValid(hLaneCreepList[1]) then
 		local farmTarget = J.Site.GetFarmLaneTarget(hLaneCreepList);
 		local nSearchRange = bot:GetAttackRange() + 180
-		if nSearchRange > 1600 then nSearchRange = 1600 end
+		if nSearchRange > 900 then nSearchRange = 900 end
 		local nNeutrals = bot:GetNearbyNeutralCreeps(nSearchRange);
 		if J.IsValid(farmTarget) and #nNeutrals == 0 then
-						
-			if farmTarget:GetTeam() == bot:GetTeam() 
-			   and J.IsInAllyArea(farmTarget)
-			then
-				bot:Action_MoveToLocation(farmTarget:GetLocation() + RandomVector(300));
-				return
-			end
-			
 			if farmTarget:GetTeam() ~= bot:GetTeam() then
 				local nEnemyTowers = bot:GetNearbyTowers(1600, true)
-				if J.IsValidBuilding(nEnemyTowers[1]) and J.IsInRange(bot, nEnemyTowers[1], 800) then
-					if nEnemyTowers[1]:GetAttackTarget() == bot or bot:WasRecentlyDamagedByTower(2.0) then
-						bot:Action_MoveToLocation(J.VectorAway(bot:GetLocation(), nEnemyTowers[1]:GetLocation(), 800))
+				if J.IsValidBuilding(nEnemyTowers[1]) then
+					if nEnemyTowers[1]:GetAttackTarget() == bot or bot:WasRecentlyDamagedByTower(5.0) then
+						bot:Action_MoveToLocation(J.VectorAway(bot:GetLocation(), nEnemyTowers[1]:GetLocation(), 1600))
 						return
-					end
-				end
-
-				--如果小兵正在被友方小兵攻击且生命值略高于自己的击杀线则S自己的出手
-				local allyTower = bot:GetNearbyTowers(1000,false)[1];
-				if bot:GetAttackTarget() == farmTarget
-				   and ( J.GetAttackEnemysAllyCreepCount(farmTarget, 800) > 0
-						   or ( J.IsValidBuilding(allyTower) and allyTower:GetAttackTarget() == farmTarget ) )
-				then
-					local botDamage = bot:GetAttackDamage();
-					local nDamageReduce = 1
-					if bot:FindItemSlot("item_quelling_blade") > 0
-						or bot:FindItemSlot("item_bfury") > 0
-					then
-						botDamage = botDamage + 13;
-					end
-					
-					if not J.CanKillTarget(farmTarget, botDamage * nDamageReduce, DAMAGE_TYPE_PHYSICAL)
-					   and J.CanKillTarget(farmTarget, (botDamage +99) * nDamageReduce, DAMAGE_TYPE_PHYSICAL)
-					then
-						bot:Action_ClearActions( true );
-					    return
 					end
 				end
 			
 				if bot:GetAttackRange() > 310 
 				then
-					if GetUnitToUnitDistance(bot,farmTarget) > bot:GetAttackRange() + 180
+					if GetUnitToUnitDistance(bot,farmTarget) > bot:GetAttackRange()
 					then
 						bot:Action_MoveToLocation(farmTarget:GetLocation());
 						return
@@ -473,7 +408,7 @@ function Think()
 						return
 					end
 				else
-					if ( GetUnitToUnitDistance(bot,farmTarget) > bot:GetAttackRange() + 100 )
+					if ( GetUnitToUnitDistance(bot,farmTarget) > bot:GetAttackRange() )
 						or bot:GetAttackDamage() > 200
 					then
 						bot:Action_AttackUnit(hLaneCreepList[1], true);
@@ -492,7 +427,7 @@ function Think()
 	if preferedCamp ~= nil then
 		local targetFarmLoc = preferedCamp.cattr.location;
 		local cDist = GetUnitToLocationDistance(bot, targetFarmLoc);
-		local nNeutrals = bot:GetNearbyCreeps(1600, true);
+		local nNeutrals = bot:GetNearbyCreeps(900, true);
 		if #nNeutrals >= 3 and cDist <= 600 and cDist > 240
 		   and ( bot:GetLevel() >= 10 or not nNeutrals[1]:IsAncientCreep())
 		then farmState = 1 end;
@@ -526,50 +461,6 @@ function Think()
 		        and cDist > 240
 		        and ( not X.IsLocCanBeSeen(targetFarmLoc) or cDist > 600 )
 			then
-				
-				-- bot:SetTarget(nil);
-				
-				-- if bot:GetLevel() >= 12
-				-- 	 and J.Role.ShouldTpToFarm() 
-				-- then
-				-- 	local mostFarmDesireLane,mostFarmDesire = J.GetMostFarmLaneDesire();
-				-- 	local tps = bot:GetItemInSlot(nTpSolt);
-				-- 	local tpLoc = GetLaneFrontLocation(GetTeam(),mostFarmDesireLane,0);
-				-- 	local bestTpLoc = J.GetNearbyLocationToTp(tpLoc);
-				-- 	local nAllies = J.GetAlliesNearLoc(tpLoc, 1400);
-				-- 	if mostFarmDesire > BOT_MODE_DESIRE_VERYHIGH 
-				-- 		and J.IsLocHaveTower(1850,false,tpLoc)
-				-- 		and bestTpLoc ~= nil					
-				-- 		and #nAllies == 0
-				-- 	then
-				-- 		if tps ~= nil and tps:IsFullyCastable() 
-				-- 		   and GetUnitToLocationDistance(bot,bestTpLoc) > 4200
-				-- 		then
-				-- 			preferedCamp = nil;
-				-- 			J.Role['lastFarmTpTime'] = DotaTime();
-				-- 			bot:Action_UseAbilityOnLocation(tps, bestTpLoc);
-				-- 			return;
-				-- 		end
-				-- 	end	
-					
-				-- 	local tBoots = J.IsItemAvailable("item_travel_boots_2");
-				-- 	if tBoots == nil then tBoots = J.IsItemAvailable("item_travel_boots"); end;
-				-- 	if tBoots ~= nil and tBoots:IsFullyCastable()
-				-- 	then
-				-- 		local tpLoc = GetLaneFrontLocation(GetTeam(),mostFarmDesireLane,-600);
-				-- 		local nAllies = J.GetAlliesNearLoc(tpLoc, 1600);
-				-- 		if mostFarmDesire > BOT_MODE_DESIRE_HIGH * 1.12		
-				-- 		   and #nAllies == 0
-				-- 		   and GetUnitToLocationDistance(bot,tpLoc) > 3500
-				-- 		then
-				-- 			preferedCamp = nil;
-				-- 			J.Role['lastFarmTpTime'] = DotaTime();
-				-- 			bot:Action_UseAbilityOnLocation(tBoots, tpLoc);
-				-- 			return;							
-				-- 		end
-				-- 	end					
-				-- end
-				
 				if J.IsValid(hLaneCreepList[1])
 				then
 					bot:Action_MoveToLocation( hLaneCreepList[1]:GetLocation() );
@@ -583,7 +474,7 @@ function Think()
 				bot:Action_MoveToLocation(targetFarmLoc);
 				return;
 		else
-			local neutralCreeps = bot:GetNearbyCreeps(1600, true); 
+			local neutralCreeps = bot:GetNearbyCreeps(1000, true); 
 			
 			if #neutralCreeps >= 2 then
 				
@@ -623,16 +514,11 @@ function Think()
 					return;
 				end
 				
-				bot:SetTarget(nil);
-				
 				if cDist > 200 then bot:Action_MoveToLocation(targetFarmLoc) return end
 			end
 		end			
 	end
 	
-	
-	
-	bot:SetTarget(nil);
 	bot:Action_MoveToLocation( ( RB + DB )/2 );
 	return;
 end

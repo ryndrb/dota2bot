@@ -634,15 +634,13 @@ function Think()
 	if bot:HasModifier('modifier_spirit_breaker_charge_of_darkness')
 	then
 		local nInRangeEnemy = bot:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
-
-		if  bot.chargeRetreat
-		and nInRangeEnemy ~= nil and #nInRangeEnemy == 0
-		then
-			bot:Action_MoveToLocation(bot:GetLocation() + RandomVector(150))
-			bot.chargeRetreat = false
+		if bot.chargeRetreat and #nInRangeEnemy == 0 then
+			if IsLocationPassable(bot:GetLocation()) then
+				bot.chargeRetreat = false
+				bot:Action_MoveToLocation(bot:GetLocation() + RandomVector(150))
+				return
+			end
 		end
-
-		return
 	end
 
 	-- Batrider
@@ -736,11 +734,17 @@ function Think()
 		for _, ally in pairs(tInRangeAlly)
 		do
 			if J.IsValidHero(ally)
+			and bot ~= ally
 			and J.GetHP(ally) < 0.5
 			and ally:WasRecentlyDamagedByAnyHero(3.5)
 			and not ally:IsIllusion()
+			and bot:IsFacingLocation(ally:GetLocation(), 60)
 			then
 				if not J.IsRunning(ally)
+				or ally:IsStunned()
+				or ally:IsRooted()
+				or ally:IsHexed()
+				or ally:HasModifier('modifier_bane_fiends_grip')
 				or ally:HasModifier('modifier_faceless_void_chronosphere_freeze')
 				or ally:HasModifier('modifier_enigma_black_hole_pull') then
 					bot.sun_ray_target = ally

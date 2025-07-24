@@ -49,7 +49,7 @@ function X.GetDesire(bot__)
             then
                 -- Expanded Armature
                 -- seems? facet have a frame hit when inside
-                if string.find(botName, 'rattletrap') and withinAttackRange then
+                if string.find(botName, 'rattletrap') and withinAttackRange and false then
                     if J.IsGoingOnSomeone(bot) then
                         if J.IsValidHero(botTarget)
                         and J.CanCastOnNonMagicImmune(botTarget)
@@ -75,41 +75,14 @@ function X.GetDesire(bot__)
                         end
                     end
                 else
-                    local cogsCount1 = J.GetPowerCogsCountInLoc(botLocation, 1000)
-                    local cogsCount2 = J.GetPowerCogsCountInLoc(botLocation, 216)
-
-                    if #tEnemyHeroes_all >= 1
-                    then
-                        local nInRangeEnemy = J.GetEnemiesNearLoc(botLocation, 800)
-
-                        -- Is stuck inside?
-                        if cogsCount1 == 8 and cogsCount2 >= 4 and withinAttackRange
-                        then
-                            if #nInRangeEnemy == 0
-                            or J.IsGoingOnSomeone(bot)
-                            or (J.IsRetreating(bot) and not J.IsRealInvisible(bot) and #nInRangeEnemy >= 1)
-                            or #tAllyHeroes < #tEnemyHeroes
-                            then
-                                return 0.95
-                            else
-                                return 0.55
+                    if bot:IsFacingLocation(unit:GetLocation(), 60) and J.IsInRange(bot, unit, 300) then
+                        if J.IsGoingOnSomeone(bot) then
+                            if J.IsValidHero(botTarget) and not J.IsInRange(bot, botTarget, botAttackRange) then
+                                return 2
                             end
                         end
-                    end
 
-                    if #tEnemyHeroes == 0 then
-                        if cogsCount1 == 8 and cogsCount2 >= 4 and withinAttackRange then
-                            return 0.90
-                        else
-                            if bot:GetTeam() ~= unit:GetTeam()
-                            and J.IsInRange(bot, unit, botAttackRange + 350)
-                            and not J.IsInLaningPhase()
-                            then
-                                return 0.75
-                            else
-                                return 0.50
-                            end
-                        end
+                        return 1
                     end
                 end
             end

@@ -384,7 +384,14 @@ function Site.IsCloseToAvailableWard( wardLoc )
 end
 
 
---位置是否已有真实视野
+local function IsValidBuilding(building)
+	return  building ~= nil
+		and not building:IsNull()
+		and building:CanBeSeen()
+		and building:IsAlive()
+		and building:IsBuilding()
+end
+
 function Site.IsLocationHaveTrueSight( vLocation )
 
 	local WardList = GetUnitList( UNIT_LIST_ALLIED_WARDS )
@@ -398,10 +405,11 @@ function Site.IsLocationHaveTrueSight( vLocation )
 		end
 	end
 
-	local tNearbyTowerList = GetBot():GetNearbyTowers( 1600, false )
-	for _, tower in pairs( tNearbyTowerList )
-	do
-		if tower ~= nil and GetUnitToLocationDistance( tower, vLocation ) < trueSightRad
+	local buildingList = GetUnitList(UNIT_LIST_ALLIED_BUILDINGS)
+	for _, building in pairs(buildingList) do
+		if  IsValidBuilding(building)
+		and building:IsTower()
+		and GetUnitToLocationDistance(building, vLocation) < trueSightRad
 		then
 			return true
 		end
@@ -965,11 +973,13 @@ function Site.IsTimeToFarm( bot )
 		end
 	end
 
-	local carry = Site.GetCarry()
-	if carry ~= nil and carry:GetNetWorth() < 4500 * 6
-	and Site.IsShouldFarmHero( bot )
-	then
-		return true
+	if Site.IsShouldFarmHero(bot) then
+		for i = 1, 5 do
+			local member = GetTeamMember(i)
+			if member ~= nil and member:GetNetWorth() < 4500 * 6 then
+				return true
+			end
+		end
 	end
 
 	if  Site.ConsiderIsTimeToFarm[botName] ~= nil

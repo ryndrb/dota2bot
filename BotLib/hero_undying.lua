@@ -198,23 +198,25 @@ local SoulRipDesire, SoulRipTarget
 local TombstoneDesire, TombstoneLocation
 local FleshGolemDesire
 
-local nAllyHeroes, nEnemyHeroes
+local bAttacking = false
 local botTarget, botHP
+local nAllyHeroes, nEnemyHeroes
 
 function X.SkillsComplement()
+    bot = GetBot()
+
 	if J.CanNotUseAbility(bot) then return end
 
-    if GetBot():GetUnitName() ~= 'npc_dota_hero_undying' then
-        Decay         = bot:GetAbilityByName('undying_decay')
-        SoulRip       = bot:GetAbilityByName('undying_soul_rip')
-        Tombstone     = bot:GetAbilityByName('undying_tombstone')
-        FleshGolem    = bot:GetAbilityByName('undying_flesh_golem')
-    end
+    Decay         = bot:GetAbilityByName('undying_decay')
+    SoulRip       = bot:GetAbilityByName('undying_soul_rip')
+    Tombstone     = bot:GetAbilityByName('undying_tombstone')
+    FleshGolem    = bot:GetAbilityByName('undying_flesh_golem')
 
+    bAttacking = J.IsAttacking(bot)
+    botHP = J.GetHP(bot)
+    botTarget = J.GetProperTarget(bot)
     nAllyHeroes = bot:GetNearbyHeroes(1600, false, BOT_MODE_NONE)
     nEnemyHeroes = bot:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
-    botTarget = J.GetProperTarget(bot)
-    botHP = J.GetHP(bot)
 
     FleshGolemDesire = X.ConsiderFleshGolem()
     if FleshGolemDesire > 0 then
@@ -250,8 +252,11 @@ function X.ConsiderDecay()
     local nRadius = Decay:GetSpecialValueInt('radius')
 	local nDamage = Decay:GetSpecialValueInt('decay_damage')
     local nAbilityLevel = Decay:GetLevel()
-    local fManaAfter = J.GetManaAfter(Decay:GetManaCost())
-    local fManaThreshold = (250 / bot:GetMaxMana())
+    local nManaCost = Decay:GetManaCost()
+    local fManaAfter = J.GetManaAfter(nManaCost)
+    local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {Decay, SoulRip, Tombstone, FleshGolem})
+    local fManaThreshold2 = J.GetManaThreshold(bot, nManaCost, {SoulRip, Tombstone, FleshGolem})
+    local fManaThreshold3 = J.GetManaThreshold(bot, nManaCost, {Tombstone, FleshGolem})
 
     for _, enemyHero in pairs(nEnemyHeroes) do
         if  J.IsValidHero(enemyHero)
@@ -275,7 +280,7 @@ function X.ConsiderDecay()
     if J.IsInTeamFight(bot, 1200) then
         local nLocationAoE = bot:FindAoELocation(true, true, bot:GetLocation(), nCastRange, nRadius, 0, 0)
         local nInRangeEnemy = J.GetEnemiesNearLoc(nLocationAoE.targetloc, nRadius)
-        if #nInRangeEnemy >= 2 then
+        if #nInRangeEnemy >= 2 and fManaAfter > fManaThreshold3 then
             return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc
         end
     end
@@ -287,6 +292,7 @@ function X.ConsiderDecay()
         and J.CanCastOnNonMagicImmune(botTarget)
         and not botTarget:HasModifier('modifier_abaddon_borrowed_time')
         and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
+        and fManaAfter > fManaThreshold3
         then
             local nLocationAoE = bot:FindAoELocation(true, true, botTarget:GetLocation(), 0, nRadius, 0, 0)
             if nLocationAoE.count >= 2 then
@@ -299,84 +305,83 @@ function X.ConsiderDecay()
 
     local nEnemyCreeps = bot:GetNearbyCreeps(nCastRange, true)
 
-    if J.IsPushing(bot) and fManaAfter > 0.5 and #nAllyHeroes <= 3 then
-        if J.IsValid(nEnemyCreeps[1])
-        and J.CanBeAttacked(nEnemyCreeps[1])
-        and not J.IsRunning(nEnemyCreeps[1])
-        then
-            local nLocationAoE = bot:FindAoELocation(true, false, nEnemyCreeps[1]:GetLocation(), 0, nRadius, 0, 0)
-            if nLocationAoE.count >= 4 then
-                return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc
+    if J.IsPushing(bot) and fManaAfter > fManaThreshold1 and #nAllyHeroes <= 3 and bAttacking then
+        for _, creep in pairs(nEnemyCreeps) do
+            if J.IsValid(creep) and J.CanBeAttacked(creep) and not J.IsRunning(creep) then
+                local nLocationAoE = bot:FindAoELocation(true, false, creep:GetLocation(), 0, nRadius, 0, 0)
+                if (nLocationAoE.count >= 4) then
+                    return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc
+                end
             end
         end
     end
 
-    if J.IsDefending(bot) and fManaAfter > 0.4 then
-        if J.IsValid(nEnemyCreeps[1])
-        and J.CanBeAttacked(nEnemyCreeps[1])
-        and not J.IsRunning(nEnemyCreeps[1])
-        then
-            local nLocationAoE = bot:FindAoELocation(true, false, nEnemyCreeps[1]:GetLocation(), 0, nRadius, 0, 0)
-            if nLocationAoE.count >= 4 then
-                return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc
+    if J.IsDefending(bot) and fManaAfter > fManaThreshold1 and #nEnemyHeroes <= 1 and bAttacking then
+        for _, creep in pairs(nEnemyCreeps) do
+            if J.IsValid(creep) and J.CanBeAttacked(creep) and not J.IsRunning(creep) then
+                local nLocationAoE = bot:FindAoELocation(true, false, creep:GetLocation(), 0, nRadius, 0, 0)
+                if (nLocationAoE.count >= 4) then
+                    return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc
+                end
             end
         end
     end
 
-    if J.IsFarming(bot) and fManaAfter > fManaThreshold then
-        if J.IsValid(nEnemyCreeps[1])
-        and J.CanBeAttacked(nEnemyCreeps[1])
-        and not J.IsRunning(nEnemyCreeps[1])
-        then
-            local nLocationAoE = bot:FindAoELocation(true, false, nEnemyCreeps[1]:GetLocation(), 0, nRadius, 0, 0)
-            if nLocationAoE.count >= 3 or (nLocationAoE.count >= 2 and nEnemyCreeps[1]:IsAncientCreep()) then
-                return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc
+    if J.IsFarming(bot) and fManaAfter > fManaThreshold2 and bAttacking then
+        for _, creep in pairs(nEnemyCreeps) do
+            if J.IsValid(creep) and J.CanBeAttacked(creep) and not J.IsRunning(creep) then
+                local nLocationAoE = bot:FindAoELocation(true, false, creep:GetLocation(), 0, nRadius, 0, 0)
+                if (nLocationAoE.count >= 3)
+                or (nLocationAoE.count >= 2 and creep:IsAncientCreep())
+                then
+                    return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc
+                end
             end
         end
     end
 
-    if J.IsLaning(bot) and J.IsInLaningPhase() and fManaAfter > fManaThreshold and (J.IsCore(bot) or not J.IsThereCoreNearby(800)) then
-        if J.IsValid(nEnemyCreeps[1])
-        and J.CanBeAttacked(nEnemyCreeps[1])
-        and not J.IsRunning(nEnemyCreeps[1])
-        then
-            local nLocationAoE = bot:FindAoELocation(true, false, nEnemyCreeps[1]:GetLocation(), 0, nRadius, 0, nDamage * 2)
-            if nLocationAoE.count >= 3 then
-                return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc
+    if J.IsLaning(bot) and J.IsInLaningPhase() and fManaAfter > fManaThreshold3 and (J.IsCore(bot) or not J.IsThereCoreNearby(800)) then
+        for _, creep in pairs(nEnemyCreeps) do
+            if J.IsValid(creep) and J.CanBeAttacked(creep) and not J.IsRunning(creep) then
+                local nLocationAoE = bot:FindAoELocation(true, false, creep:GetLocation(), 0, nRadius, 0, nDamage * 2)
+                if (nLocationAoE.count >= 3) then
+                    return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc
+                end
             end
         end
 	end
 
-    if J.IsDoingRoshan(bot) and fManaAfter > 0.5 then
+    if J.IsDoingRoshan(bot) then
         if  J.IsRoshan(botTarget)
         and J.CanBeAttacked(botTarget)
         and J.CanCastOnNonMagicImmune(botTarget)
         and J.IsInRange(bot, botTarget, nCastRange)
-        and J.IsAttacking(bot)
+        and bAttacking
+        and fManaAfter > fManaThreshold1
         and nAbilityLevel >= 3
         then
             return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation()
         end
     end
 
-    if J.IsDoingTormentor(bot) and fManaAfter > 0.5 then
+    if J.IsDoingTormentor(bot) then
         if  J.IsTormentor(botTarget)
         and J.IsInRange(bot, botTarget, nCastRange)
-        and J.IsAttacking(bot)
+        and bAttacking
+        and fManaAfter > fManaThreshold1
         and nAbilityLevel >= 3
         then
             return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation()
         end
     end
 
-    if fManaAfter > 0.5 then
-        if J.IsValid(nEnemyCreeps[1])
-        and J.CanBeAttacked(nEnemyCreeps[1])
-        and not J.IsRunning(nEnemyCreeps[1])
-        then
-            local nLocationAoE = bot:FindAoELocation(true, false, nEnemyCreeps[1]:GetLocation(), 0, nRadius, 0, nDamage * 2)
-            if nLocationAoE.count >= 4 then
-                return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc
+    if fManaAfter > fManaThreshold3 then
+        for _, creep in pairs(nEnemyCreeps) do
+            if J.IsValid(creep) and J.CanBeAttacked(creep) and not J.IsRunning(creep) then
+                local nLocationAoE = bot:FindAoELocation(true, false, creep:GetLocation(), 0, nRadius, 0, nDamage * 2)
+                if (nLocationAoE.count >= 4) then
+                    return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc
+                end
             end
         end
     end
@@ -392,10 +397,15 @@ function X.ConsiderSoulRip()
     local nCastRange = J.GetProperCastRange(false, bot, SoulRip:GetCastRange())
 	local nRadius = SoulRip:GetSpecialValueInt('radius')
     local nDamage = SoulRip:GetSpecialValueInt('damage_per_unit')
-    local fManaAfter = J.GetManaAfter(SoulRip:GetManaCost())
+    local nManaCost = SoulRip:GetManaCost()
+    local fManaAfter = J.GetManaAfter(nManaCost)
+    local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {Decay, SoulRip, Tombstone, FleshGolem})
+    local fManaThreshold2 = J.GetManaThreshold(bot, nManaCost, {Decay, Tombstone, FleshGolem})
+    local fManaThreshold3 = J.GetManaThreshold(bot, nManaCost, {Tombstone, FleshGolem})
 
     for _, enemyHero in pairs(nEnemyHeroes) do
         if  J.IsValidHero(enemyHero)
+        and J.CanBeAttacked(enemyHero)
         and J.IsInRange(bot, enemyHero, nCastRange)
         and J.CanCastOnTargetAdvanced(enemyHero)
         and J.CanCastOnNonMagicImmune(enemyHero)
@@ -468,6 +478,7 @@ function X.ConsiderSoulRip()
         and not botTarget:HasModifier('modifier_dazzle_shallow_grave')
         and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
         and not botTarget:HasModifier('modifier_oracle_false_promise_timer')
+        and fManaAfter > fManaThreshold3
         then
             local unitCount = X.GetAllHeroCreepNearbyCount(botTarget:GetLocation(), nRadius)
             if unitCount >= 5 then
@@ -483,7 +494,7 @@ function X.ConsiderSoulRip()
                 end
 
                 if not bAllyHeroCanDie and J.GetHP(botTarget) < 0.5 then
-                    return BOT_ACTION_DESIRE_HIGH, enemyHero
+                    return BOT_ACTION_DESIRE_HIGH, botTarget
                 end
             end
         end
@@ -493,8 +504,8 @@ function X.ConsiderSoulRip()
         for _, enemyHero in pairs(nEnemyHeroes) do
             if  J.IsValidHero(enemyHero)
             and J.CanCastOnNonMagicImmune(enemyHero)
-            and J.IsChasingTarget(enemyHero, bot)
             and not J.IsSuspiciousIllusion(enemyHero)
+            and not enemyHero:IsDisarmed()
             and botHP < 0.8
             then
                 local nInRangeAlly = J.GetAlliesNearLoc(bot:GetLocation(), nRadius)
@@ -519,7 +530,7 @@ function X.ConsiderSoulRip()
         end
 	end
 
-    if botHP < 0.5 and bot:DistanceFromFountain() > 1200 and fManaAfter > 0.35 then
+    if botHP < 0.5 and bot:DistanceFromFountain() > 1200 and fManaAfter > fManaThreshold2 then
         local unitCount = X.GetAllHeroCreepNearbyCount(bot:GetLocation(), nRadius)
         local totalHeal = nDamage * (Min(10, 1 + unitCount))
         local nInRangeAlly = J.GetAlliesNearLoc(bot:GetLocation(), nRadius)
@@ -539,7 +550,8 @@ function X.ConsiderSoulRip()
     if (J.IsDoingRoshan(bot) or J.IsDoingTormentor(bot)) then
         if (J.IsRoshan(botTarget) or J.IsTormentor(botTarget))
         and J.IsInRange(bot, botTarget, nRadius)
-        and J.IsAttacking(bot)
+        and bAttacking
+        and fManaAfter > fManaThreshold3
         then
             local targetAlly = nil
             local targetAllyHealth = 0

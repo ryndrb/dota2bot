@@ -63,7 +63,9 @@ function GetDesire()
 	-- 	end
 	-- end
 
-	if currentTime <= 9 * 60 and botLevel <= 7 then
+	if (currentTime <= 9 * 60 and botLevel <= 7)
+	or (botAssignedLane == LANE_MID and currentTime <= 6 * 60)
+	then
 		bot.isInLanePhase = true
 		return 0.446
 	end
@@ -177,7 +179,7 @@ function Think()
 
 	local nFurthestEnemyAttackRange = GetFurthestEnemyAttackRange()
 
-	if (bot:WasRecentlyDamagedByAnyHero(2.0) and #J.GetEnemyHeroesTargetingUnit(tEnemyHeroes, bot) >= 1)
+	if (bot:WasRecentlyDamagedByAnyHero(2.0) and #J.GetHeroesTargetingUnit(tEnemyHeroes, bot) >= 1)
 	or (J.IsValidBuilding(tEnemyTowers[1]) and tEnemyTowers[1]:GetAttackTarget() == bot)
 	or (bot:WasRecentlyDamagedByCreep(2.0) and not (bot:HasModifier('modifier_tower_aura') or bot:HasModifier('modifier_tower_aura_bonus')) and #nAllyCreeps > 0) then
 		local safeLoc = GetLaneFrontLocation(GetTeam(), botAssignedLane, -1200)
