@@ -674,7 +674,7 @@ end
 -- Returns a table of lane creeps, sorted closest-to-furthest. nRadius must be less than 1600.
 local o_GetNearbyLaneCreeps = CDOTA_Bot_Script.GetNearbyLaneCreeps
 function CDOTA_Bot_Script:GetNearbyLaneCreeps(nRadius, bEnemies)
-    if self ~= nil and self == GetBot() and self:CanBeSeen() then
+    if self ~= nil and self == GetBot() and self:CanBeSeen() and bEnemies then
         local distFromTop = GetUnitToLocationDistance(self, GetLaneFrontLocation(GetTeam(), LANE_TOP, 0))
         local distFromMid = GetUnitToLocationDistance(self, GetLaneFrontLocation(GetTeam(), LANE_MID, 0))
         local distFromBot = GetUnitToLocationDistance(self, GetLaneFrontLocation(GetTeam(), LANE_BOT, 0))
@@ -689,7 +689,7 @@ function CDOTA_Bot_Script:GetNearbyLaneCreeps(nRadius, bEnemies)
             or (selfActiveMode == BOT_MODE_PUSH_TOWER_MID and distFromMid < 1600)
             or (selfActiveMode == BOT_MODE_PUSH_TOWER_BOT and distFromBot < 1600))
         then
-            local creepListNearby = self:GetNearbyCreeps(nRadius, true)
+            local creepListNearby = self:GetNearbyCreeps(nRadius, bEnemies)
             local creepList = {}
             for _, creep in ipairs(creepListNearby) do
                 if creep and creep:CanBeSeen() and creep:GetTeam() ~= TEAM_NEUTRAL then
