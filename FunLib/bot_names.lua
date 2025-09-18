@@ -28,6 +28,7 @@ local tProTeams = {
         ['rosters'] = {
             [1] = {"23", "lorenof", "Jabz", "Q", "Oli"},
             [2] = {"23savage", "lorenof", "Jabz", "Q", "Oli"},
+            [3] = {"Nightfall", "kiyotaka", "TORONTOTOKYO", "Mira", "panto"},
         }
     },
     [2] = {
@@ -151,7 +152,7 @@ local tProTeams = {
         ['rosters'] = {
             [1] = {"K1", "4nalog <01", "Davai Lama", "Scofield", "KJ"},
             [2] = {"ɹǝʞɹɐd", "4nalog <01", "Davai Lama", "Scofield", "KJ"},
-            [2] = {"Yuma", "4nalog", "Wisper", "Scofield", "KJ"},
+            [3] = {"Yuma", "4nalog", "Wisper", "Scofield", "KJ"},
         }
     },
     [12] = {
@@ -182,6 +183,7 @@ local tProTeams = {
             [4] = {"AMMAR_THE_F", "SumaiL", "MinD_ContRoL", "Gh", "KuroKy"},
             [5] = {"Miracle-", "SumaiL", "Fbz", "Gh", "KuroKy"},
             [6] = {"Miracle-", "SumaiL", "No!ob", "OmaR", "GH"},
+            [7] = {"Ghost", "SumaiL", "No!ob", "OmaR", "GH"},
         }
     },
     [14] = {
@@ -302,7 +304,8 @@ local tProTeams = {
             [3] = {"Yatoro雨", "Larl", "Collapse", "Mira", "Miposhka"},
             [4] = {"Raddan", "Larl", "Collapse", "Mira", "Miposhka"},
             [5] = {"Satanic", "Larl", "Malik", "rue", "Miposhka"},
-            [5] = {"Raddan", "Larl", "Collapse", "rue", "Miposhka"},
+            [6] = {"Raddan", "Larl", "Collapse", "rue", "Miposhka"},
+            [7] = {"Yatoro", "Larl", "Collapse", "rue", "Miposhka"},
         }
     },
     [24] = {
@@ -346,6 +349,7 @@ local tProTeams = {
         ['alias'] = 'XG',
         ['rosters'] = {
             [1] = {"Ame", "Xm", "Xxs", "XinQ", "Dy"},
+            [1] = {"Ame", "Xm", "Xxs", "XinQ", "xNova"},
         }
     },
     [38] = {
@@ -361,6 +365,13 @@ local tProTeams = {
         ['alias'] = 'AVULUS',
         ['rosters'] = {
             [1] = {"Smiling Knight", "Stormstormer", "Xibbe", "Ekki", "SoNNeikO"},
+        }
+    },
+    [40] = {
+        ['team_org'] = 'Team Tidebound',
+        ['alias'] = 'TT',
+        ['rosters'] = {
+            [1] = {"shiro", "NothingToSay", "Bach", "planet", "y`"},
         }
     },
 }
