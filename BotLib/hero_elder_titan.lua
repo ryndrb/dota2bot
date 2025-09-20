@@ -434,7 +434,7 @@ function X.ConsiderEchoStomp(hUnit)
         then
             local bHaveRadiance = J.HasItem(bot, 'item_radiance')
             if (#nEnemyCreeps >= 3  and not bHaveRadiance)
-            or (#nEnemyCreeps >= 2 and #nEnemyCreeps[1]:IsAncientCreep())
+            or (#nEnemyCreeps >= 2 and nEnemyCreeps[1]:IsAncientCreep())
             or (#nEnemyCreeps >= 2 and fManaAfter > 0.65 and not bHaveRadiance)
             then
                 return BOT_ACTION_DESIRE_HIGH
