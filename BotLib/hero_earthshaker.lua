@@ -45,29 +45,31 @@ local HeroBuild = {
                 "item_tango",
                 "item_quelling_blade",
                 "item_double_branches",
-                "item_faerie_fire",
+                "item_circlet",
+                "item_mantle",
             
                 "item_bottle",
                 "item_magic_wand",
                 "item_null_talisman",
                 "item_power_treads",
                 "item_blink",
+                "item_kaya",
                 "item_ultimate_scepter",
                 "item_aghanims_shard",
                 "item_black_king_bar",--
+                "item_yasha_and_kaya",--
                 "item_octarine_core",--
-                "item_shivas_guard",--
-                "item_arcane_blink",--
                 "item_wind_waker",--
                 "item_ultimate_scepter_2",
                 "item_moon_shard",
+                "item_arcane_blink",--
                 "item_travel_boots_2",--
             },
             ['sell_list'] = {
-                "item_quelling_blade", "item_ultimate_scepter",
-                "item_magic_wand", "item_black_king_bar",
-                "item_null_talisman", "item_octarine_core",
-                "item_bottle", "item_shivas_guard",
+                "item_quelling_blade", "item_kaya",
+                "item_magic_wand", "item_ultimate_scepter",
+                "item_null_talisman", "item_black_king_bar",
+                "item_bottle", "item_octarine_core",
             },
         },
     },

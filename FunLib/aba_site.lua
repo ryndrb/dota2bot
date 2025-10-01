@@ -481,8 +481,9 @@ function Site.IsVaildCreep( nUnit )
 		   and not nUnit:IsNull()
 		   and nUnit:IsAlive()
 		   and nUnit:CanBeSeen()
-		   and nUnit:GetHealth() < 5000
-		   and ( GetBot():GetLevel() > 9 or not nUnit:IsAncientCreep() )		  
+		   and nUnit:IsCreep()
+		--    and nUnit:GetHealth() < 5000
+		--    and ( GetBot():GetLevel() > 9 or not nUnit:IsAncientCreep() )		  
 		  
 end
 
@@ -937,49 +938,20 @@ function Site.IsModeSuitableToFarm( bot )
 end
 
 
-
 function Site.IsTimeToFarm( bot )
-
-	if Site.IsInLaningPhase() or DotaTime() > 90 * 60 then return false end
+	if Site.IsInLaningPhase(bot) or DotaTime() > 90 * 60 then return false end
 
 	local botName = bot:GetUnitName()
-	local botNetWorth = bot:GetNetWorth()
 
-	--防止单独无用的推进
-	if bot:GetActiveMode() == BOT_MODE_PUSH_TOWER_BOT
-		or bot:GetActiveMode() == BOT_MODE_PUSH_TOWER_MID
-		or bot:GetActiveMode() == BOT_MODE_PUSH_TOWER_TOP
-	then
-		local enemyAncient = GetAncient( GetOpposingTeam() )
-		local allyList = bot:GetNearbyHeroes( 1400, false, BOT_MODE_NONE )
-		local enemyAncientDistance = GetUnitToUnitDistance( bot, enemyAncient )
-		if  enemyAncientDistance < 3800
-		    and enemyAncientDistance > 1400
-			and bot:GetActiveModeDesire() < BOT_MODE_DESIRE_HIGH
-			and #allyList <= 1
-		then
-			return true
-		end
-
-		if Site.IsShouldFarmHero( bot )
-		then
-			if  bot:GetActiveModeDesire() < BOT_MODE_DESIRE_VERYHIGH
-				and enemyAncientDistance > 1600
-				and enemyAncientDistance < 5600
-				and #allyList <= 1
-			then
-				return true
-			end
-		end
-	end
-
-	if Site.IsShouldFarmHero(bot) then
+	if Site.GetPosition(bot) <= 3 then
 		for i = 1, 5 do
 			local member = GetTeamMember(i)
-			if member ~= nil and member:GetNetWorth() < 4500 * 6 then
-				return true
+			if member and member:GetNetWorth() > 4500 * 6 then
+				return false
 			end
 		end
+
+		return true
 	end
 
 	if  Site.ConsiderIsTimeToFarm[botName] ~= nil
@@ -990,7 +962,6 @@ function Site.IsTimeToFarm( bot )
 	end
 
 	return false
-
 end
 
 -----------------------------------------------------------
@@ -2468,18 +2439,8 @@ function Site.GetPosition(bot)
 	return pos
 end
 
-function Site.GetCarry()
-	for i = 1, 5
-	do
-		local member = GetTeamMember(i)
-		if Site.GetPosition(member) == 1 then return member end
-	end
-
-	return nil
-end
-
-function Site.IsInLaningPhase()
-	if GetBot().isInLanePhase ~= nil and GetBot().isInLanePhase then return true end
+function Site.IsInLaningPhase(bot)
+	if bot.isInLanePhase ~= nil and bot.isInLanePhase then return true end
 	return false
 end
 
@@ -2500,4 +2461,3 @@ function Site.IsModeTurbo()
 end
 
 return Site
--- dota2jmz@163.com QQ:2462331592..

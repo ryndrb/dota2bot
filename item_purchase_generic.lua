@@ -305,8 +305,17 @@ function ItemPurchaseThink()
 		bot.bInitialize = true
 	end
 
-	if bot:HasModifier('modifier_arc_warden_tempest_double')
-	or (DotaTime() > 0 and J.IsMeepoClone(bot))
+	local bIsReal = false
+	for i = 1, 5 do
+		local member = GetTeamMember(i)
+		if bot == member then
+			bIsReal = true
+			break
+		end
+	end
+
+	if not bIsReal
+	or bot:HasModifier('modifier_arc_warden_tempest_double')
 	or bot:HasModifier('modifier_dazzle_nothl_projection_soul_debuff')
 	then
 		bot.itemToBuy = {}

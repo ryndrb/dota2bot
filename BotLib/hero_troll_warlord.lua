@@ -47,13 +47,13 @@ local HeroBuild = {
                 "item_basher",
                 "item_satanic",--
                 "item_abyssal_blade",--
-                "item_moon_shard",
                 "item_ultimate_scepter_2",
                 "item_travel_boots_2",--
+                "item_moon_shard",
             },
             ['sell_list'] = {
-                "item_wraith_band", "item_satanic",
                 "item_magic_wand", "item_basher",
+                "item_wraith_band", "item_satanic",
             },
         },
         [2] = {
@@ -87,9 +87,9 @@ local HeroBuild = {
                 "item_basher",
                 "item_satanic",--
                 "item_abyssal_blade",--
-                "item_moon_shard",
                 "item_ultimate_scepter_2",
                 "item_travel_boots_2",--
+                "item_moon_shard",
             },
             ['sell_list'] = {
                 "item_quelling_blade", "item_black_king_bar",
@@ -184,26 +184,27 @@ local WhirlingAxesMeleeDesire
 local BerserkersRageDesire
 local BattleTranceDesire
 
-local nAllyHeroes, nEnemyHeroes
+local bRealInvisible = false
+local bAttacking = false
 local botTarget, botHP
-local bAttacking, bRealInvisible
+local nAllyHeroes, nEnemyHeroes
 
 function X.SkillsComplement()
+    bot = GetBot()
+
     if J.CanNotUseAbility(bot) then return end
 
-    if GetBot():GetUnitName() ~= 'npc_dota_hero_troll_warlord' then
-        BattleStance          = bot:GetAbilityByName('troll_warlord_switch_stance')
-        WhirlingAxesRanged    = bot:GetAbilityByName('troll_warlord_whirling_axes_ranged')
-        WhirlingAxesMelee     = bot:GetAbilityByName('troll_warlord_whirling_axes_melee')
-        BattleTrance          = bot:GetAbilityByName('troll_warlord_battle_trance')
-    end
+    BattleStance          = bot:GetAbilityByName('troll_warlord_switch_stance')
+    WhirlingAxesRanged    = bot:GetAbilityByName('troll_warlord_whirling_axes_ranged')
+    WhirlingAxesMelee     = bot:GetAbilityByName('troll_warlord_whirling_axes_melee')
+    BattleTrance          = bot:GetAbilityByName('troll_warlord_battle_trance')
 
+    bRealInvisible = J.IsRealInvisible(bot)
+	bAttacking = J.IsAttacking(bot)
+    botHP = J.GetHP(bot)
+    botTarget = J.GetProperTarget(bot)
     nAllyHeroes = bot:GetNearbyHeroes(1600, false, BOT_MODE_NONE)
     nEnemyHeroes = bot:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
-    botTarget = J.GetProperTarget(bot)
-    botHP = J.GetHP(bot)
-    bAttacking = J.IsAttacking(bot)
-    bRealInvisible = J.IsRealInvisible(bot)
 
     BattleTranceDesire = X.ConsiderBattleTrance()
     if BattleTranceDesire > 0 then
@@ -252,7 +253,7 @@ function X.ConsiderBattleStance()
                 end
             else
                 if bAttacking
-                and J.IsInRange(bot, botTarget, 150)
+                and J.IsInRange(bot, botTarget, 300)
                 and not J.IsChasingTarget(botTarget)
                 and not botTarget:HasModifier('modifier_faceless_void_chronosphere_freeze')
                 then
@@ -357,10 +358,14 @@ function X.ConsiderWhirlingAxesRanged()
     local nRadius = WhirlingAxesRanged:GetSpecialValueInt('axe_width')
     local nSpeed = WhirlingAxesRanged:GetSpecialValueInt('axe_speed')
     local nDamage = WhirlingAxesRanged:GetSpecialValueInt('axe_damage')
-    local fManaAfter = J.GetManaAfter(WhirlingAxesRanged:GetManaCost())
+    local nManaCost = WhirlingAxesRanged:GetManaCost()
+    local fManaAfter = J.GetManaAfter(nManaCost)
+    local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {WhirlingAxesMelee, BattleStance})
+    local fManaThreshold2 = J.GetManaThreshold(bot, nManaCost, {WhirlingAxesRanged, WhirlingAxesMelee, BattleStance})
 
     for _, enemyHero in pairs(nEnemyHeroes) do
         if  J.IsValidHero(enemyHero)
+        and J.CanBeAttacked(enemyHero)
         and J.IsInRange(bot, enemyHero, nCastRange)
         and J.CanCastOnNonMagicImmune(enemyHero)
         then
@@ -382,6 +387,7 @@ function X.ConsiderWhirlingAxesRanged()
 
     if J.IsGoingOnSomeone(bot) then
 		if  J.IsValidTarget(botTarget)
+        and J.CanBeAttacked(botTarget)
         and J.CanCastOnNonMagicImmune(botTarget)
         and J.IsChasingTarget(bot, botTarget)
         and not J.IsDisabled(botTarget)
@@ -398,15 +404,15 @@ function X.ConsiderWhirlingAxesRanged()
 		end
 	end
 
-	if J.IsRetreating(bot) and not bRealInvisible then
+	if J.IsRetreating(bot) and not bRealInvisible and bot:WasRecentlyDamagedByAnyHero(3.0) then
         for _, enemyHero in ipairs(nEnemyHeroes) do
             if J.IsValidHero(enemyHero)
             and J.CanCastOnNonMagicImmune(enemyHero)
-            and J.IsChasingTarget(enemyHero, bot)
             and not enemyHero:HasModifier('modifier_necrolyte_reapers_scythe')
             then
-                if (#nEnemyHeroes > #nAllyHeroes)
-                or (J.IsChasingTarget(enemyHero, bot) and bot:WasRecentlyDamagedByAnyHero(3.0))
+                if (#nEnemyHeroes > #nAllyHeroes and enemyHero:GetAttackTarget() == bot)
+                or (J.IsChasingTarget(enemyHero, bot))
+                or (botHP < 0.5 and enemyHero:GetAttackTarget() == bot)
                 then
                     return BOT_ACTION_DESIRE_HIGH, enemyHero:GetLocation()
                 end
@@ -416,92 +422,86 @@ function X.ConsiderWhirlingAxesRanged()
 
     local nEnemyCreeps = bot:GetNearbyCreeps(nCastRange, true)
 
-	if J.IsPushing(bot) and fManaAfter > 0.5 then
-        if J.IsValid(nEnemyCreeps[1])
-        and J.CanBeAttacked(nEnemyCreeps[1])
-        and not J.IsRunning(nEnemyCreeps[1])
-        and bAttacking
-        then
-            local nLocationAoE = bot:FindAoELocation(true, false, nEnemyCreeps[1]:GetLocation(), 0, nRadius, nCastPoint, 0)
-            if nLocationAoE.count >= 4 then
-                return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc
+	if J.IsPushing(bot) and fManaAfter > fManaThreshold2 and bAttacking and #nAllyHeroes <= 3 then
+		for _, creep in pairs(nEnemyCreeps) do
+            if J.IsValid(creep) and J.CanBeAttacked(creep) and not J.IsRunning(creep) then
+                local nLocationAoE = bot:FindAoELocation(true, false, creep:GetLocation(), 0, nRadius, 0, 0)
+                if (nLocationAoE.count >= 4) then
+                    return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc
+                end
             end
         end
 	end
 
-    if J.IsDefending(bot) then
-        if J.IsValid(nEnemyCreeps[1])
-        and J.CanBeAttacked(nEnemyCreeps[1])
-        and not J.IsRunning(nEnemyCreeps[1])
-        and fManaAfter > 0.4
-        then
-            local nLocationAoE = bot:FindAoELocation(true, false, nEnemyCreeps[1]:GetLocation(), 0, nRadius, nCastPoint, 0)
-            if nLocationAoE.count >= 4 then
-                return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc
+    if J.IsDefending(bot) and fManaAfter > fManaThreshold1 and bAttacking then
+        for _, creep in pairs(nEnemyCreeps) do
+            if J.IsValid(creep) and J.CanBeAttacked(creep) and not J.IsRunning(creep) then
+                local nLocationAoE = bot:FindAoELocation(true, false, creep:GetLocation(), 0, nRadius, 0, 0)
+                if (nLocationAoE.count >= 4) then
+                    return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc
+                end
             end
         end
 
         local nLocationAoE = bot:FindAoELocation(true, true, bot:GetLocation(), nCastRange, nRadius, nCastPoint, 0)
-        if nLocationAoE.count >= 2 and fManaAfter > 0.5 then
+        if nLocationAoE.count >= 2 and fManaAfter > fManaThreshold2 then
             return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc
         end
 	end
 
-    if J.IsFarming(bot) and fManaAfter > (300 / bot:GetMaxMana()) then
-        if bAttacking then
-            if J.IsValid(nEnemyCreeps[1])
-            and J.CanBeAttacked(nEnemyCreeps[1])
-            and not J.IsRunning(nEnemyCreeps[1])
-            and bAttacking
-            then
-                local nLocationAoE = bot:FindAoELocation(true, false, nEnemyCreeps[1]:GetLocation(), 0, nRadius, nCastPoint, 0)
-                if nLocationAoE.count >= 3 or (nLocationAoE.count >= 2 and nEnemyCreeps[1]:IsAncientCreep()) then
+    if J.IsFarming(bot) and fManaAfter > fManaThreshold1 and bAttacking then
+		for _, creep in pairs(nEnemyCreeps) do
+            if J.IsValid(creep) and J.CanBeAttacked(creep) and not J.IsRunning(creep) then
+                local nLocationAoE = bot:FindAoELocation(true, false, creep:GetLocation(), 0, nRadius, 0, 0)
+                if (nLocationAoE.count >= 3)
+                or (nLocationAoE.count >= 2 and creep:IsAncientCreep())
+                then
                     return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc
                 end
             end
         end
     end
 
-    if J.IsLaning(bot) and J.IsInLaningPhase() then
+    if J.IsLaning(bot) and J.IsInLaningPhase() and fManaAfter > fManaThreshold1 then
 		for _, creep in pairs(nEnemyCreeps) do
 			if  J.IsValid(creep)
             and J.CanBeAttacked(creep)
             and not J.IsRunning(creep)
 			and (J.IsKeyWordUnit('ranged', creep) or J.IsKeyWordUnit('siege', creep) or J.IsKeyWordUnit('flagbearer', creep))
-            and fManaAfter > 0.4
 			then
                 local eta = (GetUnitToUnitDistance(bot, creep) / nSpeed) + nCastPoint
-                local vLocation = J.GetCorrectLoc(creep, eta)
                 if J.WillKillTarget(creep, nDamage, DAMAGE_TYPE_MAGICAL, eta) then
-                    local nInRangeEnemy = J.GetEnemiesNearLoc(creep:GetLocation(), nRadius)
-                    if J.IsValidHero(nInRangeEnemy[1]) and J.GetHP(nInRangeEnemy[1]) < 0.5 then
-                        return BOT_ACTION_DESIRE_HIGH, vLocation
+                    local nLocationAoE = bot:FindAoELocation(true, true, bot:GetLocation(), 0, nRadius, 0, 0)
+                    if nLocationAoE.count > 0 or J.IsUnitTargetedByTower(creep, false) then
+                        return BOT_ACTION_DESIRE_HIGH, creep:GetLocation()
                     end
                 end
 			end
 		end
 
         local nLocationAoE = bot:FindAoELocation(true, false, bot:GetLocation(), nCastRange, nRadius, nCastPoint, nDamage)
-        if nLocationAoE.count >= 3 and fManaAfter > 0.4 then
+        if nLocationAoE.count >= 3 then
             return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc
         end
 	end
 
-    if J.IsDoingRoshan(bot) and fManaAfter > 0.5 then
+    if J.IsDoingRoshan(bot) then
         if  J.IsRoshan(botTarget)
         and J.CanBeAttacked(botTarget)
         and J.CanCastOnNonMagicImmune(botTarget)
         and J.IsInRange(bot, botTarget, nCastRange)
         and bAttacking
+        and fManaAfter > fManaThreshold1
         then
             return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation()
         end
     end
 
-    if J.IsDoingTormentor(bot) and fManaAfter > 0.5 then
+    if J.IsDoingTormentor(bot) then
         if  J.IsTormentor(botTarget)
         and J.IsInRange(bot, botTarget, nCastRange)
         and bAttacking
+        and fManaAfter > fManaThreshold1
         then
             return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation()
         end
@@ -517,13 +517,17 @@ function X.ConsiderWhirlingAxesMelee()
 
     local nRadius = WhirlingAxesMelee:GetSpecialValueInt('max_range')
     local nDamage = WhirlingAxesMelee:GetSpecialValueInt('damage')
-    local fManaAfter = J.GetManaAfter(WhirlingAxesMelee:GetManaCost())
+    local nManaCost = WhirlingAxesMelee:GetManaCost()
+    local fManaAfter = J.GetManaAfter(nManaCost)
+    local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {WhirlingAxesMelee, BattleStance})
+    local fManaThreshold2 = J.GetManaThreshold(bot, nManaCost, {WhirlingAxesRanged, WhirlingAxesMelee, BattleStance})
 
     local nInRangeEnemy = bot:GetNearbyHeroes(nRadius, true, BOT_MODE_NONE)
-    local nEnemyHeroesTargetingMeCount = #J.GetHeroesTargetingUnit(nInRangeEnemy, bot)
+    local nEnemyHeroesTargetingMe = J.GetHeroesTargetingUnit(nInRangeEnemy, bot)
 
     for _, enemyHero in pairs(nEnemyHeroes) do
         if  J.IsValidHero(enemyHero)
+        and J.CanBeAttacked(enemyHero)
         and J.IsInRange(bot, enemyHero, nRadius)
         and J.CanCastOnNonMagicImmune(enemyHero)
         and J.CanKillTarget(enemyHero, nDamage, DAMAGE_TYPE_MAGICAL)
@@ -533,7 +537,13 @@ function X.ConsiderWhirlingAxesMelee()
         and not enemyHero:HasModifier('modifier_oracle_false_promise_timer')
         and not enemyHero:HasModifier('modifier_templar_assassin_refraction_absorb')
         then
-            return BOT_ACTION_DESIRE_HIGH
+            if J.IsChasingTarget(bot, enemyHero) then
+                if J.IsInRange(bot, enemyHero, nRadius / 2) then
+                    return BOT_ACTION_DESIRE_HIGH
+                end
+            else
+                return BOT_ACTION_DESIRE_HIGH
+            end
         end
     end
 
@@ -545,17 +555,17 @@ function X.ConsiderWhirlingAxesMelee()
         and not botTarget:HasModifier('modifier_dazzle_shallow_grave')
         and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
         and not botTarget:HasModifier('modifier_templar_assassin_refraction_absorb')
-        and nEnemyHeroesTargetingMeCount >= 1
+        and #nEnemyHeroesTargetingMe >= 1
 		then
             return BOT_ACTION_DESIRE_HIGH
 		end
 
-        if nEnemyHeroesTargetingMeCount >= 2 and botHP < 0.5 then
+        if #nEnemyHeroesTargetingMe >= 2 and botHP < 0.5 then
             return BOT_ACTION_DESIRE_HIGH
         end
 	end
 
-	if J.IsRetreating(bot) and not bRealInvisible then
+	if J.IsRetreating(bot) and not bRealInvisible and bot:WasRecentlyDamagedByAnyHero(5.0) then
         for _, enemyHero in ipairs(nEnemyHeroes) do
             if J.IsValidHero(enemyHero)
             and J.IsInRange(bot, enemyHero, nRadius)
@@ -564,8 +574,9 @@ function X.ConsiderWhirlingAxesMelee()
             and not enemyHero:HasModifier('modifier_necrolyte_reapers_scythe')
             and not enemyHero:HasModifier('modifier_troll_warlord_whirling_axes_slow')
             then
-                if (#nEnemyHeroes > #nAllyHeroes)
-                or (J.IsChasingTarget(enemyHero, bot) and bot:WasRecentlyDamagedByAnyHero(3.0))
+                if (#nEnemyHeroes > #nAllyHeroes and enemyHero:GetAttackTarget() == bot)
+                or (J.IsChasingTarget(enemyHero, bot))
+                or botHP < 0.5
                 then
                     return BOT_ACTION_DESIRE_HIGH
                 end
@@ -575,18 +586,19 @@ function X.ConsiderWhirlingAxesMelee()
 
     local nEnemyCreeps = bot:GetNearbyCreeps(nRadius, true)
 
-	if J.IsPushing(bot) and fManaAfter > 0.5 then
-        if J.IsValid(nEnemyCreeps[1])
+	if (J.IsPushing(bot) and fManaAfter > fManaThreshold1 and #nAllyHeroes <= 2 and bAttacking)
+    or (J.IsDefending(bot) and fManaAfter > fManaThreshold2 and #nAllyHeroes <= 3 and bAttacking)
+    then
+        if  J.IsValid(nEnemyCreeps[1])
         and J.CanBeAttacked(nEnemyCreeps[1])
         and not J.IsRunning(nEnemyCreeps[1])
         and #nEnemyCreeps >= 4
-        and #nAllyHeroes <= 2
         then
             return BOT_ACTION_DESIRE_HIGH
         end
 	end
 
-    if J.IsFarming(bot) and bAttacking and fManaAfter > (300 / bot:GetMaxMana()) then
+    if J.IsFarming(bot) and bAttacking and fManaAfter > fManaThreshold1 then
         if J.IsValid(nEnemyCreeps[1])
         and J.CanBeAttacked(nEnemyCreeps[1])
         and not J.IsRunning(nEnemyCreeps[1])
@@ -596,28 +608,34 @@ function X.ConsiderWhirlingAxesMelee()
         end
     end
 
-    if J.IsLaning(bot) and J.IsInLaningPhase() then
+    if J.IsLaning(bot) and J.IsInLaningPhase() and fManaAfter > fManaThreshold1 then
+        if #nEnemyCreeps >= 5 and bAttacking and #nEnemyHeroes == 0 then
+            return BOT_ACTION_DESIRE_HIGH
+        end
+
         local nLocationAoE = bot:FindAoELocation(true, false, bot:GetLocation(), 0, nRadius, 0, nDamage)
-        if nLocationAoE.count >= 3 and fManaAfter > 0.4 then
+        if nLocationAoE.count >= 3 then
             return BOT_ACTION_DESIRE_HIGH
         end
 	end
 
-    if J.IsDoingRoshan(bot) and fManaAfter > 0.5 then
+    if J.IsDoingRoshan(bot) then
         if  J.IsRoshan(botTarget)
         and J.CanBeAttacked(botTarget)
         and J.CanCastOnNonMagicImmune(botTarget)
         and J.IsInRange(bot, botTarget, nRadius)
         and bAttacking
+        and fManaAfter > fManaThreshold1
         then
             return BOT_ACTION_DESIRE_HIGH
         end
     end
 
-    if J.IsDoingTormentor(bot) and fManaAfter > 0.5 then
+    if J.IsDoingTormentor(bot) then
         if  J.IsTormentor(botTarget)
         and J.IsInRange(bot, botTarget, nRadius)
         and bAttacking
+        and fManaAfter > fManaThreshold1
         then
             return BOT_ACTION_DESIRE_HIGH
         end
@@ -649,8 +667,8 @@ function X.ConsiderBattleTrance()
         and not nEnemyHeroes[1]:HasModifier('modifier_oracle_false_promise_timer')
         and not nEnemyHeroes[1]:HasModifier('modifier_item_blade_mail_reflect')
         then
-            local nInRangeAlly = J.GetAlliesNearLoc(nEnemyHeroes[1]:GetLocation(), 1400)
-            local nInRangeEnemy = J.GetEnemiesNearLoc(nEnemyHeroes[1]:GetLocation(), 1400)
+            local nInRangeAlly = J.GetAlliesNearLoc(bot:GetLocation(), 1200)
+            local nInRangeEnemy = J.GetEnemiesNearLoc(bot:GetLocation(), 1200)
             local totalAttackDamge = nEnemyHeroes[1]:GetActualIncomingDamage(bot:GetAttackDamage() * (bot:GetAttackSpeed() + nBonusAS / 100) * fDuration, DAMAGE_TYPE_PHYSICAL)
 
             if (totalAttackDamge >= (nEnemyHeroes[1]:GetHealth() + nEnemyHeroes[1]:GetHealthRegen() * fDuration) and not (#nInRangeAlly >= #nInRangeEnemy + 2))

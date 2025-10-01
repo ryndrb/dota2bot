@@ -29,6 +29,7 @@ local ShouldHuskarMoveOutsideFountain = false
 local ShouldHeroMoveOutsideFountain = false
 
 local fDissimilateTime = 0
+local bMoveFromTreeDance = false
 
 local fNextMovementTime = -math.huge
 local LoneDruid = {}
@@ -45,18 +46,6 @@ function GetDesire()
 	end
 
 	LoneDruid = J.CheckLoneDruid()
-
-	-- 7.37 change
-	-- if bot:GetUnitName() == 'npc_dota_hero_broodmother'
-	-- and J.GetPosition(bot) ~= 2
-	-- then
-	-- 	if bot.shouldWebMid == nil then bot.shouldWebMid = true end
-
-	-- 	if DotaTime() < 0 and bot.shouldWebMid == true
-	-- 	then
-	-- 		return BOT_ACTION_DESIRE_ABSOLUTE * 0.99
-	-- 	end
-	-- end
 
 	------------------------------
 	-- Hero Channel/Kill/CC abilities
@@ -93,7 +82,7 @@ function GetDesire()
 		if cAbility == nil then cAbility = bot:GetAbilityByName("clinkz_burning_barrage") end
 		if cAbility:IsTrained()
 		then
-			if cAbility:IsInAbilityPhase() or bot:IsChanneling() then
+			if cAbility:IsInAbilityPhase() or bot:IsChanneling() or bot:HasModifier('modifier_clinkz_burning_barrage') then
 				return BOT_MODE_DESIRE_ABSOLUTE
 			end
 		end
@@ -162,6 +151,17 @@ function GetDesire()
 		then
 			if cAbility:IsInAbilityPhase() or bot:IsChanneling() then
 				return BOT_MODE_DESIRE_ABSOLUTE
+			end
+		end
+
+		if not bot:IsChanneling() then
+			if bot.tree_dance_status then
+				if  DotaTime() - bot.tree_dance_status.cast_time > (3.0 + bot.tree_dance_status.eta)
+				and DotaTime() - bot.tree_dance_status.cast_time < (4.0 + bot.tree_dance_status.eta)
+				then
+					bMoveFromTreeDance = true
+					return BOT_MODE_DESIRE_ABSOLUTE
+				end
 			end
 		end
 	elseif botName == "npc_dota_hero_nyx_assassin"
@@ -504,6 +504,12 @@ function Think()
 
 	PrimalBeastTrample()
 	HoodwinkSharpshooter()
+
+	if bMoveFromTreeDance then
+		bot:Action_MoveToLocation(J.GetFaceTowardDistanceLocation(bot, 500))
+		bMoveFromTreeDance = false
+		return
+	end
 
 	-- Void Spirit Dissimilate;
 	-- modifier_void_spirit_dissimilate_phase returns false
@@ -958,19 +964,6 @@ function Think()
 		end
 	end
 
-	-- Broodmother web mid at the start of game; 7.37 change
-	-- if bot.shouldWebMid == true
-	-- then
-	-- 	local targetLoc = Vector(-277, -139, 49)
-    --     if GetTeam() == TEAM_DIRE
-    --     then
-    --         targetLoc = Vector(-768, -621, 56)
-    --     end
-
-	-- 	bot:Action_MoveToLocation(targetLoc)
-	-- 	return
-	-- end
-
 	if ClosestOutpost ~= nil
 	then
 		if GetUnitToUnitDistance(bot, ClosestOutpost) > 300
@@ -1302,16 +1295,19 @@ function HoodwinkSharpshooter()
 	if bot:HasModifier('modifier_hoodwink_sharpshooter_windup') then
 		local Sharpshooter = bot:GetAbilityByName('hoodwink_sharpshooter')
 		local nCastRange = Sharpshooter:GetCastRange()
+		local nRadius = Sharpshooter:GetSpecialValueInt('arrow_width')
+		local nArrowRange = Sharpshooter:GetSpecialValueInt('arrow_range')
 
-		if J.IsValidHero(bot.sharpshooter_target) then
-			bot:Action_MoveToLocation(bot.sharpshooter_target:GetLocation())
+		if J.IsValidHero(bot.hoodwink_sharpshooter.target) then
+			bot:Action_MoveToLocation(bot.hoodwink_sharpshooter.target:GetLocation())
 			return
 		else
 			local target = nil
 			local targetHealth = math.huge
 			for _, enemy in pairs(GetUnitList(UNIT_LIST_ENEMY_HEROES)) do
 				if J.IsValidHero(enemy)
-				and J.IsInRange(bot, enemy, nCastRange * 0.8)
+				and J.CanBeAttacked(enemy)
+				and J.IsInRange(bot, enemy, nArrowRange * 0.8)
 				and J.CanCastOnNonMagicImmune(enemy)
 				and not enemy:HasModifier('modifier_abaddon_borrowed_time')
 				and not enemy:HasModifier('modifier_dazzle_shallow_grave')
@@ -1337,10 +1333,12 @@ function HoodwinkSharpshooter()
 				local member = GetTeamMember(i)
 				if J.IsValidHero(member)
 				and J.IsInRange(bot, member, 1600)
+				and bot ~= member
 				then
 					local memberTarget = member:GetAttackTarget()
 					if J.IsValidHero(memberTarget)
-					and J.IsInRange(bot, memberTarget, nCastRange)
+					and J.CanBeAttacked(memberTarget)
+					and J.IsInRange(bot, memberTarget, nArrowRange)
 					and J.CanCastOnNonMagicImmune(memberTarget)
 					and not memberTarget:HasModifier('modifier_abaddon_borrowed_time')
 					and not memberTarget:HasModifier('modifier_dazzle_shallow_grave')
@@ -1350,6 +1348,33 @@ function HoodwinkSharpshooter()
 					then
 						bot:Action_MoveToLocation(memberTarget:GetLocation())
 						return
+					end
+				end
+			end
+
+			local nInRangeEnemy = J.GetEnemiesNearLoc(bot:GetLocation(), 1600)
+			if #nInRangeEnemy == 0 then
+				local nEnemyCreeps = bot:GetNearbyCreeps(1600, true)
+				for _, creep in pairs(nEnemyCreeps) do
+					if  J.IsValid(creep)
+					and J.CanBeAttacked(creep)
+					and not creep:IsMagicImmune()
+					then
+						local count = 0
+						for _, creep_ in pairs(GetUnitList(UNIT_LIST_ENEMY_CREEPS)) do
+							if  J.IsValid(creep_)
+							and J.CanBeAttacked(creep_)
+							and J.IsInRange(creep, creep_, nRadius)
+							and not creep_:IsMagicImmune()
+							then
+								count = count + 1
+							end
+						end
+
+						if count < 5 then
+							bot:Action_MoveToLocation(creep:GetLocation())
+							return
+						end
 					end
 				end
 			end

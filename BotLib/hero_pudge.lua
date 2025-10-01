@@ -138,21 +138,22 @@ local HeroBuild = {
             
                 "item_magic_wand",
                 "item_tranquil_boots",
-                "item_solar_crest",--
+                "item_rod_of_atos",
                 "item_ancient_janggo",
                 "item_blink",
                 "item_boots_of_bearing",--
                 "item_shivas_guard",--
-                "item_heart",--
+                "item_lotus_orb",--
                 "item_ultimate_scepter",
                 "item_overwhelming_blink",--
                 "item_aghanims_shard",
+                "item_gungir",--
                 "item_moon_shard",
                 "item_ultimate_scepter_2",
                 "item_wind_waker",--
             },
             ['sell_list'] = {
-                "item_magic_wand", "item_ultimate_scepter",
+                "item_magic_wand", "item_lotus_orb",
             },
         },
     },
@@ -178,21 +179,22 @@ local HeroBuild = {
             
                 "item_magic_wand",
                 "item_arcane_boots",
-                "item_solar_crest",--
+                "item_rod_of_atos",
                 "item_mekansm",
                 "item_blink",
                 "item_guardian_greaves",--
                 "item_shivas_guard",--
-                "item_heart",--
+                "item_lotus_orb",--
                 "item_ultimate_scepter",
                 "item_overwhelming_blink",--
                 "item_aghanims_shard",
+                "item_gungir",--
                 "item_moon_shard",
                 "item_ultimate_scepter_2",
                 "item_wind_waker",--
             },
             ['sell_list'] = {
-                "item_magic_wand", "item_ultimate_scepter",
+                "item_magic_wand", "item_lotus_orb",
             },
         },
     },

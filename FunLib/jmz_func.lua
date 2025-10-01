@@ -1086,9 +1086,10 @@ function J.IsInTeamFight( bot, nRadius )
 
 	if nRadius == nil or nRadius > 1600 then nRadius = 1600 end
 
-	local attackModeAllyList = bot:GetNearbyHeroes( nRadius, false, BOT_MODE_ATTACK )
+	local attackModeAllyList = J.GetSpecialModeAllies(bot, nRadius, BOT_MODE_ATTACK)
+	local nInRangeEnemy = J.GetEnemiesNearLoc(bot:GetLocation(), nRadius)
 
-	return #attackModeAllyList >= 2 -- and bot:GetActiveMode() ~= BOT_MODE_RETREAT
+	return #attackModeAllyList >= 2 and #nInRangeEnemy >= 2 -- and bot:GetActiveMode() ~= BOT_MODE_RETREAT
 
 end
 
@@ -1155,6 +1156,11 @@ function J.IsDoingRoshan( bot )
 
 	return mode == BOT_MODE_ROSHAN
 
+end
+
+function J.IsGoingToRune(bot)
+	local mode = bot:GetActiveMode()
+	return mode == BOT_MODE_RUNE
 end
 
 
@@ -2019,7 +2025,7 @@ function J.GetFaceTowardDistanceLocation( bot, nDistance )
 
 	local npcBotLocation = bot:GetLocation()
 	local tempRadians = bot:GetFacing() * math.pi / 180
-	local tempVector = Vector( math.cos( tempRadians ), math.sin( tempRadians ), npcBotLocation.z )
+	local tempVector = Vector( math.cos( tempRadians ), math.sin( tempRadians ) ) --- z coord was causing issues
 
 	return npcBotLocation + nDistance * tempVector
 
@@ -2461,7 +2467,6 @@ function J.IsChasingTarget( bot, nTarget )
 		and J.IsRunning( nTarget )
 		and bot:IsFacingLocation( nTarget:GetLocation(), 20 )
 		and not nTarget:IsFacingLocation( bot:GetLocation(), 150 )
-		and bot:GetAttackTarget() == nTarget
 	then
 		return true
 	end
@@ -2579,14 +2584,8 @@ function J.GetSpecialModeAllies( bot, nDistance, nMode )
 		if J.IsValidHero(member)
 		and GetUnitToUnitDistance(bot, member) <= nDistance
 		then
-			if nMode == BOT_MODE_ATTACK then
-				if J.IsGoingOnSomeone(member) then
-					table.insert( allyList, member )
-				end
-			else
-				if member:GetActiveMode() == nMode then
-					table.insert( allyList, member )
-				end
+			if member:GetActiveMode() == nMode then
+				table.insert( allyList, member )
 			end
 		end
 	end
@@ -4057,13 +4056,12 @@ function J.IsNotSelf(bot, ally)
 end
 
 function J.IsThereCoreNearby(nRadius)
-	for i = 1, 5
-	do
-		local allyHero = GetTeamMember(i)
-		if allyHero ~= nil
-		and allyHero ~= GetBot()
-		and J.IsCore(allyHero)
-		and J.IsInRange(GetBot(), allyHero, nRadius)
+	for i = 1, 5 do
+		local member = GetTeamMember(i)
+		if J.IsValidHero(member)
+		and member ~= GetBot()
+		and J.IsCore(member)
+		and J.IsInRange(GetBot(), member, nRadius)
 		then
 			return true
 		end
@@ -4120,6 +4118,28 @@ function J.IsUnitBetweenMeAndLocation(hSource, hTarget, vTargetLoc, nRadius)
 	do
 		if J.IsValid(unit)
 		and GetUnitToUnitDistance(GetBot(), unit) <= 1600
+		and not unit:IsBuilding()
+		and not string.find(unit:GetUnitName(), 'ward')
+		and hSource ~= unit
+		and hTarget ~= unit
+		then
+			local nRadius__ = nRadius + unit:GetBoundingRadius()
+			local tResult = PointToLineDistance(vStart, vEnd, unit:GetLocation())
+			if tResult ~= nil and tResult.within and tResult.distance <= nRadius__ then return true end
+		end
+	end
+
+	return false
+end
+
+function J.IsEnemyUnitBetweenSourceAndTarget(hSource, hTarget, vTargetLocation, nDistance, nRadius)
+	local vStart = hSource:GetLocation()
+	local vEnd = vTargetLocation
+
+	for _, unit in pairs(GetUnitList(UNIT_LIST_ENEMIES)) do
+		if J.IsValid(unit)
+		and (unit:IsCreep() or unit:IsHero())
+		and GetUnitToUnitDistance(hSource, unit) <= nDistance
 		and not unit:IsBuilding()
 		and not string.find(unit:GetUnitName(), 'ward')
 		and hSource ~= unit
@@ -5337,7 +5357,7 @@ function J.CanCastAbilitySoon(ability, fTime)
 	or ability:IsPassive()
 	or ability:IsHidden()
 	or not ability:IsTrained()
-	or not ability:IsActivated()
+	-- or not ability:IsActivated()
 	then
 		return false
 	end
@@ -5352,22 +5372,17 @@ end
 -- hAbilityList: handle / integer (mana)
 function J.GetManaThreshold(bot, nManaCost, hAbilityList)
 	local fManaThreshold = 0
-	local botManaRegen = bot:GetManaRegen()
+	local botManaRegen = Max(bot:GetManaRegen(), 1.0)
 	local botMaxMana = bot:GetMaxMana()
 
-	-- tp, bkb
+	-- items
 	local itemSlots = {0, 1, 2, 3, 4, 5, 15}
 	for i = 1, #itemSlots do
 		local hItem = bot:GetItemInSlot(itemSlots[i])
 		if hItem then
-			local sItemName = hItem:GetName()
-			if sItemName == 'item_tpscroll'
-			or sItemName == 'item_black_king_bar'
-			then
-				local nManaCostItem = hItem:GetManaCost()
-				if J.CanCastAbilitySoon(hItem, nManaCost / botManaRegen) then
-					fManaThreshold = fManaThreshold + (nManaCostItem / botMaxMana)
-				end
+			local nManaCostItem = hItem:GetManaCost()
+			if J.CanCastAbilitySoon(hItem, nManaCost / botManaRegen) then
+				fManaThreshold = fManaThreshold + (nManaCostItem / botMaxMana)
 			end
 		end
 	end
@@ -5756,7 +5771,7 @@ function J.GetUnitListTotalAttackDamage(tUnits, fTimeInterval)
                 elseif string.find(sUnitName, 'chaos_knight') then
                     -- full
                 elseif string.find(sUnitName, 'terrorblade') then
-                    if J.IsUnitNearby(bot, tUnits, 1200, sUnitName, true) then
+                    if J.IsUnitNearby(GetBot(), tUnits, 1200, sUnitName, true) then
                         nAttackDamage = nAttackDamage * (0.6 + 0.25)
                     else
                         nAttackDamage = nAttackDamage * (0.6 - 0.50)
@@ -5848,8 +5863,8 @@ function J.GetAngleFromDotProduct(dot)
 	return math.deg(math.acos(dot))
 end
 
-function J.IsUnitTargetedByTower(hUnit, bTeam)
-	local nUnitType = (bTeam and UNIT_LIST_ALLIED_BUILDINGS) or UNIT_LIST_ENEMY_BUILDINGS
+function J.IsUnitTargetedByTower(hUnit, bEnemyTeam)
+	local nUnitType = (not bEnemyTeam and UNIT_LIST_ALLIED_BUILDINGS) or UNIT_LIST_ENEMY_BUILDINGS
 	local nUnitList = GetUnitList(nUnitType)
 
 	for _, building in pairs(nUnitList) do
@@ -5859,6 +5874,53 @@ function J.IsUnitTargetedByTower(hUnit, bTeam)
 	end
 
 	return false
+end
+
+function J.GetFurthestBuildingAlongLane(nTeam, nLane)
+	local hBuildingList = {
+		[LANE_TOP] = {
+			{name = 'tower', 	type = TOWER_TOP_1},
+			{name = 'tower', 	type = TOWER_TOP_2},
+			{name = 'tower', 	type = TOWER_TOP_3},
+			{name = 'barracks', type = BARRACKS_TOP_MELEE},
+			{name = 'barracks', type = BARRACKS_TOP_RANGED},
+			{name = 'tower', 	type = TOWER_BASE_1},
+			{name = 'tower', 	type = TOWER_BASE_2},
+		},
+		[LANE_MID] = {
+			{name = 'tower', 	type = TOWER_MID_1},
+			{name = 'tower', 	type = TOWER_MID_2},
+			{name = 'tower', 	type = TOWER_MID_3},
+			{name = 'barracks', type = BARRACKS_MID_MELEE},
+			{name = 'barracks', type = BARRACKS_MID_RANGED},
+			{name = 'tower', 	type = TOWER_BASE_1},
+			{name = 'tower', 	type = TOWER_BASE_2},
+		},
+		[LANE_BOT] = {
+			{name = 'tower', 	type = TOWER_BOT_1},
+			{name = 'tower', 	type = TOWER_BOT_2},
+			{name = 'tower', 	type = TOWER_BOT_3},
+			{name = 'barracks', type = BARRACKS_BOT_MELEE},
+			{name = 'barracks', type = BARRACKS_BOT_RANGED},
+			{name = 'tower', 	type = TOWER_BASE_1},
+			{name = 'tower', 	type = TOWER_BASE_2},
+		},
+	}
+
+	for _, b in pairs(hBuildingList[nLane]) do
+		local building = nil
+		if b.name == 'tower' then
+			building = GetTower(nTeam, b.type)
+		elseif b.name == 'barracks' then
+			building = GetBarracks(nTeam, b.type)
+		end
+
+		if building ~= nil then
+			return building
+		end
+	end
+
+	return GetAncient(nTeam)
 end
 
 return J

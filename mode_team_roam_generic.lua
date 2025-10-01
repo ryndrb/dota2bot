@@ -136,8 +136,7 @@ function GetDesire()
 
 	if botName == 'npc_dota_hero_faceless_void' and (bot:GetCurrentMovementSpeed() >= 1000 or bSomeoneInChronosphere) then
 		local nAllyHeroes = J.GetAlliesNearLoc(bot:GetLocation(), 1200)
-		nEnemyHeroes = J.GetEnemiesNearLoc(bot:GetLocation(), 1200)
-		if #nEnemyHeroes > 0 and ((#nAllyHeroes >= #nEnemyHeroes) or (#nAllyHeroes + 1 >= #nEnemyHeroes)) then
+		if #nEnemyHeroes > 0 and ((#nAllyHeroes >= #nEnemyHeroes) or J.WeAreStronger(bot, 1600) or J.IsLateGame()) then
 			return BOT_MODE_DESIRE_ABSOLUTE * 1.5
 		end
 	end
@@ -393,11 +392,11 @@ function X.SupportFindTarget()
 			return nTarget,BOT_MODE_DESIRE_ABSOLUTE *1.5;
 		end
 		
-		if nTarget:IsHero() 
-		   and (bot:GetCurrentMovementSpeed() < 300 or botLV >= 25)
-		then	
-		    return nTarget,BOT_MODE_DESIRE_ABSOLUTE *1.2;
-		end
+		-- if nTarget:IsHero() 
+		--    and (bot:GetCurrentMovementSpeed() < 300 or botLV >= 25)
+		-- then	
+		--     return nTarget,BOT_MODE_DESIRE_ABSOLUTE *1.2;
+		-- end
 		
 		if not nTarget:IsHero() 
 		   and GetUnitToUnitDistance(bot,nTarget) < nAttackRange +50
@@ -411,7 +410,7 @@ function X.SupportFindTarget()
 			return nTarget,BOT_MODE_DESIRE_ABSOLUTE *0.7;
 		end
 		
-		return nTarget,BOT_MODE_DESIRE_ABSOLUTE *0.96;
+		-- return nTarget,BOT_MODE_DESIRE_ABSOLUTE *0.96;
 	end
 	
 	
@@ -700,19 +699,19 @@ function X.CarryFindTarget()
 			return nTarget,BOT_MODE_DESIRE_ABSOLUTE *1.5;
 		end
 		
-		if nTarget:IsHero() 
-		   and (bot:GetCurrentMovementSpeed() < 300 or botLV >= 25)
-		then
-			if botName == "npc_dota_hero_antimage"
-			then
-				local bAbility = bot:GetAbilityByName("antimage_blink");
-				if bAbility ~= nil and bAbility:IsFullyCastable()
-				then
-					return nil,BOT_MODE_DESIRE_NONE;
-				end
-			end		
-		    return nTarget,BOT_MODE_DESIRE_ABSOLUTE *1.2;
-		end
+		-- if nTarget:IsHero() 
+		--    and (bot:GetCurrentMovementSpeed() < 300 or botLV >= 25)
+		-- then
+		-- 	if botName == "npc_dota_hero_antimage"
+		-- 	then
+		-- 		local bAbility = bot:GetAbilityByName("antimage_blink");
+		-- 		if bAbility ~= nil and bAbility:IsFullyCastable()
+		-- 		then
+		-- 			return nil,BOT_MODE_DESIRE_NONE;
+		-- 		end
+		-- 	end		
+		--     return nTarget,BOT_MODE_DESIRE_ABSOLUTE *1.2;
+		-- end
 		
 		if not nTarget:IsHero() 
 		   and GetUnitToUnitDistance(bot,nTarget) < nAttackRange +50
@@ -726,7 +725,7 @@ function X.CarryFindTarget()
 			return nTarget,BOT_MODE_DESIRE_ABSOLUTE *0.7;
 		end
 		
-		return nTarget,BOT_MODE_DESIRE_ABSOLUTE *0.96;
+		-- return nTarget,BOT_MODE_DESIRE_ABSOLUTE *0.96;
 	end
 	
 	

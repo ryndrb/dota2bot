@@ -375,7 +375,7 @@ function X.ConsiderChaosBolt()
 				local eta = (GetUnitToUnitDistance(bot, creep) / nProjectileSpeed) + nCastPoint
 				if J.WillKillTarget(creep, (nMinDamage + nMaxDamage) / 2, DAMAGE_TYPE_MAGICAL, eta) then
 					local nLocationAoE = bot:FindAoELocation(true, true, creep:GetLocation(), 0, 500, 0, 0)
-					if nLocationAoE.count > 0 or J.IsUnitTargetedByTower(creep, true) then
+					if nLocationAoE.count > 0 or J.IsUnitTargetedByTower(creep, false) then
 						return BOT_ACTION_DESIRE_HIGH, creep
 					end
 				end

@@ -34,7 +34,6 @@ If you’ve come across this script or is using it, good feedback is always welc
         - (For non-Git) Everytime there is an update, you have to re-download the files and replace the ones on the `bots` folder. If you've made personal changes to some files, you have to make a backup to those files, or fix the conflicts yourself.
         - Note: Since this uses the user's own computer as the server (Lobby) to work properly, there will be FPS issues. Valve making bot scripts run on their servers again is the ultimate solution.
     - How I test:
-        - Added in launch options: `+cl_clock_recvmargin_enable 0`
         - Bots v Bots
         - `Enable Cheats`
         - Type: `sv_cheats 1` in console.

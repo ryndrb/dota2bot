@@ -426,11 +426,13 @@ function X.ConsiderSpearOfMars()
 			and (J.IsKeyWordUnit('ranged', creep) or J.IsKeyWordUnit('siege', creep) or J.IsKeyWordUnit('flagbearer', creep))
 			and not J.IsRunning(creep)
 			then
-				if (J.IsValidHero(nEnemyHeroes[1]) and not J.IsSuspiciousIllusion(nEnemyHeroes[1]) and GetUnitToUnitDistance(nEnemyHeroes[1], creep) < 500)
-				or J.IsUnitTargetedByTower(creep, false)
-				then
-					local eta = (GetUnitToUnitDistance(bot, creep) / nSpeed) + nCastPoint
-					if J.WillKillTarget(creep, nDamage, DAMAGE_TYPE_MAGICAL, eta) then
+				local eta = (GetUnitToUnitDistance(bot, creep) / nSpeed) + nCastPoint
+				if J.WillKillTarget(creep, nDamage, DAMAGE_TYPE_MAGICAL, eta) then
+					if J.IsUnitTargetedByTower(creep, false) then
+						return BOT_ACTION_DESIRE_HIGH, creep:GetLocation()
+					end
+
+					if (J.IsValidHero(nEnemyHeroes[1]) and not J.IsSuspiciousIllusion(nEnemyHeroes[1]) and GetUnitToUnitDistance(nEnemyHeroes[1], creep) < 500) then
 						eta = (GetUnitToUnitDistance(bot, nEnemyHeroes[1]) / nSpeed) + nCastPoint
 						local vLocation = J.GetCorrectLoc(nEnemyHeroes[1], eta)
 						if fManaAfter > 0.65

@@ -118,6 +118,10 @@ local bBuffFlags = {
         radiant = true, -- Set to 'false' to disable Radiant bots receiving neutral items.
         dire    = true, -- Set to 'false' to disable Dire bots receiving neutral items.
     },
+    manga_regen = {
+        radiant = true, -- Set to 'false' to disable aiding Radiant bots' receiving added mana regen.
+        dire    = true, -- Set to 'false' to disable aiding Dire bots' receiving added mana regen.
+    },
     -- Applies to All Pick only
     gpm = {
         radiant = true, -- Set to 'false' to disable Radiant bots receiving a Gold boost.
@@ -169,6 +173,35 @@ function Buff:Init()
         end
 
         if GameRules:GetDOTATime(false, false) > 0 then
+            -- Mana
+            hHeroList = {}
+            if bBuffFlags.manga_regen.radiant then
+                for _, h in pairs(TeamRadiant) do
+                    table.insert(hHeroList, h)
+                end
+            end
+            if bBuffFlags.manga_regen.dire then
+                for _, h in pairs(TeamDire) do
+                    table.insert(hHeroList, h)
+                end
+            end
+
+            for _, hero in pairs(hHeroList) do
+                local nManaCost = 0
+                for i = 0, hero:GetAbilityCount() - 1 do
+                    local hAbility = hero:GetAbilityByIndex(i)
+                    if hAbility then nManaCost = nManaCost + hAbility:GetManaCost(-1) end
+                end
+
+                local idx = {0, 1, 2, 3, 4, 5, 15, 16}
+                for _, i in ipairs(idx) do
+                    local hItem = hero:GetItemInSlot(i)
+                    if hItem then nManaCost = nManaCost + hItem:GetManaCost(-1) end
+                end
+
+                hero:SetBaseManaRegen(((math.max(nManaCost - hero:GetMana(), 0)) / 30))
+            end
+
             -- Towers
             if bBuffFlags.towers.radiant then
                 T.HandleTowerBuff(DOTA_TEAM_GOODGUYS)

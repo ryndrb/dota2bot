@@ -650,6 +650,7 @@ function X.ConsiderRollingBoulder()
 	local nRadius = RollingBoulder:GetSpecialValueInt('radius')
 	local nManaCost = RollingBoulder:GetManaCost()
 	local fManaAfter = J.GetManaAfter(nManaCost)
+	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {BoulderSmash, GeomagneticGrip, EnchantRemnant, Magnetize})
 
 	local nNearbyEnemySearchRange = nDistance
 	if nStone >= 1 then
@@ -803,6 +804,52 @@ function X.ConsiderRollingBoulder()
 		end
 	end
 
+	if J.IsPushing(bot) and fManaAfter > fManaThreshold1 then
+		local nLane = LANE_MID
+		if bot:GetActiveMode() == BOT_MODE_PUSH_TOWER_TOP then nLane = LANE_TOP end
+		if bot:GetActiveMode() == BOT_MODE_PUSH_TOWER_BOT then nLane = LANE_BOT end
+
+		local vLaneFrontLocation = GetLaneFrontLocation(GetTeam(), nLane, 0)
+		if GetUnitToLocationDistance(bot, vLaneFrontLocation) > nDistance then
+			if bot:IsFacingLocation(vLaneFrontLocation, 45) and IsLocationPassable(vLaneFrontLocation) then
+				return BOT_ACTION_DESIRE_HIGH, vLaneFrontLocation, false
+			end
+		end
+	end
+
+	if J.IsDefending(bot) and fManaAfter > fManaThreshold1 then
+		local nLane = LANE_MID
+		if bot:GetActiveMode() == BOT_MODE_DEFEND_TOWER_TOP then nLane = LANE_TOP end
+		if bot:GetActiveMode() == BOT_MODE_DEFEND_TOWER_BOT then nLane = LANE_BOT end
+
+		local vLaneFrontLocation = GetLaneFrontLocation(GetTeam(), nLane, 0)
+		if GetUnitToLocationDistance(bot, vLaneFrontLocation) > nDistance then
+			if bot:IsFacingLocation(vLaneFrontLocation, 45) and IsLocationPassable(vLaneFrontLocation) then
+				return BOT_ACTION_DESIRE_HIGH, vLaneFrontLocation, false
+			end
+		end
+	end
+
+	if J.IsFarming(bot) and fManaAfter > fManaThreshold1 then
+		if bot.farm and bot.farm.location then
+			local distance = GetUnitToLocationDistance(bot, bot.farm.location)
+			local vLocation = J.VectorTowards(bot:GetLocation(), bot.farm.location, Min(nDistance, distance))
+			if J.IsRunning(bot) and distance > nDistance / 2 and IsLocationPassable(vLocation) then
+				return BOT_ACTION_DESIRE_HIGH, vLocation, false
+			end
+		end
+	end
+
+	if J.IsGoingToRune(bot) and fManaAfter > fManaThreshold1 then
+		if bot.rune and bot.rune.location then
+			local distance = GetUnitToLocationDistance(bot, bot.rune.location)
+			local vLocation = J.VectorTowards(bot:GetLocation(), bot.rune.location, Min(nDistance, distance))
+			if J.IsRunning(bot) and distance > nDistance / 2 and IsLocationPassable(vLocation) then
+				return BOT_ACTION_DESIRE_HIGH, vLocation, false
+			end
+		end
+	end
+
 	if J.IsDoingRoshan(bot) and fManaAfter > 0.5 then
 		local vRoshanLocation = J.GetCurrentRoshanLocation()
 		local distance = GetUnitToLocationDistance(bot, vRoshanLocation)
@@ -852,12 +899,6 @@ function X.ConsiderRollingBoulder()
 			end
 		end
 
-	end
-
-	if DotaTime() > 0 and bot:GetActiveMode() == BOT_MODE_RUNE then
-		if J.IsRunning(bot) and bot:GetMovementDirectionStability() >= 0.9 then
-			return BOT_ACTION_DESIRE_HIGH, J.GetFaceTowardDistanceLocation(bot, nDistance), false
-		end
 	end
 
 	return BOT_ACTION_DESIRE_NONE, 0, false

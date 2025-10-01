@@ -313,53 +313,58 @@ local SummonSpiritBearDesire
 local SavageRoarDesire
 local TrueFormDesire
 
-local botTarget, nAllyHeroes, nEnemyHeroes
+local bAttacking = false
+local botTarget, botHP
+local nAllyHeroes, nEnemyHeroes
 
 function X.SkillsComplement()
+    bot = GetBot()
+
     if J.CanNotUseAbility(bot) then return end
 
+    bAttacking = J.IsAttacking(bot)
+    botHP = J.GetHP(bot)
     botTarget = J.GetProperTarget(bot)
     nAllyHeroes = bot:GetNearbyHeroes(1600, false, BOT_MODE_NONE)
     nEnemyHeroes = bot:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
 
     TrueFormDesire = X.ConsiderTrueForm()
-    if TrueFormDesire > 0
-    then
+    if TrueFormDesire > 0 then
         bot:Action_UseAbility(TrueForm)
         return
     end
 
     SavageRoarDesire = X.ConsiderSavageRoar()
-    if SavageRoarDesire > 0
-    then
+    if SavageRoarDesire > 0 then
         bot:Action_UseAbility(SavageRoar)
         return
     end
 
     SummonSpiritBearDesire = X.ConsiderSummonSpiritBear()
-    if SummonSpiritBearDesire > 0
-    then
+    if SummonSpiritBearDesire > 0 then
         bot:Action_UseAbility(SummonSpiritBear)
         return
     end
 end
 
 function X.ConsiderSummonSpiritBear()
-    if not J.CanCastAbility(SummonSpiritBear) --[[or DotaTime() < 1 or J.IsInLaningPhase()]] then
+    if not J.CanCastAbility(SummonSpiritBear) then
         return BOT_ACTION_DESIRE_NONE
     end
 
     local IsBearAlive = false
 
 	for _, unit in pairs(GetUnitList(UNIT_LIST_ALLIES)) do
-		if string.find(unit:GetUnitName(), 'npc_dota_hero_lone_druid_bear') then
-			IsBearAlive = true
-            break
-		end
+        if J.IsValid(unit) then
+            if string.find(unit:GetUnitName(), 'npc_dota_hero_lone_druid_bear') then
+                IsBearAlive = true
+                break
+            end
+        end
 	end
 
 	if not IsBearAlive
-    and not (  (bot:IsAlive() and J.GetHP(bot) < 0.2 and bot:GetHealth() >= 1 and bot:WasRecentlyDamagedByAnyHero(3.1))
+    and not (  (botHP < 0.2 and bot:WasRecentlyDamagedByAnyHero(2.0))
             or (J.IsRetreating(bot) and #nEnemyHeroes >= #nAllyHeroes + 2))
     then
 		return BOT_ACTION_DESIRE_HIGH
@@ -374,11 +379,15 @@ function X.ConsiderSavageRoar()
     end
 
     local nRadius = SavageRoar:GetSpecialValueInt('radius')
+    local nManaCost = SavageRoar:GetManaCost()
+    local fManaAfter = J.GetManaAfter(nManaCost)
+    local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {TrueForm})
 
 	for _, enemyHero in pairs(nEnemyHeroes) do
 		if J.IsValidHero(enemyHero)
 		and J.IsInRange(bot, enemyHero, nRadius)
 		and J.CanCastOnNonMagicImmune(enemyHero)
+        and fManaAfter > fManaThreshold1
 		then
 			if enemyHero:HasModifier('modifier_teleporting') then
 				return BOT_ACTION_DESIRE_HIGH
@@ -388,11 +397,13 @@ function X.ConsiderSavageRoar()
 
     if J.IsGoingOnSomeone(bot) then
 		if  J.IsValidTarget(botTarget)
+        and J.CanBeAttacked(botTarget)
         and J.IsInRange(bot, botTarget, nRadius)
         and J.CanCastOnNonMagicImmune(botTarget)
         and not J.IsChasingTarget(bot, botTarget)
         and not J.IsDisabled(botTarget)
         and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
+        and fManaAfter > fManaThreshold1
 		then
             if #nAllyHeroes >= #nEnemyHeroes and not (#nAllyHeroes >= #nEnemyHeroes + 2) then
                 return BOT_ACTION_DESIRE_HIGH
@@ -404,13 +415,10 @@ function X.ConsiderSavageRoar()
         for _, enemyHero in pairs(nEnemyHeroes) do
             if  J.IsValidHero(enemyHero)
             and J.IsInRange(bot, enemyHero, nRadius)
-            and J.IsChasingTarget(enemyHero, bot)
             and J.CanCastOnNonMagicImmune(enemyHero)
             and not J.IsDisabled(enemyHero)
             then
-                if #nEnemyHeroes > #nAllyHeroes or J.GetHP(bot) < 0.55 then
-                    return BOT_ACTION_DESIRE_HIGH
-                end
+                return BOT_ACTION_DESIRE_HIGH
             end
         end
 	end
@@ -431,20 +439,21 @@ function X.ConsiderTrueForm()
         and not botTarget:HasModifier('modifier_faceless_void_chronosphere_freeze')
         and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
 		then
-            if J.GetHP(bot) < 0.75 or J.IsInTeamFight(bot, 1200) then
+            if botHP < 0.75 or J.IsInTeamFight(bot, 1200) then
                 return BOT_ACTION_DESIRE_HIGH
             end
 		end
 	end
 
-    if J.IsRetreating(bot) and not J.IsRealInvisible(bot) and bot:WasRecentlyDamagedByAnyHero(3.0) and J.GetHP(bot) < 0.7 then
+    if J.IsRetreating(bot) and not J.IsRealInvisible(bot) and bot:WasRecentlyDamagedByAnyHero(3.0) and botHP < 0.7 then
         for _, enemyHero in pairs(nEnemyHeroes) do
             if  J.IsValidHero(enemyHero)
-            and J.IsInRange(bot, enemyHero, 800)
-            and J.IsChasingTarget(enemyHero, bot)
+            and J.IsInRange(bot, enemyHero, 1200)
             and not J.IsSuspiciousIllusion(enemyHero)
             then
-                if #nEnemyHeroes > #nAllyHeroes or J.GetHP(bot) < 0.7 then
+                if J.IsChasingTarget(enemyHero, bot)
+                or (#nEnemyHeroes > #nAllyHeroes and enemyHero:GetAttackTarget() == bot)
+                then
                     return BOT_ACTION_DESIRE_HIGH
                 end
             end

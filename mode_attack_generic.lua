@@ -77,7 +77,7 @@ function GetDesire()
         and not J.IsSuspiciousIllusion(enemyHero)
 		and not enemyHero:HasModifier('modifier_necrolyte_reapers_scythe')
         and (   J.IsInLaningPhase() and J.IsInRange(bot, enemyHero, 1600)
-            or (not J.IsInLaningPhase() and (((GetUnitToUnitDistance(bot, enemyHero) - botAttackRange) / bot:GetCurrentMovementSpeed()) <= 10.0)))
+            or (not J.IsInLaningPhase() and (((GetUnitToUnitDistance(bot, enemyHero) - botAttackRange) / bot:GetCurrentMovementSpeed()) <= 6.0)))
         then
             fAllyDamage = 0
 
@@ -91,7 +91,7 @@ function GetDesire()
 				and not allyHero:HasModifier('modifier_necrolyte_reapers_scythe')
 				and not allyHero:HasModifier('modifier_skeleton_king_reincarnation_scepter_active')
 				and not allyHero:HasModifier('modifier_teleporting')
-                and (((GetUnitToUnitDistance(allyHero, enemyHero) - botAttackRange) / allyHero:GetCurrentMovementSpeed()) <= 10.0)
+                and (((GetUnitToUnitDistance(allyHero, enemyHero) - botAttackRange) / allyHero:GetCurrentMovementSpeed()) <= 6.0)
                 and (bot:GetPlayerID() == allyHero:GetPlayerID()
                     or J.IsNonStableHero(allyHero)
                     or allyHero:GetAttackTarget() == enemyHero
@@ -119,7 +119,7 @@ function GetDesire()
                 and not J.IsSuspiciousIllusion(possibleEnemyHero)
                 and not possibleEnemyHero:HasModifier('modifier_necrolyte_reapers_scythe')
                 and not possibleEnemyHero:HasModifier('modifier_teleporting')
-                and ((GetUnitToUnitDistance(bot, possibleEnemyHero)) / possibleEnemyHero:GetCurrentMovementSpeed()) <= 10.0
+                and ((GetUnitToUnitDistance(bot, possibleEnemyHero)) / possibleEnemyHero:GetCurrentMovementSpeed()) <= 6.0
                 then
                     fEnemyDamage = fEnemyDamage + possibleEnemyHero:GetEstimatedDamageToTarget(false, bot, 3.0, DAMAGE_TYPE_ALL)
                 end

@@ -14,6 +14,7 @@ local fRetreatFromRoshanTime = 0
 
 local fCurrentRunTime = 0
 local fShouldRunTime = 0
+local fLastRetreatDesire = 0
 
 local hTeamAncient, hEnemyAncient
 
@@ -289,14 +290,11 @@ function GetDesire()
         nHealth = botHP * 0.8 + botMP * 0.2
     end
 
-    nDesire = 1 - ((nHealth + 1 - (1 - nHealth) ^ 4) / 2)
+    nDesire = 1 - ((nHealth + 1 - (1 - nHealth ^ 2) ^ 4) / 2)
 
     if nEnemyNearbyCount > 0 then
         if nEnemyNearbyCount - nAllyNearbyCount > 0 then
             nDesire = nDesire + (nEnemyNearbyCount - nAllyNearbyCount) * (0.75 / 4)
-            if J.IsInLaningPhase() then
-                nDesire = nDesire + (#J.GetHeroesTargetingUnit(nEnemyHeroes, bot)) * (0.75 / 4)
-            end
         end
 
         if not bWeAreStronger and nEnemyNearbyCount >= nAllyNearbyCount then nDesire = nDesire + 0.25 end
@@ -326,18 +324,34 @@ function GetDesire()
     end
 
     if J.IsInLaningPhase() then
-        if not bot:WasRecentlyDamagedByAnyHero(3.0)
-        and botHP > 0.25
-        and bot:DistanceFromFountain() > 4000
+        if  (not bot:WasRecentlyDamagedByAnyHero(3.0))
+        and (not bot:WasRecentlyDamagedByCreep(2.0) and botHP > 0.2)
+        and (not bot:WasRecentlyDamagedByTower(2.0) and botHP > 0.2)
+        and (bot:DistanceFromFountain() > 4000)
         and (#J.GetHeroesTargetingUnit(nEnemyHeroes, bot) == 0)
         then
-            nDesire = nDesire -  0.75
+            if botHP > 0.25
+            or botHealthRegen > 20
+            or bot:HasModifier('modifier_tango_heal')
+			or bot:HasModifier('modifier_flask_healing')
+			or bot:HasModifier('modifier_juggernaut_healing_ward_heal')
+			or bot:HasModifier('modifier_item_urn_heal')
+			or bot:HasModifier('modifier_item_spirit_vessel_heal')
+            then
+                nDesire = nDesire / 2
+            end
         end
     end
 
     -- mulling
     -- nDesire = nDesire + X.GetUnitDesire(1200)
-    nDesire = nDesire + X.RetreatWhenTowerTargetedDesire()
+    -- nDesire = nDesire + X.RetreatWhenTowerTargetedDesire()
+
+    nDesire = Clamp(nDesire, 0.0, 1.0)
+
+    local alpha = 0.3
+    nDesire = fLastRetreatDesire * (1 - alpha) + nDesire * alpha
+    fLastRetreatDesire = nDesire
 
     return Min(nDesire, 1.0)
 end

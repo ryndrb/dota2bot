@@ -25,12 +25,6 @@ local HeroBuild = {
 					['t15'] = {10, 0},
 					['t10'] = {0, 10},
 				},
-				[2] = {
-					['t25'] = {0, 10},
-					['t20'] = {0, 10},
-					['t15'] = {10, 0},
-					['t10'] = {0, 10},
-				},
             },
             ['ability'] = {
                 [1] = {2,1,2,3,2,6,2,3,3,3,6,1,1,1,6},
@@ -38,11 +32,11 @@ local HeroBuild = {
             ['buy_list'] = {
 				"item_tango",
 				"item_double_branches",
-				"item_double_gauntlets",
+				"item_magic_stick",
 				"item_quelling_blade",
 			
-				"item_magic_wand",
 				"item_phase_boots",
+				"item_magic_wand",
 				"item_armlet",
 				"item_radiance",--
 				"item_blink",
@@ -56,9 +50,45 @@ local HeroBuild = {
 				"item_travel_boots_2",--
 			},
             ['sell_list'] = {
-				"item_quelling_blade", "item_radiance",
-				"item_gauntlets", "item_blink",
-				"item_gauntlets", "item_black_king_bar",
+				"item_quelling_blade", "item_black_king_bar",
+				"item_magic_wand", "item_assault",
+				"item_armlet", "item_abyssal_blade",
+			},
+        },
+        [2] = {
+            ['talent'] = {
+				[1] = {
+					['t25'] = {0, 10},
+					['t20'] = {0, 10},
+					['t15'] = {10, 0},
+					['t10'] = {0, 10},
+				},
+            },
+            ['ability'] = {
+                [1] = {2,1,2,3,2,6,2,3,3,3,6,1,1,1,6},
+            },
+            ['buy_list'] = {
+				"item_tango",
+				"item_double_branches",
+				"item_magic_stick",
+				"item_quelling_blade",
+			
+				"item_phase_boots",
+				"item_magic_wand",
+				"item_armlet",
+				"item_desolator",--
+				"item_blink",
+				"item_black_king_bar",--
+				"item_assault",--
+				"item_aghanims_shard",
+				"item_abyssal_blade",--
+				"item_swift_blink",--
+				"item_moon_shard",
+				"item_ultimate_scepter_2",
+				"item_travel_boots_2",--
+			},
+            ['sell_list'] = {
+				"item_quelling_blade", "item_black_king_bar",
 				"item_magic_wand", "item_assault",
 				"item_armlet", "item_abyssal_blade",
 			},
@@ -83,8 +113,8 @@ local HeroBuild = {
 					['t25'] = {0, 10},
 					['t20'] = {0, 10},
 					['t15'] = {10, 0},
-					['t10'] = {10, 0},
-				}
+					['t10'] = {0, 10},
+				},
             },
             ['ability'] = {
                 [1] = {2,1,2,3,2,6,2,3,3,3,6,1,1,1,6},
@@ -92,11 +122,11 @@ local HeroBuild = {
             ['buy_list'] = {
 				"item_tango",
 				"item_double_branches",
-				"item_double_gauntlets",
+				"item_magic_stick",
 				"item_quelling_blade",
 			
-				"item_magic_wand",
 				"item_phase_boots",
+				"item_magic_wand",
 				"item_armlet",
 				"item_radiance",--
 				"item_blink",
@@ -110,9 +140,45 @@ local HeroBuild = {
 				"item_travel_boots_2",--
 			},
             ['sell_list'] = {
-				"item_quelling_blade", "item_radiance",
-				"item_gauntlets", "item_blink",
-				"item_gauntlets", "item_black_king_bar",
+				"item_quelling_blade", "item_black_king_bar",
+				"item_magic_wand", "item_assault",
+				"item_armlet", "item_abyssal_blade",
+			},
+        },
+        [2] = {
+            ['talent'] = {
+				[1] = {
+					['t25'] = {0, 10},
+					['t20'] = {0, 10},
+					['t15'] = {10, 0},
+					['t10'] = {0, 10},
+				},
+            },
+            ['ability'] = {
+                [1] = {2,1,2,3,2,6,2,3,3,3,6,1,1,1,6},
+            },
+            ['buy_list'] = {
+				"item_tango",
+				"item_double_branches",
+				"item_magic_stick",
+				"item_quelling_blade",
+			
+				"item_phase_boots",
+				"item_magic_wand",
+				"item_armlet",
+				"item_desolator",--
+				"item_blink",
+				"item_black_king_bar",--
+				"item_assault",--
+				"item_aghanims_shard",
+				"item_abyssal_blade",--
+				"item_swift_blink",--
+				"item_moon_shard",
+				"item_ultimate_scepter_2",
+				"item_travel_boots_2",--
+			},
+            ['sell_list'] = {
+				"item_quelling_blade", "item_black_king_bar",
 				"item_magic_wand", "item_assault",
 				"item_armlet", "item_abyssal_blade",
 			},

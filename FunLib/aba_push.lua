@@ -20,7 +20,6 @@ function Push.GetPushDesire(bot, lane)
 	end
 
 	if (not bMyLane and J.IsCore(bot) and J.IsInLaningPhase())
-    or (J.IsDoingRoshan(bot) and #J.GetAlliesNearLoc(J.GetCurrentRoshanLocation(), 2800) >= 3)
     or ((#J.GetAlliesNearLoc(J.GetTormentorLocation(GetTeam()), 1600) >= 3) or #J.GetAlliesNearLoc(J.GetTormentorWaitingLocation(GetTeam()), 2500) >= 3)
 	then
 		return BOT_MODE_DESIRE_NONE
@@ -92,15 +91,15 @@ function Push.GetPushDesire(bot, lane)
         end
     end
 
-    -- mulling
-    local vEnemyLaneFrontLocation = GetLaneFrontLocation(GetOpposingTeam(), lane, 0)
-    if Push.ShouldWaitForImportantItemsSpells(vEnemyLaneFrontLocation)
-    and (  eAliveCount >= aAliveCount
-        or eAliveCount >= aAliveCount and eAliveCoreCount >= aAliveCoreCount
-        )
-    then
-        return BOT_MODE_DESIRE_NONE
-    end
+    -- -- mulling
+    -- local vEnemyLaneFrontLocation = GetLaneFrontLocation(GetOpposingTeam(), lane, 0)
+    -- if Push.ShouldWaitForImportantItemsSpells(vEnemyLaneFrontLocation)
+    -- and (  eAliveCount >= aAliveCount
+    --     or eAliveCount >= aAliveCount and eAliveCoreCount >= aAliveCoreCount
+    --     )
+    -- then
+    --     return BOT_MODE_DESIRE_NONE
+    -- end
 
     local botTarget = bot:GetAttackTarget()
     if J.IsValidBuilding(botTarget)
@@ -116,15 +115,14 @@ function Push.GetPushDesire(bot, lane)
     end
 
     -- General Push
-    if (not J.IsCore(bot) and (Push.WhichLaneToPush(bot, lane) == lane))
-    or (J.IsCore(bot) and ((J.IsLateGame() and (Push.WhichLaneToPush(bot, lane) == lane)) or (J.IsEarlyGame() or J.IsMidGame())))
-    then
+    if Push.WhichLaneToPush(bot, lane) == lane then
         if eAliveCount == 0
         or aAliveCoreCount >= eAliveCoreCount
         or (aAliveCoreCount >= 1 and aAliveCount >= eAliveCount + 2)
+        or (GetUnitToUnitDistance(bot, GetAncient(GetOpposingTeam())) < 3500 and #nInRangeAlly >= #nInRangeEnemy)
         then
-            if J.DoesTeamHaveAegis() then
-                nPushDesire = nPushDesire + 0.3
+            if J.DoesTeamHaveAegis() and aAliveCount >= 4 then
+                nPushDesire = nPushDesire + 0.25
             end
 
             if aAliveCount >= eAliveCount
@@ -132,7 +130,7 @@ function Push.GetPushDesire(bot, lane)
             -- and (DotaTime() < (J.IsModeTurbo() and 30 * 60 or 50 * 60))
             then
                 local teamNetworth, enemyNetworth = J.GetInventoryNetworth()
-                nPushDesire = nPushDesire + RemapValClamped(teamNetworth - enemyNetworth, 5000, 15000, 0.0, 1.0)
+                nPushDesire = nPushDesire + RemapValClamped(teamNetworth - enemyNetworth, 5000, (J.IsModeTurbo() and 15000) or 10000, 0.0, 0.5)
             end
 
             return RemapValClamped(nPushDesire, 0, 1, 0, nMaxDesire)
@@ -150,23 +148,29 @@ function Push.WhichLaneToPush(bot, lane)
     local vLaneFrontLocationTop = GetLaneFrontLocation(GetTeam(), LANE_TOP, 0)
     local vLaneFrontLocationMid = GetLaneFrontLocation(GetTeam(), LANE_MID, 0)
     local vLaneFrontLocationBot = GetLaneFrontLocation(GetTeam(), LANE_BOT, 0)
+    local topBuilding = J.GetFurthestBuildingAlongLane(GetOpposingTeam(), LANE_TOP)
+    local midBuilding = J.GetFurthestBuildingAlongLane(GetOpposingTeam(), LANE_MID)
+    local botBuilding = J.GetFurthestBuildingAlongLane(GetOpposingTeam(), LANE_BOT)
 
     -- distance and enemy scores; should more likely to consider a lane closest to a human/core
     for i = 1, 5 do
         local member = GetTeamMember(i)
         if J.IsValidHero(member) then
-            local topDist = GetUnitToLocationDistance(member, vLaneFrontLocationTop)
-            local midDist = GetUnitToLocationDistance(member, vLaneFrontLocationMid)
-            local botDist = GetUnitToLocationDistance(member, vLaneFrontLocationBot)
+            local topDist = GetUnitToLocationDistance(member, vLaneFrontLocationTop) * 0.9 * 0.6
+            local midDist = GetUnitToLocationDistance(member, vLaneFrontLocationMid)       * 0.6
+            local botDist = GetUnitToLocationDistance(member, vLaneFrontLocationBot) * 0.9 * 0.6
+            topDist = topDist + GetUnitToUnitDistance(member, topBuilding) * 0.9 * 0.4
+            midDist = midDist + GetUnitToUnitDistance(member, midBuilding)       * 0.4
+            botDist = botDist + GetUnitToUnitDistance(member, botBuilding) * 0.9 * 0.4
 
-            if J.IsCore(member) and not member:IsBot() then
-                topDist = topDist * 0.2
-                midDist = midDist * 0.2
-                botDist = botDist * 0.2
+            if J.IsCore(member) or not member:IsBot() then
+                topDist = topDist * 0.5
+                midDist = midDist * 0.5
+                botDist = botDist * 0.5
             elseif not J.IsCore(member) then
-                topDist = topDist * 1.5
-                midDist = midDist * 1.5
-                botDist = botDist * 1.5
+                topDist = topDist * 1.2
+                midDist = midDist * 1.2
+                botDist = botDist * 1.2
             end
 
             topLaneScore = topLaneScore + topDist
@@ -214,18 +218,13 @@ function Push.WhichLaneToPush(bot, lane)
     botLaneScore = botLaneScore * (0.05 * count3 + 1)
 
     -- tower scores; should more likely consider taking out outer tower first, ^ unless overwhelmingly closer (case above)
-    local topLaneTier = Push.GetLaneBuildingTier(lane)
-    local midLaneTier = Push.GetLaneBuildingTier(lane)
-    local botLaneTier = Push.GetLaneBuildingTier(lane)
+    local topLaneTier = Push.GetLaneBuildingTier(LANE_TOP)
+    local midLaneTier = Push.GetLaneBuildingTier(LANE_MID)
+    local botLaneTier = Push.GetLaneBuildingTier(LANE_BOT)
 
-    -- slight, not too strong; start mid first
-    if midLaneTier < topLaneTier and midLaneTier < botLaneTier then
-        midLaneScore = midLaneScore * RemapValClamped(midLaneTier, 1, 3, 0.2, 0.5)
-    elseif topLaneTier < midLaneTier and topLaneTier < botLaneTier then
-        topLaneScore = topLaneScore * RemapValClamped(topLaneTier, 1, 3, 0.2, 0.5)
-    elseif botLaneTier < topLaneTier and botLaneTier < botLaneTier then
-        botLaneScore = botLaneScore * RemapValClamped(midLaneTier, 1, 3, 0.2, 0.5)
-    end
+    topLaneScore = topLaneScore * RemapValClamped(topLaneTier, 1, 3, 0.25, 1)
+    midLaneScore = midLaneScore * RemapValClamped(midLaneTier, 1, 3, 0.25, 1)
+    botLaneScore = botLaneScore * RemapValClamped(botLaneTier, 1, 3, 0.25, 1)
 
     if  topLaneScore < midLaneScore
     and topLaneScore < botLaneScore
@@ -283,10 +282,10 @@ function Push.PushThink(bot, lane)
         targetLoc = tUrgentDefend[2]
     end
 
-    if J.IsValidBuilding(nEnemyTowers[1]) and (nEnemyTowers[1]:GetAttackTarget() == bot or (nEnemyTowers[1]:GetAttackTarget() ~= bot and bot:WasRecentlyDamagedByTower(#nAllyCreeps <= 2 and 4.0 or 2.0))) then
+    if J.IsValidBuilding(nEnemyTowers[1]) and (nEnemyTowers[1]:GetAttackTarget() == bot or (bot:WasRecentlyDamagedByTower(#nAllyCreeps <= 2 and 4.0 or 2.0))) then
         local nDamage = nEnemyTowers[1]:GetAttackDamage() * nEnemyTowers[1]:GetAttackSpeed() * 5.0 - bot:GetHealthRegen() * 5.0
-        if (bot:GetActualIncomingDamage(nDamage, DAMAGE_TYPE_PHYSICAL) / bot:GetHealth() > 0.15)
-        or #nAllyCreeps > 2
+        if (bot:GetActualIncomingDamage(nDamage, DAMAGE_TYPE_PHYSICAL) / bot:GetHealth() > 0.4)
+        -- or (#nAllyCreeps <= 2 and J.GetHP(nEnemyTowers[1]) > 0.3)
         then
             local vLocation = GetLaneFrontLocation(GetTeam(), lane, -1200)
             bot:Action_MoveToLocation(vLocation)
@@ -309,8 +308,11 @@ function Push.PushThink(bot, lane)
 
     local nRange = math.min(700 + botAttackRange, 1600)
 
+    local nInRangeAlly = J.GetAlliesNearLoc(hEnemyAncient:GetLocation(), 3200)
     local nCreeps = bot:GetNearbyLaneCreeps(nRange, true)
-    if GetUnitToLocationDistance(bot, targetLoc) <= 1200 then
+    if  ((J.IsCore(bot) and bot:GetLevel() >= 12) or bot:GetLevel() >= 18)
+    and (#nInRangeAlly == 0)
+    then
         nCreeps = bot:GetNearbyCreeps(nRange, true)
     end
     nCreeps = Push.GetSpecialUnitsNearby(bot, nCreeps, nRange)
@@ -334,10 +336,10 @@ function Push.PushThink(bot, lane)
         end
     end
 
-    if GetUnitToUnitDistance(bot, hEnemyAncient) <= 3200
-    and (   GetTower(GetOpposingTeam(), TOWER_TOP_2) == nil
-        and GetTower(GetOpposingTeam(), TOWER_MID_2) == nil
-        and GetTower(GetOpposingTeam(), TOWER_BOT_2) == nil)
+    if GetUnitToUnitDistance(bot, hEnemyAncient) <= 4000
+    and (  GetTower(GetOpposingTeam(), TOWER_TOP_2) == nil
+        or GetTower(GetOpposingTeam(), TOWER_MID_2) == nil
+        or GetTower(GetOpposingTeam(), TOWER_BOT_2) == nil)
     and not bHasPierceTheVeil
     then
         local hBuildingTarget = TryClearingOtherLaneHighGround(bot, targetLoc)
@@ -350,13 +352,13 @@ function Push.PushThink(bot, lane)
     local nBarracks = bot:GetNearbyBarracks(nRange, true)
     if J.IsValidBuilding(nBarracks[1]) and J.CanBeAttacked(nBarracks[1]) and not bHasPierceTheVeil then
         for _, barrack in pairs(nBarracks) do
-            if J.IsValid(barrack) and string.find(barrack:GetUnitName(), 'melee') then
+            if J.IsValid(barrack) and string.find(barrack:GetUnitName(), 'range') then
                 bot:Action_AttackUnit(barrack, true)
                 return
             end
         end
         for _, barrack in pairs(nBarracks) do
-            if J.IsValid(barrack) and string.find(barrack:GetUnitName(), 'range') then
+            if J.IsValid(barrack) and string.find(barrack:GetUnitName(), 'melee') then
                 bot:Action_AttackUnit(barrack, true)
                 return
             end
@@ -428,12 +430,12 @@ function TryClearingOtherLaneHighGround(bot, vLocation)
     local hBarrackTargetDistance = math.huge
     for _, barrack in pairs(unitList) do
         if IsValid(barrack)
-        and (  barrack == GetBarracks(GetOpposingTeam(), BARRACKS_TOP_MELEE)
-            or barrack == GetBarracks(GetOpposingTeam(), BARRACKS_TOP_RANGED)
-            or barrack == GetBarracks(GetOpposingTeam(), BARRACKS_MID_MELEE)
+        and (  barrack == GetBarracks(GetOpposingTeam(), BARRACKS_TOP_RANGED)
+            or barrack == GetBarracks(GetOpposingTeam(), BARRACKS_TOP_MELEE)
             or barrack == GetBarracks(GetOpposingTeam(), BARRACKS_MID_RANGED)
-            or barrack == GetBarracks(GetOpposingTeam(), BARRACKS_BOT_MELEE)
-            or barrack == GetBarracks(GetOpposingTeam(), BARRACKS_BOT_RANGED))
+            or barrack == GetBarracks(GetOpposingTeam(), BARRACKS_MID_MELEE)
+            or barrack == GetBarracks(GetOpposingTeam(), BARRACKS_BOT_RANGED)
+            or barrack == GetBarracks(GetOpposingTeam(), BARRACKS_BOT_MELEE))
         then
             local barrackDistance = GetUnitToLocationDistance(barrack, vLocation)
             if barrackDistance < hBarrackTargetDistance then

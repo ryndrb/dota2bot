@@ -14,6 +14,19 @@ function Helper.IsCore(hero, team)
     return false
 end
 
+function Helper.GetPosition(hero, team)
+    local posMap = {
+        [1] = 2, [2] = 3, [3] = 1, [4] = 5, [5] = 4,
+    }
+    for i = 1, 5 do
+        if team[i] and hero == team[i] then
+            return posMap[i]
+        end
+    end
+
+    return -1
+end
+
 function Helper.DotaTime()
     local time = GameRules:GetDOTATime(false, false)
     if time == nil or time < 0 then return 0 end

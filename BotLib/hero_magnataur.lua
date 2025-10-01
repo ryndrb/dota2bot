@@ -409,7 +409,7 @@ function X.ConsiderShockwave()
             and not J.IsDisabled(nAllyInRangeEnemy[1])
             and (GetUnitToUnitDistance(bot, allyHero) > GetUnitToUnitDistance(nAllyInRangeEnemy[1], allyHero) + 200)
             then
-                local nDelay = (GetUnitToUnitDistance(bot, botTarget) / nSpeed) + nCastPoint
+                local nDelay = (GetUnitToUnitDistance(bot, nAllyInRangeEnemy[1]) / nSpeed) + nCastPoint
                 return BOT_ACTION_DESIRE_HIGH, nAllyInRangeEnemy[1]:GetExtrapolatedLocation(nDelay + nCastPoint)
             end
         end

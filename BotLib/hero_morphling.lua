@@ -7,7 +7,6 @@ local sTalentList = J.Skill.GetTalentList( bot )
 local sAbilityList = J.Skill.GetAbilityList( bot )
 local sRole = J.Item.GetRoleItemsBuyList( bot )
 local SPL = require( GetScriptDirectory()..'/FunLib/spell_list' )
-local M = require( GetScriptDirectory()..'/FunLib/morphling_utility' )
 
 local sSelectedBuild = {}
 local HeroBuild = {}
@@ -28,8 +27,8 @@ HeroBuild = {
             ['talent'] = {
                 [1] = {
                     ['t25'] = {0, 10},
-                    ['t20'] = {0, 10},
-                    ['t15'] = {10, 0},
+                    ['t20'] = {10, 0},
+                    ['t15'] = {0, 10},
                     ['t10'] = {10, 0},
                 }
             },
@@ -49,17 +48,17 @@ HeroBuild = {
                 "item_butterfly",--
                 "item_black_king_bar",--
                 "item_aghanims_shard",
-                "item_satanic",--
                 "item_greater_crit",--
-                "item_moon_shard",
                 "item_skadi",--
+                "item_moon_shard",
+                "item_satanic",--
                 "item_ultimate_scepter_2",
             },
             ['sell_list'] = {
                 "item_circlet", "item_black_king_bar",
-                "item_vladmir", "item_satanic",
                 "item_magic_wand", "item_greater_crit",
                 "item_power_treads", "item_skadi",
+                "item_vladmir", "item_satanic",
             },
         },
         [2] = {
@@ -83,13 +82,14 @@ HeroBuild = {
                 "item_power_treads",
                 "item_lifesteal",
                 "item_mjollnir",--
-                "item_black_king_bar",--
                 "item_butterfly",--
+                "item_black_king_bar",--
                 "item_aghanims_shard",
                 "item_greater_crit",--
                 "item_satanic",--
-                "item_bloodthorn",--
+                "item_orchid",
                 "item_moon_shard",
+                "item_bloodthorn",--
                 "item_ultimate_scepter_2",
             },
             ['sell_list'] = {
@@ -103,8 +103,8 @@ HeroBuild = {
             ['talent'] = {
                 [1] = {
                     ['t25'] = {0, 10},
-                    ['t20'] = {0, 10},
-                    ['t15'] = {10, 0},
+                    ['t20'] = {10, 0},
+                    ['t15'] = {0, 10},
                     ['t10'] = {10, 0},
                 }
             },
@@ -125,18 +125,18 @@ HeroBuild = {
                 "item_butterfly",--
                 "item_black_king_bar",--
                 "item_aghanims_shard",
-                "item_satanic",--
                 "item_greater_crit",--
-                "item_moon_shard",
                 "item_disperser",--
+                "item_moon_shard",
+                "item_satanic",--
                 "item_ultimate_scepter_2",
             },
             ['sell_list'] = {
                 "item_circlet", "item_butterfly",
                 "item_magic_wand", "item_black_king_bar",
-                "item_vladmir", "item_satanic",
                 "item_bottle", "item_greater_crit",
                 "item_power_treads", "item_disperser",
+                "item_vladmir", "item_satanic",
             },
         },
         [2] = {
@@ -153,26 +153,28 @@ HeroBuild = {
             },
             ['buy_list'] = {
                 "item_tango",
-                "item_branches",
-                "item_gloves",
+                "item_double_branches",
+                "item_magic_stick",
+                "item_circlet",
             
                 "item_bottle",
-                "item_magic_wand",
                 "item_power_treads",
-                "item_lifesteal",
-                "item_mjollnir",--
-                "item_black_king_bar",--
+                "item_magic_wand",
+                "item_maelstrom",
+                "item_dragon_lance",
                 "item_butterfly",--
+                "item_black_king_bar",--
                 "item_aghanims_shard",
-                "item_greater_crit",--
-                "item_satanic",--
+                "item_revenants_brooch",--
+                "item_mjollnir",--
                 "item_bloodthorn",--
                 "item_moon_shard",
                 "item_ultimate_scepter_2",
             },
             ['sell_list'] = {
-                "item_magic_wand", "item_butterfly",
-                "item_bottle", "item_greater_crit",
+                "item_circlet", "item_butterfly",
+                "item_magic_wand", "item_black_king_bar",
+                "item_bottle", "item_revenants_brooch",
                 "item_power_treads", "item_bloodthorn",
             },
         },
@@ -254,8 +256,8 @@ local MorphDesire, MorphTarget
 
 local MorphedHeroName = ''
 
-local botTarget
-local botHP, botMP
+local bAttacking = false
+local botTarget, botHP
 local nAllyHeroes, nEnemyHeroes
 
 local bFlowFacet = false
@@ -271,7 +273,6 @@ local AGI_GROWTH_RATE = 3.9
 local STR_GROWTH_RATE = 2.6
 
 -- do similar thing as Rubick's
--- TODO: Update some bot fields from select heroes to not give errors
 local heroAbilityUsage = {}
 local function HandleSpell(spell)
     if spell == nil then return end
@@ -293,8 +294,11 @@ local function HandleSpell(spell)
 end
 
 local nMorphTime = {0, math.huge}
+local nAverageCooldownTime = math.pi
 
 function X.SkillsComplement()
+    bot = GetBot()
+
     if J.CanNotUseAbility(bot) then return end
 
     Waveform              = bot:GetAbilityByName('morphling_waveform')
@@ -303,37 +307,41 @@ function X.SkillsComplement()
     AttributeShiftAGI     = bot:GetAbilityByName('morphling_morph_agi')
     AttributeShiftSTR     = bot:GetAbilityByName('morphling_morph_str')
 
+	bAttacking = J.IsAttacking(bot)
+    botHP = J.GetHP(bot)
+    botTarget = J.GetProperTarget(bot)
     nAllyHeroes = bot:GetNearbyHeroes(1600, false, BOT_MODE_NONE)
     nEnemyHeroes = bot:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
-    botTarget = J.GetProperTarget(bot)
-    botHP = J.GetHP(bot)
-    botMP = J.GetMP(bot)
 
     bFlowFacet = bot:GetPrimaryAttribute() == ATTRIBUTE_STRENGTH and true or false
 
     if bot:GetAbilityInSlot(0) == Waveform then bot.IsMorphling = true else bot.IsMorphling = false end
 
     if bot:HasModifier('modifier_morphling_replicate_manager') then
-        -- Replicate back if it's a good hero
-        local nCooldownTime = M.GetMorphLength(bot, MorphedHeroName)
-        if DotaTime() > nMorphTime[2] + nCooldownTime + (0.25 + 0.1) then
-            local nInRangeEnemy = J.GetEnemiesNearLoc(bot:GetLocation(), 1200)
+        -- replicate back
+        if DotaTime() > nMorphTime[2] + nAverageCooldownTime + (0.25 + 0.1) then
             if bot.IsMorphling == true then
                 if J.IsGoingOnSomeone(bot)
                 and J.IsValidHero(botTarget)
                 and J.IsInRange(bot, botTarget, 900)
                 then
-                    bot:Action_UseAbility(MorphReplicate)
-                    nMorphTime[1] = DotaTime()
-                    return
+                    if (IsGoodToMorphBack(MorphedHeroName, true))
+                    or (botHP > 0.8)
+                    or (botHP > 0.5 and #nAllyHeroes > #nEnemyHeroes)
+                    then
+                        bot:Action_UseAbility(MorphReplicate)
+                        nMorphTime[1] = DotaTime()
+                        return
+                    end
                 end
 
-                if J.IsRetreating(bot) and not J.IsRealInvisible(bot) and M.IsGoodToMorphBack(MorphedHeroName)
-                and Waveform:GetCooldownTimeRemaining() > 3
+                if J.IsRetreating(bot)
+                and not J.IsRealInvisible(bot)
+                and IsGoodToMorphBack(MorphedHeroName, false)
+                and not J.CanCastAbility(Waveform, 3)
                 then
-                    if J.IsValidHero(nInRangeEnemy[1])
-                    and J.IsChasingTarget(nInRangeEnemy[1], bot)
-                    then
+                    local nInRangeEnemy = J.GetEnemiesNearLoc(bot:GetLocation(), 1200)
+                    if #nInRangeEnemy > 0 and botHP > 0.4 then
                         bot:Action_UseAbility(MorphReplicate)
                         nMorphTime[1] = DotaTime()
                         return
@@ -344,22 +352,90 @@ function X.SkillsComplement()
 
         -- give 3 seconds to cast any spells
         if DotaTime() < nMorphTime[1] + 3 + (0.25 + 0.1) then
-            if bot.IsMorphling == false and not MorphReplicate:IsHidden() and J.CanCastAbility(MorphReplicate) and MorphedHeroName ~= '' then
+            if bot.IsMorphling == false and J.CanCastAbility(MorphReplicate) then
+                -- just average it out
+                if nAverageCooldownTime == math.pi then
+                    local bCanCastAnAbility = false
+                    local count = 0
+                    local weightedCooldownSum = 0
+                    local totalWeight = 0
+
+                    for i = 0, 7 do
+                        local hAbility = bot:GetAbilityInSlot(i)
+                        if  hAbility
+                        and hAbility ~= MorphReplicate
+                        and hAbility:IsTrained()
+                        and not hAbility:IsPassive()
+                        and string.find(hAbility:GetName(), string.gsub(MorphedHeroName, 'npc_dota_hero_',''))
+                        and not string.find(hAbility:GetName(), 'morphling')
+                        then
+                            if J.CanCastAbilitySoon(hAbility, 1.5) then
+                                bCanCastAnAbility = true
+                            end
+
+                            -- weigh shorter cooldowns more
+                            local nCooldown = hAbility:GetCooldown()
+                            if nCooldown > 0 then
+                                local weight = 1 / math.sqrt(nCooldown)
+                                weightedCooldownSum = weightedCooldownSum + (nCooldown * weight)
+                                totalWeight = totalWeight + weight
+                                count = count + 1
+                            end
+                        end
+                    end
+
+                    -- 'nothing' to cast
+                    if not bCanCastAnAbility then
+                        bot:Action_UseAbility(MorphReplicate)
+                        nMorphTime[2] = DotaTime()
+                        return
+                    end
+
+                    if count > 0 then
+                        nAverageCooldownTime = Max(weightedCooldownSum / totalWeight, math.pi)
+                    end
+                end
+
                 for i = 0, 6 do
                     local hAbility = bot:GetAbilityInSlot(i)
-                    if hAbility ~= nil and not hAbility ~= MorphReplicate then
+                    if hAbility ~= nil and hAbility ~= MorphReplicate then
                         HandleSpell(hAbility)
                     end
                 end
             end
         else
-            if bot.IsMorphling == false and not MorphReplicate:IsHidden() and J.CanCastAbility(MorphReplicate) then
-                bot:Action_UseAbility(MorphReplicate)
-                nMorphTime[2] = DotaTime()
-                return
+            local bShouldReplicateToMorph = true
+
+            if bot:HasModifier('modifier_terrorblade_metamorphosis')
+            or bot:HasModifier('modifier_terrorblade_metamorphosis_transform')
+            then
+                if botHP > 0.4 and J.IsGoingOnSomeone(bot) then
+                    bShouldReplicateToMorph = false
+                end
+            end
+
+            if MorphedHeroName == 'npc_dota_hero_obsidian_destroyer' then
+                local hAbility1 = bot:GetAbilityInSlot(0)
+                local hAbility3 = bot:GetAbilityInSlot(2)
+                if  (hAbility1 and hAbility1:IsTrained() and hAbility1:GetLevel() >= 3)
+                and (hAbility3 and hAbility3:IsTrained() and hAbility1:GetLevel() >= 3)
+                then
+                    if J.IsGoingOnSomeone(bot) then
+                        bShouldReplicateToMorph = false
+                    end
+                end
+            end
+
+            if bShouldReplicateToMorph then
+                if bot.IsMorphling == false and J.CanCastAbility(MorphReplicate) then
+                    bot:Action_UseAbility(MorphReplicate)
+                    nMorphTime[2] = DotaTime()
+                    return
+                end
             end
         end
     else
+        nAverageCooldownTime = math.pi
         nMorphTime = {0, math.huge}
         MorphedHeroName = ''
     end
@@ -368,10 +444,8 @@ function X.SkillsComplement()
         X.SetRatios()
 
         AtttributeShiftDesire, Type = X.ConsiderAtttributeShift()
-        if AtttributeShiftDesire > 0
-        then
-            if Type == 'agi'
-            then
+        if AtttributeShiftDesire > 0 then
+            if Type == 'agi' then
                 bot:Action_UseAbility(AttributeShiftAGI)
             else
                 bot:Action_UseAbility(AttributeShiftSTR)
@@ -380,31 +454,27 @@ function X.SkillsComplement()
         end
 
         WaveformDesire, WaveformLocation = X.ConsiderWaveform()
-        if WaveformDesire > 0
-        then
+        if WaveformDesire > 0 then
             J.SetQueuePtToINT(bot, false)
             bot:ActionQueue_UseAbilityOnLocation(Waveform, WaveformLocation)
             return
         end
 
         AdaptiveStrikeSTRDesire, AdaptiveStrikeSTRTarget = X.ConsiderAdaptiveStrikeSTR()
-        if AdaptiveStrikeSTRDesire > 0
-        then
+        if AdaptiveStrikeSTRDesire > 0 then
             bot:Action_UseAbilityOnEntity(AdaptiveStrikeSTR, AdaptiveStrikeSTRTarget)
             return
         end
 
         AdaptiveStrikeAGIDesire, AdaptiveStrikeAGITarget = X.ConsiderAdaptiveStrikeAGI()
-        if AdaptiveStrikeAGIDesire > 0
-        then
+        if AdaptiveStrikeAGIDesire > 0 then
             J.SetQueuePtToINT(bot, false)
             bot:ActionQueue_UseAbilityOnEntity(AdaptiveStrikeAGI, AdaptiveStrikeAGITarget)
             return
         end
 
         MorphDesire, MorphTarget = X.ConsiderMorph()
-        if MorphDesire > 0
-        then
+        if MorphDesire > 0 then
             bot:Action_UseAbilityOnEntity(Morph, MorphTarget)
             nMorphTime[1] = DotaTime()
             MorphedHeroName = MorphTarget:GetUnitName()
@@ -423,53 +493,47 @@ function X.ConsiderWaveform()
 	local nSpeed = Waveform:GetSpecialValueInt('speed')
     local nDamage = Waveform:GetSpecialValueInt('#AbilityDamage')
     local nRadius = Waveform:GetSpecialValueInt('width')
-    local nManaAfter = J.GetManaAfter(Waveform:GetManaCost())
+    local nManaCost = Waveform:GetManaCost()
+    local fManaAfter = J.GetManaAfter(nManaCost)
+    local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {AdaptiveStrikeAGI, Morph})
+    local fManaThreshold2 = J.GetManaThreshold(bot, nManaCost, {Waveform, AdaptiveStrikeAGI, Morph})
 
     local vTeamFountain = J.GetTeamFountain()
+    local vLocationTeamFountain = J.VectorTowards(bot:GetLocation(), vTeamFountain, nCastRange)
 
 	if J.IsStuck(bot) then
-		return BOT_ACTION_DESIRE_HIGH, J.Site.GetXUnitsTowardsLocation(bot, vTeamFountain, nCastRange)
+		return BOT_ACTION_DESIRE_HIGH, vLocationTeamFountain
 	end
 
-    if not J.IsRealInvisible(bot) then
-        if J.IsStunProjectileIncoming(bot, 500)
-        or J.IsUnitTargetProjectileIncoming(bot, 500)
+    if not J.IsRealInvisible(bot) and not bot:IsMagicImmune() then
+        if (J.IsStunProjectileIncoming(bot, 500))
+        or (J.IsUnitTargetProjectileIncoming(bot, 500))
+        or (not bot:HasModifier('modifier_sniper_assassinate') and J.IsWillBeCastUnitTargetSpell(bot, 400))
         then
-            return BOT_ACTION_DESIRE_HIGH, J.Site.GetXUnitsTowardsLocation(bot, vTeamFountain, nCastRange)
-        end
-
-        if  not bot:HasModifier('modifier_sniper_assassinate')
-        and not bot:IsMagicImmune()
-        then
-            if J.IsWillBeCastUnitTargetSpell(bot, 400)
-            then
-                return BOT_ACTION_DESIRE_HIGH, J.Site.GetXUnitsTowardsLocation(bot, vTeamFountain, nCastRange)
-            end
+            return BOT_ACTION_DESIRE_HIGH, vLocationTeamFountain
         end
     end
 
 	if J.IsGoingOnSomeone(bot) then
 		if J.IsValidHero(botTarget)
         and J.CanBeAttacked(botTarget)
+        and GetUnitToLocationDistance(botTarget, J.GetEnemyFountain()) > 800
         and not J.IsInRange(bot, botTarget, bot:GetAttackRange())
 		and not J.IsSuspiciousIllusion(botTarget)
         and not botTarget:HasModifier('modifier_faceless_void_chronosphere_freeze')
 		and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
 		then
-            local nInRangeAlly = J.GetAlliesNearLoc(bot:GetLocation(), 1200)
-            local nInRangeEnemy = J.GetEnemiesNearLoc(botTarget:GetLocation(), 1200)
-            local nInRangeAlly2 = J.GetAlliesNearLoc(bot:GetLocation(), 650)
-            local nInRangeEnemy2 = J.GetEnemiesNearLoc(botTarget:GetLocation(), 650)
             local bStronger = J.WeAreStronger(bot, 1200)
 
-            if #nInRangeAlly >= #nInRangeEnemy and #nInRangeAlly2 >= #nInRangeEnemy2 and bStronger then
-                local vLocation = J.GetCorrectLoc(botTarget, (GetUnitToUnitDistance(bot, botTarget) / nSpeed) + nCastPoint)
+            if #nAllyHeroes >= #nEnemyHeroes and bStronger then
+                local eta = (GetUnitToUnitDistance(bot, botTarget) / nSpeed) + nCastPoint
+                local vLocation = J.VectorAway(botTarget:GetLocation(), bot:GetLocation(), 300)
                 local bTowerNearby = botTarget:HasModifier('modifier_tower_aura_bonus')
 
                 if GetUnitToLocationDistance(bot, vLocation) <= nCastRange then
                     if IsLocationPassable(vLocation) then
                         if J.IsInLaningPhase() then
-                            if not bTowerNearby then
+                            if not bTowerNearby or (J.WillKillTarget(botTarget, nDamage, DAMAGE_TYPE_MAGICAL, eta)) then
                                 return BOT_ACTION_DESIRE_HIGH, vLocation
                             end
                         else
@@ -481,7 +545,7 @@ function X.ConsiderWaveform()
                 if GetUnitToLocationDistance(bot, vLocation) > nCastRange and GetUnitToLocationDistance(bot, vLocation) < nCastRange + 350 then
                     if IsLocationPassable(vLocation) then
                         if J.IsInLaningPhase() then
-                            if not bTowerNearby then
+                            if not bTowerNearby or (J.WillKillTarget(botTarget, nDamage, DAMAGE_TYPE_MAGICAL, eta)) then
                                 return BOT_ACTION_DESIRE_HIGH, vLocation
                             end
                         else
@@ -498,68 +562,82 @@ function X.ConsiderWaveform()
 			if J.IsValidHero(enemyHero)
             and not J.IsSuspiciousIllusion(enemyHero)
             then
-                local nInRangeAlly = J.GetAlliesNearLoc(bot:GetLocation(), 1200)
-                local nInRangeEnemy = J.GetEnemiesNearLoc(enemyHero:GetLocation(), 1000)
-
-                if ((J.IsInLaningPhase() and #nInRangeEnemy >= #nInRangeAlly + 1) or (#nInRangeEnemy > #nInRangeAlly and not J.WeAreStronger(bot, 1200)))
-                or (botHP < 0.75 and J.IsChasingTarget(enemyHero, bot) and not J.IsInTeamFight(bot, 1200))
+                if (J.IsChasingTarget(enemyHero, bot) and not J.IsInTeamFight(bot, 1200) and bot:WasRecentlyDamagedByAnyHero(3.0))
+                or (#nEnemyHeroes > #nAllyHeroes and enemyHero:GetAttackTarget() == bot)
+                or (botHP < 0.65 and bot:WasRecentlyDamagedByAnyHero(3.0))
                 then
-                    return BOT_ACTION_DESIRE_HIGH, J.Site.GetXUnitsTowardsLocation(bot, vTeamFountain, nCastRange)
+                    return BOT_ACTION_DESIRE_HIGH, vLocationTeamFountain
                 end
-
 			end
         end
 	end
 
-    local bAttacking = J.IsAttacking(bot)
+    local nEnemyCreeps = bot:GetNearbyCreeps(nCastRange, true)
 
-	if J.IsPushing(bot) and bAttacking and not J.IsThereCoreNearby(1000) and nManaAfter > 0.35 then
-        local nEnemyCreeps = bot:GetNearbyCreeps(nCastRange, true)
-        if J.CanBeAttacked(nEnemyCreeps[1]) and not J.IsRunning(nEnemyCreeps[1]) then
-            local nLocationAoE = bot:FindAoELocation(true, false, nEnemyCreeps[1]:GetLocation(), 0, nRadius, 0, 0)
-            if nLocationAoE.count >= 4 then
-                local nInRangeEnemy = J.GetEnemiesNearLoc(nLocationAoE.targetloc, 1200)
-                if #nInRangeEnemy <= 1 then
+	if J.IsPushing(bot) and bAttacking and fManaAfter > fManaThreshold2 and fManaAfter > 0.5 and (J.IsCore(bot) or not J.IsThereCoreNearby(800)) and #nEnemyHeroes == 0 then
+        for _, creep in pairs(nEnemyCreeps) do
+            if J.IsValid(creep) and J.CanBeAttacked(creep) and not J.IsRunning(creep) then
+                local nLocationAoE = bot:FindAoELocation(true, false, creep:GetLocation(), 0, nRadius, 0, 0)
+                if nLocationAoE.count >= 4 then
                     return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc
                 end
             end
         end
 	end
 
-	if J.IsFarming(bot) and bAttacking and nManaAfter > 0.4 and bot:GetLevel() < 18 then
-        local nEnemyCreeps = bot:GetNearbyCreeps(nCastRange, true)
-        if J.CanBeAttacked(nEnemyCreeps[1])
-        and not J.IsRunning(nEnemyCreeps[1])
-        then
-            local nLocationAoE = bot:FindAoELocation(true, false, nEnemyCreeps[1]:GetLocation(), 0, nRadius, 0, 0)
-            if (nLocationAoE.count >= 3 or (nLocationAoE.count >= 2 and nEnemyCreeps[1]:IsAncientCreep())) then
-                return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc
+	if J.IsDefending(bot) and bAttacking and fManaAfter > fManaThreshold1 and #nEnemyHeroes == 0 then
+        for _, creep in pairs(nEnemyCreeps) do
+            if J.IsValid(creep) and J.CanBeAttacked(creep) and not J.IsRunning(creep) then
+                local nLocationAoE = bot:FindAoELocation(true, false, creep:GetLocation(), 0, nRadius, 0, 0)
+                if nLocationAoE.count >= 4 then
+                    return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc
+                end
             end
         end
 	end
 
-	if J.IsDoingRoshan(bot) and nManaAfter > 0.75 then
-		local roshLoc = J.GetCurrentRoshanLocation()
-        if GetUnitToLocationDistance(bot, roshLoc) > nCastRange then
-			local targetLoc = J.Site.GetXUnitsTowardsLocation(bot, roshLoc, nCastRange)
-			if #nEnemyHeroes == 0 and IsLocationPassable(targetLoc) then
-				return BOT_ACTION_DESIRE_HIGH, targetLoc
+	if J.IsFarming(bot) and fManaAfter > fManaThreshold2 and #nEnemyHeroes == 0 and not J.IsLateGame() then
+        for _, creep in pairs(nEnemyCreeps) do
+            if J.IsValid(creep) and J.CanBeAttacked(creep) and not J.IsRunning(creep) then
+                local nLocationAoE = bot:FindAoELocation(true, false, creep:GetLocation(), 0, nRadius, 0, 0)
+                if (nLocationAoE.count >= 3)
+                or (nLocationAoE.count >= 2 and creep:IsAncientCreep())
+                then
+                    local vLocation = J.VectorAway(nLocationAoE.targetloc, bot:GetLocation(), 350)
+                    if IsLocationPassable(vLocation) then
+                        return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc
+                    end
+                end
+            end
+        end
+	end
+
+	if J.IsGoingToRune(bot) and fManaAfter > fManaThreshold2 and DotaTime() >= 6 * 60 then
+		if bot.rune and bot.rune.location then
+			local distance = GetUnitToLocationDistance(bot, bot.rune.location)
+			local vLocation = J.VectorTowards(bot:GetLocation(), bot.rune.location, Min(nCastRange, distance))
+			if J.IsRunning(bot) and distance > nCastRange / 2 and distance < 1600 and IsLocationPassable(vLocation) then
+				return BOT_ACTION_DESIRE_HIGH, vLocation
 			end
+		end
+	end
+
+	if J.IsDoingRoshan(bot) and fManaAfter > fManaThreshold2 and fManaAfter > 0.5 then
+		local vRoshanLocation = J.GetCurrentRoshanLocation()
+        if GetUnitToLocationDistance(bot, vRoshanLocation) > 2000 and #nEnemyHeroes == 0 and IsLocationPassable(vRoshanLocation) then
+            return BOT_ACTION_DESIRE_HIGH, J.VectorTowards(bot:GetLocation(), vRoshanLocation, nCastRange)
         end
     end
 
-    if J.IsDoingTormentor(bot) and nManaAfter > 0.75 then
-		local tormentorLoc = J.GetTormentorWaitingLocation(GetTeam())
-        if GetUnitToLocationDistance(bot, tormentorLoc) > 1600 then
-			local targetLoc = J.Site.GetXUnitsTowardsLocation(bot, tormentorLoc, nCastRange)
-			if #nEnemyHeroes == 0 and IsLocationPassable(targetLoc) then
-				return BOT_ACTION_DESIRE_HIGH, targetLoc
-			end
+	if J.IsDoingTormentor(bot) and fManaAfter > fManaThreshold2 and fManaAfter > 0.5 then
+		local vTormentorLocation = J.GetTormentorWaitingLocation(GetTeam())
+        if GetUnitToLocationDistance(bot, vTormentorLocation) > 2000 and #nEnemyHeroes == 0 and IsLocationPassable(vTormentorLocation) then
+            return BOT_ACTION_DESIRE_HIGH, J.VectorTowards(bot:GetLocation(), vTormentorLocation, nCastRange)
         end
     end
 
-    local nLocationAoE = bot:FindAoELocation(true, false, bot:GetLocation(), nCastRange, nRadius, nCastPoint, nDamage)
-    if nLocationAoE.count >= 5 and #nEnemyHeroes == 0 and nManaAfter > 0.45 then
+    local nLocationAoE = bot:FindAoELocation(true, false, bot:GetLocation(), nCastRange, nRadius, 0, nDamage)
+    if nLocationAoE.count >= 5 and #nEnemyHeroes == 0 and fManaAfter > fManaThreshold2 then
         return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc
     end
 
@@ -579,8 +657,10 @@ function X.ConsiderAdaptiveStrikeAGI()
 	local nCurrSTR = bot:GetAttributeValue(ATTRIBUTE_STRENGTH)
 	local nDamage = AdaptiveStrikeAGI:GetSpecialValueInt('damage_base')
     local nSpeed = AdaptiveStrikeAGI:GetSpecialValueInt('projectile_speed')
-    local nManaAfter = J.GetManaAfter(AdaptiveStrikeAGI:GetManaCost())
-    local nManaThreshold = (150 / bot:GetMana())
+    local nManaCost = AdaptiveStrikeAGI:GetManaCost()
+    local fManaAfter = J.GetManaAfter(nManaCost)
+    local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {Waveform, Morph})
+    local fManaThreshold2 = J.GetManaThreshold(bot, nManaCost, {Waveform, AdaptiveStrikeAGI, Morph})
     local bUsingMax = nCurrAGI > nCurrSTR * 1.5
 
 	if bUsingMax then
@@ -595,11 +675,17 @@ function X.ConsiderAdaptiveStrikeAGI()
         and J.CanCastOnNonMagicImmune(enemyHero)
         and J.CanCastOnTargetAdvanced(enemyHero)
         then
-            if enemyHero:HasModifier('modifier_teleporting') then
-                return BOT_ACTION_DESIRE_HIGH, enemyHero
+            local nDelay = (GetUnitToUnitDistance(bot, enemyHero) / nSpeed) + nCastPoint
+            if nCurrSTR > nCurrAGI * 1.5 then
+                if enemyHero:HasModifier('modifier_teleporting') then
+                    if J.GetModifierTime(enemyHero, 'modifier_teleporting') > nDelay then
+                        return BOT_ACTION_DESIRE_HIGH, enemyHero
+                    end
+                elseif enemyHero:IsChanneling() and fManaAfter > fManaThreshold2 and not J.IsRealInvisible(bot) and not J.IsRetreating(bot) then
+                    return BOT_ACTION_DESIRE_HIGH, enemyHero
+                end
             end
 
-            local nDelay = (GetUnitToUnitDistance(bot, enemyHero) / nSpeed) + nCastPoint
             if J.WillKillTarget(enemyHero, nDamage, DAMAGE_TYPE_MAGICAL, nDelay)
             and not enemyHero:HasModifier('modifier_abaddon_borrowed_time')
             and not enemyHero:HasModifier('modifier_dazzle_shallow_grave')
@@ -614,9 +700,10 @@ function X.ConsiderAdaptiveStrikeAGI()
 
     if J.IsInTeamFight(bot, 1200) or J.IsGoingOnSomeone(bot) and bUsingMax then
         local hTarget = nil
-        local hTargetDamage = 0
+        local hTargetScore = 0
         for _, enemyHero in pairs(nEnemyHeroes) do
             if  J.IsValidHero(enemyHero)
+            and J.CanBeAttacked(enemyHero)
             and J.IsInRange(bot, enemyHero, nCastRange)
             and J.CanCastOnNonMagicImmune(enemyHero)
             and J.CanCastOnTargetAdvanced(enemyHero)
@@ -631,10 +718,10 @@ function X.ConsiderAdaptiveStrikeAGI()
                     return BOT_ACTION_DESIRE_HIGH, enemyHero
                 end
 
-                local enemyHeroDamage = enemyHero:GetActualIncomingDamage(nDamage, DAMAGE_TYPE_MAGICAL)
-                if enemyHeroDamage > hTargetDamage then
+                local enemyHeroDamage = enemyHero:GetActualIncomingDamage(nDamage, DAMAGE_TYPE_MAGICAL) / enemyHero:GetHealth()
+                if enemyHeroDamage > hTargetScore then
                     hTarget = enemyHero
-                    hTargetDamage = enemyHeroDamage
+                    hTargetScore = enemyHeroDamage
                 end
             end
         end
@@ -646,6 +733,7 @@ function X.ConsiderAdaptiveStrikeAGI()
 
 	if J.IsGoingOnSomeone(bot) and bUsingMax then
 		if  J.IsValidTarget(botTarget)
+        and J.CanBeAttacked(botTarget)
         and J.IsInRange(bot, botTarget, nCastRange)
         and J.CanCastOnNonMagicImmune(botTarget)
         and J.CanCastOnTargetAdvanced(botTarget)
@@ -662,12 +750,14 @@ function X.ConsiderAdaptiveStrikeAGI()
     if J.IsRetreating(bot) and not J.IsRealInvisible(bot) and not bUsingMax then
 		for _, enemyHero in pairs(nEnemyHeroes) do
 			if  J.IsValidHero(enemyHero)
+            and J.CanBeAttacked(enemyHero)
             and J.IsInRange(bot, enemyHero, nCastRange)
             and J.CanCastOnNonMagicImmune(enemyHero)
             and J.CanCastOnTargetAdvanced(enemyHero)
 			then
                 if (botHP < 0.75 and bot:WasRecentlyDamagedByAnyHero(3.0))
-                or (J.IsChasingTarget(enemyHero, bot) and #nEnemyHeroes > #nAllyHeroes)
+                or (J.IsChasingTarget(enemyHero, bot))
+                or (#nEnemyHeroes > #nAllyHeroes and enemyHero:GetAttackTarget() == bot)
                 then
                     return BOT_ACTION_DESIRE_HIGH, enemyHero
                 end
@@ -675,19 +765,21 @@ function X.ConsiderAdaptiveStrikeAGI()
         end
 	end
 
-    if J.IsFarming(bot) and nManaAfter > nManaThreshold and (bFlowFacet or bUsingMax) then
-        local nNeutralCreeps = bot:GetNearbyNeutralCreeps(nCastRange)
+    local nEnemyCreeps = bot:GetNearbyCreeps(nCastRange, true)
+
+    if J.IsFarming(bot) and fManaAfter > fManaThreshold1 and (bFlowFacet or bUsingMax) then
         local creepTarget = nil
-        local creepTargetDamage = 0
-        for _, creep in pairs(nNeutralCreeps) do
+        local creepTargetScore = 0
+        for _, creep in pairs(nEnemyCreeps) do
             if J.IsValid(creep)
             and J.CanBeAttacked(creep)
+            and J.CanCastOnTargetAdvanced(creep)
             and J.GetHP(creep) > 0.4
             then
-                local creepDamage = creep:GetActualIncomingDamage(nDamage, DAMAGE_TYPE_MAGICAL)
-                if creepDamage > creepTargetDamage then
+                local creepScore = creep:GetActualIncomingDamage(nDamage, DAMAGE_TYPE_MAGICAL) / creep:GetHealth()
+                if creepScore > creepTargetScore then
                     creepTarget = creep
-                    creepTargetDamage = creepDamage
+                    creepTargetScore = creepScore
                 end
             end
         end
@@ -697,23 +789,22 @@ function X.ConsiderAdaptiveStrikeAGI()
         end
     end
 
-    if J.IsLaning(bot) and nManaAfter > nManaThreshold then
+    if J.IsLaning(bot) and J.IsInLaningPhase() and fManaAfter > fManaThreshold1 then
 		local nEnemyLaneCreeps = bot:GetNearbyLaneCreeps(nCastRange, true)
 
 		for _, creep in pairs(nEnemyLaneCreeps) do
 			if  J.IsValid(creep)
             and J.CanBeAttacked(creep)
+            and J.CanCastOnTargetAdvanced(creep)
 			and (not bFlowFacet and (J.IsKeyWordUnit('ranged', creep)
                     or J.IsKeyWordUnit('siege', creep)
                     or J.IsKeyWordUnit('flagbearer', creep))
-                or nManaAfter > 0.5)
+                or fManaAfter > 0.5)
 			then
                 local nDelay = (GetUnitToUnitDistance(bot, creep) / nSpeed) + nCastPoint
                 if J.WillKillTarget(creep, nDamage, DAMAGE_TYPE_MAGICAL, nDelay) then
-                    if J.IsValidHero(nEnemyHeroes[1])
-                    and not J.IsSuspiciousIllusion(nEnemyHeroes[1])
-                    and GetUnitToUnitDistance(creep, nEnemyHeroes[1]) < 600
-                    then
+                    local nLocationAoE = bot:FindAoELocation(true, true, creep:GetLocation(), 0, 600, 0, 0)
+                    if nLocationAoE.count > 0 or J.IsUnitTargetedByTower(creep, false) then
                         return BOT_ACTION_DESIRE_HIGH, creep
                     end
                 end
@@ -726,7 +817,8 @@ function X.ConsiderAdaptiveStrikeAGI()
 		and J.IsInRange(bot, botTarget, nCastRange)
 		and J.CanBeAttacked(botTarget)
 		and J.CanCastOnNonMagicImmune(botTarget)
-        and J.IsAttacking(bot)
+        and bAttacking
+        and fManaAfter > fManaThreshold1
 		then
 			return BOT_ACTION_DESIRE_HIGH, botTarget
 		end
@@ -735,7 +827,8 @@ function X.ConsiderAdaptiveStrikeAGI()
     if J.IsDoingTormentor(bot) and bUsingMax then
 		if  J.IsTormentor(botTarget)
 		and J.IsInRange(bot, botTarget, nCastRange)
-        and J.IsAttacking(bot)
+        and bAttacking
+        and fManaAfter > fManaThreshold1
 		then
 			return BOT_ACTION_DESIRE_HIGH
 		end
@@ -811,21 +904,8 @@ function X.ConsiderAtttributeShift()
 	local nCurrSTR = bot:GetAttributeValue(ATTRIBUTE_STRENGTH)
     local nCurrAGIRatio = nCurrAGI / nCurrSTR * 1.5
 
-    local nNearbyEnemyCount = 0
-    for _, id in pairs(GetTeamPlayers(GetOpposingTeam())) do
-        if IsHeroAlive(id) then
-            local info = GetHeroLastSeenInfo(id)
-            if info ~= nil then
-                local dInfo = info[1]
-                if dInfo ~= nil and GetUnitToLocationDistance(bot, dInfo.location) < 3200 and dInfo.time_since_seen <= 5.0 then
-                    nNearbyEnemyCount = nNearbyEnemyCount + 1
-                end
-            end
-        end
-    end
-
     if (J.IsRetreating(bot) and not J.IsRealInvisible(bot) and bot:WasRecentlyDamagedByAnyHero(4.0)) then
-        if bot:WasRecentlyDamagedByAnyHero(1.0) then
+        if bot:WasRecentlyDamagedByAnyHero(3.0) then
             if bToggleState__STR == false then
                 return BOT_ACTION_DESIRE_HIGH, 'str'
             end
@@ -900,7 +980,7 @@ function X.ConsiderAtttributeShift()
             and J.IsInRange(bot, botTarget, botAttackRange + 300)
             and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
             then
-                local ratio = RemapValClamped(botNetworth, 5000, 25000, 0.5, 0.85)
+                local ratio = RemapValClamped(botNetworth, 5000, 25000, 0.5, 0.90)
 
                 if #nInRangeEnemy > #nInRangeAlly and not bStronger then
                     ratio = ratio * 0.75
@@ -922,7 +1002,7 @@ function X.ConsiderAtttributeShift()
             end
         end
 
-        if J.IsPushing(bot) then
+        if J.IsPushing(bot) or J.IsDefending(bot) then
             local ratio = RemapValClamped(botNetworth, 5000, 20000, 0.5, 0.75)
             if #nInRangeEnemy > #nInRangeAlly and not bStronger then
                 ratio = ratio * 0.75
@@ -1013,55 +1093,103 @@ function X.ConsiderAtttributeShift()
 end
 
 function X.ConsiderMorph()
-    if not J.CanCastAbility(Morph)
-    then
+    if not J.CanCastAbility(Morph) then
         return BOT_ACTION_DESIRE_NONE, nil
     end
 
     local nCastRange = J.GetProperCastRange(false, bot, Morph:GetCastRange())
-    local nInRangeEnemy = J.GetEnemiesNearLoc(bot:GetLocation(), nCastRange)
 
-	if J.IsGoingOnSomeone(bot)
-	then
+    if J.IsInTeamFight(bot, 1200) then
         local target = nil
         local targetScore = 0
-
-        if (J.IsEarlyGame() and #nInRangeEnemy > 0)
-        or #nInRangeEnemy > 1
-        then
-            for _, enemyHero in pairs(nInRangeEnemy) do
-                if J.IsValidHero(enemyHero)
-                and J.CanCastOnTargetAdvanced(enemyHero)
-                then
-                    local score = M.GetMorphEngageScore(enemyHero:GetUnitName())
-                    if score > targetScore then
-                        target = enemyHero
-                        targetScore = score
-                    end
+        for _, enemyHero in pairs(nEnemyHeroes) do
+            if J.IsValidHero(enemyHero)
+            and J.IsInRange(bot, enemyHero, nCastRange)
+            and J.CanCastOnTargetAdvanced(enemyHero)
+            and not J.IsSuspiciousIllusion(enemyHero)
+            and not string.find(enemyHero:GetUnitName(), 'huskar')
+            and not string.find(enemyHero:GetUnitName(), 'invoker')
+            then
+                local enemyHeroScore = enemyHero:GetEstimatedDamageToTarget(false, bot, 5.0, DAMAGE_TYPE_MAGICAL)
+                                     + enemyHero:GetEstimatedDamageToTarget(false, bot, 5.0, DAMAGE_TYPE_PURE)
+                if enemyHeroScore > targetScore then
+                    target = enemyHero
+                    targetScore = enemyHeroScore
                 end
             end
         end
 
-        if target ~= nil then
+        if target then
             return BOT_ACTION_DESIRE_HIGH, target
+        end
+    end
+
+	if J.IsGoingOnSomeone(bot) then
+        if  J.IsValidHero(botTarget)
+        and J.CanBeAttacked(botTarget)
+        and J.IsInRange(bot, botTarget, 1200)
+        and J.GetHP(botTarget) < 0.5
+        and not J.IsSuspiciousIllusion(botTarget)
+        and not botTarget:HasModifier('modifier_abaddon_borrowed_time')
+        and not botTarget:HasModifier('modifier_dazzle_shallow_grave')
+        and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
+        and not botTarget:HasModifier('modifier_oracle_false_promise_timer')
+        then
+            local fDuration = 6.0
+            local estimatedDamage = J.GetTotalEstimatedDamageToTarget(nAllyHeroes, botTarget, fDuration)
+
+            if  (estimatedDamage > (botTarget:GetHealth() + botTarget:GetHealthRegen() * fDuration))
+            and (#nAllyHeroes >= #nEnemyHeroes)
+            and (botHP > 0.4)
+            then
+                local nInRangeEnemy = J.GetEnemiesNearLoc(bot:GetLocation(), 1200)
+                if (not J.IsLateGame() and #nInRangeEnemy > 0)
+                or (#nInRangeEnemy > 1)
+                then
+                    local target = nil
+                    local targetScore = -math.huge
+                    for _, enemyHero in pairs(nInRangeEnemy) do
+                        if  J.IsValidHero(enemyHero)
+                        and J.CanCastOnTargetAdvanced(enemyHero)
+                        and not enemyHero:HasModifier('modifier_skeleton_king_reincarnation_scepter_active')
+                        and not enemyHero:HasModifier('modifier_item_helm_of_the_undying_active')
+                        then
+                            local enemyHeroScore = enemyHero:GetEstimatedDamageToTarget(false, bot, 5.0, DAMAGE_TYPE_MAGICAL)
+                                                 + enemyHero:GetEstimatedDamageToTarget(false, bot, 5.0, DAMAGE_TYPE_PURE)
+                            local engageScore = GetMorphEngageScore(enemyHero:GetUnitName()) * enemyHeroScore
+
+                            if engageScore > targetScore then
+                                target = enemyHero
+                                targetScore = engageScore
+                            end
+                        end
+                    end
+
+                    if target ~= nil then
+                        return BOT_ACTION_DESIRE_HIGH, target
+                    end
+                end
+            end
         end
 	end
 
-    if J.IsRetreating(bot)
+    if  J.IsRetreating(bot)
     and not J.IsRealInvisible(bot)
     and bot:GetActiveModeDesire() > BOT_MODE_DESIRE_HIGH
     and bot:WasRecentlyDamagedByAnyHero(3.0)
-    and Waveform:GetCooldownTimeRemaining() > 3
+    and not J.CanCastAbility(Waveform, 3.0)
+    and botHP > 0.5
 	then
         local target = nil
         local targetScore = 0
-
-        for _, enemyHero in pairs(nInRangeEnemy) do
+        for _, enemyHero in pairs(nEnemyHeroes) do
             if J.IsValidHero(enemyHero)
+            and J.IsInRange(bot, enemyHero, nCastRange)
             and J.CanCastOnTargetAdvanced(enemyHero)
+            and enemyHero:GetAttackTarget() == bot
             then
-                local score = M.GetMorphRetreatScore(enemyHero:GetUnitName())
-                if score > targetScore then
+                local score = GetMorphRetreatScore(enemyHero:GetUnitName())
+                if score > 0 and score > targetScore then
                     target = enemyHero
                     targetScore = score
                 end
@@ -1197,6 +1325,178 @@ function X.SetAbilityBuild()
     nAbilityBuildList = J.Skill.GetRandomBuild(sSelectedBuild.ability)
 
     X['sSkillList'] = J.Skill.GetSkillList( sAbilityList, nAbilityBuildList, sTalentList, nTalentBuildList )
+end
+
+-- #### -----------------------
+-- negligible overhead
+local function CreateHeroData(sEngage, sRetreat, bEngageBack, bRetreatBack)
+    return {
+        scoreEngage = sEngage,
+        scoreRetreat = sRetreat,
+        goodToEngageBack = bEngageBack,
+        goodToRetreatBack = bRetreatBack,
+    }
+end
+
+local hHeroList = {
+    ['npc_dota_hero_abaddon'] = CreateHeroData(0.3, 0.1, false, false),
+    ['npc_dota_hero_abyssal_underlord'] = CreateHeroData(0.8, 0.5, true, true),
+    ['npc_dota_hero_alchemist'] = CreateHeroData(0.4, 0.2, false, false),
+    ['npc_dota_hero_ancient_apparition'] = CreateHeroData(0.7, 0.4, true, false),
+    ['npc_dota_hero_antimage'] = CreateHeroData(0.5, 0.9, true, true),
+    ['npc_dota_hero_arc_warden'] = CreateHeroData(0.4, 0.1, true, false),
+    ['npc_dota_hero_axe'] = CreateHeroData(0.3, 0.5, false, false),
+    ['npc_dota_hero_bane'] = CreateHeroData(0.8, 0.5, true, true),
+    ['npc_dota_hero_batrider'] = CreateHeroData(0.3, 0.3, false, false),
+    ['npc_dota_hero_beastmaster'] = CreateHeroData(0.2, 0.2, false, false),
+    ['npc_dota_hero_bloodseeker'] = CreateHeroData(0.2, 0.1, false, false),
+    ['npc_dota_hero_bounty_hunter'] = CreateHeroData(0.2, 0.6, false, true),
+    ['npc_dota_hero_brewmaster'] = CreateHeroData(0.3, 0.3, false, false),
+    ['npc_dota_hero_bristleback'] = CreateHeroData(0.4, 0.2, false, false),
+    ['npc_dota_hero_broodmother'] = CreateHeroData(0.5, 0.1, false, false),
+    ['npc_dota_hero_centaur'] = CreateHeroData(0.4, 0.3, true, false),
+    ['npc_dota_hero_chaos_knight'] = CreateHeroData(0.6, 0.5, true, false),
+    ['npc_dota_hero_chen'] = CreateHeroData(0.4, 0.1, false, false),
+    ['npc_dota_hero_clinkz'] = CreateHeroData(0.3, 0.2, false, false),
+    ['npc_dota_hero_crystal_maiden'] = CreateHeroData(0.8, 0.8, true, true),
+    ['npc_dota_hero_dark_seer'] = CreateHeroData(0.2, 0.5, true, true),
+    ['npc_dota_hero_dark_willow'] = CreateHeroData(0.6, 0.5, true, true),
+    ['npc_dota_hero_dawnbreaker'] = CreateHeroData(0.6, 0.4, true, false),
+    ['npc_dota_hero_dazzle'] = CreateHeroData(0.8, 0.2, true, false),
+    ['npc_dota_hero_death_prophet'] = CreateHeroData(0.5, 0.2, true, false),
+    ['npc_dota_hero_disruptor'] = CreateHeroData(0.8, 0.5, true, true),
+    ['npc_dota_hero_doom_bringer'] = CreateHeroData(0.2, 0.1, false, false),
+    ['npc_dota_hero_dragon_knight'] = CreateHeroData(0.6, 0.8, true, true),
+    ['npc_dota_hero_drow_ranger'] = CreateHeroData(0.2, 0.2, false, false),
+    ['npc_dota_hero_earth_spirit'] = CreateHeroData(0.8, 1, true, true),
+    ['npc_dota_hero_earthshaker'] = CreateHeroData(1, 1, true, true),
+    ['npc_dota_hero_elder_titan'] = CreateHeroData(0.1, 0.1, false, false),
+    ['npc_dota_hero_ember_spirit'] = CreateHeroData(0.5, 0.4, true, true),
+    ['npc_dota_hero_enchantress'] = CreateHeroData(0.2, 0.2, false, false),
+    ['npc_dota_hero_enigma'] = CreateHeroData(0.2, 0.5, false, false),
+    ['npc_dota_hero_faceless_void'] = CreateHeroData(0.5, 0.5, true, true),
+    ['npc_dota_hero_furion'] = CreateHeroData(0.5, 0.5, true, true),
+    ['npc_dota_hero_grimstroke'] = CreateHeroData(0.8, 0.4, true, true),
+    ['npc_dota_hero_gyrocopter'] = CreateHeroData(0.6, 0.4, true, false),
+    ['npc_dota_hero_hoodwink'] = CreateHeroData(0.5, 0.3, true, false),
+    ['npc_dota_hero_huskar'] = CreateHeroData(0.2, 0.1, false, false),
+    ['npc_dota_hero_invoker'] = CreateHeroData(0.5, 0.3, true, false),
+    ['npc_dota_hero_jakiro'] = CreateHeroData(0.6, 0.6, true, false),
+    ['npc_dota_hero_juggernaut'] = CreateHeroData(0.8, 0.3, true, true),
+    ['npc_dota_hero_keeper_of_the_light'] = CreateHeroData(0.2, 0.2, false, false),
+    ['npc_dota_hero_kunkka'] = CreateHeroData(0.4, 0.4, true, true),
+    ['npc_dota_hero_legion_commander'] = CreateHeroData(0.6, 0.4, true, true),
+    ['npc_dota_hero_leshrac'] = CreateHeroData(0.6, 0.4, true, true),
+    ['npc_dota_hero_lich'] = CreateHeroData(0.7, 0.2, true, false),
+    ['npc_dota_hero_life_stealer'] = CreateHeroData(0.8, 0.4, true, true),
+    ['npc_dota_hero_lina'] = CreateHeroData(0.4, 0.2, true, true),
+    ['npc_dota_hero_lion'] = CreateHeroData(1, 1, true, true),
+    ['npc_dota_hero_lone_druid'] = CreateHeroData(0.1, 0.1, false, false),
+    ['npc_dota_hero_luna'] = CreateHeroData(0.4, 0.2, false, false),
+    ['npc_dota_hero_lycan'] = CreateHeroData(0.7, 0.2, true, false),
+    ['npc_dota_hero_magnataur'] = CreateHeroData(0.4, 0.7, true, true),
+    ['npc_dota_hero_marci'] = CreateHeroData(0.3, 0.3, false, false),
+    ['npc_dota_hero_mars'] = CreateHeroData(0.7, 0.4, true, true),
+    ['npc_dota_hero_medusa'] = CreateHeroData(0.1, 0.2, true, false),
+    ['npc_dota_hero_meepo'] = CreateHeroData(0.2, 0.2, false, false),
+    ['npc_dota_hero_mirana'] = CreateHeroData(0.3, 0.7, false, true),
+    -- ['npc_dota_hero_morphling']          = { time_len = {0}, },
+    ['npc_dota_hero_monkey_king'] = CreateHeroData(0.4, 0.4, true, false),
+    ['npc_dota_hero_muerta'] = CreateHeroData(0.5, 0.3, true, false),
+    ['npc_dota_hero_naga_siren'] = CreateHeroData(0.2, 0.2, false, false),
+    ['npc_dota_hero_necrolyte'] = CreateHeroData(0.2, 0.1, true, true),
+    ['npc_dota_hero_nevermore'] = CreateHeroData(0.2, 0.1, true, false),
+    ['npc_dota_hero_night_stalker'] = CreateHeroData(0.5, 0.2, true, false),
+    ['npc_dota_hero_nyx_assassin'] = CreateHeroData(0.6, 0.6, true, true),
+    ['npc_dota_hero_obsidian_destroyer'] = CreateHeroData(0.8, 0.8, true, true),
+    ['npc_dota_hero_ogre_magi'] = CreateHeroData(0.8, 0.7, true, true),
+    ['npc_dota_hero_omniknight'] = CreateHeroData(0.3, 0.3, true, false),
+    ['npc_dota_hero_oracle'] = CreateHeroData(0.3, 0.3, true, false),
+    ['npc_dota_hero_pangolier'] = CreateHeroData(0.5, 0.5, true, true),
+    ['npc_dota_hero_phantom_lancer'] = CreateHeroData(0.1, 0.3, false, true),
+    ['npc_dota_hero_phantom_assassin'] = CreateHeroData(0.3, 0.3, false, true),
+    ['npc_dota_hero_phoenix'] = CreateHeroData(0.2, 0.2, false, false),
+    ['npc_dota_hero_primal_beast'] = CreateHeroData(0.2, 0.2, false, false),
+    ['npc_dota_hero_puck'] = CreateHeroData(0.6, 0.5, true, true),
+    ['npc_dota_hero_pudge'] = CreateHeroData(0.5, 0.1, true, false),
+    ['npc_dota_hero_pugna'] = CreateHeroData(0.4, 0.1, true, true),
+    ['npc_dota_hero_queenofpain'] = CreateHeroData(0.9, 0.9, true, true),
+    ['npc_dota_hero_rattletrap'] = CreateHeroData(0.2, 0.2, true, false),
+    ['npc_dota_hero_razor'] = CreateHeroData(0.8, 0.2, true, false),
+    ['npc_dota_hero_riki'] = CreateHeroData(0.2, 0.2, true, true),
+    ['npc_dota_hero_ringmaster'] = CreateHeroData(0.4, 0.1, false, false),
+    ['npc_dota_hero_rubick'] = CreateHeroData(0.3, 0.5, false, true),
+    ['npc_dota_hero_sand_king'] = CreateHeroData(1, 1, true, true),
+    ['npc_dota_hero_shadow_demon'] = CreateHeroData(0.8, 0.5, true, false),
+    ['npc_dota_hero_shadow_shaman'] = CreateHeroData(0.9, 0.8, true, true),
+    ['npc_dota_hero_shredder'] = CreateHeroData(0.4, 0.8, true, true),
+    ['npc_dota_hero_silencer'] = CreateHeroData(0.2, 0.1, false, false),
+    ['npc_dota_hero_skeleton_king'] = CreateHeroData(0.2, 0.3, false, false),
+    ['npc_dota_hero_skywrath_mage'] = CreateHeroData(0.5, 0.1, true, false),
+    ['npc_dota_hero_slardar'] = CreateHeroData(0.5, 0.5, true, true),
+    ['npc_dota_hero_slark'] = CreateHeroData(0.7, 0.7, true, true),
+    ["npc_dota_hero_snapfire"] = CreateHeroData(0.5, 0.5, true, false),
+    ['npc_dota_hero_sniper'] = CreateHeroData(0.2, 0.1, false, false),
+    ['npc_dota_hero_spectre'] = CreateHeroData(0.1, 0.1, false, false),
+    ['npc_dota_hero_spirit_breaker'] = CreateHeroData(0.5, 0.5, true, true),
+    ['npc_dota_hero_storm_spirit'] = CreateHeroData(0.2, 0.2, false, false),
+    ['npc_dota_hero_sven'] = CreateHeroData(0.5, 0.5, true, true),
+    ['npc_dota_hero_techies'] = CreateHeroData(0.3, 0.2, false, false),
+    ['npc_dota_hero_templar_assassin'] = CreateHeroData(0.2, 0.1, false, false),
+    ['npc_dota_hero_terrorblade'] = CreateHeroData(0.5, 0.1, false, false),
+    ['npc_dota_hero_tidehunter'] = CreateHeroData(0.3, 0.3, false, false),
+    ['npc_dota_hero_tinker'] = CreateHeroData(0.2, 0.1, false, false),
+    ['npc_dota_hero_tiny'] = CreateHeroData(0.9, 0.7, true, true),
+    ['npc_dota_hero_treant'] = CreateHeroData(0.3, 0.2, false, false),
+    ['npc_dota_hero_troll_warlord'] = CreateHeroData(0.2, 0.2, false, false),
+    ['npc_dota_hero_tusk'] = CreateHeroData(0.3, 0.6, false, true),
+    ['npc_dota_hero_undying'] = CreateHeroData(0.1, 0.1, false, false),
+    ['npc_dota_hero_ursa'] = CreateHeroData(0.5, 0.3, true, false),
+    ['npc_dota_hero_vengefulspirit'] = CreateHeroData(0.7, 0.6, true, true),
+    ['npc_dota_hero_venomancer'] = CreateHeroData(0.2, 0.1, false, false),
+    ['npc_dota_hero_viper'] = CreateHeroData(0.2, 0.1, false, false),
+    ['npc_dota_hero_visage'] = CreateHeroData(0.2, 0.1, false, false),
+    ['npc_dota_hero_void_spirit'] = CreateHeroData(0.6, 0.6, true, true),
+    ['npc_dota_hero_warlock'] = CreateHeroData(0.4, 0.2, false, false),
+    ['npc_dota_hero_weaver'] = CreateHeroData(0.2, 0.8, false, true),
+    ['npc_dota_hero_windrunner'] = CreateHeroData(0.4, 0.5, true, true),
+    ['npc_dota_hero_wisp'] = CreateHeroData(0.1, 0.1, false, false),
+    ['npc_dota_hero_witch_doctor'] = CreateHeroData(0.5, 0.5, true, false),
+    ['npc_dota_hero_zuus'] = CreateHeroData(0.5, 0.2, true, false),
+}
+
+function GetMorphEngageScore(sHeroName)
+    if hHeroList[sHeroName] and hHeroList[sHeroName].scoreEngage then
+        return hHeroList[sHeroName].scoreEngage
+    end
+
+    return 0.1
+end
+
+function GetMorphRetreatScore(sHeroName)
+    if hHeroList[sHeroName] and hHeroList[sHeroName].scoreRetreat then
+        if hHeroList[sHeroName].scoreRetreat >= 0.5 then
+            return hHeroList[sHeroName].scoreRetreat
+        end
+    end
+
+    return -1
+end
+
+function IsGoodToMorphBack(sHeroName, bEngage)
+    if hHeroList[sHeroName] then
+        if bEngage then
+            if hHeroList[sHeroName].goodToEngageBack then
+                return hHeroList[sHeroName].goodToEngageBack
+            end
+        else
+            if hHeroList[sHeroName].goodToRetreatBack then
+                return hHeroList[sHeroName].goodToRetreatBack
+            end
+        end
+    end
+
+    return false
 end
 
 return X

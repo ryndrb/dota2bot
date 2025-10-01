@@ -427,7 +427,7 @@ function X.ConsiderWhirlingDeath()
 			then
 				if J.IsKeyWordUnit('ranged', creep) then
 					local nLocationAoE = bot:FindAoELocation(true, true, bot:GetLocation(), 0, nRadius, 0, 0)
-					if nLocationAoE.count > 0 or J.IsUnitTargetedByTower(creep, true) then
+					if nLocationAoE.count > 0 or J.IsUnitTargetedByTower(creep, false) then
 						return BOT_ACTION_DESIRE_HIGH
 					end
 				end
@@ -612,6 +612,26 @@ function X.ConsiderTimberChain()
 				if bot:IsFacingLocation(vTreeLocation, 45) then
 					return BOT_ACTION_DESIRE_HIGH, GetTreeLocation(nTargetTree)
 				end
+			end
+		end
+	end
+
+	if J.IsFarming(bot) and fManaAfter > fManaThreshold3 and #nEnemyHeroes == 0 then
+		if bot.farm and bot.farm.location then
+			local distance = GetUnitToLocationDistance(bot, bot.farm.location)
+			local nTargetTree = X.GetBestTreeTowardsLocation(nCastRange, nChainRadius, bot.farm.location, 600, 30)
+			if nTargetTree and J.IsRunning(bot) and distance > 600 then
+				return BOT_ACTION_DESIRE_HIGH, GetTreeLocation(nTargetTree)
+			end
+		end
+	end
+
+	if J.IsGoingToRune(bot) and fManaAfter > fManaThreshold3 then
+		if bot.rune and bot.rune.location then
+			local distance = GetUnitToLocationDistance(bot, bot.rune.location)
+			local nTargetTree = X.GetBestTreeTowardsLocation(nCastRange, nChainRadius, bot.rune.location, 600, 30)
+			if nTargetTree and J.IsRunning(bot) and distance > 600 then
+				return BOT_ACTION_DESIRE_HIGH, GetTreeLocation(nTargetTree)
 			end
 		end
 	end
@@ -986,7 +1006,7 @@ function X.ConsiderChakram()
 				if J.IsChasingTarget(enemyHero, bot)
 				or (#nEnemyHeroes > #nAllyHeroes and enemyHero:GetAttackTarget() == bot)
 				then
-					local eta = (GetUnitToUnitDistance(bot, botTarget) / nSpeed) + nCastPoint
+					local eta = (GetUnitToUnitDistance(bot, enemyHero) / nSpeed) + nCastPoint
 					return BOT_ACTION_DESIRE_HIGH, enemyHero:GetLocation(), eta
 				end
 			end

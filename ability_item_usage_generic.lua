@@ -911,11 +911,20 @@ function X.SetUseItem( hItem, hItemTarget, sCastType )
 		return
 	elseif sCastType == 'ground'
 	then
-		if hItem and hItem:GetName() == 'item_ward_dispenser' then
-			if hItem:GetToggleState() == true then
-				bot:Action_UseAbilityOnEntity(hItem, bot)
-				bot:ActionQueue_UseAbilityOnLocation(hItem, hItemTarget)
-				return
+		if hItem then
+			local sItemName = hItem:GetName()
+			if sItemName == 'item_ward_dispenser' then
+				if hItem:GetToggleState() == true then
+					bot:Action_UseAbilityOnEntity(hItem, bot)
+					bot:ActionQueue_UseAbilityOnLocation(hItem, hItemTarget)
+					return
+				end
+			elseif sItemName == 'item_tpscroll' then
+				local hAbility = bot:GetAbilityByName('furion_teleportation')
+				if J.CanCastAbility(hAbility) then
+					bot:Action_UseAbilityOnLocation(hAbility, hItemTarget)
+					return
+				end
 			end
 		end
 
@@ -1375,13 +1384,13 @@ X.ConsiderItemDesire["item_blink"] = function( hItem )
 	end
 
 	local nInRangeAlly = bot:GetNearbyHeroes(800, false, BOT_MODE_ATTACK)
+	local nInRangeEnemy = J.GetEnemiesNearLoc(bot:GetLocation(), 1200)
 
 	if  J.IsRetreating(bot)
 	and not J.IsRealInvisible(bot)
 	and bot:GetActiveModeDesire() > BOT_MODE_DESIRE_MODERATE
 	then
 		local vLocation = J.GetLocationTowardDistanceLocation(bot, GetAncient(GetTeam()):GetLocation(), nCastRange)
-		local nInRangeEnemy = J.GetEnemiesNearLoc(bot:GetLocation(), 1200)
 
 		if  bot:DistanceFromFountain() > 900
 		and IsLocationPassable(vLocation)
@@ -1394,34 +1403,26 @@ X.ConsiderItemDesire["item_blink"] = function( hItem )
 	end
 
 	nInRangeAlly = bot:GetNearbyHeroes(1600, false, BOT_MODE_ATTACK)
+	local nEnemyHeroes = bot:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
 
-	if #nInRangeAlly <= 1 and (botTarget == nil or not botTarget:IsHero())
-	and J.IsFarming(bot)
-	and not bot:WasRecentlyDamagedByAnyHero(3.1)
-	and not J.IsPushing(bot)
-	and not J.IsDefending(bot)
-	then
-		local nAOELocation = bot:FindAoELocation(true, false, bot:GetLocation(), nCastRange, 500, 0, 0)
-		local nEnemyLaneCreeps = bot:GetNearbyLaneCreeps(1600, true)
-		local nInRangeEnemy = J.GetEnemiesNearLoc(nAOELocation.targetloc, 1600)
+	if J.IsFarming(bot) then
+		if #nEnemyHeroes == 0 then
+			if bot.farm and bot.farm.location then
+				local distance = GetUnitToLocationDistance(bot, bot.farm.location)
+				local vLocation = J.VectorTowards(bot:GetLocation(), bot.farm.location, Min(nCastRange, distance))
+				if J.IsRunning(bot) and distance > nCastRange and IsLocationPassable(vLocation) then
+					return BOT_ACTION_DESIRE_HIGH, vLocation, 'ground', nil
+				end
+			end
+		end
+	end
 
-		if  nEnemyLaneCreeps ~= nil and #nEnemyLaneCreeps >= 4
-		and nInRangeEnemy ~= nil and #nInRangeEnemy == 0
-		and nAOELocation.count >= 4
-		then
-			local bCenter = J.GetCenterOfUnits(nEnemyLaneCreeps)
-			local bDist = GetUnitToLocationDistance(bot, bCenter)
-			local vLocation = J.GetLocationTowardDistanceLocation(bot, bCenter, bDist + 550)
-			local bLocation = J.GetLocationTowardDistanceLocation(bot, bCenter, bDist - 300)
-
-			if bDist > nCastRange then bLocation = J.GetLocationTowardDistanceLocation(bot, bCenter, nCastRange) end
-
-			if  IsLocationPassable(bLocation)
-			and GetUnitToLocationDistance(bot, bLocation) > 600
-			and IsLocationVisible(vLocation)
-			and not J.IsLocHaveTower(700, true, bLocation)
-			then
-				return BOT_ACTION_DESIRE_HIGH, bLocation, 'ground', nil
+	if J.IsGoingToRune(bot) then
+		if bot.rune and bot.rune.location then
+			local distance = GetUnitToLocationDistance(bot, bot.rune.location)
+			local vLocation = J.VectorTowards(bot:GetLocation(), bot.rune.location, Min(nCastRange, distance))
+			if J.IsRunning(bot) and distance > nCastRange and IsLocationPassable(vLocation) then
+				return BOT_ACTION_DESIRE_HIGH, vLocation, 'ground', nil
 			end
 		end
 	end
@@ -1488,6 +1489,18 @@ X.ConsiderItemDesire["item_blink"] = function( hItem )
 				if IsLocationPassable(vLocation) then
 					return BOT_ACTION_DESIRE_HIGH, vLocation, 'ground', nil
 				end
+			end
+		end
+	end
+
+	if hItem:GetName() == 'item_swift_blink' then
+		if J.IsPushing(bot) and #nInRangeEnemy == 0 then
+			if  J.IsValidBuilding(botTarget)
+			and J.CanBeAttacked(botTarget)
+			and J.GetHP(botTarget) > 0.3
+			and J.IsAttacking(bot)
+			then
+				return BOT_ACTION_DESIRE_HIGH, bot:GetLocation(), 'ground', nil
 			end
 		end
 	end
@@ -3761,6 +3774,9 @@ X.ConsiderItemDesire["item_quelling_blade"] = function( hItem )
 	local sCastMotive = nil
 	local nInRangeEnmyList = bot:GetNearbyHeroes( nCastRange, true, BOT_MODE_NONE )
 
+	if J.GetAbility(bot, 'monkey_king_tree_dance') ~= nil then
+		return BOT_ACTION_DESIRE_NONE
+	end
 
 	if DotaTime() < 0 and not thereBeMonkey
 	then
@@ -4756,9 +4772,6 @@ function X.IsBaseTowerDestroyed()
 
 end
 
---TP
-if bot.useProphetTP == nil then bot.useProphetTP = false end
-if bot.ProphetTPLocation == nil then bot.ProphetTPLocation = bot:GetLocation() end
 X.ConsiderItemDesire["item_tpscroll"] = function( hItem )
 
 	if nMode == BOT_MODE_RUNE
@@ -4854,18 +4867,6 @@ X.ConsiderItemDesire["item_tpscroll"] = function( hItem )
 		sCastMotive = '出去发育'
 		if shouldTp
 		then
-			if bot:GetUnitName() == 'npc_dota_hero_furion'
-			then
-				local Teleportation = bot:GetAbilityByName('furion_teleportation')
-				if  Teleportation:IsTrained()
-				and Teleportation:IsFullyCastable()
-				then
-					bot.useProphetTP = true
-					bot.ProphetTPLocation = hEffectTarget
-					return BOT_ACTION_DESIRE_NONE
-				end
-			end
-
 			return BOT_ACTION_DESIRE_HIGH, hEffectTarget, sCastType, sCastMotive
 		end
 	end
@@ -4879,19 +4880,6 @@ X.ConsiderItemDesire["item_tpscroll"] = function( hItem )
 	-- then
 	-- 	hEffectTarget = J.GetTeamFountain()
 	-- 	sCastMotive = '撤退:1'
-
-	-- 	if bot:GetUnitName() == 'npc_dota_hero_furion'
-	-- 	then
-	-- 		local Teleportation = bot:GetAbilityByName('furion_teleportation')
-	-- 		if  Teleportation:IsTrained()
-	-- 		and Teleportation:IsFullyCastable()
-	-- 		then
-	-- 			bot.useProphetTP = true
-	-- 			bot.ProphetTPLocation = hEffectTarget
-	-- 			return BOT_ACTION_DESIRE_NONE
-	-- 		end
-	-- 	end
-
 	-- 	return BOT_ACTION_DESIRE_HIGH, hEffectTarget, sCastType, sCastMotive
 	-- end
 
@@ -4912,18 +4900,6 @@ X.ConsiderItemDesire["item_tpscroll"] = function( hItem )
 		and roshanLocDist > tpLocDist
 		and tpRoshDist <= 8200
 		then
-			if bot:GetUnitName() == 'npc_dota_hero_furion'
-			then
-				local Teleportation = bot:GetAbilityByName('furion_teleportation')
-				if  Teleportation:IsTrained()
-				and Teleportation:IsFullyCastable()
-				then
-					bot.useProphetTP = true
-					bot.ProphetTPLocation = targetLoc
-					return BOT_ACTION_DESIRE_NONE
-				end
-			end
-
 			return BOT_ACTION_DESIRE_HIGH, targetLoc, 'ground', 'tp_roshan'
 		end
 	end
@@ -4943,18 +4919,6 @@ X.ConsiderItemDesire["item_tpscroll"] = function( hItem )
 		sCastMotive = 'tormentor'
 
 		if distToTPLocation > 4400 and distToTormentor > distTPLocationToTormentor then
-			if bot:GetUnitName() == 'npc_dota_hero_furion'
-			then
-				local Teleportation = bot:GetAbilityByName('furion_teleportation')
-				if  Teleportation:IsTrained()
-				and Teleportation:IsFullyCastable()
-				then
-					bot.useProphetTP = true
-					bot.ProphetTPLocation = tpLocation
-					return BOT_ACTION_DESIRE_NONE
-				end
-			end
-
 			return BOT_ACTION_DESIRE_HIGH, tpLocation, sCastType, sCastMotive
 		end
 	end
@@ -4975,19 +4939,6 @@ X.ConsiderItemDesire["item_tpscroll"] = function( hItem )
 		then
 			hEffectTarget = tpLoc
 			sCastMotive = '前往守塔:'..sLane
-
-			if bot:GetUnitName() == 'npc_dota_hero_furion'
-			then
-				local Teleportation = bot:GetAbilityByName('furion_teleportation')
-				if  Teleportation:IsTrained()
-				and Teleportation:IsFullyCastable()
-				then
-					bot.useProphetTP = true
-					bot.ProphetTPLocation = hEffectTarget
-					return BOT_ACTION_DESIRE_NONE
-				end
-			end
-
 			return BOT_ACTION_DESIRE_ABSOLUTE, hEffectTarget, sCastType, sCastMotive
 		end
 	end
@@ -5016,19 +4967,6 @@ X.ConsiderItemDesire["item_tpscroll"] = function( hItem )
 		then
 			hEffectTarget = tpLoc
 			sCastMotive = '前往推塔:'..sLane
-
-			if bot:GetUnitName() == 'npc_dota_hero_furion'
-			then
-				local Teleportation = bot:GetAbilityByName('furion_teleportation')
-				if  Teleportation:IsTrained()
-				and Teleportation:IsFullyCastable()
-				then
-					bot.useProphetTP = true
-					bot.ProphetTPLocation = hEffectTarget
-					return BOT_ACTION_DESIRE_NONE
-				end
-			end
-
 			return BOT_ACTION_DESIRE_HIGH, hEffectTarget, sCastType, sCastMotive
 		end
 	end
@@ -5056,19 +4994,6 @@ X.ConsiderItemDesire["item_tpscroll"] = function( hItem )
 		then
 			hEffectTarget = tpLoc
 			sCastMotive = '支援队友:'..J.Chat.GetNormName( target )
-
-			if bot:GetUnitName() == 'npc_dota_hero_furion'
-			then
-				local Teleportation = bot:GetAbilityByName('furion_teleportation')
-				if  Teleportation:IsTrained()
-				and Teleportation:IsFullyCastable()
-				then
-					bot.useProphetTP = true
-					bot.ProphetTPLocation = hEffectTarget
-					return BOT_ACTION_DESIRE_NONE
-				end
-			end
-
 			return BOT_ACTION_DESIRE_HIGH, hEffectTarget, sCastType, sCastMotive
 		end
 	end
@@ -5101,19 +5026,6 @@ X.ConsiderItemDesire["item_tpscroll"] = function( hItem )
 		then
 			tpLoc = J.GetTeamFountain()
 			sCastMotive = '撤退:1'
-
-			if bot:GetUnitName() == 'npc_dota_hero_furion'
-			then
-				local Teleportation = bot:GetAbilityByName('furion_teleportation')
-				if  Teleportation:IsTrained()
-				and Teleportation:IsFullyCastable()
-				then
-					bot.useProphetTP = true
-					bot.ProphetTPLocation = hEffectTarget
-					return BOT_ACTION_DESIRE_NONE
-				end
-			end
-
 			return BOT_ACTION_DESIRE_HIGH, tpLoc, sCastType, sCastMotive
 		end
 
@@ -5136,19 +5048,6 @@ X.ConsiderItemDesire["item_tpscroll"] = function( hItem )
 		then
 			tpLoc = J.GetTeamFountain()
 			sCastMotive = '撤退:2'
-
-			if bot:GetUnitName() == 'npc_dota_hero_furion'
-			then
-				local Teleportation = bot:GetAbilityByName('furion_teleportation')
-				if  Teleportation:IsTrained()
-				and Teleportation:IsFullyCastable()
-				then
-					bot.useProphetTP = true
-					bot.ProphetTPLocation = hEffectTarget
-					return BOT_ACTION_DESIRE_NONE
-				end
-			end
-
 			return BOT_ACTION_DESIRE_HIGH, tpLoc, sCastType, sCastMotive
 		end
 
@@ -5176,19 +5075,6 @@ X.ConsiderItemDesire["item_tpscroll"] = function( hItem )
 		then
 			tpLoc = J.GetTeamFountain()
 			sCastMotive = '撤退:3'
-
-			if bot:GetUnitName() == 'npc_dota_hero_furion'
-			then
-				local Teleportation = bot:GetAbilityByName('furion_teleportation')
-				if  Teleportation:IsTrained()
-				and Teleportation:IsFullyCastable()
-				then
-					bot.useProphetTP = true
-					bot.ProphetTPLocation = hEffectTarget
-					return BOT_ACTION_DESIRE_NONE
-				end
-			end
-
 			return BOT_ACTION_DESIRE_HIGH, tpLoc, sCastType, sCastMotive
 		end
 	end
@@ -5219,19 +5105,6 @@ X.ConsiderItemDesire["item_tpscroll"] = function( hItem )
 		then
 			hEffectTarget = tpLoc
 			sCastMotive = '出去发育'
-
-			if bot:GetUnitName() == 'npc_dota_hero_furion'
-			then
-				local Teleportation = bot:GetAbilityByName('furion_teleportation')
-				if  Teleportation:IsTrained()
-				and Teleportation:IsFullyCastable()
-				then
-					bot.useProphetTP = true
-					bot.ProphetTPLocation = hEffectTarget
-					return BOT_ACTION_DESIRE_NONE
-				end
-			end
-
 			return BOT_ACTION_DESIRE_ABSOLUTE, hEffectTarget, sCastType, sCastMotive
 		end
 
@@ -5275,19 +5148,6 @@ X.ConsiderItemDesire["item_tpscroll"] = function( hItem )
 				then
 					J.Role['lastFarmTpTime'] = DotaTime()
 					sCastMotive = '飞鞋带线'
-
-					if bot:GetUnitName() == 'npc_dota_hero_furion'
-					then
-						local Teleportation = bot:GetAbilityByName('furion_teleportation')
-						if  Teleportation:IsTrained()
-						and Teleportation:IsFullyCastable()
-						then
-							bot.useProphetTP = true
-							bot.ProphetTPLocation = tpLoc
-							return BOT_ACTION_DESIRE_NONE
-						end
-					end
-
 					return BOT_ACTION_DESIRE_HIGH, tpLoc, sCastType, sCastMotive
 				end
 			end
@@ -5302,19 +5162,6 @@ X.ConsiderItemDesire["item_tpscroll"] = function( hItem )
 			then
 				J.Role['lastFarmTpTime'] = DotaTime()
 				sCastMotive = '线上打钱'
-
-				if bot:GetUnitName() == 'npc_dota_hero_furion'
-				then
-					local Teleportation = bot:GetAbilityByName('furion_teleportation')
-					if  Teleportation:IsTrained()
-					and Teleportation:IsFullyCastable()
-					then
-						bot.useProphetTP = true
-						bot.ProphetTPLocation = bestTpLoc
-						return BOT_ACTION_DESIRE_NONE
-					end
-				end
-
 				return BOT_ACTION_DESIRE_HIGH, bestTpLoc, sCastType, sCastMotive
 			end
 		end
@@ -5358,19 +5205,6 @@ X.ConsiderItemDesire["item_tpscroll"] = function( hItem )
 			if isTravelBootsAvailable
 			then
 				sCastMotive = '飞鞋支援团战距离:'..GetUnitToLocationDistance( bot, nTeamFightLocation )
-
-				if bot:GetUnitName() == 'npc_dota_hero_furion'
-				then
-					local Teleportation = bot:GetAbilityByName('furion_teleportation')
-					if  Teleportation:IsTrained()
-					and Teleportation:IsFullyCastable()
-					then
-						bot.useProphetTP = true
-						bot.ProphetTPLocation = nTeamFightLocation
-						return BOT_ACTION_DESIRE_NONE
-					end
-				end
-
 				return BOT_ACTION_DESIRE_HIGH, nTeamFightLocation, sCastType, sCastMotive
 			end
 
@@ -5380,19 +5214,6 @@ X.ConsiderItemDesire["item_tpscroll"] = function( hItem )
 				and GetUnitToLocationDistance( bot, bestTpLoc ) > nMinTPDistance - 1200
 			then
 				sCastMotive = '支援团战:'..GetUnitToLocationDistance( bot, nTeamFightLocation )
-
-				if bot:GetUnitName() == 'npc_dota_hero_furion'
-				then
-					local Teleportation = bot:GetAbilityByName('furion_teleportation')
-					if  Teleportation:IsTrained()
-					and Teleportation:IsFullyCastable()
-					then
-						bot.useProphetTP = true
-						bot.ProphetTPLocation = bestTpLoc
-						return BOT_ACTION_DESIRE_NONE
-					end
-				end
-
 				return BOT_ACTION_DESIRE_HIGH, bestTpLoc, sCastType, sCastMotive
 			end
 		end
@@ -5413,19 +5234,6 @@ X.ConsiderItemDesire["item_tpscroll"] = function( hItem )
 
 				J.Role['lastFarmTpTime'] = DotaTime()
 				sCastMotive = '守护遗迹'
-
-				if bot:GetUnitName() == 'npc_dota_hero_furion'
-				then
-					local Teleportation = bot:GetAbilityByName('furion_teleportation')
-					if  Teleportation:IsTrained()
-					and Teleportation:IsFullyCastable()
-					then
-						bot.useProphetTP = true
-						bot.ProphetTPLocation = nAncient:GetLocation()
-						return BOT_ACTION_DESIRE_NONE
-					end
-				end
-
 				return BOT_ACTION_DESIRE_HIGH, nAncient:GetLocation(), sCastType, sCastMotive
 			end
 			
@@ -5443,19 +5251,6 @@ X.ConsiderItemDesire["item_tpscroll"] = function( hItem )
 					then
 						J.Role['lastFarmTpTime'] = DotaTime()
 						sCastMotive = '保护遗迹'
-
-						if bot:GetUnitName() == 'npc_dota_hero_furion'
-						then
-							local Teleportation = bot:GetAbilityByName('furion_teleportation')
-							if  Teleportation:IsTrained()
-							and Teleportation:IsFullyCastable()
-							then
-								bot.useProphetTP = true
-								bot.ProphetTPLocation = nAncient:GetLocation()
-								return BOT_ACTION_DESIRE_NONE
-							end
-						end
-
 						return BOT_ACTION_DESIRE_HIGH, nAncient:GetLocation(), sCastType, sCastMotive
 					end
 				end
@@ -5495,19 +5290,6 @@ X.ConsiderItemDesire["item_tpscroll"] = function( hItem )
 		then
 			hEffectTarget = tpLoc
 			sCastMotive = '回复状态'
-
-			if bot:GetUnitName() == 'npc_dota_hero_furion'
-			then
-				local Teleportation = bot:GetAbilityByName('furion_teleportation')
-				if  Teleportation:IsTrained()
-				and Teleportation:IsFullyCastable()
-				then
-					bot.useProphetTP = true
-					bot.ProphetTPLocation = hEffectTarget
-					return BOT_ACTION_DESIRE_NONE
-				end
-			end
-
 			return BOT_ACTION_DESIRE_HIGH, hEffectTarget, sCastType, sCastMotive
 		end
 	end
@@ -5526,19 +5308,6 @@ X.ConsiderItemDesire["item_tpscroll"] = function( hItem )
 		then
 			hEffectTarget = tpLoc
 			sCastMotive = '躲血魔大'
-
-			if bot:GetUnitName() == 'npc_dota_hero_furion'
-			then
-				local Teleportation = bot:GetAbilityByName('furion_teleportation')
-				if  Teleportation:IsTrained()
-				and Teleportation:IsFullyCastable()
-				then
-					bot.useProphetTP = true
-					bot.ProphetTPLocation = hEffectTarget
-					return BOT_ACTION_DESIRE_NONE
-				end
-			end
-
 			return BOT_ACTION_DESIRE_HIGH, hEffectTarget, sCastType, sCastMotive
 		end
 	end
@@ -5548,19 +5317,6 @@ X.ConsiderItemDesire["item_tpscroll"] = function( hItem )
 	-- then
 	-- 	tpLoc = GetAncient( GetTeam() ):GetLocation()
 	-- 	sCastMotive = '处理特殊情况一'
-
-	-- 	if bot:GetUnitName() == 'npc_dota_hero_furion'
-	-- 	then
-	-- 		local Teleportation = bot:GetAbilityByName('furion_teleportation')
-	-- 		if  Teleportation:IsTrained()
-	-- 		and Teleportation:IsFullyCastable()
-	-- 		then
-	-- 			bot.useProphetTP = true
-	-- 			bot.ProphetTPLocation = tpLoc
-	-- 			return BOT_ACTION_DESIRE_NONE
-	-- 		end
-	-- 	end
-
 	-- 	return BOT_ACTION_DESIRE_HIGH, tpLoc, sCastType, sCastMotive
 	-- end
 
@@ -5569,19 +5325,6 @@ X.ConsiderItemDesire["item_tpscroll"] = function( hItem )
 	then
 		tpLoc = GetAncient( GetTeam() ):GetLocation()
 		sCastMotive = '处理特殊情况二'
-
-		if bot:GetUnitName() == 'npc_dota_hero_furion'
-		then
-			local Teleportation = bot:GetAbilityByName('furion_teleportation')
-			if  Teleportation:IsTrained()
-			and Teleportation:IsFullyCastable()
-			then
-				bot.useProphetTP = true
-				bot.ProphetTPLocation = tpLoc
-				return BOT_ACTION_DESIRE_NONE
-			end
-		end
-
 		return BOT_ACTION_DESIRE_HIGH, tpLoc, sCastType, sCastMotive
 	end
 	
@@ -8066,35 +7809,42 @@ local function UseGlyph()
 
 end
 
--- store some bot values for last 10 sec
-local infoBuffer = {}
+-- store some bot values for last n sec
+local history = {}
 local timeDelta = 10
 local currIdx = 0
 
-for i = 1, timeDelta do infoBuffer[i] = {health = 0, location = bot:GetLocation()} end
+for i = 1, timeDelta do history[i] = {health = 0, location = bot:GetLocation()} end
 
-function X.UpdateInfoBuffer()
+function X.UpdateBotHistory()
 	currIdx = (currIdx % timeDelta) + 1
-	infoBuffer[timeDelta + 1 - currIdx] = {
+	history[timeDelta + 1 - currIdx] = {
 		health = bot:GetHealth(),
 		location = bot:GetLocation(),
 	}
-	bot.InfoBuffer = infoBuffer
+
+	if bot.history == nil then bot.history = {} end
+
+	bot.history = history
 end
 
 function ItemUsageThink()
+	if bot.farm and bot.farm.state == 2 then return end
+
 	ItemUsageComplement()
+
+	BotBuild.SkillsComplement()
 end
 
 function AbilityUsageThink()
-	BotBuild.SkillsComplement()
+
 end
 
 local fLastTime = 0
 function BuybackUsageThink()
 	local fCurrTime = DotaTime()
 	if fCurrTime - fLastTime >= 1.0 then
-		X.UpdateInfoBuffer()
+		X.UpdateBotHistory()
 		fLastTime = fCurrTime
 	end
 

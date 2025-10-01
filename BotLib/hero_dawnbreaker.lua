@@ -19,13 +19,43 @@ local HeroBuild = {
     ['pos_1'] = {
         [1] = {
             ['talent'] = {
-                [1] = {},
+				[1] = {
+					['t25'] = {0, 10},
+					['t20'] = {10, 0},
+					['t15'] = {0, 10},
+					['t10'] = {0, 10},
+				}
             },
             ['ability'] = {
-                [1] = {},
+                [1] = {2,1,2,3,2,6,2,1,1,1,6,3,3,3,6},
             },
-            ['buy_list'] = {},
-            ['sell_list'] = {},
+            ['buy_list'] = {
+				"item_tango",
+				"item_double_branches",
+				"item_quelling_blade",
+                "item_circlet",
+                "item_gauntlets",
+			
+				"item_magic_wand",
+				"item_bracer",
+				"item_phase_boots",
+                "item_echo_sabre",
+                "item_desolator",--
+                "item_black_king_bar",--
+				"item_aghanims_shard",
+                "item_harpoon",--
+                "item_satanic",--
+                "item_abyssal_blade",--
+				"item_ultimate_scepter_2",
+				"item_moon_shard",
+                "item_bloodthorn",--
+			},
+            ['sell_list'] = {
+				"item_quelling_blade", "item_black_king_bar",
+				"item_bracer", "item_satanic",
+				"item_magic_wand", "item_abyssal_blade",
+                "item_phase_boots", "item_bloodthorn",
+			},
         },
     },
     ['pos_2'] = {
@@ -617,6 +647,7 @@ function X.ConsiderSolarGuardian()
     local fTotalCastTime = nChannelTime + nAirTime + nCastPoint
 
     local vTeamFightLocation = J.GetTeamFightLocation(bot)
+    local nEnemyHeroesAttackingMe = J.GetHeroesTargetingUnit(nEnemyHeroes, bot)
 
     if vTeamFightLocation ~= nil then
         local nInRangeAlly = J.GetAlliesNearLoc(vTeamFightLocation, nRadius)
@@ -630,7 +661,7 @@ function X.ConsiderSolarGuardian()
                 then
                     local nInRangeEnemy = J.GetEnemiesNearLoc(allyHero:GetLocation(), nRadius)
                     if #nInRangeEnemy >= 1 and ((#nInRangeAlly + 1) >= #nInRangeEnemy) then
-                        if not bot:IsMagicImmune() and #J.GetHeroesTargetingUnit(nEnemyHeroes, bot) >= 2 then
+                        if not bot:IsMagicImmune() and #nEnemyHeroesAttackingMe >= 2 then
                             bShouldBKB = true
                         end
 
@@ -646,7 +677,6 @@ function X.ConsiderSolarGuardian()
                     and J.CanBeAttacked(allyHero)
                     and J.IsCore(allyHero)
                     and J.GetHP(allyHero) < 0.65
-                    and not J.IsRetreating(allyHero)
                     and not allyHero:HasModifier('modifier_faceless_void_chronosphere_freeze')
                     and not allyHero:HasModifier('modifier_necrolyte_reapers_scythe')
                     then
@@ -655,7 +685,7 @@ function X.ConsiderSolarGuardian()
                         and (#nInRangeAlly >= #nInRangeEnemy)
                         and #J.GetHeroesTargetingUnit(nEnemyHeroes, allyHero) >= 2
                         then
-                            if not bot:IsMagicImmune() and #J.GetHeroesTargetingUnit(nEnemyHeroes, bot) >= 2 then
+                            if not bot:IsMagicImmune() and #nEnemyHeroesAttackingMe >= 2 then
                                 bShouldBKB = true
                             end
 
@@ -669,19 +699,12 @@ function X.ConsiderSolarGuardian()
 
     if J.IsRetreating(bot) and not J.IsRealInvisible(bot) and bot:DistanceFromFountain() > 3000 and botHP < 0.5 and not J.IsInTeamFight(bot, 1200) then
         for _, enemyHero in pairs(nEnemyHeroes) do
-            if J.IsValidHero(enemyHero)
+            if  J.IsValidHero(enemyHero)
             and not J.IsSuspiciousIllusion(enemyHero)
-            and (enemyHero:GetAttackTarget() == bot or J.IsChasingTarget(enemyHero, bot))
+            and enemyHero:GetAttackTarget() == bot
             then
-                local nEnemyHeroesAttackingBot = J.GetHeroesTargetingUnit(nEnemyHeroes, bot)
-                local totalAttackDamage = 0
-                for _, enemy in pairs(nEnemyHeroesAttackingBot) do
-                    if J.IsValidHero(enemy) then
-                        totalAttackDamage = totalAttackDamage + bot:GetActualIncomingDamage(enemy:GetAttackDamage() * enemy:GetAttackSpeed() * fTotalCastTime, DAMAGE_TYPE_PHYSICAL)
-                    end
-                end
-
-                if bot:IsMagicImmune() and bot:GetHealth() > totalAttackDamage then
+                local totalDamage = J.GetTotalEstimatedDamageToTarget(nEnemyHeroesAttackingMe, bot, fTotalCastTime)
+                if not J.IsStunProjectileIncoming(bot, 1000) and bot:GetHealth() > totalDamage then
                     local hTargetAlly = nil
                     local hTargetAllyDistance = 0
                     for i = 1, 5 do

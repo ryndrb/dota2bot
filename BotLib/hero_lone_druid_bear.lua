@@ -201,9 +201,7 @@ function X.ConsiderSavageRoar()
             and J.CanCastOnNonMagicImmune(enemyHero)
             and not J.IsDisabled(enemyHero)
             then
-                if #nEnemyHeroes > #nAllyHeroes or J.GetHP(bot) < 0.55 then
-                    return BOT_ACTION_DESIRE_HIGH
-                end
+                return BOT_ACTION_DESIRE_HIGH
             end
         end
 	end
