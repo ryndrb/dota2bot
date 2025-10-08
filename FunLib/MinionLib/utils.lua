@@ -361,7 +361,14 @@ function U.IsMinionWithNoSkill(unit)
 		or unit_name == "npc_dota_creep_goodguys_ranged_upgraded"
 		or unit_name == "npc_dota_goodguys_siege"
 		or unit_name == "npc_dota_goodguys_siege_upgraded"
+		or unit_name == "npc_dota_creep_badguys_melee"
+		or unit_name == "npc_dota_creep_badguys_melee_upgraded"
+		or unit_name == "npc_dota_creep_badguys_ranged"
+		or unit_name == "npc_dota_creep_badguys_ranged_upgraded"
+		or unit_name == "npc_dota_badguys_siege"
+		or unit_name == "npc_dota_badguys_siege_upgraded"
 		or unit_name == "npc_dota_neutral_tadpole"
+		or unit_name == "npc_dota_neutral_frostbitten_golem"
 end
 
 function U.IsMinionWithSkill(unit)
@@ -392,6 +399,7 @@ function U.IsMinionWithSkill(unit)
 		or unit_name == "npc_dota_neutral_grown_frog"
 		or unit_name == "npc_dota_neutral_ancient_frog_mage"
 		or unit_name == "npc_dota_neutral_ancient_frog"
+		or unit_name == "npc_dota_neutral_ice_shaman"
 end
 
 function U.IsFrozeSigil(unit)
