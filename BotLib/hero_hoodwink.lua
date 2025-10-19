@@ -377,7 +377,7 @@ function X.ConsiderAcornShot()
                     local nDelay = (GetUnitToUnitDistance(bot, enemy) / nSpeed) + nCastPoint
                     local nLocationAoE = bot:FindAoELocation(true, true, enemy:GetLocation(), 0, nRadius, nDelay, 0)
                     if nLocationAoE.count >= 2 or enemy:IsChanneling() or enemy:IsUsingAbility() or enemy:IsCastingAbility() then
-                        return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc, true
+                        return BOT_ACTION_DESIRE_HIGH, enemy, true
                     else
                         return BOT_ACTION_DESIRE_HIGH, enemy:GetLocation(), false
                     end
