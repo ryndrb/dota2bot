@@ -129,7 +129,7 @@ local HeroBuild = {
             },
             ['buy_list'] = {
 				"item_tango",
-				"item_enchanted_mango",
+				"item_magic_stick",
 				"item_double_branches",
 				"item_faerie_fire",
 				"item_blood_grenade",
@@ -138,16 +138,19 @@ local HeroBuild = {
 				"item_tranquil_boots",
 				"item_solar_crest",--
 				"item_ancient_janggo",
-				"item_force_staff",--
-				"item_holy_locket",--
+				"item_glimmer_cape",--
+				"item_blink",
 				"item_boots_of_bearing",--
 				"item_aghanims_shard",
 				"item_sheepstick",--
+				"item_octarine_core",--
 				"item_ultimate_scepter_2",
-				"item_shivas_guard",--
+				"item_overwhelming_blink",--
 				"item_moon_shard",
 			},
-            ['sell_list'] = {},
+            ['sell_list'] = {
+				"item_magic_wand", "item_octarine_core",
+			},
         },
     },
     ['pos_5'] = {
@@ -165,7 +168,7 @@ local HeroBuild = {
             },
             ['buy_list'] = {
 				"item_tango",
-				"item_enchanted_mango",
+				"item_magic_stick",
 				"item_double_branches",
 				"item_faerie_fire",
 				"item_blood_grenade",
@@ -174,16 +177,19 @@ local HeroBuild = {
 				"item_arcane_boots",
 				"item_solar_crest",--
 				"item_mekansm",
-				"item_force_staff",--
-				"item_holy_locket",--
+				"item_glimmer_cape",--
+				"item_blink",
 				"item_guardian_greaves",--
 				"item_aghanims_shard",
 				"item_sheepstick",--
+				"item_octarine_core",--
 				"item_ultimate_scepter_2",
-				"item_shivas_guard",--
+				"item_overwhelming_blink",--
 				"item_moon_shard",
 			},
-            ['sell_list'] = {},
+            ['sell_list'] = {
+				"item_magic_wand", "item_octarine_core",
+			},
         },
     },
 }
