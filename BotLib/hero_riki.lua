@@ -20,51 +20,7 @@ local HeroBuild = {
         [1] = {
             ['talent'] = {
 				[1] = {
-					['t25'] = {0, 10},
-					['t20'] = {0, 10},
-					['t15'] = {0, 10},
-					['t10'] = {0, 10},
-				}
-            },
-            ['ability'] = {
-                [1] = {2,3,2,1,2,6,2,3,3,3,6,1,1,1,6},
-            },
-            ['buy_list'] = {
-				"item_tango",
-				"item_quelling_blade",
-				"item_magic_stick",
-				"item_circlet",
-			
-				"item_power_treads",
-				"item_magic_wand",
-				"item_maelstrom",
-				"item_diffusal_blade",
-				"item_manta",--
-				"item_mjollnir",--
-				"item_ultimate_scepter",
-				"item_aghanims_shard",
-				"item_greater_crit",--
-				"item_disperser",--
-				"item_basher",
-				"item_ultimate_scepter_2",
-				"item_abyssal_blade",--
-				"item_moon_shard",
-				"item_butterfly",--
-			},
-            ['sell_list'] = {
-				"item_quelling_blade", "item_manta",
-				"item_circlet", "item_ultimate_scepter",
-				"item_wraith_band", "item_greater_crit",
-				"item_magic_wand", "item_basher",
-				"item_power_treads", "item_butterfly"
-			},
-        },
-    },
-    ['pos_2'] = {
-        [1] = {
-            ['talent'] = {
-				[1] = {
-					['t25'] = {0, 10},
+					['t25'] = {10, 0},
 					['t20'] = {0, 10},
 					['t15'] = {0, 10},
 					['t10'] = {0, 10},
@@ -80,28 +36,66 @@ local HeroBuild = {
 				"item_circlet",
 				"item_slippers",
 			
-				"item_bottle",
 				"item_magic_wand",
-				"item_power_treads",
 				"item_wraith_band",
-				"item_maelstrom",
+				"item_power_treads",
+				"item_bfury",--
 				"item_diffusal_blade",
-				"item_manta",--
-				"item_mjollnir",--
+				"item_desolator",--
+				"item_ultimate_scepter",
+				"item_aghanims_shard",
+				"item_greater_crit",--
+				"item_disperser",--
+				"item_abyssal_blade",--
+				"item_ultimate_scepter_2",
+				"item_butterfly",--
+				"item_moon_shard",
+			},
+            ['sell_list'] = {
+				"item_magic_wand", "item_ultimate_scepter",
+				"item_wraith_band", "item_greater_crit",
+				"item_power_treads", "item_butterfly"
+			},
+        },
+    },
+    ['pos_2'] = {
+        [1] = {
+            ['talent'] = {
+				[1] = {
+					['t25'] = {10, 0},
+					['t20'] = {0, 10},
+					['t15'] = {0, 10},
+					['t10'] = {0, 10},
+				}
+            },
+            ['ability'] = {
+                [1] = {2,3,2,1,2,6,2,3,3,3,6,1,1,1,6},
+            },
+            ['buy_list'] = {
+				"item_tango",
+				"item_double_branches",
+				"item_quelling_blade",
+				"item_circlet",
+				"item_slippers",
+			
+				"item_magic_wand",
+				"item_wraith_band",
+				"item_power_treads",
+				"item_bfury",--
+				"item_diffusal_blade",
+				"item_desolator",--
 				"item_ultimate_scepter",
 				"item_aghanims_shard",
 				"item_greater_crit",--
 				"item_disperser",--
 				"item_nullifier",--
 				"item_ultimate_scepter_2",
-				"item_moon_shard",
 				"item_abyssal_blade",--
+				"item_moon_shard",
 			},
             ['sell_list'] = {
-				"item_quelling_blade", "item_diffusal_blade",
-				"item_magic_wand", "item_manta",
-				"item_wraith_band", "item_ultimate_scepter",
-				"item_bottle", "item_greater_crit",
+				"item_magic_wand", "item_ultimate_scepter",
+				"item_wraith_band", "item_greater_crit",
 				"item_power_treads", "item_abyssal_blade"
 			},
         },
