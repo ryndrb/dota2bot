@@ -255,11 +255,7 @@ local Combo1Desire, Combo1Target, Combo1Location
 local Combo2Desire, Combo2Target, Combo2Location
 local Combo3Desire, Combo3Target, Combo3Location
 
-local fTorrentCastTime = math.huge
-
-local fCombo1CastTime = math.huge
-local fCombo2CastTime = math.huge
-local fCombo3CastTime = math.huge
+local kunkka = { combo1 = false, combo2 = false, combo3 = false }
 
 local bAttacking = false
 local botTarget, botHP
@@ -283,51 +279,51 @@ function X.SkillsComplement()
     nAllyHeroes = bot:GetNearbyHeroes(1600, false, BOT_MODE_NONE)
     nEnemyHeroes = bot:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
 
-	-- inconsistent
 	if J.CanCastAbility(Return) then
 		if Torrent and Torrent:IsTrained() and XMarksTheSpot and XMarksTheSpot:IsTrained() then
 			local fTorrentDelay = Torrent:GetSpecialValueFloat('delay')
-			local fTorrentCastPoint = Torrent:GetCastPoint()
-			local fXMarksTheSpotCastPoint = XMarksTheSpot:GetCastPoint()
 			local fReturnCastPoint = Return:GetCastPoint()
 
-			if (DotaTime() > fCombo2CastTime + (fTorrentDelay + fXMarksTheSpotCastPoint + fTorrentCastPoint - fReturnCastPoint)) then
-				fCombo1CastTime, fCombo2CastTime, fCombo3CastTime = math.huge, math.huge, math.huge
-				bot:Action_UseAbility(Return)
-				return
-			end
+			local fTimeRemaining__X = XMarksTheSpot:GetCooldown() - XMarksTheSpot:GetCooldownTimeRemaining()
+			local fTimeRemaining__Torrent = Torrent:GetCooldown() - Torrent:GetCooldownTimeRemaining()
 
-			if Ghostship and Ghostship:IsTrained() then
-				local fGhostshipCastPoint = Ghostship:GetCastPoint()
-				local nGhostshipDistance = Ghostship:GetSpecialValueInt('ghostship_distance')
-				local nGhostshipSpeed = Ghostship:GetSpecialValueInt('ghostship_speed')
-
-				if DotaTime() > fCombo1CastTime + (fTorrentDelay + fXMarksTheSpotCastPoint + fGhostshipCastPoint + fTorrentCastPoint - fReturnCastPoint) then
-					fCombo1CastTime, fCombo2CastTime, fCombo3CastTime = math.huge, math.huge, math.huge
+			if kunkka.combo2 then
+				if fTorrentDelay - fTimeRemaining__Torrent > 0 and fTorrentDelay - fTimeRemaining__Torrent < fReturnCastPoint + 0.1 then
 					bot:Action_UseAbility(Return)
 					return
 				end
+			end
 
-				if DotaTime() > fCombo3CastTime + ((nGhostshipDistance / nGhostshipSpeed) + fXMarksTheSpotCastPoint + fGhostshipCastPoint - fReturnCastPoint) then
-					fCombo1CastTime, fCombo2CastTime, fCombo3CastTime = math.huge, math.huge, math.huge
-					bot:Action_UseAbility(Return)
-					return
+			if Ghostship and Ghostship:IsTrained() then
+				local fTimeRemaining__Ghostship = Ghostship:GetCooldown() - Ghostship:GetCooldownTimeRemaining()
+
+				if kunkka.combo1 then
+					if fTorrentDelay - fTimeRemaining__Torrent > 0 and fTorrentDelay - fTimeRemaining__Torrent < fReturnCastPoint + 0.1 then
+						bot:Action_UseAbility(Return)
+						return
+					end
+				end
+
+				if kunkka.combo3 then
+					local nDelay = Ghostship:GetSpecialValueFloat('tooltip_delay')
+					if nDelay - fTimeRemaining__X > 0 and nDelay - fTimeRemaining__X < fReturnCastPoint + 0.1 then
+						bot:Action_UseAbility(Return)
+						return
+					end
 				end
 			end
 		end
 
 		return
 	else
-		fCombo1CastTime, fCombo2CastTime, fCombo3CastTime = math.huge, math.huge, math.huge
+		kunkka = { combo1 = false, combo2 = false, combo3 = false }
 	end
 
 	-- X -> Ghostship -> Torrent
 	Combo1Desire, Combo1Target, Combo1Location = X.ConsiderCombo1()
 	if Combo1Desire > 0 then
+		kunkka.combo1 = true
 		bot:Action_ClearActions(true)
-		fCombo1CastTime = DotaTime()
-		fTorrentCastTime = DotaTime() + XMarksTheSpot:GetCastPoint() + Ghostship:GetCastPoint()
-		fCombo2CastTime, fCombo3CastTime = math.huge, math.huge
 		bot:ActionQueue_UseAbilityOnEntity(XMarksTheSpot, Combo1Target)
 		bot:ActionQueue_UseAbilityOnLocation(Ghostship, Combo1Location)
 		bot:ActionQueue_UseAbilityOnLocation(Torrent, Combo1Location)
@@ -337,10 +333,8 @@ function X.SkillsComplement()
 	-- X -> Torrent
 	Combo2Desire, Combo2Target, Combo2Location = X.ConsiderCombo2()
 	if Combo2Desire > 0 then
+		kunkka.combo2 = true
 		bot:Action_ClearActions(true)
-		fCombo2CastTime = DotaTime()
-		fTorrentCastTime = DotaTime() + XMarksTheSpot:GetCastPoint()
-		fCombo1CastTime, fCombo3CastTime = math.huge, math.huge
 		bot:ActionQueue_UseAbilityOnEntity(XMarksTheSpot, Combo2Target)
 		bot:ActionQueue_UseAbilityOnLocation(Torrent, Combo2Location)
 		return
@@ -349,9 +343,8 @@ function X.SkillsComplement()
 	-- X -> Ghostship
 	Combo3Desire, Combo3Target, Combo3Location = X.ConsiderCombo3()
 	if Combo3Desire > 0 then
+		kunkka.combo3 = true
 		bot:Action_ClearActions(true)
-		fCombo3CastTime = DotaTime()
-		fCombo1CastTime, fCombo2CastTime = math.huge, math.huge
 		bot:ActionQueue_UseAbilityOnEntity(XMarksTheSpot, Combo3Target)
 		bot:ActionQueue_UseAbilityOnLocation(Ghostship, Combo3Location)
 		return
@@ -637,9 +630,7 @@ function X.ConsiderReturn()
 end
 
 function X.ConsiderTidalWave()
-	if not J.CanCastAbility(TidalWave)
-	or DotaTime() < fTorrentCastTime + 3
-	then
+	if not J.CanCastAbility(TidalWave) then
 		return BOT_ACTION_DESIRE_NONE, 0
 	end
 
@@ -648,6 +639,10 @@ function X.ConsiderTidalWave()
 	local nManaCost = TidalWave:GetManaCost()
 	local fManaAfter = J.GetManaAfter(nManaCost)
 	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {Torrent, XMarksTheSpot, Ghostship})
+
+	if Torrent and Torrent:IsTrained() and Torrent:GetCooldown() - Torrent:GetCooldownTimeRemaining() < 3.1 then
+		return BOT_ACTION_DESIRE_NONE, 0
+	end
 
 	if J.IsInTeamFight(bot, 1200) then
 		local nLocationAoE = bot:FindAoELocation(true, true, bot:GetLocation(), nRadius, nRadius, 0, 0)
@@ -763,17 +758,12 @@ function X.ConsiderCombo1()
 			and not botTarget:HasModifier('modifier_oracle_false_promise_timer')
 			and not botTarget:HasModifier('modifier_templar_assassin_refraction_absorb')
 			and not botTarget:HasModifier('modifier_item_aeon_disk_buff')
+			and J.GetHP(botTarget) > 0.4
 			then
-				local nInRangeAlly = J.GetAlliesNearLoc(botTarget:GetLocation(), 1200)
-				local nInRangeEnemy = J.GetEnemiesNearLoc(botTarget:GetLocation(), 1200)
-				if #nInRangeAlly <= 2 and #nInRangeEnemy <= 1 then
-					if J.GetTotalEstimatedDamageToTarget(nInRangeAlly, botTarget, 5.0) / botTarget:GetHealth() >= 0.6 then
-						return BOT_ACTION_DESIRE_HIGH, botTarget, J.GetCorrectLoc(botTarget, XMarksTheSpot:GetCastPoint())
-					end
-				else
-					if not (#nInRangeAlly >= #nInRangeEnemy + 2) or J.IsInTeamFight(bot, 1200) then
-						return BOT_ACTION_DESIRE_HIGH, botTarget, J.GetCorrectLoc(botTarget, XMarksTheSpot:GetCastPoint())
-					end
+				local nInRangeAlly = J.GetAlliesNearLoc(bot:GetLocation(), 1200)
+				local nInRangeEnemy = J.GetEnemiesNearLoc(bot:GetLocation(), 1200)
+				if not (#nInRangeAlly >= #nInRangeEnemy + 2) or J.IsInTeamFight(bot, 1200) then
+					return BOT_ACTION_DESIRE_HIGH, botTarget, J.GetCorrectLoc(botTarget, XMarksTheSpot:GetCastPoint())
 				end
 			end
 		end
@@ -809,9 +799,9 @@ function X.ConsiderCombo2()
 			and not botTarget:HasModifier('modifier_templar_assassin_refraction_absorb')
 			and not botTarget:HasModifier('modifier_item_aeon_disk_buff')
 			then
-				local nInRangeAlly = J.GetAlliesNearLoc(botTarget:GetLocation(), 1200)
-				local nInRangeEnemy = J.GetEnemiesNearLoc(botTarget:GetLocation(), 1200)
-				if not (#nInRangeAlly >= #nInRangeEnemy + 2)
+				local nInRangeAlly = J.GetAlliesNearLoc(bot:GetLocation(), 1200)
+				local nInRangeEnemy = J.GetEnemiesNearLoc(bot:GetLocation(), 1200)
+				if not (#nInRangeAlly >= #nInRangeEnemy + 3)
 				or (J.IsChasingTarget(bot, botTarget) and not J.IsInRange(bot, botTarget, nCastRange_X / 2))
 				then
 					return BOT_ACTION_DESIRE_HIGH, botTarget, J.GetCorrectLoc(botTarget, XMarksTheSpot:GetCastPoint())
@@ -846,14 +836,11 @@ function X.ConsiderCombo3()
 			and not botTarget:HasModifier('modifier_templar_assassin_refraction_absorb')
 			and not botTarget:HasModifier('modifier_item_aeon_disk_buff')
 			then
-				local nInRangeAlly = J.GetAlliesNearLoc(botTarget:GetLocation(), 1200)
-				local nInRangeEnemy = J.GetEnemiesNearLoc(botTarget:GetLocation(), 1200)
-				if #nInRangeAlly <= 2 and #nInRangeEnemy <= 1 then
-					if J.GetTotalEstimatedDamageToTarget(nInRangeAlly, botTarget, 5.0) > botTarget:GetHealth() then
-						return BOT_ACTION_DESIRE_HIGH, botTarget, J.GetCorrectLoc(botTarget, XMarksTheSpot:GetCastPoint())
-					end
-				else
-					if not (#nInRangeAlly >= #nInRangeEnemy + 2) or J.IsInTeamFight(bot, 1200) then
+				local nInRangeAlly = J.GetAlliesNearLoc(bot:GetLocation(), 1200)
+				local nInRangeEnemy = J.GetEnemiesNearLoc(bot:GetLocation(), 1200)
+
+				if not (#nInRangeAlly >= #nInRangeEnemy + 2) then
+					if J.GetTotalEstimatedDamageToTarget(nInRangeAlly, botTarget, 5.0) > botTarget:GetHealth() or J.IsInTeamFight(bot, 1200) then
 						return BOT_ACTION_DESIRE_HIGH, botTarget, J.GetCorrectLoc(botTarget, XMarksTheSpot:GetCastPoint())
 					end
 				end

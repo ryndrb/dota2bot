@@ -40,7 +40,7 @@ local HeroBuild = {
 				"item_power_treads",
 				"item_wraith_band",
                 "item_bfury",--
-                "item_manta",--
+                "item_desolator",--
                 "item_black_king_bar",--
                 "item_butterfly",--
                 "item_ultimate_scepter",
@@ -51,8 +51,8 @@ local HeroBuild = {
                 "item_travel_boots_2",--
 			},
             ['sell_list'] = {
-				"item_wraith_band", "item_black_king_bar",
-				"item_magic_wand", "item_ultimate_scepter",
+				"item_magic_wand", "item_butterfly",
+				"item_wraith_band", "item_ultimate_scepter",
 			},
         },
         [2] = {
@@ -77,13 +77,13 @@ local HeroBuild = {
 				"item_magic_wand",
 				"item_power_treads",
 				"item_wraith_band",
-                "item_maelstrom",
-                "item_manta",--
+                "item_falcon_blade",
+                "item_desolator",--
                 "item_black_king_bar",--
-                "item_mjollnir",--
                 "item_butterfly",--
                 "item_ultimate_scepter",
                 "item_greater_crit",--
+                "item_skadi",--
 				"item_ultimate_scepter_2",
                 "item_aghanims_shard",
 				"item_moon_shard",
@@ -91,8 +91,9 @@ local HeroBuild = {
 			},
             ['sell_list'] = {
                 "item_quelling_blade", "item_black_king_bar",
-				"item_wraith_band", "item_butterfly",
-				"item_magic_wand", "item_ultimate_scepter",
+				"item_magic_wand", "item_butterfly",
+				"item_wraith_band", "item_ultimate_scepter",
+                "item_falcon_blade", "item_greater_crit",
 			},
         },
     },
@@ -118,25 +119,26 @@ local HeroBuild = {
 				
                 "item_bottle",
 				"item_magic_wand",
-				"item_wraith_band",
 				"item_power_treads",
-                "item_maelstrom",
-                "item_manta",--
+				"item_wraith_band",
+                "item_falcon_blade",
+                "item_desolator",--
                 "item_black_king_bar",--
-                "item_mjollnir",--
                 "item_butterfly",--
                 "item_ultimate_scepter",
                 "item_greater_crit",--
+                "item_skadi",--
 				"item_ultimate_scepter_2",
                 "item_aghanims_shard",
 				"item_moon_shard",
                 "item_travel_boots_2",--
 			},
             ['sell_list'] = {
-                "item_quelling_blade", "item_manta",
-				"item_wraith_band", "item_black_king_bar",
-				"item_magic_wand", "item_butterfly",
+                "item_quelling_blade", "item_desolator",
+				"item_magic_wand", "item_black_king_bar",
+				"item_wraith_band", "item_butterfly",
                 "item_bottle", "item_ultimate_scepter",
+                "item_falcon_blade", "item_greater_crit",
 			},
         },
     },

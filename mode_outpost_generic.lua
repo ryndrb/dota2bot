@@ -8,16 +8,10 @@ local Item = require( GetScriptDirectory()..'/FunLib/aba_item' )
 
 local hAbilityCapture = bot:GetAbilityByName('ability_capture')
 local Outposts = {}
-local DidWeGetOutpost = false
+local bGotOutposts = false
+local bIsEnemyTier2Down = false
 local ClosestOutpost = nil
 local ClosestOutpostDist = 10000
-
-local IsEnemyTier2Down = false
-
-local TinkerShouldWaitInBaseToHeal = false
-
-local ShouldWaitInBaseToHeal = false
-local TPScroll = nil
 
 local botName = bot:GetUnitName()
 local cAbility = nil
@@ -34,14 +28,15 @@ local bMoveFromTreeDance = false
 local fNextMovementTime = -math.huge
 local LoneDruid = {}
 
+local channel_target = { unit = nil, location = 0, tree = -1 }
+
 function GetDesire()
-	if not IsEnemyTier2Down
-	then
+	if not bIsEnemyTier2Down then
 		if GetTower(GetOpposingTeam(), TOWER_TOP_2) == nil
 		or GetTower(GetOpposingTeam(), TOWER_MID_2) == nil
 		or GetTower(GetOpposingTeam(), TOWER_BOT_2) == nil
 		then
-			IsEnemyTier2Down = true
+			bIsEnemyTier2Down = true
 		end
 	end
 
@@ -62,7 +57,7 @@ function GetDesire()
 	if botName == "npc_dota_hero_pugna" 
 	then
 		if cAbility == nil then cAbility = bot:GetAbilityByName( "pugna_life_drain" ) end;
-		if cAbility:IsInAbilityPhase() or bot:IsChanneling() then
+		if cAbility:IsChanneling() then
 			return BOT_MODE_DESIRE_ABSOLUTE;
 		end	
 	elseif botName == "npc_dota_hero_drow_ranger"
@@ -210,7 +205,7 @@ function GetDesire()
 		if cAbility == nil then cAbility = bot:GetAbilityByName("puck_phase_shift") end
 		if cAbility:IsTrained()
 		then
-			if cAbility:IsInAbilityPhase() or bot:HasModifier('modifier_puck_phase_shift') then
+			if cAbility:IsInAbilityPhase() or bot:HasModifier('modifier_puck_phase_shift') or cAbility:IsChanneling() then
 				return BOT_MODE_DESIRE_ABSOLUTE
 			end
 		end
@@ -322,20 +317,55 @@ function GetDesire()
 				end
 			end
 		end
-	end
-
-	TPScroll = J.GetItem2(bot, 'item_tpscroll')
-
-	-- if  ConsiderWaitInBaseToHeal()
-	-- and GetUnitToLocationDistance(bot, J.GetTeamFountain()) > 5500
-	-- then
-	-- 	return BOT_ACTION_DESIRE_ABSOLUTE
-	-- end
-
-	TinkerShouldWaitInBaseToHeal = TinkerWaitInBaseAndHeal()
-	if TinkerShouldWaitInBaseToHeal
+	elseif bot:HasModifier('modifier_dark_willow_bedlam')
 	then
-		return BOT_ACTION_DESIRE_ABSOLUTE
+		cAbility = bot:GetAbilityByName("dark_willow_bedlam")
+		if cAbility and cAbility:IsTrained() then
+			local nRadius = cAbility:GetSpecialValueInt('attack_radius')
+			local nInRangeAlly = J.GetAlliesNearLoc(bot:GetLocation(), 1200)
+			local nInRangeEnemy = J.GetEnemiesNearLoc(bot:GetLocation(), 1200)
+
+			if #nInRangeAlly >= #nInRangeEnemy or J.IsInTeamFight(bot, 1200) then
+				for _, enemyHero in pairs(nInRangeEnemy) do
+					if J.IsValidHero(enemyHero)
+					and J.IsInRange(bot, enemyHero, bot:GetAttackRange() + nRadius)
+					and not enemyHero:HasModifier('modifier_abaddon_borrowed_time')
+					and not enemyHero:HasModifier('modifier_dazzle_shallow_grave')
+					and not enemyHero:HasModifier('modifier_oracle_false_promise_timer')
+					and not enemyHero:HasModifier('modifier_item_blade_mail_reflect')
+					then
+						if J.GetHP(enemyHero) < 0.5
+						or J.IsDisabled(enemyHero)
+						or enemyHero:HasModifier('modifier_legion_commander_duel')
+					   	then
+							channel_target.location = enemyHero:GetLocation()
+							return BOT_MODE_DESIRE_ABSOLUTE
+					   	end
+					end
+				end
+			end
+		end
+	elseif bot:GetAbilityByName('witch_doctor_death_ward')
+	then
+		cAbility = bot:GetAbilityByName('witch_doctor_death_ward')
+		if cAbility and cAbility:IsTrained() then
+			if cAbility:IsChanneling() then
+				return BOT_MODE_DESIRE_ABSOLUTE
+			end
+		end
+	elseif bot:HasModifier('modifier_chen_hand_of_god_invuln_aura')
+	then
+		if J.IsInTeamFight(bot, 1200) then
+			cAbility = bot:GetAbilityByName('chen_hand_of_god')
+			if cAbility and cAbility:IsTrained() then
+				local nRadius = cAbility:GetSpecialValueInt('debuff_immune_radius')
+				local nInRangeAlly = J.GetEnemiesNearLoc(bot:GetLocation(), nRadius)
+
+				if #nInRangeAlly >= 3 and not J.IsStunProjectileIncoming(bot, 800) then
+					return BOT_MODE_DESIRE_ABSOLUTE
+				end
+			end
+		end
 	end
 
 	ShouldHuskarMoveOutsideFountain = ConsiderHuskarMoveOutsideFountain()
@@ -454,36 +484,33 @@ function GetDesire()
 	-- Outpost
 	----------
 
-	if not IsEnemyTier2Down then return BOT_ACTION_DESIRE_NONE end
+	if not bIsEnemyTier2Down then return BOT_MODE_DESIRE_NONE end
 
-	if not DidWeGetOutpost
-	then
-		for _, unit in pairs(GetUnitList(UNIT_LIST_ALL))
-		do
-			if unit:GetUnitName() == '#DOTA_OutpostName_North'
-			or unit:GetUnitName() == '#DOTA_OutpostName_South'
-			then
-				table.insert(Outposts, unit)
+	if not bGotOutposts then
+		for _, unit in pairs(GetUnitList(UNIT_LIST_ALL)) do
+			if unit then
+				if unit:GetUnitName() == '#DOTA_OutpostName_North'
+				or unit:GetUnitName() == '#DOTA_OutpostName_South'
+				then
+					table.insert(Outposts, unit)
+				end
 			end
 		end
 
-		DidWeGetOutpost = true
-	end
-
-	ClosestOutpost, ClosestOutpostDist = GetClosestOutpost()
-	if  ClosestOutpost ~= nil and ClosestOutpostDist < 2200
-	and not IsEnemyCloserToOutpostLoc(ClosestOutpost:GetLocation(), ClosestOutpostDist, 15)
-	and IsSuitableToCaptureOutpost()
-	then
-		local nInRangeEnemy = J.GetEnemiesNearLoc(ClosestOutpost:GetLocation(), 1200)
-		if J.IsRealInvisible(bot) then
-			return BOT_MODE_DESIRE_VERYHIGH
-		else
-			return BOT_MODE_DESIRE_VERYHIGH - (#nInRangeEnemy * (0.9 / 5))
+		if #Outposts == 2 then
+			bGotOutposts = true
 		end
 	end
 
-	return BOT_ACTION_DESIRE_NONE
+	ClosestOutpost, ClosestOutpostDist = GetClosestOutpost()
+	if  ClosestOutpost
+	and not IsEnemyCloserToOutpost(ClosestOutpost:GetLocation(), ClosestOutpostDist)
+	and IsSuitableToCaptureOutpost(ClosestOutpost:GetLocation())
+	then
+		return BOT_MODE_DESIRE_VERYHIGH
+	end
+
+	return BOT_MODE_DESIRE_NONE
 end
 
 function OnStart()
@@ -493,7 +520,6 @@ end
 function OnEnd()
 	ClosestOutpost = nil
 	ClosestOutpostDist = 10000
-	ShouldWaitInBaseToHeal = false
 end
 
 function Think()
@@ -790,6 +816,14 @@ function Think()
 		return
 	end
 
+	-- Bedlam
+	if bot:HasModifier('modifier_dark_willow_bedlam') then
+		if channel_target.location then
+			bot:Action_MoveToLocation(channel_target.location + RandomVector(50))
+			return
+		end
+	end
+
 	if J.CanNotUseAction(bot) then return end
 
 	-- Lone Druid Bear
@@ -909,61 +943,6 @@ function Think()
 		end
 	end
 
-	-- Heal in Base
-	-- Just for TP. Too much back and forth when "forcing" them try to walk to fountain; <- not reliable and misses farm.
-	if ShouldWaitInBaseToHeal
-	then
-		if GetUnitToLocationDistance(bot, J.GetTeamFountain()) > 150
-		then
-			local nInRangeEnemy = J.GetEnemiesNearLoc(bot:GetLocation(), 1600)
-			if  J.Item.GetItemCharges(bot, 'item_tpscroll') >= 1
-			and nInRangeEnemy ~= nil and #nInRangeEnemy == 0
-			then
-				if bot:GetUnitName() == 'npc_dota_hero_furion'
-				then
-					local Teleportation = bot:GetAbilityByName('furion_teleportation')
-					if  Teleportation:IsTrained()
-					and Teleportation:IsFullyCastable()
-					then
-						bot:Action_UseAbilityOnLocation(Teleportation, J.GetTeamFountain())
-						return
-					end
-				end
-
-				if J.CanCastAbility(TPScroll)
-				then
-					bot:Action_UseAbilityOnLocation(TPScroll, J.GetTeamFountain())
-					return
-				end
-			end
-		else
-			if J.GetHP(bot) < 0.85 or J.GetMP(bot) < 0.85
-			then
-				if  J.Item.GetItemCharges(bot, 'item_tpscroll') <= 1
-				and not J.IsMeepoClone(bot)
-				and bot:GetGold() >= GetItemCost('item_tpscroll')
-				and not string.find(bot:GetUnitName(), 'bear')
-				then
-					bot:ActionImmediate_PurchaseItem('item_tpscroll')
-					return
-				end
-
-				bot:Action_MoveToLocation(bot:GetLocation() + 150)
-				return
-			else
-				ShouldWaitInBaseToHeal = false
-			end
-		end
-	end
-
-	-- Tinker
-	if TinkerShouldWaitInBaseToHeal
-	then
-		if J.GetHP(bot) < 0.8 or J.GetMP(bot) < 0.8 then
-			return
-		end
-	end
-
 	if ClosestOutpost ~= nil
 	then
 		if GetUnitToUnitDistance(bot, ClosestOutpost) > 300
@@ -981,39 +960,38 @@ function Think()
 end
 
 function GetClosestOutpost()
-	local closest = nil
-	local dist = 10000
+	local closestOutpost = nil
+	local closestOutpostETA = math.huge
 
-	for i = 1, 2
-	do
-		if  Outposts[i] ~= nil
+	for i = 1, #Outposts do
+		if  Outposts[i]
 		and Outposts[i]:GetTeam() ~= GetTeam()
-		and GetUnitToUnitDistance(bot, Outposts[i]) < dist
 		and not Outposts[i]:IsNull()
 		and not Outposts[i]:IsInvulnerable()
 		then
-			closest = Outposts[i]
-			dist = GetUnitToUnitDistance(bot, Outposts[i])
+			local outpostDistance = GetUnitToUnitDistance(bot, Outposts[i])
+			local eta = (outpostDistance / bot:GetCurrentMovementSpeed())
+			if eta <= 10.0 and eta < closestOutpostETA then
+				closestOutpost = Outposts[i]
+				closestOutpostETA = eta
+			end
 		end
 	end
 
-	return closest, dist
+	if closestOutpost then
+		return closestOutpost, GetUnitToUnitDistance(bot, closestOutpost)
+	end
+
+	return nil, 0
 end
 
-function IsEnemyCloserToOutpostLoc(opLoc, botDist, fTime)
-	for _, id in pairs(GetTeamPlayers(GetOpposingTeam()))
-	do
+function IsEnemyCloserToOutpost(vLocation, nDistance)
+	for _, id in pairs(GetTeamPlayers(GetOpposingTeam())) do
 		local info = GetHeroLastSeenInfo(id)
-
-		if info ~= nil
-		then
+		if info ~= nil then
 			local dInfo = info[1]
-			if dInfo ~= nil
-			then
-				if  dInfo ~= nil
-				and dInfo.time_since_seen < fTime
-				and J.GetDistance(dInfo.location, opLoc) < botDist
-				then
+			if dInfo ~= nil then
+				if dInfo ~= nil and J.GetDistance(dInfo.location, vLocation) < nDistance then
 					return true
 				end
 			end
@@ -1023,32 +1001,23 @@ function IsEnemyCloserToOutpostLoc(opLoc, botDist, fTime)
 	return false
 end
 
-function IsSuitableToCaptureOutpost()
+function IsSuitableToCaptureOutpost(vLocation)
 	local botTarget = J.GetProperTarget(bot)
 
+	local nInRangeAlly = J.GetAlliesNearLoc(bot:GetLocation(), 1200)
+	local nInRangeEnemy = J.GetEnemiesNearLoc(bot:GetLocation(), 1200)
+
 	if (J.IsGoingOnSomeone(bot) and J.IsValidTarget(botTarget) and GetUnitToUnitDistance(bot, botTarget) < 1200)
-	or J.IsDefending(bot)
-	or (J.IsDoingTormentor(bot) and J.IsTormentor(botTarget))
-	or (J.IsDoingRoshan(bot) and J.IsRoshan(botTarget))
-	or J.IsRetreating(bot)
-	or bot:WasRecentlyDamagedByAnyHero(5.0)
-	or bot:GetActiveMode() == BOT_MODE_DEFEND_ALLY
+	or (J.IsDoingTormentor(bot))
+	or (J.IsDoingRoshan(bot))
+	or (J.IsRetreating(bot))
+	or (bot:WasRecentlyDamagedByAnyHero(15.0) and #nInRangeEnemy >= #nInRangeAlly)
+	or (#nInRangeEnemy > #nInRangeAlly)
 	then
 		return false
 	end
 
 	return true
-end
-
-function TinkerWaitInBaseAndHeal()
-	if  bot:GetUnitName() == 'npc_dota_hero_tinker'
-	and bot.healInBase
-	and GetUnitToLocationDistance(bot, J.GetTeamFountain()) < 500
-	then
-		return true
-	end
-
-	return false
 end
 
 function GetMortimerKissesTarget()
@@ -1110,51 +1079,6 @@ function ConsiderLeshracEdictTower()
 					return true
 				end
 			end
-		end
-	end
-
-	return false
-end
-
--- Just for TP. Too much back and forth when "forcing" them try to walk to fountain; <- not reliable and misses farm.
-function ConsiderWaitInBaseToHeal()
-	local nInRangeEnemy = J.GetEnemiesNearLoc(bot:GetLocation(), 1600)
-
-	local ProphetTP = nil
-	if bot:GetUnitName() == 'npc_dota_hero_furion'
-	then
-		ProphetTP = bot:GetAbilityByName('furion_teleportation')
-	end
-
-	if  not J.IsInLaningPhase()
-	and not (J.IsFarming(bot) and J.IsAttacking(bot))
-	and nInRangeEnemy ~= nil and #nInRangeEnemy == 0
-	and GetUnitToUnitDistance(bot, GetAncient(GetOpposingTeam())) > 2400
-	and (  (TPScroll ~= nil and TPScroll:IsFullyCastable())
-		or (ProphetTP ~= nil and ProphetTP:IsTrained() and ProphetTP:IsFullyCastable()))
-	then
-		if  (J.GetHP(bot) < 0.25
-			and bot:GetHealthRegen() < 15
-			and bot:GetUnitName() ~= 'npc_dota_hero_huskar'
-			and bot:GetUnitName() ~= 'npc_dota_hero_slark'
-			and bot:GetUnitName() ~= 'npc_dota_hero_necrolyte'
-			and not bot:HasModifier('modifier_tango_heal')
-			and not bot:HasModifier('modifier_flask_healing')
-			and not bot:HasModifier('modifier_alchemist_chemical_rage')
-			and not bot:HasModifier('modifier_arc_warden_tempest_double')
-			and not bot:HasModifier('modifier_juggernaut_healing_ward_heal')
-			and not bot:HasModifier('modifier_oracle_purifying_flames')
-			and not bot:HasModifier('modifier_warlock_fatal_bonds')
-			and not bot:HasModifier('modifier_item_satanic_unholy')
-			and not bot:HasModifier('modifier_item_spirit_vessel_heal')
-			and not bot:HasModifier('modifier_item_urn_heal'))
-		or (((J.IsCore(bot) and J.GetMP(bot) < 0.25 and (J.GetHP(bot) < 0.75 and bot:GetHealthRegen() < 10))
-				or ((not J.IsCore(bot) and J.GetMP(bot) < 0.25 and bot:GetHealthRegen() < 10)))
-			and bot:GetUnitName() ~= 'npc_dota_hero_necrolyte'
-			and not (J.IsPushing(bot) and #J.GetAlliesNearLoc(bot:GetLocation(), 900) >= 3))
-		then
-			ShouldWaitInBaseToHeal = true
-			return true
 		end
 	end
 
@@ -1298,12 +1222,12 @@ function HoodwinkSharpshooter()
 		local nRadius = Sharpshooter:GetSpecialValueInt('arrow_width')
 		local nArrowRange = Sharpshooter:GetSpecialValueInt('arrow_range')
 
-		if J.IsValidHero(bot.hoodwink_sharpshooter.target) then
+		if J.IsValid(bot.hoodwink_sharpshooter.target) then
 			bot:Action_MoveToLocation(bot.hoodwink_sharpshooter.target:GetLocation())
 			return
 		else
-			local target = nil
-			local targetHealth = math.huge
+			local hTarget = nil
+			local hTargetHealth = math.huge
 			for _, enemy in pairs(GetUnitList(UNIT_LIST_ENEMY_HEROES)) do
 				if J.IsValidHero(enemy)
 				and J.CanBeAttacked(enemy)
@@ -1316,15 +1240,16 @@ function HoodwinkSharpshooter()
 				and not enemy:HasModifier('modifier_item_blade_mail_reflect')
 				then
 					local enemyHealth = enemy:GetHealth()
-					if enemyHealth < targetHealth then
-						targetHealth = enemyHealth
-						target = enemy
+					if enemyHealth < hTargetHealth then
+						hTargetHealth = enemyHealth
+						hTarget = enemy
 					end
 				end
 			end
 
-			if target ~= nil then
-				bot:Action_MoveToLocation(target:GetLocation())
+			if hTarget ~= nil then
+				bot.hoodwink_sharpshooter.target = hTarget
+				bot:Action_MoveToLocation(hTarget:GetLocation())
 				return
 			end
 
@@ -1346,6 +1271,7 @@ function HoodwinkSharpshooter()
 					and not memberTarget:HasModifier('modifier_item_aeon_disk_buff')
 					and not memberTarget:HasModifier('modifier_item_blade_mail_reflect')
 					then
+						bot.hoodwink_sharpshooter.target = member
 						bot:Action_MoveToLocation(memberTarget:GetLocation())
 						return
 					end
@@ -1372,6 +1298,7 @@ function HoodwinkSharpshooter()
 						end
 
 						if count < 5 then
+							bot.hoodwink_sharpshooter.target = creep
 							bot:Action_MoveToLocation(creep:GetLocation())
 							return
 						end

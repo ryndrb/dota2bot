@@ -24,7 +24,7 @@ local sHeroList = {										-- pos    1,   2,   3,   4,   5
 	{name = 'npc_dota_hero_abaddon', 					role = {100, 100, 100, 100, 100},	weak = false},
 	{name = 'npc_dota_hero_abyssal_underlord', 			role = {  0,   0, 100,   0,   0},	weak = false},
 	{name = 'npc_dota_hero_alchemist', 					role = {100,  90,  95,   0,   0},	weak = false},
-	{name = 'npc_dota_hero_ancient_apparition', 		role = {  0,  80,   0,  95, 100},	weak = false},
+	{name = 'npc_dota_hero_ancient_apparition', 		role = {  0,   0,   0,  95, 100},	weak = false},
 	{name = 'npc_dota_hero_antimage', 					role = {100,   0,  85,   0,   0},	weak = false},
 	{name = 'npc_dota_hero_arc_warden', 				role = {100, 100,   0,   0,   0},	weak = false},
 	{name = 'npc_dota_hero_axe',	 					role = {  0, 100, 100,   0,   0},	weak = false},
@@ -40,7 +40,7 @@ local sHeroList = {										-- pos    1,   2,   3,   4,   5
 	{name = 'npc_dota_hero_chaos_knight', 				role = {100,  80,  90,   0,   0},	weak = false},
 	{name = 'npc_dota_hero_chen', 						role = {  0,   0,   0,   0, 100},	weak = false},
 	{name = 'npc_dota_hero_clinkz', 					role = {100, 100,   0,  85,  80},	weak = false},
-	{name = 'npc_dota_hero_crystal_maiden', 			role = {  0,   0,   0, 100, 100},	weak = false},
+	{name = 'npc_dota_hero_crystal_maiden', 			role = {  0,  80,   0, 100, 100},	weak = false},
 	{name = 'npc_dota_hero_dark_seer', 					role = {  0,   0, 100,   0,   0},	weak = false},
 	{name = 'npc_dota_hero_dark_willow', 				role = {  0,   0,   0, 100,  80},	weak = true },
 	{name = 'npc_dota_hero_dawnbreaker', 				role = { 85,  85, 100, 100,  90},	weak = false},
@@ -54,7 +54,7 @@ local sHeroList = {										-- pos    1,   2,   3,   4,   5
 	{name = 'npc_dota_hero_earthshaker', 				role = {  0, 100,  90, 100,   0},	weak = false},
 	{name = 'npc_dota_hero_elder_titan', 				role = {  0,   0,  80,  90, 100},	weak = true },
 	{name = 'npc_dota_hero_ember_spirit', 				role = { 95, 100,   0,   0,   0},	weak = false},
-	{name = 'npc_dota_hero_enchantress', 				role = {  0,   0,  90,  90, 100},	weak = false},
+	{name = 'npc_dota_hero_enchantress', 				role = {  0,  80,  90,  90, 100},	weak = false},
 	{name = 'npc_dota_hero_enigma', 					role = {  0,   0,  90,  90, 100},	weak = false},
 	{name = 'npc_dota_hero_faceless_void', 				role = {100,   0,   0,   0,   0},	weak = false},
 	{name = 'npc_dota_hero_furion', 					role = {100, 100,  90,  85, 100},	weak = false},
@@ -62,14 +62,14 @@ local sHeroList = {										-- pos    1,   2,   3,   4,   5
 	{name = 'npc_dota_hero_gyrocopter', 				role = {100,  90,   0,  95,  90},	weak = false},
 	{name = 'npc_dota_hero_hoodwink', 					role = {  0,  80,   0, 100,  85},	weak = true },
 	{name = 'npc_dota_hero_huskar', 					role = { 90, 100,  95,   0,   0},	weak = false},
-	{name = 'npc_dota_hero_invoker', 					role = {  0, 100,   0,   0,   0},	weak = false},
+	{name = 'npc_dota_hero_invoker', 					role = {  0, 100,   0,  85,  80},	weak = false},
 	{name = 'npc_dota_hero_jakiro', 					role = {  0,  85,   0, 100, 100},	weak = false},
 	{name = 'npc_dota_hero_juggernaut', 				role = {100,   0,   0,   0,   0},	weak = false},
 	{name = 'npc_dota_hero_keeper_of_the_light', 		role = {  0,  90,   0, 100,  85},	weak = false},
 	{name = 'npc_dota_hero_kez', 						role = { 85, 100,   0,   0,   0},	weak = true },
 	{name = 'npc_dota_hero_kunkka', 					role = { 90, 100, 100,   0,   0},	weak = false},
 	{name = 'npc_dota_hero_legion_commander', 			role = { 95,   0, 100,   0,   0},	weak = false},
-	{name = 'npc_dota_hero_leshrac', 					role = {  0, 100,  90,   0,   0},	weak = false},
+	{name = 'npc_dota_hero_leshrac', 					role = {  0, 100,   0,   0,   0},	weak = false},
 	{name = 'npc_dota_hero_lich', 						role = {  0,   0,   0,  90, 100},	weak = false},
 	{name = 'npc_dota_hero_life_stealer', 				role = {100,   0,   0,   0,   0},	weak = false},
 	{name = 'npc_dota_hero_lina', 						role = {100, 100,   0, 100, 100},	weak = false},
@@ -87,7 +87,7 @@ local sHeroList = {										-- pos    1,   2,   3,   4,   5
 	{name = 'npc_dota_hero_morphling', 					role = {100,  95,   0,   0,   0},	weak = false},
 	{name = 'npc_dota_hero_muerta', 				    role = {100,   0,   0,   0,   0},	weak = true },
 	{name = 'npc_dota_hero_naga_siren', 				role = {100,   0,  90,   0,   0},	weak = false},
-	{name = 'npc_dota_hero_necrolyte', 					role = {  0, 100, 100,   0,   0},	weak = false},
+	{name = 'npc_dota_hero_necrolyte', 					role = {  0, 100, 100,  80,  80},	weak = false},
 	{name = 'npc_dota_hero_nevermore', 					role = {100, 100,   0,   0,   0},	weak = false},
 	{name = 'npc_dota_hero_night_stalker', 				role = {  0,   0, 100,   0,   0},	weak = false},
 	{name = 'npc_dota_hero_nyx_assassin', 				role = {  0,   0,   0, 100,  85},	weak = false},
@@ -103,19 +103,19 @@ local sHeroList = {										-- pos    1,   2,   3,   4,   5
 	{name = 'npc_dota_hero_puck', 						role = {  0, 100,   0,   0,   0},	weak = false},
 	{name = 'npc_dota_hero_pudge', 						role = {  0, 100,  90,  95,  85},	weak = false},
 	{name = 'npc_dota_hero_pugna', 						role = {  0,  90,   0, 100, 100},	weak = false},
-	{name = 'npc_dota_hero_queenofpain', 				role = {  0, 100,   0,   0,   0},	weak = false},
+	{name = 'npc_dota_hero_queenofpain', 				role = {  0, 100,  90,  85,  80},	weak = false},
 	{name = 'npc_dota_hero_rattletrap', 				role = {  0,   0,   0,  95, 100},	weak = false},
 	{name = 'npc_dota_hero_razor', 						role = {100, 100, 100,   0,   0},	weak = false},
 	{name = 'npc_dota_hero_riki', 						role = {100, 100,   0,   0,   0},	weak = false},
 	{name = 'npc_dota_hero_ringmaster', 				role = {  0,   0,   0, 100, 100},	weak = false},
-	{name = 'npc_dota_hero_rubick', 					role = {  0,  85,   0, 100, 100},	weak = false},
+	{name = 'npc_dota_hero_rubick', 					role = {  0,   0,   0, 100, 100},	weak = false},
 	{name = 'npc_dota_hero_sand_king', 					role = {  0, 100, 100,   0,   0},	weak = false},
 	{name = 'npc_dota_hero_shadow_demon', 				role = {  0,   0,   0, 100, 100},	weak = false},
 	{name = 'npc_dota_hero_shadow_shaman', 				role = {  0,   0,   0, 100, 100},	weak = false},
 	{name = 'npc_dota_hero_shredder', 					role = {  0, 100, 100,   0,   0},	weak = false},
 	{name = 'npc_dota_hero_silencer', 					role = { 85,  95,   0,  95, 100},	weak = false},
 	{name = 'npc_dota_hero_skeleton_king', 				role = {100,   0,  90,   0,   0},	weak = false},
-	{name = 'npc_dota_hero_skywrath_mage', 				role = {  0,   0,   0, 100, 100},	weak = false},
+	{name = 'npc_dota_hero_skywrath_mage', 				role = {  0,  90,   0, 100,  95},	weak = false},
 	{name = 'npc_dota_hero_slardar', 					role = {  0,  95, 100,   0,   0},	weak = false},
 	{name = 'npc_dota_hero_slark', 						role = {100,   0,  85,   0,   0},	weak = false},
 	{name = "npc_dota_hero_snapfire", 					role = {  0, 100,   0,  95, 100},	weak = false},
@@ -137,16 +137,16 @@ local sHeroList = {										-- pos    1,   2,   3,   4,   5
 	{name = 'npc_dota_hero_ursa', 						role = {100,   0,  85,   0,   0},	weak = false},
 	{name = 'npc_dota_hero_vengefulspirit', 			role = { 90,  90,   0,  95, 100},	weak = false},
 	{name = 'npc_dota_hero_venomancer', 				role = {  0,   0,   0, 100, 100},	weak = false},
-	{name = 'npc_dota_hero_viper', 						role = { 85, 100, 100,   0,   0},	weak = false},
+	{name = 'npc_dota_hero_viper', 						role = {  0, 100, 100,   0,   0},	weak = false},
 	{name = 'npc_dota_hero_visage', 					role = {  0,  90, 100,   0,   0},	weak = false},
 	{name = 'npc_dota_hero_void_spirit', 				role = {  0, 100,   0,   0,   0},	weak = false},
 	{name = 'npc_dota_hero_warlock', 					role = {  0,   0,   0, 100, 100},	weak = false},
 	{name = 'npc_dota_hero_weaver', 					role = {100,   0,   0,  95,  95},	weak = false},
 	{name = 'npc_dota_hero_windrunner', 				role = {100, 100,  85,  95,  90},	weak = false},
-	{name = 'npc_dota_hero_winter_wyvern', 				role = {  0,  80,  80, 100, 100},	weak = false},
+	{name = 'npc_dota_hero_winter_wyvern', 				role = {  0,  80,   0, 100, 100},	weak = false},
 	{name = 'npc_dota_hero_wisp', 						role = {  0,   0,   0,  90, 100},	weak = true },
 	{name = 'npc_dota_hero_witch_doctor', 				role = {  0,   0,   0, 100, 100},	weak = false},
-	{name = 'npc_dota_hero_zuus', 						role = {  0, 100,   0,  95,  95},	weak = false},
+	{name = 'npc_dota_hero_zuus', 						role = {  0, 100,   0, 100,  95},	weak = false},
 }
 
 local function GetHeroList(pos)
@@ -419,7 +419,12 @@ function Think()
 
 									-- reduce chances of multiple weak heroes getting picked
 									if hero.weak then
-										score = score * (1 - Min(X.CountWeakHeroesSelected() / 2, 1))
+										local count = X.CountWeakHeroesSelected()
+										if count.team > 0 then
+											score = 0
+										else
+											score = score * (1 - Min(count.total / 2, 1))
+										end
 									end
 								end
 							end
@@ -488,14 +493,14 @@ function X.GetCurrentTeam(nTeam)
 end
 
 function X.CountWeakHeroesSelected()
-	local count = 0
+	local count = {total = 0, team = 0, opponent = 0}
 	for _, id in pairs(GetTeamPlayers(GetTeam())) do
 		local sHeroName = GetSelectedHeroName(id)
 		if sHeroName ~= nil then
 			for _, hero in pairs(sHeroList) do
 				if hero.name and hero.weak then
 					if hero.name == sHeroName then
-						count = count + 1
+						count.team = count.team + 1
 					end
 				end
 			end
@@ -507,12 +512,14 @@ function X.CountWeakHeroesSelected()
 			for _, hero in pairs(sHeroList) do
 				if hero.name and hero.weak then
 					if hero.name == sHeroName then
-						count = count + 1
+						count.opponent = count.opponent + 1
 					end
 				end
 			end
 		end
 	end
+
+	count.total = count.team + count.opponent
 
 	return count
 end

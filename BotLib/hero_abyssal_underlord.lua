@@ -497,7 +497,7 @@ function X.ConsiderFiendsGate()
 
                 if  (#nInRangeAlly + 1 >= #nInRangeEnemy)
                 and (#nInRangeEnemy >= 2)
-                and (#nInRangeEnemy == 0 and #nEnemyTowers == 0)
+                and (#nEnemyHeroes == 0 and #nEnemyTowers == 0)
                 then
                     local vTargetLocation = allyHero:GetLocation()
 

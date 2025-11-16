@@ -294,7 +294,7 @@ function Think()
 
 				if  J.IsValid(nEnemyCreeps[1])
 				and J.CanBeAttacked(nEnemyCreeps[1])
-				and J.CanKillTarget(nEnemyCreeps[1], bot:GetAttackDamage() * 5.0, DAMAGE_TYPE_PHYSICAL)
+				and J.CanKillTarget(nEnemyCreeps[1], bot:GetAttackDamage(), DAMAGE_TYPE_PHYSICAL)
 				then
 					bot:Action_AttackUnit(nEnemyCreeps[1], true)
 					return
@@ -320,7 +320,7 @@ function Think()
 
 			if  J.IsValid(nEnemyCreeps[1])
 			and J.CanBeAttacked(nEnemyCreeps[1])
-			and J.CanKillTarget(nEnemyCreeps[1], bot:GetAttackDamage() * 5.0, DAMAGE_TYPE_PHYSICAL)
+			and J.CanKillTarget(nEnemyCreeps[1], bot:GetAttackDamage(), DAMAGE_TYPE_PHYSICAL)
 			then
 				bot:Action_AttackUnit(nEnemyCreeps[1], true)
 				return

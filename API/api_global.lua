@@ -98,6 +98,26 @@ end
 
 -- Returns a table containing a list of camp-type and location pairs. Camp types are one of "basic_N", "ancient_N", "basic_enemy_N", "ancient_enemy_N", where N counts up from 0.
 
+-- location field was (removed?) with 11/10/25 update
+-- some fix
+local o_GetNeutralSpawners = GetNeutralSpawners
+function GetNeutralSpawners()
+	local camps = {}
+	for _, camp in pairs(o_GetNeutralSpawners()) do
+		if camp then
+			if camp.location == nil then
+				if camp.min and camp.max then
+					camp.location = (camp.min + camp.max) / 2
+				end
+			end
+
+			table.insert(camps, camp)
+		end
+	end
+
+	return camps
+end
+
 -- int GetItemCost( sItemName )
 
 -- Returns the cost of the specified item.

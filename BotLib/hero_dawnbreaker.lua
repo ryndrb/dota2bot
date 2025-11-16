@@ -177,17 +177,19 @@ local HeroBuild = {
 				"item_tranquil_boots",
                 "item_blade_mail",
 				"item_solar_crest",--
+                "item_ancient_janggo",
 				"item_ultimate_scepter",
-				"item_holy_locket",--
-                "item_shivas_guard",--
 				"item_boots_of_bearing",--
 				"item_aghanims_shard",
+                "item_sheepstick",--
+                "item_shivas_guard",--
 				"item_wind_waker",--
 				"item_ultimate_scepter_2",
 				"item_abyssal_blade",--
 				"item_moon_shard",
 			},
             ['sell_list'] = {
+                "item_magic_wand", "item_shivas_guard",
                 "item_blade_mail", "item_abyssal_blade",
             },
         },
@@ -216,17 +218,19 @@ local HeroBuild = {
 				"item_arcane_boots",
                 "item_blade_mail",
 				"item_solar_crest",--
+                "item_mekansm",
 				"item_ultimate_scepter",
-				"item_holy_locket",--
-                "item_shivas_guard",--
 				"item_guardian_greaves",--
 				"item_aghanims_shard",
+                "item_sheepstick",--
+                "item_shivas_guard",--
 				"item_wind_waker",--
 				"item_ultimate_scepter_2",
 				"item_abyssal_blade",--
 				"item_moon_shard",
 			},
             ['sell_list'] = {
+                "item_magic_wand", "item_shivas_guard",
                 "item_blade_mail", "item_abyssal_blade",
             },
         },
@@ -649,48 +653,43 @@ function X.ConsiderSolarGuardian()
     local vTeamFightLocation = J.GetTeamFightLocation(bot)
     local nEnemyHeroesAttackingMe = J.GetHeroesTargetingUnit(nEnemyHeroes, bot)
 
-    if vTeamFightLocation ~= nil then
-        local nInRangeAlly = J.GetAlliesNearLoc(vTeamFightLocation, nRadius)
-        if GetUnitToLocationDistance(bot, vTeamFightLocation) > 1200 then
-            for _, allyHero in pairs(nInRangeAlly) do
-                if bot ~= allyHero
-                and J.IsValidHero(allyHero)
-                and not J.IsRetreating(allyHero)
+    for i = 1, 5 do
+        local allyHero = GetTeamMember(i)
+
+        if  bot ~= allyHero
+        and J.IsValidHero(allyHero)
+        and not J.IsRetreating(allyHero)
+        and not allyHero:HasModifier('modifier_faceless_void_chronosphere_freeze')
+        and not allyHero:HasModifier('modifier_necrolyte_reapers_scythe')
+        then
+            local nInRangeAlly = J.GetAlliesNearLoc(allyHero:GetLocation(), 1200)
+            local nInRangeEnemy = J.GetEnemiesNearLoc(allyHero:GetLocation(), nRadius * 0.9)
+            if J.IsInTeamFight(allyHero, 1200) and J.GetHP(allyHero) < 0.75 then
+                if #nInRangeEnemy >= 1 and (#nInRangeAlly + 1 >= #nInRangeEnemy) then
+                    if not bot:IsMagicImmune() and #nEnemyHeroesAttackingMe >= 2 then
+                        bShouldBKB = true
+                    end
+
+                    return BOT_ACTION_DESIRE_HIGH, allyHero:GetLocation()
+                end
+            end
+
+            if not J.IsRetreating(bot) then
+                if  J.IsCore(allyHero)
+                and J.GetHP(allyHero) < 0.65
                 and not allyHero:HasModifier('modifier_faceless_void_chronosphere_freeze')
                 and not allyHero:HasModifier('modifier_necrolyte_reapers_scythe')
+                and not J.IsEarlyGame()
                 then
-                    local nInRangeEnemy = J.GetEnemiesNearLoc(allyHero:GetLocation(), nRadius)
-                    if #nInRangeEnemy >= 1 and ((#nInRangeAlly + 1) >= #nInRangeEnemy) then
+                    if #nInRangeEnemy >= 1
+                    and (#nInRangeAlly >= #nInRangeEnemy)
+                    and #J.GetHeroesTargetingUnit(nEnemyHeroes, allyHero) >= 2
+                    then
                         if not bot:IsMagicImmune() and #nEnemyHeroesAttackingMe >= 2 then
                             bShouldBKB = true
                         end
 
                         return BOT_ACTION_DESIRE_HIGH, allyHero:GetLocation()
-                    end
-                end
-            end
-        else
-            if not J.IsRetreating(bot) then
-                for _, allyHero in pairs(nInRangeAlly) do
-                    if bot ~= allyHero
-                    and J.IsValidHero(allyHero)
-                    and J.CanBeAttacked(allyHero)
-                    and J.IsCore(allyHero)
-                    and J.GetHP(allyHero) < 0.65
-                    and not allyHero:HasModifier('modifier_faceless_void_chronosphere_freeze')
-                    and not allyHero:HasModifier('modifier_necrolyte_reapers_scythe')
-                    then
-                        local nInRangeEnemy = J.GetEnemiesNearLoc(allyHero:GetLocation(), nRadius)
-                        if #nInRangeEnemy >= 1
-                        and (#nInRangeAlly >= #nInRangeEnemy)
-                        and #J.GetHeroesTargetingUnit(nEnemyHeroes, allyHero) >= 2
-                        then
-                            if not bot:IsMagicImmune() and #nEnemyHeroesAttackingMe >= 2 then
-                                bShouldBKB = true
-                            end
-
-                            return BOT_ACTION_DESIRE_HIGH, allyHero:GetLocation()
-                        end
                     end
                 end
             end

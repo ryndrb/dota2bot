@@ -861,8 +861,13 @@ function X.GetSpearToLocation(nCastRange, nRadius, nCastPoint, nSpeed, hTarget)
 	-- local hTargetLocation = hTarget:GetLocation()
 	local hTrees = bot:GetNearbyTrees(nCastRange * 0.6)
 
-	if DotaTime() < fArenaOfBloodCastTime + 7 then
-		return hTargetLocation
+	if ArenaOfBlood and ArenaOfBlood:IsTrained() then
+		local radius = ArenaOfBlood:GetSpecialValueInt('radius') * 0.9
+		if ArenaOfBloodLocation and type(ArenaOfBloodLocation) == 'userdata' and GetUnitToLocationDistance(bot, ArenaOfBloodLocation) <= radius then
+			if DotaTime() < fArenaOfBloodCastTime + 7 then
+				return hTargetLocation
+			end
+		end
 	end
 
 	-- impale to tree

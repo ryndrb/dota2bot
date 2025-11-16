@@ -1086,7 +1086,7 @@ function X.ConsiderEnchantRemnant()
 	local nEnemyHeroesAttackingMe = J.GetHeroesTargetingUnit(nEnemyHeroes, bot)
 
 	if J.IsInTeamFight(bot, 1200) then
-		if #nEnemyHeroesAttackingMe >= 3 and botHP < 0.5 then
+		if #nEnemyHeroesAttackingMe >= 2 and botHP < 0.5 then
 			return BOT_ACTION_DESIRE_HIGH, bot, false
 		end
 	end
@@ -1116,7 +1116,7 @@ function X.ConsiderEnchantRemnant()
 				and J.GetHP(ally) < 0.5
 				then
 					if #nInRangeEnemy >= #nInRangeAlly + 2
-					and #nEnemyHeroesAttackingMe >= 3
+					and #nEnemyHeroesAttackingMe >= 2
 					and J.IsInRange(bot, ally, 600)
 					then
 						if J.CanCastAbility(BoulderSmash) and bot:GetMana() > 350 and false then

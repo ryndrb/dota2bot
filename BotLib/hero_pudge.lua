@@ -46,6 +46,7 @@ local HeroBuild = {
                 "item_double_branches",
                 "item_circlet",
                 "item_gauntlets",
+                "item_quelling_blade",
             
                 "item_bottle",
                 "item_magic_wand",
@@ -53,21 +54,22 @@ local HeroBuild = {
                 "item_phase_boots",
                 "item_blade_mail",
                 "item_ultimate_scepter",
-                "item_bloodstone",--
+                "item_heart",--
                 "item_aghanims_shard",
-                "item_kaya_and_sange",--
                 "item_shivas_guard",--
+                "item_kaya_and_sange",--
                 "item_overwhelming_blink",--
                 "item_ultimate_scepter_2",
-                "item_heart",--
+                "item_lotus_orb",--
                 "item_moon_shard",
                 "item_travel_boots_2",--
             },
             ['sell_list'] = {
-                "item_magic_wand", "item_bloodstone",
-                "item_bracer", "item_kaya_and_sange",
-                "item_bottle", "item_shivas_guard",
-                "item_blade_mail", "item_heart",
+                "item_quelling_blade", "item_ultimate_scepter",
+                "item_magic_wand", "item_heart",
+                "item_bracer", "item_shivas_guard",
+                "item_bottle", "item_kaya_and_sange",
+                "item_blade_mail", "item_lotus_orb",
             },
         },
     },
@@ -573,58 +575,25 @@ function X.ConsiderRot()
     end
 
     if J.IsGoingOnSomeone(bot) then
-        local nInRangeEnemy = J.GetEnemiesNearLoc(bot:GetLocation(), nRadius)
-        if #nInRangeEnemy >= 2 then
-            if not bToggled and botHP > 0.1 then
-                return BOT_ACTION_DESIRE_HIGH
-            else
-                if bToggled and botHP < 0.1 then
+        local nInRangeEnemy = bot:GetNearbyHeroes(nRadius + 100, true, BOT_MODE_NONE)
+        if #nInRangeEnemy >= 1 then
+            if botHP > 0.1 or bFleshHeaped then
+                if not bToggled then
                     return BOT_ACTION_DESIRE_HIGH
+                else
+                    return BOT_ACTION_DESIRE_NONE
                 end
-                return BOT_ACTION_DESIRE_NONE
-            end
-        end
-
-        if J.IsValidHero(botTarget)
-        and J.CanBeAttacked(botTarget)
-        and J.IsInRange(bot, botTarget, nRadius)
-        and J.CanCastOnNonMagicImmune(botTarget)
-        and not botTarget:HasModifier('modifier_abaddon_borrowed_time')
-        and not botTarget:HasModifier('modifier_eul_cyclone')
-        and not botTarget:HasModifier('modifier_brewmaster_storm_cyclone')
-        then
-            if not bToggled and botHP > 0.15 then
-                return BOT_ACTION_DESIRE_HIGH
-            else
-                if bToggled
-                and botHP < 0.15
-                and J.CanBeAttacked(bot)
-                and not bFleshHeaped
-                and not bHeart
-                then
-                    return BOT_ACTION_DESIRE_HIGH
-                end
-                return BOT_ACTION_DESIRE_NONE
             end
         end
     end
 
     if J.IsRetreating(bot) and not J.IsRealInvisible(bot) then
-        for _, enemyHero in pairs(nEnemyHeroes) do
-            if  J.IsValidHero(enemyHero)
-            and J.IsInRange(bot, enemyHero, nRadius)
-            and J.CanCastOnNonMagicImmune(enemyHero)
-            and not enemyHero:HasModifier('modifier_abaddon_borrowed_time')
-            then
-                if (#nAllyHeroes < #nEnemyHeroes and enemyHero:GetAttackTarget() == bot) or J.IsChasingTarget(enemyHero, bot) then
-                    if not bToggled and botHP > 0.2 then
-                        return BOT_ACTION_DESIRE_HIGH
-                    else
-                        if bToggled and botHP < 0.15 and not (bFleshHeaped or bHeart) then
-                            return BOT_ACTION_DESIRE_HIGH
-                        end
-                        return BOT_ACTION_DESIRE_NONE
-                    end
+        if bot:WasRecentlyDamagedByAnyHero(2.0) then
+            if botHP > 0.15 or bFleshHeaped then
+                if not bToggled then
+                    return BOT_ACTION_DESIRE_HIGH
+                else
+                    return BOT_ACTION_DESIRE_NONE
                 end
             end
         end
@@ -632,55 +601,34 @@ function X.ConsiderRot()
 
     local nEnemyCreeps = bot:GetNearbyCreeps(nRadius * 2, true)
 
-    if J.IsPushing(bot) or (J.IsDefending(bot) and #nEnemyHeroes == 0) then
+    if J.IsPushing(bot) or J.IsDefending(bot) or J.IsFarming(bot) then
         if J.IsValid(nEnemyCreeps[1])
         and J.CanBeAttacked(nEnemyCreeps[1])
         and J.IsInRange(bot, nEnemyCreeps[1], nRadius)
         then
-            if not bToggled and botHP > 0.2 then
-                return BOT_ACTION_DESIRE_HIGH
-            else
-                if bToggled and ((botHP < 0.15 and not (bFleshHeaped or bHeart)) or #nEnemyCreeps == 0) then
+            if botHP > 0.2 or bFleshHeaped or bHeart then
+                if not bToggled then
                     return BOT_ACTION_DESIRE_HIGH
+                else
+                    return BOT_ACTION_DESIRE_NONE
                 end
-                return BOT_ACTION_DESIRE_NONE
-            end
-        end
-    end
-
-    if J.IsFarming(bot) then
-        if J.IsValid(nEnemyCreeps[1])
-        and J.CanBeAttacked(nEnemyCreeps[1])
-        and J.IsInRange(bot, nEnemyCreeps[1], nRadius)
-        then
-            if not bToggled and botHP > 0.2 then
-                return BOT_ACTION_DESIRE_HIGH
-            else
-                if bToggled and ((botHP < 0.15 and not (bFleshHeaped or bHeart)) or #nEnemyCreeps == 0) then
-                    return BOT_ACTION_DESIRE_HIGH
-                end
-                return BOT_ACTION_DESIRE_NONE
             end
         end
     end
 
     if J.IsLaning(bot)
-    and (J.IsCore(bot) or not J.IsThereCoreNearby(1200))
+    and J.IsInLaningPhase()
+    and (J.IsCore(bot) or not J.IsThereCoreNearby(650))
     and #nEnemyHeroes == 0
     then
         local nLocationAoE = bot:FindAoELocation(true, false, bot:GetLocation(), 0, nRadius, 0, bot:GetAttackDamage() + 1)
-        if J.IsValid(nEnemyCreeps[1])
-        and J.CanBeAttacked(nEnemyCreeps[1])
-        and J.IsInRange(bot, nEnemyCreeps[1], nRadius)
-        and nLocationAoE.count >= 3
-        then
-            if not bToggled and botHP > 0.5 then
-                return BOT_ACTION_DESIRE_HIGH
-            else
-                if bToggled and ((botHP < 0.3 and not (bFleshHeaped or bHeart)) or #nEnemyCreeps == 0) then
+        if nLocationAoE.count >= 3 then
+            if botHP > 0.2 or bFleshHeaped or bHeart then
+                if not bToggled then
                     return BOT_ACTION_DESIRE_HIGH
+                else
+                    return BOT_ACTION_DESIRE_NONE
                 end
-                return BOT_ACTION_DESIRE_NONE
             end
         end
     end
@@ -691,13 +639,12 @@ function X.ConsiderRot()
         and J.CanCastOnNonMagicImmune(botTarget)
         and J.IsInRange(bot, botTarget, nRadius)
         then
-            if not bToggled and botHP > 0.4 then
-                return BOT_ACTION_DESIRE_HIGH
-            else
-                if bToggled and (botHP < 0.4 and not (bFleshHeaped or bHeart)) then
+            if botHP > 0.4 or bFleshHeaped or bHeart then
+                if not bToggled then
                     return BOT_ACTION_DESIRE_HIGH
+                else
+                    return BOT_ACTION_DESIRE_NONE
                 end
-                return BOT_ACTION_DESIRE_NONE
             end
         end
     end
@@ -706,13 +653,12 @@ function X.ConsiderRot()
         if  J.IsTormentor(botTarget)
         and J.IsInRange(bot, botTarget, nRadius)
         then
-            if not bToggled and botHP > 0.6 then
-                return BOT_ACTION_DESIRE_HIGH
-            else
-                if bToggled and (botHP < 0.4 and not (bFleshHeaped or bHeart)) then
+            if botHP > 0.6 or bFleshHeaped or bHeart then
+                if not bToggled then
                     return BOT_ACTION_DESIRE_HIGH
+                else
+                    return BOT_ACTION_DESIRE_NONE
                 end
-                return BOT_ACTION_DESIRE_NONE
             end
         end
     end

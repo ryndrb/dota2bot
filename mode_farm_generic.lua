@@ -75,7 +75,6 @@ function GetDesire()
     or (#nInRangeAlly_roshan >= 2 and bRoshanAlive and bNotClone)
     or (nAliveEnemyCount <= 1 and nAliveAllyCount >= 2)
     or (J.DoesTeamHaveAegis() and J.IsLateGame() and nAliveAllyCount >= 4)
-	or bot:GetNextItemPurchaseValue() == 0
 	or X.IsUnitAroundLocation(GetAncient(GetTeam()):GetLocation(), 3200)
 	or #nEnemyHeroes > 0
 	or nAliveEnemyCount <= 1
@@ -201,6 +200,7 @@ function Think()
 	if J.CanNotUseAction(bot) then return end
 
 	local botAttackRange = bot:GetAttackRange()
+	local StaticRemnant = bot:GetAbilityByName('storm_spirit_static_remnant')
 
 	local nEnemyLaneCreeps = bot:GetNearbyLaneCreeps(900, true)
 	if J.IsValid(nEnemyLaneCreeps[1]) and bot.farm.state ~= FARM_STATE__STACK then
@@ -215,7 +215,12 @@ function Think()
 				end
 			end
 
-			if GetUnitToUnitDistance(bot, farmTarget) > botAttackRange then
+			local range = botAttackRange
+			if J.CanCastAbility(StaticRemnant) then
+				range = StaticRemnant:GetSpecialValueInt('static_remnant_radius')
+			end
+
+			if GetUnitToUnitDistance(bot, farmTarget) > range then
 				bot.farm.location = farmTarget:GetLocation()
 				bot.farm.state = FARM_STATE__NONE
 				bot:Action_MoveToLocation(farmTarget:GetLocation())
@@ -296,6 +301,15 @@ function Think()
 				end
 
 				bot.farm.state = FARM_STATE__FARM
+
+				if J.CanCastAbility(StaticRemnant) then
+					local nRadius = StaticRemnant:GetSpecialValueInt('static_remnant_radius')
+					if GetUnitToUnitDistance(bot, farmTarget) > nRadius then
+						bot:Action_MoveToLocation(farmTarget:GetLocation())
+						return
+					end
+				end
+
 				bot:SetTarget(farmTarget)
 				bot:Action_AttackUnit(farmTarget, true)
 				return
@@ -341,6 +355,7 @@ function X.GetPreferedCampToFarm(hCampList)
 	local camp = nil
 	local campDistance = math.huge
 	local botLevel = bot:GetLevel()
+	local teamAverageLevel = J.GetAverageLevel(GetTeam())
 	local botNetworth = bot:GetNetWorth()
 	local botAttackDamage = bot:GetAttackDamage()
 
@@ -352,20 +367,20 @@ function X.GetPreferedCampToFarm(hCampList)
 			local bCanFarmEnemy = currDistance <= 900 and #nEnemyHeroes == 0 and not bot:WasRecentlyDamagedByAnyHero(4.0)
 
 			local prefered = nil
-			if botLevel <= 7 or botAttackDamage <= 80 then
+			if teamAverageLevel <= 7 or botAttackDamage <= 80 then
 				if  (hCampList[i].team == GetTeam())
 				and (hCampList[i].type ~= 'large')
 				and (hCampList[i].type ~= 'ancient')
 				then
 					prefered = hCampList[i]
 				end
-			elseif botLevel <= 11 then
+			elseif teamAverageLevel <= 11 then
 				if  (hCampList[i].team == GetTeam() or bCanFarmEnemy)
 				and (hCampList[i].type ~= 'ancient')
 				then
 					prefered = hCampList[i]
 				end
-			elseif botLevel <= 14 then
+			elseif teamAverageLevel <= 14 then
 				if (hCampList[i].team == GetTeam() or bCanFarmEnemy) then
 					prefered = hCampList[i]
 				end
@@ -413,7 +428,7 @@ function X.IsTheClosestAroundLocation(vLocation)
 				local memberDistance = GetUnitToLocationDistance(member, vLocation)
 				if memberDistance < closestMemberDistance then
 					closestMember = member
-					closestMemberDistance = closestMemberDistance
+					closestMemberDistance = memberDistance
 				end
 			end
 		end

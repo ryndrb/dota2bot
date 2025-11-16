@@ -141,8 +141,8 @@ function GetDesire()
     -------------------------
 
     if bot:HasModifier('modifier_fountain_fury_swipes_damage_increase')
-    or (not bTeamFight and J.IsTargetedByEnemyWithModifier(nEnemyHeroes, 'modifier_skeleton_king_reincarnation_scepter_active'))
-    or (not bTeamFight and J.IsTargetedByEnemyWithModifier(nEnemyHeroes, 'modifier_item_helm_of_the_undying_active'))
+    or (not bTeamFight and J.IsTargetedByEnemyWithModifier(bot, nEnemyHeroes, 'modifier_skeleton_king_reincarnation_scepter_active'))
+    or (not bTeamFight and J.IsTargetedByEnemyWithModifier(bot, nEnemyHeroes, 'modifier_item_helm_of_the_undying_active'))
     then
         return BOT_MODE_DESIRE_ABSOLUTE
     end
@@ -197,7 +197,7 @@ function GetDesire()
     end
 
     -- should directly run
-	if bot:IsAlive() then
+	if bot:IsAlive() and not bot:HasModifier('modifier_fountain_aura_buff') then
         -- print(fShouldRunTime, fCurrentRunTime, botName)
 		if fCurrentRunTime ~= 0 and DotaTime() < fCurrentRunTime + fShouldRunTime then
 			return BOT_MODE_DESIRE_ABSOLUTE * 1.1
@@ -264,6 +264,23 @@ function GetDesire()
                 if string.find(sUnitName, 'npc_dota_phoenix_sun') then
                     nAllyNearbyCount = nAllyNearbyCount + 1
                 end
+
+                if unit:IsHero() and not unit:IsIllusion() then
+                    if (GetUnitToUnitDistance(bot, unit) / unit:GetCurrentMovementSpeed()) <= 6.0 then
+                        if J.IsHaveAegis(unit) then
+                            nAllyNearbyCount = nAllyNearbyCount + 1
+                        end
+                    end
+
+                    if sUnitName == 'npc_dota_hero_skeleton_king' then
+                        local hAbility = unit:GetAbilityByName('skeleton_king_reincarnation')
+                        if hAbility and hAbility:IsTrained() then
+                            if hAbility:GetCooldownTimeRemaining() == 0 and unit:GetMana() > hAbility:GetManaCost() * 1.5 then
+                                nAllyNearbyCount = nAllyNearbyCount + 1
+                            end
+                        end
+                    end
+                end
             end
         end
     end
@@ -281,8 +298,8 @@ function GetDesire()
     local nHealth = 0
 
     if botName == 'npc_dota_hero_medusa' then
-        local unitHealth = botHealth - bot:GetMana()
-        local unitMaxHealth = bot:GetMaxHealth() - bot:GetMaxMana()
+        local unitHealth = botHealth - (bot:GetMana() * 0.98 * (2 + 0.1 * botLevel))
+        local unitMaxHealth = bot:GetMaxHealth() - (bot:GetMaxMana() * 0.98 * (2 + 0.1 * botLevel))
         nHealth = (unitHealth / unitMaxHealth) * 0.2 + botMP * 0.8
     elseif botName == 'npc_dota_hero_huskar' then
         nHealth = botHP
@@ -453,6 +470,20 @@ end
 
 -- from mode_farm_generic
 function X.ShouldRun()
+    if ((bot:GetCurrentMovementSpeed() > 330 and bot:DistanceFromFountain() < 10000) or bot:DistanceFromFountain() < 5000) and not bot:WasRecentlyDamagedByAnyHero(5.0) then
+        if botName == 'npc_dota_hero_medusa' then
+            local eta = bot:DistanceFromFountain() / bot:GetCurrentMovementSpeed()
+            if botMP < 0.2 and botMP + ((botManaRegen * eta) / bot:GetMaxMana()) < 0.4 then
+                return eta
+            end
+        else
+            local eta = bot:DistanceFromFountain() / bot:GetCurrentMovementSpeed()
+            if botHP < 0.2 and botHP + ((botHealthRegen * eta) / bot:GetMaxHealth()) < 0.4 then
+                return eta
+            end
+        end
+    end
+
 	if J.GetModifierTime(bot, 'modifier_medusa_stone_gaze_facing') > 3.33 then
 		return 3.33
 	end

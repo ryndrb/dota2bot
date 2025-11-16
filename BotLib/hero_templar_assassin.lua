@@ -228,7 +228,6 @@ local PsionicProjectionDesire, PsionicProjectionLocation
 local PsionicTrapDesire, PsionicTrapLocation
 
 local tRuneLocations = {}
-local tCampLocations = {}
 local tTraps = {}
 local tRunes = {
 	RUNE_BOUNTY_1,
@@ -701,18 +700,6 @@ function X.ConsiderPsionicTrap()
 		end
 	end
 
-	if #tCampLocations == 0 then
-		local camps = GetNeutralSpawners()
-		for i, camp in pairs(camps) do
-			if  camp.team == GetTeam()
-			and camp.type ~= 'small'
-			and camp.type ~= 'medium'
-			then
-				tCampLocations[i] = camp
-			end
-		end
-	end
-
 	local nCastRange = PsionicTrap:GetCastRange()
 	local nCastPoint = PsionicTrap:GetCastPoint()
 	local nRadius = PsionicTrap:GetSpecialValueInt('trap_radius')
@@ -771,17 +758,6 @@ function X.ConsiderPsionicTrap()
 			if GetUnitToLocationDistance(bot, location) < nCastRange then
 				if not IsLocationVisible(location) and not X.IsThereTrapInLocation(location, nRadius) then
 					return BOT_ACTION_DESIRE_HIGH, location
-				end
-			end
-		end
-
-		if not J.IsEarlyGame() then
-			for _, camp in pairs(tCampLocations) do
-				if  GetUnitToLocationDistance(bot, camp.location) < nCastRange
-				and not X.IsThereTrapInLocation(camp.location, nRadius)
-				and not IsLocationVisible(camp.location)
-				then
-					return BOT_ACTION_DESIRE_HIGH, camp.location
 				end
 			end
 		end

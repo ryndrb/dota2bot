@@ -115,8 +115,8 @@ local bBuffFlags = {
         dire    = true, -- Set to 'false' to disable Dire towers buff.
     },
     neutrals = {
-        radiant = true, -- Set to 'false' to disable Radiant bots receiving neutral items.
-        dire    = true, -- Set to 'false' to disable Dire bots receiving neutral items.
+        radiant = false, -- Set to 'false' to disable Radiant bots receiving neutral items.
+        dire    = false, -- Set to 'false' to disable Dire bots receiving neutral items.
     },
     manga_regen = {
         radiant = true, -- Set to 'false' to disable aiding Radiant bots' receiving added mana regen.

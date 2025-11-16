@@ -204,7 +204,6 @@ function GetDesire()
 	and bot:GetActiveMode() ~= BOT_MODE_ATTACK
 	and bot:GetActiveMode() ~= BOT_MODE_DEFEND_ALLY
 	and bot:GetActiveMode() ~= BOT_MODE_ROAM
-	and bot:GetActiveMode() ~= BOT_MODE_ATTACK
 	then
 		if IsHeroCore
 		then

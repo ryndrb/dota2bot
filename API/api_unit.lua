@@ -213,7 +213,7 @@ local o_GetHealth = CDOTA_Bot_Script.GetHealth
 function CDOTA_Bot_Script:GetHealth()
     if self ~= nil and (self:GetUnitName() == 'npc_dota_hero_medusa')
     then
-        local nHealth = o_GetHealth(self) + self:GetMana()
+        local nHealth = o_GetHealth(self) + (self:GetMana() * 0.98 * (2 + 0.1 * self:GetLevel()))
         return nHealth
     end
     return o_GetHealth(self)
@@ -226,7 +226,7 @@ local o_GetMaxHealth = CDOTA_Bot_Script.GetMaxHealth
 function CDOTA_Bot_Script:GetMaxHealth()
     if self ~= nil and (self:GetUnitName() == 'npc_dota_hero_medusa')
     then
-        local nHealth = o_GetMaxHealth(self) + self:GetMaxMana()
+        local nHealth = o_GetMaxHealth(self) + (self:GetMaxMana() * 0.98 * (2 + 0.1 * self:GetLevel()))
         return nHealth
     end
     return o_GetMaxHealth(self)

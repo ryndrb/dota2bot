@@ -1024,6 +1024,7 @@ function J.IsDisabled( npcTarget )
 				or npcTarget:IsHexed()
 				or npcTarget:IsNightmared()
 				or J.IsTaunted( npcTarget )
+				or npcTarget:HasModifier('modifier_stunned')
 				or npcTarget:HasModifier('modifier_enigma_black_hole_pull')
 				or npcTarget:HasModifier('modifier_faceless_void_chronosphere_freeze')
 				or npcTarget:HasModifier('modifier_eul_cyclone')
@@ -1111,10 +1112,12 @@ end
 
 function J.IsGoingOnSomeone( bot )
 	local mode = bot:GetActiveMode()
+	local botTarget = J.GetProperTarget(bot)
+
 	return mode == BOT_MODE_ROAM
 		or mode == BOT_MODE_GANK
 		or mode == BOT_MODE_DEFEND_ALLY
-		or mode == BOT_MODE_TEAM_ROAM
+		or (mode == BOT_MODE_TEAM_ROAM and J.IsValidHero(botTarget))
 		or mode == BOT_MODE_ATTACK
 end
 
@@ -2165,28 +2168,24 @@ function J.SetQueueToInvisible( bot )
 			and itemAmulet:IsFullyCastable()
 		then
 			bot:ActionQueue_UseAbilityOnEntity( itemAmulet, bot )
-			return
 		end
 	
 		local itemGlimer = J.IsItemAvailable( 'item_glimmer_cape' )
 		if itemGlimer ~= nil and itemGlimer:IsFullyCastable()
 		then
 			bot:ActionQueue_UseAbilityOnEntity( itemGlimer, bot )
-			return
 		end
 
 		local itemInvisSword = J.IsItemAvailable( 'item_invis_sword' )
 		if itemInvisSword ~= nil and itemInvisSword:IsFullyCastable()
 		then
 			bot:ActionQueue_UseAbility( itemInvisSword )
-			return
 		end
 
 		local itemSilverEdge = J.IsItemAvailable( 'item_silver_edge' )
 		if itemSilverEdge ~= nil and itemSilverEdge:IsFullyCastable()
 		then
 			bot:ActionQueue_UseAbility( itemSilverEdge )
-			return
 		end
 
 	end
@@ -2487,7 +2486,6 @@ function J.IsRealInvisible( bot )
 		and not bot:HasModifier( 'modifier_sniper_assassinate' )
 		and not bot:HasModifier( 'modifier_bounty_hunter_track' )
 		and not bot:HasModifier( 'modifier_faceless_void_chronosphere_freeze' )
-		and not bot:UsingItemBreaksInvisibility()
 		and #enemyTowerList == 0
 	then
 		return true
@@ -2830,6 +2828,7 @@ function J.CanBeAttacked( unit )
 			and not unit:HasModifier("modifier_ringmaster_the_box_buff")
 			and not unit:HasModifier("modifier_dazzle_nothl_projection_soul_debuff")
 			and not unit:HasModifier("modifier_naga_siren_song_of_the_siren")
+			and not unit:HasModifier("modifier_visage_summon_familiars_stone_form_buff")
 			and not unit:HasModifier("modifier_eul_cyclone")
 			and not unit:HasModifier("modifier_brewmaster_storm_cyclone")
 			and not unit:HasModifier("modifier_wind_waker")
@@ -3667,8 +3666,8 @@ local function GetHealthMultiplier(hUnit)
 		botHP = ((GetEffectiveHealthFromArmor(hUnit:GetHealth(), hUnit:GetArmor())) / hUnit:GetMaxHealth()) + (hUnit:GetHealthRegen() * 5.0 / hUnit:GetMaxHealth())
 		mul = RemapValClamped(botHP, 0, 0.5, 0.5, 1)
 	elseif sUnitName == 'npc_dota_hero_medusa' then
-		local unitHealth = GetEffectiveHealthFromArmor(hUnit:GetHealth() - hUnit:GetMana(), hUnit:GetArmor())
-		local unitMaxHealth = hUnit:GetMaxHealth() - hUnit:GetMaxMana()
+		local unitHealth = GetEffectiveHealthFromArmor(hUnit:GetHealth() - (hUnit:GetMana() * 0.98 * (2 + 0.1 * hUnit:GetLevel())), hUnit:GetArmor())
+		local unitMaxHealth = hUnit:GetMaxHealth() - (hUnit:GetMaxMana() * 0.98 * (2 + 0.1 * hUnit:GetLevel()))
 		local nHealth = RemapValClamped(unitHealth / unitMaxHealth, 0, 1, 0, 1) * 0.2 + RemapValClamped(botMP, 0, 0.75, 0, 1) * 0.8
 		mul = RemapValClamped(nHealth, 0.5, 1, 0.5, 1)
 	else
@@ -4062,6 +4061,21 @@ function J.IsThereCoreNearby(nRadius)
 		and member ~= GetBot()
 		and J.IsCore(member)
 		and J.IsInRange(GetBot(), member, nRadius)
+		then
+			return true
+		end
+	end
+
+    return false
+end
+
+function J.IsThereCoreInLocation(vLocation, nRadius)
+	for i = 1, 5 do
+		local member = GetTeamMember(i)
+		if J.IsValidHero(member)
+		and member ~= GetBot()
+		and J.IsCore(member)
+		and GetUnitToLocationDistance(member, vLocation) <= nRadius
 		then
 			return true
 		end
@@ -4479,7 +4493,8 @@ function J.IsTormentor(nTarget)
 end
 
 function J.IsDoingTormentor(bot)
-	return bot:GetActiveMode() == BOT_MODE_SIDE_SHOP
+	-- return bot:GetActiveMode() == BOT_MODE_SIDE_SHOP
+	return bot:GetActiveMode() == BOT_MODE_ASSEMBLE_WITH_HUMANS
 end
 
 function J.IsLocationInChrono(loc)
@@ -5726,9 +5741,16 @@ function J.GetHeroesTargetingUnit(tUnits, hUnit)
     for _, enemyHero in pairs(tUnits) do
         if J.IsValidHero(enemyHero)
 		and not J.IsSuspiciousIllusion(enemyHero)
-        and (enemyHero:GetAttackTarget() == hUnit or J.IsChasingTarget(enemyHero, hUnit))
         then
-            table.insert(tAttackingUnits, enemyHero)
+			if J.IsValidHero(hUnit) and hUnit:GetTeam() == GetTeam() then
+				if (enemyHero:GetAttackTarget() == hUnit or J.IsChasingTarget(enemyHero, hUnit) or hUnit:WasRecentlyDamagedByHero(enemyHero, 2.0)) then
+					table.insert(tAttackingUnits, enemyHero)
+				end
+			else
+				if (enemyHero:GetAttackTarget() == hUnit or J.IsChasingTarget(enemyHero, hUnit)) then
+					table.insert(tAttackingUnits, enemyHero)
+				end
+			end
         end
     end
 
@@ -5796,11 +5818,11 @@ function J.GetUnitListTotalAttackDamage(tUnits, fTimeInterval)
 	return dmg
 end
 
-function J.IsTargetedByEnemyWithModifier(tUnits, sModifierName)
+function J.IsTargetedByEnemyWithModifier(bot, tUnits, sModifierName)
     for _, enemyHero in pairs(tUnits) do
         if J.IsValidHero(enemyHero)
         and enemyHero:HasModifier(sModifierName)
-        and (enemyHero:GetAttackTarget() == bot or J.IsChasingTarget(enemyHero, bot))
+        and (enemyHero:GetAttackTarget() == bot or J.IsChasingTarget(enemyHero, bot) or bot:WasRecentlyDamagedByHero(enemyHero, 4.0))
         then
             return true
         end

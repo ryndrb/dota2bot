@@ -925,6 +925,12 @@ function X.SetUseItem( hItem, hItemTarget, sCastType )
 					bot:Action_UseAbilityOnLocation(hAbility, hItemTarget)
 					return
 				end
+
+				hAbility = bot:GetAbilityByName('tinker_keen_teleport')
+				if J.CanCastAbility(hAbility) then
+					bot:Action_UseAbilityOnLocation(hAbility, hItemTarget)
+					return
+				end
 			end
 		end
 
@@ -1241,7 +1247,7 @@ X.ConsiderItemDesire["item_black_king_bar"] = function( hItem )
 	local hEffectTarget = nil
 	local sCastMotive = nil
 	local bRealInvisible = J.IsRealInvisible(bot)
-	local nInRangeEnmyList = J.GetEnemiesNearLoc(bot:GetLocation(), nCastRange)
+	local nInRangeEnmyList = J.GetEnemiesNearLoc(bot:GetLocation(), 1200)
 
 	if bot:HasModifier('modifier_dazzle_nothl_projection_soul_debuff') then
 		return BOT_ACTION_DESIRE_NONE
@@ -1269,22 +1275,24 @@ X.ConsiderItemDesire["item_black_king_bar"] = function( hItem )
 			return BOT_ACTION_DESIRE_HIGH, bot, sCastType, sCastMotive
 		end
 
-		if J.IsNotAttackProjectileIncoming( bot, 350 )
-		then
-			sCastMotive = '防御弹道'
-			return BOT_ACTION_DESIRE_HIGH, bot, sCastType, sCastMotive
-		end
+		if bot:WasRecentlyDamagedByAnyHero(3.0) then
+			if J.IsNotAttackProjectileIncoming( bot, 350 )
+			then
+				sCastMotive = '防御弹道'
+				return BOT_ACTION_DESIRE_HIGH, bot, sCastType, sCastMotive
+			end
 
-		if J.IsWillBeCastUnitTargetSpell( bot, nCastRange )
-		then
-			sCastMotive = '防御指向技能'
-			return BOT_ACTION_DESIRE_HIGH, bot, sCastType, sCastMotive
-		end
+			if J.IsWillBeCastUnitTargetSpell( bot, nCastRange )
+			then
+				sCastMotive = '防御指向技能'
+				return BOT_ACTION_DESIRE_HIGH, bot, sCastType, sCastMotive
+			end
 
-		if J.IsWillBeCastPointSpell( bot, nCastRange )
-		then
-			sCastMotive = '防御地点技能'
-			return BOT_ACTION_DESIRE_HIGH, bot, sCastType, sCastMotive
+			if J.IsWillBeCastPointSpell( bot, nCastRange )
+			then
+				sCastMotive = '防御地点技能'
+				return BOT_ACTION_DESIRE_HIGH, bot, sCastType, sCastMotive
+			end
 		end
 
 		if J.GetEnemyCount( bot, 800 ) >= 3 and (J.IsInTeamFight(bot, 1200) or not bRealInvisible)
@@ -4796,7 +4804,6 @@ X.ConsiderItemDesire["item_tpscroll"] = function( hItem )
 	end
 
 	if bot:HasModifier('modifier_spirit_breaker_charge_of_darkness')
-	or bot.healInBase
 	then
 		return BOT_ACTION_DESIRE_NONE
 	end
@@ -4905,7 +4912,7 @@ X.ConsiderItemDesire["item_tpscroll"] = function( hItem )
 	end
 
 	--Tormentor
-	if  bot:GetActiveMode() == BOT_MODE_SIDE_SHOP
+	if  J.IsDoingTormentor(bot)
 	and nEnemyCount == 0
 	and (not J.IsInTeamFight(bot, 1200)
 		or not J.IsGoingOnSomeone(bot)

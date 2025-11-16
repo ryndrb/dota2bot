@@ -75,29 +75,30 @@ local HeroBuild = {
 				"item_tango",
 				"item_double_branches",
 				"item_circlet",
-				"item_slippers",
+				"item_gauntlets",
 				"item_quelling_blade",
 			
 				"item_bottle",
 				"item_magic_wand",
-				"item_wraith_band",
+				"item_bracer",
 				"item_power_treads",
 				"item_dragon_lance",
-				"item_black_king_bar",--
+				"item_ultimate_scepter",
 				"item_hurricane_pike",--
-				"item_revenants_brooch",--
+				"item_black_king_bar",--
 				"item_aghanims_shard",
 				"item_bloodthorn",--
 				"item_sheepstick",--
-				"item_moon_shard",
+				"item_butterfly",--
 				"item_ultimate_scepter_2",
+				"item_moon_shard",
 				"item_travel_boots_2",--
 			},
             ['sell_list'] = {
-				"item_quelling_blade", "item_black_king_bar",
-				"item_wraith_band", "item_revenants_brooch",
-				"item_magic_wand", "item_bloodthorn",
-				"item_bottle", "item_bloodthorn",
+				"item_quelling_blade", "item_ultimate_scepter",
+				"item_magic_wand", "item_black_king_bar",
+				"item_bracer", "item_bloodthorn",
+				"item_bottle", "item_sheepstick",
 			},
         },
     },
@@ -602,7 +603,6 @@ function X.ConsiderViperStrike()
 			and J.CanBeAttacked(enemyHero)
 			and J.IsInRange(bot, enemyHero, nCastRange + 300)
 			and J.CanCastOnTargetAdvanced(enemyHero)
-			and not J.CanKillTarget(enemyHero, nDamage * nDuration, DAMAGE_TYPE_MAGICAL)
             and not enemyHero:HasModifier('modifier_abaddon_borrowed_time')
             and not enemyHero:HasModifier('modifier_dazzle_shallow_grave')
             and not enemyHero:HasModifier('modifier_necrolyte_reapers_scythe')
@@ -631,7 +631,6 @@ function X.ConsiderViperStrike()
 			and J.CanBeAttacked(botTarget)
 			and J.IsInRange(bot, botTarget, nCastRange + 300)
 			and J.CanCastOnTargetAdvanced(botTarget)
-			and not J.CanKillTarget(botTarget, nDamage * nDuration, DAMAGE_TYPE_MAGICAL)
             and not botTarget:HasModifier('modifier_abaddon_borrowed_time')
             and not botTarget:HasModifier('modifier_dazzle_shallow_grave')
             and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')

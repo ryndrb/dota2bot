@@ -8,6 +8,8 @@ local helpAlly = {should = false, location = 0}
 
 local botAttackRange, botHP, botMP, botHealth, botAttackDamage, botAttackSpeed, botActiveModeDesire, botTargetLocation, botName, botLocation
 
+local fLastAttackDesire = 0
+
 if J.IsNonStableHero(GetBot():GetUnitName()) then
 
 local bClearMode = false
@@ -52,7 +54,7 @@ function GetDesire()
             end
         end
 
-        if creepCountAttacking >= 4 and (creepCountAttackingDamage / botHealth) >= 0.25 then return 0 end
+        if creepCountAttacking >= 4 and (creepCountAttackingDamage / botHealth) >= 0.25 then return X.GetActualDesire(BOT_MODE_DESIRE_NONE) end
     end
 
     if (bot:HasModifier('modifier_marci_unleash') and J.GetModifierTime(bot, 'modifier_marci_unleash') > 3)
@@ -63,7 +65,7 @@ function GetDesire()
         and (  (botName == 'npc_dota_hero_muerta' and (botHP > 0.3 or bot:HasModifier('modifier_item_satanic_unholy') or bot:IsAttackImmune()))
             or (botName == 'npc_dota_hero_marci' and (botHP > 0.45 or bot:HasModifier('modifier_item_satanic_unholy') or bot:IsAttackImmune())))
         then
-            return BOT_MODE_DESIRE_ABSOLUTE
+            return X.GetActualDesire(BOT_MODE_DESIRE_ABSOLUTE)
         end
     end
 
@@ -107,7 +109,7 @@ function GetDesire()
 
             if J.IsInLaningPhase() and not bot:WasRecentlyDamagedByAnyHero(3.0) and not bot:WasRecentlyDamagedByCreep(2.0) and #nInRangeAlly >= #nInRangeEnemy then
                 if not J.IsRetreating(bot) and GetUnitToUnitDistance(bot, enemyHero) < botAttackRange then
-                    return BOT_MODE_DESIRE_VERYHIGH
+                    return X.GetActualDesire(BOT_MODE_DESIRE_VERYHIGH)
                 end
             end
 
@@ -139,15 +141,15 @@ function GetDesire()
                 if dist <= 2000 or ((dist / bot:GetCurrentMovementSpeed()) <= 10.0) then
                     if J.IsInLaningPhase() and bot:GetActiveMode() == BOT_MODE_ATTACK then
                         if (bot:WasRecentlyDamagedByTower(2.0) or (J.IsValidBuilding(tEnemyTowers[1]) and tEnemyTowers[1]:GetAttackTarget() == bot)) then
-                            return BOT_MODE_DESIRE_VERYLOW
+                            return X.GetActualDesire(BOT_MODE_DESIRE_VERYLOW)
                         end
                     end
 
-                    if b1 then return BOT_MODE_DESIRE_VERYHIGH end
-                    if b2 then return BOT_MODE_DESIRE_VERYHIGH end
-                    if b3 then return BOT_MODE_DESIRE_ABSOLUTE end
+                    if b1 then return X.GetActualDesire(BOT_MODE_DESIRE_VERYHIGH) end
+                    if b2 then return X.GetActualDesire(BOT_MODE_DESIRE_VERYHIGH) end
+                    if b3 then return X.GetActualDesire(BOT_MODE_DESIRE_ABSOLUTE) end
                 else
-                    return BOT_MODE_DESIRE_MODERATE
+                    return X.GetActualDesire(BOT_MODE_DESIRE_MODERATE)
                 end
             end
         end
@@ -183,7 +185,7 @@ function GetDesire()
 
                     if #nInRangeAlly >= #nInRangeEnemy or bWeAreStronger__Ally then
                         helpAlly = {should = true, location = allyHero:GetLocation()}
-                        return BOT_MODE_DESIRE_VERYHIGH
+                        return X.GetActualDesire(BOT_MODE_DESIRE_VERYHIGH)
                     else
                         helpAlly.should = false
                     end
@@ -206,7 +208,7 @@ function GetDesire()
                         if #tAllyHeroes_real >= #tEnemyHeroes_real or bWeAreStronger then
                             botTarget.fogChase = true
                             botTarget.location = dInfo.location
-                            return BOT_MODE_DESIRE_VERYHIGH
+                            return X.GetActualDesire(BOT_MODE_DESIRE_VERYHIGH)
                         end
                     end
                 end
@@ -216,7 +218,7 @@ function GetDesire()
 
     botTarget.fogChase = false
 
-    return BOT_MODE_DESIRE_NONE
+    return X.GetActualDesire(BOT_MODE_DESIRE_NONE)
 end
 
 function Think()
@@ -388,7 +390,7 @@ function Think()
                     bot:Action_MoveToLocation(__target:GetLocation())
                     return
                 else
-                    bot:Action_AttackUnit(__target, false)
+                    bot:Action_AttackUnit(__target, true)
                     return
                 end
             else
@@ -410,10 +412,10 @@ function Think()
                     --     bot:Action_MoveToLocation(J.VectorAway(botLocation, __target:GetLocation(), botAttackRange - dist))
                     --     return
                     -- else
-                    --     bot:Action_AttackUnit(__target, false)
+                    --     bot:Action_AttackUnit(__target, true)
                     --     return
                     -- end
-                    bot:Action_AttackUnit(__target, false)
+                    bot:Action_AttackUnit(__target, true)
                     return
                 end
             else
@@ -616,4 +618,11 @@ function X.GetWeakestNearbyHero(bEnemy, nRadius)
 	end
 
 	return weakestHero
+end
+
+function X.GetActualDesire(nDesire)
+    local alpha = 0.3
+    nDesire = fLastAttackDesire * (1 - alpha) + nDesire * alpha
+    fLastAttackDesire = nDesire
+    return nDesire
 end

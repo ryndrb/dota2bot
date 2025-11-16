@@ -18,8 +18,6 @@ local nSuppCountInLoc = 0
 local bHumanInTeam = false
 
 function GetDesire()
-    if true then return 0 end -- mode removed (?); side_shop -> assemble_with_humans_generic
-
     TormentorLocation = J.GetTormentorLocation(GetTeam())
     vWaitingLocation = J.GetTormentorWaitingLocation(GetTeam())
 

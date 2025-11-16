@@ -209,40 +209,45 @@ local function DoGive(hero, nTier)
         NeutralItems.GiveItem(sItemName, hero, nTier)
         -- something green
         GameRules:SendCustomMessage("<font color='#70EA71'>"..string.gsub(hero:GetUnitName(), 'npc_dota_hero_', '').."</font>"..' recieved a Tier '..tostring(nTier)..' neutral item!', -1, 0)
-        hero.bTierDone[nTier] = true
+        hero.neutral_items[nTier].assigned = true
     end
 end
 
+-- with 11/10/25 update, this will override (or get overriden), since valve made bots craft items
+-- will disable (?); can't check madstones
 local bInitTimes = false
 function NeutralItems.GiveNeutralItems(hHeroList)
     local bTurboMode = Helper.IsTurboMode()
     local fCurrentTime = Helper.DotaTime()
+    local nCurrentTierWindow = NeutralItems.GetCurrentTierWindow(bTurboMode, fCurrentTime)
 
     if not bInitTimes and #hHeroList > 0 then
         for _, hero in pairs(hHeroList) do
-            if hero.neutral_times == nil then
-                if bTurboMode then
-                    -- range; to feel more natural
-                    hero.neutral_times = {
-                        RandomFloat( 2.5, 4.5),
-                        RandomFloat( 7.5, 9.5),
-                        RandomFloat(12.5, 14.5),
-                        RandomFloat(17.5, 19.5),
-                        RandomFloat(30.0, 32),
-                    }
-                else
-                    hero.neutral_times = {
-                        RandomFloat( 5, 8),
-                        RandomFloat(15, 18),
-                        RandomFloat(25, 28),
-                        RandomFloat(35, 38),
-                        RandomFloat(60, 63),
-                    }
-                end
+            if hero.neutral_items == nil then
+                hero.neutral_items = {
+                    [1] = { assign_time = 0, assigned = false },
+                    [2] = { assign_time = 0, assigned = false },
+                    [3] = { assign_time = 0, assigned = false },
+                    [4] = { assign_time = 0, assigned = false },
+                    [5] = { assign_time = 0, assigned = false },
+                }
             end
 
-            if hero.bTierDone == nil then
-                hero.bTierDone = {false, false, false, false, false}
+            if hero.neutral_items then
+                -- range; to feel more natural
+                if bTurboMode then
+                    hero.neutral_items[1].assign_time = RandomFloat( 2.5,  4.5)
+                    hero.neutral_items[2].assign_time = RandomFloat( 7.5,  9.5)
+                    hero.neutral_items[3].assign_time = RandomFloat(12.5, 14.5)
+                    hero.neutral_items[4].assign_time = RandomFloat(17.5, 19.5)
+                    hero.neutral_items[5].assign_time = RandomFloat(30.0, 32.0)
+                else
+                    hero.neutral_items[1].assign_time = RandomFloat( 5,  8)
+                    hero.neutral_items[2].assign_time = RandomFloat(15, 18)
+                    hero.neutral_items[3].assign_time = RandomFloat(25, 28)
+                    hero.neutral_items[4].assign_time = RandomFloat(35, 38)
+                    hero.neutral_items[5].assign_time = RandomFloat(60, 63)
+                end
             end
         end
 
@@ -251,18 +256,20 @@ function NeutralItems.GiveNeutralItems(hHeroList)
 
     -- Give Neutral Items
     for _, hero in pairs(hHeroList) do
-        if hero.bTierDone and hero.neutral_times then
-            if hero.bTierDone[1] == false and fCurrentTime >= hero.neutral_times[1] * 60 then
-                DoGive(hero, 1)
-            elseif hero.bTierDone[2] == false and fCurrentTime >= hero.neutral_times[2] * 60 then
-                DoGive(hero, 2)
-            elseif hero.bTierDone[3] == false and fCurrentTime >= hero.neutral_times[3] * 60 then
-                DoGive(hero, 3)
-            elseif hero.bTierDone[4] == false and fCurrentTime >= hero.neutral_times[4] * 60 then
-                DoGive(hero, 4)
-            elseif hero.bTierDone[5] == false and fCurrentTime >= hero.neutral_times[5] * 60 then
-                DoGive(hero, 5)
+        if hero.neutral_items then
+            if hero.neutral_items[nCurrentTierWindow].assigned == false and fCurrentTime >= hero.neutral_items[nCurrentTierWindow].assign_time * 60 then
+                DoGive(hero, nCurrentTierWindow)
             end
+
+            -- if fCurrentTime >= hero.neutral_items[nCurrentTierWindow].assign_time * 60 then
+            --     local hItem = hero:GetItemInSlot(16)
+            --     if hItem then
+            --         local itemTier = NeutralItems.GetItemTier(hItem:GetName())
+            --         if itemTier > 0 and itemTier ~= nCurrentTierWindow then
+            --             DoGive(hero, nCurrentTierWindow)
+            --         end
+            --     end
+            -- end
         end
     end
 
@@ -363,6 +370,28 @@ function NeutralItems.SelectItem(hNeutralItemList)
     end
 
     return selectedItem
+end
+
+function NeutralItems.GetCurrentTierWindow(bTurboMode, fCurrentTime)
+    local thresholds = bTurboMode and {2.5, 7.5, 12.5, 17.5, 30} or {5, 15, 25, 35, 60}
+    for i = #thresholds, 1, -1 do
+        if fCurrentTime >= thresholds[i] * 60 then return i end
+    end
+
+    return 1
+end
+
+function NeutralItems.GetItemTier(sItemName)
+    local itemList = { Tier1NeutralItems, Tier2NeutralItems, Tier3NeutralItems, Tier4NeutralItems, Tier5NeutralItems }
+    for tier, items in pairs(itemList) do
+        for _, item in pairs(items) do
+            if item == sItemName then
+                return tier
+            end
+        end
+    end
+
+    return -1
 end
 
 return NeutralItems
