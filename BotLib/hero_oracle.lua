@@ -187,17 +187,17 @@ function X.SkillsComplement()
 	RainOfDestiny = bot:GetAbilityByName('oracle_rain_of_destiny')
 	FalsePromise = bot:GetAbilityByName('oracle_false_promise')
 
+	bAttacking = J.IsAttacking(bot)
+    botHP = J.GetHP(bot)
+    botTarget = J.GetProperTarget(bot)
+    nAllyHeroes = bot:GetNearbyHeroes(1600, false, BOT_MODE_NONE)
+    nEnemyHeroes = bot:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
+
 	FalsePromiseDesire, FalsePromiseTarget = X.ConsiderFalsePromise()
 
 	X.ConsiderFortunesEndCancel()
 
 	if J.CanNotUseAbility(bot) then return end
-
-    bAttacking = J.IsAttacking(bot)
-    botHP = J.GetHP(bot)
-    botTarget = J.GetProperTarget(bot)
-    nAllyHeroes = bot:GetNearbyHeroes(1600, false, BOT_MODE_NONE)
-    nEnemyHeroes = bot:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
 
 	if FalsePromiseDesire > 0 then
 		J.SetQueuePtToINT(bot, false)
