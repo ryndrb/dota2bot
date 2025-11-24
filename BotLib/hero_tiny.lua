@@ -901,7 +901,7 @@ function X.ConsiderTreeVolley()
 	local nSplashRadius = TreeVolley:GetSpecialValueInt('splash_radius')
 	local nProjectileSpeed = TreeVolley:GetSpecialValueInt('speed')
 	local nManaCost = TreeVolley:GetManaCost()
-	local fManaAfter = J.GetManaAfter(TreeVolley)
+	local fManaAfter = J.GetManaAfter(nManaCost)
 	local fManaThreshold = J.GetManaThreshold(bot, nManaCost, {Avalanche, Toss, 150})
 
 	if fManaAfter < fManaThreshold then
