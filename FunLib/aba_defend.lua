@@ -86,18 +86,23 @@ function Defend.GetDefendDesire(bot, lane)
 	local hTier3Tower = hTowerTable[lane][3]
 
 	if 	   not J.IsValidBuilding(hTier3Tower) then
-		return Clamp(nDesire * 5, 0, 0.9)
+		nDesire = nDesire * 5
 	elseif not J.IsValidBuilding(hTier2Tower) then
-		return Clamp(nDesire * 3, 0, 0.9)
+		nDesire = nDesire * 3
 	elseif J.IsValidBuilding(hTier1Tower) and Defend.ShouldDefend(bot, furthestBuilding, 1600)
 	then
-		return Clamp(nDesire, 0, 0.9)
+		nDesire = nDesire
 	elseif J.IsValidBuilding(hTier2Tower) and Defend.ShouldDefend(bot, furthestBuilding, 1600)
 	then
-		return Clamp(nDesire * 2, 0, 0.9)
+		nDesire = nDesire * 2
 	end
 
-	return 0
+	local _, closestLane = J.GetClosestTeamLane(bot)
+	if closestLane == lane then
+		nDesire = Max(BOT_MODE_DESIRE_VERYLOW, nDesire)
+	end
+
+	return Clamp(nDesire, 0, 0.9)
 end
 
 function Defend.DefendThink(bot, lane)

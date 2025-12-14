@@ -53,9 +53,9 @@ local HeroBuild = {
 				"item_skadi",--
 			},
             ['sell_list'] = {
-				"item_quelling_blade", "item_black_king_bar",
-				"item_wraith_band", "item_basher",
-				"item_magic_wand", "item_satanic",
+				"item_quelling_blade", "item_ultimate_scepter",
+				"item_magic_wand", "item_basher",
+				"item_wraith_band", "item_satanic",
 				"item_power_treads", "item_skadi",
 			},
         },

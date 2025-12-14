@@ -54,9 +54,9 @@ local HeroBuild = {
 				"item_power_treads",
 				"item_blink",
 				"item_echo_sabre",
+				"item_aghanims_shard",
 				"item_black_king_bar",--
 				"item_ultimate_scepter",
-				"item_aghanims_shard",
 				"item_harpoon",--
 				"item_assault",--
 				"item_bloodthorn",--
@@ -99,9 +99,9 @@ local HeroBuild = {
 				"item_blink",
 				"item_crimson_guard",--
 				"item_black_king_bar",--
+				"item_aghanims_shard",
 				"item_ultimate_scepter",
 				sUtilityItem,--
-				"item_aghanims_shard",
 				"item_assault",--
 				"item_ultimate_scepter_2",
 				"item_overwhelming_blink",--

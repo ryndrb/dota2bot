@@ -310,8 +310,7 @@ function Push.PushThink(bot, lane)
 
     local nInRangeAlly = J.GetAlliesNearLoc(hEnemyAncient:GetLocation(), 3200)
     local nCreeps = bot:GetNearbyLaneCreeps(nRange, true)
-    if  ((J.IsCore(bot) and bot:GetLevel() >= 12) or bot:GetLevel() >= 18)
-    and (#nInRangeAlly == 0)
+    if (bot:GetAttackDamage() * bot:GetAttackSpeed() * 5.0 >= 2800)
     then
         nCreeps = bot:GetNearbyCreeps(nRange, true)
     end

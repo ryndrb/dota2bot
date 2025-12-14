@@ -511,7 +511,7 @@ function X.ConsiderEarthSpike()
 						return BOT_ACTION_DESIRE_HIGH, creep:GetLocation()
 					end
 
-					nLocationAoE = bot:FindAoELocation(true, false, creep:GetLocation(), 0, 600, 0, nDamage)
+					nLocationAoE = bot:FindAoELocation(true, false, creep:GetLocation(), 0, nRadius, 0, nDamage)
 					if nLocationAoE.count >= 2 then
 						return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc
 					end

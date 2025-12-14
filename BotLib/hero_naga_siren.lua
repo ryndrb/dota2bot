@@ -525,7 +525,6 @@ function X.ConsiderSongOfTheSiren()
 		and J.IsInRange(bot, botTarget, nRadius)
 		and not J.IsInRange(bot, botTarget, 800)
 		and J.CanCastOnNonMagicImmune(botTarget)
-		and not botTarget:WasRecentlyDamagedByAnyHero(3.0)
 		then
 			local nInRangeAlly = J.GetAlliesNearLoc(bot:GetLocation(), 1000)
 			local nInRangeEnemy = J.GetEnemiesNearLoc(bot:GetLocation(), 1000)

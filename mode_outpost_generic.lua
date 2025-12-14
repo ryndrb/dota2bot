@@ -22,7 +22,7 @@ local EdictTowerTarget = nil
 local ShouldHuskarMoveOutsideFountain = false
 local ShouldHeroMoveOutsideFountain = false
 
-local fDissimilateTime = 0
+local dissimilate = { cast_time = 0, duration = 0 }
 local bMoveFromTreeDance = false
 
 local fNextMovementTime = -math.huge
@@ -95,13 +95,17 @@ function GetDesire()
 		if cAbility == nil then cAbility = bot:GetAbilityByName("void_spirit_dissimilate") end
 		if cAbility:IsTrained()
 		then
-			if DotaTime() < fDissimilateTime + 1.15 then
+			local nPhaseDuration = cAbility:GetSpecialValueFloat('phase_duration') + 0.05
+			dissimilate.duration = nPhaseDuration
+
+			if DotaTime() <= dissimilate.cast_time + dissimilate.duration then
 				return BOT_MODE_DESIRE_ABSOLUTE
 			end
 
-			if cAbility:IsInAbilityPhase()
+			if (cAbility:IsInAbilityPhase())
+			or ((cAbility:GetCooldown() - cAbility:GetCooldownTimeRemaining()) <= dissimilate.duration)
 			then
-				fDissimilateTime = DotaTime()
+				dissimilate.cast_time = DotaTime()
 				return BOT_MODE_DESIRE_ABSOLUTE
 			end
 		end
@@ -155,19 +159,6 @@ function GetDesire()
 				and DotaTime() - bot.tree_dance_status.cast_time < (4.0 + bot.tree_dance_status.eta)
 				then
 					bMoveFromTreeDance = true
-					return BOT_MODE_DESIRE_ABSOLUTE
-				end
-			end
-		end
-	elseif botName == "npc_dota_hero_nyx_assassin"
-	then
-		if cAbility == nil then cAbility = bot:GetAbilityByName("nyx_assassin_vendetta") end
-		if cAbility:IsTrained()
-		then
-			if cAbility:IsInAbilityPhase() or bot:HasModifier('modifier_nyx_assassin_vendetta')
-			then
-				if bot.canVendettaKill
-				then
 					return BOT_MODE_DESIRE_ABSOLUTE
 				end
 			end
@@ -311,8 +302,11 @@ function GetDesire()
 		if cAbility == nil then cAbility = bot:GetAbilityByName("wisp_tether") end
 		if cAbility:IsTrained()
 		then
-			if bot:HasModifier('modifier_wisp_tether') and bot.tethered_ally ~= nil and not (J.IsRetreating(bot) and J.GetHP(bot) < 0.25) then
-				if GetUnitToUnitDistance(bot, bot.tethered_ally) > 550 then
+			if bot:HasModifier('modifier_wisp_tether') and bot.wisp and bot.wisp.tether.target then
+				if J.IsValidHero(bot.wisp.tether.target)
+				and not (J.IsRetreating(bot) and J.GetHP(bot) < 0.25)
+				and GetUnitToUnitDistance(bot, bot.wisp.tether.target) > 550
+				then
 					return BOT_MODE_DESIRE_ABSOLUTE
 				end
 			end
@@ -418,52 +412,40 @@ function GetDesire()
 					local hItemName = hItem:GetName()
 
 					if GLOBAL_bHaveBearNecessitiesFacet then
-						for _, itemName in pairs(GLOBAL_hBearItemList_BearNecessities) do
+						for itemName, rule in pairs(GLOBAL_hBearItemList_BearNecessities) do
 							if hItemName == itemName then
-								if itemName == 'item_hyperstone' then
-									if J.HasItem(LoneDruid.bear, 'item_assault') then
-										bot.dropItem = hItem
-										bot.isGiveItem = true
-										return BOT_MODE_DESIRE_ABSOLUTE
+								if rule then
+									if itemName == 'item_eagle'
+									or itemName == 'item_power_treads'
+									then
+										if rule(nil, LoneDruid.hero) then
+											bot.dropItem = hItem
+											bot.isGiveItem = true
+											return BOT_MODE_DESIRE_ABSOLUTE
+										end
+									else
+										if (rule(LoneDruid.bear, nil) == true)
+										or (rule(LoneDruid.bear, nil) == nil)
+										then
+											bot.dropItem = hItem
+											bot.isGiveItem = true
+											return BOT_MODE_DESIRE_ABSOLUTE
+										end
 									end
-								elseif itemName == 'item_eagle' then
-									if J.HasItem(LoneDruid.hero, 'item_butterfly') then
-										bot.dropItem = hItem
-										bot.isGiveItem = true
-										return BOT_MODE_DESIRE_ABSOLUTE
-									end
-								elseif itemName == 'item_power_treads' then
-									if (J.HasItem(LoneDruid.hero, 'item_lesser_crit') or J.HasItem(LoneDruid.hero, 'item_greater_crit')) then
-										bot.dropItem = hItem
-										bot.isGiveItem = true
-										return BOT_MODE_DESIRE_ABSOLUTE
-									end
-								else
-									bot.dropItem = hItem
-									bot.isGiveItem = true
-									return BOT_MODE_DESIRE_ABSOLUTE
 								end
 							end
 						end
 					else
-						for _, itemName in pairs(GLOBAL_hBearItemList_BearWithMe) do
+						for itemName, rule in pairs(GLOBAL_hBearItemList_BearWithMe) do
 							if hItemName == itemName then
-								if itemName == 'item_moon_shard' then
-									if not LoneDruid.bear:HasModifier('modifier_item_moon_shard_consumed') or not J.HasItem(LoneDruid.bear, 'item_moon_shard') then
+								if rule then
+									if (rule(LoneDruid.bear, nil) == true)
+									or (rule(LoneDruid.bear, nil) == nil)
+									then
 										bot.dropItem = hItem
 										bot.isGiveItem = true
 										return BOT_MODE_DESIRE_ABSOLUTE
 									end
-								elseif itemName == 'item_hyperstone' then
-									if J.HasItem(LoneDruid.bear, 'item_assault') then
-										bot.dropItem = hItem
-										bot.isGiveItem = true
-										return BOT_MODE_DESIRE_ABSOLUTE
-									end
-								else
-									bot.dropItem = hItem
-									bot.isGiveItem = true
-									return BOT_MODE_DESIRE_ABSOLUTE
 								end
 							end
 						end
@@ -520,6 +502,7 @@ end
 function OnEnd()
 	ClosestOutpost = nil
 	ClosestOutpostDist = 10000
+	channel_target = { unit = nil, location = 0, tree = -1 }
 end
 
 function Think()
@@ -538,18 +521,16 @@ function Think()
 	end
 
 	-- Void Spirit Dissimilate;
-	-- modifier_void_spirit_dissimilate_phase returns false
-	if DotaTime() < fDissimilateTime + 1.15
+	if DotaTime() < dissimilate.cast_time + dissimilate.duration
 	then
-		-- static locs, for now
-		if bot.dissimilate_status ~= nil then
-			if bot.dissimilate_status[1] == 'engaging' then
-				if J.IsValidHero(bot.dissimilate_status[2]) then
-					bot:Action_MoveToLocation(bot.dissimilate_status[2]:GetLocation())
+		if bot.dissimilate and bot.dissimilate.status then
+			if bot.dissimilate.status == 'engage' then
+				if bot.dissimilate.location then
+					bot:Action_MoveToLocation(bot.dissimilate.location)
 					return
 				else
-					local target = nil
-					local hp = 0
+					local hTarget = nil
+					local hTargetHealth = math.huge
 					local nEnemyHeroes = J.GetEnemiesNearLoc(bot:GetLocation(), 800)
 					for _, enemyHero in pairs(nEnemyHeroes) do
 						if J.IsValidHero(enemyHero)
@@ -557,36 +538,47 @@ function Think()
 						and J.CanCastOnNonMagicImmune(enemyHero)
 						and not enemyHero:HasModifier('modifier_faceless_void_chronosphere_freeze')
 						and not enemyHero:HasModifier('modifier_necrolyte_reapers_scythe')
-						and hp < enemyHero:GetHealth()
 						then
-							hp = enemyHero:GetHealth()
-							target = enemyHero
+							local enemyHeroHealth = enemyHero:GetHealth()
+							if enemyHeroHealth < hTargetHealth then
+								hTarget = enemyHero
+								hTargetHealth = enemyHeroHealth
+							end
 						end
 					end
 
-					if target ~= nil then
-						bot:Action_MoveToLocation(target:GetLocation())
+					if hTarget then
+						bot.dissimilate.location = hTarget:GetLocation()
+						bot:Action_MoveToLocation(bot.dissimilate.location)
 						return
 					end
 				end
-			elseif bot.dissimilate_status[1] == 'farming' then
-				local tEnemyCreeps = bot:GetNearbyCreeps(520, true)
-				if J.CanBeAttacked(tEnemyCreeps[1])
-				and (#tEnemyCreeps >= 4 or (#tEnemyCreeps >= 2 and tEnemyCreeps[1]:IsAncientCreep()))
-				and not J.IsRunning(tEnemyCreeps[1])
-				and J.IsAttacking(bot)
-				then
-					local nLocationAoE = bot:FindAoELocation(true, false, tEnemyCreeps[1]:GetLocation(), 0, 300, 0, 0)
-					if nLocationAoE.count >= 2 then
-						bot:Action_MoveToLocation(nLocationAoE.targetloc)
-						return
+			elseif bot.dissimilate.status == 'farm' then
+				local hTargetLocation = nil
+				local hTargetLocationCreepCount = 0
+				local nEnemyCreeps = bot:GetNearbyCreeps(550, true)
+				for _, creep in pairs(nEnemyCreeps) do
+					if J.IsValid(creep) and J.CanBeAttacked(creep) and not J.IsRunning(creep) then
+						local nLocationAoE = bot:FindAoELocation(true, false, creep:GetLocation(), 0, 275, 0, 0)
+						if nLocationAoE.count > hTargetLocationCreepCount then
+							hTargetLocation = nLocationAoE.targetloc
+							hTargetLocationCreepCount = nLocationAoE.count
+						end
+
 					end
 				end
-			elseif bot.dissimilate_status[1] == 'miniboss' then
-				bot:Action_MoveToLocation(bot.dissimilate_status[2]:GetLocation())
-				return
-			elseif bot.dissimilate_status[1] == 'retreating' then
-				bot:Action_MoveToLocation(bot.dissimilate_status[2])
+
+				if hTargetLocation then
+					bot:Action_MoveToLocation(hTargetLocation)
+					return
+				end
+			elseif bot.dissimilate.status == 'miniboss' then
+				if bot.dissimilate.location then
+					bot:Action_MoveToLocation(bot.dissimilate.location)
+					return
+				end
+			elseif bot.dissimilate.status == 'retreat' then
+				bot:Action_MoveToLocation(bot.dissimilate.location)
 				return
 			end
 		end
@@ -683,53 +675,52 @@ function Think()
 	end
 
 	-- Rolling Thunder
-	if bot:HasModifier('modifier_pangolier_gyroshell')
-	then
-		if J.IsInTeamFight(bot, 1600)
-		then
-			local target = nil
-			local hp = 0
-			for _, enemyHero in pairs(GetUnitList(UNIT_LIST_ENEMY_HEROES))
-			do
+	if bot:HasModifier('modifier_pangolier_gyroshell') then
+		if J.IsInTeamFight(bot, 1600) then
+			local hTarget = nil
+			local hTargetHealth = 0
+			for _, enemyHero in pairs(GetUnitList(UNIT_LIST_ENEMY_HEROES)) do
 				if J.IsValidHero(enemyHero)
+				and J.CanBeAttacked(enemyHero)
 				and J.IsInRange(bot, enemyHero, 2200)
 				and J.CanBeAttacked(enemyHero)
 				and J.CanCastOnNonMagicImmune(enemyHero)
+				and GetUnitToLocationDistance(enemyHero, J.GetTeamFountain()) > 1200
 				and not enemyHero:HasModifier('modifier_faceless_void_chronosphere_freeze')
 				and not enemyHero:HasModifier('modifier_necrolyte_reapers_scythe')
-				and hp < enemyHero:GetHealth()
 				then
-					hp = enemyHero:GetHealth()
-					target = enemyHero
+					local enemyHeroHealth = enemyHero:GetHealth()
+					if hTargetHealth > enemyHeroHealth then
+						hTarget = enemyHero
+						hTargetHealth = enemyHeroHealth
+					end
 				end
 			end
 
-			if target ~= nil
-			then
-				bot:Action_MoveToLocation(target:GetLocation())
+			if hTarget ~= nil then
+				bot:Action_MoveToLocation(hTarget:GetLocation())
 				return
 			end
 		end
 
-		local tAllyHeroes = J.GetAlliesNearLoc(bot:GetLocation(), 1200)
-		local tEnemyHeroes = J.GetEnemiesNearLoc(bot:GetLocation(), 1200)
-		if #tEnemyHeroes > #tAllyHeroes
+		local nAllyHeroes = J.GetAlliesNearLoc(bot:GetLocation(), 1200)
+		local nEnemyHeroes = J.GetEnemiesNearLoc(bot:GetLocation(), 1200)
+		if (#nEnemyHeroes > #nAllyHeroes)
 		or (not J.WeAreStronger(bot, 1200) and J.GetHP(bot) < 0.55)
-		or (#tEnemyHeroes > 0 and J.GetHP(bot) < 0.3) then
+		or (#nEnemyHeroes > 0 and J.GetHP(bot) < 0.3) then
 			bot:Action_MoveToLocation(J.GetTeamFountain())
 			return
 		end
 
-		if J.IsValidHero(tEnemyHeroes[1])
-		and not tEnemyHeroes[1]:HasModifier('modifier_faceless_void_chronosphere_freeze')
+		if J.IsValidHero(nEnemyHeroes[1])
+		and not nEnemyHeroes[1]:HasModifier('modifier_faceless_void_chronosphere_freeze')
 		then
-			bot:Action_MoveToLocation(tEnemyHeroes[1]:GetLocation())
+			bot:Action_MoveToLocation(nEnemyHeroes[1]:GetLocation())
 			return
 		end
 
 		local tCreeps = bot:GetNearbyCreeps(880, true)
-		if J.IsValid(tCreeps[1])
-		then
+		if J.IsValid(tCreeps[1]) then
 			bot:Action_MoveToLocation(tCreeps[1]:GetLocation())
 			return
 		end
@@ -790,19 +781,17 @@ function Think()
 	-- Snapfire
 	if bot:HasModifier('modifier_snapfire_mortimer_kisses')
 	then
-		local nKissesTarget = GetMortimerKissesTarget()
-
-		if nKissesTarget ~= nil
-		then
-			local eta = (GetUnitToUnitDistance(bot, nKissesTarget) / 1300) + 0.3
-			bot:Action_MoveToLocation(J.GetCorrectLoc(nKissesTarget, eta))
+		local hKissesTarget = GetMortimerKissesTarget()
+		if hKissesTarget ~= nil then
+			local eta = (GetUnitToUnitDistance(bot, hKissesTarget) / 1300) + 0.3
+			bot:Action_MoveToLocation(J.GetCorrectLoc(hKissesTarget, eta))
 			return
 		end
 	end
 
 	-- IO Tether
-	if bot:HasModifier('modifier_wisp_tether') and bot.tethered_ally ~= nil then
-		local attackTarget = bot.tethered_ally:GetAttackTarget()
+	if bot:HasModifier('modifier_wisp_tether') and bot.wisp and bot.wisp.tether.target and J.IsValidHero(bot.wisp.tether.target) then
+		local attackTarget = bot.wisp.tether.target:GetAttackTarget()
 		if J.IsValid(attackTarget) and J.IsInRange(bot, attackTarget, bot:GetAttackRange() + 300)
 		and not J.IsGoingOnSomeone(bot)
 		then
@@ -812,7 +801,7 @@ function Think()
 		end
 
 		-- TODO: Less frontlining when engaging sometimes
-		bot:Action_MoveToLocation(bot.tethered_ally:GetLocation())
+		bot:Action_MoveToLocation(J.VectorAway(bot.wisp.tether.target:GetLocation(), J.GetEnemyFountain(), bot:GetAttackRange() / 2))
 		return
 	end
 
@@ -927,22 +916,6 @@ function Think()
 		end
 	end
 
-	-- Nyx Assassin
-	if bot.canVendettaKill
-	then
-		if bot.vendettaTarget ~= nil
-		then
-			if GetUnitToUnitDistance(bot, bot.vendettaTarget) > bot:GetAttackRange()
-			then
-				bot:Action_MoveToLocation(bot.vendettaTarget:GetLocation())
-				return
-			else
-				bot:Action_AttackUnit(bot.vendettaTarget, true)
-				return
-			end
-		end
-	end
-
 	if ClosestOutpost ~= nil
 	then
 		if GetUnitToUnitDistance(bot, ClosestOutpost) > 300
@@ -1021,37 +994,55 @@ function IsSuitableToCaptureOutpost(vLocation)
 end
 
 function GetMortimerKissesTarget()
-	for _, enemyHero in pairs(GetUnitList(UNIT_LIST_ENEMY_HEROES))
-	do
-		if  J.IsValidHero(enemyHero)
-		and J.IsInRange(bot, enemyHero, 3000 + (275 / 2))
-		and J.CanCastOnNonMagicImmune(enemyHero)
-		and not J.IsInRange(bot, enemyHero, 600)
-		then
-			if J.IsLocationInChrono(enemyHero:GetLocation())
-			or J.IsLocationInBlackHole(enemyHero:GetLocation())
+	local hAbility = bot:GetAbilityByName('snapfire_mortimer_kisses')
+	if hAbility and hAbility:IsTrained() then
+		local nCastRange = hAbility:GetCastRange()
+		local nMinDistance = hAbility:GetSpecialValueInt('min_range')
+		local unitList = GetUnitList(UNIT_LIST_ENEMY_HEROES)
+
+		for _, enemyHero in pairs(unitList) do
+			if  J.IsValidHero(enemyHero)
+			and J.CanBeAttacked(enemyHero)
+			and J.IsInRange(bot, enemyHero, nCastRange * 0.75)
+			and not J.IsInRange(bot, enemyHero, nMinDistance)
+			and not J.IsSuspiciousIllusion(enemyHero)
+			and not enemyHero:HasModifier('modifier_abaddon_borrowed_time')
+			and not enemyHero:HasModifier('modifier_dazzle_shallow_grave')
+			and not enemyHero:HasModifier('modifier_necrolyte_reapers_scythe')
+			then
+				if enemyHero:HasModifier('modifier_enigma_black_hole_pull')
+				or enemyHero:HasModifier('modifier_faceless_void_chronosphere_freeze')
+				or enemyHero:HasModifier('modifier_legion_commander_duel')
+				or J.IsDisabled(enemyHero)
+				then
+					return enemyHero
+				end
+			end
+		end
+
+		for _, enemyHero in pairs(unitList) do
+			if  J.IsValidHero(enemyHero)
+			and J.CanBeAttacked(enemyHero)
+			and J.IsInRange(bot, enemyHero, nCastRange)
+			and not J.IsInRange(bot, enemyHero, nMinDistance)
+			and not J.IsSuspiciousIllusion(enemyHero)
+			and not enemyHero:HasModifier('modifier_abaddon_borrowed_time')
+			and not enemyHero:HasModifier('modifier_dazzle_shallow_grave')
+			and not enemyHero:HasModifier('modifier_necrolyte_reapers_scythe')
 			then
 				return enemyHero
 			end
 		end
 
-		if  J.IsValidHero(enemyHero)
-		and J.IsInRange(bot, enemyHero, 3000 + (275 / 2))
-		and J.CanCastOnNonMagicImmune(enemyHero)
-		and not J.IsInRange(bot, enemyHero, 600)
-		and not enemyHero:HasModifier('modifier_abaddon_borrowed_time')
-		and not enemyHero:HasModifier('modifier_dazzle_shallow_grave')
-		and not enemyHero:HasModifier('modifier_oracle_false_promise_timer')
-		and not enemyHero:HasModifier('modifier_necrolyte_reapers_scythe')
-		then
-			return enemyHero
+		local nEnemyCreeps = bot:GetNearbyCreeps(1600, true)
+		for _, creep in pairs(nEnemyCreeps) do
+			if  J.IsValid(creep)
+			and J.CanBeAttacked(creep)
+			and not J.IsInRange(bot, creep, nMinDistance)
+			then
+				return creep
+			end
 		end
-	end
-
-	local nCreeps = bot:GetNearbyCreeps(1600, true)
-	if J.IsValid(nCreeps[1])
-	then
-		return nCreeps[1]
 	end
 
 	return nil

@@ -7514,6 +7514,7 @@ X.ConsiderItemDesire["item_minotaur_horn"] = function( hItem )
         return BOT_ACTION_DESIRE_NONE
     end
 
+	local nAllyHeroes = J.GetAlliesNearLoc(bot:GetLocation(), 1200)
     local nEnemyHeroes = J.GetEnemiesNearLoc(bot:GetLocation(), 1200)
 
 	if (J.IsGoingOnSomeone(bot) or (J.IsRetreating(bot) and not J.IsRealInvisible(bot)))

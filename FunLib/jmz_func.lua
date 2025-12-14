@@ -2442,16 +2442,7 @@ end
 
 function J.IsAttacking( bot )
 
-	local nAnimActivity = bot:GetAnimActivity()
-
-	if nAnimActivity ~= ACTIVITY_ATTACK
-		and nAnimActivity ~= ACTIVITY_ATTACK2
-	then
-		return false
-	end
-
-	if bot:GetAttackPoint() > bot:GetAnimCycle() * 0.99
-	then
+	if (GameTime() - bot:GetLastAttackTime()) <= bot:GetAttackPoint() * 2 then
 		return true
 	end
 
@@ -3652,33 +3643,6 @@ local function GetUnitAttackDamage(unit, fInterval, bIllusion)
 	return nil
 end
 
-local function GetEffectiveHealthFromArmor(nHealth, fArmor)
-    local damageMultiplier = 1 - ((0.06 * fArmor) / (1 + 0.06 * math.abs(fArmor)))
-    return nHealth / damageMultiplier
-end
-
-local function GetHealthMultiplier(hUnit)
-	local mul = 1
-	local sUnitName = hUnit:GetUnitName()
-	local botHP = J.GetHP(hUnit) + (hUnit:GetHealthRegen() * 5.0 / hUnit:GetMaxHealth())
-	local botMP = J.GetMP(hUnit) + (hUnit:GetManaRegen() * 5.0 / hUnit:GetMaxMana())
-	if sUnitName == 'npc_dota_hero_huskar' then
-		botHP = ((GetEffectiveHealthFromArmor(hUnit:GetHealth(), hUnit:GetArmor())) / hUnit:GetMaxHealth()) + (hUnit:GetHealthRegen() * 5.0 / hUnit:GetMaxHealth())
-		mul = RemapValClamped(botHP, 0, 0.5, 0.5, 1)
-	elseif sUnitName == 'npc_dota_hero_medusa' then
-		local unitHealth = GetEffectiveHealthFromArmor(hUnit:GetHealth() - (hUnit:GetMana() * 0.98 * (2 + 0.1 * hUnit:GetLevel())), hUnit:GetArmor())
-		local unitMaxHealth = hUnit:GetMaxHealth() - (hUnit:GetMaxMana() * 0.98 * (2 + 0.1 * hUnit:GetLevel()))
-		local nHealth = RemapValClamped(unitHealth / unitMaxHealth, 0, 1, 0, 1) * 0.2 + RemapValClamped(botMP, 0, 0.75, 0, 1) * 0.8
-		mul = RemapValClamped(nHealth, 0.5, 1, 0.5, 1)
-	else
-		botHP = ((GetEffectiveHealthFromArmor(hUnit:GetHealth(), hUnit:GetArmor())) / hUnit:GetMaxHealth()) + (hUnit:GetHealthRegen() * 5.0 / hUnit:GetMaxHealth())
-		local nHealth = RemapValClamped(botHP, 0, 0.75, 0, 1) * 0.8 + RemapValClamped(botMP, 0, 1, 0, 1) * 0.2
-		mul = RemapValClamped(nHealth, 0.5, 1, 0.5, 1)
-	end
-
-	return mul
-end
-
 function J.WeAreStronger(bot, nRadius)
 	local tAllyHeroes = {}
 	local tEnemyHeroes = {}
@@ -3699,8 +3663,6 @@ function J.WeAreStronger(bot, nRadius)
 		and unit:GetTeam() ~= TEAM_NONE
 		then
 			local sUnitName = unit:GetUnitName()
-			local fMul = GetHealthMultiplier(unit)
-			local fMul_Illusion = RemapValClamped(J.GetHP(unit), 0.25, 1, 0, 1)
 
 			if GetTeam() == unit:GetTeam() then
 				if not unit:HasModifier('modifier_arc_warden_tempest_double')
@@ -3708,8 +3670,8 @@ function J.WeAreStronger(bot, nRadius)
 				then
 					local nDamage = GetUnitAttackDamage(unit, 5.0, true)
 					if nDamage then
-						ourPower = ourPower + (math.log(1 + unit:GetOffensivePower())) * ((math.sqrt(Max(0, nDamage)))) * fMul_Illusion
-						ourPowerRaw = ourPowerRaw + (math.log(1 + unit:GetRawOffensivePower())) * (math.sqrt(Max(0, nDamage))) * fMul_Illusion
+						ourPower = ourPower + (math.log(1 + unit:GetOffensivePower())) * ((math.sqrt(Max(0, nDamage))))
+						ourPowerRaw = ourPowerRaw + (math.log(1 + unit:GetRawOffensivePower())) * (math.sqrt(Max(0, nDamage)))
 					end
 				else
 					if not J.IsMeepoClone(unit)
@@ -3718,8 +3680,8 @@ function J.WeAreStronger(bot, nRadius)
 					then
 						table.insert(tAllyHeroes, unit)
 					end
-					ourPower = ourPower + (math.log(1 + unit:GetOffensivePower())) * (math.sqrt(unit:GetAttackDamage() * unit:GetAttackSpeed() * 5)) * fMul
-					ourPowerRaw = ourPowerRaw + (math.log(1 + unit:GetRawOffensivePower())) * (math.sqrt(Max(0, unit:GetAttackDamage() * unit:GetAttackSpeed() * 5))) * fMul
+					ourPower = ourPower + (math.log(1 + unit:GetOffensivePower())) * (math.sqrt(unit:GetAttackDamage() * unit:GetAttackSpeed() * 5))
+					ourPowerRaw = ourPowerRaw + (math.log(1 + unit:GetRawOffensivePower())) * (math.sqrt(Max(0, unit:GetAttackDamage() * unit:GetAttackSpeed() * 5)))
 				end
 			else
 				if not unit:HasModifier('modifier_arc_warden_tempest_double')
@@ -3727,7 +3689,7 @@ function J.WeAreStronger(bot, nRadius)
 				then
 					local nDamage = GetUnitAttackDamage(unit, 5.0, true)
 					if nDamage then
-						enemyPower = enemyPower + (math.log(1 + unit:GetRawOffensivePower())) * (math.sqrt(Max(0, nDamage))) * fMul_Illusion
+						enemyPower = enemyPower + (math.log(1 + unit:GetRawOffensivePower())) * (math.sqrt(Max(0, nDamage)))
 					end
 				else
 					if not J.IsMeepoClone(unit)
@@ -3736,7 +3698,7 @@ function J.WeAreStronger(bot, nRadius)
 					then
 						table.insert(tEnemyHeroes, unit)
 					end
-					enemyPower = enemyPower + (math.log(1 + unit:GetRawOffensivePower())) * (math.sqrt(Max(0, unit:GetAttackDamage() * unit:GetAttackSpeed() * 5))) * fMul
+					enemyPower = enemyPower + (math.log(1 + unit:GetRawOffensivePower())) * (math.sqrt(Max(0, unit:GetAttackDamage() * unit:GetAttackSpeed() * 5)))
 				end
 			end
 		end
@@ -5743,11 +5705,11 @@ function J.GetHeroesTargetingUnit(tUnits, hUnit)
 		and not J.IsSuspiciousIllusion(enemyHero)
         then
 			if J.IsValidHero(hUnit) and hUnit:GetTeam() == GetTeam() then
-				if (enemyHero:GetAttackTarget() == hUnit or J.IsChasingTarget(enemyHero, hUnit) or hUnit:WasRecentlyDamagedByHero(enemyHero, 2.0)) then
+				if (enemyHero:GetAttackTarget() == hUnit or J.IsChasingTarget(enemyHero, hUnit) or hUnit:WasRecentlyDamagedByHero(enemyHero, 2.0) or enemyHero:IsFacingLocation(hUnit:GetLocation(), 15)) then
 					table.insert(tAttackingUnits, enemyHero)
 				end
 			else
-				if (enemyHero:GetAttackTarget() == hUnit or J.IsChasingTarget(enemyHero, hUnit)) then
+				if (enemyHero:GetAttackTarget() == hUnit or J.IsChasingTarget(enemyHero, hUnit) or enemyHero:IsFacingLocation(hUnit:GetLocation(), 15)) then
 					table.insert(tAttackingUnits, enemyHero)
 				end
 			end
@@ -5943,6 +5905,45 @@ function J.GetFurthestBuildingAlongLane(nTeam, nLane)
 	end
 
 	return GetAncient(nTeam)
+end
+
+local laneLocations = {
+	locationFountainStairRad = Vector(-6601, -6092),
+	locationFountainStairDir = Vector(6432, 5948),
+
+	locationCenterTop = Vector(-6200, 5853),
+	locationCenterBot = Vector(6048, -6173),
+}
+function J.IsLocationWithinLane(vLocation, nRadius, nLane)
+	local tResult = nil
+	if nLane == LANE_TOP then
+		tResult = PointToLineDistance(laneLocations.locationFountainStairRad, laneLocations.locationCenterTop, vLocation)
+		if tResult and tResult.within and tResult.distance <= nRadius then
+			return true
+		end
+
+		tResult = PointToLineDistance(laneLocations.locationCenterTop, laneLocations.locationFountainStairDir, vLocation)
+		if tResult and tResult.within and tResult.distance <= nRadius then
+			return true
+		end
+	elseif nLane == LANE_MID then
+		tResult = PointToLineDistance(laneLocations.locationFountainStairRad, laneLocations.locationFountainStairDir, vLocation)
+		if tResult and tResult.within and tResult.distance <= nRadius then
+			return true
+		end
+	elseif nLane == LANE_BOT then
+		tResult = PointToLineDistance(laneLocations.locationFountainStairRad, laneLocations.locationCenterBot, vLocation)
+		if tResult and tResult.within and tResult.distance <= nRadius then
+			return true
+		end
+
+		tResult = PointToLineDistance(laneLocations.locationCenterBot, laneLocations.locationFountainStairDir, vLocation)
+		if tResult and tResult.within and tResult.distance <= nRadius then
+			return true
+		end
+	end
+	
+	return false
 end
 
 return J

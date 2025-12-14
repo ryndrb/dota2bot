@@ -207,7 +207,17 @@ function X.SkillsComplement()
 
 	SpearToAllyDesire, SpearToAllyLocation, BlinkLocation = X.ConsiderSpearToAlly()
 	if SpearToAllyDesire > 0 then
-		bot:Action_ClearActions(false)
+		bot:Action_ClearActions(true)
+
+		local vTeamFightLocation = J.GetTeamFightLocation(bot)
+		if vTeamFightLocation and J.GetDistance(vTeamFightLocation, BlinkLocation) <= 1200 then
+			local BlackKingBar = J.IsItemAvailable('item_black_king_bar')
+			if J.CanCastAbility(BlackKingBar) and (bot:GetMana() > (SpearOfMars:GetManaCost() + BlackKingBar:GetManaCost() + 100)) then
+				bot:ActionQueue_UseAbility(BlackKingBar)
+				bot:ActionQueue_Delay(0.1)
+			end
+		end
+
 		bot:ActionQueue_UseAbilityOnLocation(bot.Blink, BlinkLocation)
 		bot:ActionQueue_Delay(0.1)
 		bot:ActionQueue_UseAbilityOnLocation(SpearOfMars, SpearToAllyLocation)
@@ -810,27 +820,30 @@ function X.ConsiderSpearToAlly()
 		local fCastPoint = SpearOfMars:GetCastPoint()
 
 		if J.IsGoingOnSomeone(bot) then
-			if  J.IsValidTarget(botTarget)
-			and J.CanBeAttacked(botTarget)
-			and J.CanCastOnNonMagicImmune(botTarget)
-			and J.IsInRange(bot, botTarget, bot.Blink:GetCastRange())
-			and GetUnitToLocationDistance(botTarget, J.GetEnemyFountain()) > 600
-			and not J.IsInRange(bot, botTarget, 500)
-			and not J.IsDisabled(botTarget)
-			and not botTarget:HasModifier('modifier_enigma_black_hole_pull')
-			and not botTarget:HasModifier('modifier_faceless_void_chronosphere_freeze')
-			and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
-			then
-				local vBotTargetLocation = botTarget:GetLocation()
-				local nInRangeAlly = J.GetAlliesNearLoc(botTarget:GetLocation(), 1200)
-				local nInRangeEnemy = J.GetEnemiesNearLoc(botTarget:GetLocation(), 1200)
-				local hAllyTarget = X.GetFurthestAllyFromBot(nInRangeAlly)
-
-				if #nInRangeAlly >= #nInRangeEnemy
-				and #nInRangeAlly >= 2
-				and hAllyTarget ~= nil
+			for _, enemyHero in pairs(nEnemyHeroes) do
+				if  J.IsValidTarget(enemyHero)
+				and J.CanBeAttacked(enemyHero)
+				and J.CanCastOnNonMagicImmune(enemyHero)
+				and J.IsInRange(bot, enemyHero, bot.Blink:GetCastRange() - 175)
+				and not J.IsInRange(bot, enemyHero, 600)
+				and GetUnitToLocationDistance(enemyHero, J.GetEnemyFountain()) > 1200
+				and not J.IsDisabled(enemyHero)
+				and not enemyHero:HasModifier('modifier_enigma_black_hole_pull')
+				and not enemyHero:HasModifier('modifier_faceless_void_chronosphere_freeze')
+				and not enemyHero:HasModifier('modifier_legion_commander_duel')
+				and not enemyHero:HasModifier('modifier_necrolyte_reapers_scythe')
 				then
-					return BOT_ACTION_DESIRE_HIGH, hAllyTarget:GetLocation(), vBotTargetLocation
+					local vEnemyHeroLocation = enemyHero:GetLocation()
+					local nInRangeAlly = J.GetAlliesNearLoc(vEnemyHeroLocation, nCastRange)
+					local nInRangeEnemy = J.GetEnemiesNearLoc(vEnemyHeroLocation, nCastRange)
+					local hAllyTarget = X.GetBestAllyToReceiveSpeared(nInRangeAlly)
+
+					if hAllyTarget and #nInRangeAlly >= #nInRangeEnemy then
+						local vLocation = J.VectorAway(vEnemyHeroLocation, hAllyTarget:GetLocation(), 250)
+						if GetUnitToLocationDistance(bot, vLocation) <= bot.Blink:GetCastRange() then
+							return BOT_ACTION_DESIRE_HIGH, hAllyTarget:GetLocation(), vLocation
+						end
+					end
 				end
 			end
 		end
@@ -839,13 +852,15 @@ function X.ConsiderSpearToAlly()
     return BOT_ACTION_DESIRE_NONE
 end
 
-function X.GetFurthestAllyFromBot(hAllyList)
+function X.GetBestAllyToReceiveSpeared(hAllyList, hUnitTo)
 	local target = nil
 	local targetDist = 0
 	for _, ally in pairs(hAllyList) do
-		if J.IsValidHero(ally) and bot ~= ally and not J.IsRetreating(ally) then
-			local allyDist = GetUnitToUnitDistance(bot, ally)
-			if allyDist > targetDist then
+		if J.IsValidHero(ally) and bot ~= ally and J.IsGoingOnSomeone(ally) then
+			local nInRangeAlly = J.GetAlliesNearLoc(ally:GetLocation(), 800)
+			local nInRangeEnemy = J.GetEnemiesNearLoc(ally:GetLocation(), 800)
+			local allyDist = GetUnitToUnitDistance(ally, hUnitTo)
+			if allyDist > targetDist and #nInRangeAlly >= #nInRangeEnemy then
 				target = ally
 				targetDist = allyDist
 			end

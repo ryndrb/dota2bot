@@ -490,7 +490,7 @@ function X.ConsiderSpinnerSnare()
         local nLocationAoE = bot:FindAoELocation(true, true, bot:GetLocation(), nCastRange, nWidth, 0, 0)
         local nInRangeEnemy = J.GetEnemiesNearLoc(nLocationAoE.targetloc, nWidth)
 
-        if SpinnersSnareLocation == nil or J.GetDistance(nLocationAoE.targetloc, SpinnersSnareLocation) > nWidth then
+        if SpinnersSnareLocation == nil or (type(SpinnersSnareLocation) == 'userdata' and J.GetDistance(nLocationAoE.targetloc, SpinnersSnareLocation) > nWidth) then
             if  #nInRangeEnemy >= 2
             and not J.IsLocationInChrono(nLocationAoE.targetloc)
             then
@@ -508,7 +508,7 @@ function X.ConsiderSpinnerSnare()
         and not J.IsLocationInChrono(botTarget:GetLocation())
         and fManaAfter > fManaThreshold1
 		then
-            if SpinnersSnareLocation == nil or GetUnitToLocationDistance(botTarget, SpinnersSnareLocation) > nWidth then
+            if SpinnersSnareLocation == nil or (type(SpinnersSnareLocation) == 'userdata' and GetUnitToLocationDistance(botTarget, SpinnersSnareLocation) > nWidth) then
                 return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation()
             end
 		end
@@ -525,7 +525,7 @@ function X.ConsiderSpinnerSnare()
                 if (J.IsChasingTarget(enemyHero, bot))
                 or (#nEnemyHeroes > #nAllyHeroes and enemyHero:GetAttackTarget() == bot)
                 then
-                    if SpinnersSnareLocation == nil or GetUnitToLocationDistance(bot, SpinnersSnareLocation) > nWidth then
+                    if SpinnersSnareLocation == nil or (type(SpinnersSnareLocation) == 'userdata' and GetUnitToLocationDistance(bot, SpinnersSnareLocation) > nWidth) then
                         return BOT_ACTION_DESIRE_HIGH, bot:GetLocation()
                     end
                 end

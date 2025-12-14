@@ -70,19 +70,19 @@ local HeroBuild = {
                 "item_double_branches",
                 "item_blood_grenade",
                 "item_magic_stick",
-                "item_enchanted_mango",
+                "item_faerie_fire",
             
                 "item_tranquil_boots",
                 "item_magic_wand",
                 "item_glimmer_cape",--
                 "item_ancient_janggo",
-                "item_holy_locket",--
-                "item_boots_of_bearing",--
                 "item_solar_crest",--
-                "item_sheepstick",--
-                "item_satanic",--
-                "item_ultimate_scepter_2",
+                "item_boots_of_bearing",--
                 "item_aghanims_shard",
+                "item_holy_locket",--
+                "item_sheepstick",--
+                "item_heart",--
+                "item_ultimate_scepter_2",
                 "item_moon_shard",
             },
             ['sell_list'] = {},
@@ -106,19 +106,19 @@ local HeroBuild = {
                 "item_double_branches",
                 "item_blood_grenade",
                 "item_magic_stick",
-                "item_enchanted_mango",
+                "item_faerie_fire",
             
                 "item_arcane_boots",
                 "item_magic_wand",
                 "item_glimmer_cape",--
                 "item_mekansm",
-                "item_holy_locket",--
-                "item_guardian_greaves",--
                 "item_solar_crest",--
-                "item_sheepstick",--
-                "item_satanic",--
-                "item_ultimate_scepter_2",
+                "item_guardian_greaves",--
                 "item_aghanims_shard",
+                "item_holy_locket",--
+                "item_sheepstick",--
+                "item_heart",--
+                "item_ultimate_scepter_2",
                 "item_moon_shard",
             },
             ['sell_list'] = {},
@@ -166,15 +166,24 @@ local RelocateDesire, RelocateLocation
 
 local TetherRelocateDesire, TetherRelocateTarget, TetherRelocateLocation
 
-local botTarget
-local tAllyHeroes_real
-local tEnemyHeroes_real
+local bAttacking = false
+local botTarget, botHP
+local nAllyHeroes, nEnemyHeroes
 
 local spirit_state = false
 
 local SpiritsToggleTime = -1
 
 function X.SkillsComplement()
+    bot = GetBot()
+
+    if  bot.wisp == nil then
+        bot.wisp = {
+            tether      = { target = nil },
+            relocate    = { fountain = false, back = false }
+        }
+    end
+
     Tether        = bot:GetAbilityByName('wisp_tether')
     BreakTether   = bot:GetAbilityByName('wisp_tether_break')
     Spirits       = bot:GetAbilityByName('wisp_spirits')
@@ -185,20 +194,16 @@ function X.SkillsComplement()
 
     if J.CanNotUseAbility(bot) then return end
 
+    bAttacking = J.IsAttacking(bot)
+    botHP = J.GetHP(bot)
     botTarget = J.GetProperTarget(bot)
-    tAllyHeroes_real = J.GetAlliesNearLoc(bot:GetLocation(), 1600)
-    tEnemyHeroes_real = J.GetEnemiesNearLoc(bot:GetLocation(), 1600)
+    nAllyHeroes = bot:GetNearbyHeroes(1600, false, BOT_MODE_NONE)
+    nEnemyHeroes = bot:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
 
     if not bot:HasModifier('modifier_wisp_tether') then
-        bot.tethered_ally = nil
+        bot.wisp.tether.target = nil
     else
-        ItemDesire, Item, ItemTarget, CastType = X.ConsiderItems()
-        if ItemDesire > 0 then
-            if CastType == 'none' then
-                bot:Action_UseAbility(Item)
-                return
-            end
-        end
+        X.ConsiderItems()
     end
 
     TetherRelocateDesire, TetherRelocateTarget, TetherRelocateLocation = X.ConsiderTetherRelocate()
@@ -213,7 +218,7 @@ function X.SkillsComplement()
     TetherDesire, TetherTarget = X.ConsiderTether()
     if TetherDesire > 0 then
         if J.IsValidHero(TetherTarget) then
-            bot.tethered_ally = TetherTarget
+            bot.wisp.tether.target = TetherTarget
         end
         bot:Action_UseAbilityOnEntity(Tether, TetherTarget)
         return
@@ -270,10 +275,10 @@ function X.ConsiderTether()
 
     local nCastRange = J.GetProperCastRange(false, bot, Tether:GetCastRange())
 
-    local botMode = bot:GetActiveMode()
-    if botMode == BOT_MODE_RUNE
-    or botMode == BOT_MODE_WARD
-    or bot.relocate_fountain == true
+    local botActiveMode = bot:GetActiveMode()
+    if botActiveMode == BOT_MODE_RUNE
+    or botActiveMode == BOT_MODE_WARD
+    or bot.wisp.relocate.fountain == true
     or bot:HasModifier('modifier_fountain_aura_buff')
     or bot:DistanceFromFountain() < 700
     then
@@ -282,7 +287,7 @@ function X.ConsiderTether()
 
     local target = nil
     local targetScore = 0
-    for _, ally in pairs(tAllyHeroes_real) do
+    for _, ally in pairs(nAllyHeroes) do
         if J.IsValidHero(ally)
         and bot ~= ally
         and not ally:IsIllusion()
@@ -293,11 +298,7 @@ function X.ConsiderTether()
         and not ally:HasModifier('modifier_necrolyte_reapers_scythe')
         and not ally:HasModifier('modifier_skeleton_king_reincarnation_scepter_active')
         then
-            if (ally:HasModifier('modifier_faceless_void_chronosphere_freeze')
-                or ally:HasModifier('modifier_enigma_black_hole_pull')
-                or ally:HasModifier('modifier_legion_commander_duel')
-            )
-            and #tAllyHeroes_real >= #tEnemyHeroes_real then
+            if J.IsDisabled(ally) and #nAllyHeroes >= #nEnemyHeroes then
                 return BOT_ACTION_DESIRE_HIGH, ally
             end
 
@@ -311,22 +312,27 @@ function X.ConsiderTether()
             end
 
             local bCore = J.IsCore(ally)
-            local allyPos = J.GetPosition(ally)
             local allyScore = ally:GetAttackDamage() * ally:GetAttackSpeed()
-            if J.IsLaning(ally) and bCore
-            or J.IsGoingOnSomeone(ally)
-            or J.IsPushing(ally)
-            or J.IsDoingRoshan(ally)
-            or J.IsDoingTormentor(ally)
-            or J.IsFarming(ally) and bCore
-            then
-                if     allyPos == 1 then allyScore = allyScore * 5
-                elseif allyPos == 2 then allyScore = allyScore * 2.5
-                elseif allyPos == 3 then allyScore = allyScore * 1
-                elseif allyPos >= 4 then allyScore = allyScore * 0.3
-                end
+            -- if (J.IsLaning(ally) and bCore and bot:GetAssignedLane() == ally:GetAssignedLane())
+            -- or (J.IsFarming(ally) and bCore)
+            -- or J.IsGoingOnSomeone(ally)
+            -- or J.IsPushing(ally)
+            -- or J.IsDoingRoshan(ally)
+            -- or J.IsDoingTormentor(ally)
+            -- then
+            --     if allyScore > targetScore then
+            --         targetScore = allyScore
+            --         target = ally
+            --     end
+            -- end
 
-                if allyScore > targetScore then
+            if (J.IsLaning(ally) and bCore and bot:GetAssignedLane() == ally:GetAssignedLane())
+            or (J.IsGoingOnSomeone(ally))
+            or (J.IsPushing(ally))
+            or (J.IsDoingRoshan(ally))
+            or (J.IsDoingTormentor(ally) and bot.tormentor_state == true)
+            then
+                if allyScore > targetScore and bot:GetActiveMode() == ally:GetActiveMode() then
                     targetScore = allyScore
                     target = ally
                 end
@@ -342,18 +348,20 @@ function X.ConsiderTether()
     and not J.IsRealInvisible(bot)
     and bot:WasRecentlyDamagedByAnyHero(2.0)
 	then
-        local vBotToFountain = (J.GetTeamFountain() - bot:GetLocation()):Normalized()
-        local fNormVal = math.cos(45)
-
+        local targetDir = (J.GetTeamFountain() - bot:GetLocation()):Normalized()
         for _, ally in pairs(GetUnitList(UNIT_LIST_ALLIES)) do
-            if J.IsValid(ally)
+            if  J.IsValid(ally)
             and bot ~= ally
+            and (ally:IsCreep() or ally:IsHero())
             and J.IsInRange(bot, ally, nCastRange)
-            and not J.IsInRange(bot, ally, 750)
+            and not J.IsInRange(bot, ally, nCastRange / 2)
             and ally:DistanceFromFountain() < bot:DistanceFromFountain()
             then
-                local vAllyToFountain = (J.GetTeamFountain() - ally:GetLocation()):Normalized()
-                if J.DotProduct(vBotToFountain, vAllyToFountain) >= fNormVal then
+                local allyDir = (ally:GetLocation() - bot:GetLocation()):Normalized()
+                local dot = J.DotProduct(targetDir, allyDir)
+                local nAngle = J.GetAngleFromDotProduct(dot)
+
+                if nAngle <= 45 then
                     return BOT_ACTION_DESIRE_HIGH, ally
                 end
             end
@@ -368,23 +376,28 @@ function X.ConsiderBreakTether()
         return BOT_ACTION_DESIRE_NONE
     end
 
-    if bot.tethered_ally ~= nil and bot.tethered_ally:HasModifier('modifier_teleporting') then
-        return BOT_ACTION_DESIRE_HIGH
-    end
+    local tetheredAlly = bot.wisp.tether.target
 
-    if J.IsInLaningPhase() and J.IsInTeamFight(bot, 1200) then
-        if J.IsValidHero(bot.tethered_ally)
-        and not J.IsCore(bot.tethered_ally)
-        and not J.IsRetreating(bot.tethered_ally)
-        then
+    if tetheredAlly ~= nil then
+        if tetheredAlly:HasModifier('modifier_teleporting') then
             return BOT_ACTION_DESIRE_HIGH
+        end
+
+        if J.IsEarlyGame() and J.IsInTeamFight(bot, 1200) then
+            if J.IsValidHero(tetheredAlly)
+            and not J.IsCore(tetheredAlly)
+            and not J.IsRetreating(tetheredAlly)
+            then
+                return BOT_ACTION_DESIRE_HIGH
+            end
         end
     end
 
-    local botMode = bot:GetActiveMode()
-    if botMode == BOT_MODE_RUNE
-    or botMode == BOT_MODE_WARD
-    or (bot.relocate_fountain == true and bot.relocate_back == false)
+
+    local botActiveMode = bot:GetActiveMode()
+    if botActiveMode == BOT_MODE_RUNE
+    or botActiveMode == BOT_MODE_WARD
+    or (bot.wisp.relocate.fountain == true and bot.wisp.relocate.back == false)
     then
         return BOT_ACTION_DESIRE_HIGH
     end
@@ -392,7 +405,7 @@ function X.ConsiderBreakTether()
     return BOT_ACTION_DESIRE_NONE
 end
 
-local CONST_COLLISION_RADIUS = 110
+local nCollisionRadius = 0
 local nMinRange = 0
 local nMaxRange = 0
 local nSpeed = 0
@@ -403,15 +416,20 @@ function X.ConsiderSpirits()
         return BOT_ACTION_DESIRE_NONE
     end
 
+    nCollisionRadius = Spirits:GetSpecialValueInt('hero_hit_radius')
     nMinRange = Spirits:GetSpecialValueInt('min_range')
     nMaxRange = Spirits:GetSpecialValueInt('max_range')
     nSpeed = Spirits:GetSpecialValueInt('spirit_movement_rate')
 
-    if J.IsGoingOnSomeone(bot) and #tAllyHeroes_real >= #tEnemyHeroes_real then
+    local nManaCost = Spirits:GetManaCost()
+    local fManaAfter = J.GetManaAfter(nManaCost)
+    local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {Overcharge, Relocate})
+
+    if J.IsGoingOnSomeone(bot) and fManaAfter > fManaThreshold1 then
         if J.IsValidHero(botTarget)
+        and J.CanBeAttacked(botTarget)
         and J.IsInRange(bot, botTarget, nMaxRange)
         and J.CanCastOnNonMagicImmune(botTarget)
-        and J.CanBeAttacked(botTarget)
         and not botTarget:HasModifier('modifier_abaddon_borrowed_time')
         and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
         then
@@ -432,11 +450,12 @@ function X.ConsiderSpirits_IO()
 
     local nSpiritsRangeFromIO = X.GetCurrentSpiritRangeFromIO(DotaTime() - SpiritsToggleTime, spirit_state, nMinRange, nMaxRange, nSpeed)
 
-    if #tEnemyHeroes_real > 0 then
+    if #nEnemyHeroes > 0 then
         if J.IsValidHero(botTarget) then
-            if GetUnitToUnitDistance(bot, botTarget) < nSpiritsRangeFromIO
+            local distance = GetUnitToUnitDistance(bot, botTarget)
+            if distance < nSpiritsRangeFromIO
             and nSpiritsRangeFromIO > nMinRange
-            and math.abs(GetUnitToUnitDistance(bot, botTarget) - nSpiritsRangeFromIO) > CONST_COLLISION_RADIUS
+            and math.abs(distance - nSpiritsRangeFromIO) > nCollisionRadius
             then
                 if Spirits_in:GetToggleState() == false then
                     return BOT_ACTION_DESIRE_HIGH, 'in'
@@ -445,9 +464,9 @@ function X.ConsiderSpirits_IO()
                 return BOT_ACTION_DESIRE_NONE, ''
             end
 
-            if GetUnitToUnitDistance(bot, botTarget) > nSpiritsRangeFromIO
+            if distance > nSpiritsRangeFromIO
             and nSpiritsRangeFromIO < nMaxRange
-            and math.abs(GetUnitToUnitDistance(bot, botTarget) - nSpiritsRangeFromIO) > CONST_COLLISION_RADIUS
+            and math.abs(distance - nSpiritsRangeFromIO) > nCollisionRadius
             then
                 if Spirits_out:GetToggleState() == false then
                     return BOT_ACTION_DESIRE_HIGH, 'out'
@@ -459,13 +478,15 @@ function X.ConsiderSpirits_IO()
     end
 
     if J.IsValid(botTarget)
-    and botTarget:IsCreep()
     and J.CanBeAttacked(botTarget)
+    and botTarget:IsCreep()
     and not J.IsRunning(botTarget)
     then
-        if GetUnitToUnitDistance(bot, botTarget) < nSpiritsRangeFromIO
+        local distance = GetUnitToUnitDistance(bot, botTarget)
+
+        if distance < nSpiritsRangeFromIO
         and nSpiritsRangeFromIO > nMinRange
-        and math.abs(GetUnitToUnitDistance(bot, botTarget) - nSpiritsRangeFromIO) > CONST_COLLISION_RADIUS
+        and math.abs(distance - nSpiritsRangeFromIO) > nCollisionRadius
         then
             if Spirits_in:GetToggleState() == false then
                 return BOT_ACTION_DESIRE_HIGH, 'in'
@@ -474,9 +495,9 @@ function X.ConsiderSpirits_IO()
             return BOT_ACTION_DESIRE_NONE, ''
         end
 
-        if GetUnitToUnitDistance(bot, botTarget) > nSpiritsRangeFromIO
+        if distance > nSpiritsRangeFromIO
         and nSpiritsRangeFromIO < nMaxRange
-        and math.abs(GetUnitToUnitDistance(bot, botTarget) - nSpiritsRangeFromIO) > CONST_COLLISION_RADIUS
+        and math.abs(distance - nSpiritsRangeFromIO) > nCollisionRadius
         then
             if Spirits_out:GetToggleState() == false then
                 return BOT_ACTION_DESIRE_HIGH, 'out'
@@ -488,13 +509,13 @@ function X.ConsiderSpirits_IO()
 
     if J.IsDoingRoshan(bot) or J.IsDoingTormentor(bot) then
         if (J.IsRoshan(botTarget) or J.IsTormentor(botTarget))
+        and J.CanBeAttacked(botTarget)
         and J.IsInRange(bot, botTarget, nMaxRange)
-        and J.GetHP(botTarget) > 0.5
-        and J.IsAttacking(bot)
         then
-            if GetUnitToUnitDistance(bot, botTarget) < nSpiritsRangeFromIO
+            local distance = GetUnitToUnitDistance(bot, botTarget)
+            if distance < nSpiritsRangeFromIO
             and nSpiritsRangeFromIO > nMinRange
-            and math.abs(GetUnitToUnitDistance(bot, botTarget) - nSpiritsRangeFromIO) > CONST_COLLISION_RADIUS
+            and math.abs(distance - nSpiritsRangeFromIO) > nCollisionRadius
             then
                 if Spirits_in:GetToggleState() == false then
                     return BOT_ACTION_DESIRE_HIGH, 'in'
@@ -503,9 +524,9 @@ function X.ConsiderSpirits_IO()
                 return BOT_ACTION_DESIRE_NONE, ''
             end
 
-            if GetUnitToUnitDistance(bot, botTarget) > nSpiritsRangeFromIO
+            if distance > nSpiritsRangeFromIO
             and nSpiritsRangeFromIO < nMaxRange
-            and math.abs(GetUnitToUnitDistance(bot, botTarget) - nSpiritsRangeFromIO) > CONST_COLLISION_RADIUS
+            and math.abs(distance - nSpiritsRangeFromIO) > nCollisionRadius
             then
                 if Spirits_out:GetToggleState() == false then
                     return BOT_ACTION_DESIRE_HIGH, 'out'
@@ -530,38 +551,42 @@ end
 function X.ConsiderOvercharge()
     if not J.CanCastAbility(Overcharge)
     or not bot:HasModifier('modifier_wisp_tether')
-    or bot.tethered_ally == nil
+    or bot.wisp.tether.target == nil
     then
         return BOT_ACTION_DESIRE_NONE
     end
 
-    if J.IsValidHero(bot.tethered_ally)
-    and not bot.tethered_ally:HasModifier('modifier_necrolyte_reapers_scythe')
-    and not bot.tethered_ally:HasModifier('modifier_skeleton_king_reincarnation_scepter_active')
-    then
-        local allyTarget = J.GetProperTarget(bot.tethered_ally)
-        if J.IsGoingOnSomeone(bot.tethered_ally) then
-            if J.IsValidHero(allyTarget)
-            and J.CanBeAttacked(allyTarget)
-            and J.IsInRange(bot.tethered_ally, allyTarget, bot.tethered_ally:GetAttackRange() + 300)
-            and not J.IsSuspiciousIllusion(allyTarget)
-            and not allyTarget:HasModifier('modifier_necrolyte_reapers_scythe')
-            then
+    local tetheredAlly = bot.wisp.tether.target
+
+    if tetheredAlly then
+        if J.IsValidHero(tetheredAlly)
+        and not tetheredAlly:HasModifier('modifier_necrolyte_reapers_scythe')
+        and not tetheredAlly:HasModifier('modifier_skeleton_king_reincarnation_scepter_active')
+        then
+            local allyTarget = J.GetProperTarget(tetheredAlly)
+            if J.IsGoingOnSomeone(tetheredAlly) then
+                if J.IsValidHero(allyTarget)
+                and J.CanBeAttacked(allyTarget)
+                and J.IsInRange(tetheredAlly, allyTarget, tetheredAlly:GetAttackRange() + 300)
+                and not J.IsSuspiciousIllusion(allyTarget)
+                and not allyTarget:HasModifier('modifier_necrolyte_reapers_scythe')
+                then
+                    return BOT_ACTION_DESIRE_HIGH
+                end
+            end
+
+            if J.IsRetreating(tetheredAlly) and J.GetHP(tetheredAlly) < 0.5 then
                 return BOT_ACTION_DESIRE_HIGH
             end
-        end
 
-        if J.IsRetreating(bot.tethered_ally) and J.GetHP(bot.tethered_ally) < 0.5 then
-            return BOT_ACTION_DESIRE_HIGH
-        end
-
-        if J.IsDoingRoshan(bot) or J.IsDoingTormentor(bot) then
-            if (J.IsRoshan(botTarget) or J.IsTormentor(botTarget))
-            and J.IsInRange(bot, botTarget, 800)
-            and J.GetHP(botTarget) > 0.5
-            and J.IsAttacking(bot.tethered_ally)
-            then
-                return BOT_ACTION_DESIRE_HIGH
+            if J.IsDoingRoshan(bot) or J.IsDoingTormentor(bot) then
+                if (J.IsRoshan(botTarget) or J.IsTormentor(botTarget))
+                and J.CanBeAttacked(botTarget)
+                and J.IsInRange(bot, botTarget, 800)
+                and J.IsAttacking(tetheredAlly)
+                then
+                    return BOT_ACTION_DESIRE_HIGH
+                end
             end
         end
     end
@@ -571,40 +596,52 @@ end
 
 function X.ConsiderRelocate()
     if not J.CanCastAbility(Relocate) then
-        bot.relocate_fountain = false
-        bot.relocate_back = false
+        bot.wisp.relocate.fountain = false
+        bot.wisp.relocate.back = false
         return BOT_ACTION_DESIRE_NONE, 0
+    end
+
+    local fEffectDelay = Relocate:GetSpecialValueFloat('cast_delay')
+
+    if J.GetTotalEstimatedDamageToTarget(nEnemyHeroes, bot, fEffectDelay) > bot:GetHealth() + 150 then
+        return BOT_ACTION_DESIRE_NONE
     end
 
 	if J.IsRetreating(bot)
     and not J.IsRealInvisible(bot)
-    and bot.tethered_ally == nil
-    and J.GetHP(bot) < 0.4
+    and not bot:HasModifier('modifier_wisp_tether')
+    and botHP < 0.55
     then
-        if J.IsValidHero(tEnemyHeroes_real[1])
-        and J.IsInRange(bot, tEnemyHeroes_real[1], 1200)
-        and bot:WasRecentlyDamagedByAnyHero(3.0)
-        and #tEnemyHeroes_real >= #tAllyHeroes_real
-        then
+        if bot:WasRecentlyDamagedByAnyHero(2.0) and #nEnemyHeroes > 0 then
             return BOT_ACTION_DESIRE_HIGH, J.GetTeamFountain()
         end
     end
 
-    if J.IsValidHero(bot.tethered_ally) and J.IsCore(bot.tethered_ally) then
-        if J.IsInTeamFight(bot, 1600) then
-            if J.GetHP(bot.tethered_ally) < 0.4
-            and not bot.tethered_ally:HasModifier('modifier_item_satanic_unholy')
-            and not bot.tethered_ally:HasModifier('modifier_abaddon_borrowed_time')
-            and J.CanBeAttacked(bot.tethered_ally)
-            then
-                if J.WeAreStronger(bot, 1600) and #tAllyHeroes_real > #tEnemyHeroes_real then
-                    bot.relocate_back = true
-                else
-                    bot.relocate_back = false
-                end
+    local tetheredAlly = bot.wisp.tether.target
 
-                bot.relocate_fountain = true
-                return BOT_ACTION_DESIRE_HIGH, J.GetTeamFountain()
+    if tetheredAlly then
+        if J.IsValidHero(tetheredAlly) and J.IsCore(tetheredAlly) then
+            if J.IsInTeamFight(tetheredAlly, 1600) then
+                if  J.IsRetreating(tetheredAlly)
+                and J.GetHP(tetheredAlly) < 0.4
+                and J.CanBeAttacked(tetheredAlly)
+                and not tetheredAlly:HasModifier('modifier_item_satanic_unholy')
+                and not tetheredAlly:HasModifier('modifier_abaddon_borrowed_time')
+                and (J.GetTotalEstimatedDamageToTarget(nEnemyHeroes, tetheredAlly, fEffectDelay) + 100 < tetheredAlly:GetHealth())
+                then
+                    local nInRangeAlly = J.GetAlliesNearLoc(tetheredAlly:GetLocation(), 1200)
+                    local nInRangeEnemy = J.GetEnemiesNearLoc(tetheredAlly:GetLocation(), 1200)
+                    if tetheredAlly:WasRecentlyDamagedByAnyHero(2.0) and #nInRangeEnemy > 0 then
+                        if #nInRangeAlly > #nInRangeEnemy then
+                            bot.wisp.relocate.back = true
+                        else
+                            bot.wisp.relocate.back = false
+                        end
+
+                        bot.wisp.relocate.fountain = true
+                        return BOT_ACTION_DESIRE_HIGH, J.GetTeamFountain()
+                    end
+                end
             end
         end
     end
@@ -613,9 +650,9 @@ function X.ConsiderRelocate()
 end
 
 function X.ConsiderTetherRelocate()
-    if J.CanCastAbility(Tether) and J.CanCastAbility(Relocate) then
-        local nCastRange = J.GetProperCastRange(false, bot, Tether:GetCastRange())
-        local nManaCost = Tether:GetManaCost() + Relocate:GetManaCost()
+    if J.CanCastAbility(Tether) and J.CanCastAbility(Relocate) and not bot:HasModifier('modifier_wisp_tether') then
+        local nCastRange = Tether:GetCastRange()
+        local nManaCost = Tether:GetManaCost() + Relocate:GetManaCost() + 75
 
         if bot:GetMana() < nManaCost then
             return BOT_ACTION_DESIRE_NONE, nil, 0
@@ -623,23 +660,29 @@ function X.ConsiderTetherRelocate()
 
         if J.IsInTeamFight(bot, 1600) then
             for i = 1, 5 do
-                local ally = GetTeamMember(i)
-                if J.IsValidHero(ally)
-                and bot ~= ally
-                and J.IsInRange(bot, ally, nCastRange)
-                and J.GetHP(ally) < 0.4
-                and not bot.tethered_ally:HasModifier('modifier_item_satanic_unholy')
-                and not bot.tethered_ally:HasModifier('modifier_abaddon_borrowed_time')
-                and J.CanBeAttacked(bot.tethered_ally)
+                local allyHero = GetTeamMember(i)
+                if J.IsValidHero(allyHero)
+                and bot ~= allyHero
+                and J.IsRetreating(allyHero)
+                and J.IsInRange(bot, allyHero, nCastRange)
+                and J.GetHP(allyHero) < 0.4
+                and not allyHero:HasModifier('modifier_item_satanic_unholy')
+                and not allyHero:HasModifier('modifier_abaddon_borrowed_time')
+                and J.CanBeAttacked(allyHero)
+                and (J.GetTotalEstimatedDamageToTarget(nEnemyHeroes, allyHero, 4.0) + 100 < allyHero:GetHealth())
                 then
-                    if J.WeAreStronger(bot, 1600) and #tAllyHeroes_real > #tEnemyHeroes_real then
-                        bot.relocate_back = true
-                    else
-                        bot.relocate_back = false
-                    end
+                    local nInRangeAlly = J.GetAlliesNearLoc(allyHero:GetLocation(), 1200)
+                    local nInRangeEnemy = J.GetEnemiesNearLoc(allyHero:GetLocation(), 1200)
+                    if allyHero:WasRecentlyDamagedByAnyHero(2.0) and #nInRangeEnemy > 0 then
+                        if #nInRangeAlly > #nInRangeEnemy then
+                            bot.wisp.relocate.back = true
+                        else
+                            bot.wisp.relocate.back = false
+                        end
 
-                    bot.relocate_fountain = true
-                    return BOT_ACTION_DESIRE_HIGH, ally, J.GetTeamFountain()
+                        bot.wisp.relocate.fountain = true
+                        return BOT_ACTION_DESIRE_HIGH, J.GetTeamFountain()
+                    end
                 end
             end
         end
@@ -659,44 +702,51 @@ function X.GetCurrentSpiritRangeFromIO(fTimeElapsed, bOutward, nMin, nMax, nSpee
 end
 
 function X.ConsiderItems()
-    local nCharges = 0
-    local item = nil
-
     if not J.IsValidHero(bot.tethered_ally) then
         return BOT_ACTION_DESIRE_NONE, nil, nil, ''
     end
 
-    if J.GetHP(bot.tethered_ally) < 0.5
-    and bot.tethered_ally:DistanceFromFountain() > 2000
-    and not bot.tethered_ally:HasModifier('modifier_necrolyte_reapers_scythe')
-    and not bot.tethered_ally:HasModifier('modifier_fountain_aura_buff')
-    then
-        item = J.GetItem('item_holy_locket')
-        if item ~= nil and item:IsFullyCastable() then
-            nCharges = item:GetCurrentCharges()
-            if nCharges >= 10 then
-                return BOT_ACTION_DESIRE_HIGH, item, nil, 'none'
-            end
-        end
+    local tetheredAlly = bot.wisp.tether.target
 
-        item = J.GetItem('item_magic_wand')
-        if item ~= nil and item:IsFullyCastable() then
-            nCharges = item:GetCurrentCharges()
-            if nCharges >= 10 then
-                return BOT_ACTION_DESIRE_HIGH, item, nil, 'none'
-            end
-        end
+    if tetheredAlly and J.IsValidHero(tetheredAlly) then
+        if  (J.IsGoingOnSomeone(tetheredAlly) or J.IsRetreating(tetheredAlly))
+        and J.GetHP(tetheredAlly) < 0.5
+        and tetheredAlly:DistanceFromFountain() > 2000
+        and not tetheredAlly:HasModifier('modifier_doom_bringer_doom_aura_enemy')
+        and not tetheredAlly:HasModifier('modifier_necrolyte_reapers_scythe')
+        and not tetheredAlly:HasModifier('modifier_ice_blast')
+        and not tetheredAlly:HasModifier('modifier_fountain_aura_buff')
+        then
+            local nCharges = 0
 
-        item = J.GetItem('item_magic_stick')
-        if item ~= nil and item:IsFullyCastable() then
-            nCharges = item:GetCurrentCharges()
-            if nCharges >= 6 then
-                return BOT_ACTION_DESIRE_HIGH, item, nil, 'none'
+            local hItem = J.IsItemAvailable('item_holy_locket')
+            if J.CanCastAbility(hItem) then
+                nCharges = hItem:GetCurrentCharges()
+                if nCharges >= 10 then
+                    bot:ActionPush_UseAbility(hItem)
+                    return
+                end
+            end
+
+            hItem = J.IsItemAvailable('item_magic_wand')
+            if J.CanCastAbility(hItem) then
+                nCharges = hItem:GetCurrentCharges()
+                if nCharges >= 10 then
+                    bot:ActionPush_UseAbility(hItem)
+                    return
+                end
+            end
+
+            hItem = J.IsItemAvailable('item_magic_stick')
+            if J.CanCastAbility(hItem) then
+                nCharges = hItem:GetCurrentCharges()
+                if nCharges >= 6 then
+                    bot:ActionPush_UseAbility(hItem)
+                    return
+                end
             end
         end
     end
-
-    return BOT_ACTION_DESIRE_NONE, nil, ''
 end
 
 return X

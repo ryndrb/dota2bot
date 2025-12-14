@@ -25,6 +25,7 @@ function GetDesire()
     or bot:HasModifier('modifier_dazzle_nothl_projection_soul_clone')
     or bot:HasModifier('modifier_skeleton_king_reincarnation_scepter_active')
     or bot:HasModifier('modifier_item_helm_of_the_undying_active')
+    or bot:HasModifier('modifier_dazzle_nothl_projection_soul_clone')
     or (botActiveMode == BOT_MODE_EVASIVE_MANEUVERS)
     or (bot:GetUnitName() == 'npc_dota_hero_lone_druid' and bot:HasModifier('modifier_fountain_aura_buff') and DotaTime() < 0)
     then
@@ -293,8 +294,8 @@ function GetDesire()
         nAllyNearbyCount = nAllyNearbyCount + 1
     end
 
-    botHP = botHP + (botHealthRegen * 5.0 / bot:GetMaxHealth())
-    botMP = botMP + (botManaRegen * 5.0 / bot:GetMaxMana())
+    botHP = Clamp(botHP + (botHealthRegen * 5.0 / bot:GetMaxHealth()) , 0, 1)
+    botMP = Clamp(botMP + (botManaRegen * 5.0 / bot:GetMaxMana()) , 0, 1)
     local nHealth = 0
 
     if botName == 'npc_dota_hero_medusa' then
@@ -355,7 +356,7 @@ function GetDesire()
 			or bot:HasModifier('modifier_item_urn_heal')
 			or bot:HasModifier('modifier_item_spirit_vessel_heal')
             then
-                nDesire = nDesire / 2
+                nDesire = nDesire - 0.25
             end
         end
     end
@@ -370,7 +371,7 @@ function GetDesire()
     nDesire = fLastRetreatDesire * (1 - alpha) + nDesire * alpha
     fLastRetreatDesire = nDesire
 
-    return Min(nDesire, 1.0)
+    return Clamp(nDesire, 0.0, 1.0)
 end
 
 function X.GetUnitDesire(nRadius)

@@ -201,6 +201,8 @@ function Think()
 
 	local botAttackRange = bot:GetAttackRange()
 	local StaticRemnant = bot:GetAbilityByName('storm_spirit_static_remnant')
+	local Firefly = bot:GetAbilityByName('batrider_firefly')
+	local ShadowWave = bot:GetAbilityByName('dazzle_shadow_wave')
 
 	local nEnemyLaneCreeps = bot:GetNearbyLaneCreeps(900, true)
 	if J.IsValid(nEnemyLaneCreeps[1]) and bot.farm.state ~= FARM_STATE__STACK then
@@ -218,6 +220,10 @@ function Think()
 			local range = botAttackRange
 			if J.CanCastAbility(StaticRemnant) then
 				range = StaticRemnant:GetSpecialValueInt('static_remnant_radius')
+			elseif J.CanCastAbility(Firefly) or bot:HasModifier('modifier_batrider_firefly') then
+				range = Firefly:GetSpecialValueInt('radius')
+			elseif J.CanCastAbility(ShadowWave) then
+				range = ShadowWave:GetSpecialValueInt('damage_radius')
 			end
 
 			if GetUnitToUnitDistance(bot, farmTarget) > range then
@@ -302,8 +308,16 @@ function Think()
 
 				bot.farm.state = FARM_STATE__FARM
 
+				local nRadius = 0
 				if J.CanCastAbility(StaticRemnant) then
-					local nRadius = StaticRemnant:GetSpecialValueInt('static_remnant_radius')
+					nRadius = StaticRemnant:GetSpecialValueInt('static_remnant_radius')
+				elseif J.CanCastAbility(Firefly) or bot:HasModifier('modifier_batrider_firefly') then
+					nRadius = Firefly:GetSpecialValueInt('radius')
+				elseif J.CanCastAbility(ShadowWave) then
+					nRadius = ShadowWave:GetSpecialValueInt('damage_radius')
+				end
+
+				if nRadius > 0 then
 					if GetUnitToUnitDistance(bot, farmTarget) > nRadius then
 						bot:Action_MoveToLocation(farmTarget:GetLocation())
 						return

@@ -463,55 +463,91 @@ function X.ConsiderTrueForm()
     return BOT_ACTION_DESIRE_NONE
 end
 
--- Items to give
+local function HasHaveNotItem(unit, hasList, notList)
+    for _, sItemName in ipairs(hasList) do
+        if unit:FindItemSlot(sItemName) < 0 then
+            return false
+        end
+    end
+
+    if not notList then return true end
+
+    for _, sItemName in ipairs(notList) do
+        if unit:FindItemSlot(sItemName) >= 0 then
+            return false
+        end
+    end
+
+    return true
+end
+
+-- Items to give; with rules
 -- Bear With Me
 GLOBAL_hBearItemList_BearWithMe = {
-	"item_quelling_blade",
-	"item_phase_boots",--bear
-	"item_maelstrom",
-	"item_diffusal_blade",
-	"item_assault",--bear
-	"item_ultimate_scepter",
+	item_quelling_blade = function (bear, druid) return nil end,
+	item_phase_boots = function (bear, druid) return nil end,--bear
+	item_maelstrom = function (bear, druid) return nil end,
+	item_diffusal_blade = function (bear, druid) return nil end,
+	item_assault = function (bear, druid) return nil end,--bear
+	item_ultimate_scepter = function (bear, druid)
+        return not HasHaveNotItem(bear, {'item_ultimate_scepter'})
+    end,
 
-	"item_hyperstone",
-	"item_recipe_mjollnir",
-	"item_mjollnir",--bear
+	item_hyperstone = function (bear, druid)
+        return HasHaveNotItem(bear, {'item_assault'}, {'item_mjollnir', 'item_bloodthorn'})
+			or HasHaveNotItem(bear, {'item_assault', 'item_mjollnir'}, {'item_bloodthorn'})
+    end,
+	item_recipe_mjollnir = function (bear, druid) return nil end,
+	item_mjollnir = function (bear, druid) return nil end,--bear
 
-	"item_eagle",
-	"item_recipe_disperser",
-	"item_disperser",--bear
+	item_eagle = function (bear, druid) return nil end,
+	item_recipe_disperser = function (bear, druid) return nil end,
+	item_disperser = function (bear, druid) return nil end,--bear
 
-	"item_basher",
-	"item_recipe_ultimate_scepter_2",
+	item_basher = function (bear, druid) return nil end,
+	item_recipe_ultimate_scepter_2 = function (bear, druid)
+        return HasHaveNotItem(bear, {'item_ultimate_scepter'})
+    end,
 
-	"item_bloodthorn",--bear
+	item_bloodthorn = function (bear, druid) return nil end,--bear
 
-	"item_sange",
-	"item_recipe_abyssal_blade",
-	"item_abyssal_blade",--bear
+	item_sange = function (bear, druid) return nil end,
+	item_recipe_abyssal_blade = function (bear, druid) return nil end,
+	item_abyssal_blade = function (bear, druid) return nil end,--bear
 
-	"item_moon_shard",
+	item_moon_shard = function (bear, druid)
+        return (not bear:HasModifier('modifier_item_moon_shard_consumed') or not J.HasItem(bear, 'item_moon_shard'))
+    end,
 }
 --Bear Necessities
 GLOBAL_hBearItemList_BearNecessities = {
-	"item_quelling_blade",
-	"item_power_treads",--bear
-	"item_desolator",--bear
-	"item_echo_sabre",
-	"item_diffusal_blade",
-	"item_assault",--bear
-	"item_ultimate_scepter",
+	item_quelling_blade = function (bear, druid) return nil end,
+	item_power_treads = function (bear, druid)
+        return HasHaveNotItem(druid, {'item_lesser_crit'})
+            or HasHaveNotItem(druid, {'item_greater_crit'})
+    end,--bear
+	item_desolator = function (bear, druid) return nil end,--bear
+    item_echo_sabre = function (bear, druid) return nil end,
+	item_diffusal_blade = function (bear, druid) return nil end,
+	item_assault = function (bear, druid) return nil end,--bear
+	item_ultimate_scepter = function (bear, druid)
+        return not HasHaveNotItem(bear, {'item_ultimate_scepter'})
+    end,
 
-	"item_diadem",
-	"item_recipe_harpoon",
-	"item_harpoon",--bear
+    item_diadem = function (bear, druid) return nil end,
+    item_recipe_harpoon = function (bear, druid) return nil end,
+    item_harpoon = function (bear, druid) return nil end,--bear
 
-	"item_eagle",
-	"item_recipe_disperser",
-	"item_disperser",--bear
+    item_eagle = function (bear, druid)
+        return HasHaveNotItem(druid, {'item_butterfly'})
+    end,
+    item_recipe_disperser = function (bear, druid) return nil end,
+    item_disperser = function (bear, druid) return nil end,--bear
 
-	"item_satanic",--bear
-	"item_recipe_ultimate_scepter_2",
+    item_satanic = function (bear, druid) return nil end,--bear
+    item_recipe_ultimate_scepter_2 = function (bear, druid)
+        return HasHaveNotItem(bear, {'item_ultimate_scepter'})
+    end,
 }
 
 return X

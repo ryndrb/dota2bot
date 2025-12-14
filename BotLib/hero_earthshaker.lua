@@ -252,6 +252,7 @@ function X.SkillsComplement()
 
     Fissure       = bot:GetAbilityByName('earthshaker_fissure')
     EnchantTotem  = bot:GetAbilityByName('earthshaker_enchant_totem')
+    Aftershock    = bot:GetAbilityByName('earthshaker_aftershock')
     EchoSlam      = bot:GetAbilityByName('earthshaker_echo_slam')
 
     bAttacking = J.IsAttacking(bot)
@@ -261,9 +262,20 @@ function X.SkillsComplement()
     nAllyHeroes = bot:GetNearbyHeroes(1600, false, BOT_MODE_NONE)
     nEnemyHeroes = bot:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
 
+    local vTeamFightLocation = J.GetTeamFightLocation(bot)
+
     BlinkSlamDesire, BlinkSlamLocation = X.ConsiderBlinkSlam()
     if BlinkSlamDesire > 0 then
         J.SetQueuePtToINT(bot, false)
+
+        if vTeamFightLocation and J.GetDistance(vTeamFightLocation, BlinkSlamLocation) <= 1200 then
+            local BlackKingBar = J.IsItemAvailable('item_black_king_bar')
+            if J.CanCastAbility(BlackKingBar) and (bot:GetMana() > (EchoSlam:GetManaCost() + BlackKingBar:GetManaCost() + 100)) and not bot:IsMagicImmune() then
+                bot:ActionQueue_UseAbility(BlackKingBar)
+                bot:ActionQueue_Delay(0.1)
+            end
+        end
+
         bot:ActionQueue_UseAbilityOnLocation(bot.Blink, BlinkSlamLocation)
         bot:ActionQueue_Delay(0.1)
         bot:ActionQueue_UseAbility(EchoSlam)
@@ -274,6 +286,15 @@ function X.SkillsComplement()
     if TotemSlamDesire > 0 then
         local nLeapDuration = EnchantTotem:GetSpecialValueFloat('scepter_leap_duration')
         J.SetQueuePtToINT(bot, false)
+
+        if vTeamFightLocation and J.GetDistance(vTeamFightLocation, TotemSlamLocation) <= 1200 then
+            local BlackKingBar = J.IsItemAvailable('item_black_king_bar')
+            if J.CanCastAbility(BlackKingBar) and (bot:GetMana() > (EnchantTotem:GetManaCost() + EchoSlam:GetManaCost() + BlackKingBar:GetManaCost() + 100)) and not bot:IsMagicImmune() then
+                bot:ActionQueue_UseAbility(BlackKingBar)
+                bot:ActionQueue_Delay(0.1)
+            end
+        end
+
         bot:ActionQueue_UseAbilityOnLocation(EnchantTotem, TotemSlamLocation)
         bot:ActionQueue_UseAbility(EchoSlam)
         return

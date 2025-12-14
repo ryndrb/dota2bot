@@ -306,6 +306,8 @@ function ItemPurchaseThink()
 	end
 
 	local bIsReal = false
+	isBear = bot:GetUnitName() == 'npc_dota_hero_lone_druid_bear'
+
 	for i = 1, 5 do
 		local member = GetTeamMember(i)
 		if bot == member then
@@ -314,29 +316,12 @@ function ItemPurchaseThink()
 		end
 	end
 
-	if not bIsReal
+	if (not bIsReal and not isBear)
 	or bot:HasModifier('modifier_arc_warden_tempest_double')
 	or bot:HasModifier('modifier_dazzle_nothl_projection_soul_debuff')
 	then
 		bot.itemToBuy = {}
 		return
-	end
-
-	isBear = bot:GetUnitName() == 'npc_dota_hero_lone_druid_bear'
-	if isBear and math.floor(DotaTime()) % 5 == 0 then
-		for i = 1, 5 do
-			local member = GetTeamMember(i)
-			if member ~= nil and member:GetUnitName() == 'npc_dota_hero_lone_druid' then
-				if member.bearItems == nil then member.bearItems = {[0]='',[1]='',[2]='',[3]='',[4]='',[5]='',[6]='',[7]='',[8]=''} end
-				for j = 0, 8 do
-					local hItem = bot:GetItemInSlot(j)
-					if hItem ~= nil then
-						member.bearItems[j] = hItem:GetName()
-					end
-				end
-				break
-			end
-		end
 	end
 
 	if bot.currentComponentToBuy == "item_infused_raindrop"

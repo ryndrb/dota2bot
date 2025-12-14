@@ -126,6 +126,22 @@ local ReturnDesire
 local SavageRoarDesire
 
 function X.SkillsComplement()
+    bot = GetBot()
+
+    for i = 1, 5 do
+        local member = GetTeamMember(i)
+        if member ~= nil and member:GetUnitName() == 'npc_dota_hero_lone_druid' then
+            if member.bearItems == nil then member.bearItems = {[0]='',[1]='',[2]='',[3]='',[4]='',[5]='',[6]='',[7]='',[8]=''} end
+            for j = 0, 8 do
+                local hItem = bot:GetItemInSlot(j)
+                if hItem ~= nil then
+                    member.bearItems[j] = hItem:GetName()
+                end
+            end
+            break
+        end
+    end
+
     if J.CanNotUseAbility(bot) then return end
 
     ReturnDesire = X.ConsiderReturn()

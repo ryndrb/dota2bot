@@ -15,10 +15,7 @@ function GetDesire()
 
 	if currentTime < 0
 	or not bot:IsAlive()
-	-- or ((  botActiveMode == BOT_MODE_RUNE
-	-- 	or botActiveMode == BOT_MODE_DEFEND_ALLY
-	-- 	or botActiveMode == BOT_MODE_EVASIVE_MANEUVERS
-	-- 	or botActiveMode == BOT_MODE_WARD) and botActiveModeDesire > 0)
+	or J.IsGoingToRune(bot)
 	then
 		return BOT_ACTION_DESIRE_NONE
 	end
@@ -26,47 +23,21 @@ function GetDesire()
 	local bCore = J.IsCore(bot)
 	local botLevel = bot:GetLevel()
 	local nInRangeAlly = J.GetAlliesNearLoc(bot:GetLocation(), 1200)
-	local nInRangeEnemy = J.GetEnemiesNearLoc(bot:GetLocation(), 1200)
-	-- if (DotaTime() < 10 * 60) and ((bCore and bot:GetNetWorth() < 5500) or (not bCore and botLevel < 6))
-	-- then
-	-- 	local nLastHits = bot:GetLastHits()
-	-- 	local nDesire = RemapValClamped(nLastHits, 50, 75, BOT_MODE_DESIRE_HIGH, BOT_MODE_DESIRE_LOW)
-	-- 	local vLaneFrontLocation = GetLocationAlongLane(botAssignedLane, GetLaneFrontAmount(GetTeam(), botAssignedLane, false))
-	-- 	local botTarget = J.GetProperTarget(bot)
-	-- 	local bGood = DotaTime() > 10
-	-- 				and ((#nInRangeEnemy >= 1 and J.GetHP(bot) > 0.25) or (#nInRangeEnemy == 0))
-	-- 				and #nInRangeAlly >= #nInRangeEnemy
-	-- 				and not (#nInRangeAlly >= #nInRangeEnemy + 1)
-	-- 				-- and (GetUnitToLocationDistance(bot, vLaneFrontLocation) < 2000 and #nEnemyLaneCreeps > 0)
-	-- 				-- and not J.IsRetreating(bot)
-
-	-- 	bot.isInLanePhase = true
-
-	-- 	if J.IsGoingOnSomeone(bot) then
-	-- 		if J.IsValidHero(botTarget)
-	-- 		and J.CanBeAttacked(botTarget)
-	-- 		and J.IsInRange(bot, botTarget, Max(bot:GetAttackRange() + 200, 800))
-	-- 		and not J.IsSuspiciousIllusion(botTarget)
-	-- 		then
-	-- 			nDesire = nDesire / 2
-	-- 		end
-	-- 	end
-
-	-- 	if bGood then
-	-- 		if (bCore and nLastHits < 60) or (not bCore and not J.IsThereCoreNearby(1600)) then
-	-- 			return nDesire
-	-- 		elseif not bCore then
-	-- 			return 0.444
-	-- 		end
-	-- 	else
-	-- 		return RemapValClamped(#nInRangeAlly - #nInRangeEnemy, -1, 1, 0.25, 0.5)
-	-- 	end
-	-- end
+	local nInRangeEnemy = J.GetEnemiesNearLoc(bot:GetLocation(), 1600)
 
 	if (currentTime <= 9 * 60 and botLevel <= 7)
 	or (botAssignedLane == LANE_MID and currentTime <= 6 * 60)
 	then
 		bot.isInLanePhase = true
+
+		if J.IsNonStableHero(bot) then
+			return 0.9 -- less feed?
+		end
+
+		if (bCore and (#nInRangeEnemy == 0 and not bot:WasRecentlyDamagedByAnyHero(5.0)) and not J.IsRetreating(bot)) then
+			return 0.96
+		end
+
 		return 0.446
 	end
 
@@ -83,7 +54,6 @@ function GetDesire()
 		local sItemName = ''
 		for i = 1, #bot.sItemBuyList do
 			if bot.sItemBuyList[i] == 'item_maelstrom'
-			or bot.sItemBuyList[i] == 'item_mjollnir'
 			or bot.sItemBuyList[i] == 'item_bfury'
 			then
 				if i <= (#bot.sItemBuyList / 2) then
@@ -106,7 +76,7 @@ function GetDesire()
 		return 0.369
 	end
 
-	return BOT_MODE_DESIRE_VERYLOW
+	return 0
 end
 
 if J.IsNonStableHero(botName)

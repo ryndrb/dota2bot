@@ -206,7 +206,7 @@ local function DoGive(hero, nTier)
     end
 
     if sItemName ~= '' then
-        NeutralItems.GiveItem(sItemName, hero, nTier)
+        NeutralItems.GiveItem(sItemName, hero, nTier, true, true)
         -- something green
         GameRules:SendCustomMessage("<font color='#70EA71'>"..string.gsub(hero:GetUnitName(), 'npc_dota_hero_', '').."</font>"..' recieved a Tier '..tostring(nTier)..' neutral item!', -1, 0)
         hero.neutral_items[nTier].assigned = true
@@ -214,7 +214,6 @@ local function DoGive(hero, nTier)
 end
 
 -- with 11/10/25 update, this will override (or get overriden), since valve made bots craft items
--- will disable (?); can't check madstones
 local bInitTimes = false
 function NeutralItems.GiveNeutralItems(hHeroList)
     local bTurboMode = Helper.IsTurboMode()
@@ -225,11 +224,11 @@ function NeutralItems.GiveNeutralItems(hHeroList)
         for _, hero in pairs(hHeroList) do
             if hero.neutral_items == nil then
                 hero.neutral_items = {
-                    [1] = { assign_time = 0, assigned = false },
-                    [2] = { assign_time = 0, assigned = false },
-                    [3] = { assign_time = 0, assigned = false },
-                    [4] = { assign_time = 0, assigned = false },
-                    [5] = { assign_time = 0, assigned = false },
+                    [1] = { assign_time = 0, assigned = false, items = { neutral = '', enhancement = '' } },
+                    [2] = { assign_time = 0, assigned = false, items = { neutral = '', enhancement = '' } },
+                    [3] = { assign_time = 0, assigned = false, items = { neutral = '', enhancement = '' } },
+                    [4] = { assign_time = 0, assigned = false, items = { neutral = '', enhancement = '' } },
+                    [5] = { assign_time = 0, assigned = false, items = { neutral = '', enhancement = '' } },
                 }
             end
 
@@ -261,19 +260,30 @@ function NeutralItems.GiveNeutralItems(hHeroList)
                 DoGive(hero, nCurrentTierWindow)
             end
 
-            -- if fCurrentTime >= hero.neutral_items[nCurrentTierWindow].assign_time * 60 then
-            --     local hItem = hero:GetItemInSlot(16)
-            --     if hItem then
-            --         local itemTier = NeutralItems.GetItemTier(hItem:GetName())
-            --         if itemTier > 0 and itemTier ~= nCurrentTierWindow then
-            --             DoGive(hero, nCurrentTierWindow)
-            --         end
-            --     end
-            -- end
+            -- change back to ^ Buff item; valve's default is too random
+            if hero.neutral_items[nCurrentTierWindow].assigned == true  and fCurrentTime >= hero.neutral_items[nCurrentTierWindow].assign_time * 60 then
+                local hItem1 = hero:GetItemInSlot(16)
+                local hItem2 = hero:GetItemInSlot(17)
+                if hItem1 and hItem2 then
+                    local sItemName1 = hItem1:GetName()
+                    local sItemName2 = hItem2:GetName()
+
+                    if sItemName1 ~= 'item_divine_regalia_broken' then
+                        local sNeutralName = hero.neutral_items[nCurrentTierWindow].items.neutral
+                        local sEnhancementName = hero.neutral_items[nCurrentTierWindow].items.enhancement
+
+                        if sItemName1 ~= sNeutralName or sItemName2 ~= sEnhancementName then
+                            NeutralItems.GiveItem(sNeutralName, hero, nCurrentTierWindow, true, false)
+                            NeutralItems.GiveItem(sEnhancementName, hero, nCurrentTierWindow, false, true)
+                            -- GameRules:SendCustomMessage("<font color='#70EA71'>"..string.gsub(hero:GetUnitName(), 'npc_dota_hero_', '').."</font>"..' changed back its neutral item!', -1, 0)
+                        end
+                    end
+                end
+            end
         end
     end
 
-    -- replace 'item_divine_regalia_broken'; right away?
+    -- replace 'item_divine_regalia_broken'
     for _, h in pairs(hHeroList) do
         if h and h:HasItemInInventory('item_divine_regalia_broken') then
             local sItemName = ''
@@ -285,59 +295,73 @@ function NeutralItems.GiveNeutralItems(hHeroList)
             end
 
             if sItemName ~= '' then
-                NeutralItems.GiveItem(sItemName, h, 5)
+                NeutralItems.GiveItem(sItemName, h, 5, true, true)
             end
         end
     end
 end
 
-function NeutralItems.GiveItem(itemName, hero, tier)
-    if hero:HasRoomForItem(itemName, true, true)
-    then
-        local item = CreateItem(itemName, hero, hero)
+function NeutralItems.GiveItem(sItemName, hero, nTier, bNeutral, bEnhancement)
+    if hero:HasRoomForItem(sItemName, true, true) then
+        local item = CreateItem(sItemName, hero, hero)
         item:SetPurchaseTime(0)
 
-        -- remove so they don't stick to the next item
-        if hero then
-            local itemEnhancement = hero:GetItemInSlot(17)
-            if itemEnhancement then hero:RemoveItem(itemEnhancement) end
+        if bNeutral then
+            -- neutral item
+            hero:RemoveItem(hero:GetItemInSlot(16))
+            hero:AddItem(item)
         end
 
-        -- neutral item
-        hero:RemoveItem(hero:GetItemInSlot(16))
-        hero:AddItem(item)
-
-        -- give some enhancement
-        local eList = TierEnhancements[tier]
-        if eList then
-            local e = eList[RandomInt(1, #eList)]
-            local heroData = neutrals_data[hero:GetUnitName()]['enhancement']
-            if heroData and heroData[tier] then
-                e = NeutralItems.SelectItem(heroData[tier])
+        if (bNeutral and bEnhancement)
+        or (not bNeutral and bEnhancement)
+        then
+            -- remove so they don't stick to the next item
+            if hero then
+                local itemEnhancement = hero:GetItemInSlot(17)
+                if itemEnhancement then hero:RemoveItem(itemEnhancement) end
             end
 
-            if e ~= nil then
-                item = CreateItem(e, hero, hero)
+            -- give some enhancement
+            local eList = TierEnhancements[nTier]
+            if eList then
+                local e = eList[RandomInt(1, #eList)]
+                local heroData = neutrals_data[hero:GetUnitName()]['enhancement']
+                if heroData and heroData[nTier] then
+                    e = NeutralItems.SelectItem(heroData[nTier])
+                end
 
-                -- check if this enhancement is available in lower tiers
-                -- if it does, upgrade it n times
-                local nCount = 0
-                for i = 1, tier - 1 do
-                    if TierEnhancements[i] then
-                        for _, prev in pairs(TierEnhancements[i]) do
-                            if prev == e then
-                                nCount = nCount + 1
+                if (not bNeutral and bEnhancement) then
+                    e = sItemName
+                end
+
+                if e ~= nil then
+                    item = CreateItem(e, hero, hero)
+
+                    -- check if this enhancement is available in lower tiers
+                    -- if it does, upgrade it n times
+                    local nCount = 0
+                    for i = 1, nTier - 1 do
+                        if TierEnhancements[i] then
+                            for _, prev in pairs(TierEnhancements[i]) do
+                                if prev == e then
+                                    nCount = nCount + 1
+                                end
                             end
                         end
                     end
-                end
 
-                for _ = 1, nCount do
-                    item:UpgradeAbility(true)
-                end
+                    for _ = 1, nCount do
+                        item:UpgradeAbility(true)
+                    end
 
-                item:SetPurchaseTime(0)
-                hero:AddItem(item)
+                    item:SetPurchaseTime(0)
+                    hero:AddItem(item)
+
+                    if (bNeutral and bEnhancement) then
+                        hero.neutral_items[nTier].items.neutral = sItemName
+                        hero.neutral_items[nTier].items.enhancement = e
+                    end
+                end
             end
         end
     end
@@ -348,8 +372,10 @@ function NeutralItems.SelectItem(hNeutralItemList)
     local items = {}
     local weights = {}
     for item, weight in pairs(hNeutralItemList) do
-        table.insert(items,item)
-        table.insert(weights,weight)
+        if item ~= 'item_helm_of_the_undying' then -- annoying item
+            table.insert(items,item)
+            table.insert(weights,weight)
+        end
     end
 
     local totalWeight = 0

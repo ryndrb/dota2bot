@@ -45,14 +45,8 @@ local HeroBuild = {
             ['talent'] = {
                 [1] = {
                     ['t25'] = {10, 0},
-                    ['t20'] = {10, 0},
-                    ['t15'] = {0, 10},
-                    ['t10'] = {0, 10},
-                },
-                [2] = {
-                    ['t25'] = {0, 10},
                     ['t20'] = {0, 10},
-                    ['t15'] = {10, 0},
+                    ['t15'] = {0, 10},
                     ['t10'] = {0, 10},
                 },
             },
@@ -61,11 +55,13 @@ local HeroBuild = {
             },
             ['buy_list'] = {
                 "item_tango",
-                "item_magic_stick",
+                "item_double_branches",
                 "item_faerie_fire",
+                "item_double_circlet",
 
-                "item_tranquil_boots",
                 "item_magic_wand",
+                "item_tranquil_boots",
+                "item_vladmir",
                 "item_blink",
                 "item_pipe",--
                 "item_black_king_bar",--
@@ -74,11 +70,14 @@ local HeroBuild = {
                 "item_aghanims_shard",
                 "item_arcane_blink",--
                 "item_ultimate_scepter_2",
-                "item_moon_shard",
                 "item_travel_boots_2",--
+                "item_moon_shard",
             },
             ['sell_list'] = {
-                "item_magic_wand", "item_refresher",
+                "item_circlet", "item_pipe",
+                "item_circlet", "item_black_king_bar",
+                "item_magic_wand", "item_shivas_guard",
+                "item_vladmir", "item_refresher",
             },
         },
     },
@@ -87,8 +86,8 @@ local HeroBuild = {
             ['talent'] = {
                 [1] = {
                     ['t25'] = {0, 10},
-                    ['t20'] = {10, 0},
-                    ['t15'] = {10, 0},
+                    ['t20'] = {0, 10},
+                    ['t15'] = {0, 10},
                     ['t10'] = {0, 10},
                 }
             },
@@ -104,20 +103,22 @@ local HeroBuild = {
 
                 "item_tranquil_boots",
                 "item_magic_wand",
-                "item_glimmer_cape",--
+                "item_vladmir",
                 "item_ancient_janggo",
                 "item_blink",
-                "item_black_king_bar",--
+                "item_solar_crest",--
                 "item_boots_of_bearing",--
-                "item_aghanims_shard",
+                "item_black_king_bar",--
                 "item_refresher",--
+                "item_aghanims_shard",
                 "item_sphere",--
                 "item_arcane_blink",--
                 "item_ultimate_scepter_2",
                 "item_moon_shard",
             },
             ['sell_list'] = {
-                "item_magic_wand", "item_blink",
+                "item_magic_wand", "item_refresher",
+                "item_vladmir", "item_sphere",
             },
         },
     },
@@ -126,8 +127,8 @@ local HeroBuild = {
             ['talent'] = {
                 [1] = {
                     ['t25'] = {0, 10},
-                    ['t20'] = {10, 0},
-                    ['t15'] = {10, 0},
+                    ['t20'] = {0, 10},
+                    ['t15'] = {0, 10},
                     ['t10'] = {0, 10},
                 }
             },
@@ -143,20 +144,22 @@ local HeroBuild = {
 
                 "item_arcane_boots",
                 "item_magic_wand",
-                "item_glimmer_cape",--
+                "item_vladmir",
                 "item_mekansm",
                 "item_blink",
-                "item_black_king_bar",--
+                "item_solar_crest",--
                 "item_guardian_greaves",--
-                "item_aghanims_shard",
+                "item_black_king_bar",--
                 "item_refresher",--
+                "item_aghanims_shard",
                 "item_sphere",--
                 "item_arcane_blink",--
                 "item_ultimate_scepter_2",
                 "item_moon_shard",
             },
             ['sell_list'] = {
-                "item_magic_wand", "item_blink",
+                "item_magic_wand", "item_refresher",
+                "item_vladmir", "item_sphere",
             },
         },
     },
@@ -198,9 +201,43 @@ local BlackHoleDesire, BlackHoleLocation
 local BlinkHoleDesire, BlinkHoleLocation
 local BlinkPulseHoleDesire, BlinkPulseHoleLocation
 
-local botTarget
+local bAttacking = false
+local botTarget, botHP
+local nAllyHeroes, nEnemyHeroes
 
 function X.SkillsComplement()
+    bot = GetBot()
+
+    local hAbilityCurrentActive = bot:GetCurrentActiveAbility()
+    if hAbilityCurrentActive and hAbilityCurrentActive == BlackHole then
+        local nRadius = BlackHole:GetSpecialValueInt('radius')
+        if BlackHoleLocation and type(BlackHoleLocation) == 'userdata' then
+            local nInRangeEnemy = J.GetEnemiesNearLoc(BlackHoleLocation, nRadius)
+            if #nInRangeEnemy == 0 then
+                bot:Action_ClearActions(true)
+                return
+            end
+        end
+
+        if BlinkHoleLocation and type(BlinkHoleLocation) == 'userdata' then
+            local nInRangeEnemy = J.GetEnemiesNearLoc(BlinkHoleLocation, nRadius)
+            if #nInRangeEnemy == 0 then
+                bot:Action_ClearActions(true)
+                return
+            end
+        end
+
+        if BlinkPulseHoleLocation and type(BlinkPulseHoleLocation) == 'userdata'  then
+            local nInRangeEnemy = J.GetEnemiesNearLoc(BlinkPulseHoleLocation, nRadius)
+            if #nInRangeEnemy == 0 then
+                bot:Action_ClearActions(true)
+                return
+            end
+        end
+
+        return
+    end
+
 	if J.CanNotUseAbility(bot) then return end
 
     Malefice          = bot:GetAbilityByName('enigma_malefice')
@@ -208,36 +245,43 @@ function X.SkillsComplement()
     MidnightPulse     = bot:GetAbilityByName('enigma_midnight_pulse')
     BlackHole         = bot:GetAbilityByName('enigma_black_hole')
 
+    bAttacking = J.IsAttacking(bot)
+    botHP = J.GetHP(bot)
     botTarget = J.GetProperTarget(bot)
+    nAllyHeroes = bot:GetNearbyHeroes(1600, false, BOT_MODE_NONE)
+    nEnemyHeroes = bot:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
+
+    local vTeamFightLocation = J.GetTeamFightLocation(bot)
 
     BlinkPulseHoleDesire, BlinkPulseHoleLocation = X.ConsiderBlinkPulseHole()
-    if BlinkPulseHoleDesire > 0
-    then
+    if BlinkPulseHoleDesire > 0 and J.CanCastAbility(bot.Blink) then
         bot:Action_ClearActions(false)
 
-        if  J.CanBlackKingBar(bot)
-        and not bot:IsMagicImmune()
-        then
-            bot:ActionQueue_UseAbility(bot.BlackKingBar)
+        if vTeamFightLocation and J.GetDistance(vTeamFightLocation, BlinkPulseHoleLocation) <= 1200 then
+            local BlackKingBar = J.IsItemAvailable('item_black_king_bar')
+            if J.CanCastAbility(BlackKingBar) and (bot:GetMana() > (MidnightPulse:GetManaCost() + BlackHole:GetManaCost() + BlackKingBar:GetManaCost() + 100)) and not bot:IsMagicImmune() then
+                bot:ActionQueue_UseAbility(BlackKingBar)
+                bot:ActionQueue_Delay(0.1)
+            end
         end
 
         bot:ActionQueue_UseAbilityOnLocation(bot.Blink, BlinkPulseHoleLocation)
         bot:ActionQueue_Delay(0.1)
         bot:ActionQueue_UseAbilityOnLocation(MidnightPulse, BlinkPulseHoleLocation)
-        bot:ActionQueue_Delay(0.1)
         bot:ActionQueue_UseAbilityOnLocation(BlackHole, BlinkPulseHoleLocation)
         return
     end
 
     BlinkHoleDesire, BlinkHoleLocation = X.ConsiderBlinkHole()
-    if BlinkHoleDesire > 0
-    then
+    if BlinkHoleDesire > 0 and J.CanCastAbility(bot.Blink) then
         bot:Action_ClearActions(false)
 
-        if  J.CanBlackKingBar(bot)
-        and not bot:IsMagicImmune()
-        then
-            bot:ActionQueue_UseAbility(bot.BlackKingBar)
+        if vTeamFightLocation and J.GetDistance(vTeamFightLocation, BlinkHoleLocation) <= 1200 then
+            local BlackKingBar = J.IsItemAvailable('item_black_king_bar')
+            if J.CanCastAbility(BlackKingBar) and (bot:GetMana() > (BlackHole:GetManaCost() + BlackKingBar:GetManaCost() + 100)) and not bot:IsMagicImmune() then
+                bot:ActionQueue_UseAbility(BlackKingBar)
+                bot:ActionQueue_Delay(0.1)
+            end
         end
 
         bot:ActionQueue_UseAbilityOnLocation(bot.Blink, BlinkHoleLocation)
@@ -247,21 +291,35 @@ function X.SkillsComplement()
     end
 
     MidnightPulseDesire, MidnightPulseLocation = X.ConsiderMidnightPulse()
-    if MidnightPulseDesire > 0
-    then
+    if MidnightPulseDesire > 0 then
         J.SetQueuePtToINT(bot, false)
         bot:ActionQueue_UseAbilityOnLocation(MidnightPulse, MidnightPulseLocation)
         return
     end
 
     BlackHoleDesire, BlackHoleLocation = X.ConsiderBlackHole()
-    if BlackHoleDesire > 0
-    then
-        if  J.CanBlackKingBar(bot)
-        and not bot:IsMagicImmune()
-        then
+    if BlackHoleDesire > 0 then
+        local BlackKingBar = J.IsItemAvailable('item_black_king_bar')
+        if not bot:IsMagicImmune() and J.CanCastAbility(BlackKingBar) then
+            if (bot:GetMana() > (BlackHole:GetManaCost() + BlackKingBar:GetManaCost() + 100)) then
+                bot:Action_ClearActions(false)
+                bot:ActionQueue_UseAbility(BlackKingBar)
+                bot:ActionQueue_Delay(0.1)
+                bot:ActionQueue_UseAbilityOnLocation(BlackHole, BlackHoleLocation)
+                return
+            elseif J.CanCastAbility(MidnightPulse) and (bot:GetMana() > (MidnightPulse:GetManaCost() + BlackHole:GetManaCost() + BlackKingBar:GetManaCost() + 100)) then
+                bot:Action_ClearActions(false)
+                bot:ActionQueue_UseAbility(BlackKingBar)
+                bot:ActionQueue_Delay(0.1)
+                bot:ActionQueue_UseAbilityOnLocation(MidnightPulse, BlackHoleLocation)
+                bot:ActionQueue_UseAbilityOnLocation(BlackHole, BlackHoleLocation)
+                return
+            end
+        end
+
+        if J.CanCastAbility(MidnightPulse) and (bot:GetMana() > (MidnightPulse:GetManaCost() + BlackHole:GetManaCost() + 100)) then
             bot:Action_ClearActions(false)
-            bot:ActionQueue_UseAbility(bot.BlackKingBar)
+            bot:ActionQueue_UseAbilityOnLocation(MidnightPulse, BlackHoleLocation)
             bot:ActionQueue_UseAbilityOnLocation(BlackHole, BlackHoleLocation)
             return
         end
@@ -271,16 +329,14 @@ function X.SkillsComplement()
     end
 
     MaleficeDesire, MaleficeTarget = X.ConsiderMalefice()
-    if MaleficeDesire > 0
-    then
+    if MaleficeDesire > 0 then
         J.SetQueuePtToINT(bot, false)
         bot:ActionQueue_UseAbilityOnEntity(Malefice, MaleficeTarget)
         return
     end
 
     DemonicSummoningDesire, DemonicSummoningLocation = X.ConsiderDemonicSummoning()
-    if DemonicSummoningDesire > 0
-    then
+    if DemonicSummoningDesire > 0 then
         J.SetQueuePtToINT(bot, false)
         bot:ActionQueue_UseAbilityOnLocation(DemonicSummoning, DemonicSummoningLocation)
         return
@@ -288,36 +344,26 @@ function X.SkillsComplement()
 end
 
 function X.ConsiderMalefice()
-    if not J.CanCastAbility(Malefice)
-    then
+    if not J.CanCastAbility(Malefice) then
         return BOT_ACTION_DESIRE_NONE, nil
     end
 
 	local nCastRange = J.GetProperCastRange(false, bot, Malefice:GetCastRange())
-    local nStunInstances = Malefice:GetSpecialValueInt('value')
-
-    if bot:GetUnitName() == 'npc_dota_hero_enigma'
-    then
-        local MaleficeAdditionalInstanceTalent = bot:GetAbilityByName('special_bonus_unique_enigma_2')
-        if MaleficeAdditionalInstanceTalent:IsTrained()
-        then
-            nStunInstances = nStunInstances + Malefice:GetSpecialValueInt('value')
-        end
-    end
-
+    local nStunInstances = Malefice:GetSpecialValueInt('stun_instances')
 	local nDamage = Malefice:GetSpecialValueInt('damage') * nStunInstances
+    local nManaCost = Malefice:GetManaCost()
+	local fManaAfter = J.GetManaAfter(nManaCost)
+    local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {DemonicSummoning, MidnightPulse, BlackHole})
+	local fManaThreshold2 = J.GetManaThreshold(bot, nManaCost, {BlackHole})
 
-	local nEnemyHeroes = bot:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
-
-	for _, enemyHero in pairs(nEnemyHeroes)
-	do
+	for _, enemyHero in pairs(nEnemyHeroes) do
 		if  J.IsValidHero(enemyHero)
+        and J.CanBeAttacked(enemyHero)
         and J.IsInRange(bot, enemyHero, nCastRange + 150)
         and J.CanCastOnNonMagicImmune(enemyHero)
         and J.CanCastOnTargetAdvanced(enemyHero)
 		then
-            if enemyHero:IsChanneling() or J.IsCastingUltimateAbility(enemyHero)
-            then
+            if enemyHero:IsChanneling() then
                 return BOT_ACTION_DESIRE_HIGH, enemyHero
             end
 
@@ -333,78 +379,56 @@ function X.ConsiderMalefice()
 		end
 	end
 
-	if J.IsGoingOnSomeone(bot)
-	then
-		if  J.IsValidTarget(botTarget)
+	if J.IsGoingOnSomeone(bot) then
+		if  J.IsValidHero(botTarget)
+        and J.CanBeAttacked(botTarget)
+        and J.IsInRange(bot, botTarget, nCastRange + 150)
         and J.CanCastOnNonMagicImmune(botTarget)
         and J.CanCastOnTargetAdvanced(botTarget)
-        and J.IsInRange(bot, botTarget, nCastRange + 150)
         and not J.IsDisabled(botTarget)
         and not botTarget:HasModifier('modifier_abaddon_borrowed_time')
         and not botTarget:HasModifier('modifier_dazzle_shallow_grave')
+        and not botTarget:HasModifier('modifier_enigma_malefice')
         and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
         and not botTarget:HasModifier('modifier_oracle_false_promise_timer')
+        and fManaAfter > fManaThreshold2
 		then
             return BOT_ACTION_DESIRE_HIGH, botTarget
 		end
 	end
 
-	if J.IsRetreating(bot)
-    and not J.IsRealInvisible(bot)
-    and bot:WasRecentlyDamagedByAnyHero(4)
-	then
-        if  J.IsValidHero(nEnemyHeroes[1])
-        and J.CanCastOnNonMagicImmune(nEnemyHeroes[1])
-        and J.CanCastOnTargetAdvanced(nEnemyHeroes[1])
-        and J.IsInRange(bot, nEnemyHeroes[1], nCastRange)
-        and not J.IsDisabled(nEnemyHeroes[1])
-		then
-            return BOT_ACTION_DESIRE_HIGH, nEnemyHeroes[1]
-		end
-	end
-
-    local nAllyHeroes = bot:GetNearbyHeroes(1600, false, BOT_MODE_NONE)
-    for _, allyHero in pairs(nAllyHeroes)
-    do
-        if  J.IsValidHero(allyHero)
-        and (not J.IsCore(bot) or J.IsCore(bot) and J.GetManaAfter(Malefice:GetManaCost()) > 0.66)
-        and J.IsRetreating(allyHero)
-        and allyHero:WasRecentlyDamagedByAnyHero(5)
-        and not allyHero:IsIllusion()
-        then
-            local nAllyInRangeEnemy = allyHero:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
-
-            if J.IsValidHero(nAllyInRangeEnemy[1])
-            and J.CanCastOnNonMagicImmune(nAllyInRangeEnemy[1])
-            and J.CanCastOnTargetAdvanced(nAllyInRangeEnemy[1])
-            and J.IsInRange(bot, nAllyInRangeEnemy[1], nCastRange)
-            and not J.IsDisabled(nAllyInRangeEnemy[1])
-            and not nAllyInRangeEnemy[1]:HasModifier('modifier_legion_commander_duel')
-            and not nAllyInRangeEnemy[1]:HasModifier('modifier_enigma_black_hole_pull')
-            and not nAllyInRangeEnemy[1]:HasModifier('modifier_faceless_void_chronosphere_freeze')
+	if J.IsRetreating(bot) and not J.IsRealInvisible(bot) then
+        for _, enemyHero in pairs(nEnemyHeroes) do
+            if J.IsValidHero(enemyHero)
+            and J.CanBeAttacked(enemyHero)
+            and J.IsInRange(bot, enemyHero, nCastRange)
+            and J.CanCastOnNonMagicImmune(enemyHero)
+            and J.CanCastOnTargetAdvanced(enemyHero)
+            and not J.IsDisabled(enemyHero)
+            and not enemyHero:HasModifier('modifier_enigma_malefice')
+            and bot:WasRecentlyDamagedByHero(enemyHero, 3.0)
             then
-                return BOT_ACTION_DESIRE_HIGH, nAllyInRangeEnemy[1]
+                return BOT_ACTION_DESIRE_HIGH, enemyHero
             end
         end
-    end
+	end
 
-	if J.IsDoingRoshan(bot)
-	then
+	if J.IsDoingRoshan(bot) then
         if  J.IsRoshan(botTarget)
-        and J.CanCastOnNonMagicImmune(botTarget)
+        and J.CanBeAttacked(botTarget)
         and J.IsInRange(bot, botTarget, nCastRange)
-        and J.IsAttacking(bot)
-        and not botTarget:HasModifier('modifier_roshan_spell_block')
+        and bAttacking
+        and fManaAfter > fManaThreshold1
         then
             return BOT_ACTION_DESIRE_HIGH, botTarget
         end
 	end
 
-    if J.IsDoingTormentor(bot)
-	then
+    if J.IsDoingTormentor(bot) then
         if  J.IsTormentor(botTarget)
         and J.IsInRange(bot, botTarget, nCastRange)
-        and J.IsAttacking(bot)
+        and bAttacking
+        and fManaAfter > fManaThreshold1
         then
             return BOT_ACTION_DESIRE_HIGH, botTarget
         end
@@ -414,139 +438,115 @@ function X.ConsiderMalefice()
 end
 
 function X.ConsiderDemonicSummoning()
-    if not J.CanCastAbility(DemonicSummoning)
-    then
+    if not J.CanCastAbility(DemonicSummoning) then
         return BOT_ACTION_DESIRE_NONE, 0
     end
 
     local nCastRange = J.GetProperCastRange(false, bot, DemonicSummoning:GetCastRange())
-    local nHPCost = 75 + (25 * (DemonicSummoning:GetLevel() - 1))
+    local nHealthCost = 75 + (25 * (DemonicSummoning:GetLevel() - 1))
+    local nManaCost = DemonicSummoning:GetManaCost()
+    local fHealthAfter = J.GetHealthAfter(nHealthCost)
+    local fManaAfter = J.GetManaAfter(nManaCost)
+    local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {Malefice, MidnightPulse, BlackHole})
+	local fManaThreshold2 = J.GetManaThreshold(bot, nManaCost, {BlackHole})
 
-    if  J.IsGoingOnSomeone(bot)
-    and J.GetHP(bot) > 0.5
-	then
-		if  J.IsValidTarget(botTarget)
-        and J.IsInRange(bot, botTarget, nCastRange)
+    local botAttackRange = bot:GetAttackRange()
+    local botLocation = bot:GetLocation()
+
+    if  J.IsGoingOnSomeone(bot) and fHealthAfter > 0.4 and fManaAfter > fManaThreshold2 then
+		if  J.IsValidHero(botTarget)
+        and J.CanBeAttacked(botTarget)
+        and J.IsInRange(bot, botTarget, botAttackRange)
         and not J.IsSuspiciousIllusion(botTarget)
         and not botTarget:HasModifier('modifier_abaddon_borrowed_time')
         and not botTarget:HasModifier('modifier_dazzle_shallow_grave')
-        and not botTarget:HasModifier('modifier_faceless_void_chronosphere_freeze')
 		then
-            if DotaTime() < 10 * 60
-            then
-                local nEnemyTowers = botTarget:GetNearbyTowers(800, false)
-                if nEnemyTowers ~= nil
-                then
-                    if J.IsChasingTarget(bot, botTarget)
-                    then
-                        if  J.IsInRange(bot, botTarget, nCastRange)
-                        and #nEnemyTowers == 0
-                        then
-                            return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation()
-                        else
-                            if #nEnemyTowers == 0
-                            then
-                                return BOT_ACTION_DESIRE_HIGH, J.Site.GetXUnitsTowardsLocation(bot, botTarget:GetLocation(), nCastRange)
-                            end
-                        end
-                    else
-                        if J.IsInRange(bot, botTarget, nCastRange)
-                        then
-                            return BOT_ACTION_DESIRE_HIGH, (bot:GetLocation() + botTarget:GetLocation()) / 2
-                        end
-                    end
-                end
-            else
-                if J.IsChasingTarget(bot, botTarget)
-                then
-                    if J.IsInRange(bot, botTarget, nCastRange)
-                    then
-                        return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation()
-                    else
-                        return BOT_ACTION_DESIRE_HIGH, J.Site.GetXUnitsTowardsLocation(bot, botTarget:GetLocation(), nCastRange)
-                    end
-                else
-                    if J.IsInRange(bot, botTarget, bot:GetAttackRange())
-                    then
-                        return BOT_ACTION_DESIRE_HIGH, (bot:GetLocation() + botTarget:GetLocation()) / 2
-                    end
-                end
+            local distance = GetUnitToUnitDistance(bot, botTarget)
+            local nInRangeAlly = J.GetAlliesNearLoc(bot:GetLocation(), 1200)
+            local nInRangeEnemy = J.GetEnemiesNearLoc(bot:GetLocation(), 1200)
+
+            if #nInRangeAlly >= #nInRangeEnemy then
+                return BOT_ACTION_DESIRE_HIGH, J.VectorTowards(bot:GetLocation(), botTarget:GetLocation(), Min(distance, nCastRange))
             end
+
+            return BOT_ACTION_DESIRE_HIGH, botLocation
 		end
 	end
 
-    local nEnemyLaneCreeps = bot:GetNearbyLaneCreeps(1000, true)
+    local nEnemyCreeps = bot:GetNearbyCreeps(Min(botAttackRange + 300, 1600), true)
 
-	if (J.IsDefending(bot) or J.IsPushing(bot))
-    and J.GetHealthAfter(nHPCost) > 0.5
-	then
-        if J.IsAttacking(bot)
-        then
-            if nEnemyLaneCreeps ~= nil and #nEnemyLaneCreeps >= 4
+    if J.IsPushing(bot) and bAttacking and fManaAfter > fManaThreshold1 and fHealthAfter > 0.5 and #nAllyHeroes <= 2 and #nEnemyHeroes == 0 then
+        if J.IsValid(nEnemyCreeps[1]) and J.CanBeAttacked(nEnemyCreeps[1]) then
+            if (#nEnemyCreeps >= 2 and #nAllyHeroes <= 1)
+            or (#nEnemyCreeps >= 3)
             then
-                return BOT_ACTION_DESIRE_HIGH, bot:GetLocation()
-            end
-
-            local nEnemyTowers = bot:GetNearbyTowers(888, true)
-            local nEnemyBarracks = bot:GetNearbyBarracks(888,true)
-            local nEnemyFillers = bot:GetNearbyFillers(888, true)
-
-            if  J.IsValidBuilding(bot:GetAttackTarget())
-            and (nEnemyTowers ~= nil and #nEnemyTowers >= 1
-                or nEnemyBarracks ~= nil and #nEnemyBarracks >= 1
-                or nEnemyFillers ~= nil and #nEnemyFillers >= 1)
-            then
-                return BOT_ACTION_DESIRE_HIGH, bot:GetLocation()
+                return BOT_ACTION_DESIRE_HIGH, botLocation
             end
         end
-	end
 
-    if  J.IsFarming(bot)
-    and J.GetHealthAfter(nHPCost) > 0.5
-    and J.GetManaAfter(DemonicSummoning:GetManaCost()) > 0.33
-    and J.IsAttacking(bot)
-    then
-        if nEnemyLaneCreeps ~= nil and #nEnemyLaneCreeps >= 4
-        then
-            return BOT_ACTION_DESIRE_HIGH, bot:GetLocation()
-        end
+        local nAllyLaneCreeps = bot:GetNearbyLaneCreeps(900, false)
 
-        local nNeutralCreeps = bot:GetNearbyNeutralCreeps(nCastRange)
-        if nNeutralCreeps ~= nil and #nNeutralCreeps >= 2
+        if  J.IsValidBuilding(botTarget)
+		and J.CanBeAttacked(botTarget)
+        and J.IsInRange(bot, botTarget, botAttackRange)
+        and not botTarget:HasModifier('modifier_backdoor_protection')
+        and #nAllyLaneCreeps >= 3
         then
-            return BOT_ACTION_DESIRE_HIGH, bot:GetLocation()
+            return BOT_ACTION_DESIRE_HIGH, botLocation
         end
     end
 
-    if  J.IsLaning(bot)
-    and J.GetHealthAfter(nHPCost) > 0.61
-    and J.GetManaAfter(DemonicSummoning:GetManaCost()) > 0.45
-    then
-        if nEnemyLaneCreeps ~= nil and #nEnemyLaneCreeps >= 3
-        then
-            return BOT_ACTION_DESIRE_HIGH, bot:GetLocation()
+    if J.IsDefending(bot) and bAttacking and fManaAfter > fManaThreshold1 and fHealthAfter > 0.5 and #nAllyHeroes <= 3 and #nEnemyHeroes == 0 then
+        if J.IsValid(nEnemyCreeps[1]) and J.CanBeAttacked(nEnemyCreeps[1]) then
+            if (#nEnemyCreeps >= 2 and #nAllyHeroes <= 1)
+            or (#nEnemyCreeps >= 3)
+            then
+                return BOT_ACTION_DESIRE_HIGH, botLocation
+            end
         end
     end
 
-    if  J.IsDoingRoshan(bot)
-    and J.GetHealthAfter(nHPCost) > 0.5
-	then
+    if J.IsFarming(bot) and bAttacking and fManaAfter > fManaThreshold1 and fHealthAfter > 0.4 then
+        if J.IsValid(nEnemyCreeps[1]) and J.CanBeAttacked(nEnemyCreeps[1]) then
+            if (#nEnemyCreeps >= 2)
+            or (#nEnemyCreeps >= 1 and nEnemyCreeps[1]:GetHealth() >= 550)
+            then
+                return BOT_ACTION_DESIRE_HIGH, botLocation
+            end
+        end
+    end
+
+    if J.IsLaning(bot) and J.IsInLaningPhase() and fManaAfter > fManaThreshold1 and fHealthAfter > 0.55 then
+        local nInRangeAlly = J.GetAlliesNearLoc(bot:GetLocation(), 1200)
+        local nInRangeEnemy = J.GetEnemiesNearLoc(bot:GetLocation(), 1200)
+        if #nInRangeAlly >= #nInRangeEnemy and not bot:WasRecentlyDamagedByAnyHero(5.0) then
+            local nEnemyLaneCreeps = bot:GetNearbyLaneCreeps(1000, true)
+            if #nEnemyLaneCreeps >= 3 then
+                return BOT_ACTION_DESIRE_HIGH, botLocation
+            end
+        end
+    end
+
+    if J.IsDoingRoshan(bot) then
         if  J.IsRoshan(botTarget)
-        and J.IsInRange(bot, botTarget, bot:GetAttackRange())
-        and J.IsAttacking(bot)
+        and J.CanBeAttacked(botTarget)
+        and J.IsInRange(bot, botTarget, botAttackRange)
+        and bAttacking
+        and fManaAfter > fManaThreshold1
+        and fHealthAfter > 0.5
         then
-            return BOT_ACTION_DESIRE_HIGH, bot:GetLocation()
+            return BOT_ACTION_DESIRE_HIGH, botLocation
         end
 	end
 
-    if  J.IsDoingTormentor(bot)
-    and J.GetHealthAfter(nHPCost) > 0.63
-	then
+    if J.IsDoingTormentor(bot) then
         if  J.IsTormentor(botTarget)
-        and J.IsInRange(bot, botTarget, bot:GetAttackRange())
-        and J.IsAttacking(bot)
+        and J.IsInRange(bot, botTarget, botAttackRange)
+        and bAttacking
+        and fManaAfter > fManaThreshold1
+        and fHealthAfter > 0.6
         then
-            return BOT_ACTION_DESIRE_HIGH, bot:GetLocation()
+            return BOT_ACTION_DESIRE_HIGH, botLocation
         end
 	end
 
@@ -554,173 +554,141 @@ function X.ConsiderDemonicSummoning()
 end
 
 function X.ConsiderMidnightPulse()
-    if not J.CanCastAbility(MidnightPulse)
-    then
+    if not J.CanCastAbility(MidnightPulse) then
         return BOT_ACTION_DESIRE_NONE, 0
     end
 
     local nCastRange = J.GetProperCastRange(false, bot, MidnightPulse:GetCastRange())
     local nRadius = MidnightPulse:GetSpecialValueInt('radius')
+    local nManaCost = MidnightPulse:GetManaCost()
+    local fManaAfter = J.GetManaAfter(nManaCost)
+	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {BlackHole})
 
-    if bot:GetUnitName() == 'npc_dota_hero_enigma'
-    then
-        local MidnightPulseRadiusTalent = bot:GetAbilityByName('special_bonus_unique_enigma_9')
-        if MidnightPulseRadiusTalent:IsTrained()
-        then
-            nRadius = nRadius + MidnightPulse:GetSpecialValueInt('value')
-        end
-    end
-
-	if J.IsInTeamFight(bot, 1200)
-	then
-		local nLocationAoE = bot:FindAoELocation(true, true, bot:GetLocation(), nCastRange, nRadius, 0, 0)
+	if J.IsInTeamFight(bot, 1200) then
+        local nLocationAoE = bot:FindAoELocation(true, true, bot:GetLocation(), nCastRange, nRadius, 0, 0)
         local nInRangeEnemy = J.GetEnemiesNearLoc(nLocationAoE.targetloc, nRadius * 0.8)
-
-		if nInRangeEnemy ~= nil and #nInRangeEnemy >= 2
-        then
-			return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc
-		end
-	end
-
-	if J.IsGoingOnSomeone(bot)
-	then
-		if  J.IsValidTarget(botTarget)
-        and J.CanCastOnNonMagicImmune(botTarget)
-        and not botTarget:HasModifier('modifier_abaddon_borrowed_time')
-		then
-            local nInRangeEnemy = J.GetEnemiesNearLoc(botTarget:GetLocation(), nRadius * 0.66)
-            if J.IsInRange(bot, botTarget, nCastRange)
-            then
-                if not J.IsRunning(bot)
+        if #nInRangeEnemy >= 2 then
+            local count = 0
+            for _, enemyHero in pairs(nInRangeEnemy) do
+                if  J.IsValidHero(enemyHero)
+                and J.CanBeAttacked(enemyHero)
+                and not J.IsChasingTarget(bot, enemyHero)
+                and not enemyHero:HasModifier('modifier_necrolyte_reapers_scythe')
+                and not enemyHero:HasModifier('modifier_enigma_midnight_pulse_damage')
                 then
-                    if nInRangeEnemy ~= nil and #nInRangeEnemy >= 2
-                    then
-                        return BOT_ACTION_DESIRE_HIGH, J.GetCenterOfUnits(nInRangeEnemy)
-                    else
-                        return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation()
-                    end
-                else
-                    return BOT_ACTION_DESIRE_HIGH, J.GetCorrectLoc(botTarget, 1)
-                end
-            else
-                if  J.IsInRange(bot, botTarget, nCastRange + nRadius)
-                and not J.IsInRange(bot, botTarget, nCastRange)
-                and not J.IsChasingTarget(bot, botTarget)
-                then
-                    return BOT_ACTION_DESIRE_HIGH, J.Site.GetXUnitsTowardsLocation(bot, botTarget:GetLocation(), nCastRange)
+                    count = count + 1
                 end
             end
+
+            if count >= 2 then
+                return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc
+            end
+        end
+	end
+
+	if J.IsGoingOnSomeone(bot) then
+		if  J.IsValidHero(botTarget)
+        and J.CanBeAttacked(botTarget)
+        and J.IsInRange(bot, botTarget, nCastRange)
+        and not J.IsChasingTarget(bot, botTarget)
+        and not J.IsSuspiciousIllusion(botTarget)
+        and not botTarget:HasModifier('modifier_abaddon_borrowed_time')
+        and not botTarget:HasModifier('modifier_enigma_midnight_pulse_damage')
+        and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
+		then
+            if J.IsDisabled(botTarget)
+            or botTarget:GetCurrentMovementSpeed() <= 250
+            or botTarget:IsFacingLocation(bot:GetLocation(), 45)
+            then
+                return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation()
+            end
 		end
-	end
-
-    if J.IsDoingRoshan(bot)
-	then
-        if  J.IsRoshan(botTarget)
-        and J.CanCastOnNonMagicImmune(botTarget)
-        and J.GetHP(botTarget) > 0.35
-        and J.IsInRange(bot, botTarget, nCastRange)
-        and J.IsAttacking(bot)
-        then
-            return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation()
-        end
-	end
-
-    if J.IsDoingTormentor(bot)
-	then
-        if  J.IsTormentor(botTarget)
-        and J.IsInRange(bot, botTarget, nCastRange)
-        and J.IsAttacking(bot)
-        then
-            return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation()
-        end
 	end
 
     return BOT_ACTION_DESIRE_NONE, 0
 end
 
 function X.ConsiderBlackHole()
-    if not J.CanCastAbility(BlackHole)
-    then
+    if not J.CanCastAbility(BlackHole) then
         return BOT_ACTION_DESIRE_NONE, 0
     end
 
 	local nCastRange = J.GetProperCastRange(false, bot, BlackHole:GetCastRange())
+    local nCastPoint = BlackHole:GetCastPoint()
     local nRadius = BlackHole:GetSpecialValueInt('radius')
-    local nDamage = BlackHole:GetSpecialValueInt('value')
+    local nDamage = BlackHole:GetSpecialValueInt('damage')
     local nDuration = BlackHole:GetSpecialValueInt('duration')
+    local fTickRate = BlackHole:GetSpecialValueFloat('tick_rate')
 
-	if J.IsInTeamFight(bot, 1200)
-	then
-		local nLocationAoE = bot:FindAoELocation(true, true, bot:GetLocation(), nCastRange, nRadius, 0, 0)
-        local nInRangeEnemy = J.GetEnemiesNearLoc(nLocationAoE.targetloc, nRadius * 0.8)
-
-		if nInRangeEnemy ~= nil and #nInRangeEnemy >= 2
-        then
-            return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc
+    if not bot:IsMagicImmune() then
+		if J.IsStunProjectileIncoming(bot, 1200) then
+			return BOT_ACTION_DESIRE_NONE, 0
 		end
 	end
 
-	if J.IsGoingOnSomeone(bot)
-	then
-		if  J.IsValidTarget(botTarget)
-        and J.CanCastOnMagicImmune(botTarget)
+    if J.GetAttackProjectileDamageByRange(bot, 1200) > bot:GetHealth() + 200 then
+        return BOT_ACTION_DESIRE_NONE, 0
+    end
+
+	if J.IsInTeamFight(bot, 1200) then
+        local nLocationAoE = bot:FindAoELocation(true, true, bot:GetLocation(), nCastRange, nRadius, 0, 0)
+        local nInRangeEnemy = J.GetEnemiesNearLoc(nLocationAoE.targetloc, nRadius * 0.8)
+        if #nInRangeEnemy >= 2 then
+            local count = 0
+            for _, enemyHero in pairs(nInRangeEnemy) do
+                if  J.IsValidHero(enemyHero)
+                and J.CanBeAttacked(enemyHero)
+                and not J.IsChasingTarget(bot, enemyHero)
+                and not enemyHero:HasModifier('modifier_abaddon_borrowed_time')
+                and not enemyHero:HasModifier('modifier_dazzle_shallow_grave')
+                and not enemyHero:HasModifier('modifier_faceless_void_chronosphere_freeze')
+                and not enemyHero:HasModifier('modifier_oracle_false_promise_timer')
+                and not enemyHero:HasModifier('modifier_item_aeon_disk_buff')
+                then
+                    if J.IsCore(enemyHero) then
+                        count = count + 1
+                    else
+                        count = count + 0.5
+                    end
+                end
+            end
+
+            if count >= 1.5 then
+                return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc
+            end
+        end
+	end
+
+	if J.IsGoingOnSomeone(bot) and not J.IsInTeamFight(bot, 1400) then
+		if  J.IsValidHero(botTarget)
+        and J.CanBeAttacked(botTarget)
         and J.IsInRange(bot, botTarget, 800)
+        and not J.IsSuspiciousIllusion(botTarget)
+        and not J.IsChasingTarget(bot, botTarget)
         and not botTarget:HasModifier('modifier_abaddon_borrowed_time')
         and not botTarget:HasModifier('modifier_dazzle_shallow_grave')
         and not botTarget:HasModifier('modifier_faceless_void_chronosphere_freeze')
         and not botTarget:HasModifier('modifier_oracle_false_promise_timer')
         and not botTarget:HasModifier('modifier_item_aeon_disk_buff')
 		then
-            local nInRangeAlly = botTarget:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
-            local nInRangeEnemy = botTarget:GetNearbyHeroes(1600, false, BOT_MODE_NONE)
+            local nInRangeAlly = J.GetAlliesNearLoc(bot:GetLocation(), 1200)
+            local nInRangeEnemy = J.GetEnemiesNearLoc(bot:GetLocation(), 1200)
+            local damage = nDamage * (nDuration * (1 - fTickRate))
 
-            if  nInRangeAlly ~= nil and nInRangeEnemy ~= nil
-            and not (#nInRangeAlly + 3 >= #nInRangeEnemy)
-            then
-                if  #nInRangeEnemy >= #nInRangeAlly
-                and #nInRangeEnemy <= 1
-                then
-                    if  J.CanKillTarget(botTarget, nDamage * nDuration, DAMAGE_TYPE_PURE)
-                    and J.IsCore(botTarget)
-                    and botTarget:GetHealth() > 200
-                    then
-                        nInRangeEnemy = J.GetEnemiesNearLoc(botTarget:GetLocation(), nRadius)
-                        if nInRangeEnemy ~= nil and #nInRangeEnemy >= 2
-                        then
-                            return BOT_ACTION_DESIRE_HIGH, J.GetCenterOfUnits(nInRangeEnemy)
-                        else
-                            if  J.IsInRange(bot, botTarget, nCastRange + nRadius)
-                            and not J.IsInRange(bot, botTarget, nCastRange)
-                            then
-                                return BOT_ACTION_DESIRE_HIGH, J.Site.GetXUnitsTowardsLocation(bot, botTarget:GetLocation(), nCastRange)
-                            else
-                                return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation()
-                            end
+            local nInRangeEnemy__ = J.GetEnemiesNearLoc(botTarget:GetLocation(), nRadius * 0.8)
+
+            if not (#nInRangeAlly >= #nInRangeEnemy + 3) and botTarget:GetHealth() >= damage * 0.5 then
+                if J.WillKillTarget(botTarget, damage, DAMAGE_TYPE_PURE, nDuration + nCastPoint) then
+                    if #nInRangeAlly <= 2 and #nInRangeEnemy <= 1 then
+                        if J.IsCore(botTarget) or #nInRangeEnemy__ >= 2 then
+                            return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation()
                         end
                     end
                 end
 
-                if  #nInRangeAlly >= #nInRangeEnemy
-                and J.IsCore(botTarget)
-                then
-                    if  #nInRangeAlly == 0
-                    and J.CanKillTarget(botTarget, nDamage * nDuration, DAMAGE_TYPE_PURE)
-                    then
+                if J.GetTotalEstimatedDamageToTarget(nAllyHeroes, nDuration, nDuration + nCastPoint - 1) then
+                    if J.IsCore(botTarget) or #nInRangeEnemy__ >= 2 then
                         return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation()
-                    else
-                        nInRangeEnemy = J.GetEnemiesNearLoc(botTarget:GetLocation(), nRadius)
-                        if nInRangeEnemy ~= nil and #nInRangeEnemy >= 1
-                        then
-                            return BOT_ACTION_DESIRE_HIGH, J.GetCenterOfUnits(nInRangeEnemy)
-                        else
-                            if  J.IsInRange(bot, botTarget, nCastRange + nRadius)
-                            and not J.IsInRange(bot, botTarget, nCastRange)
-                            then
-                                return BOT_ACTION_DESIRE_HIGH, J.Site.GetXUnitsTowardsLocation(bot, botTarget:GetLocation(), nCastRange)
-                            else
-                                return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation()
-                            end
-                        end
                     end
                 end
             end
@@ -730,76 +698,104 @@ function X.ConsiderBlackHole()
     return BOT_ACTION_DESIRE_NONE, 0
 end
 
-------------------------------
 function X.ConsiderBlinkHole()
-    if X.CanDoBlinkHole()
-    then
+    if J.CanCastAbility(BlackHole) and J.CanBlinkDagger(bot) then
+
+        local nManaCost = BlackHole:GetManaCost() + 100
+        if bot:GetMana() < nManaCost then
+            return BOT_ACTION_DESIRE_NONE, 0
+        end
+
         local nRadius = BlackHole:GetSpecialValueInt('radius')
 
-        if J.IsInTeamFight(bot, 1200)
-        then
-            local nLocationAoE = bot:FindAoELocation(true, true, bot:GetLocation(), 1199, nRadius, 0, 0)
-            local nInRangeEnemy = J.GetEnemiesNearLoc(nLocationAoE.targetloc, nRadius)
+        for i = 1, 5 do
+            local allyHero = GetTeamMember(i)
 
-            if nInRangeEnemy ~= nil and #nInRangeEnemy >= 2
+            if  J.IsValidHero(allyHero)
+            and J.IsInRange(bot, allyHero, 1600)
+            and J.IsInTeamFight(allyHero, 1200)
             then
-                return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc
+                local nLocationAoE = allyHero:FindAoELocation(true, true, allyHero:GetLocation(), 1200, nRadius, 0, 0)
+                local nInRangeEnemy = J.GetEnemiesNearLoc(nLocationAoE.targetloc, nRadius * 0.8)
+                if #nInRangeEnemy >= 2 then
+                    local count = 0
+                    for _, enemyHero in pairs(nInRangeEnemy) do
+                        if  J.IsValidHero(enemyHero)
+                        and J.CanBeAttacked(enemyHero)
+                        and not J.IsChasingTarget(allyHero, enemyHero)
+                        and not enemyHero:HasModifier('modifier_abaddon_borrowed_time')
+                        and not enemyHero:HasModifier('modifier_dazzle_shallow_grave')
+                        and not enemyHero:HasModifier('modifier_faceless_void_chronosphere_freeze')
+                        and not enemyHero:HasModifier('modifier_oracle_false_promise_timer')
+                        and not enemyHero:HasModifier('modifier_item_aeon_disk_buff')
+                        then
+                            if J.IsCore(enemyHero) then
+                                count = count + 1
+                            else
+                                count = count + 0.5
+                            end
+                        end
+                    end
+
+                    if count >= 1.5 then
+                        return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc
+                    end
+                end
             end
         end
     end
 
-    return BOT_ACTION_DESIRE_NONE
+    return BOT_ACTION_DESIRE_NONE, 0
 end
 
-function X.CanDoBlinkHole()
-    if  J.CanCastAbility(BlackHole)
-    and J.CanBlinkDagger(bot)
-    then
-        local nManaCost = BlackHole:GetManaCost()
-
-        if bot:GetMana() >= nManaCost
-        then
-            return true
-        end
-    end
-
-    return false
-end
-------------------------------
 function X.ConsiderBlinkPulseHole()
-    if X.CanDoBlinkPulseHole()
-    then
+    if J.CanCastAbility(MidnightPulse) and J.CanCastAbility(BlackHole) and J.CanBlinkDagger(bot) then
+
+        local nManaCost = BlackHole:GetManaCost() + MidnightPulse:GetManaCost() + 100
+        if bot:GetMana() < nManaCost then
+            return BOT_ACTION_DESIRE_NONE, 0
+        end
+
         local nRadius = BlackHole:GetSpecialValueInt('radius')
 
-        if J.IsInTeamFight(bot, 1200)
-        then
-            local nLocationAoE = bot:FindAoELocation(true, true, bot:GetLocation(), 1199, nRadius, 0, 0)
-            local nInRangeEnemy = J.GetEnemiesNearLoc(nLocationAoE.targetloc, nRadius)
+        for i = 1, 5 do
+            local allyHero = GetTeamMember(i)
 
-            if nInRangeEnemy ~= nil and #nInRangeEnemy >= 2
+            if  J.IsValidHero(allyHero)
+            and J.IsInRange(bot, allyHero, 1600)
+            and J.IsInTeamFight(allyHero, 1200)
             then
-                return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc
+                local nLocationAoE = allyHero:FindAoELocation(true, true, allyHero:GetLocation(), 1200, nRadius, 0, 0)
+                local nInRangeEnemy = J.GetEnemiesNearLoc(nLocationAoE.targetloc, nRadius * 0.8)
+                if #nInRangeEnemy >= 2 then
+                    local count = 0
+                    for _, enemyHero in pairs(nInRangeEnemy) do
+                        if  J.IsValidHero(enemyHero)
+                        and J.CanBeAttacked(enemyHero)
+                        and not J.IsChasingTarget(allyHero, enemyHero)
+                        and not enemyHero:HasModifier('modifier_abaddon_borrowed_time')
+                        and not enemyHero:HasModifier('modifier_dazzle_shallow_grave')
+                        and not enemyHero:HasModifier('modifier_faceless_void_chronosphere_freeze')
+                        and not enemyHero:HasModifier('modifier_oracle_false_promise_timer')
+                        and not enemyHero:HasModifier('modifier_item_aeon_disk_buff')
+                        then
+                            if J.IsCore(enemyHero) then
+                                count = count + 1
+                            else
+                                count = count + 0.5
+                            end
+                        end
+                    end
+
+                    if count >= 1.5 then
+                        return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc
+                    end
+                end
             end
         end
     end
 
-    return BOT_ACTION_DESIRE_NONE
-end
-
-function X.CanDoBlinkPulseHole()
-    if  J.CanCastAbility(BlackHole)
-    and J.CanCastAbility(MidnightPulse)
-    and J.CanBlinkDagger(bot)
-    then
-        local nManaCost = BlackHole:GetManaCost() + MidnightPulse:GetManaCost()
-
-        if bot:GetMana() >= nManaCost
-        then
-            return true
-        end
-    end
-
-    return false
+    return BOT_ACTION_DESIRE_NONE, 0
 end
 
 return X

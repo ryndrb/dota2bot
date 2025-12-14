@@ -152,6 +152,20 @@ local nAllyHeroes, nEnemyHeroes
 function X.SkillsComplement()
 	bot = GetBot()
 
+	local hAbilityCurrentActive = bot:GetCurrentActiveAbility()
+	if hAbilityCurrentActive and hAbilityCurrentActive == Chronosphere then
+		local nRadius = Chronosphere:GetSpecialValueInt('radius')
+		if Chronosphere and type(ChronosphereLocation) == 'userdata' then
+            local nInRangeEnemy = J.GetEnemiesNearLoc(ChronosphereLocation, nRadius)
+            if #nInRangeEnemy == 0 then
+                bot:Action_ClearActions(true)
+                return
+            end
+        end
+
+		return
+	end
+
     if J.CanNotUseAbility(bot) then return end
 
     TimeWalk 			= bot:GetAbilityByName('faceless_void_time_walk')
