@@ -54,6 +54,11 @@ function GetDesire()
             end
         end
 
+        local nInRangeAlly = J.GetAlliesNearLoc(vRoshanLocation, 1000)
+        if #nInRangeAlly >= 4 then
+            nRoshanDesire = 0.9
+        end
+
         return Clamp(nRoshanDesire, 0, 0.9)
     end
 

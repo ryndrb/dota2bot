@@ -18,8 +18,8 @@ local nRuneList = {
 local botHP, botMP, botPos, botActiveMode, botActiveModeDesire, botAssignedLane
 local nAllyHeroes, nEnemyHeroes
 
-local WRLocationRadiant = Vector(-8088.000000,   408.000183, 280.742340)
-local WRLocationDire 	= Vector( 8340.000000, -1008.000000, 280.742340)
+local WRLocationRadiant = Vector(-7948.152344, 	 768.207825, 0.000000)
+local WRLocationDire 	= Vector( 8029.234375, -1125.811768, 0.000000)
 
 local nShrineOfWisdomTime = 0
 local nShrineOfWisdomTeam = TEAM_RADIANT

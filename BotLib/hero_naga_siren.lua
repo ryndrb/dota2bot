@@ -39,7 +39,6 @@ local HeroBuild = {
 				"item_magic_wand",
 				"item_wraith_band",
 				"item_power_treads",
-				"item_diffusal_blade",
 				"item_manta",--
 				"item_orchid",
 				"item_butterfly",--
@@ -48,14 +47,14 @@ local HeroBuild = {
 				"item_aghanims_shard",
 				"item_skadi",--
 				"item_moon_shard",
+				"item_nullifier",--
 				"item_ultimate_scepter_2",
-				"item_disperser",--
 			},
             ['sell_list'] = {
-				"item_quelling_blade", "item_orchid",
-				"item_magic_wand", "item_butterfly",
-				"item_wraith_band", "item_heart",
-				"item_power_treads", "item_skadi",
+				"item_quelling_blade", "item_butterfly",
+				"item_magic_wand", "item_heart",
+				"item_wraith_band", "item_skadi",
+				"item_power_treads", "item_nullifier",
 			},
         },
     },
@@ -94,23 +93,22 @@ local HeroBuild = {
 				"item_magic_wand",
 				"item_bracer",
 				"item_power_treads",
-				"item_diffusal_blade",
 				"item_orchid",
 				"item_assault",--
 				"item_aghanims_shard",
 				"item_butterfly",--
 				"item_heart",--
 				"item_bloodthorn",--
-				"item_disperser",--
+				"item_nullifier",--
 				"item_moon_shard",
 				"item_sheepstick",--
 				"item_ultimate_scepter_2",
 			},
             ['sell_list'] = {
-				"item_quelling_blade", "item_assault",
-				"item_magic_wand", "item_butterfly",
-				"item_bracer", "item_heart",
-				"item_power_treads", "item_heart",
+				"item_quelling_blade", "item_butterfly",
+				"item_magic_wand", "item_heart",
+				"item_bracer", "item_nullifier",
+				"item_power_treads", "item_sheepstick",
 			},
         },
     },

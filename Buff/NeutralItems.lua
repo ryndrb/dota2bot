@@ -22,20 +22,22 @@ local Tier1NeutralItems = {
     -- --[[Seeds of Serenity]]     "item_seeds_of_serenity",
     -- --[[Lance of Pursuit]]      "item_lance_of_pursuit",
     --[[Occult Bracelet]]       "item_occult_bracelet",
-    -- --[[Duelist Gloves]]        "item_duelist_gloves",
+    --[[Duelist Gloves]]        "item_duelist_gloves",
     -- --[[Broom Handle]]          "item_broom_handle",
     -- --[[Royal Jelly]]           "item_royal_jelly",
     -- --[[Faded Broach]]          "item_faded_broach",
-    --[[Spark Of Courage]]      "item_spark_of_courage",
+    -- --[[Spark Of Courage]]      "item_spark_of_courage",
     -- --[[Ironwood Tree]]         "item_ironwood_tree",
     -- --[[Mana Draught]]          "item_mana_draught",
     --[[Polliwog Charm]]        "item_polliwog_charm",
-    --[[Ripper's Lash]]         "item_rippers_lash",
+    -- --[[Ripper's Lash]]         "item_rippers_lash",
     -- -- [[Orb of Destruction]]    "item_orb_of_destruction",
     --[[Chipped Vest]]          "item_chipped_vest",
     --[[Dormant Curio]]         "item_dormant_curio",
     --[[Kobold Cup]]            "item_kobold_cup",
-    --[[Sister's Shroud]]       "item_sisters_shroud",
+    -- --[[Sister's Shroud]]       "item_sisters_shroud",
+    --[[Ash Legion Shield]]     "item_ash_legion_shield",
+    --[[Weighted Dice]]         "item_weighted_dice",
 }
 
 local Tier2NeutralItems = {
@@ -54,10 +56,11 @@ local Tier2NeutralItems = {
     -- --[[Iron Talon]]            "item_iron_talon",
     --[[Essence Ring]]          "item_essence_ring",
     --[[Searing Signet]]        "item_searing_signet",
-    --[[Brigand's Balde]]       "item_misericorde",
+    -- --[[Brigand's Balde]]       "item_misericorde",
     --[[Tumbler's Toy]]         "item_pogo_stick",
     --[[Mana Draught]]          "item_mana_draught",
     --[[Poor Man's Shield]]     "item_poor_mans_shield",
+    --[[Defiant Shell]]         "item_defiant_shell",
 }
 
 local Tier3NeutralItems = {
@@ -76,10 +79,11 @@ local Tier3NeutralItems = {
     -- --[[Vambrace]]              "item_vambrace",
     --[[Whisper of the Dread]]  "item_whisper_of_the_dread",
     --[[Serrrated Shiv]]        "item_serrated_shiv",
-    --[[Gale Guard]]            "item_gale_guard",
+    -- --[[Gale Guard]]            "item_gale_guard",
     --[[Gunpowder Gauntlet]]    "item_gunpowder_gauntlets",
     -- --[[Ninja Gear]]            "item_ninja_gear",
     --[[Jidi Pollen Bag]]       "item_jidi_pollen_bag",
+    --[[Unrelenting Eye]]       "item_unrelenting_eye",
 }
 
 local Tier4NeutralItems = {
@@ -94,15 +98,18 @@ local Tier4NeutralItems = {
     -- --[[Havoc Hammer]]          "item_havoc_hammer",
     -- --[[Mind Breaker]]          "item_mind_breaker",
     -- --[[Martyr's Plate]]        "item_martyrs_plate",
-    -- --[[Rattlecage]]            "item_rattlecage",
+    --[[Rattlecage]]            "item_rattlecage",
     -- --[[Ogre Seal Totem]]       "item_ogre_seal_totem",
     --[[Crippling Crossbow]]    "item_crippling_crossbow",
-    --[[Magnifying Monocle]]    "item_magnifying_monocle",
+    -- --[[Magnifying Monocle]]    "item_magnifying_monocle",
     -- --[[Ceremonial Robe]]       "item_ceremonial_robe",
-    --[[Pyrrhic Cloak]]         "item_pyrrhic_cloak",
-    --[[Dezun Bloodrite]]       "item_dezun_bloodrite",
+    -- --[[Pyrrhic Cloak]]         "item_pyrrhic_cloak",
+    -- --[[Dezun Bloodrite]]       "item_dezun_bloodrite",
     --[[Giant's Maul]]          "item_giant_maul",
-    --[[Outworld Staff]]        "item_outworld_staff",
+    -- --[[Outworld Staff]]        "item_outworld_staff",
+    --[[Flayer's Bota]]         "item_flayers_bota",
+    --[[Idol of Scree'Auk]]     "item_idol_of_screeauk",
+    --[[Metamorphic Mandible]]  "item_metamorphic_mandible",
 }
 
 local Tier5NeutralItems = {
@@ -121,10 +128,12 @@ local Tier5NeutralItems = {
     --[[Fallen Sky]]            "item_fallen_sky",
     --[[Minotaur Horn]]         "item_minotaur_horn",
     --[[Spider Legs]]           "item_spider_legs",
-    --[[Unrelenting Eye]]       "item_unrelenting_eye",
+    -- --[[Unrelenting Eye]]       "item_unrelenting_eye",
     --[[Divine Regalia]]        "item_divine_regalia",
     -- -- [[Disgraced Regalia]]     "item_divine_regalia_broken", -- what 'item_divine_regalia' turns into
-    --[[Helm of the Undying]]   "item_helm_of_the_undying",
+    -- --[[Helm of the Undying]]   "item_helm_of_the_undying",
+    --[[Dezun Bloodrite]]       "item_dezun_bloodrite",
+    --[[Riftshadow Prism]]      "item_riftshadow_prism",
 }
 
 local hNeutralItemsList = {
@@ -372,10 +381,8 @@ function NeutralItems.SelectItem(hNeutralItemList)
     local items = {}
     local weights = {}
     for item, weight in pairs(hNeutralItemList) do
-        if item ~= 'item_helm_of_the_undying' then -- annoying item
-            table.insert(items,item)
-            table.insert(weights,weight)
-        end
+        table.insert(items,item)
+        table.insert(weights,weight)
     end
 
     local totalWeight = 0

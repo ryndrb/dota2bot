@@ -187,6 +187,10 @@ hero_name_table = {
             "urlName": "kunkka",
             "visibleName": "Kunkka",
         },
+        "npc_dota_hero_largo": {
+            "urlName": "largo",
+            "visibleName": "Largo",
+        },
         "npc_dota_hero_legion_commander": {
             "urlName": "legion-commander",
             "visibleName": "Legion Commander",
@@ -517,18 +521,18 @@ neutral_name_table = {
         "item_occult_bracelet": {
             "visibleName": "Occult Bracelet",
         },
-        "item_spark_of_courage": {
-            "visibleName": "Spark of Courage",
-        },
+        # "item_spark_of_courage": {
+        #     "visibleName": "Spark of Courage",
+        # },
         # "item_mana_draught": {
         #     "visibleName": "Mana Draught",
         # },
         "item_polliwog_charm": {
             "visibleName": "Pollywog Charm",
         },
-        "item_rippers_lash": {
-            "visibleName": "Ripper's Lash",
-        },
+        # "item_rippers_lash": {
+        #     "visibleName": "Ripper's Lash",
+        # },
         # "item_orb_of_destruction": {
         #     "visibleName": "Orb of Destruction",
         # },
@@ -541,8 +545,17 @@ neutral_name_table = {
         "item_kobold_cup": {
             "visibleName": "Kobold Cup",
         },
-        "item_sisters_shroud": {
-            "visibleName": "Sister's Shroud",
+        # "item_sisters_shroud": {
+        #     "visibleName": "Sister's Shroud",
+        # },
+        "item_duelist_gloves": {
+            "visibleName": "Duelist Gloves",
+        },
+        "item_ash_legion_shield": {
+            "visibleName": "Ash Legion Shield",
+        },
+        "item_weighted_dice": {
+            "visibleName": "Weighted Dice",
         },
     },
     2: {
@@ -558,9 +571,9 @@ neutral_name_table = {
         "item_searing_signet": {
             "visibleName": "Searing Signet",
         },
-        "item_misericorde": {
-            "visibleName": "Brigand's Blade",
-        },
+        # "item_misericorde": {
+        #     "visibleName": "Brigand's Blade",
+        # },
         "item_pogo_stick": {
             "visibleName": "Tumbler's Toy",
         },
@@ -569,6 +582,9 @@ neutral_name_table = {
         },
         "item_poor_mans_shield": {
             "visibleName": "Poor Man's Shield",
+        },
+        "item_defiant_shell": {
+            "visibleName": "Defiant Shell",
         },
     },
     3: {
@@ -584,9 +600,9 @@ neutral_name_table = {
         "item_serrated_shiv": {
             "visibleName": "Serrrated Shiv",
         },
-        "item_gale_guard": {
-            "visibleName": "Gale Guard",
-        },
+        # "item_gale_guard": {
+        #     "visibleName": "Gale Guard",
+        # },
         "item_gunpowder_gauntlets": {
             "visibleName": "Gunpowder Gauntlet",
         },
@@ -595,6 +611,9 @@ neutral_name_table = {
         # },
         "item_jidi_pollen_bag": {
             "visibleName": "Jidi Pollen Bag",
+        },
+        "item_unrelenting_eye": {
+            "visibleName": "Unrelenting Eye",
         },
     },
     4: {
@@ -607,23 +626,35 @@ neutral_name_table = {
         "item_crippling_crossbow": {
             "visibleName": "Crippling Crossbow",
         },
-        "item_magnifying_monocle": {
-            "visibleName": "Magnifying Monocle",
-        },
+        # "item_magnifying_monocle": {
+        #     "visibleName": "Magnifying Monocle",
+        # },
         # "item_ceremonial_robe": {
         #     "visibleName": "Ceremonial Robe",
         # },
-        "item_pyrrhic_cloak": {
-            "visibleName": "Pyrrhic Cloak",
-        },
-        "item_dezun_bloodrite": {
-            "visibleName": "Dezun Bloodrite",
-        },
+        # "item_pyrrhic_cloak": {
+        #     "visibleName": "Pyrrhic Cloak",
+        # },
+        # "item_dezun_bloodrite": {
+        #     "visibleName": "Dezun Bloodrite",
+        # },
         "item_giant_maul": {
             "visibleName": "Giant's Maul",
         },
-        "item_outworld_staff": {
-            "visibleName": "Outworld Staff",
+        # "item_outworld_staff": {
+        #     "visibleName": "Outworld Staff",
+        # },
+        "item_rattlecage": {
+            "visibleName": "Rattlecage",
+        },
+        "item_flayers_bota": {
+            "visibleName": "Flayer's Bota",
+        },
+        "item_idol_of_screeauk": {
+            "visibleName": "Idol of Scree'Auk",
+        },
+        "item_metamorphic_mandible": {
+            "visibleName": "Metamorphic Mandible",
         },
     },
     5: {
@@ -648,17 +679,23 @@ neutral_name_table = {
         "item_spider_legs": {
             "visibleName": "Spider Legs",
         },
-        "item_unrelenting_eye": {
-            "visibleName": "Unrelenting Eye",
-        },
+        # "item_unrelenting_eye": {
+        #     "visibleName": "Unrelenting Eye",
+        # },
         "item_divine_regalia": {
             "visibleName": "Divine Regalia",
         },
         # "item_divine_regalia_broken": {
         #     "visibleName": "Disgraced Regalia",
         # },
-        "item_helm_of_the_undying": {
-            "visibleName": "Helm of the Undying",
+        # "item_helm_of_the_undying": {
+        #     "visibleName": "Helm of the Undying",
+        # },
+        "item_dezun_bloodrite": {
+            "visibleName": "Dezun Bloodrite",
+        },
+        "item_riftshadow_prism": {
+            "visibleName": "Riftshadow Prism",
         },
     }
 }

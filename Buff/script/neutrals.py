@@ -10,7 +10,7 @@ import time
 
 # more general as can't go by bracket
 def GetHeroItems(hero_url_name):
-    url = f"https://www.dotabuff.com/heroes/{hero_url_name}/items?date=patch_7.39"
+    url = f"https://www.dotabuff.com/heroes/{hero_url_name}/items?date=patch_7.40"
 
     options = Options()
     options.add_argument("--headless=new")

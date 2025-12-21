@@ -156,7 +156,6 @@ local HeroBuild = {
 				"item_heart",--
 				"item_ultimate_scepter_2",
 				"item_moon_shard",
-				"item_ethereal_blade",--
 			},
             ['sell_list'] = {
 				"item_magic_wand", "item_sheepstick",
@@ -196,7 +195,6 @@ local HeroBuild = {
 				"item_heart",--
 				"item_ultimate_scepter_2",
 				"item_moon_shard",
-				"item_ethereal_blade",--
 			},
             ['sell_list'] = {
 				"item_magic_wand", "item_sheepstick",

@@ -183,18 +183,18 @@ local HeroBuild = {
 				"item_tranquil_boots",
 				"item_magic_wand",
 				"item_cyclone",
-				"item_aether_lens",
 				"item_ancient_janggo",
 				"item_rod_of_atos",
-				"item_boots_of_bearing",--
+				"item_force_staff",
 				"item_aghanims_shard",
+				"item_boots_of_bearing",--
 				"item_sheepstick",--
 				"item_octarine_core",--
-				"item_ethereal_blade",--
 				"item_gungir",--
 				"item_ultimate_scepter_2",
-				"item_moon_shard",
 				"item_wind_waker",--
+				"item_moon_shard",
+				"item_hurricane_pike",--
 			},
             ['sell_list'] = {
 				"item_magic_wand", "item_octarine_core",
@@ -224,18 +224,18 @@ local HeroBuild = {
 				"item_arcane_boots",
 				"item_magic_wand",
 				"item_cyclone",
-				"item_aether_lens",
 				"item_mekansm",
 				"item_rod_of_atos",
-				"item_guardian_greaves",--
+				"item_force_staff",
 				"item_aghanims_shard",
+				"item_guardian_greaves",--
 				"item_sheepstick",--
 				"item_octarine_core",--
-				"item_ethereal_blade",--
 				"item_gungir",--
 				"item_ultimate_scepter_2",
-				"item_moon_shard",
 				"item_wind_waker",--
+				"item_moon_shard",
+				"item_hurricane_pike",--
 			},
             ['sell_list'] = {
 				"item_magic_wand", "item_octarine_core",

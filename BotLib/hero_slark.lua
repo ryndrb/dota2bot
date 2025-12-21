@@ -173,10 +173,12 @@ local DarkPact = bot:GetAbilityByName('slark_dark_pact')
 local Pounce = bot:GetAbilityByName('slark_pounce')
 local EssenceShift = bot:GetAbilityByName('slark_essence_shift')
 local DepthShroud = bot:GetAbilityByName('slark_depth_shroud')
+local SaltwaterShiv = bot:GetAbilityByName('slark_saltwater_shiv')
 local ShadowDance = bot:GetAbilityByName('slark_shadow_dance')
 
 local DarkPactDesire
 local PounceDesire
+local SaltwaterShivDesire, SaltwaterShivTarget
 local DepthShroudDesire, DepthShroudLocation
 local ShadowDanceDesire
 
@@ -193,6 +195,7 @@ function X.SkillsComplement()
 
 	DarkPact = bot:GetAbilityByName('slark_dark_pact')
 	Pounce = bot:GetAbilityByName('slark_pounce')
+	SaltwaterShiv = bot:GetAbilityByName('slark_saltwater_shiv')
 	DepthShroud = bot:GetAbilityByName('slark_depth_shroud')
 	ShadowDance = bot:GetAbilityByName('slark_shadow_dance')
 
@@ -214,6 +217,12 @@ function X.SkillsComplement()
 		ffLastPounceTime = DotaTime()
 		J.SetQueuePtToINT(bot, false)
 		bot:ActionQueue_UseAbility(Pounce)
+		return
+	end
+
+	SaltwaterShivDesire, SaltwaterShivTarget = X.ConsiderSaltwaterShiv()
+	if SaltwaterShivDesire > 0 then
+		bot:Action_UseAbilityOnEntity(SaltwaterShiv, SaltwaterShivTarget)
 		return
 	end
 
@@ -496,6 +505,24 @@ function X.ConsiderPounce()
     end
 
 	return BOT_ACTION_DESIRE_NONE
+end
+
+function X.ConsiderSaltwaterShiv()
+	if not J.CanCastAbility(SaltwaterShiv) then
+		return BOT_ACTION_DESIRE_HIGH, nil
+	end
+
+	if J.IsGoingOnSomeone(bot) then
+		if  J.IsValidHero(botTarget)
+		and J.CanBeAttacked(botTarget)
+		and J.IsInRange(bot, botTarget, bot:GetAttackRange() + 200)
+		and not J.IsSuspiciousIllusion(botTarget)
+		then
+			return BOT_ACTION_DESIRE_HIGH, botTarget
+		end
+	end
+
+	return BOT_ACTION_DESIRE_HIGH, nil
 end
 
 function X.ConsiderDepthShroud()

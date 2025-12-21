@@ -133,6 +133,7 @@ X['spells'] = {
     
     ['npc_dota_hero_clinkz'] = {
         ['clinkz_strafe'] = {weight = 0.9},
+        ['clinkz_searing_arrows'] = {weight = 0.9},
         ['clinkz_tar_bomb'] = {weight = 0.8},
         ['clinkz_death_pact'] = {weight = 0.9},
         ['clinkz_burning_barrage'] = {weight = 0.9},
@@ -374,6 +375,16 @@ X['spells'] = {
         ['kunkka_ghostship'] = {weight = 0.8},
     },
     
+    ['npc_dota_hero_largo'] = {
+        ['largo_catchy_lick'] = {weight = 0.3},
+        ['largo_frogstomp'] = {weight = 0.4},
+        ['largo_croak_of_genius'] = {weight = 0.4},
+        ['largo_amphibian_rhapsody'] = {weight = 1},
+        ['largo_song_fight_song'] = {weight = 1},
+        ['largo_song_double_time'] = {weight = 1},
+        ['largo_song_good_vibrations'] = {weight = 1},
+    },
+    
     ['npc_dota_hero_legion_commander'] = {
         ['legion_commander_overwhelming_odds'] = {weight = 0.8},
         ['legion_commander_press_the_attack'] = {weight = 0.2},
@@ -419,6 +430,13 @@ X['spells'] = {
         ['lion_voodoo'] = {weight = 0},
         ['lion_mana_drain'] = {weight = 0.5},
         ['lion_finger_of_death'] = {weight = 0.5},
+    },
+
+    ['npc_dota_hero_lone_druid'] = {
+        ['lone_druid_entangle'] = {weight = 0.6},
+        ['lone_druid_savage_roar'] = {weight = 0.8},
+        ['lone_druid_spirit_bear'] = {weight = 1},
+        ['lone_druid_true_form'] = {weight = 0.8},
     },
 
     ['npc_dota_hero_luna'] = {
@@ -762,6 +780,7 @@ X['spells'] = {
         ['slark_dark_pact'] = {weight = 0.5},
         ['slark_pounce'] = {weight = 0.6},
         ['slark_essence_shift'] = {weight = 1},
+        ['slark_saltwater_shiv'] = {weight = 0.8},
         ['slark_depth_shroud'] = {weight = 0.2},
         ['slark_shadow_dance'] = {weight = 0.6},
     },
@@ -787,7 +806,7 @@ X['spells'] = {
         ['spectre_spectral_dagger'] = {weight = 0.6},
         ['spectre_desolate'] = {weight = 1},
         ['spectre_dispersion'] = {weight = 1},
-        ['spectre_haunt_single'] = {weight = 1},
+        ['spectre_shadow_step'] = {weight = 1},
         ['spectre_haunt'] = {weight = 1},
         ['spectre_reality'] = {weight = 1},
     },

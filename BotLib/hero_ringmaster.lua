@@ -86,7 +86,6 @@ local HeroBuild = {
                 "item_aghanims_shard",
                 "item_sheepstick",--
                 "item_ultimate_scepter_2",
-                "item_ethereal_blade",--
                 "item_moon_shard",
             },
             ['sell_list'] = {
@@ -127,7 +126,6 @@ local HeroBuild = {
                 "item_aghanims_shard",
                 "item_sheepstick",--
                 "item_ultimate_scepter_2",
-                "item_ethereal_blade",--
                 "item_moon_shard",
             },
             ['sell_list'] = {

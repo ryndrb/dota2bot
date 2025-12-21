@@ -910,11 +910,62 @@ function X.ConsiderGeomagneticGrip()
 	end
 
 	local nCastRange = J.GetProperCastRange(false, bot, GeomagneticGrip:GetCastRange())
+	local nCastRange_ally = GeomagneticGrip:GetSpecialValueInt('cast_range_heroes')
 	local nDamage = GeomagneticGrip:GetSpecialValueInt('rock_damage')
 	local nRadius = GeomagneticGrip:GetSpecialValueInt('radius')
 	local fManaAfter = J.GetManaAfter(GeomagneticGrip:GetManaCost())
 
-	-- can't check if have shard
+	for _, allyHero in pairs(nAllyHeroes) do
+		if J.IsValidHero(allyHero)
+		and bot ~= allyHero
+		and J.IsInRange(bot, allyHero, nCastRange_ally + 300)
+		and not J.IsInRange(bot, allyHero, nCastRange_ally * 0.8)
+		and not J.IsDisabled(allyHero)
+		and not J.IsSuspiciousIllusion(allyHero)
+		and not J.IsRealInvisible(allyHero)
+		and not X.IsStoneNearLocation(allyHero:GetLocation(), nRadius)
+		and not allyHero:IsChanneling()
+		then
+			if J.IsGoingOnSomeone(allyHero) then
+				local allyHeroTarget = J.GetProperTarget(allyHero)
+				if  J.IsValidHero(allyHeroTarget)
+				and allyHeroTarget:IsFacingLocation(allyHeroTarget:GetLocation(), 15)
+				and GetUnitToUnitDistance(allyHero, allyHeroTarget) > allyHero:GetAttackRange() + 50
+				and GetUnitToUnitDistance(allyHero, allyHeroTarget) < allyHero:GetAttackRange() + 700
+				and not J.IsSuspiciousIllusion(allyHeroTarget)
+				and not allyHeroTarget:IsFacingLocation(allyHero:GetLocation(), 40)
+				and #nAllyHeroes >= 3
+				then
+					local tResult = PointToLineDistance(allyHeroTarget:GetLocation(), allyHero:GetLocation(), bot:GetLocation())
+					if tResult and tResult.within and tResult.distance <= 600 then
+						return BOT_ACTION_DESIRE_HIGH, allyHero:GetLocation(), false
+					end
+
+					tResult = PointToLineDistance(bot:GetLocation(), allyHero:GetLocation(), allyHeroTarget:GetLocation())
+					if tResult and tResult.within and tResult.distance <= 600 then
+						return BOT_ACTION_DESIRE_HIGH, allyHero:GetLocation(), false
+					end
+				end
+			end
+
+			local nInRangeEnemy = J.GetEnemiesNearLoc(allyHero:GetLocation(), 900)
+			if  J.IsRetreating(allyHero)
+			and #nInRangeEnemy > 0
+			and allyHero:IsFacingLocation(J.GetTeamFountain(), 30)
+			and allyHero:DistanceFromFountain() > 1200
+			and allyHero:WasRecentlyDamagedByAnyHero(5.0)
+			then
+				local tResult = PointToLineDistance(J.GetTeamFountain(), allyHero:GetLocation(), bot:GetLocation())
+				if tResult and tResult.within and tResult.distance <= 600 then
+					return BOT_ACTION_DESIRE_HIGH, allyHero:GetLocation(), false
+				end
+			end
+
+			if J.IsStuck(allyHero) then
+				return BOT_ACTION_DESIRE_HIGH, allyHero:GetLocation(), false
+			end
+		end
+	end
 
     for _, enemyHero in pairs(nEnemyHeroes) do
         if J.IsValidHero(enemyHero)

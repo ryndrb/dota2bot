@@ -524,7 +524,7 @@ Item['item_force_staff']	= GetItemComponents( 'item_force_staff' )[1]
 
 Item['item_glimmer_cape']	= GetItemComponents( 'item_glimmer_cape' )[1]
 
-Item['item_guardian_greaves']	= {"item_arcane_boots", "item_mekansm", "item_buckler", "item_recipe_guardian_greaves"}
+Item['item_guardian_greaves']	= {"item_arcane_boots", "item_mekansm", "item_recipe_guardian_greaves"}
 
 Item['item_greater_crit']	= GetItemComponents( 'item_greater_crit' )[1]
 

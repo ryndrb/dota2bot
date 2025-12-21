@@ -43,13 +43,46 @@ local HeroBuild = {
     ['pos_3'] = {
         [1] = {
             ['talent'] = {
-                [1] = {},
+                [1] = {
+                    ['t25'] = {0, 10},
+                    ['t20'] = {10, 0},
+                    ['t15'] = {0, 10},
+                    ['t10'] = {10, 0},
+                }
             },
             ['ability'] = {
-                [1] = {},
+                [1] = {2,1,2,3,2,6,2,3,3,3,6,1,1,1,6},
             },
-            ['buy_list'] = {},
-            ['sell_list'] = {},
+            ['buy_list'] = {
+                "item_tango",
+                "item_double_branches",
+                "item_quelling_blade",
+                "item_circlet",
+                "item_gauntlets",
+            
+                "item_magic_wand",
+                "item_boots",
+                "item_bracer",
+                "item_phase_boots",
+                "item_echo_sabre",
+                "item_crimson_guard",--
+                "item_black_king_bar",--
+                "item_harpoon",--
+                "item_blink",
+                "item_ultimate_scepter",
+                "item_aghanims_shard",
+                "item_overwhelming_blink",--
+                "item_heart",--
+                "item_ultimate_scepter_2",
+                "item_moon_shard",
+                "item_travel_boots_2",--
+            },
+            ['sell_list'] = {
+                "item_quelling_blade", "item_black_king_bar",
+                "item_magic_wand", "item_blink",
+                "item_magic_wand", "item_blink",
+                "item_bracer", "item_ultimate_scepter",
+            },
         },
     },
     ['pos_4'] = {
@@ -384,110 +417,19 @@ function X.ConsiderLeechSeed()
     end
 
     local nCastRange = J.GetProperCastRange(false, bot, LeechSeed:GetCastRange())
-    local nRadius = LeechSeed:GetSpecialValueInt('radius')
-    local nDPS = LeechSeed:GetSpecialValueInt('leech_damage')
-    local nDuration = LeechSeed:GetSpecialValueInt('duration')
-    local nManaCost = LeechSeed:GetManaCost()
-	local fManaAfter = J.GetManaAfter(nManaCost)
-	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {NaturesGrasp, LivingArmor, EyesInTheForest, Overgrowth})
-    local fManaThreshold2 = J.GetManaThreshold(bot, nManaCost, {NaturesGrasp, LeechSeed, LivingArmor, EyesInTheForest, Overgrowth})
-    local fManaThreshold3 = J.GetManaThreshold(bot, nManaCost, {LivingArmor, Overgrowth})
+    local nHealFlat = LeechSeed:GetSpecialValueInt('flat_heal')
+    local nHealDamagePct = LeechSeed:GetSpecialValueInt('leech_heal') / 100
+    local nHeal = nHealFlat + (bot:GetAttackDamage() * nHealDamagePct)
 
-    if J.IsGoingOnSomeone(bot) then
-        if  J.IsValidHero(botTarget)
-        and J.CanBeAttacked(botTarget)
-        and J.CanCastOnNonMagicImmune(botTarget)
-        and J.CanCastOnTargetAdvanced(botTarget)
-        and J.IsInRange(bot, botTarget, nCastRange + 300)
-        and not J.IsInRange(bot, botTarget, bot:GetAttackRange() + 150)
-        and not J.IsDisabled(botTarget)
-        and not botTarget:HasModifier('modifier_abaddon_borrowed_time')
-        and not botTarget:HasModifier('modifier_dazzle_shallow_grave')
-        and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
-        and not botTarget:HasModifier('modifier_treant_natures_grasp_damage')
-        and botTarget:GetCurrentMovementSpeed() > 300
-        and J.IsChasingTarget(bot, botTarget)
-        and fManaAfter > fManaThreshold3
-        then
-            return BOT_ACTION_DESIRE_HIGH, botTarget
+    local bIsAutoCasted = LeechSeed:GetAutoCastState()
+
+    if bot:GetMaxHealth() - bot:GetHealth() > nHeal then
+        if not bIsAutoCasted then
+            LeechSeed:ToggleAutoCast()
         end
-
-        for _, enemyHero in pairs(nEnemyHeroes) do
-            if  J.IsValidHero(enemyHero)
-            and J.CanBeAttacked(enemyHero)
-            and J.CanCastOnNonMagicImmune(enemyHero)
-            and J.CanCastOnTargetAdvanced(enemyHero)
-            and J.IsInRange(bot, enemyHero, nCastRange + 300)
-            and not J.IsDisabled(enemyHero)
-            and not enemyHero:HasModifier('modifier_abaddon_borrowed_time')
-            and not enemyHero:HasModifier('modifier_dazzle_shallow_grave')
-            and not enemyHero:HasModifier('modifier_necrolyte_reapers_scythe')
-            and not enemyHero:HasModifier('modifier_treant_natures_grasp_damage')
-            and fManaAfter > fManaThreshold3
-            then
-                local nInRangeAlly = J.GetAlliesNearLoc(enemyHero:GetLocation(), nRadius)
-                if #nInRangeAlly > 0 then
-                    return BOT_ACTION_DESIRE_HIGH, enemyHero
-                end
-            end
-        end
-	end
-
-	if J.IsRetreating(bot) and not J.IsRealInvisible(bot) and bot:WasRecentlyDamagedByAnyHero(5.0) then
-        for _, enemyHero in pairs(nEnemyHeroes) do
-			if J.IsValidHero(enemyHero)
-			and J.IsInRange(bot, enemyHero, nCastRange)
-			and J.CanCastOnNonMagicImmune(enemyHero)
-            and J.CanCastOnTargetAdvanced(enemyHero)
-			and not J.IsDisabled(enemyHero)
-			and not enemyHero:IsDisarmed()
-            and not enemyHero:HasModifier('modifier_treant_natures_grasp_damage')
-			then
-				if (J.IsChasingTarget(enemyHero, bot) and (bot:GetCurrentMovementSpeed() + 30 < enemyHero:GetCurrentMovementSpeed()))
-				or (#nEnemyHeroes > #nAllyHeroes and enemyHero:GetAttackTarget() == bot and botHP < 0.8 and J.IsInRange(bot, enemyHero, nRadius - 75))
-				then
-					return BOT_ACTION_DESIRE_HIGH, enemyHero
-				end
-			end
-		end
-	end
-
-    if ((J.IsPushing(bot) or J.IsDefending(bot)) and #nEnemyHeroes <= 1) or J.IsFarming(bot) then
-        if  J.IsValid(botTarget)
-        and J.CanBeAttacked(botTarget)
-        and J.IsInRange(bot, botTarget, nRadius)
-        and botTarget:IsCreep()
-        and not J.CanKillTarget(botTarget, bot:GetAttackDamage() * 3, DAMAGE_TYPE_PHYSICAL)
-        and not J.WillKillTarget(botTarget, nDPS, DAMAGE_TYPE_MAGICAL, nDuration)
-        and not J.IsOtherAllysTarget(botTarget)
-        and bAttacking
-        and botHP < 0.5
-        and fManaAfter > fManaThreshold1
-        then
-            return BOT_ACTION_DESIRE_HIGH, botTarget
-        end
-    end
-
-    if J.IsDoingRoshan(bot) then
-        if  J.IsRoshan(botTarget)
-        and J.CanBeAttacked(botTarget)
-        and J.CanCastOnNonMagicImmune(botTarget)
-        and J.CanCastOnTargetAdvanced(botTarget)
-        and J.IsInRange(bot, botTarget, nCastRange)
-        and bAttacking
-        and fManaAfter > fManaThreshold2
-        then
-            return BOT_ACTION_DESIRE_HIGH, botTarget
-        end
-    end
-
-    if J.IsDoingTormentor(bot) then
-        if  J.IsTormentor(botTarget)
-        and J.IsInRange(bot, botTarget, nCastRange)
-        and bAttacking
-        and fManaAfter > fManaThreshold2
-        then
-            return BOT_ACTION_DESIRE_HIGH, botTarget
+    else
+        if bIsAutoCasted then
+            LeechSeed:ToggleAutoCast()
         end
     end
 

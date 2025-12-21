@@ -113,7 +113,6 @@ local HeroBuild = {
 				"item_boots_of_bearing",--
 				"item_ultimate_scepter",
 				"item_sheepstick",--
-				"item_ethereal_blade",--
 				"item_black_king_bar",--
 				"item_ultimate_scepter_2",
 				"item_moon_shard",
@@ -154,7 +153,6 @@ local HeroBuild = {
 				"item_guardian_greaves",--
 				"item_ultimate_scepter",
 				"item_sheepstick",--
-				"item_ethereal_blade",--
 				"item_black_king_bar",--
 				"item_ultimate_scepter_2",
 				"item_moon_shard",

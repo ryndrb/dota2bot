@@ -82,7 +82,6 @@ local HeroBuild = {
 				"item_boots_of_bearing",--
 				"item_aeon_disk",--
 				"item_ultimate_scepter",
-				"item_ethereal_blade",--
 				"item_cyclone",
 				"item_ultimate_scepter_2",
 				"item_arcane_blink",--
@@ -124,7 +123,6 @@ local HeroBuild = {
 				"item_guardian_greaves",--
 				"item_aeon_disk",--
 				"item_ultimate_scepter",
-				"item_ethereal_blade",--
 				"item_cyclone",
 				"item_ultimate_scepter_2",
 				"item_arcane_blink",--

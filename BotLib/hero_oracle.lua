@@ -81,7 +81,6 @@ local HeroBuild = {
 				"item_boots_of_bearing",--
 				"item_aghanims_shard",
 				"item_ultimate_scepter",
-				"item_ethereal_blade",--
 				"item_refresher",--
 				"item_wind_waker",--
 				"item_ultimate_scepter_2",
@@ -121,7 +120,6 @@ local HeroBuild = {
 				"item_guardian_greaves",--
 				"item_aghanims_shard",
 				"item_ultimate_scepter",
-				"item_ethereal_blade",--
 				"item_refresher",--
 				"item_wind_waker",--
 				"item_ultimate_scepter_2",
@@ -368,6 +366,7 @@ function X.ConsiderFatesEdict()
             and not allyHero:IsIllusion()
 			and not allyHero:HasModifier('modifier_necrolyte_reapers_scythe')
 			and not allyHero:HasModifier('modifier_oracle_fates_edict')
+			and (bot == allyHero) or (allyHero:IsMagicImmune() or not J.IsGoingOnSomeone(allyHero))
             then
 				local allyHP = J.GetHP(allyHero)
 

@@ -133,6 +133,14 @@ function X.GetSkillList( sAbilityList, nAbilityBuildList, sTalentList, nTalentBu
 	local bMoreMeepoFacet = GetBot():GetUnitName() == 'npc_dota_hero_meepo' and true
 	local buildListLen = bMoreMeepoFacet and 30 or (#nAbilityBuildList + #nTalentBuildList)
 
+	if GetBot():GetUnitName() == 'npc_dota_hero_lone_druid_bear' then
+		for i = 1, #nTalentBuildList do
+			sSkillList[i] = sTalentList[nTalentBuildList[i]]
+		end
+
+		return sSkillList
+	end
+
 	for i = 1, buildListLen do
 		if sSkillList[i] == nil then
 			if (not bMoreMeepoFacet and (i >= 10 and (i % 5 == 0 or ability_idx > #nAbilityBuildList)))

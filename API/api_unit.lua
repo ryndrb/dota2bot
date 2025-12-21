@@ -367,6 +367,34 @@ end
 
 -- Gets the amount of XP needed for this unit to gain a level. Returns -1 for non-heroes.
 -- int GetAbilityPoints()
+local o_GetAbilityPoints = CDOTA_Bot_Script.GetAbilityPoints
+function CDOTA_Bot_Script:GetAbilityPoints()
+    local abilityPoints = o_GetAbilityPoints(self)
+
+    if self and string.find(self:GetUnitName(), 'lone_druid_bear') then
+        local level = self:GetLevel()
+        local talentLevels = {10, 15, 20, 25, 27, 28, 29, 30}
+
+        abilityPoints = 0
+        for _, lvl in ipairs(talentLevels) do
+            if level >= lvl then
+                abilityPoints = abilityPoints + 1
+            end
+        end
+
+        for i = 1, 23 do
+            local hAbility = self:GetAbilityInSlot(i)
+            if  hAbility
+            and string.find(hAbility:GetName(), 'special_bonus')
+            and hAbility:IsTrained()
+            then
+                abilityPoints = abilityPoints - 1
+            end
+        end
+    end
+
+    return Max(abilityPoints, 0)
+end
 
 -- Get the number of ability points available to this bot.
 -- int GetLevel()

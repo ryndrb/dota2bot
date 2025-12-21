@@ -136,7 +136,7 @@ end
 local SpectralDagger    = bot:GetAbilityByName('spectre_spectral_dagger')
 local Desolate          = bot:GetAbilityByName('spectre_desolate')
 local Dispersion        = bot:GetAbilityByName('spectre_dispersion')
-local ShadowStep        = bot:GetAbilityByName('spectre_haunt_single')
+local ShadowStep        = bot:GetAbilityByName('spectre_shadow_step')
 local Haunt             = bot:GetAbilityByName('spectre_haunt')
 local Reality           = bot:GetAbilityByName('spectre_reality')
 
@@ -157,7 +157,7 @@ function X.SkillsComplement()
 
     SpectralDagger    = bot:GetAbilityByName('spectre_spectral_dagger')
     Dispersion        = bot:GetAbilityByName('spectre_dispersion')
-    ShadowStep        = bot:GetAbilityByName('spectre_haunt_single')
+    ShadowStep        = bot:GetAbilityByName('spectre_shadow_step')
     Haunt             = bot:GetAbilityByName('spectre_haunt')
     Reality           = bot:GetAbilityByName('spectre_reality')
 
@@ -425,10 +425,10 @@ function X.ConsiderDispersion()
     return BOT_ACTION_DESIRE_NONE
 end
 
-local bDontSStepBack = false
-local bDontHauntBack = false
 function X.ConsiderReality()
-    if not J.CanCastAbility(Reality) then
+    if not J.CanCastAbility(Reality)
+    or bot:IsRooted()
+    then
         return BOT_ACTION_DESIRE_NONE, 0
     end
 
@@ -436,38 +436,9 @@ function X.ConsiderReality()
         local nDuration = ShadowStep:GetSpecialValueInt('duration')
         local fTimeRemaining = (ShadowStep:GetCooldown() - ShadowStep:GetCooldownTimeRemaining())
 
-        if fTimeRemaining > nDuration and bDontSStepBack then
-            bDontSStepBack = false
-        end
-
-        if fTimeRemaining < nDuration and not bDontSStepBack then
-            if J.IsValidTarget(ShadowStepTarget) and X.IsThereHauntIllusion(ShadowStepTarget:GetLocation(), 700) then
+        if fTimeRemaining < nDuration then
+            if J.IsValidTarget(ShadowStepTarget) and X.IsThereHauntIllusion(ShadowStepTarget:GetLocation(), 350) then
                 return BOT_ACTION_DESIRE_HIGH, ShadowStepTarget:GetLocation()
-            end
-
-            if (#nEnemyHeroes == 0)
-            or (#nEnemyHeroes >= 2 and #nEnemyHeroes > #nAllyHeroes and bot:WasRecentlyDamagedByAnyHero(2.5) and botHP < 0.75)
-            then
-                local targetIllu = nil
-                local targetIlluDist = 100000
-                for _, allyHero in pairs(GetUnitList(UNIT_LIST_ALLIED_HEROES)) do
-                    if bot ~= allyHero
-                    and J.IsValidHero(allyHero)
-                    and allyHero:GetUnitName() == 'npc_dota_hero_spectre'
-                    and allyHero:IsIllusion()
-                    then
-                        local allyHeroDist = GetUnitToLocationDistance(allyHero, J.GetTeamFountain())
-                        if allyHeroDist < targetIlluDist then
-                            targetIlluDist = allyHeroDist
-                            targetIllu = allyHero
-                        end
-                    end
-                end
-
-                if targetIllu ~= nil then
-                    bDontSStepBack = true
-                    return BOT_ACTION_DESIRE_HIGH, targetIllu:GetLocation()
-                end
             end
         end
     end
@@ -476,16 +447,12 @@ function X.ConsiderReality()
         local nDuration = Haunt:GetSpecialValueInt('duration')
         local fTimeRemaining = (Haunt:GetCooldown() - Haunt:GetCooldownTimeRemaining())
 
-        if fTimeRemaining > nDuration and bDontHauntBack then
-            bDontHauntBack = false
-        end
-
-        if fTimeRemaining < nDuration and not bDontHauntBack then
+        if fTimeRemaining < nDuration then
             for _, allyHero in pairs(GetUnitList(UNIT_LIST_ALLIED_HEROES)) do
                 if J.IsValidHero(allyHero)
+                and bot ~= allyHero
                 and not J.IsInRange(bot, allyHero, 1300)
                 and not J.IsSuspiciousIllusion(allyHero)
-                and not J.IsMeepoClone(allyHero)
                 and J.IsGoingOnSomeone(allyHero)
                 and not J.IsRetreating(bot)
                 and not J.IsGoingOnSomeone(bot)
@@ -495,7 +462,7 @@ function X.ConsiderReality()
                     and J.CanBeAttacked(allyTarget)
                     and not J.IsSuspiciousIllusion(allyTarget)
                     and not allyTarget:HasModifier('modifier_faceless_void_chronosphere_freeze')
-                    and X.IsThereHauntIllusion(allyTarget:GetLocation(), 500)
+                    and X.IsThereHauntIllusion(allyTarget:GetLocation(), 350)
                     then
                         local nInRangeAlly = J.GetAlliesNearLoc(allyTarget:GetLocation(), 1200)
                         local nInRangeEnemy = J.GetEnemiesNearLoc(allyTarget:GetLocation(), 1200)
@@ -508,31 +475,6 @@ function X.ConsiderReality()
                     end
                 end
             end
-
-            if (#nEnemyHeroes == 0)
-            or (#nEnemyHeroes >= 2 and #nEnemyHeroes > #nAllyHeroes and bot:WasRecentlyDamagedByAnyHero(2.5) and botHP < 0.75)
-            then
-                local targetIllu = nil
-                local targetIlluDist = 100000
-                for _, allyHero in pairs(GetUnitList(UNIT_LIST_ALLIED_HEROES)) do
-                    if bot ~= allyHero
-                    and J.IsValidHero(allyHero)
-                    and allyHero:GetUnitName() == 'npc_dota_hero_spectre'
-                    and allyHero:IsIllusion()
-                    then
-                        local allyHeroDist = GetUnitToLocationDistance(allyHero, J.GetTeamFountain())
-                        if allyHeroDist < targetIlluDist then
-                            targetIlluDist = allyHeroDist
-                            targetIllu = allyHero
-                        end
-                    end
-                end
-
-                if targetIllu ~= nil then
-                    bDontHauntBack = true
-                    return BOT_ACTION_DESIRE_HIGH, targetIllu:GetLocation()
-                end
-            end
         end
     end
 
@@ -543,46 +485,20 @@ function X.ConsiderShadowStep()
     if not J.CanCastAbility(ShadowStep)
     or J.IsInLaningPhase()
     then
-        return BOT_ACTION_DESIRE_NONE, nil
+        return BOT_ACTION_DESIRE_NONE, ShadowStepTarget
     end
 
+    local nCastRange = ShadowStep:GetCastRange()
     local nDuration = ShadowStep:GetSpecialValueFloat('duration')
     local botActiveMode = bot:GetActiveMode()
-
-    if not J.IsGoingOnSomeone(bot)
-    and not J.IsRetreating(bot)
-    and not J.IsDefending(bot)
-    and not J.IsDoingRoshan(bot)
-    and not J.IsDoingTormentor(bot)
-    and botActiveMode ~= BOT_MODE_DEFEND_ALLY
-    then
-        for _, enemyHero in pairs(GetUnitList(UNIT_LIST_ENEMY_HEROES)) do
-            if J.IsValidHero(enemyHero)
-            and J.CanBeAttacked(enemyHero)
-            and J.GetHP(enemyHero) < 0.3
-            and not J.IsInRange(bot, enemyHero, 1600)
-            and not J.IsSuspiciousIllusion(enemyHero)
-            and not J.IsMeepoClone(enemyHero)
-            and not enemyHero:HasModifier('modifier_abaddon_borrowed_time')
-            and not enemyHero:HasModifier('modifier_dazzle_shallow_grave')
-            and not enemyHero:HasModifier('modifier_faceless_void_chronosphere_freeze')
-            and not enemyHero:HasModifier('modifier_necrolyte_reapers_scythe')
-            then
-                local damage = bot:GetEstimatedDamageToTarget(true, enemyHero, nDuration - 1, DAMAGE_TYPE_PHYSICAL)
-                local nInRangeEnemy = J.GetEnemiesNearLoc(enemyHero:GetLocation(), 1200)
-                local nInRangeTowers = enemyHero:GetNearbyTowers(1600, false)
-                if #nInRangeEnemy <= 1 and #nInRangeTowers == 0 and damage > enemyHero:GetHealth() then
-                    return BOT_ACTION_DESIRE_HIGH, enemyHero
-                end
-            end
-        end
-    end
 
     if J.IsGoingOnSomeone(bot) then
         for _, enemyHero in pairs(nEnemyHeroes) do
             if J.IsValidHero(enemyHero)
             and J.CanBeAttacked(enemyHero)
-            and not J.IsInRange(bot, enemyHero, 600)
+            and J.IsInRange(bot, enemyHero, nCastRange)
+            and J.CanCastOnTargetAdvanced(enemyHero)
+            and not J.IsInRange(bot, enemyHero, nCastRange / 2)
             and not J.IsSuspiciousIllusion(enemyHero)
             and not enemyHero:HasModifier('modifier_abaddon_borrowed_time')
             and not enemyHero:HasModifier('modifier_dazzle_shallow_grave')
@@ -601,48 +517,12 @@ function X.ConsiderShadowStep()
         end
     end
 
-    local vTeamFightLocation = J.GetTeamFightLocation(bot)
-
-    if  vTeamFightLocation ~= nil
-    and GetUnitToLocationDistance(bot, vTeamFightLocation) > 1600
-    and (bot:GetNetWorth() > 5000 or J.HasItem(bot, 'item_radiance'))
-    and not J.IsRetreating(bot)
-    and not J.IsGoingOnSomeone(bot)
-    then
-        local hTarget = nil
-        local hTargetDamage = 0
-        local nInRangeTeamFightEnemy = J.GetEnemiesNearLoc(vTeamFightLocation, 2000)
-        for _, enemyHero in pairs(nInRangeTeamFightEnemy) do
-            if  J.IsValidHero(enemyHero)
-            and J.CanBeAttacked(enemyHero)
-            and not J.IsSuspiciousIllusion(enemyHero)
-            and not enemyHero:HasModifier('modifier_abaddon_borrowed_time')
-            and not enemyHero:HasModifier('modifier_dazzle_shallow_grave')
-            and not enemyHero:HasModifier('modifier_enigma_black_hole_pull')
-            and not enemyHero:HasModifier('modifier_faceless_void_chronosphere_freeze')
-            and not enemyHero:HasModifier('modifier_necrolyte_reapers_scythe')
-            then
-                local nInRangeAlly = J.GetAlliesNearLoc(enemyHero:GetLocation(), 1200)
-                local nInRangeEnemy = J.GetEnemiesNearLoc(enemyHero:GetLocation(), 1200)
-                local enemyHeroDamage = enemyHero:GetActualIncomingDamage(1000, DAMAGE_TYPE_PHYSICAL)
-                if hTargetDamage < enemyHeroDamage and #nInRangeAlly + 1 >= #nInRangeEnemy then
-                    hTarget = enemyHero
-                    hTargetDamage = enemyHeroDamage
-                end
-            end
-        end
-
-        if hTarget ~= nil then
-            return BOT_ACTION_DESIRE_HIGH, hTarget
-        end
-    end
-
     return BOT_ACTION_DESIRE_NONE, nil
 end
 
 function X.ConsiderHaunt()
     if not J.CanCastAbility(Haunt)
-    or J.CanCastAbility(ShadowStep)
+    or (J.CanCastAbility(ShadowStep) and #nEnemyHeroes > 0)
     or J.IsInLaningPhase()
     then
         return BOT_ACTION_DESIRE_NONE

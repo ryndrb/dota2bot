@@ -688,7 +688,7 @@ local hAbilityList = {
     ['npc_dota_hero_nevermore'] = {'nevermore_requiem'},
     ['npc_dota_hero_slark'] = {'slark_shadow_dance'},
     --sniper
-    ['npc_dota_hero_spectre'] = {'spectre_haunt_single', 'spectre_haunt'},
+    ['npc_dota_hero_spectre'] = {'spectre_shadow_step', 'spectre_haunt'},
     -- ta
     ['npc_dota_hero_terrorblade'] = {'terrorblade_metamorphosis', 'terrorblade_sunder'},
     ['npc_dota_hero_troll_warlord'] = {'troll_warlord_battle_trance'},

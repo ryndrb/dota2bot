@@ -304,13 +304,15 @@ end
 
 end
 
-local SummonSpiritBear  = bot:GetAbilityByName('lone_druid_spirit_bear')
+local Entangle          = bot:GetAbilityByName('lone_druid_entangle')
 -- local SpiritLink        = bot:GetAbilityByName('lone_druid_spirit_link')
 local SavageRoar        = bot:GetAbilityByName('lone_druid_savage_roar')
+local SummonSpiritBear  = bot:GetAbilityByName('lone_druid_spirit_bear')
 local TrueForm          = bot:GetAbilityByName('lone_druid_true_form')
 
-local SummonSpiritBearDesire
+local EntangleDesire, EntangleLocation
 local SavageRoarDesire
+local SummonSpiritBearDesire
 local TrueFormDesire
 
 local bAttacking = false
@@ -322,6 +324,11 @@ function X.SkillsComplement()
 
     if J.CanNotUseAbility(bot) then return end
 
+    Entangle          = bot:GetAbilityByName('lone_druid_entangle')
+    SavageRoar        = bot:GetAbilityByName('lone_druid_savage_roar')
+    SummonSpiritBear  = bot:GetAbilityByName('lone_druid_spirit_bear')
+    TrueForm          = bot:GetAbilityByName('lone_druid_true_form')
+
     bAttacking = J.IsAttacking(bot)
     botHP = J.GetHP(bot)
     botTarget = J.GetProperTarget(bot)
@@ -331,6 +338,12 @@ function X.SkillsComplement()
     TrueFormDesire = X.ConsiderTrueForm()
     if TrueFormDesire > 0 then
         bot:Action_UseAbility(TrueForm)
+        return
+    end
+
+    EntangleDesire, EntangleLocation = X.ConsiderEntangle()
+    if EntangleDesire > 0 then
+        bot:Action_UseAbilityOnLocation(Entangle, EntangleLocation)
         return
     end
 
@@ -345,6 +358,30 @@ function X.SkillsComplement()
         bot:Action_UseAbility(SummonSpiritBear)
         return
     end
+end
+
+function X.ConsiderEntangle()
+    if not J.CanCastAbility(Entangle) then
+        return BOT_ACTION_DESIRE_NONE, 0
+    end
+
+    local nCastRange = Entangle:GetCastRange()
+    local nRadius = Entangle:GetSpecialValueInt('active_radius')
+
+    if J.IsGoingOnSomeone(bot) then
+		if J.IsValidHero(botTarget)
+		and J.CanBeAttacked(botTarget)
+		and J.CanCastOnNonMagicImmune(botTarget)
+		and J.IsInRange(bot, botTarget, nCastRange)
+        and J.IsInRange(bot, botTarget, bot:GetAttackRange())
+        and not J.IsDisabled(botTarget)
+        and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
+		then
+			return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation()
+		end
+	end
+
+    return BOT_ACTION_DESIRE_NONE, 0
 end
 
 function X.ConsiderSummonSpiritBear()

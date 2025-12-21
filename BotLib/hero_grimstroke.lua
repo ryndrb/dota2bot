@@ -84,7 +84,6 @@ local HeroBuild = {
                 "item_ultimate_scepter_2",
                 "item_octarine_core",--
                 "item_moon_shard",
-                "item_ethereal_blade",--
             },
             ['sell_list'] = {
                 "item_magic_wand", "item_aeon_disk",
@@ -123,7 +122,6 @@ local HeroBuild = {
                 "item_ultimate_scepter_2",
                 "item_octarine_core",--
                 "item_moon_shard",
-                "item_ethereal_blade",--
             },
             ['sell_list'] = {
                 "item_magic_wand", "item_aeon_disk",

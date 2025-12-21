@@ -117,7 +117,6 @@ local HeroBuild = {
 				"item_lotus_orb",--
 				"item_wind_waker",--
 				"item_ultimate_scepter_2",
-				"item_ethereal_blade",--
 				"item_moon_shard",
 			},
             ['sell_list'] = {
@@ -157,7 +156,6 @@ local HeroBuild = {
 				"item_lotus_orb",--
 				"item_wind_waker",--
 				"item_ultimate_scepter_2",
-				"item_ethereal_blade",--
 				"item_moon_shard",
 			},
             ['sell_list'] = {

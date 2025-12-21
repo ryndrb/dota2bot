@@ -368,7 +368,7 @@ function X.ConsiderBattleHunger()
             and not enemyHero:HasModifier('modifier_axe_battle_hunger')
             and not enemyHero:HasModifier('modifier_necrolyte_reapers_scythe')
 			then
-				local enemyHeroDamage = enemyHero:GetActualIncomingDamage(nDamage * nDuration, DAMAGE_TYPE_PHYSICAL)
+				local enemyHeroDamage = enemyHero:GetActualIncomingDamage(nDamage * nDuration, DAMAGE_TYPE_PURE)
 				if enemyHeroDamage > hTargetDamage then
 					hTargetDamage = enemyHeroDamage
 					hTarget = enemyHero
@@ -412,7 +412,7 @@ function X.ConsiderBattleHunger()
             and not enemyHero:HasModifier('modifier_axe_battle_hunger')
             and not enemyHero:HasModifier('modifier_necrolyte_reapers_scythe')
 			then
-				local enemyHeroDamage = enemyHero:GetActualIncomingDamage(nDamage * nDuration, DAMAGE_TYPE_PHYSICAL)
+				local enemyHeroDamage = enemyHero:GetActualIncomingDamage(nDamage * nDuration, DAMAGE_TYPE_PURE)
 				if enemyHeroDamage > hTargetDamage then
 					hTargetDamage = enemyHeroDamage
 					hTarget = enemyHero

@@ -85,7 +85,6 @@ local HeroBuild = {
                 "item_solar_crest",--
                 "item_octarine_core",--
                 "item_ultimate_scepter_2",
-                "item_ethereal_blade",--
                 "item_arcane_blink",--
                 "item_moon_shard",
             },
@@ -126,7 +125,6 @@ local HeroBuild = {
                 "item_solar_crest",--
                 "item_octarine_core",--
                 "item_ultimate_scepter_2",
-                "item_ethereal_blade",--
                 "item_arcane_blink",--
                 "item_moon_shard",
             },

@@ -230,6 +230,7 @@ end
 end
 
 local Strafe            = bot:GetAbilityByName('clinkz_strafe')
+local SearingArrows     = bot:GetAbilityByName('clinkz_searing_arrows')
 local TarBomb           = bot:GetAbilityByName('clinkz_tar_bomb')
 local DeathPact         = bot:GetAbilityByName('clinkz_death_pact')
 local BurningBarrage    = bot:GetAbilityByName('clinkz_burning_barrage')
@@ -237,6 +238,7 @@ local BurningArmy       = bot:GetAbilityByName('clinkz_burning_army')
 local SkeletonWalk      = bot:GetAbilityByName('clinkz_wind_walk')
 
 local StrafeDesire
+local SearingArrowsDesire, SearingArrowsTarget
 local TarBombDesire, TarBombTarget
 local DeathPactDesire, DeathPactTarget
 local BurningBarrageDesire, BurningBarrageLocation
@@ -254,6 +256,7 @@ function X.SkillsComplement()
 
 	Strafe            = bot:GetAbilityByName('clinkz_strafe')
 	TarBomb           = bot:GetAbilityByName('clinkz_tar_bomb')
+    SearingArrows     = bot:GetAbilityByName('clinkz_searing_arrows')
 	DeathPact         = bot:GetAbilityByName('clinkz_death_pact')
 	BurningBarrage    = bot:GetAbilityByName('clinkz_burning_barrage')
 	BurningArmy       = bot:GetAbilityByName('clinkz_burning_army')
@@ -278,6 +281,13 @@ function X.SkillsComplement()
     then
 		J.SetQueuePtToINT(bot, false)
         bot:ActionQueue_UseAbilityOnEntity(TarBomb, TarBombTarget)
+        return
+    end
+
+    SearingArrowsDesire, SearingArrowsTarget = X.ConsiderSearingArrows()
+    if SearingArrowsDesire > 0
+    then
+        bot:Action_UseAbilityOnEntity(SearingArrows, SearingArrowsTarget)
         return
     end
 
@@ -382,6 +392,94 @@ function X.ConsiderStrafe()
 	end
 
 	return BOT_ACTION_DESIRE_NONE
+end
+
+function X.ConsiderSearingArrows()
+    if not J.CanCastAbility(SearingArrows)
+    or bot:IsDisarmed()
+    then
+        return BOT_ACTION_DESIRE_NONE, nil
+    end
+
+    local nCastRange = bot:GetAttackRange()
+    local nManaCost = SearingArrows:GetManaCost()
+	local fManaAfter = J.GetManaAfter(nManaCost)
+	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {Strafe, DeathPact, BurningBarrage, BurningArmy, SkeletonWalk})
+
+    local bIsAutoCasted = SearingArrows:GetAutoCastState()
+
+	if J.IsGoingOnSomeone(bot) then
+		if  J.IsValidHero(botTarget)
+		and J.CanBeAttacked(botTarget)
+		and J.IsInRange(bot, botTarget, nCastRange + 300)
+        and not J.IsSuspiciousIllusion(botTarget)
+        and not botTarget:IsMagicImmune()
+        and not botTarget:HasModifier('modifier_abaddon_borrowed_time')
+		and not botTarget:HasModifier('modifier_dazzle_shallow_grave')
+        and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
+		then
+            if fManaAfter > fManaThreshold1 + 0.1 then
+                if not bIsAutoCasted then
+                    SearingArrows:ToggleAutoCast()
+                end
+
+                return BOT_ACTION_DESIRE_NONE
+            end
+		end
+	end
+
+    if J.IsPushing(bot) or J.IsDefending(bot) or J.IsFarming(bot) then
+        if  J.IsValid(botTarget)
+        and J.CanBeAttacked(botTarget)
+        and J.IsInRange(bot, botTarget, nCastRange)
+        and not J.CanKillTarget(botTarget, bot:GetAttackDamage() * 3, DAMAGE_TYPE_PHYSICAL)
+        and not J.IsRoshan(botTarget)
+        and not J.IsTormentor(botTarget)
+        then
+            if fManaAfter > fManaThreshold1 + 0.15 then
+                if not bIsAutoCasted then
+                    SearingArrows:ToggleAutoCast()
+                end
+
+                return BOT_ACTION_DESIRE_NONE
+            end
+        end
+    end
+
+	if J.IsDoingRoshan(bot) then
+        if  J.IsRoshan(botTarget)
+		and J.CanBeAttacked(botTarget)
+        and J.IsInRange(bot, botTarget, nCastRange)
+        then
+            if fManaAfter > fManaThreshold1 + 0.15 then
+                if not bIsAutoCasted and bAttacking then
+                    SearingArrows:ToggleAutoCast()
+                end
+
+                return BOT_ACTION_DESIRE_NONE
+            end
+        end
+    end
+
+    if J.IsDoingTormentor(bot) then
+        if  J.IsTormentor(botTarget)
+        and J.IsInRange(bot, botTarget, nCastRange)
+        then
+            if fManaAfter > fManaThreshold1 + 0.15 then
+                if not bIsAutoCasted and bAttacking then
+                    SearingArrows:ToggleAutoCast()
+                end
+
+                return BOT_ACTION_DESIRE_NONE
+            end
+        end
+    end
+
+    if bIsAutoCasted then
+        SearingArrows:ToggleAutoCast()
+    end
+
+    return BOT_ACTION_DESIRE_NONE, nil
 end
 
 function X.ConsiderTarBomb()

@@ -617,6 +617,8 @@ function X.ConsiderJetpack()
         return BOT_ACTION_DESIRE_NONE
     end
 
+    local bIsToggled = Jetpack:GetToggleState()
+
     if J.IsRetreating(bot) and not J.IsRealInvisible(bot) and bot:WasRecentlyDamagedByAnyHero(4.0) then
         for _, enemyHero in pairs(nEnemyHeroes) do
             if  J.IsValidHero(enemyHero)
@@ -628,7 +630,9 @@ function X.ConsiderJetpack()
                 if J.IsChasingTarget(enemyHero, bot)
                 or (#nInRangeEnemy > #nInRangeAlly and botHP < 0.75 and enemyHero:GetAttackTarget() == bot)
                 then
-                    return BOT_ACTION_DESIRE_HIGH
+                    if not bIsToggled then
+                        return BOT_ACTION_DESIRE_HIGH
+                    end
                 end
             end
         end
