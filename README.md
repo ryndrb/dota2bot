@@ -46,7 +46,7 @@ If you’ve come across this script or is using it, good feedback is always welc
     - ExtremePush (https://github.com/insraq/dota2bots)
 
 - ***Heroes (Pos: 1,2,3,4,5)***
-    - <ins>Heroes Implemented Count:</ins> **126** / 126
+    - <ins>Heroes Implemented Count:</ins> **127** / 127
     - Bugged (due to Valve; some can be relatively weak)
         - Dark Willow
         - Elder Titan
