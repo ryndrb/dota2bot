@@ -263,9 +263,6 @@ function X.GetNotRepeatHero( nTable )
 		for id = 0, 20
 		do
 			if ( IsTeamPlayer( id ) and GetSelectedHeroName( id ) == sHero )
-				or ( sHero ~= "npc_dota_hero_ringmaster"
-					and sHero ~= "npc_dota_hero_kez"
-					and IsCMBannedHero( sHero ) )
 				or ( X.IsBanByChat( sHero ) )
 			then
 				bRepeated = true
@@ -284,9 +281,6 @@ function X.IsRepeatHero( sHero )
 	for id = 0, 20
 	do
 		if ( IsTeamPlayer( id ) and GetSelectedHeroName( id ) == sHero )
-			or ( sHero ~= "npc_dota_hero_ringmaster"
-				and sHero ~= "npc_dota_hero_kez"
-				and IsCMBannedHero( sHero ) )
 			or ( X.IsBanByChat( sHero ) )
 		then
 			return true
