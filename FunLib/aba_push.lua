@@ -21,6 +21,7 @@ function Push.GetPushDesire(bot, lane)
 
 	if (not bMyLane and J.IsCore(bot) and J.IsInLaningPhase())
     or ((#J.GetAlliesNearLoc(J.GetTormentorLocation(GetTeam()), 1600) >= 3) or #J.GetAlliesNearLoc(J.GetTormentorWaitingLocation(GetTeam()), 2500) >= 3)
+    or (J.IsGoingToRune(bot))
 	then
 		return BOT_MODE_DESIRE_NONE
 	end

@@ -101,7 +101,6 @@ local HeroBuild = {
             ['buy_list'] = {
                 "item_tango",
                 "item_double_branches",
-                "item_enchanted_mango",
                 "item_blood_grenade",
                 "item_wind_lace",
             
@@ -141,7 +140,6 @@ local HeroBuild = {
             ['buy_list'] = {
                 "item_tango",
                 "item_double_branches",
-                "item_enchanted_mango",
                 "item_blood_grenade",
                 "item_wind_lace",
             
@@ -451,7 +449,7 @@ function X.ConsiderLivingArmor()
     if J.IsGoingOnSomeone(bot) then
         local hTarget = nil
         local hTargetScore = 0
-        for _, allyHero in pairs(nEnemyHeroes) do
+        for _, allyHero in pairs(nAllyHeroes) do
             if  J.IsValidHero(allyHero)
             and J.CanBeAttacked(allyHero)
             and not J.IsSuspiciousIllusion(allyHero)

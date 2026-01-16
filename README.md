@@ -23,7 +23,7 @@ If you’ve come across this script or is using it, good feedback is always welc
         - Under the `Lobby Settings` at the bottom, select `Edit`. Then, in the drop down `Radiant Bots` and `Dire Bots` menus, select `Local Dev Script`.
             - It's meant to play itself as it's built that way.
         - The `Server Location` must be `Local Host`.
-        - Click OK, and it should be good to go. Bot names should be: `(team.name.(kanji)TA)`.
+        - Click OK, and it should be good to go. Bot names should be in hiragana (ie. あ).
             - Note: All playing humans should only play on one team.
             - The lobby has 5 slots:
                 -  1st is for Position 2 (Mid Lane)

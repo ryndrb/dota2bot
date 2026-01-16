@@ -134,7 +134,6 @@ local HeroBuild = {
             ['buy_list'] = {
                 "item_tango",
                 "item_double_branches",
-                "item_enchanted_mango",
                 "item_wind_lace",
                 "item_blood_grenade",
             
@@ -175,7 +174,6 @@ local HeroBuild = {
             ['buy_list'] = {
                 "item_tango",
                 "item_double_branches",
-                "item_enchanted_mango",
                 "item_wind_lace",
                 "item_blood_grenade",
             

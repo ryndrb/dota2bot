@@ -107,7 +107,6 @@ local HeroBuild = {
                 "item_double_branches",
                 "item_blood_grenade",
                 "item_magic_stick",
-                "item_enchanted_mango",
             
                 "item_magic_wand",
                 "item_tranquil_boots",
@@ -151,7 +150,6 @@ local HeroBuild = {
                 "item_double_branches",
                 "item_blood_grenade",
                 "item_magic_stick",
-                "item_enchanted_mango",
             
                 "item_magic_wand",
                 "item_arcane_boots",

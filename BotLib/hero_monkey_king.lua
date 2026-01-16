@@ -41,17 +41,21 @@ local HeroBuild = {
                 "item_wraith_band",
                 "item_maelstrom",
                 "item_black_king_bar",--
+                "item_lesser_crit",
                 "item_mjollnir",--
                 "item_greater_crit",--
-                "item_abyssal_blade",--
+                "item_basher",
                 "item_butterfly",--
+                "item_abyssal_blade",--
                 "item_moon_shard",
-                "item_aghanims_shard",
                 "item_ultimate_scepter_2",
+                "item_aghanims_shard",
                 "item_travel_boots_2",--
             },
             ['sell_list'] = {
+                "item_quelling_blade", "item_lesser_crit",
                 "item_quelling_blade", "item_greater_crit",
+                "item_magic_wand", "item_basher",
                 "item_magic_wand", "item_abyssal_blade",
                 "item_wraith_band", "item_butterfly",
             },
@@ -79,19 +83,18 @@ local HeroBuild = {
                 "item_power_treads",
                 "item_wraith_band",
                 "item_bfury",--
+                "item_desolator",--
                 "item_black_king_bar",--
                 "item_greater_crit",--
-                "item_basher",
-                "item_butterfly",--
                 "item_abyssal_blade",--
                 "item_moon_shard",
-                "item_aghanims_shard",
                 "item_ultimate_scepter_2",
+                "item_aghanims_shard",
                 "item_travel_boots_2",--
             },
             ['sell_list'] = {
-                "item_magic_wand", "item_basher",
-                "item_wraith_band", "item_butterfly",
+                "item_magic_wand", "item_greater_crit",
+                "item_wraith_band", "item_abyssal_blade",
             },
         },
     },
@@ -120,9 +123,10 @@ local HeroBuild = {
                 "item_power_treads",
                 "item_maelstrom",
                 "item_black_king_bar",--
+                "item_lesser_crit",
                 "item_mjollnir",--
-                "item_basher",
                 "item_greater_crit",--
+                "item_basher",
                 "item_refresher",--
                 "item_abyssal_blade",--
                 "item_moon_shard",
@@ -132,9 +136,11 @@ local HeroBuild = {
             },
             ['sell_list'] = {
                 "item_quelling_blade", "item_black_king_bar",
-                "item_magic_wand", "item_basher",
-                "item_orb_of_corrosion", "item_greater_crit",
-                "item_bottle", "item_refresher",
+                "item_magic_wand", "item_lesser_crit",
+                "item_magic_wand", "item_greater_crit",
+                "item_bottle", "item_basher",
+                "item_bottle", "item_abyssal_blade",
+                "item_orb_of_corrosion", "item_refresher",
             },
         },
     },
@@ -352,7 +358,7 @@ function X.ConsiderBoundlessStrike()
                 and J.CanBeAttacked(enemyHero)
                 and J.IsInRange(bot, enemyHero, nCastRange)
                 and not J.IsSuspiciousIllusion(enemyHero)
-                and not J.IsDisabled(botTarget)
+                and not J.IsDisabled(enemyHero)
                 and not enemyHero:HasModifier('modifier_abaddon_borrowed_time')
                 and not enemyHero:HasModifier('modifier_dazzle_shallow_grave')
                 and not enemyHero:HasModifier('modifier_necrolyte_reapers_scythe')

@@ -269,7 +269,6 @@ function X.ConsiderNetherSwap(hMinionUnit, ability)
 		and not enemyHero:HasModifier('modifier_faceless_void_chronosphere_freeze')
 		and not enemyHero:HasModifier('modifier_legion_commander_duel')
 		and not enemyHero:HasModifier('modifier_necrolyte_reapers_scythe')
-		and not enemyHero:WasRecentlyDamagedByAnyHero(2.0)
 		then
 			local currDmg = enemyHero:GetEstimatedDamageToTarget(false, hMinionUnit, 5, DAMAGE_TYPE_ALL)
 

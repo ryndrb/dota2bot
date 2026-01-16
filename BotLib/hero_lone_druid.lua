@@ -17,7 +17,7 @@ local sUtilityItem = RI.GetBestUtilityItem(sUtility)
 
 local HeroBuild = {
     ['pos_1'] = {
-        -- Beat With Me
+        -- bear build first
         [1] = {
             ['talent'] = {
                 [1] = {
@@ -34,47 +34,48 @@ local HeroBuild = {
                 "item_tango",
                 "item_double_branches",
                 "item_quelling_blade",
+                "item_circlet",
+                "item_slippers",
 
                 "item_magic_wand",
+                "item_wraith_band",
                 "item_phase_boots",--bear
-                "item_maelstrom",
                 "item_diffusal_blade",
+                "item_desolator",--bear
                 "item_power_treads",
                 "item_assault",--bear
-                "item_ultimate_scepter",
                 "item_black_king_bar",--ld
-
-                "item_hyperstone",
-                "item_recipe_mjollnir",
-                -- "item_mjollnir",--bear
-
+                "item_basher",
+                "item_bloodthorn",--bear
+                
                 "item_eagle",
                 "item_recipe_disperser",
                 -- "item_disperser",--bear
-
-                "item_basher",
-                "item_recipe_ultimate_scepter_2",
-
-                "item_bloodthorn",--bear
-
+                
                 "item_sange",
                 "item_recipe_abyssal_blade",
                 -- "item_abyssal_blade",--bear
 
+                "item_ultimate_scepter",
+                "item_recipe_ultimate_scepter_2",
+                
                 "item_vladmir",--ld
                 "item_butterfly",--ld
                 "item_nullifier",--ld
-                "item_sheepstick",--ld
                 "item_moon_shard",
+                "item_sheepstick",--ld
                 "item_moon_shard",
                 "item_travel_boots_2",--ld
                 "item_aghanims_shard",
+                "item_ultimate_scepter_2",
             },
             ['sell_list'] = {
-                "item_magic_wand", "item_sheepstick",
+                "item_quelling_blade", "item_butterfly",
+                "item_magic_wand", "item_nullifier",
+                "item_wraith_band", "item_sheepstick",
             },
         },
-        -- Bear Necessities
+        -- ld build first
         [2] = {
             ['talent'] = {
                 [1] = {
@@ -89,45 +90,53 @@ local HeroBuild = {
             },
             ['buy_list'] = {
                 "item_tango",
-                "item_magic_stick",
-                "item_circlet",
+                "item_double_branches",
                 "item_quelling_blade",
+                "item_circlet",
+                "item_slippers",
 
                 "item_magic_wand",
                 "item_wraith_band",
-                "item_power_treads",--ld->bear
+                "item_power_treads",
+                "item_maelstrom",
+                "item_lesser_crit",
+                "item_phase_boots",--bear
+                "item_black_king_bar",--ld
                 "item_mjollnir",--ld
                 "item_butterfly",--ld
                 "item_greater_crit",--ld
+                "item_aghanims_shard",
 
                 "item_desolator",--bear
-                "item_echo_sabre",
-                "item_diffusal_blade",
                 "item_assault",--bear
+
+                "item_satanic",--ld
+
+                "item_nullifier",--bear
+                "item_basher",
+                "item_skadi",--bear
+
+                "item_sange",
+                "item_recipe_abyssal_blade",
+                -- "item_abyssal_blade",--bear
+
                 "item_ultimate_scepter",
-
-                "item_diadem",
-                "item_recipe_harpoon",
-                -- "item_recipe_harpoon",--bear
-
-                "item_eagle",
-                "item_recipe_disperser",
-                -- "item_disperser",--bear
-
-                "item_satanic",--bear
                 "item_recipe_ultimate_scepter_2",
 
-                "item_aghanims_shard",
+                "item_moon_shard",
+                "item_moon_shard",
+                "item_travel_boots_2",--ld
+                "item_ultimate_scepter_2",
             },
             ['sell_list'] = {
-                "item_magic_wand", "item_mjollnir",
-                "item_wraith_band", "item_butterfly",
-                -- "item_power_treads", "item_greater_crit",
+                "item_quelling_blade", "item_black_king_bar",
+                "item_magic_wand", "item_butterfly",
+                "item_wraith_band", "item_satanic",
             },
         },
     },
     ['pos_2'] = {
-        --Bear With Me
+        -- bear build first
         [1] = {
             ['talent'] = {
                 [1] = {
@@ -144,47 +153,48 @@ local HeroBuild = {
                 "item_tango",
                 "item_double_branches",
                 "item_quelling_blade",
+                "item_circlet",
+                "item_slippers",
 
                 "item_magic_wand",
+                "item_wraith_band",
                 "item_phase_boots",--bear
-                "item_maelstrom",
                 "item_diffusal_blade",
+                "item_desolator",--bear
                 "item_power_treads",
                 "item_assault",--bear
-                "item_ultimate_scepter",
                 "item_black_king_bar",--ld
-
-                "item_hyperstone",
-                "item_recipe_mjollnir",
-                -- "item_mjollnir",--bear
-
+                "item_basher",
+                "item_bloodthorn",--bear
+                
                 "item_eagle",
                 "item_recipe_disperser",
                 -- "item_disperser",--bear
-
-                "item_basher",
-                "item_recipe_ultimate_scepter_2",
-
-                "item_bloodthorn",--bear
-
+                
                 "item_sange",
                 "item_recipe_abyssal_blade",
                 -- "item_abyssal_blade",--bear
 
+                "item_ultimate_scepter",
+                "item_recipe_ultimate_scepter_2",
+                
                 "item_vladmir",--ld
                 "item_butterfly",--ld
                 "item_nullifier",--ld
-                "item_sheepstick",--ld
                 "item_moon_shard",
+                "item_sheepstick",--ld
                 "item_moon_shard",
                 "item_travel_boots_2",--ld
                 "item_aghanims_shard",
+                "item_ultimate_scepter_2",
             },
             ['sell_list'] = {
-                "item_magic_wand", "item_sheepstick",
+                "item_quelling_blade", "item_butterfly",
+                "item_magic_wand", "item_nullifier",
+                "item_wraith_band", "item_sheepstick",
             },
         },
-        --Bear Necessities
+        -- ld build first
         [2] = {
             ['talent'] = {
                 [1] = {
@@ -199,40 +209,48 @@ local HeroBuild = {
             },
             ['buy_list'] = {
                 "item_tango",
-                "item_magic_stick",
-                "item_circlet",
+                "item_double_branches",
                 "item_quelling_blade",
+                "item_circlet",
+                "item_slippers",
 
                 "item_magic_wand",
                 "item_wraith_band",
-                "item_power_treads",--ld->bear
+                "item_power_treads",
+                "item_maelstrom",
+                "item_lesser_crit",
+                "item_phase_boots",--bear
+                "item_black_king_bar",--ld
                 "item_mjollnir",--ld
                 "item_butterfly",--ld
                 "item_greater_crit",--ld
+                "item_aghanims_shard",
 
                 "item_desolator",--bear
-                "item_echo_sabre",
-                "item_diffusal_blade",
                 "item_assault",--bear
+
+                "item_satanic",--ld
+
+                "item_nullifier",--bear
+                "item_basher",
+                "item_skadi",--bear
+
+                "item_sange",
+                "item_recipe_abyssal_blade",
+                -- "item_abyssal_blade",--bear
+
                 "item_ultimate_scepter",
-
-                "item_diadem",
-                "item_recipe_harpoon",
-                -- "item_recipe_harpoon",--bear
-
-                "item_eagle",
-                "item_recipe_disperser",
-                -- "item_disperser",--bear
-
-                "item_satanic",--bear
                 "item_recipe_ultimate_scepter_2",
 
-                "item_aghanims_shard",
+                "item_moon_shard",
+                "item_moon_shard",
+                "item_travel_boots_2",--ld
+                "item_ultimate_scepter_2",
             },
             ['sell_list'] = {
-                "item_magic_wand", "item_mjollnir",
-                "item_wraith_band", "item_butterfly",
-                -- "item_power_treads", "item_greater_crit",
+                "item_quelling_blade", "item_black_king_bar",
+                "item_magic_wand", "item_butterfly",
+                "item_wraith_band", "item_satanic",
             },
         },
     },
@@ -276,8 +294,10 @@ local HeroBuild = {
 
 local sSelectedBuild = {}
 
-GLOBAL_bHaveBearNecessitiesFacet = false
-if GLOBAL_bHaveBearNecessitiesFacet then
+local buildNum = RandomInt(1, 2)
+GLOBAL_bBearBuildFirst = true
+if buildNum == 2 then
+    GLOBAL_bBearBuildFirst = false
     sSelectedBuild = HeroBuild[sRole][2]
 else
     sSelectedBuild = HeroBuild[sRole][1]
@@ -519,71 +539,56 @@ local function HasHaveNotItem(unit, hasList, notList)
 end
 
 -- Items to give; with rules
--- Bear With Me
-GLOBAL_hBearItemList_BearWithMe = {
-	item_quelling_blade = function (bear, druid) return nil end,
+-- bear build first
+GLOBAL_hBearItemList_FirstBear = {
 	item_phase_boots = function (bear, druid) return nil end,--bear
-	item_maelstrom = function (bear, druid) return nil end,
 	item_diffusal_blade = function (bear, druid) return nil end,
+    item_desolator = function (bear, druid) return nil end,
 	item_assault = function (bear, druid) return nil end,--bear
-	item_ultimate_scepter = function (bear, druid)
-        return not HasHaveNotItem(bear, {'item_ultimate_scepter'})
-    end,
-
-	item_hyperstone = function (bear, druid)
-        return HasHaveNotItem(bear, {'item_assault'}, {'item_mjollnir', 'item_bloodthorn'})
-			or HasHaveNotItem(bear, {'item_assault', 'item_mjollnir'}, {'item_bloodthorn'})
-    end,
-	item_recipe_mjollnir = function (bear, druid) return nil end,
-	item_mjollnir = function (bear, druid) return nil end,--bear
+    item_basher = function (bear, druid) return nil end,
+    item_bloodthorn = function (bear, druid) return nil end,--bear
 
 	item_eagle = function (bear, druid) return nil end,
 	item_recipe_disperser = function (bear, druid) return nil end,
 	item_disperser = function (bear, druid) return nil end,--bear
 
-	item_basher = function (bear, druid) return nil end,
+    item_sange = function (bear, druid) return nil end,
+    item_recipe_abyssal_blade = function (bear, druid) return nil end,
+    item_abyssal_blade = function (bear, druid) return nil end,--bear
+
+	item_ultimate_scepter = function (bear, druid)
+        return not HasHaveNotItem(bear, {'item_ultimate_scepter'})
+    end,
 	item_recipe_ultimate_scepter_2 = function (bear, druid)
         return HasHaveNotItem(bear, {'item_ultimate_scepter'})
     end,
-
-	item_bloodthorn = function (bear, druid) return nil end,--bear
-
-	item_sange = function (bear, druid) return nil end,
-	item_recipe_abyssal_blade = function (bear, druid) return nil end,
-	item_abyssal_blade = function (bear, druid) return nil end,--bear
 
 	item_moon_shard = function (bear, druid)
         return (not bear:HasModifier('modifier_item_moon_shard_consumed') or not J.HasItem(bear, 'item_moon_shard'))
     end,
 }
---Bear Necessities
-GLOBAL_hBearItemList_BearNecessities = {
-	item_quelling_blade = function (bear, druid) return nil end,
-	item_power_treads = function (bear, druid)
-        return HasHaveNotItem(druid, {'item_lesser_crit'})
-            or HasHaveNotItem(druid, {'item_greater_crit'})
-    end,--bear
-	item_desolator = function (bear, druid) return nil end,--bear
-    item_echo_sabre = function (bear, druid) return nil end,
-	item_diffusal_blade = function (bear, druid) return nil end,
-	item_assault = function (bear, druid) return nil end,--bear
+-- ld build first
+GLOBAL_hBearItemList_FirstDruid = {
+    item_phase_boots = function (bear, druid) return nil end,
+	item_desolator = function (bear, druid) return nil end,
+	item_assault = function (bear, druid) return nil end,
+    item_nullifier = function (bear, druid) return nil end,
+    item_basher = function (bear, druid) return nil end,
+    item_skadi = function (bear, druid) return nil end,
+
+    item_sange = function (bear, druid) return nil end,
+    item_recipe_abyssal_blade = function (bear, druid) return nil end,
+    item_abyssal_blade = function (bear, druid) return nil end,--bear
+
 	item_ultimate_scepter = function (bear, druid)
         return not HasHaveNotItem(bear, {'item_ultimate_scepter'})
     end,
-
-    item_diadem = function (bear, druid) return nil end,
-    item_recipe_harpoon = function (bear, druid) return nil end,
-    item_harpoon = function (bear, druid) return nil end,--bear
-
-    item_eagle = function (bear, druid)
-        return HasHaveNotItem(druid, {'item_butterfly'})
-    end,
-    item_recipe_disperser = function (bear, druid) return nil end,
-    item_disperser = function (bear, druid) return nil end,--bear
-
-    item_satanic = function (bear, druid) return nil end,--bear
     item_recipe_ultimate_scepter_2 = function (bear, druid)
         return HasHaveNotItem(bear, {'item_ultimate_scepter'})
+    end,
+
+    item_moon_shard = function (bear, druid)
+        return (not bear:HasModifier('modifier_item_moon_shard_consumed') or not J.HasItem(bear, 'item_moon_shard'))
     end,
 }
 

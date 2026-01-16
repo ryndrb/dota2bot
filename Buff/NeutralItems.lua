@@ -381,8 +381,10 @@ function NeutralItems.SelectItem(hNeutralItemList)
     local items = {}
     local weights = {}
     for item, weight in pairs(hNeutralItemList) do
-        table.insert(items,item)
-        table.insert(weights,weight)
+        if item ~= 'item_enhancement_wise' then
+            table.insert(items,item)
+            table.insert(weights,weight)
+        end
     end
 
     local totalWeight = 0

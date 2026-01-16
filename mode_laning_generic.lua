@@ -34,8 +34,8 @@ function GetDesire()
 			return 0.9 -- less feed?
 		end
 
-		if (bCore and (#nInRangeEnemy == 0 and not bot:WasRecentlyDamagedByAnyHero(5.0)) and not J.IsRetreating(bot)) then
-			return 0.96
+		if (bCore and ((#nInRangeEnemy == 0 or bot:HasModifier('modifier_tower_aura_bonus')) and not bot:WasRecentlyDamagedByAnyHero(5.0)) and not J.IsRetreating(bot)) then
+			return 0.94
 		end
 
 		return 0.446

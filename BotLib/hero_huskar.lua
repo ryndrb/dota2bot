@@ -33,14 +33,13 @@ local HeroBuild = {
 				"item_tango",
 				"item_faerie_fire",
 				"item_double_gauntlets",
-				"item_double_branches",
 			
-				"item_magic_wand",
 				"item_boots",
 				"item_armlet",
 				"item_phase_boots",
-				"item_sange_and_yasha",--
+				"item_sange",
 				"item_black_king_bar",--
+				"item_sange_and_yasha",--
 				"item_ultimate_scepter",
 				"item_satanic",--
 				"item_aghanims_shard",
@@ -51,9 +50,8 @@ local HeroBuild = {
 				"item_travel_boots_2",--
 			},
             ['sell_list'] = {
-				"item_gauntlets", "item_black_king_bar",
 				"item_gauntlets", "item_ultimate_scepter",
-				"item_magic_wand", "item_satanic",
+				"item_gauntlets", "item_satanic",
 				"item_armlet", "item_hurricane_pike",
 			},
         },
@@ -103,14 +101,52 @@ local HeroBuild = {
 				"item_armlet", "item_hurricane_pike",
 			},
         },
+        [2] = {
+            ['talent'] = {
+				[1] = {
+					['t25'] = {10, 0},
+					['t20'] = {0, 10},
+					['t15'] = {10, 0},
+					['t10'] = {0, 10},
+				},
+            },
+            ['ability'] = {
+				[1] = {2,3,3,2,3,6,3,1,2,2,1,6,1,1,6},
+            },
+            ['buy_list'] = {
+				"item_tango",
+				"item_faerie_fire",
+				"item_double_gauntlets",
+			
+				"item_boots",
+				"item_armlet",
+				"item_phase_boots",
+				"item_sange",
+				"item_black_king_bar",--
+				"item_sange_and_yasha",--
+				"item_ultimate_scepter",
+				"item_satanic",--
+				"item_aghanims_shard",
+				"item_assault",--
+				"item_ultimate_scepter_2",
+				"item_heart",--
+				"item_moon_shard",
+				"item_travel_boots_2",--
+			},
+            ['sell_list'] = {
+				"item_gauntlets", "item_ultimate_scepter",
+				"item_gauntlets", "item_satanic",
+				"item_armlet", "item_heart",
+			},
+        },
     },
     ['pos_3'] = {
         [1] = {
             ['talent'] = {
 				[1] = {
-					['t25'] = {10, 0},
+					['t25'] = {0, 10},
 					['t20'] = {0, 10},
-					['t15'] = {0, 10},
+					['t15'] = {10, 0},
 					['t10'] = {0, 10},
 				},
             },
@@ -121,29 +157,26 @@ local HeroBuild = {
 				"item_tango",
 				"item_faerie_fire",
 				"item_double_gauntlets",
-				"item_double_branches",
 			
-				"item_magic_wand",
-				"item_double_bracer",
 				"item_boots",
+				"item_double_bracer",
 				"item_armlet",
 				"item_phase_boots",
-				"item_sange",
+				"item_blade_mail",
 				"item_crimson_guard",--
 				"item_black_king_bar",--
 				"item_sange_and_yasha",--
-				"item_ultimate_scepter",
-				"item_assault",--
 				"item_ultimate_scepter_2",
+				"item_assault",--
 				"item_aghanims_shard",
 				"item_satanic",--
 				"item_moon_shard",
 				"item_travel_boots_2",--
 			},
             ['sell_list'] = {
-				"item_magic_wand", "item_crimson_guard",
 				"item_bracer", "item_black_king_bar",
-				"item_bracer", "item_ultimate_scepter",
+				"item_bracer", "item_sange_and_yasha",
+				"item_blade_mail", "item_assault",
 				"item_armlet", "item_travel_boots_2",
 			},
         },
@@ -485,6 +518,14 @@ function X.ConsiderBurningSpear()
 		then
 			if J.WillKillTarget(enemyHero, nDamage, DAMAGE_TYPE_MAGICAL, nDuration) then
 				return BOT_ACTION_DESIRE_HIGH, enemyHero
+			end
+
+			if J.IsLaning(bot) and not J.IsRealInvisible(bot) then
+				if J.IsInRange(bot, enemyHero, nCastRange + 100) and #nAllyHeroes >= #nEnemyHeroes then
+					if J.GetModifierCount(enemyHero, 'modifier_huskar_burning_spear_debuff') <= 5 then
+						return BOT_ACTION_DESIRE_HIGH, enemyHero
+					end
+				end
 			end
 		end
 	end

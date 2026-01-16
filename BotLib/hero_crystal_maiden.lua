@@ -142,7 +142,6 @@ local HeroBuild = {
 				"item_tango",
 				"item_double_branches",
 				"item_faerie_fire",
-				"item_enchanted_mango",
 				"item_blood_grenade",
 			
 				"item_magic_wand",
@@ -182,7 +181,6 @@ local HeroBuild = {
 				"item_tango",
 				"item_double_branches",
 				"item_faerie_fire",
-				"item_enchanted_mango",
 				"item_blood_grenade",
 			
 				"item_magic_wand",

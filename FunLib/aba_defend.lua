@@ -44,6 +44,7 @@ function Defend.GetDefendDesire(bot, lane)
 	or (not bMyLane and botPosition == 1 and J.IsInLaningPhase()) -- reduce carry feeds
 	or (J.IsDoingRoshan(bot) and #J.GetAlliesNearLoc(J.GetCurrentRoshanLocation(), 2800) >= 3)
 	or (J.IsDoingTormentor(bot) and ((#J.GetAlliesNearLoc(J.GetTormentorLocation(GetTeam()), 1600) >= 2) or #J.GetAlliesNearLoc(J.GetTormentorWaitingLocation(GetTeam()), 2500) >= 2) and nEnemyAroundAncient == 0)
+	or (J.IsGoingToRune(bot))
 	then
 		return BOT_MODE_DESIRE_NONE
 	end

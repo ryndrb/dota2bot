@@ -550,6 +550,7 @@ function CDOTA_Bot_Script:IsMagicImmune()
         or self:HasModifier('modifier_dawnbreaker_fire_wreath_magic_immunity_tooltip')
         or self:HasModifier('modifier_rattletrap_cog_immune')
         or self:HasModifier('modifier_legion_commander_press_the_attack_immunity')
+        or self:HasModifier('modifier_minotaur_horn_immune')
         then
             return true
         end

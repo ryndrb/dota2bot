@@ -382,27 +382,6 @@ function GetDesire()
 	-- 	return BOT_ACTION_DESIRE_ABSOLUTE
 	-- end
 
-	-- Bear Necessities
-	-- facet fix
-	if GLOBAL_bHaveBearNecessitiesFacet and J.IsValid(LoneDruid.hero) and bot == LoneDruid.hero then
-		for i = 0, 8 do
-			local hItem = bot:GetItemInSlot(i)
-			if hItem ~= nil and i >= 3 then
-				local sItemName = hItem:GetName()
-				for j = 0, 2 do
-					local hItem2 = bot:GetItemInSlot(j)
-					if  hItem2 == nil
-					or (hItem2 ~= nil and sItemName == 'item_maelstrom' and hItem2:GetName() == 'item_magic_wand')
-					or (hItem2 ~= nil and sItemName == 'item_lesser_crit' and hItem2:GetName() == 'item_wraith_band')
-					or (hItem2 ~= nil and sItemName == 'item_greater_crit' and hItem2:GetName() == 'item_wraith_band')
-					then
-						bot:ActionImmediate_SwapItems(i, j)
-					end
-				end
-			end
-		end
-	end
-
 	if DotaTime() > -30 and J.IsValid(LoneDruid.hero) and J.IsValid(LoneDruid.bear) and bot == LoneDruid.hero and J.IsInRange(bot, LoneDruid.bear, 1600) then
 		local nEnemyHeroes = J.GetEnemiesNearLoc(bot:GetLocation(), 1200)
 		if not J.IsInTeamFight(bot, 1600) and #nEnemyHeroes == 0 then
@@ -411,41 +390,20 @@ function GetDesire()
 				if hItem ~= nil then
 					local hItemName = hItem:GetName()
 
-					if GLOBAL_bHaveBearNecessitiesFacet then
-						for itemName, rule in pairs(GLOBAL_hBearItemList_BearNecessities) do
-							if hItemName == itemName then
-								if rule then
-									if itemName == 'item_eagle'
-									or itemName == 'item_power_treads'
-									then
-										if rule(nil, LoneDruid.hero) then
-											bot.dropItem = hItem
-											bot.isGiveItem = true
-											return BOT_MODE_DESIRE_ABSOLUTE
-										end
-									else
-										if (rule(LoneDruid.bear, nil) == true)
-										or (rule(LoneDruid.bear, nil) == nil)
-										then
-											bot.dropItem = hItem
-											bot.isGiveItem = true
-											return BOT_MODE_DESIRE_ABSOLUTE
-										end
-									end
-								end
-							end
-						end
-					else
-						for itemName, rule in pairs(GLOBAL_hBearItemList_BearWithMe) do
-							if hItemName == itemName then
-								if rule then
-									if (rule(LoneDruid.bear, nil) == true)
-									or (rule(LoneDruid.bear, nil) == nil)
-									then
-										bot.dropItem = hItem
-										bot.isGiveItem = true
-										return BOT_MODE_DESIRE_ABSOLUTE
-									end
+					local itemList = GLOBAL_hBearItemList_FirstBear
+					if not GLOBAL_bBearBuildFirst then
+						itemList = GLOBAL_hBearItemList_FirstBear
+					end
+
+					for itemName, rule in pairs(itemList) do
+						if hItemName == itemName then
+							if rule then
+								if (rule(LoneDruid.bear, nil) == true)
+								or (rule(LoneDruid.bear, nil) == nil)
+								then
+									bot.dropItem = hItem
+									bot.isGiveItem = true
+									return BOT_MODE_DESIRE_ABSOLUTE
 								end
 							end
 						end
@@ -838,6 +796,28 @@ function Think()
 						if droppedItem.item == LoneDruid.hero.dropItem then
 							bot:Action_PickUpItem(LoneDruid.hero.dropItem)
 							LoneDruid.hero.dropItem = nil
+							return
+						end
+
+						local hTargetItem = nil
+						local hTargetItemDistance = math.huge
+						local itemList = GLOBAL_hBearItemList_FirstBear
+						if not GLOBAL_bBearBuildFirst then
+							itemList = GLOBAL_hBearItemList_FirstDruid
+						end
+
+						for itemName, _ in pairs(itemList) do
+							if droppedItem.item and droppedItem.item:GetName() == itemName then
+								local distance = GetUnitToLocationDistance(bot, droppedItem.location)
+								if distance < hTargetItemDistance then
+									hTargetItem = droppedItem.item
+									hTargetItemDistance = distance
+								end
+							end
+						end
+
+						if hTargetItem then
+							bot:Action_PickUpItem(hTargetItem)
 							return
 						end
 					end

@@ -128,38 +128,169 @@ end
 
 function X.GetSkillList( sAbilityList, nAbilityBuildList, sTalentList, nTalentBuildList )
 	local sSkillList = {}
-	local talent_idx = 1
-	local ability_idx = 1
-	local bMoreMeepoFacet = GetBot():GetUnitName() == 'npc_dota_hero_meepo' and true
-	local buildListLen = bMoreMeepoFacet and 30 or (#nAbilityBuildList + #nTalentBuildList)
+	local botName = GetBot():GetUnitName()
+	local bMoreMeepoFacet = botName == 'npc_dota_hero_meepo' and true
 
-	if GetBot():GetUnitName() == 'npc_dota_hero_lone_druid_bear' then
-		for i = 1, #nTalentBuildList do
-			sSkillList[i] = sTalentList[nTalentBuildList[i]]
-		end
+	--[[
+	7.40+ broke "ActionImmediate_LevelAbility"
+	ability points are different server side; the distribution is also "wrong", except invoker
+	~for most heroes:             (now)					 (before?)
+					level  1-17 : 14 points (other 15)   16 points
+					level 18-22 :  1 points				 2 points
+					level 23-30 :  8 points      		 5 points
+	
+	will level talents last
+	]]
 
-		return sSkillList
+	sSkillList = {
+		[ 1] = {done = false, name = sAbilityList[nAbilityBuildList[1]]},
+		[ 2] = {done = false, name = sAbilityList[nAbilityBuildList[2]]},
+		[ 3] = {done = false, name = sAbilityList[nAbilityBuildList[3]]},
+		[ 4] = {done = false, name = sAbilityList[nAbilityBuildList[4]]},
+		[ 5] = {done = false, name = sAbilityList[nAbilityBuildList[5]]},
+		[ 6] = {done = false, name = sAbilityList[nAbilityBuildList[6]]},
+		[ 7] = {done = false, name = sAbilityList[nAbilityBuildList[7]]},
+		[ 8] = {done = false, name = sAbilityList[nAbilityBuildList[8]]},
+		[ 9] = {done = false, name = sAbilityList[nAbilityBuildList[9]]},
+		[10] = {done = false, name = sAbilityList[nAbilityBuildList[10]]},
+		[11] = {done = false, name = sAbilityList[nAbilityBuildList[12]]},
+		[12] = {done = false, name = sAbilityList[nAbilityBuildList[11]]},
+		[13] = {done = false, name = sAbilityList[nAbilityBuildList[13]]},
+		[14] = {done = false, name = sAbilityList[nAbilityBuildList[14]]},
+		[15] = {done = false, name = nil},
+		[16] = {done = false, name = nil},
+		[17] = {done = false, name = nil},
+		[18] = {done = false, name = sAbilityList[nAbilityBuildList[15]]},
+		[19] = {done = false, name = nil},
+		[20] = {done = false, name = nil},
+		[21] = {done = false, name = nil},
+		[22] = {done = false, name = nil},
+		[23] = {done = false, name = sTalentList[nTalentBuildList[1]]},
+		[24] = {done = false, name = sTalentList[nTalentBuildList[2]]},
+		[25] = {done = false, name = sTalentList[nTalentBuildList[3]]},
+		[26] = {done = false, name = sTalentList[nTalentBuildList[4]]},
+		[27] = {done = false, name = sTalentList[nTalentBuildList[5]]},
+		[28] = {done = false, name = sTalentList[nTalentBuildList[6]]},
+		[29] = {done = false, name = sTalentList[nTalentBuildList[7]]},
+		[30] = {done = false, name = sTalentList[nTalentBuildList[8]]},
+	}
+
+	if botName == 'npc_dota_hero_lone_druid_bear' then
+		sSkillList = {
+			[10] = {done = false, name = sTalentList[nTalentBuildList[1]]},
+			[15] = {done = false, name = sTalentList[nTalentBuildList[2]]},
+			[20] = {done = false, name = sTalentList[nTalentBuildList[3]]},
+			[25] = {done = false, name = sTalentList[nTalentBuildList[4]]},
+			[27] = {done = false, name = sTalentList[nTalentBuildList[5]]},
+			[28] = {done = false, name = sTalentList[nTalentBuildList[6]]},
+			[29] = {done = false, name = sTalentList[nTalentBuildList[7]]},
+			[30] = {done = false, name = sTalentList[nTalentBuildList[8]]},
+		}
 	end
 
-	for i = 1, buildListLen do
-		if sSkillList[i] == nil then
-			if (not bMoreMeepoFacet and (i >= 10 and (i % 5 == 0 or ability_idx > #nAbilityBuildList)))
-			or (bMoreMeepoFacet and ((i == 11) or (i == 15) or (i >= 18 and i <= 23) or (i >= 25 and i <= 30)))
-			then
-				sSkillList[i] = sTalentList[nTalentBuildList[talent_idx]]
-				talent_idx = talent_idx + 1
-				if bMoreMeepoFacet then
-					if talent_idx == 9 then talent_idx = 3 end
-				end
-			else
-				if (bMoreMeepoFacet)
-				or (not bMoreMeepoFacet and (ability_idx <= #nAbilityBuildList))
-				then
-					sSkillList[i] = sAbilityList[nAbilityBuildList[ability_idx]]
-					ability_idx = ability_idx + 1
-				end
-			end
-		end
+	if botName == 'npc_dota_hero_invoker' then
+		sSkillList = {
+			[ 1] = {done = false, name = sAbilityList[nAbilityBuildList[1]]},
+			[ 2] = {done = false, name = sAbilityList[nAbilityBuildList[2]]},
+			[ 3] = {done = false, name = sAbilityList[nAbilityBuildList[3]]},
+			[ 4] = {done = false, name = sAbilityList[nAbilityBuildList[4]]},
+			[ 5] = {done = false, name = sAbilityList[nAbilityBuildList[5]]},
+			[ 6] = {done = false, name = sAbilityList[nAbilityBuildList[6]]},
+			[ 7] = {done = false, name = sAbilityList[nAbilityBuildList[7]]},
+			[ 8] = {done = false, name = sAbilityList[nAbilityBuildList[8]]},
+			[ 9] = {done = false, name = sAbilityList[nAbilityBuildList[9]]},
+			[10] = {done = false, name = sAbilityList[nAbilityBuildList[10]]},
+			[11] = {done = false, name = sAbilityList[nAbilityBuildList[11]]},
+			[12] = {done = false, name = sAbilityList[nAbilityBuildList[12]]},
+			[13] = {done = false, name = sAbilityList[nAbilityBuildList[13]]},
+			[14] = {done = false, name = sAbilityList[nAbilityBuildList[14]]},
+			[15] = {done = false, name = sAbilityList[nAbilityBuildList[15]]},
+			[16] = {done = false, name = sAbilityList[nAbilityBuildList[16]]},
+			[17] = {done = false, name = sAbilityList[nAbilityBuildList[17]]},
+			[18] = {done = false, name = sAbilityList[nAbilityBuildList[18]]},
+			[19] = {done = false, name = sAbilityList[nAbilityBuildList[19]]},
+			[20] = {done = false, name = sAbilityList[nAbilityBuildList[20]]},
+			[21] = {done = false, name = sAbilityList[nAbilityBuildList[21]]},
+			[22] = {done = false, name = sTalentList[nTalentBuildList[1]]},
+			[23] = {done = false, name = sTalentList[nTalentBuildList[2]]},
+			[24] = {done = false, name = sTalentList[nTalentBuildList[3]]},
+			[25] = {done = false, name = sTalentList[nTalentBuildList[4]]},
+			[26] = {done = false, name = nil},
+			[27] = {done = false, name = sTalentList[nTalentBuildList[5]]},
+			[28] = {done = false, name = sTalentList[nTalentBuildList[6]]},
+			[29] = {done = false, name = sTalentList[nTalentBuildList[7]]},
+			[30] = {done = false, name = sTalentList[nTalentBuildList[8]]},
+		}
+	end
+
+	if bMoreMeepoFacet then
+		sSkillList = {
+			[ 1] = {done = false, name = sAbilityList[nAbilityBuildList[1]]},
+			[ 2] = {done = false, name = sAbilityList[nAbilityBuildList[2]]},
+			[ 3] = {done = false, name = sAbilityList[nAbilityBuildList[3]]},
+			[ 4] = {done = false, name = sAbilityList[nAbilityBuildList[4]]},
+			[ 5] = {done = false, name = sAbilityList[nAbilityBuildList[5]]},
+			[ 6] = {done = false, name = sAbilityList[nAbilityBuildList[6]]},
+			[ 7] = {done = false, name = sAbilityList[nAbilityBuildList[7]]},
+			[ 8] = {done = false, name = sAbilityList[nAbilityBuildList[8]]},
+			[ 9] = {done = false, name = sAbilityList[nAbilityBuildList[9]]},
+			[10] = {done = false, name = sAbilityList[nAbilityBuildList[10]]},
+			[11] = {done = false, name = sAbilityList[nAbilityBuildList[11]]},
+			[12] = {done = false, name = sAbilityList[nAbilityBuildList[12]]},
+			[13] = {done = false, name = sAbilityList[nAbilityBuildList[13]]},
+			[14] = {done = false, name = sAbilityList[nAbilityBuildList[14]]},
+			[15] = {done = false, name = nil},
+			[16] = {done = false, name = nil},
+			[17] = {done = false, name = nil},
+			[18] = {done = false, name = sAbilityList[nAbilityBuildList[15]]},
+			[19] = {done = false, name = nil},
+			[20] = {done = false, name = nil},
+			[21] = {done = false, name = nil},
+			[22] = {done = false, name = sTalentList[nTalentBuildList[1]]},
+			[23] = {done = false, name = sTalentList[nTalentBuildList[2]]},
+			[24] = {done = false, name = sAbilityList[nAbilityBuildList[16]]},
+			[25] = {done = false, name = sTalentList[nTalentBuildList[3]]},
+			[26] = {done = false, name = sTalentList[nTalentBuildList[4]]},
+			[27] = {done = false, name = sTalentList[nTalentBuildList[5]]},
+			[28] = {done = false, name = sTalentList[nTalentBuildList[6]]},
+			[29] = {done = false, name = sTalentList[nTalentBuildList[7]]},
+			[30] = {done = false, name = sTalentList[nTalentBuildList[8]]},
+		}
+	end
+
+	if not bMoreMeepoFacet and #nAbilityBuildList == 16 then
+		sSkillList = {
+			[ 1] = {done = false, name = sAbilityList[nAbilityBuildList[1]]},
+			[ 2] = {done = false, name = sAbilityList[nAbilityBuildList[2]]},
+			[ 3] = {done = false, name = sAbilityList[nAbilityBuildList[3]]},
+			[ 4] = {done = false, name = sAbilityList[nAbilityBuildList[4]]},
+			[ 5] = {done = false, name = sAbilityList[nAbilityBuildList[5]]},
+			[ 6] = {done = false, name = sAbilityList[nAbilityBuildList[6]]},
+			[ 7] = {done = false, name = sAbilityList[nAbilityBuildList[7]]},
+			[ 8] = {done = false, name = sAbilityList[nAbilityBuildList[8]]},
+			[ 9] = {done = false, name = sAbilityList[nAbilityBuildList[9]]},
+			[10] = {done = false, name = sAbilityList[nAbilityBuildList[10]]},
+			[11] = {done = false, name = sAbilityList[nAbilityBuildList[12]]},
+			[12] = {done = false, name = sAbilityList[nAbilityBuildList[11]]},
+			[13] = {done = false, name = sAbilityList[nAbilityBuildList[13]]},
+			[14] = {done = false, name = sAbilityList[nAbilityBuildList[14]]},
+			[15] = {done = false, name = nil},
+			[16] = {done = false, name = nil},
+			[17] = {done = false, name = sAbilityList[nAbilityBuildList[15]]},
+			[18] = {done = false, name = sAbilityList[nAbilityBuildList[16]]},
+			[19] = {done = false, name = nil},
+			[20] = {done = false, name = nil},
+			[21] = {done = false, name = nil},
+			[22] = {done = false, name = nil},
+			[23] = {done = false, name = sTalentList[nTalentBuildList[1]]},
+			[24] = {done = false, name = sTalentList[nTalentBuildList[2]]},
+			[25] = {done = false, name = sTalentList[nTalentBuildList[3]]},
+			[26] = {done = false, name = sTalentList[nTalentBuildList[4]]},
+			[27] = {done = false, name = sTalentList[nTalentBuildList[5]]},
+			[28] = {done = false, name = sTalentList[nTalentBuildList[6]]},
+			[29] = {done = false, name = sTalentList[nTalentBuildList[7]]},
+			[30] = {done = false, name = sTalentList[nTalentBuildList[8]]},
+		}
 	end
 
 	return sSkillList

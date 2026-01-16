@@ -192,21 +192,23 @@ function X.SkillsComplement()
     nAllyHeroes = bot:GetNearbyHeroes(1600, false, BOT_MODE_NONE)
     nEnemyHeroes = bot:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
 
-    ConsumeDesire = X.ConsiderConsume()
-    if ConsumeDesire > 0 then
-        bot:Action_UseAbility(Consume)
-        return
-    end
+    -- broken with 7.40+; it removed lifestealer's instance when infesting
+    -- ConsumeDesire = X.ConsiderConsume()
+    -- if ConsumeDesire > 0 then
+    --     bot:Action_UseAbility(Consume)
+    --     return
+    -- end
 
     if not bot:HasModifier('modifier_life_stealer_infest') then
         if J.CanNotUseAbility(bot) then return end
     end
 
-    InfestDesire, InfestTarget = X.ConsiderInfest()
-    if InfestDesire > 0 then
-        bot:Action_UseAbilityOnEntity(Infest, InfestTarget)
-        return
-    end
+    -- broken with 7.40+; it removed lifestealer's instance when infesting
+    -- InfestDesire, InfestTarget = X.ConsiderInfest()
+    -- if InfestDesire > 0 then
+    --     bot:Action_UseAbilityOnEntity(Infest, InfestTarget)
+    --     return
+    -- end
 
     RageDesire = X.ConsiderRage()
     if RageDesire > 0 then

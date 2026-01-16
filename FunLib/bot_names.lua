@@ -378,7 +378,7 @@ local tProTeams = {
 
 local G2 = {"Monet", "NothingToSay", "JT-", "BoBoKa", "xNova"}
 
-local tKanjis = {
+local tKanjis_Hiragana = {
     "あ", "い", "う", "え", "お",
     "か", "き", "く", "け", "こ",
     "さ", "し", "す", "せ", "そ",
@@ -388,34 +388,50 @@ local tKanjis = {
     "ま", "み", "む", "め", "も",
     "や", "ゆ", "よ",
     "ら", "り", "る", "れ", "ろ",
-    "わ", "を", "ん"
+    "わ", "を",
+    "ん",
+    "が", "ぎ", "ぐ", "げ", "ご",
+    "ざ", "じ", "ず", "ぜ", "ぞ",
+    "だ", "ぢ", "づ", "で", "ど",
+    "ば", "び",	"ぶ", "べ", "ぼ",
+    "ぱ", "ぴ", "ぷ", "ぺ", "ぽ",
+    "っ",
 }
 
 function X.GetBotNames()
     local names = {}
 
-    local rep = tKanjis[RandomInt(1, #tKanjis)]
-    local idx = RandomInt(1, #tProTeams)
-    if GetTeam() == TEAM_RADIANT
-    then while idx % 2 ~= 0 do idx = RandomInt(1, #tProTeams) end
-    else while idx % 2 ~= 1 do idx = RandomInt(1, #tProTeams) end end
+    -- local rep = tKanjis_Hiragana[RandomInt(1, #tKanjis_Hiragana)]
+    -- local idx = RandomInt(1, #tProTeams)
+    -- if GetTeam() == TEAM_RADIANT
+    -- then while idx % 2 ~= 0 do idx = RandomInt(1, #tProTeams) end
+    -- else while idx % 2 ~= 1 do idx = RandomInt(1, #tProTeams) end end
 
-    local team = tProTeams[idx]
-    local currTeam = team['rosters'][RandomInt(1, #team['rosters'])]
+    -- local team = tProTeams[idx]
+    -- local currTeam = team['rosters'][RandomInt(1, #team['rosters'])]
 
-    -- pos 2, 3, 1, 5, 4
-    currTeam[1], currTeam[2] = currTeam[2], currTeam[1]
-    currTeam[2], currTeam[3] = currTeam[3], currTeam[2]
-    currTeam[4], currTeam[5] = currTeam[5], currTeam[4]
+    -- -- pos 2, 3, 1, 5, 4
+    -- currTeam[1], currTeam[2] = currTeam[2], currTeam[1]
+    -- currTeam[2], currTeam[3] = currTeam[3], currTeam[2]
+    -- currTeam[4], currTeam[5] = currTeam[5], currTeam[4]
 
-    for _, pName in pairs(currTeam)
-    do
-        if U.tablesEqual(currTeam, G2)
-        then
-            table.insert(names, 'G2.'..team['alias']..'.'..pName..'.'..rep..'TA')
-        else
-            table.insert(names, team['alias']..'.'..pName..'.'..rep..'TA')
+    -- for _, pName in pairs(currTeam)
+    -- do
+    --     if U.tablesEqual(currTeam, G2)
+    --     then
+    --         table.insert(names, 'G2.'..team['alias']..'.'..pName..'.'..rep..'TA')
+    --     else
+    --         table.insert(names, team['alias']..'.'..pName..'.'..rep..'TA')
+    --     end
+    -- end
+
+    for _ = 1, 5 do
+        local name = {}
+        for _ = 1, 3 do
+            name[#name + 1] = tKanjis_Hiragana[RandomInt(1, #tKanjis_Hiragana)]
         end
+
+        table.insert(names, table.concat(name))
     end
 
     return names

@@ -120,27 +120,27 @@ local HeroBuild = {
                 "item_tango",
                 "item_double_branches",
                 "item_quelling_blade",
-                "item_circlet",
-                "item_gauntlets",
+                "item_double_gauntlets",
 			
 				"item_magic_wand",
-				"item_bracer",
 				"item_power_treads",
+				"item_soul_ring",
 				"item_orchid",
-				"item_crimson_guard",--
+				"item_blink",
 				"item_black_king_bar",--
-				sUtilityItem,--
+				"item_assault",--
 				"item_aghanims_shard",
-				"item_overwhelming_blink",--
 				"item_bloodthorn",--
+				"item_nullifier",--
+				"item_swift_blink",--
 				"item_ultimate_scepter_2",
 				"item_moon_shard",
 				"item_travel_boots_2",--
 			},
             ['sell_list'] = {
-				"item_quelling_blade", "item_crimson_guard",
-				"item_magic_wand", "item_black_king_bar",
-				"item_bracer", sUtilityItem,
+				"item_quelling_blade", "item_black_king_bar",
+				"item_magic_wand", "item_assault",
+				"item_soul_ring", "item_nullifier",
 			},
         },
     },

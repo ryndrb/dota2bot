@@ -508,65 +508,26 @@ function X.ShouldRun()
 	local nDistanceFromEnemyFountain = J.GetDistanceFromEnemyFountain(bot)
 	local nDistanceFromEnemyAncient = GetUnitToUnitDistance(bot, hEnemyAncient)
 	local nAliveEnemyCount = J.GetNumOfAliveHeroes(true)
-	local rushEnemyTowerDistance = 250
+    local botAssignedLane = bot:GetAssignedLane()
 
 	if nDistanceFromEnemyFountain < 1560 then
 		return 2
 	end
 
-    local botAssignedLane = bot:GetAssignedLane()
-	if botLevel <= 4 and nDistanceFromEnemyFountain < 8000 then
-		if (botAssignedLane == LANE_TOP and nDistanceFromEnemyFountain < (GetTeam() == TEAM_RADIANT and 10800 or 8100))
-		or (botAssignedLane == LANE_MID and nDistanceFromEnemyFountain < (GetTeam() == TEAM_RADIANT and 8100 or 8000))
-		or (botAssignedLane == LANE_BOT and nDistanceFromEnemyFountain < (GetTeam() == TEAM_RADIANT and 8200 or 10800))
-		then
-            return 3.33
-		end
-	end
-
-	if botLevel < 6 and DotaTime() > 30 and J.IsEarlyGame() then
+	if DotaTime() > 30 and J.IsEarlyGame() then
 		if (botAssignedLane == LANE_TOP and nDistanceFromEnemyFountain < (GetTeam() == TEAM_RADIANT and 12000 or 9000))
 		or (botAssignedLane == LANE_MID and nDistanceFromEnemyFountain < (GetTeam() == TEAM_RADIANT and 9000 or 8000))
-		or (botAssignedLane == LANE_BOT and nDistanceFromEnemyFountain < (GetTeam() == TEAM_RADIANT and 9000 or 12000))
+		or (botAssignedLane == LANE_BOT and nDistanceFromEnemyFountain < (GetTeam() == TEAM_RADIANT and 8700 or 11500))
 		then
 			if J.IsValidHero(botTarget)
+            and J.CanBeAttacked(botTarget)
 			and not J.IsSuspiciousIllusion(botTarget)
-            and J.GetHP(botTarget) > 0.35
-            and (not J.IsInRange(bot,botTarget,bot:GetAttackRange() + 150)
-                or not J.CanKillTarget(botTarget, bot:GetAttackDamage() * 2.33, DAMAGE_TYPE_PHYSICAL))
+            and not J.CanKillTarget(botTarget, bot:GetAttackDamage() * 2.33, DAMAGE_TYPE_PHYSICAL)
 			then
 				return 2.88
 			end
 		end
 	end
-
-	if botLevel < 10
-    and bot:GetAttackDamage() < 133
-    and J.IsValid(botTarget)
-    and botTarget:IsAncientCreep()
-    and #nAllyHeroes <= 1
-    and bot:DistanceFromFountain() > 3000
-	then
-		return 6.21
-	end
-
-	-- if not J.AreTheseBuildingDestroyed({TOWER_TOP_3, TOWER_MID_3, TOWER_BOT_3})
-    -- and nAliveEnemyCount >= 3
-    -- and #nEnemyHeroes < nAliveEnemyCount + 2
-    -- and not J.IsLateGame()
-	-- then
-	-- 	local averageAllyLevel = J.GetAverageLevel(false)
-	-- 	local averageEnemyLevel = J.GetAverageLevel(true)
-	-- 	if nDistanceFromEnemyFountain < 4765 then
-	-- 		local nAllyLaneCreeps = bot:GetNearbyLaneCreeps(700, false)
-	-- 		if (averageAllyLevel - 4 < averageEnemyLevel and averageAllyLevel < 17)
-    --         and not (averageAllyLevel - 2 > averageEnemyLevel and nAliveEnemyCount == 3)
-    --         and #nAllyLaneCreeps <= 4
-	-- 		then
-	-- 			return 1.33
-	-- 		end
-	-- 	end
-	-- end
 
 	local nEnemyTowers = bot:GetNearbyTowers(900, true)
 	local nEnemyBarracks = bot:GetNearbyBarracks(900, true)
@@ -579,122 +540,6 @@ function X.ShouldRun()
 			return 2
 		end
 	end
-
-	-- if J.IsValidBuilding(nEnemyTowers[1]) and botLevel < 17 then
-	-- 	if J.CanBeAttacked(nEnemyTowers[1]) and nAliveEnemyCount > 1 then
-	-- 		return 2.5
-	-- 	end
-
-	-- 	if nDistanceFromEnemyAncient > 2100
-    --     and nDistanceFromEnemyAncient < GetUnitToUnitDistance(nEnemyTowers[1], hEnemyAncient) - rushEnemyTowerDistance
-	-- 	then
-	-- 		if botTarget == nil then
-	-- 			return 3.9
-	-- 		end
-
-	-- 		if J.IsValidHero(botTarget) and nAliveEnemyCount > 2 then
-	-- 			local bAssistAlly = false
-	-- 			for _, ally in pairs(nAllyHeroes) do
-    --                 if J.IsValidHero(ally)
-    --                 and GetUnitToUnitDistance(ally, botTarget) <= ally:GetAttackRange() + 100
-    --                 and (ally:GetAttackTarget() == botTarget or ally:GetTarget() == botTarget)
-    --                 then
-    --                     bAssistAlly = true
-    --                     break
-    --                 end
-	-- 			end
-
-	-- 			if not bAssistAlly then
-	-- 				return 2.5
-	-- 			end
-	-- 		end
-	-- 	end
-	-- end
-
-	-- if botLevel <= 10 and (#nEnemyHeroes > 0 or botHP < 0.2) then
-	-- 	local nLongEnemyTowers = bot:GetNearbyTowers(999, true)
-	-- 	if bot:GetAssignedLane() == LANE_MID then
-	-- 		 nLongEnemyTowers = bot:GetNearbyTowers(988, true)
-	-- 		 nEnemyTowers     = bot:GetNearbyTowers(966, true)
-	-- 	end
-	-- 	if (botLevel <= 2 or DotaTime() < 2 * 60)
-	-- 	and J.IsValidBuilding(nLongEnemyTowers[1]) ~= nil
-	-- 	then
-	-- 		return 1
-	-- 	end
-	-- 	if (botLevel <= 4 or DotaTime() < 3 * 60)
-	-- 	and J.IsValidBuilding(nEnemyTowers[1])
-	-- 	then
-	-- 		return 1
-	-- 	end
-	-- 	if botLevel <= 9
-    --     and J.IsValidBuilding(nEnemyTowers[1])
-    --     and nEnemyTowers[1]:GetAttackTarget() == bot
-    --     and #nAllyHeroes <= 1
-	-- 	then
-	-- 		return 1
-	-- 	end
-	-- end
-
-	if J.IsRealInvisible(bot)
-    and not J.IsEarlyGame()
-    and J.IsRetreating(bot)
-    and bot:GetActiveModeDesire() > 0.4
-    and #nAllyHeroes <= 1
-    and J.IsValidHero(nEnemyHeroes[1])
-    and botName ~= "npc_dota_hero_riki"
-    and botName ~= "npc_dota_hero_bounty_hunter"
-    and botName ~= "npc_dota_hero_slark"
-    and J.GetDistanceFromAncient(bot, false) < J.GetDistanceFromAncient(nEnemyHeroes[1], false)
-	then
-		return 5
-	end
-
-	-- if #nAllyHeroes <= 1
-    -- and botActiveMode ~= BOT_MODE_TEAM_ROAM
-    -- and botActiveMode ~= BOT_MODE_LANING
-    -- and botActiveMode ~= BOT_MODE_RETREAT
-    -- and (botLevel <= 1 or botLevel > 5)
-    -- and bot:DistanceFromFountain() > 1400
-	-- then
-	-- 	if enemyPids == nil then
-	-- 		enemyPids = GetTeamPlayers(GetOpposingTeam())
-	-- 	end	
-	-- 	local enemyCount = 0
-	-- 	for i = 1, #enemyPids do
-	-- 		local info = GetHeroLastSeenInfo(enemyPids[i])
-	-- 		if info ~= nil then
-	-- 			local dInfo = info[1]; 
-	-- 			if dInfo ~= nil and dInfo.time_since_seen < 2.0  
-	-- 				and GetUnitToLocationDistance(bot,dInfo.location) < 1000 
-	-- 			then
-	-- 				enemyCount = enemyCount +1;
-	-- 			end
-	-- 		end	
-	-- 	end
-	-- 	if (enemyCount >= 4 or #hEnemyHeroList >= 4) 
-	-- 		and botMode ~= BOT_MODE_ATTACK
-	-- 		and botMode ~= BOT_MODE_TEAM_ROAM
-	-- 		and bot:GetCurrentMovementSpeed() > 300
-	-- 	then
-	-- 		local nNearByHeroes = bot:GetNearbyHeroes(700,true,BOT_MODE_NONE);
-	-- 		if #nNearByHeroes < 2
-	--         then
-	-- 			return 4;
-	-- 		end
-	-- 	end	
-	-- 	if  botLevel >= 9 and botLevel <= 17  
-	-- 		and (enemyCount >= 3 or #hEnemyHeroList >= 3) 
-	-- 		and botMode ~= BOT_MODE_LANING
-	-- 		and bot:GetCurrentMovementSpeed() > 300
-	-- 	then
-	-- 		local nNearByHeroes = bot:GetNearbyHeroes(700,true,BOT_MODE_NONE);
-	-- 		if #nNearByHeroes < 2
-	--         then
-	-- 			return 3;
-	-- 		end
-	-- 	end	
-	-- end	
 
 	return 0
 end

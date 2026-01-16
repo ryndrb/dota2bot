@@ -294,6 +294,7 @@ function U.CantBeControlled(unit)
 		or unit_name == "dota_death_prophet_exorcism_spirit"
 		or unit_name == "npc_dota_dark_willow_creature"
 		or (unit_name == "npc_dota_hero_hoodwink" and unit:HasModifier('modifier_hoodwink_sharpshooter_windup'))
+		or unit_name == "npc_dota_enraged_wildkin_tornado"
 end
 
 function U.IsMinionWithNoSkill(unit)

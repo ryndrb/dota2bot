@@ -43,7 +43,6 @@ function GetDesire()
     local botLevel = bot:GetLevel()
     local bAlive = bot:IsAlive()
 	local bCore = J.IsCore(bot)
-	local bWeAreStronger = J.WeAreStronger(bot, 1600)
 
     local vTormentorLocation = J.GetTormentorLocation(GetTeam())
 	local nInRangeAlly_tormentor = J.GetAlliesNearLoc(vTormentorLocation, 1600)

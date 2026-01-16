@@ -2455,8 +2455,8 @@ function J.IsChasingTarget( bot, nTarget )
 	if J.IsValid(nTarget)
 	and J.IsRunning( bot )
 		and J.IsRunning( nTarget )
-		and bot:IsFacingLocation( nTarget:GetLocation(), 20 )
-		and not nTarget:IsFacingLocation( bot:GetLocation(), 150 )
+		and bot:IsFacingLocation( nTarget:GetLocation(), 45 )
+		and not nTarget:IsFacingLocation( bot:GetLocation(), 135 )
 	then
 		return true
 	end
@@ -4742,7 +4742,7 @@ function J.HasInvisCounterBuff(unit)
 	or unit:HasModifier('modifier_bloodseeker_thirst_vision')
 	or unit:HasModifier('modifier_slardar_amplify_damage')
 	or unit:HasModifier('modifier_sniper_assassinate')
-	or unit:HasModifier( 'modifier_faceless_void_chronosphere_freeze' )
+	or unit:HasModifier('modifier_faceless_void_chronosphere_freeze')
 	then
 		return true
 	end

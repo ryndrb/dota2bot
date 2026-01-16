@@ -415,7 +415,7 @@ function X.ConsiderOverwhelmingOdds()
 		end
 
 		if J.IsDoingTormentor(bot) then
-			if J.IsTormetor(botTarget)
+			if J.IsTormentor(botTarget)
 			and J.IsInRange(bot, botTarget, nRadius)
 			and fManaAfter > fManaThreshold2
 			and fManaAfter > 0.5
