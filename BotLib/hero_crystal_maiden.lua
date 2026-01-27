@@ -654,7 +654,7 @@ function X.ConsiderCrystalClone()
 	end
 
 	local nSlideDistance = CrystalClone:GetSpecialValueInt('hop_distance')
-	local nManaCost = CrystalNova:GetManaCost()
+	local nManaCost = CrystalClone:GetManaCost()
 	local fManaAfter = J.GetManaAfter(nManaCost)
 	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {FreezingField})
 
