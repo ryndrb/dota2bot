@@ -416,7 +416,7 @@ function X.ConsiderMistCoil()
                 hTargetAllyHealth = allyHP
             end
 
-            if allyHero:WasRecentlyDamagedByAnyHero(2.0) and J.IsDisabled(allyHero) and allyHero < 0.8 then
+            if allyHero:WasRecentlyDamagedByAnyHero(2.0) and J.IsDisabled(allyHero) and allyHP < 0.8 then
                 return BOT_ACTION_DESIRE_HIGH, allyHero
             end
         end

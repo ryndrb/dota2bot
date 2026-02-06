@@ -118,25 +118,83 @@ local HeroBuild = {
     ['pos_4'] = {
         [1] = {
             ['talent'] = {
-                [1] = {},
+                [1] = {
+                    ['t25'] = {0, 10},
+                    ['t20'] = {0, 10},
+                    ['t15'] = {10, 0},
+                    ['t10'] = {10, 0},
+                }
             },
             ['ability'] = {
-                [1] = {},
+                [1] = {2,1,2,3,2,6,2,1,1,1,6,3,3,3,6},
             },
-            ['buy_list'] = {},
-            ['sell_list'] = {},
+            ['buy_list'] = {
+                "item_tango",
+                "item_double_branches",
+                "item_blood_grenade",
+                "item_circlet",
+                "item_mantle",
+            
+                "item_magic_wand",
+				"item_null_talisman",
+                "item_tranquil_boots",
+				"item_blink",
+				"item_solar_crest",--
+				"item_cyclone",
+                "item_aghanims_shard",
+				"item_boots_of_bearing",--
+				"item_shivas_guard",--
+				"item_octarine_core",--
+                "item_ultimate_scepter_2",
+				"item_wind_waker",
+				"item_overwhelming_blink",--
+                "item_moon_shard",
+            },
+            ['sell_list'] = {
+                "item_magic_wand", "item_shivas_guard",
+				"item_null_talisman", "item_octarine_core",
+            },
         },
     },
     ['pos_5'] = {
         [1] = {
             ['talent'] = {
-                [1] = {},
+                [1] = {
+                    ['t25'] = {0, 10},
+                    ['t20'] = {0, 10},
+                    ['t15'] = {10, 0},
+                    ['t10'] = {10, 0},
+                }
             },
             ['ability'] = {
-                [1] = {},
+                [1] = {2,1,2,3,2,6,2,1,1,1,6,3,3,3,6},
             },
-            ['buy_list'] = {},
-            ['sell_list'] = {},
+            ['buy_list'] = {
+                "item_tango",
+                "item_double_branches",
+                "item_blood_grenade",
+                "item_circlet",
+                "item_mantle",
+            
+                "item_magic_wand",
+				"item_null_talisman",
+                "item_arcane_boots",
+				"item_blink",
+				"item_solar_crest",--
+				"item_cyclone",
+                "item_aghanims_shard",
+				"item_guardian_greaves",--
+				"item_shivas_guard",--
+				"item_octarine_core",--
+                "item_ultimate_scepter_2",
+				"item_wind_waker",
+				"item_overwhelming_blink",--
+                "item_moon_shard",
+            },
+            ['sell_list'] = {
+                "item_magic_wand", "item_shivas_guard",
+				"item_null_talisman", "item_octarine_core",
+            },
         },
     },
 }

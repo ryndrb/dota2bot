@@ -319,6 +319,7 @@ function X.ConsiderSlithereenCrush()
 	for _, enemyHero in pairs(nEnemyHeroes) do
 		if J.IsValidHero(enemyHero)
 		and J.CanBeAttacked(enemyHero)
+		and J.IsInRange(bot, enemyHero, nRadius)
 		and J.CanCastOnNonMagicImmune(enemyHero)
 		and not enemyHero:HasModifier('modifier_necrolyte_reapers_scythe')
 		then
@@ -374,6 +375,7 @@ function X.ConsiderSlithereenCrush()
 		for _, enemyHero in pairs(nEnemyHeroes) do
 			if J.IsValidHero(enemyHero)
 			and J.CanBeAttacked(enemyHero)
+			and J.IsInRange(bot, enemyHero, nRadius)
 			and J.CanCastOnNonMagicImmune(enemyHero)
 			and bot:WasRecentlyDamagedByHero(enemyHero, 5.0)
 			and not J.IsDisabled(enemyHero)

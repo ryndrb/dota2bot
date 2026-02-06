@@ -110,7 +110,7 @@ local sHeroList = {										-- pos    1,   2,   3,   4,   5
 	{name = 'npc_dota_hero_riki', 						role = {100, 100,   0,   0,   0},	weak = false},
 	{name = 'npc_dota_hero_ringmaster', 				role = {  0,   0,   0, 100, 100},	weak = false},
 	{name = 'npc_dota_hero_rubick', 					role = {  0,   0,   0, 100, 100},	weak = false},
-	{name = 'npc_dota_hero_sand_king', 					role = {  0, 100, 100,   0,   0},	weak = false},
+	{name = 'npc_dota_hero_sand_king', 					role = {  0, 100, 100,  85,  80},	weak = false},
 	{name = 'npc_dota_hero_shadow_demon', 				role = {  0,   0,   0, 100, 100},	weak = false},
 	{name = 'npc_dota_hero_shadow_shaman', 				role = {  0,   0,   0, 100, 100},	weak = false},
 	{name = 'npc_dota_hero_shredder', 					role = {  0, 100, 100,   0,   0},	weak = false},

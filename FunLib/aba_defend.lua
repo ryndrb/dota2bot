@@ -89,13 +89,13 @@ function Defend.GetDefendDesire(bot, lane)
 	if 	   not J.IsValidBuilding(hTier3Tower) then
 		nDesire = nDesire * 5
 	elseif not J.IsValidBuilding(hTier2Tower) then
-		nDesire = nDesire * 3
+		nDesire = nDesire * 2
 	elseif J.IsValidBuilding(hTier1Tower) and Defend.ShouldDefend(bot, furthestBuilding, 1600)
 	then
 		nDesire = nDesire
 	elseif J.IsValidBuilding(hTier2Tower) and Defend.ShouldDefend(bot, furthestBuilding, 1600)
 	then
-		nDesire = nDesire * 2
+		nDesire = nDesire * 3
 	end
 
 	local _, closestLane = J.GetClosestTeamLane(bot)

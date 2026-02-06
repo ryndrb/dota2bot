@@ -666,7 +666,7 @@ function X.GetShrineOfWisdomTeam()
 			return TEAM_RADIANT
 		else
 			local hTower = GetTower(GetOpposingTeam(), TOWER_BOT_1) -- don't feed
-			if hTower == nil or dist2 <= 1600 then
+			if hTower == nil or not hTower:IsAlive() or dist2 <= 1600 then
 				return TEAM_DIRE
 			end
 		end
@@ -675,7 +675,7 @@ function X.GetShrineOfWisdomTeam()
 			return TEAM_DIRE
 		else
 			local hTower = GetTower(GetOpposingTeam(), TOWER_TOP_1) -- don't feed
-			if hTower == nil or dist1 <= 1600 then
+			if hTower == nil or not hTower:IsAlive() or dist1 <= 1600 then
 				return TEAM_RADIANT
 			end
 		end

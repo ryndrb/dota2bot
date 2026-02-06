@@ -102,14 +102,18 @@ function Push.GetPushDesire(bot, lane)
     --     return BOT_MODE_DESIRE_NONE
     -- end
 
-    local botTarget = bot:GetAttackTarget()
-    if J.IsValidBuilding(botTarget)
-    and not string.find(botTarget:GetUnitName(), 'tower1')
-    and not string.find(botTarget:GetUnitName(), 'tower2')
+    local nEnemyTowers = bot:GetNearbyTowers(1600, true)
+    if nEnemyTowers == nil then
+        nEnemyTowers = bot:GetNearbyBarracks(1600, true)
+    end
+
+    if J.IsValidBuilding(nEnemyTowers[1])
+    and not string.find(nEnemyTowers[1]:GetUnitName(), 'tower1')
+    and not string.find(nEnemyTowers[1]:GetUnitName(), 'tower2')
     then
-        if botTarget:HasModifier('modifier_backdoor_protection')
-        or botTarget:HasModifier('modifier_backdoor_protection_in_base')
-        or botTarget:HasModifier('modifier_backdoor_protection_active')
+        if nEnemyTowers[1]:HasModifier('modifier_backdoor_protection')
+        or nEnemyTowers[1]:HasModifier('modifier_backdoor_protection_in_base')
+        or nEnemyTowers[1]:HasModifier('modifier_backdoor_protection_active')
         then
             return BOT_MODE_DESIRE_NONE
         end
@@ -337,9 +341,10 @@ function Push.PushThink(bot, lane)
     end
 
     if GetUnitToUnitDistance(bot, hEnemyAncient) <= 4000
-    and (  GetTower(GetOpposingTeam(), TOWER_TOP_2) == nil
-        or GetTower(GetOpposingTeam(), TOWER_MID_2) == nil
-        or GetTower(GetOpposingTeam(), TOWER_BOT_2) == nil)
+    and (  not (GetTower(GetOpposingTeam(), TOWER_TOP_2) ~= nil and GetTower(GetOpposingTeam(), TOWER_TOP_2):IsAlive())
+        or not (GetTower(GetOpposingTeam(), TOWER_MID_2) ~= nil and GetTower(GetOpposingTeam(), TOWER_MID_2):IsAlive())
+        or not (GetTower(GetOpposingTeam(), TOWER_BOT_2) ~= nil and GetTower(GetOpposingTeam(), TOWER_BOT_2):IsAlive())
+        )
     and not bHasPierceTheVeil
     then
         local hBuildingTarget = TryClearingOtherLaneHighGround(bot, targetLoc)
@@ -573,47 +578,35 @@ function Push.GetAllyCreepsAttackingUnit(hUnit)
     return hUnitList
 end
 
+local laneBuildings = {
+    [LANE_TOP] = {
+        towers      = { TOWER_TOP_1, TOWER_TOP_2, TOWER_TOP_3 },
+        barracks    = { BARRACKS_TOP_MELEE, BARRACKS_TOP_RANGED }
+    },
+    [LANE_MID] = {
+        towers      = { TOWER_MID_1, TOWER_MID_2, TOWER_MID_3 },
+        barracks    = { BARRACKS_MID_MELEE, BARRACKS_MID_RANGED }
+    },
+    [LANE_BOT] = {
+        towers      = { TOWER_BOT_1, TOWER_BOT_2, TOWER_BOT_3 },
+        barracks    = { BARRACKS_BOT_MELEE, BARRACKS_BOT_RANGED }
+    }
+}
 function Push.GetLaneBuildingTier(nLane)
-    if nLane == LANE_TOP then
-        if GetTower(GetOpposingTeam(), TOWER_TOP_1) ~= nil then
-            return 1
-        elseif GetTower(GetOpposingTeam(), TOWER_TOP_2) ~= nil then
-            return 2
-        elseif GetTower(GetOpposingTeam(), TOWER_TOP_3) ~= nil
-            or GetBarracks(GetOpposingTeam(), BARRACKS_TOP_MELEE) ~= nil
-            or GetBarracks(GetOpposingTeam(), BARRACKS_TOP_RANGED) ~= nil
-        then
-            return 3
-        else
-            return 4
-        end
-    elseif nLane == LANE_MID then
-        if GetTower(GetOpposingTeam(), TOWER_MID_1) ~= nil then
-            return 1
-        elseif GetTower(GetOpposingTeam(), TOWER_MID_2) ~= nil then
-            return 2
-        elseif GetTower(GetOpposingTeam(), TOWER_MID_3) ~= nil
-            or GetBarracks(GetOpposingTeam(), BARRACKS_MID_MELEE) ~= nil
-            or GetBarracks(GetOpposingTeam(), BARRACKS_MID_RANGED) ~= nil
-        then
-            return 3
-        else
-            return 4
-        end
-    elseif nLane == LANE_BOT then
-        if GetTower(GetOpposingTeam(), TOWER_BOT_1) ~= nil then
-            return 1
-        elseif GetTower(GetOpposingTeam(), TOWER_BOT_2) ~= nil then
-            return 2
-        elseif GetTower(GetOpposingTeam(), TOWER_BOT_3) ~= nil
-            or GetBarracks(GetOpposingTeam(), BARRACKS_BOT_MELEE) ~= nil
-            or GetBarracks(GetOpposingTeam(), BARRACKS_BOT_RANGED) ~= nil
-        then
-            return 3
-        else
-            return 4
-        end
+    local buildings = laneBuildings[nLane]
+    if buildings == nil then return 4 end
+
+    for i, tower in ipairs(buildings.towers) do
+        local t = GetTower(GetOpposingTeam(), tower)
+        if t ~= nil and t:IsAlive() then return i end
     end
+
+    for _, barrack in ipairs(buildings.barracks) do
+        local b = GetBarracks(GetOpposingTeam(), barrack)
+        if b ~= nil and b:IsAlive() then return 3 end
+    end
+
+    return 4
 end
 
 local function IsValidAbility(hAbility)

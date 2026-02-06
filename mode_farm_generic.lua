@@ -72,11 +72,10 @@ function GetDesire()
 		or botActiveMode == BOT_MODE_OUTPOST) and botActiveModeDesire > 0)
 	or (#nInRangeAlly_tormentor >= 2 and bot.tormentor_state == true)
     or (#nInRangeAlly_roshan >= 2 and bRoshanAlive and bNotClone)
-    or (nAliveEnemyCount <= 1 and nAliveAllyCount >= 2)
     or (J.DoesTeamHaveAegis() and J.IsLateGame() and nAliveAllyCount >= 4)
 	or X.IsUnitAroundLocation(GetAncient(GetTeam()):GetLocation(), 3200)
 	or #nEnemyHeroes > 0
-	or nAliveEnemyCount <= 1
+	or (nAliveEnemyCount <= 1 and networthAdvantage > 10000)
     then
         return BOT_MODE_DESIRE_NONE
     end
@@ -205,7 +204,27 @@ function Think()
 
 	local nEnemyLaneCreeps = bot:GetNearbyLaneCreeps(900, true)
 	if J.IsValid(nEnemyLaneCreeps[1]) and bot.farm.state ~= FARM_STATE__STACK then
-		local farmTarget = J.Site.GetMaxHPCreep(nEnemyLaneCreeps)
+		local farmTarget = nEnemyLaneCreeps[1]
+		local farmTargetHealth = 0
+		for _, creep in pairs(nEnemyLaneCreeps) do
+			if J.IsValid(creep)
+			and J.CanBeAttacked(creep)
+			and not J.IsRoshan(creep)
+			and not J.IsTormentor(creep)
+			then
+				if J.Site.HasArmorReduction(creep) then
+					farmTarget = creep
+					break
+				end
+
+				local creepHealth = creep:GetHealth()
+				if creepHealth > farmTargetHealth then
+					farmTarget = creep
+					farmTargetHealth = creepHealth
+				end
+			end
+		end
+
 		if J.IsValid(farmTarget) then
 			local nEnemyTowers = bot:GetNearbyTowers(1600, true)
 			if J.IsValidBuilding(nEnemyTowers[1]) then
@@ -253,7 +272,27 @@ function Think()
 
 		local nEnemyCreeps = bot:GetNearbyCreeps(900, true)
 		if J.IsValid(nEnemyCreeps[1]) then
-			local farmTarget = J.Site.GetMaxHPCreep(nEnemyCreeps)
+			local farmTarget = nEnemyCreeps[1]
+			local farmTargetHealth = 0
+			for _, creep in pairs(nEnemyCreeps) do
+				if J.IsValid(creep)
+				and J.CanBeAttacked(creep)
+				and not J.IsRoshan(creep)
+				and not J.IsTormentor(creep)
+				then
+					if J.Site.HasArmorReduction(creep) then
+						farmTarget = creep
+						break
+					end
+
+					local creepHealth = creep:GetHealth()
+					if creepHealth > farmTargetHealth then
+						farmTarget = creep
+						farmTargetHealth = creepHealth
+					end
+				end
+			end
+
 			if J.IsValid(farmTarget) then
 				-- stack; decent; they stack quite a bit, but can die sometimes if weak hero
 				local nLocationAoE_heroes = bot:FindAoELocation(false, true, farmLocation, 0, 600, 0, 0)

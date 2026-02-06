@@ -1425,7 +1425,7 @@ X.ConsiderItemDesire["item_bottle"] = function( hItem )
 		return BOT_ACTION_DESIRE_NONE
 	end
 
-	if bot:HasModifier('modifier_fountain_aura_buff') then
+	if bot:HasModifier('modifier_fountain_aura_buff') and bot:DistanceFromFountain() <= 1000 then
 		return BOT_ACTION_DESIRE_HIGH, nil, ITEM_TARGET_TYPE_NONE
 	end
 
@@ -2766,7 +2766,7 @@ X.ConsiderItemDesire["item_manta"] = function( hItem )
 		or (bot:HasModifier('modifier_slardar_amplify_damage'))
 		or (bot:HasModifier('modifier_item_dustofappearance') and bIsRetreating)
 		or (bot:HasModifier('modifier_axe_battle_hunger'))
-		or (bot:HasModifier('modifier_bristleback_viscous_nasal_goo') and J.IsRunning(allyHero))
+		or (bot:HasModifier('modifier_bristleback_viscous_nasal_goo') and J.IsRunning(bot))
 		or (bot:HasModifier('modifier_earth_spirit_magnetize') and not bIsGoingOnSomeone)
 		or (bot:HasModifier('modifier_phoenix_fire_spirit_burn') and bIsGoingOnSomeone)
 		or (bot:HasModifier('modifier_life_stealer_open_wounds') and bIsRetreating)
@@ -5294,6 +5294,8 @@ X.ConsiderItemDesire["item_riftshadow_prism"] = function( hItem )
 			return BOT_ACTION_DESIRE_HIGH, bot, 'none', nil
 		end
 	end
+
+	return BOT_ACTION_DESIRE_NONE
 end
 
 X.ConsiderItemDesire["item_spider_legs"] = function( hItem )

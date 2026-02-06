@@ -9,7 +9,6 @@ local Item = require( GetScriptDirectory()..'/FunLib/aba_item' )
 local hAbilityCapture = bot:GetAbilityByName('ability_capture')
 local Outposts = {}
 local bGotOutposts = false
-local bIsEnemyTier2Down = false
 local ClosestOutpost = nil
 local ClosestOutpostDist = 10000
 
@@ -31,15 +30,6 @@ local LoneDruid = {}
 local channel_target = { unit = nil, location = 0, tree = -1 }
 
 function GetDesire()
-	if not bIsEnemyTier2Down then
-		if GetTower(GetOpposingTeam(), TOWER_TOP_2) == nil
-		or GetTower(GetOpposingTeam(), TOWER_MID_2) == nil
-		or GetTower(GetOpposingTeam(), TOWER_BOT_2) == nil
-		then
-			bIsEnemyTier2Down = true
-		end
-	end
-
 	LoneDruid = J.CheckLoneDruid()
 
 	------------------------------
@@ -424,8 +414,6 @@ function GetDesire()
 	-- Outpost
 	----------
 
-	if not bIsEnemyTier2Down then return BOT_MODE_DESIRE_NONE end
-
 	if not bGotOutposts then
 		for _, unit in pairs(GetUnitList(UNIT_LIST_ALL)) do
 			if unit then
@@ -447,7 +435,31 @@ function GetDesire()
 	and not IsEnemyCloserToOutpost(ClosestOutpost:GetLocation(), ClosestOutpostDist)
 	and IsSuitableToCaptureOutpost(ClosestOutpost:GetLocation())
 	then
-		return BOT_MODE_DESIRE_VERYHIGH
+		if ClosestOutpostDist < 1100 then
+			return BOT_MODE_DESIRE_VERYHIGH
+		end
+
+		local allyChannel = nil
+		local allyChannelDistance = math.huge
+		for i = 1, 5 do
+			local member = GetTeamMember(i)
+			if J.IsValidHero(member) then
+				local outpostDistance = ClosestOutpostDist
+
+				if J.IsCore(member) then
+					outpostDistance = outpostDistance * 1.5
+				end
+
+				if outpostDistance < allyChannelDistance then
+					allyChannel = member
+					allyChannelDistance = outpostDistance
+				end
+			end
+		end
+
+		if bot == allyChannel then
+			return BOT_MODE_DESIRE_VERYHIGH
+		end
 	end
 
 	return BOT_MODE_DESIRE_NONE
@@ -918,9 +930,10 @@ function GetClosestOutpost()
 
 	for i = 1, #Outposts do
 		if  Outposts[i]
-		and Outposts[i]:GetTeam() ~= GetTeam()
 		and not Outposts[i]:IsNull()
 		and not Outposts[i]:IsInvulnerable()
+		and not Outposts[i]:HasModifier('modifier_watch_tower_invulnerable')
+		and Outposts[i]:GetTeam() ~= GetTeam()
 		then
 			local outpostDistance = GetUnitToUnitDistance(bot, Outposts[i])
 			local eta = (outpostDistance / bot:GetCurrentMovementSpeed())
@@ -964,6 +977,7 @@ function IsSuitableToCaptureOutpost(vLocation)
 	or (J.IsDoingTormentor(bot))
 	or (J.IsDoingRoshan(bot))
 	or (J.IsRetreating(bot))
+	or (J.IsGoingToRune(bot))
 	or (bot:WasRecentlyDamagedByAnyHero(15.0) and #nInRangeEnemy >= #nInRangeAlly)
 	or (#nInRangeEnemy > #nInRangeAlly)
 	then

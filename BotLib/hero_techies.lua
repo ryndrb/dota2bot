@@ -1061,7 +1061,8 @@ function X.UpdateMineLocations()
 
     if GetUnitToLocationDistance(bot, vTormentorLocation) > 1600 and not J.IsStuck(bot) then
         local function alive(tower)
-            return GetTower(GetTeam(), tower) ~= nil
+            local hTower = GetTower(GetTeam(), tower)
+            return hTower ~= nil and hTower:IsAlive()
         end
 
         local minDistance = 1600

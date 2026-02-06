@@ -509,7 +509,7 @@ end
 
 function X.ConsiderSaltwaterShiv()
 	if not J.CanCastAbility(SaltwaterShiv) then
-		return BOT_ACTION_DESIRE_HIGH, nil
+		return BOT_ACTION_DESIRE_NONE, nil
 	end
 
 	if J.IsGoingOnSomeone(bot) then
@@ -522,7 +522,7 @@ function X.ConsiderSaltwaterShiv()
 		end
 	end
 
-	return BOT_ACTION_DESIRE_HIGH, nil
+	return BOT_ACTION_DESIRE_NONE, nil
 end
 
 function X.ConsiderDepthShroud()
@@ -574,11 +574,15 @@ function X.ConsiderShadowDance()
 
 	if J.IsGoingOnSomeone(bot) then
 		if J.IsValidHero(botTarget)
-		and J.IsInRange(bot, botTarget, 650)
+		and J.IsInRange(bot, botTarget, 800)
 		and botHP < 0.75
 		then
 			local nInRangeEnemy = J.GetEnemiesNearLoc(bot:GetLocation(), 800)
 			if #nInRangeEnemy >= 2 or botHP < 0.5 then
+				return BOT_ACTION_DESIRE_HIGH
+			end
+
+			if (J.GetTotalEstimatedDamageToTarget(nEnemyHeroes, bot, 4.0) > bot:GetHealth()) then
 				return BOT_ACTION_DESIRE_HIGH
 			end
 		end
@@ -586,26 +590,19 @@ function X.ConsiderShadowDance()
 
 	if J.IsRetreating(bot) and not J.IsRealInvisible(bot) and bot:WasRecentlyDamagedByAnyHero(4.0) then
 		for _, enemyHero in pairs(nEnemyHeroes) do
-			if J.IsValid(enemyHero)
-			and J.IsInRange(bot, enemyHero, 1200)
+			if J.IsValidHero(enemyHero)
 			and not J.IsSuspiciousIllusion(enemyHero)
+			and bot:WasRecentlyDamagedByHero(enemyHero, 4.0)
 			then
-				if (J.IsChasingTarget(enemyHero, bot))
-				or (#nEnemyHeroes > #nAllyHeroes and enemyHero:GetAttackTarget() == bot)
-				or botHP < 0.6
-				then
+				if botHP < 0.6 then
 					return BOT_ACTION_DESIRE_HIGH
 				end
 			end
 		end
 
-		if botHP < 0.6 and J.IsStunProjectileIncoming(bot, 800) then
-			return BOT_ACTION_DESIRE_HIGH
-		end
-	end
-
-	if not J.IsRetreating(bot) and not J.IsRealInvisible(bot) then
-		if bot:DistanceFromFountain() > 4000 and botHP < 0.25 and fManaAfter > fManaThreshold1 then
+		if (botHP < 0.6 and J.IsStunProjectileIncoming(bot, 800))
+		or (J.GetTotalEstimatedDamageToTarget(nEnemyHeroes, bot, 4.0) > bot:GetHealth())
+		then
 			return BOT_ACTION_DESIRE_HIGH
 		end
 	end

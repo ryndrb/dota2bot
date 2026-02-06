@@ -179,6 +179,11 @@ local nAllyHeroes, nEnemyHeroes
 function X.SkillsComplement()
 	bot = GetBot()
 
+	FatalBonds = bot:GetAbilityByName('warlock_fatal_bonds')
+	ShadowWord = bot:GetAbilityByName('warlock_shadow_word')
+	Upheaval = bot:GetAbilityByName('warlock_upheaval')
+	ChaoticOffering = bot:GetAbilityByName('warlock_rain_of_chaos')
+
 	if Upheaval and Upheaval:IsTrained() and Upheaval:IsChanneling() then
 		local nRadius = Upheaval:GetSpecialValueInt('aoe')
 		if UpheavalLocation then
@@ -202,11 +207,6 @@ function X.SkillsComplement()
 	end
 
 	if J.CanNotUseAbility(bot) then return end
-
-	FatalBonds = bot:GetAbilityByName('warlock_fatal_bonds')
-	ShadowWord = bot:GetAbilityByName('warlock_shadow_word')
-	Upheaval = bot:GetAbilityByName('warlock_upheaval')
-	ChaoticOffering = bot:GetAbilityByName('warlock_rain_of_chaos')
 
     bAttacking = J.IsAttacking(bot)
     botHP = J.GetHP(bot)
