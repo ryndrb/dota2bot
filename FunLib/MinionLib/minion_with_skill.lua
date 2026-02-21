@@ -669,7 +669,7 @@ X.ConsiderSpellUsage['frogmen_arm_of_the_deep'] = function (hMinionUnit, ability
                     and not enemyHero:IsDisarmed()
                     and allyHero:WasRecentlyDamagedByHero(enemyHero, 3.0)
                     then
-                        return BOT_ACTION_DESIRE_HIGH, allyHeroTarget:GetLocation(), SPELL_TARGET_TYPE_POINT
+                        return BOT_ACTION_DESIRE_HIGH, enemyHero:GetLocation(), SPELL_TARGET_TYPE_POINT
                     end
                 end
             end
