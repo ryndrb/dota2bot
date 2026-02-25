@@ -267,7 +267,7 @@ local NaturesCallDesire, NaturesCallLocation
 local CurseOfTheOldGrowthDesire
 local WrathOfNatureDesire, WrathOfNatureTarget
 
-local SproutCallDesire, SproutCallTarget, SproutCallLocation
+local SproutCallDesire, SproutCallLocation
 
 local bCanSummonMultipleTreants = true
 
@@ -293,10 +293,10 @@ function X.SkillsComplement()
     nEnemyHeroes = bot:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
 
     if bCanSummonMultipleTreants then
-        SproutCallDesire, SproutCallTarget, SproutCallLocation = X.ConsiderSproutCall()
+        SproutCallDesire, SproutCallLocation = X.ConsiderSproutCall()
         if SproutCallDesire > 0 then
             bot:Action_ClearActions(true)
-            bot:ActionQueue_UseAbilityOnEntity(Sprout, SproutCallTarget)
+            bot:ActionQueue_UseAbilityOnLocation(Sprout, SproutCallLocation)
             bot:ActionQueue_UseAbilityOnLocation(NaturesCall, SproutCallLocation)
             return
         end
@@ -309,10 +309,14 @@ function X.SkillsComplement()
         return
     end
 
-    SproutDesire, SproutTarget = X.ConsiderSprout()
+    SproutDesire, SproutTarget, bUnit = X.ConsiderSprout()
     if SproutDesire > 0 then
         J.SetQueuePtToINT(bot, false)
-        bot:ActionQueue_UseAbilityOnEntity(Sprout, SproutTarget)
+        if bUnit then
+            bot:ActionQueue_UseAbilityOnEntity(Sprout, SproutTarget)
+        else
+            bot:ActionQueue_UseAbilityOnLocation(Sprout, SproutTarget)
+        end
         return
     end
 
@@ -344,7 +348,7 @@ end
 
 function X.ConsiderSprout()
     if not J.CanCastAbility(Sprout) then
-        return BOT_ACTION_DESIRE_NONE, nil
+        return BOT_ACTION_DESIRE_NONE, nil, false
     end
 
 	local nCastRange = J.GetProperCastRange(false, bot, Sprout:GetCastRange())
@@ -378,7 +382,7 @@ function X.ConsiderSprout()
         end
 
         if hTarget then
-            return BOT_ACTION_DESIRE_HIGH, hTarget
+            return BOT_ACTION_DESIRE_HIGH, hTarget, true
         end
 	end
 
@@ -391,7 +395,7 @@ function X.ConsiderSprout()
         and not botTarget:HasModifier('modifier_hoodwink_scurry_active')
         and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
         then
-            return BOT_ACTION_DESIRE_HIGH, botTarget
+            return BOT_ACTION_DESIRE_HIGH, botTarget, true
         end
     end
 
@@ -405,7 +409,7 @@ function X.ConsiderSprout()
             and not J.IsDisabled(enemyHero)
             and bot:WasRecentlyDamagedByHero(enemyHero, 2.0)
             then
-                return BOT_ACTION_DESIRE_HIGH, enemyHero
+                return BOT_ACTION_DESIRE_HIGH, enemyHero, true
             end
         end
 	end
@@ -421,7 +425,7 @@ function X.ConsiderSprout()
                         if (nLocationAoE.count >= 4)
                         or (nLocationAoE.count >= 3 and creep:GetHealth() >= 550)
                         then
-                            return BOT_ACTION_DESIRE_HIGH, creep
+                            return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc, false
                         end
                     end
                 end
@@ -434,7 +438,7 @@ function X.ConsiderSprout()
                         if (nLocationAoE.count >= 4)
                         or (nLocationAoE.count >= 3 and creep:GetHealth() >= 550)
                         then
-                            return BOT_ACTION_DESIRE_HIGH, creep
+                            return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc, false
                         end
                     end
                 end
@@ -445,10 +449,9 @@ function X.ConsiderSprout()
                     if J.IsValid(creep) and J.CanBeAttacked(creep) then
                         local nLocationAoE = bot:FindAoELocation(true, false, creep:GetLocation(), 0, nRadius, 0, 0)
                         if (nLocationAoE.count >= 3)
-                        or (nLocationAoE.count >= 2 and creep:IsAncientCreep())
-                        or (nLocationAoE.count >= 1 and creep:GetHealth() >= 550)
+                        or (nLocationAoE.count >= 2 and creep:GetHealth() >= 550)
                         then
-                            return BOT_ACTION_DESIRE_HIGH, creep
+                            return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc, false
                         end
                     end
                 end
@@ -465,22 +468,22 @@ function X.ConsiderSprout()
                     local sCreepName = creep:GetUnitName()
                     local nLocationAoE = bot:FindAoELocation(true, true, creep:GetLocation(), 0, 600, 0, 0)
 
-                    if string.find(sCreepName, 'ranged') then
+                    if string.find(sCreepName, 'ranged') and not creep:IsAncientCreep() then
                         if nLocationAoE.count > 0 or J.IsUnitTargetedByTower(creep, false) or J.IsEnemyTargetUnit(creep, 1200) then
-                            return BOT_ACTION_DESIRE_HIGH, creep
+                            return BOT_ACTION_DESIRE_HIGH, creep, true
                         end
                     end
 
                     nLocationAoE = bot:FindAoELocation(true, false, creep:GetLocation(), 0, nRadius, 0, nDamage)
                     if nLocationAoE.count >= 2 then
-                        return BOT_ACTION_DESIRE_HIGH, creep
+                        return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc, false
                     end
                 end
             end
         end
     end
 
-    return BOT_ACTION_DESIRE_NONE, nil
+    return BOT_ACTION_DESIRE_NONE, nil, false
 end
 
 function X.ConsiderTeleportation()
@@ -790,7 +793,7 @@ function X.ConsiderSproutCall()
                     if J.IsValid(creep) and J.CanBeAttacked(creep) then
                         local nLocationAoE = bot:FindAoELocation(true, false, creep:GetLocation(), 0, nRadius, 0, 0)
                         if (nLocationAoE.count >= 4) then
-                            return BOT_ACTION_DESIRE_HIGH, creep, creep:GetLocation()
+                            return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc
                         end
                     end
                 end
@@ -801,7 +804,7 @@ function X.ConsiderSproutCall()
                     if J.IsValid(creep) and J.CanBeAttacked(creep) then
                         local nLocationAoE = bot:FindAoELocation(true, false, creep:GetLocation(), 0, nRadius, 0, 0)
                         if (nLocationAoE.count >= 4) then
-                            return BOT_ACTION_DESIRE_HIGH, creep, creep:GetLocation()
+                            return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc
                         end
                     end
                 end
@@ -815,7 +818,7 @@ function X.ConsiderSproutCall()
                         or (nLocationAoE.count >= 2 and creep:IsAncientCreep())
                         or (nLocationAoE.count >= 1 and creep:GetHealth() >= 550 and fManaAfter > fManaThreshold1 + 0.2)
                         then
-                            return BOT_ACTION_DESIRE_HIGH, creep, creep:GetLocation()
+                            return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc
                         end
                     end
                 end
@@ -828,7 +831,7 @@ function X.ConsiderSproutCall()
                 and bAttacking
                 and fManaAfter > fManaThreshold1
                 then
-                    return BOT_ACTION_DESIRE_HIGH, botTarget, botTarget:GetLocation()
+                    return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation()
                 end
             end
 
@@ -838,13 +841,13 @@ function X.ConsiderSproutCall()
                 and bAttacking
                 and fManaAfter > fManaThreshold1
                 then
-                    return BOT_ACTION_DESIRE_HIGH, botTarget, botTarget:GetLocation()
+                    return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation()
                 end
             end
         end
     end
 
-    return BOT_ACTION_DESIRE_NONE, nil, 0
+    return BOT_ACTION_DESIRE_NONE, 0
 end
 
 return X
