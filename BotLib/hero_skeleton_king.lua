@@ -37,7 +37,6 @@ local HeroBuild = {
 			
 				"item_phase_boots",
 				"item_magic_wand",
-				"item_armlet",
 				"item_radiance",--
 				"item_blink",
 				"item_black_king_bar",--
@@ -45,14 +44,13 @@ local HeroBuild = {
 				"item_aghanims_shard",
 				"item_abyssal_blade",--
 				"item_swift_blink",--
-				"item_moon_shard",
 				"item_ultimate_scepter_2",
+				"item_moon_shard",
 				"item_travel_boots_2",--
 			},
             ['sell_list'] = {
-				"item_quelling_blade", "item_black_king_bar",
-				"item_magic_wand", "item_assault",
-				"item_armlet", "item_abyssal_blade",
+				"item_quelling_blade", "item_assault",
+				"item_magic_wand", "item_abyssal_blade",
 			},
         },
         [2] = {
@@ -83,8 +81,8 @@ local HeroBuild = {
 				"item_aghanims_shard",
 				"item_abyssal_blade",--
 				"item_swift_blink",--
-				"item_moon_shard",
 				"item_ultimate_scepter_2",
+				"item_moon_shard",
 				"item_travel_boots_2",--
 			},
             ['sell_list'] = {
@@ -127,7 +125,6 @@ local HeroBuild = {
 			
 				"item_phase_boots",
 				"item_magic_wand",
-				"item_armlet",
 				"item_radiance",--
 				"item_blink",
 				"item_black_king_bar",--
@@ -135,14 +132,13 @@ local HeroBuild = {
 				"item_aghanims_shard",
 				"item_abyssal_blade",--
 				"item_swift_blink",--
-				"item_moon_shard",
 				"item_ultimate_scepter_2",
+				"item_moon_shard",
 				"item_travel_boots_2",--
 			},
             ['sell_list'] = {
-				"item_quelling_blade", "item_black_king_bar",
-				"item_magic_wand", "item_assault",
-				"item_armlet", "item_abyssal_blade",
+				"item_quelling_blade", "item_assault",
+				"item_magic_wand", "item_abyssal_blade",
 			},
         },
         [2] = {
@@ -173,8 +169,8 @@ local HeroBuild = {
 				"item_aghanims_shard",
 				"item_abyssal_blade",--
 				"item_swift_blink",--
-				"item_moon_shard",
 				"item_ultimate_scepter_2",
+				"item_moon_shard",
 				"item_travel_boots_2",--
 			},
             ['sell_list'] = {
@@ -290,15 +286,13 @@ function X.ConsiderWraithfireBlast()
 		return BOT_ACTION_DESIRE_NONE, nil
 	end
 
-	local nCastRange = J.GetProperCastRange(false, bot, WraithfireBlast:GetCastRange())
+	local nCastRange = WraithfireBlast:GetCastRange()
 	local nCastPoint = WraithfireBlast:GetCastPoint()
 	local nSpeed = WraithfireBlast:GetSpecialValueInt('blast_speed')
 	local nDamage = WraithfireBlast:GetSpecialValueInt('damage')
     local nManaCost = WraithfireBlast:GetManaCost()
     local fManaAfter = J.GetManaAfter(nManaCost)
-    local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {WraithfireBlast, BoneGuard, Reincarnation})
-	local fManaThreshold2 = J.GetManaThreshold(bot, nManaCost, {BoneGuard, Reincarnation})
-	local fManaThreshold3 = J.GetManaThreshold(bot, nManaCost, {Reincarnation, 100})
+    local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {BoneGuard, Reincarnation})
 
 	for _, enemyHero in pairs(nEnemyHeroes) do
 		if J.IsValidHero(enemyHero)
@@ -306,9 +300,8 @@ function X.ConsiderWraithfireBlast()
 		and J.IsInRange(bot, enemyHero, nCastRange + 300)
 		and J.CanCastOnNonMagicImmune(enemyHero)
 		and J.CanCastOnTargetAdvanced(enemyHero)
-		and fManaAfter > fManaThreshold3
 		then
-			if enemyHero:IsChanneling() and fManaAfter > fManaThreshold2 then
+			if enemyHero:IsChanneling() and fManaAfter > fManaThreshold1 then
 				return BOT_ACTION_DESIRE_HIGH, enemyHero
 			end
 
@@ -329,7 +322,7 @@ function X.ConsiderWraithfireBlast()
     if J.IsGoingOnSomeone(bot) then
         if  J.IsValidHero(botTarget)
         and J.CanBeAttacked(botTarget)
-        and J.IsInRange(bot, botTarget, nCastRange + 300)
+        and J.IsInRange(bot, botTarget, nCastRange)
 		and J.CanCastOnNonMagicImmune(botTarget)
         and J.CanCastOnTargetAdvanced(botTarget)
 		and not J.IsDisabled(botTarget)
@@ -342,7 +335,7 @@ function X.ConsiderWraithfireBlast()
         end
 	end
 
-	if J.IsRetreating(bot) and not J.IsRealInvisible(bot) and bot:WasRecentlyDamagedByAnyHero(5.0) and fManaAfter > fManaThreshold3 then
+	if J.IsRetreating(bot) and not J.IsRealInvisible(bot) and fManaAfter > fManaThreshold1 then
         for _, enemyHero in pairs(nEnemyHeroes) do
 			if J.IsValidHero(enemyHero)
 			and J.CanBeAttacked(enemyHero)
@@ -351,12 +344,9 @@ function X.ConsiderWraithfireBlast()
             and J.CanCastOnTargetAdvanced(enemyHero)
 			and not J.IsDisabled(enemyHero)
 			and not enemyHero:IsDisarmed()
+			and bot:WasRecentlyDamagedByHero(enemyHero, 2.0)
 			then
-				if (J.IsChasingTarget(enemyHero, bot))
-				or (#nEnemyHeroes > #nAllyHeroes and enemyHero:GetAttackTarget() == bot)
-				then
-					return BOT_ACTION_DESIRE_HIGH, enemyHero
-				end
+				return BOT_ACTION_DESIRE_HIGH, enemyHero
 			end
 		end
 	end
@@ -364,7 +354,7 @@ function X.ConsiderWraithfireBlast()
     if ((J.IsPushing(bot) or J.IsDefending(bot)) and #nEnemyHeroes <= 1) or J.IsFarming(bot) then
         if  J.IsValid(botTarget)
         and J.CanBeAttacked(botTarget)
-        and J.IsInRange(bot, botTarget, nCastPoint)
+        and J.IsInRange(bot, botTarget, nCastRange)
         and botTarget:IsCreep()
         and not J.CanKillTarget(botTarget, bot:GetAttackDamage() * 3, DAMAGE_TYPE_PHYSICAL)
         and not J.CanKillTarget(botTarget, nDamage * 1.5, DAMAGE_TYPE_MAGICAL)
@@ -376,27 +366,28 @@ function X.ConsiderWraithfireBlast()
         end
     end
 
-	if J.IsLaning(bot) and J.IsInLaningPhase() and fManaAfter > fManaThreshold3 then
-		local nEnemyLaneCreeps = bot:GetNearbyLaneCreeps(nCastRange, true)
+	if J.IsLaning(bot) and J.IsInLaningPhase() and fManaAfter > fManaThreshold1 then
+		local nEnemyLaneCreeps = bot:GetNearbyLaneCreeps(Min(nCastRange + 300, 1600), true)
 		for _, creep in pairs(nEnemyLaneCreeps) do
 			if  J.IsValid(creep)
-            and not J.IsRunning(creep)
             and J.CanBeAttacked(creep)
 			and J.IsKeyWordUnit('range', creep)
+			and not J.IsOtherAllysTarget(creep)
 			then
                 local eta = (GetUnitToUnitDistance(bot, creep) / nSpeed) + nCastPoint
-				local nInRangeEnemy = J.GetEnemiesNearLoc(creep:GetLocation(), 500)
-                if  J.WillKillTarget(creep, nDamage, DAMAGE_TYPE_PURE, eta)
-				and (J.IsUnitTargetedByTower(creep, true) or #nInRangeEnemy > 0)
-				then
-                    return BOT_ACTION_DESIRE_HIGH, creep
-                end
+                if J.WillKillTarget(creep, nDamage, DAMAGE_TYPE_PURE, eta) then
+					local nInRangeEnemy = J.GetEnemiesNearLoc(creep:GetLocation(), 800)
+					if J.IsUnitTargetedByTower(creep, true) or #nInRangeEnemy > 0 then
+						return BOT_ACTION_DESIRE_HIGH, creep
+					end
+				end
 			end
 		end
 
 		for _, enemyHero in pairs(nEnemyHeroes) do
 			if J.IsValid(enemyHero)
 			and J.CanBeAttacked(enemyHero)
+			and J.IsInRange(bot, enemyHero, nCastRange)
 			and J.CanCastOnNonMagicImmune(enemyHero)
 			and J.CanCastOnTargetAdvanced(enemyHero)
 			and not J.IsChasingTarget(bot, enemyHero)
@@ -411,12 +402,13 @@ function X.ConsiderWraithfireBlast()
     if J.IsDoingRoshan(bot) then
         if  J.IsRoshan(botTarget)
         and J.CanBeAttacked(botTarget)
+        and J.IsInRange(bot, botTarget, nCastRange)
         and J.CanCastOnNonMagicImmune(botTarget)
 		and J.CanCastOnTargetAdvanced(botTarget)
-        and J.IsInRange(bot, botTarget, nCastRange)
 		and not J.IsDisabled(botTarget)
         and bAttacking
-        and fManaAfter > fManaThreshold2
+        and fManaAfter > fManaThreshold1 + 0.1
+		and #nEnemyHeroes == 0
         then
             return BOT_ACTION_DESIRE_HIGH, botTarget
         end
@@ -425,9 +417,9 @@ function X.ConsiderWraithfireBlast()
     if J.IsDoingTormentor(bot) then
         if  J.IsTormentor(botTarget)
         and J.IsInRange(bot, botTarget, nCastRange)
-        and not J.IsDisabled(botTarget)
         and bAttacking
-        and fManaAfter > fManaThreshold2
+        and fManaAfter > fManaThreshold1 + 0.1
+		and #nEnemyHeroes == 0
         then
             return BOT_ACTION_DESIRE_HIGH, botTarget
         end

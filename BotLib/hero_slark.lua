@@ -252,8 +252,7 @@ function X.ConsiderDarkPact()
 	local nManaCost = DarkPact:GetManaCost()
 	local fManaAfter = J.GetManaAfter(nManaCost)
 	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {Pounce, DepthShroud, ShadowDance})
-	local fManaThreshold2 = J.GetManaThreshold(bot, nManaCost, {DarkPact, Pounce, DepthShroud, ShadowDance})
-	local fManaThreshold3 = J.GetManaThreshold(bot, nManaCost, {Pounce, ShadowDance})
+	local fManaThreshold2 = J.GetManaThreshold(bot, nManaCost, {DepthShroud, ShadowDance})
 
 	if not J.IsRetreating(bot) and not J.IsRealInvisible(bot) and #nEnemyHeroes > 0 then
 		if bot:IsDisarmed()
@@ -264,7 +263,7 @@ function X.ConsiderDarkPact()
 		end
 	end
 
-	if J.IsInTeamFight(bot, 1200) and fManaAfter > fManaThreshold3 then
+	if J.IsInTeamFight(bot, 1200) and fManaAfter > fManaThreshold2 then
 		local count = 0
 		for _, enemyHero in pairs(nEnemyHeroes) do
 			if J.IsValidHero(enemyHero)
@@ -295,11 +294,13 @@ function X.ConsiderDarkPact()
 		and not botTarget:HasModifier('modifier_dazzle_shallow_grave')
 		and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
 		then
-			return BOT_ACTION_DESIRE_HIGH
+			if J.IsStunProjectileIncoming(bot, 1000) or J.GetHP(botTarget) < 0.5 then
+				return BOT_ACTION_DESIRE_HIGH
+			end
 		end
 	end
 
-	if J.IsRetreating(bot) and not J.IsRealInvisible(bot) and bot:WasRecentlyDamagedByAnyHero(3.0) then
+	if J.IsRetreating(bot) and not J.IsRealInvisible(bot) then
 		for _, enemyHero in pairs(nEnemyHeroes) do
 			if J.IsValid(enemyHero)
 			and J.CanBeAttacked(enemyHero)
@@ -307,13 +308,15 @@ function X.ConsiderDarkPact()
 			and J.CanCastOnNonMagicImmune(enemyHero)
 			and not J.IsDisabled(enemyHero)
 			and not enemyHero:IsDisarmed()
+			and bot:WasRecentlyDamagedByHero(enemyHero, 3.0)
 			then
 				local bIsFaster = bot:GetCurrentMovementSpeed() > enemyHero:GetCurrentMovementSpeed() + 10
 				if (J.IsChasingTarget(enemyHero, bot) and not bIsFaster)
-				or (#nEnemyHeroes > #nAllyHeroes and enemyHero:GetAttackTarget() == bot and not bIsFaster)
+				or (#nEnemyHeroes > #nAllyHeroes and not bIsFaster)
 				or bot:IsRooted()
 				or botHP < 0.55
 				or bot:GetCurrentMovementSpeed() < 200
+				or J.IsStunProjectileIncoming(bot, 800)
 				then
 					return BOT_ACTION_DESIRE_HIGH
 				end
@@ -323,7 +326,7 @@ function X.ConsiderDarkPact()
 
 	local nEnemyCreeps = bot:GetNearbyCreeps(nRadius, true)
 
-	if J.IsPushing(bot) and bAttacking and #nAllyHeroes <= 3 and fManaAfter > fManaThreshold2 then
+	if J.IsPushing(bot) and bAttacking and #nAllyHeroes <= 2 and fManaAfter > fManaThreshold1 then
 		if J.IsValid(nEnemyCreeps[1]) and J.CanBeAttacked(nEnemyCreeps[1]) then
 			if (#nEnemyCreeps >= 4)
 			or (#nEnemyCreeps >= 3 and not J.IsLateGame() and #nAllyHeroes <= 2)
@@ -396,7 +399,6 @@ function X.ConsiderPounce()
 	local nManaCost = Pounce:GetManaCost()
 	local fManaAfter = J.GetManaAfter(nManaCost)
 	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {DarkPact, DepthShroud, ShadowDance})
-	local fManaThreshold2 = J.GetManaThreshold(bot, nManaCost, {DarkPact, Pounce, DepthShroud, ShadowDance})
 
 	local vLocation = J.GetFaceTowardDistanceLocation(bot, nDistance)
 
@@ -411,7 +413,7 @@ function X.ConsiderPounce()
 		and J.CanBeAttacked(botTarget)
 		and J.IsInRange(bot, botTarget, nDistance - 100)
 		and J.CanCastOnNonMagicImmune(botTarget)
-		and GetUnitToLocationDistance(botTarget, J.GetEnemyFountain()) > 650
+		and GetUnitToLocationDistance(botTarget, J.GetEnemyFountain()) > 1200
 		and not J.IsDisabled(botTarget)
 		and not botTarget:HasModifier('modifier_slark_pounce_leash')
 		and bot:IsFacingLocation(botTarget:GetLocation(), 10)
@@ -421,22 +423,17 @@ function X.ConsiderPounce()
 	end
 
 	if J.IsRetreating(bot) and not J.IsRealInvisible(bot) then
-		for _, enemyHero in pairs(nEnemyHeroes) do
-			if J.IsValid(enemyHero)
-			and J.IsInRange(bot, enemyHero, 1200)
-			and not J.IsDisabled(enemyHero)
-			and not enemyHero:IsDisarmed()
-			then
-				if botHP < 0.55 or J.IsRunning(bot) then
-					if bot:IsFacingLocation(J.GetTeamFountain(), 30) then
-						return BOT_ACTION_DESIRE_HIGH
-					end
-				end
+		if (J.GetTotalEstimatedDamageToTarget(nEnemyHeroes, bot, 6.0) > bot:GetHealth())
+		or (#nEnemyHeroes > #nAllyHeroes)
+		or (botHP < 0.55 and J.IsRunning(bot))
+		then
+			if bot:IsFacingLocation(J.GetTeamFountain(), 30) then
+				return BOT_ACTION_DESIRE_HIGH
 			end
 		end
 	end
 
-    if J.IsPushing(bot) and fManaAfter > fManaThreshold2 and not bAttacking and #nEnemyHeroes == 0 then
+    if J.IsPushing(bot) and fManaAfter > fManaThreshold1 + 0.15 and not bAttacking and #nEnemyHeroes == 0 then
 		local nLane = LANE_MID
 		if bot:GetActiveMode() == BOT_MODE_PUSH_TOWER_TOP then nLane = LANE_TOP end
 		if bot:GetActiveMode() == BOT_MODE_PUSH_TOWER_BOT then nLane = LANE_BOT end
@@ -452,7 +449,7 @@ function X.ConsiderPounce()
 		end
 	end
 
-    if J.IsDefending(bot) and fManaAfter > fManaThreshold2 and not bAttacking and #nEnemyHeroes == 0 then
+    if J.IsDefending(bot) and fManaAfter > fManaThreshold1 + 0.15 and not bAttacking and #nEnemyHeroes == 0 then
 		local nLane = LANE_MID
 		if bot:GetActiveMode() == BOT_MODE_DEFEND_TOWER_TOP then nLane = LANE_TOP end
 		if bot:GetActiveMode() == BOT_MODE_DEFEND_TOWER_BOT then nLane = LANE_BOT end
@@ -468,7 +465,7 @@ function X.ConsiderPounce()
 		end
 	end
 
-	if J.IsFarming(bot) and fManaAfter > fManaThreshold2 then
+	if J.IsFarming(bot) and fManaAfter > fManaThreshold1 + 0.15 then
 		if bot.farm and bot.farm.location and DotaTime() > ffLastPounceTime + nRestoreTime then
 			local distance = GetUnitToLocationDistance(bot, bot.farm.location)
 			if J.IsRunning(bot) and bot:IsFacingLocation(bot.farm.location, 45) and distance > nDistance then
@@ -477,7 +474,7 @@ function X.ConsiderPounce()
 		end
 	end
 
-	if J.IsGoingToRune(bot) and fManaAfter > fManaThreshold2 then
+	if J.IsGoingToRune(bot) and fManaAfter > fManaThreshold1 + 0.1 then
 		if bot.rune and bot.rune.location and DotaTime() > ffLastPounceTime + nRestoreTime then
 			local distance = GetUnitToLocationDistance(bot, bot.rune.location)
 			if J.IsRunning(bot) and bot:IsFacingLocation(bot.rune.location, 30) and distance > nDistance then
@@ -486,7 +483,7 @@ function X.ConsiderPounce()
 		end
 	end
 
-    if J.IsDoingRoshan(bot) then
+    if J.IsDoingRoshan(bot) and fManaAfter > fManaThreshold1 + 0.1 then
         local vRoshanLocation = J.GetCurrentRoshanLocation()
         if GetUnitToLocationDistance(bot, vRoshanLocation) > 2000 and #nEnemyHeroes == 0 and DotaTime() > ffLastPounceTime + nRestoreTime then
 			if IsLocationPassable(vLocation) and bot:IsFacingLocation(vLocation, 20) then
@@ -495,7 +492,7 @@ function X.ConsiderPounce()
         end
     end
 
-    if J.IsDoingTormentor(bot) then
+    if J.IsDoingTormentor(bot) and fManaAfter > fManaThreshold1 + 0.1 then
         local vTormentorLocation = J.GetTormentorLocation(GetTeam())
         if GetUnitToLocationDistance(bot, vTormentorLocation) > 2000 and #nEnemyHeroes == 0 and DotaTime() > ffLastPounceTime + nRestoreTime then
 			if IsLocationPassable(vLocation) and bot:IsFacingLocation(vLocation, 20) then
@@ -589,19 +586,9 @@ function X.ConsiderShadowDance()
 	end
 
 	if J.IsRetreating(bot) and not J.IsRealInvisible(bot) and bot:WasRecentlyDamagedByAnyHero(4.0) then
-		for _, enemyHero in pairs(nEnemyHeroes) do
-			if J.IsValidHero(enemyHero)
-			and not J.IsSuspiciousIllusion(enemyHero)
-			and bot:WasRecentlyDamagedByHero(enemyHero, 4.0)
-			then
-				if botHP < 0.6 then
-					return BOT_ACTION_DESIRE_HIGH
-				end
-			end
-		end
-
 		if (botHP < 0.6 and J.IsStunProjectileIncoming(bot, 800))
-		or (J.GetTotalEstimatedDamageToTarget(nEnemyHeroes, bot, 4.0) > bot:GetHealth())
+		or (botHP < 0.6 and bot:WasRecentlyDamagedByAnyHero(2.0))
+		or (J.GetTotalEstimatedDamageToTarget(nEnemyHeroes, bot, 5.0) > bot:GetHealth())
 		then
 			return BOT_ACTION_DESIRE_HIGH
 		end

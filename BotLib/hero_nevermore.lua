@@ -300,7 +300,7 @@ function X.ConsiderShadowRaze(shadowRaze)
 	local nRadius = shadowRaze:GetSpecialValueInt('shadowraze_radius')
 	local nManaCost = shadowRaze:GetManaCost()
 	local fManaAfter = J.GetManaAfter(nManaCost)
-	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {ShadowRaze_Q, FeastOfSouls, RequiemOfSouls})
+	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {FeastOfSouls, RequiemOfSouls})
 	local fManaThreshold2 = J.GetManaThreshold(bot, nManaCost, {ShadowRaze_Q, ShadowRaze_W, ShadowRaze_E, FeastOfSouls, RequiemOfSouls})
 
 	local vCastLocation = J.GetFaceTowardDistanceLocation(bot, nCastRange)
@@ -341,7 +341,7 @@ function X.ConsiderShadowRaze(shadowRaze)
 
 	if J.IsPushing(bot) and fManaAfter > fManaThreshold1 then
 		for _, creep in pairs(nEnemyCreeps) do
-			if J.IsValid(creep) and J.CanBeAttacked(creep) and not J.IsRunning(creep) then
+			if J.IsValid(creep) and J.CanBeAttacked(creep) then
 				local nLocationAoE = bot:FindAoELocation(true, false, creep:GetLocation(), 0, nRadius, 0, 0)
 				if J.GetDistance(vCastLocation, nLocationAoE.targetloc) <= nRadius then
 					if (nLocationAoE.count >= 4)
@@ -356,7 +356,7 @@ function X.ConsiderShadowRaze(shadowRaze)
 
 	if J.IsDefending(bot) and fManaAfter > fManaThreshold1 then
 		for _, creep in pairs(nEnemyCreeps) do
-			if J.IsValid(creep) and J.CanBeAttacked(creep) and not J.IsRunning(creep) then
+			if J.IsValid(creep) and J.CanBeAttacked(creep) then
 				local nLocationAoE = bot:FindAoELocation(true, false, creep:GetLocation(), 0, nRadius, 0, 0)
 				if J.GetDistance(vCastLocation, nLocationAoE.targetloc) <= nRadius then
 					if (nLocationAoE.count >= 4)
@@ -378,7 +378,7 @@ function X.ConsiderShadowRaze(shadowRaze)
 
 	if J.IsFarming(bot) and fManaAfter > fManaThreshold1 then
 		for _, creep in pairs(nEnemyCreeps) do
-			if J.IsValid(creep) and J.CanBeAttacked(creep) and not J.IsRunning(creep) then
+			if J.IsValid(creep) and J.CanBeAttacked(creep) then
 				local nLocationAoE = bot:FindAoELocation(true, false, creep:GetLocation(), 0, nRadius, 0, 0)
 				if J.GetDistance(vCastLocation, nLocationAoE.targetloc) <= nRadius then
 					if (nLocationAoE.count >= 3)
@@ -396,7 +396,7 @@ function X.ConsiderShadowRaze(shadowRaze)
 		for _, creep in pairs(nEnemyCreeps) do
 			if J.IsValid(creep)
 			and J.CanBeAttacked(creep)
-			and not J.IsRunning(creep)
+			and not J.IsOtherAllysTarget(creep)
 			and GetUnitToLocationDistance(creep, vCastLocation) <= nRadius
 			then
 				local sCreepName = creep:GetUnitName()
@@ -422,7 +422,6 @@ function X.ConsiderShadowRaze(shadowRaze)
 		for _, creep in pairs(nEnemyCreeps) do
 			if J.IsValid(creep)
 			and J.CanBeAttacked(creep)
-			and not J.IsRunning(creep)
 			and GetUnitToLocationDistance(creep, vCastLocation) <= nRadius
 			and X.CanKillUnit(creep, nDamage, nStackBonusDamage, nCastPoint)
 			then
@@ -439,7 +438,6 @@ function X.ConsiderShadowRaze(shadowRaze)
 
 	if J.IsDoingRoshan(bot) or J.IsDoingTormentor(bot) then
 		if (J.IsRoshan(botTarget) or J.IsTormentor(botTarget))
-		and not J.IsRunning(botTarget)
 		and J.CanBeAttacked(botTarget)
 		and bAttacking
 		and fManaAfter > fManaThreshold1

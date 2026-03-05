@@ -288,8 +288,7 @@ function X.ConsiderRocketBarrage()
     local fManaAfter = J.GetManaAfter(nManaCost)
     local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {HomingMissile, FlakCannon, CallDown})
     local fManaThreshold2 = J.GetManaThreshold(bot, nManaCost, {FlakCannon, CallDown})
-    local fManaThreshold3 = J.GetManaThreshold(bot, nManaCost, {RocketBarrage, HomingMissile, FlakCannon, CallDown})
-    local fManaThreshold4 = J.GetManaThreshold(bot, nManaCost, {FlakCannon})
+    local fManaThreshold3 = J.GetManaThreshold(bot, nManaCost, {FlakCannon})
 
     local nEnemyCreeps = bot:GetNearbyCreeps(nRadius, true)
 
@@ -305,17 +304,17 @@ function X.ConsiderRocketBarrage()
         and not enemyHero:HasModifier('modifier_oracle_false_promise_timer')
         and not enemyHero:HasModifier('modifier_templar_assassin_refraction_absorb')
         and #nEnemyCreeps <= 1
-        and fManaAfter > fManaThreshold4
+        and fManaAfter > fManaThreshold3
         then
             return BOT_ACTION_DESIRE_HIGH
         end
     end
 
 	if J.IsGoingOnSomeone(bot) then
-		if J.IsValidTarget(botTarget)
+		if J.IsValidHero(botTarget)
         and J.CanBeAttacked(botTarget)
-        and J.CanCastOnNonMagicImmune(botTarget)
         and J.IsInRange(bot, botTarget, nRadius)
+        and J.CanCastOnNonMagicImmune(botTarget)
         and not botTarget:HasModifier('modifier_abaddon_borrowed_time')
         and not botTarget:HasModifier('modifier_dazzle_shallow_grave')
         and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
@@ -326,17 +325,17 @@ function X.ConsiderRocketBarrage()
 		end
 	end
 
-	if J.IsRetreating(bot) and not J.IsRealInvisible(bot) and bot:WasRecentlyDamagedByAnyHero(3.0) then
+	if J.IsRetreating(bot) and not J.IsRealInvisible(bot) then
 		for _, enemy in pairs(nEnemyHeroes) do
 			if J.IsValidHero(enemy)
 			and J.CanBeAttacked(enemy)
             and J.IsInRange(bot, enemy, nRadius)
 			and J.CanCastOnNonMagicImmune(enemy)
+            and not J.IsDisabled(enemy)
 			and not enemy:IsDisarmed()
 			then
 				local nInRangeEnemy = bot:GetNearbyHeroes(nRadius - 50, true, BOT_MODE_NONE)
-				if J.IsChasingTarget(enemy, bot)
-				or (#nEnemyHeroes > #nAllyHeroes and enemy:GetAttackTarget() == bot)
+				if (bot:WasRecentlyDamagedByHero(enemy, 3.0))
 				or (#nInRangeEnemy >= 2 and #nEnemyCreeps <= 1)
 				then
 					return BOT_ACTION_DESIRE_HIGH
@@ -345,34 +344,29 @@ function X.ConsiderRocketBarrage()
 		end
 	end
 
-    if J.IsPushing(bot) and #nAllyHeroes <= 3 and fManaAfter > fManaThreshold1 and bAttacking
-    and (J.IsCore(bot) or not J.IsThereCoreNearby(800))
-    and not bot:HasModifier('modifier_gyrocopter_flak_cannon')
-    then
-        if J.IsValid(nEnemyCreeps[1]) and J.CanBeAttacked(nEnemyCreeps[1]) and #nEnemyCreeps >= 4 then
-            return BOT_ACTION_DESIRE_HIGH
-        end
-    end
-
-    if J.IsDefending(bot) and #nAllyHeroes <= 3 and fManaAfter > fManaThreshold2 and bAttacking
-    and not bot:HasModifier('modifier_gyrocopter_flak_cannon')
-    then
-        if J.IsValid(nEnemyCreeps[1]) and J.CanBeAttacked(nEnemyCreeps[1]) and #nEnemyCreeps >= 4 and #nEnemyHeroes == 0 then
-            return BOT_ACTION_DESIRE_HIGH
-        end
-
-        local nInRangeEnemy = bot:GetNearbyHeroes(nRadius, true, BOT_MODE_NONE)
-        if #nInRangeEnemy >= 3 then
-            return BOT_ACTION_DESIRE_HIGH
-        end
-    end
-
-    if J.IsFarming(bot) and fManaAfter > fManaThreshold2 and bAttacking
-    and not bot:HasModifier('modifier_gyrocopter_flak_cannon')
-    then
-        if J.IsValid(nEnemyCreeps[1]) and J.CanBeAttacked(nEnemyCreeps[1]) then
-            if #nEnemyCreeps >= 3 or (#nEnemyCreeps >= 2 and nEnemyCreeps[1]:IsAncientCreep()) then
+    if not bot:HasModifier('modifier_gyrocopter_flak_cannon') then
+        if J.IsPushing(bot) and #nAllyHeroes <= 3 and fManaAfter > fManaThreshold1 and bAttacking then
+            if J.IsValid(nEnemyCreeps[1]) and J.CanBeAttacked(nEnemyCreeps[1]) and #nEnemyCreeps >= 4 then
                 return BOT_ACTION_DESIRE_HIGH
+            end
+        end
+
+        if J.IsDefending(bot) and #nAllyHeroes <= 3 and fManaAfter > fManaThreshold2 and bAttacking then
+            if J.IsValid(nEnemyCreeps[1]) and J.CanBeAttacked(nEnemyCreeps[1]) and #nEnemyCreeps >= 4 and #nEnemyHeroes == 0 then
+                return BOT_ACTION_DESIRE_HIGH
+            end
+
+            local nInRangeEnemy = bot:GetNearbyHeroes(nRadius, true, BOT_MODE_NONE)
+            if #nInRangeEnemy >= 3 then
+                return BOT_ACTION_DESIRE_HIGH
+            end
+        end
+
+        if J.IsFarming(bot) and fManaAfter > fManaThreshold2 and bAttacking then
+            if J.IsValid(nEnemyCreeps[1]) and J.CanBeAttacked(nEnemyCreeps[1]) then
+                if #nEnemyCreeps >= 3 or (#nEnemyCreeps >= 2 and nEnemyCreeps[1]:IsAncientCreep()) then
+                    return BOT_ACTION_DESIRE_HIGH
+                end
             end
         end
     end
@@ -380,8 +374,8 @@ function X.ConsiderRocketBarrage()
 	if J.IsDoingRoshan(bot) then
 		if  J.IsRoshan(botTarget)
         and J.CanBeAttacked(botTarget)
-        and J.CanCastOnNonMagicImmune(botTarget)
         and J.IsInRange(bot, botTarget, nRadius)
+        and J.CanCastOnNonMagicImmune(botTarget)
         and bAttacking
         and fManaAfter > fManaThreshold1
 		then
@@ -407,15 +401,14 @@ function X.ConsiderHomingMissile()
         return BOT_ACTION_DESIRE_NONE, nil
     end
 
-	local nCastRange = J.GetProperCastRange(false, bot, HomingMissile:GetCastRange())
+	local nCastRange = HomingMissile:GetCastRange()
     local nCastPoint = HomingMissile:GetCastPoint()
     local nLaunchDelay = HomingMissile:GetSpecialValueFloat('pre_flight_time')
 	local nDamage = HomingMissile:GetSpecialValueInt('hit_damage')
     local nSpeed = HomingMissile:GetSpecialValueInt('speed')
     local nManaCost = HomingMissile:GetManaCost()
     local fManaAfter = J.GetManaAfter(nManaCost)
-    local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {FlakCannon, CallDown})
-    local fManaThreshold2 = J.GetManaThreshold(bot, nManaCost, {RocketBarrage, FlakCannon, CallDown})
+    local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {RocketBarrage, FlakCannon, CallDown})
 
     for _, enemyHero in pairs(nEnemyHeroes) do
         if  J.IsValidHero(enemyHero)
@@ -430,7 +423,7 @@ function X.ConsiderHomingMissile()
         and not enemyHero:HasModifier('modifier_templar_assassin_refraction_absorb')
         and botTarget ~= enemyHero
         then
-            local eta = (GetUnitToLocationDistance(bot, J.GetCorrectLoc(enemyHero, nLaunchDelay)) / nSpeed) + nCastPoint
+            local eta = (GetUnitToLocationDistance(bot, J.GetCorrectLoc(enemyHero, nLaunchDelay)) / nSpeed) + nCastPoint + nLaunchDelay
             if J.WillKillTarget(enemyHero, nDamage, DAMAGE_TYPE_MAGICAL, eta) then
                 return BOT_ACTION_DESIRE_HIGH, enemyHero
             end
@@ -438,11 +431,11 @@ function X.ConsiderHomingMissile()
     end
 
 	if J.IsGoingOnSomeone(bot) then
-        if  J.IsValidTarget(botTarget)
+        if  J.IsValidHero(botTarget)
         and J.CanBeAttacked(botTarget)
+        and J.IsInRange(bot, botTarget, nCastRange)
         and J.CanCastOnNonMagicImmune(botTarget)
         and J.CanCastOnTargetAdvanced(botTarget)
-        and J.IsInRange(bot, botTarget, nCastRange)
         and not J.IsDisabled(botTarget)
         and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
         and fManaAfter > fManaThreshold1
@@ -465,12 +458,12 @@ function X.ConsiderHomingMissile()
             and J.IsInRange(bot, enemy, nCastRange)
             and J.CanCastOnNonMagicImmune(enemy)
 			and J.CanCastOnTargetAdvanced(enemy)
-            and bot:WasRecentlyDamagedByHero(enemy, 4.0)
+            and bot:WasRecentlyDamagedByHero(enemy, 2.0)
             and not J.IsDisabled(enemy)
 			and not enemy:IsDisarmed()
 			then
 				if J.IsChasingTarget(enemy, bot)
-				or (#nEnemyHeroes > #nAllyHeroes and enemy:GetAttackTarget() == bot)
+				or (#nEnemyHeroes > #nAllyHeroes)
                 or botHP < 0.4
 				then
 					return BOT_ACTION_DESIRE_HIGH, enemy
@@ -479,19 +472,17 @@ function X.ConsiderHomingMissile()
 		end
 	end
 
-    if J.IsLaning(bot) and J.IsInLaningPhase() and fManaAfter > fManaThreshold1
-    and (J.IsCore(bot) or not J.IsThereCoreNearby(800))
-	then
+    if J.IsLaning(bot) and J.IsInLaningPhase() and fManaAfter > fManaThreshold1 and (J.IsCore(bot) or not J.IsThereCoreNearby(800)) then
 		local nEnemyLaneCreeps = bot:GetNearbyLaneCreeps(nCastRange, true)
 		for _, creep in pairs(nEnemyLaneCreeps) do
 			if  J.IsValid(creep)
             and J.CanBeAttacked(creep)
-            and not J.IsRunning(creep)
+            and not J.IsOtherAllysTarget(creep)
 			and string.find(creep:GetUnitName(), 'ranged')
             and creep:GetHealth() > bot:GetAttackDamage()
             and bot:GetAttackTarget() ~= creep
 			then
-                local eta = (GetUnitToUnitDistance(bot, creep) / nSpeed) + nCastPoint
+                local eta = (GetUnitToUnitDistance(bot, creep) / nSpeed) + nCastPoint + nLaunchDelay
                 if J.WillKillTarget(creep, nDamage, DAMAGE_TYPE_MAGICAL, eta) then
                     return BOT_ACTION_DESIRE_HIGH, creep
                 end
@@ -514,7 +505,7 @@ function X.ConsiderHomingMissile()
                 and J.CanCastOnNonMagicImmune(enemy)
                 and J.CanCastOnTargetAdvanced(enemy)
                 and J.IsChasingTarget(enemy, allyHero)
-                and bot:WasRecentlyDamagedByHero(enemy, 4.0)
+                and bot:WasRecentlyDamagedByHero(enemy, 2.0)
                 and not J.IsDisabled(enemy)
                 and not enemy:IsDisarmed()
                 then
@@ -530,6 +521,7 @@ end
 function X.ConsiderFlakCannon()
     if not J.CanCastAbility(FlakCannon)
     or bot:IsDisarmed()
+    or bot:HasModifier('modifier_gyrocopter_flak_cannon')
     then
         return BOT_ACTION_DESIRE_NONE
     end
@@ -537,11 +529,10 @@ function X.ConsiderFlakCannon()
 	local nRadius = FlakCannon:GetSpecialValueInt('radius')
     local nManaCost = FlakCannon:GetManaCost()
     local fManaAfter = J.GetManaAfter(nManaCost)
-    local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {FlakCannon, CallDown})
-    local fManaThreshold2 = J.GetManaThreshold(bot, nManaCost, {RocketBarrage, FlakCannon, CallDown})
+    local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {RocketBarrage, HomingMissile, CallDown})
 
     if J.IsGoingOnSomeone(bot) then
-		if  J.IsValidTarget(botTarget)
+		if  J.IsValidHero(botTarget)
         and J.CanBeAttacked(botTarget)
         and J.IsInRange(bot, botTarget, bot:GetAttackRange() * 2)
         and not J.IsSuspiciousIllusion(botTarget)
@@ -557,14 +548,10 @@ function X.ConsiderFlakCannon()
 		end
 	end
 
-    if J.IsPushing(bot) and bAttacking and fManaAfter > fManaThreshold2
+    if J.IsPushing(bot) and bAttacking and fManaAfter > fManaThreshold1 + 0.1
     and (J.IsCore(bot) or not J.IsThereCoreNearby(800))
-    and not bot:HasModifier('modifier_gyrocopter_flak_cannon')
     then
-        if J.IsValid(botTarget)
-        and J.CanBeAttacked(botTarget)
-        and botTarget:IsCreep()
-        then
+        if J.IsValid(botTarget) and J.CanBeAttacked(botTarget) then
             local nLocationAoE = bot:FindAoELocation(true, false, bot:GetLocation(), 0, nRadius * 0.9, 0, 0)
             if (nLocationAoE.count >= 4 and #nAllyHeroes <= 3)
             or (nLocationAoE.count >= 6)
@@ -574,13 +561,11 @@ function X.ConsiderFlakCannon()
         end
     end
 
-    if J.IsDefending(bot) and bAttacking and fManaAfter > fManaThreshold1
-    and not bot:HasModifier('modifier_gyrocopter_flak_cannon')
-    then
+    if J.IsDefending(bot) and bAttacking and fManaAfter > fManaThreshold1 then
         if J.IsValid(botTarget)
         and J.CanBeAttacked(botTarget)
-        and botTarget:IsCreep()
-        and #nEnemyHeroes == 0 and #nAllyHeroes <= 3
+        and #nEnemyHeroes == 0
+        and #nAllyHeroes <= 3
         then
             local nLocationAoE = bot:FindAoELocation(true, false, bot:GetLocation(), 0, nRadius * 0.9, 0, 0)
             if nLocationAoE.count >= 4 then
@@ -595,12 +580,8 @@ function X.ConsiderFlakCannon()
 
     if J.IsFarming(bot) and bAttacking and fManaAfter > fManaThreshold1
     and #nEnemyHeroes == 0
-    and not bot:HasModifier('modifier_gyrocopter_flak_cannon')
     then
-        if J.IsValid(botTarget)
-        and J.CanBeAttacked(botTarget)
-        and botTarget:IsCreep()
-        then
+        if J.IsValid(botTarget) and J.CanBeAttacked(botTarget) then
             local nLocationAoE = bot:FindAoELocation(true, false, bot:GetLocation(), 0, nRadius * 0.9, 0, 0)
             if nLocationAoE.count >= 3 or (nLocationAoE.count >= 2 and botTarget:IsAncientCreep()) then
                 return BOT_ACTION_DESIRE_HIGH
@@ -616,7 +597,7 @@ function X.ConsiderCallDown()
         return BOT_ACTION_DESIRE_NONE, 0
     end
 
-	local nCastRange = J.GetProperCastRange(false, bot, CallDown:GetCastRange())
+	local nCastRange = CallDown:GetCastRange()
 	local nCastPoint = CallDown:GetCastPoint()
 	local nRadius = CallDown:GetSpecialValueInt('radius')
     local nStrikeDelay = CallDown:GetSpecialValueInt('strike_delay')
@@ -652,14 +633,17 @@ function X.ConsiderCallDown()
                 if  J.IsValidHero(enemyHero)
                 and J.CanBeAttacked(enemyHero)
                 and J.CanCastOnNonMagicImmune(enemyHero)
-                and not J.IsChasingTarget(bot, enemyHero)
                 and not enemyHero:HasModifier('modifier_abaddon_borrowed_time')
                 and not enemyHero:HasModifier('modifier_dazzle_shallow_grave')
                 and not enemyHero:HasModifier('modifier_necrolyte_reapers_scythe')
                 and not enemyHero:HasModifier('modifier_oracle_false_promise_timer')
                 and not enemyHero:HasModifier('modifier_templar_assassin_refraction_absorb')
                 then
-                    count = count + 1
+                    if (J.IsDisabled(enemyHero) and not enemyHero:HasModifier('modifier_teleporting'))
+                    or enemyHero:GetCurrentMovementSpeed() <= 250
+                    then
+                        count = count + 1
+                    end
                 end
             end
 
@@ -670,7 +654,7 @@ function X.ConsiderCallDown()
     end
 
     if J.IsGoingOnSomeone(bot) then
-		if  J.IsValidTarget(botTarget)
+		if  J.IsValidHero(botTarget)
         and J.CanBeAttacked(botTarget)
         and J.CanCastOnNonMagicImmune(botTarget)
         and J.IsInRange(bot, botTarget, nCastRange)
@@ -678,12 +662,9 @@ function X.ConsiderCallDown()
         and not botTarget:HasModifier('modifier_dazzle_shallow_grave')
         and not botTarget:HasModifier('modifier_templar_assassin_refraction_absorb')
 		then
-            if J.IsChasingTarget(bot, botTarget) then
-                local vLocation = J.VectorTowards(bot:GetLocation(), botTarget:GetLocation(), GetUnitToUnitDistance(bot, botTarget) + 350)
-                if GetUnitToLocationDistance(bot, vLocation) <= nCastRange then
-                    return BOT_ACTION_DESIRE_HIGH, vLocation
-                end
-            else
+            if J.IsDisabled(botTarget) and not botTarget:HasModifier('modifier_teleporting')
+            or botTarget:GetCurrentMovementSpeed() <= 250
+            then
                 return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation()
             end
 		end
@@ -692,8 +673,8 @@ function X.ConsiderCallDown()
     if J.IsDoingRoshan(bot) then
 		if  J.IsRoshan(botTarget)
         and J.CanBeAttacked(botTarget)
-        and J.CanCastOnNonMagicImmune(botTarget)
         and J.IsInRange(bot, botTarget, nCastRange)
+        and J.CanCastOnNonMagicImmune(botTarget)
         and bAttacking
         and fManaAfter > 0.3
         and not J.IsLateGame()

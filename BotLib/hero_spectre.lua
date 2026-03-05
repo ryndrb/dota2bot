@@ -186,10 +186,10 @@ function X.SkillsComplement()
         return
     end
 
-    SpectralDaggerDesire, SpectralDaggerTarget, DaggerType = X.ConsiderSpectralDagger()
+    SpectralDaggerDesire, SpectralDaggerTarget, bUnit = X.ConsiderSpectralDagger()
     if SpectralDaggerDesire > 0 then
         J.SetQueuePtToINT(bot, false)
-        if DaggerType == 'unit' then
+        if bUnit then
             bot:ActionQueue_UseAbilityOnEntity(SpectralDagger, SpectralDaggerTarget)
         else
             bot:ActionQueue_UseAbilityOnLocation(SpectralDagger, SpectralDaggerTarget)
@@ -207,7 +207,7 @@ end
 
 function X.ConsiderSpectralDagger()
     if not J.CanCastAbility(SpectralDagger) then
-        return BOT_ACTION_DESIRE_NONE, nil, ''
+        return BOT_ACTION_DESIRE_NONE, nil, false
     end
 
     local nCastRange = SpectralDagger:GetCastRange()
@@ -220,9 +220,7 @@ function X.ConsiderSpectralDagger()
 	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {Dispersion, ShadowStep, Haunt})
 
     if J.IsStuck(bot) then
-        J.SetQueuePtToINT(bot, false)
-        bot:ActionQueue_UseAbilityOnLocation(SpectralDagger, J.VectorTowards(bot:GetLocation(), J.GetTeamFountain(), Min(nCastRange, bot:DistanceFromFountain())))
-        return BOT_ACTION_DESIRE_NONE, nil, ''
+        return BOT_ACTION_DESIRE_HIGH, bot:GetLocation(), false
     end
 
     for _, enemyHero in pairs(nEnemyHeroes) do
@@ -239,7 +237,7 @@ function X.ConsiderSpectralDagger()
         then
             local eta = (GetUnitToUnitDistance(bot, enemyHero) / nSpeed) + nCastPoint
             if J.WillKillTarget(enemyHero, nDamage, DAMAGE_TYPE_PURE, eta) then
-                return BOT_ACTION_DESIRE_HIGH, enemyHero, 'unit'
+                return BOT_ACTION_DESIRE_HIGH, enemyHero, true
             end
         end
     end
@@ -248,6 +246,7 @@ function X.ConsiderSpectralDagger()
 		if  J.IsValidHero(botTarget)
         and J.CanBeAttacked(botTarget)
         and J.IsInRange(bot, botTarget, nCastRange)
+        and not J.IsInRange(bot, botTarget, bot:GetAttackRange() + 150)
         and J.CanCastOnNonMagicImmune(botTarget)
         and J.CanCastOnTargetAdvanced(botTarget)
         and not J.IsDisabled(botTarget)
@@ -256,21 +255,21 @@ function X.ConsiderSpectralDagger()
         and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
         and fManaAfter > fManaThreshold1
 		then
-            return BOT_ACTION_DESIRE_HIGH, botTarget, 'unit'
+            return BOT_ACTION_DESIRE_HIGH, botTarget, true
 		end
 	end
 
-    if J.IsRetreating(bot) and not J.IsRealInvisible(bot) then
+    if J.IsRetreating(bot) and not J.IsRealInvisible(bot) and J.IsRunning(bot) then
         for _, enemyHero in pairs(nEnemyHeroes) do
             if  J.IsValidHero(enemyHero)
             and J.CanBeAttacked(enemyHero)
-            and J.IsInRange(bot, enemyHero, 800)
+            and J.IsInRange(bot, enemyHero, nCastRange)
             and J.CanCastOnNonMagicImmune(enemyHero)
             and J.CanCastOnTargetAdvanced(enemyHero)
             and not J.IsDisabled(enemyHero)
             and bot:WasRecentlyDamagedByHero(enemyHero, 3.0)
             then
-                return BOT_ACTION_DESIRE_HIGH, enemyHero, 'unit'
+                return BOT_ACTION_DESIRE_HIGH, enemyHero, true
             end
         end
 	end
@@ -282,7 +281,7 @@ function X.ConsiderSpectralDagger()
             if J.IsValid(creep) and J.CanBeAttacked(creep) then
                 local nLocationAoE = bot:FindAoELocation(true, false, creep:GetLocation(), 0, nRadius, 0, 0)
                 if (nLocationAoE.count >= 4) then
-                    return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc, 'location'
+                    return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc, false
                 end
             end
         end
@@ -293,7 +292,7 @@ function X.ConsiderSpectralDagger()
             if J.IsValid(creep) and J.CanBeAttacked(creep) then
                 local nLocationAoE = bot:FindAoELocation(true, false, creep:GetLocation(), 0, nRadius, 0, 0)
                 if (nLocationAoE.count >= 4) then
-                    return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc, 'location'
+                    return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc, false
                 end
             end
         end
@@ -307,13 +306,13 @@ function X.ConsiderSpectralDagger()
                 or (nLocationAoE.count >= 2 and creep:IsAncientCreep())
                 or (nLocationAoE.count >= 2 and creep:GetHealth() >= 550)
                 then
-                    return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc, 'location'
+                    return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc, false
                 end
             end
         end
     end
 
-	if J.IsLaning(bot) and J.IsInLaningPhase() and fManaAfter > fManaThreshold1 then
+	if J.IsLaning(bot) and J.IsEarlyGame() and fManaAfter > fManaThreshold1 then
 		for _, creep in pairs(nEnemyCreeps) do
 			if  J.IsValid(creep)
             and J.CanBeAttacked(creep)
@@ -325,13 +324,13 @@ function X.ConsiderSpectralDagger()
                     local sCreepName = creep:GetUnitName()
                     if string.find(sCreepName, 'ranged') then
                         if J.IsUnitTargetedByTower(creep, false) or J.IsEnemyTargetUnit(creep, 1200) then
-                            return BOT_ACTION_DESIRE_HIGH, creep:GetLocation(), 'location'
+                            return BOT_ACTION_DESIRE_HIGH, creep:GetLocation(), false
                         end
                     end
 
                     local nLocationAoE = bot:FindAoELocation(true, false, creep:GetLocation(), 0, nRadius, 0, nDamage)
                     if nLocationAoE.count >= 2 then
-                        return BOT_ACTION_DESIRE_HIGH, creep:GetLocation(), 'location'
+                        return BOT_ACTION_DESIRE_HIGH, creep:GetLocation(), false
                     end
                 end
 			end
@@ -346,7 +345,7 @@ function X.ConsiderSpectralDagger()
                 or (nLocationAoE.count >= 2 and creep:IsAncientCreep())
                 or (nLocationAoE.count >= 2 and creep:GetHealth() >= 550)
                 then
-                    return BOT_ACTION_DESIRE_HIGH, creep:GetLocation(), 'location'
+                    return BOT_ACTION_DESIRE_HIGH, creep:GetLocation(), false
                 end
             end
         end
@@ -359,7 +358,7 @@ function X.ConsiderSpectralDagger()
         and bAttacking
         and fManaAfter > fManaThreshold1 + 0.1
         then
-            return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation(), 'location'
+            return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation(), false
         end
     end
 
@@ -369,11 +368,11 @@ function X.ConsiderSpectralDagger()
         and bAttacking
         and fManaAfter > fManaThreshold1 + 0.1
         then
-            return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation(), 'location'
+            return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation(), false
         end
     end
 
-    return BOT_ACTION_DESIRE_NONE, nil, ''
+    return BOT_ACTION_DESIRE_NONE, nil, false
 end
 
 function X.ConsiderDispersion()
@@ -381,24 +380,16 @@ function X.ConsiderDispersion()
         return BOT_ACTION_DESIRE_NONE
     end
 
-    local nEnemyHeroesTargetingMe = J.GetHeroesTargetingUnit(nEnemyHeroes, bot)
 
     if J.IsGoingOnSomeone(bot) then
-        if J.IsValidTarget(botTarget) and bot:WasRecentlyDamagedByAnyHero(1.0) and #nEnemyHeroesTargetingMe > 0 and botHP < 0.6 then
+        if J.IsValidHero(botTarget) and bot:WasRecentlyDamagedByAnyHero(2.0) and botHP < 0.6 then
             return BOT_ACTION_DESIRE_HIGH
         end
     end
 
-    if J.IsRetreating(bot) and not J.IsRealInvisible(bot) then
-        for _, enemyHero in pairs(nEnemyHeroes) do
-            if  J.IsValidHero(enemyHero)
-            and J.IsInRange(bot, enemyHero, enemyHero:GetAttackRange() + 150)
-            and not J.IsSuspiciousIllusion(enemyHero)
-            and not J.IsDisabled(enemyHero)
-            and bot:WasRecentlyDamagedByHero(enemyHero, 3.0)
-            then
-                return BOT_ACTION_DESIRE_HIGH
-            end
+    if J.IsRetreating(bot) and not J.IsRealInvisible(bot) and bot:WasRecentlyDamagedByAnyHero(2.0) then
+        if J.GetTotalEstimatedDamageToTarget(nEnemyHeroes, bot, 5.0) > bot:GetHealth() then
+            return BOT_ACTION_DESIRE_HIGH
         end
 	end
 
@@ -407,6 +398,7 @@ function X.ConsiderDispersion()
         and J.CanBeAttacked(botTarget)
         and J.IsInRange(bot, botTarget, 800)
         and bAttacking
+        and botHP < 0.5
         and botTarget:GetAttackTarget() == bot
         then
             return BOT_ACTION_DESIRE_HIGH
@@ -417,6 +409,7 @@ function X.ConsiderDispersion()
         if  J.IsTormentor(botTarget)
         and J.IsInRange(bot, botTarget, 800)
         and bAttacking
+        and botHP < 0.5
         then
             return BOT_ACTION_DESIRE_HIGH
         end
@@ -458,7 +451,7 @@ function X.ConsiderReality()
                 and not J.IsGoingOnSomeone(bot)
                 then
                     local allyTarget = J.GetProperTarget(allyHero)
-                    if J.IsValidTarget(allyTarget)
+                    if J.IsValidHero(allyTarget)
                     and J.CanBeAttacked(allyTarget)
                     and not J.IsSuspiciousIllusion(allyTarget)
                     and not allyTarget:HasModifier('modifier_faceless_void_chronosphere_freeze')
@@ -482,9 +475,7 @@ function X.ConsiderReality()
 end
 
 function X.ConsiderShadowStep()
-    if not J.CanCastAbility(ShadowStep)
-    or J.IsInLaningPhase()
-    then
+    if not J.CanCastAbility(ShadowStep) then
         return BOT_ACTION_DESIRE_NONE, ShadowStepTarget
     end
 
@@ -523,7 +514,7 @@ end
 function X.ConsiderHaunt()
     if not J.CanCastAbility(Haunt)
     or (J.CanCastAbility(ShadowStep) and #nEnemyHeroes > 0)
-    or J.IsInLaningPhase()
+    or J.IsEarlyGame()
     then
         return BOT_ACTION_DESIRE_NONE
     end
@@ -542,7 +533,7 @@ function X.ConsiderHaunt()
             and not J.IsInRange(bot, allyHero, 1300)
             and not J.IsRetreating(bot)
             and not J.IsGoingOnSomeone(bot)
-            and J.IsValidTarget(allyTarget)
+            and J.IsValidHero(allyTarget)
             and J.CanBeAttacked(allyTarget)
             and not J.IsSuspiciousIllusion(allyTarget)
             and not allyTarget:HasModifier('modifier_faceless_void_chronosphere_freeze')

@@ -4485,7 +4485,7 @@ X.ConsiderItemDesire["item_tpscroll"] = function( hItem )
 	and not bot:HasModifier('modifier_arc_warden_tempest_double')
 	then
 		if botHP < 0.19
-		and (bot:WasRecentlyDamagedByAnyHero(8.0) or botHP < 0.12)
+		and (bot:WasRecentlyDamagedByAnyHero(5.0) or botHP < 0.12)
 		and (botName ~= 'npc_dota_hero_slark' or bot:GetLevel() <= 5)
 		and botName ~= 'npc_dota_hero_huskar'
 		and nEnemyCount == 0
@@ -4504,7 +4504,7 @@ X.ConsiderItemDesire["item_tpscroll"] = function( hItem )
 		local nInRangeAlly_Attacking = J.GetSpecialModeAllies(bot, 1200, BOT_MODE_ATTACK)
 		if botHP < (0.15 + 0.24 * nEnemyCount)
 		and #nInRangeAlly_Attacking == 0
-		and bot:WasRecentlyDamagedByAnyHero(6.0)
+		and bot:WasRecentlyDamagedByAnyHero(5.0)
 		and nEnemyCount <= (botHP < 0.4 and 2 or 3)
 		and nAllyCount <= 2
 		and Salve == nil

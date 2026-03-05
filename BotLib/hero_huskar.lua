@@ -296,8 +296,8 @@ function X.ConsiderInnerFire()
 	end
 
 	local fCastPoint = InnerFire:GetCastPoint()
-	local nDamage = InnerFire:GetSpecialValueInt('damage')
 	local nRadius = InnerFire:GetSpecialValueInt('radius')
+	local nDamage = InnerFire:GetSpecialValueInt('damage')
 	local nHealthCost = math.floor(InnerFire:GetSpecialValueInt('health_cost') * (1 - bot:GetMagicResist()))
 	local fHealthAfter = J.GetHealthAfter(nHealthCost)
 
@@ -306,8 +306,8 @@ function X.ConsiderInnerFire()
 	local nCanHurtCount = 0
 	for _, enemyHero in pairs(nEnemyHeroes) do
 		if J.IsValidHero(enemyHero)
-		and J.IsInRange(bot, enemyHero, nRadius - 50)
 		and J.CanBeAttacked(enemyHero)
+		and J.IsInRange(bot, enemyHero, nRadius - 50)
 		and J.CanCastOnNonMagicImmune(enemyHero)
 		and not enemyHero:HasModifier('modifier_necrolyte_reapers_scythe')
 		then
@@ -324,13 +324,11 @@ function X.ConsiderInnerFire()
 			if J.IsInLaningPhase(bot) and not J.IsRetreating(bot) then
 				if J.IsValidBuilding(nAllyTowers[1])
 				and nAllyTowers[1]:GetAttackTarget() == nil
-				and J.IsInRange(nAllyTowers[1], enemyHero, 850)
-				and not J.IsInRange(nAllyTowers[1], enemyHero, 700)
+				and J.IsInRange(nAllyTowers[1], enemyHero, 700)
+				and not J.IsInRange(nAllyTowers[1], enemyHero, 400)
 				and GetUnitToUnitDistance(bot, nAllyTowers[1]) > GetUnitToUnitDistance(enemyHero, nAllyTowers[1])
 				then
-					if (enemyHero:GetActualIncomingDamage(nAllyTowers[1]:GetAttackTarget() * 3, DAMAGE_TYPE_PHYSICAL) / enemyHero:GetHealth()) > 0.3 then
-						return BOT_ACTION_DESIRE_HIGH
-					end
+					return BOT_ACTION_DESIRE_HIGH
 				end
 			end
 
@@ -344,39 +342,29 @@ function X.ConsiderInnerFire()
 		if J.IsValidHero(botTarget)
 		and J.CanBeAttacked(botTarget)
 		and J.IsInRange(bot, botTarget, nRadius - 30)
-		and J.IsAttacking(botTarget)
 		and J.CanCastOnNonMagicImmune(botTarget)
 		and not J.IsDisabled(botTarget)
-		and not botTarget:IsDisarmed()
+		and not botTarget:IsSilenced()
 		and not botTarget:HasModifier('modifier_abaddon_borrowed_time')
 		and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
-		and (not J.IsChasingTarget(bot, botTarget) or J.IsInRange(bot, botTarget, nRadius * 0.5))
 		then
 			return BOT_ACTION_DESIRE_HIGH
 		end
 	end
 
-	if J.IsRetreating(bot) and not J.IsRealInvisible(bot) and bot:WasRecentlyDamagedByAnyHero(4.0) then
+	if J.IsRetreating(bot) and not J.IsRealInvisible(bot) then
 		for _, enemyHero in pairs(nEnemyHeroes) do
 			if J.IsValidHero(enemyHero)
-			and J.IsInRange(bot, enemyHero, nRadius - 50)
 			and J.CanBeAttacked(enemyHero)
+			and J.IsInRange(bot, enemyHero, nRadius - 50)
 			and J.CanCastOnNonMagicImmune(enemyHero)
-			and not enemyHero:HasModifier('modifier_necrolyte_reapers_scythe')
 			and not J.IsDisabled(enemyHero)
+			and not enemyHero:HasModifier('modifier_necrolyte_reapers_scythe')
 			and not enemyHero:IsDisarmed()
+			and not enemyHero:IsSilenced()
+			and bot:WasRecentlyDamagedByHero(enemyHero, 3.0)
 			then
-				if J.IsChasingTarget(enemyHero, bot)
-				or (enemyHero:GetAttackTarget() == bot)
-				or (#nEnemyHeroes > #nAllyHeroes and #nEnemyHeroes >= 2)
-				then
-					return BOT_ACTION_DESIRE_HIGH
-				end
-
-				local nInRangeEnemy = J.GetEnemiesNearLoc(bot:GetLocation(), nRadius)
-				if #nInRangeEnemy >= 2 and J.IsAttacking(enemyHero) then
-					return BOT_ACTION_DESIRE_HIGH
-				end
+				return BOT_ACTION_DESIRE_HIGH
 			end
 		end
 	end
@@ -429,8 +417,7 @@ function X.ConsiderInnerFire()
 		end
 
 		local nLocationAoE = bot:FindAoELocation(true, true, bot:GetLocation(), 0, nRadius, 0, 0)
-		local nInRangeEnemy = J.GetAlliesNearLoc(bot:GetLocation(), 1600)
-		if #nInRangeEnemy == 0 and nLocationAoE.count >= 2 and bAttacking then
+		if nLocationAoE.count >= 2 then
 			return BOT_ACTION_DESIRE_HIGH
 		end
 	end
@@ -439,13 +426,14 @@ function X.ConsiderInnerFire()
 		if J.IsValid(nEnemyCreeps[1]) and J.CanBeAttacked(nEnemyCreeps[1]) then
 			if (#nEnemyCreeps >= 2)
 			or (#nEnemyCreeps >= 1 and nEnemyCreeps[1]:IsAncientCreep())
+			or (#nEnemyCreeps >= 1 and nEnemyCreeps[1]:GetHealth() >= 500)
 			then
 				return BOT_ACTION_DESIRE_HIGH
 			end
 		end
 	end
 
-	if J.IsLaning(bot) and J.IsInLaningPhase() then
+	if J.IsLaning(bot) and J.IsInLaningPhase() and fHealthAfter > 0.15 then
 		local nCanKillCount = 0
 		for _, creep in pairs(nEnemyCreeps) do
 			if J.IsValid(creep)
@@ -453,6 +441,14 @@ function X.ConsiderInnerFire()
 			and J.WillKillTarget(creep, nDamage, DAMAGE_TYPE_MAGICAL, fCastPoint)
 			then
 				nCanKillCount = nCanKillCount + 1
+				local sCreepName = creep:GetUnitName()
+				local nInRangeEnemy = J.GetEnemiesNearLoc(creep:GetLocation(), nRadius)
+
+				if (#nInRangeEnemy > 0)
+				or (string.find(sCreepName, 'range'))
+				then
+					return BOT_ACTION_DESIRE_HIGH
+				end
 			end
 		end
 
@@ -520,7 +516,7 @@ function X.ConsiderBurningSpear()
 				return BOT_ACTION_DESIRE_HIGH, enemyHero
 			end
 
-			if J.IsLaning(bot) and not J.IsRealInvisible(bot) then
+			if J.IsInLaningPhase(bot) and not J.IsRealInvisible(bot) then
 				if J.IsInRange(bot, enemyHero, nCastRange + 100) and #nAllyHeroes >= #nEnemyHeroes then
 					if J.GetModifierCount(enemyHero, 'modifier_huskar_burning_spear_debuff') <= 5 then
 						return BOT_ACTION_DESIRE_HIGH, enemyHero
@@ -531,20 +527,21 @@ function X.ConsiderBurningSpear()
 	end
 
 	if J.IsGoingOnSomeone(bot) then
-		if #nEnemyHeroes > 0 then
-			if not bIsAutoCasted then
-				BurningSpear:ToggleAutoCast()
-			end
-			return BOT_ACTION_DESIRE_NONE, nil
+		if  J.IsValidHero(botTarget)
+		and J.CanBeAttacked(botTarget)
+		and J.IsInRange(bot, botTarget, nCastRange)
+        and not botTarget:HasModifier('modifier_abaddon_borrowed_time')
+		and not botTarget:HasModifier('modifier_dazzle_shallow_grave')
+        and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
+		and not botTarget:HasModifier('modifier_item_blade_mail_reflect')
+		then
+			return BOT_ACTION_DESIRE_HIGH, botTarget
 		end
 	end
 
 	if (J.IsPushing(bot) or J.IsDefending(bot) or J.IsFarming(bot)) then
 		if J.IsValid(botTarget) and J.CanBeAttacked(botTarget) and not botTarget:IsBuilding() then
-			if not bIsAutoCasted then
-				BurningSpear:ToggleAutoCast()
-			end
-			return BOT_ACTION_DESIRE_NONE, nil
+			return BOT_ACTION_DESIRE_HIGH, botTarget
 		end
 	end
 
@@ -582,10 +579,7 @@ function X.ConsiderBurningSpear()
 		and J.IsInRange(bot, botTarget, nCastRange)
 		and botHP > 0.25
 		then
-			if not bIsAutoCasted then
-				BurningSpear:ToggleAutoCast()
-			end
-			return BOT_ACTION_DESIRE_NONE, nil
+			return BOT_ACTION_DESIRE_HIGH, botTarget
 		end
 	end
 
@@ -594,15 +588,8 @@ function X.ConsiderBurningSpear()
 		and J.IsInRange(bot, botTarget, nCastRange)
 		and botHP > 0.25
 		then
-			if not bIsAutoCasted then
-				BurningSpear:ToggleAutoCast()
-			end
-			return BOT_ACTION_DESIRE_NONE, nil
+			return BOT_ACTION_DESIRE_HIGH, botTarget
 		end
-	end
-
-	if bIsAutoCasted then
-		BurningSpear:ToggleAutoCast()
 	end
 
 	return BOT_ACTION_DESIRE_NONE, nil
@@ -635,7 +622,7 @@ end
 function X.ConsiderLifeBreak()
 	if not J.CanCastAbility(LifeBreak) then return 0 end
 
-	local nCastRange = J.GetProperCastRange(false, bot, LifeBreak:GetCastRange())
+	local nCastRange = LifeBreak:GetCastRange()
 	local bWeAreStronger = J.WeAreStronger(bot, 1200)
 
 	if J.IsGoingOnSomeone(bot) then
@@ -676,11 +663,11 @@ function X.ConsiderLifeBreak()
 		end
 	end
 
-	if not J.IsInLaningPhase() and bot:GetLevel() >= 12 and #nEnemyHeroes <= 1 and #nAllyHeroes <= 3 then
+	if not J.IsInLaningPhase() and bot:GetLevel() >= 12 and #nEnemyHeroes <= 1 then
 		if J.IsValid(botTarget)
+		and J.CanBeAttacked(botTarget)
 		and J.IsInRange(bot, botTarget, nCastRange)
-		and not J.IsInRange(bot, botTarget, nCastRange - 150)
-		and J.GetHP(botTarget) > 0.8
+		and J.GetHP(botTarget) > 0.6
 		and not botTarget:IsHero()
 		and not J.IsRoshan(botTarget)
 		and not J.IsTormentor(botTarget)

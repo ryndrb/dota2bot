@@ -564,7 +564,9 @@ function X.ConsiderTeleportation()
 		if bot:GetActiveMode() == BOT_MODE_PUSH_TOWER_BOT then nLane = LANE_BOT end
 
 		local vLaneFrontLocation = GetLaneFrontLocation(GetTeam(), nLane, 0)
-		if (GetUnitToLocationDistance(bot, vLaneFrontLocation) / bot:GetCurrentMovementSpeed()) > nChannelTime * 2 then
+        local nInRangeAlly = J.GetAlliesNearLoc(vLaneFrontLocation, 1200)
+        local nInRangeEnemy = J.GetEnemiesNearLoc(vLaneFrontLocation, 1200)
+		if (GetUnitToLocationDistance(bot, vLaneFrontLocation) / bot:GetCurrentMovementSpeed()) > nChannelTime * 2 and (#nInRangeAlly + 1 >= #nInRangeEnemy) then
 			if J.IsRunning(bot) and IsLocationPassable(vLaneFrontLocation) then
 				return BOT_ACTION_DESIRE_HIGH, vLaneFrontLocation
 			end
@@ -577,7 +579,9 @@ function X.ConsiderTeleportation()
 		if bot:GetActiveMode() == BOT_MODE_DEFEND_TOWER_BOT then nLane = LANE_BOT end
 
 		local vLaneFrontLocation = GetLaneFrontLocation(GetTeam(), nLane, -1000)
-		if (GetUnitToLocationDistance(bot, vLaneFrontLocation) / bot:GetCurrentMovementSpeed()) > nChannelTime * 2 then
+        local nInRangeAlly = J.GetAlliesNearLoc(vLaneFrontLocation, 1200)
+        local nInRangeEnemy = J.GetEnemiesNearLoc(vLaneFrontLocation, 1200)
+		if (GetUnitToLocationDistance(bot, vLaneFrontLocation) / bot:GetCurrentMovementSpeed()) > nChannelTime * 2 and (#nInRangeAlly + 1 >= #nInRangeEnemy) then
 			if J.IsRunning(bot) and IsLocationPassable(vLaneFrontLocation) then
 				return BOT_ACTION_DESIRE_HIGH, vLaneFrontLocation
 			end
@@ -586,7 +590,9 @@ function X.ConsiderTeleportation()
 
 	if J.IsFarming(bot) and not bAttacking and #nEnemyHeroes == 0 then
 		if bot.farm and bot.farm.location then
-            if (GetUnitToLocationDistance(bot, bot.farm.location) / bot:GetCurrentMovementSpeed()) > nChannelTime * 2 then
+            local nInRangeAlly = J.GetAlliesNearLoc(bot.farm.location, 1200)
+            local nInRangeEnemy = J.GetEnemiesNearLoc(bot.farm.location, 1200)
+            if (GetUnitToLocationDistance(bot, bot.farm.location) / bot:GetCurrentMovementSpeed()) > nChannelTime * 2 and (#nInRangeAlly + 1 >= #nInRangeEnemy) then
                 if J.IsRunning(bot) and IsLocationPassable(bot.farm.location) then
                     return BOT_ACTION_DESIRE_HIGH, bot.farm.location
                 end
@@ -596,7 +602,9 @@ function X.ConsiderTeleportation()
 
 	if J.IsGoingToRune(bot) then
 		if bot.rune and bot.rune.location then
-            if (GetUnitToLocationDistance(bot, bot.rune.location) / bot:GetCurrentMovementSpeed()) > nChannelTime * 2 then
+            local nInRangeAlly = J.GetAlliesNearLoc(bot.rune.location, 1200)
+            local nInRangeEnemy = J.GetEnemiesNearLoc(bot.rune.location, 1200)
+            if (GetUnitToLocationDistance(bot, bot.rune.location) / bot:GetCurrentMovementSpeed()) > nChannelTime * 2 and (#nInRangeAlly + 1 >= #nInRangeEnemy) then
                 if J.IsRunning(bot) and IsLocationPassable(bot.rune.location) then
                     return BOT_ACTION_DESIRE_HIGH, bot.rune.location
                 end

@@ -229,8 +229,6 @@ local UnstableConcoctionThrowDesire, UnstableConcoctionThrowTarget
 local BerserkPotionDesire, BerserkPotionTarget
 local ChemicalRageDesire
 
-local UnstableConcoctionCastTime = 0
-
 local bAttacking = false
 local botTarget, botHP
 local nAllyHeroes, nEnemyHeroes
@@ -268,7 +266,6 @@ function X.SkillsComplement()
 	if UnstableConcoctionDesire > 0 then
 		J.SetQueuePtToINT(bot, false)
 		bot:ActionQueue_UseAbility(UnstableConcoction)
-		UnstableConcoctionCastTime = DotaTime()
 		return
 	end
 
@@ -281,7 +278,8 @@ function X.SkillsComplement()
 
 	BerserkPotionDesire, BerserkPotionTarget = X.ConsiderBerserkPotion()
 	if BerserkPotionDesire > 0 then
-		bot:Action_UseAbilityOnEntity(BerserkPotion, BerserkPotionTarget)
+		J.SetQueuePtToINT(bot, false)
+		bot:ActionQueue_UseAbilityOnEntity(BerserkPotion, BerserkPotionTarget)
 		return
 	end
 end
@@ -296,8 +294,7 @@ function X.ConsiderAcidSpray()
 	local nRadius = AcidSpray:GetSpecialValueInt('radius')
 	local nManaCost = AcidSpray:GetManaCost()
 	local fManaAfter = J.GetManaAfter(nManaCost)
-	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {AcidSpray, UnstableConcoction, ChemicalRage})
-	local fManaThreshold2 = J.GetManaThreshold(bot, nManaCost, {UnstableConcoction, ChemicalRage})
+	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {UnstableConcoction, ChemicalRage})
 
 	if J.IsInTeamFight(bot, 1200) then
 		local nLocationAoE = bot:FindAoELocation(true, true, bot:GetLocation(), nCastRange, nRadius, nCastPoint, 0)
@@ -306,53 +303,46 @@ function X.ConsiderAcidSpray()
 			return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc
 		end
 
-		if nLocationAoE.count >= 3 and fManaAfter > fManaThreshold2 then
+		if nLocationAoE.count >= 3 and fManaAfter > fManaThreshold1 then
 			return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc
 		end
 	end
 
 	if J.IsGoingOnSomeone(bot) then
-		if  J.IsValidTarget(botTarget)
+		if  J.IsValidHero(botTarget)
 		and J.CanBeAttacked(botTarget)
 		and J.CanCastOnNonMagicImmune(botTarget)
-		and J.IsInRange(bot, botTarget, nCastRange + nRadius)
+		and J.IsInRange(bot, botTarget, nCastRange)
 		and not botTarget:HasModifier('modifier_abaddon_borrowed_time')
 		and not botTarget:HasModifier('modifier_dazzle_shallow_grave')
 		and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
 		then
-			if not J.IsChasingTarget(bot, botTarget) and J.IsInRange(bot, botTarget, nCastRange) then
-				return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation()
-			elseif J.IsChasingTarget(bot, botTarget)
-				and not J.IsInRange(bot, botTarget, nCastRange)
-				and J.IsInRange(bot, botTarget, nCastRange + nRadius / 2)
-				and J.GetHP(botTarget) < 0.2
+			if not J.IsChasingTarget(bot, botTarget)
+			or J.IsDisabled(botTarget)
 			then
-				return BOT_ACTION_DESIRE_HIGH, J.VectorTowards(bot:GetLocation(), botTarget:GetLocation(), nCastRange)
+				return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation()
 			end
 		end
 	end
 
-	if J.IsRetreating(bot) and not J.IsRealInvisible(bot) and bot:WasRecentlyDamagedByAnyHero(3.0) then
+	if J.IsRetreating(bot) and not J.IsRealInvisible(bot) then
 		for _, enemyHero in pairs(nEnemyHeroes) do
 			if J.IsValidHero(enemyHero)
+			and J.CanBeAttacked(enemyHero)
 			and J.CanCastOnNonMagicImmune(enemyHero)
-			and J.IsInRange(bot, enemyHero, nRadius + nRadius / 2)
+			and J.IsInRange(bot, enemyHero, nRadius)
+			and not J.IsInRange(bot, enemyHero, nRadius / 2)
 			and not J.IsDisabled(enemyHero)
+			and bot:WasRecentlyDamagedByHero(enemyHero, 3.0)
 			then
-				local nEnemyHeroesTargetingMe = J.GetHeroesTargetingUnit(nEnemyHeroes, bot)
-				if J.IsChasingTarget(enemyHero, bot)
-				or (#nEnemyHeroes > #nAllyHeroes and enemyHero:GetAttackTarget())
-				or (#nEnemyHeroesTargetingMe >= 2 and botHP < 0.7)
-				then
-					return BOT_ACTION_DESIRE_HIGH, bot:GetLocation()
-				end
+				return BOT_ACTION_DESIRE_HIGH, bot:GetLocation()
 			end
 		end
 	end
 
-	local nEnemyCreeps = bot:GetNearbyCreeps(800, true)
+	local nEnemyCreeps = bot:GetNearbyCreeps(Min(nCastRange, 1600), true)
 
-	if J.IsPushing(bot) and fManaAfter > fManaThreshold1 and #nAllyHeroes <= 2 and bAttacking and #nEnemyHeroes == 0 then
+	if J.IsPushing(bot) and bAttacking and fManaAfter > fManaThreshold1 and #nEnemyHeroes == 0 then
 		for _, creep in pairs(nEnemyCreeps) do
             if J.IsValid(creep) and J.CanBeAttacked(creep) and not J.IsRunning(creep) then
                 local nLocationAoE = bot:FindAoELocation(true, false, creep:GetLocation(), 0, nRadius, 0, 0)
@@ -363,7 +353,7 @@ function X.ConsiderAcidSpray()
         end
 	end
 
-	if J.IsDefending(bot) and fManaAfter > fManaThreshold2 and bAttacking then
+	if J.IsDefending(bot) and fManaAfter > fManaThreshold1 and bAttacking then
 		if #nEnemyHeroes <= 1 then
 			for _, creep in pairs(nEnemyCreeps) do
 				if J.IsValid(creep) and J.CanBeAttacked(creep) and not J.IsRunning(creep) then
@@ -381,12 +371,13 @@ function X.ConsiderAcidSpray()
 		end
 	end
 
-	if J.IsFarming(bot) and bAttacking and fManaAfter > fManaThreshold2 then
+	if J.IsFarming(bot) and bAttacking and fManaAfter > fManaThreshold1 then
 		for _, creep in pairs(nEnemyCreeps) do
             if J.IsValid(creep) and J.CanBeAttacked(creep) and not J.IsRunning(creep) then
                 local nLocationAoE = bot:FindAoELocation(true, false, creep:GetLocation(), 0, nRadius, 0, 0)
                 if (nLocationAoE.count >= 3 and not J.HasItem(bot, 'item_radiance'))
 				or (nLocationAoE.count >= 2 and creep:IsAncientCreep())
+				or (nLocationAoE.count >= 5)
 				then
                     return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc
                 end
@@ -394,15 +385,14 @@ function X.ConsiderAcidSpray()
         end
 	end
 
-	local nEnemyLaneCreeps = bot:GetNearbyCreeps(800, true)
-	local nEnemyTowers = bot:GetNearbyTowers(1600, true)
+	local nEnemyTowers = bot:GetNearbyTowers(1200, true)
 
-	if J.IsLaning(bot) and J.IsInLaningPhase() and bAttacking and fManaAfter > fManaThreshold2 and #nAllyHeroes >= #nEnemyHeroes then
-		for _, creep in pairs(nEnemyLaneCreeps) do
+	if J.IsLaning(bot) and J.IsInLaningPhase() and bAttacking and fManaAfter > fManaThreshold1 and #nAllyHeroes >= #nEnemyHeroes then
+		for _, creep in pairs(nEnemyCreeps) do
             if J.IsValid(creep) and J.CanBeAttacked(creep) and not J.IsRunning(creep) then
                 local nLocationAoE = bot:FindAoELocation(true, false, creep:GetLocation(), 0, nRadius, 0, 0)
                 if (nLocationAoE.count >= 4) then
-					if #nEnemyTowers == 0 or (J.IsValidBuilding(nEnemyTowers[1]) and GetUnitToLocationDistance(nEnemyTowers[1], nLocationAoE.targetloc) > 1000) then
+					if #nEnemyTowers == 0 then
 						return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc
 					end
                 end
@@ -415,8 +405,8 @@ function X.ConsiderAcidSpray()
 		and J.CanBeAttacked(botTarget)
         and J.CanCastOnNonMagicImmune(botTarget)
         and J.IsInRange(bot, botTarget, nCastRange)
-		and fManaAfter > fManaThreshold1
 		and bAttacking
+		and fManaAfter > fManaThreshold1
         then
             return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation()
         end
@@ -425,8 +415,8 @@ function X.ConsiderAcidSpray()
     if J.IsDoingTormentor(bot) then
         if  J.IsTormentor(botTarget)
         and J.IsInRange(bot, botTarget, nCastRange)
-		and fManaAfter > fManaThreshold1
 		and bAttacking
+		and fManaAfter > fManaThreshold1
         then
             return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation()
         end
@@ -446,13 +436,19 @@ function X.ConsiderUnstableConcoction()
 	local fManaAfter = J.GetManaAfter(nManaCost)
 	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {ChemicalRage, 75})
 
+	if not bot:IsMagicImmune() then
+		if J.IsStunProjectileIncoming(bot, 1200) then
+			return BOT_ACTION_DESIRE_NONE, 0
+		end
+	end
+
 	for _, enemyHero in pairs(nEnemyHeroes) do
 		if  J.IsValidHero(enemyHero)
 		and J.CanBeAttacked(enemyHero)
 		and J.IsInRange(bot, enemyHero, nCastRange)
 		and J.CanCastOnNonMagicImmune(enemyHero)
 		and J.CanCastOnTargetAdvanced(enemyHero)
-		and not J.IsChasingTarget(bot, enemyHero)
+		and not enemyHero:HasModifier('modifier_necrolyte_reapers_scythe')
 		and fManaAfter > fManaThreshold1
 		then
 			if enemyHero:IsChanneling() then
@@ -464,7 +460,6 @@ function X.ConsiderUnstableConcoction()
 			and not enemyHero:HasModifier('modifier_dazzle_shallow_grave')
 			and not enemyHero:HasModifier('modifier_enigma_black_hole_pull')
 			and not enemyHero:HasModifier('modifier_faceless_void_chronosphere_freeze')
-			and not enemyHero:HasModifier('modifier_necrolyte_reapers_scythe')
 			and not enemyHero:HasModifier('modifier_templar_assassin_refraction_absorb')
 			and not enemyHero:HasModifier('modifier_oracle_false_promise_timer')
 			and not enemyHero:HasModifier('modifier_item_solar_crest_armor_addition')
@@ -475,9 +470,9 @@ function X.ConsiderUnstableConcoction()
 	end
 
 	if J.IsGoingOnSomeone(bot) then
-		if  J.IsValidTarget(botTarget)
-		and J.IsInRange(bot, botTarget, nCastRange - 150)
+		if  J.IsValidHero(botTarget)
 		and J.CanBeAttacked(botTarget)
+		and J.IsInRange(bot, botTarget, nCastRange - 150)
 		and J.CanCastOnNonMagicImmune(botTarget)
 		and J.CanCastOnTargetAdvanced(botTarget)
 		and not J.IsDisabled(botTarget)
@@ -495,19 +490,19 @@ function X.ConsiderUnstableConcoction()
 		end
 	end
 
-	if J.IsRetreating(bot) and not J.IsRealInvisible(bot) and bot:WasRecentlyDamagedByAnyHero(3.0) then
+	if J.IsRetreating(bot) and not J.IsRealInvisible(bot) then
 		for _, enemyHero in pairs(nEnemyHeroes) do
 			if J.IsValidHero(enemyHero)
+			and J.CanBeAttacked(enemyHero)
 			and J.IsInRange(bot, enemyHero, nCastRange)
 			and J.CanCastOnNonMagicImmune(enemyHero)
 			and J.CanCastOnTargetAdvanced(enemyHero)
 			and not J.IsDisabled(enemyHero)
-			and not enemyHero:HasModifier('modifier_enigma_black_hole_pull')
-			and not enemyHero:HasModifier('modifier_faceless_void_chronosphere_freeze')
 			and not enemyHero:HasModifier('modifier_necrolyte_reapers_scythe')
+			and bot:WasRecentlyDamagedByHero(enemyHero, 3.0)
 			then
 				if J.IsChasingTarget(enemyHero, bot)
-				or (#nEnemyHeroes > #nAllyHeroes and enemyHero:GetAttackTarget() == bot and botHP < 0.75)
+				or (#nEnemyHeroes > #nAllyHeroes and bot:IsRooted())
 				then
 					return BOT_ACTION_DESIRE_HIGH
 				end
@@ -525,8 +520,10 @@ function X.ConsiderUnstableConcoctionThrow()
 
 	local nCastRange = J.GetProperCastRange(false, bot, UnstableConcoctionThrow:GetCastRange())
 	local nCastPoint = UnstableConcoctionThrow:GetCastPoint()
-	local nDamage = UnstableConcoctionThrow:GetSpecialValueInt('max_damage')
+	local nMaxDamage = UnstableConcoctionThrow:GetSpecialValueInt('max_damage')
 	local nBrewTime = UnstableConcoctionThrow:GetSpecialValueInt('brew_time')
+
+	local fElapsedTime = UnstableConcoction:GetCooldown() - UnstableConcoction:GetCooldownTimeRemaining()
 
 	for _, enemyHero in pairs(nEnemyHeroes) do
 		if  J.IsValidHero(enemyHero)
@@ -534,17 +531,15 @@ function X.ConsiderUnstableConcoctionThrow()
 		and J.CanCastOnNonMagicImmune(enemyHero)
         and J.CanCastOnTargetAdvanced(enemyHero)
 		then
-			if enemyHero:IsChanneling() and DotaTime() > UnstableConcoctionCastTime then
+			if enemyHero:IsChanneling() then
 				return BOT_ACTION_DESIRE_HIGH, enemyHero
 			end
 
-			local currDamage = RemapValClamped(DotaTime(), UnstableConcoctionCastTime, UnstableConcoctionCastTime + nBrewTime, 0, nDamage)
+			local nDamage = RemapValClamped(fElapsedTime, 0, nBrewTime, 0, nMaxDamage)
 
-			if J.WillKillTarget(enemyHero, currDamage, DAMAGE_TYPE_PHYSICAL, nCastPoint + (GetUnitToUnitDistance(bot, enemyHero) / 900))
+			if J.WillKillTarget(enemyHero, nDamage, DAMAGE_TYPE_PHYSICAL, nCastPoint + (GetUnitToUnitDistance(bot, enemyHero) / 900))
 			and not enemyHero:HasModifier('modifier_abaddon_borrowed_time')
 			and not enemyHero:HasModifier('modifier_dazzle_shallow_grave')
-			and not enemyHero:HasModifier('modifier_enigma_black_hole_pull')
-			and not enemyHero:HasModifier('modifier_faceless_void_chronosphere_freeze')
 			and not enemyHero:HasModifier('modifier_templar_assassin_refraction_absorb')
 			and not enemyHero:HasModifier('modifier_oracle_false_promise_timer')
 			and not enemyHero:HasModifier('modifier_item_solar_crest_armor_addition')
@@ -555,16 +550,16 @@ function X.ConsiderUnstableConcoctionThrow()
 	end
 
 	if J.IsGoingOnSomeone(bot) then
-		if  J.IsValidTarget(botTarget)
-		and J.IsInRange(bot, botTarget, nCastRange - 150)
+		if  J.IsValidHero(botTarget)
 		and J.CanBeAttacked(botTarget)
+		and J.IsInRange(bot, botTarget, nCastRange)
 		and J.CanCastOnNonMagicImmune(botTarget)
 		and J.CanCastOnTargetAdvanced(botTarget)
 		and not J.IsDisabled(botTarget)
 		and not botTarget:HasModifier('modifier_legion_commander_duel')
 		and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
 		then
-			if DotaTime() >= UnstableConcoctionCastTime + 4
+			if fElapsedTime >= 3.8
 			or J.IsStunProjectileIncoming(bot, 400)
 			or J.IsUnitTargetProjectileIncoming(bot, 400)
 			then
@@ -576,15 +571,14 @@ function X.ConsiderUnstableConcoctionThrow()
 	if J.IsRetreating(bot) and not J.IsRealInvisible(bot) then
 		for _, enemyHero in pairs(nEnemyHeroes) do
 			if J.IsValidHero(enemyHero)
+			and J.CanBeAttacked(enemyHero)
 			and J.IsInRange(bot, enemyHero, nCastRange)
 			and J.CanCastOnNonMagicImmune(enemyHero)
 			and J.CanCastOnTargetAdvanced(enemyHero)
 			and not J.IsDisabled(enemyHero)
-			and not enemyHero:HasModifier('modifier_enigma_black_hole_pull')
-			and not enemyHero:HasModifier('modifier_faceless_void_chronosphere_freeze')
-			and not enemyHero:HasModifier('modifier_necrolyte_reapers_scythe')
+			and bot:WasRecentlyDamagedByHero(enemyHero, 3.0)
 			then
-				if DotaTime() >= UnstableConcoctionCastTime + 2.0
+				if fElapsedTime >= 2.1
 				or J.IsStunProjectileIncoming(bot, 400)
 				then
 					return BOT_ACTION_DESIRE_HIGH, enemyHero
@@ -593,7 +587,7 @@ function X.ConsiderUnstableConcoctionThrow()
 		end
 	end
 
-	if J.IsValidHero(nEnemyHeroes[1]) and DotaTime() >= UnstableConcoctionCastTime + 4.0 then
+	if J.IsValidHero(nEnemyHeroes[1]) and fElapsedTime >= 4 then
 		return BOT_ACTION_DESIRE_HIGH, nEnemyHeroes[1]
 	end
 
@@ -614,7 +608,7 @@ function X.ConsiderBerserkPotion()
 		and not J.IsSuspiciousIllusion(allyHero)
 		and not allyHero:HasModifier('modifier_legion_commander_press_the_attack')
 		and not allyHero:HasModifier('modifier_item_satanic_unholy')
-		and not allyHero:IsMagicImmune()
+		and not allyHero:HasModifier('modifier_item_nullifier_mute')
 		then
 			if J.IsDisabled(allyHero) then
 				return BOT_ACTION_DESIRE_HIGH, allyHero
@@ -632,7 +626,7 @@ function X.ConsiderBerserkPotion()
 
 				if  J.IsValidHero(allyTarget)
 				and J.CanBeAttacked(allyTarget)
-				and J.IsChasingTarget(allyTarget)
+				and J.IsChasingTarget(allyHero, allyTarget)
 				and J.IsInRange(allyHero, allyTarget, 1200)
 				and not J.IsSuspiciousIllusion(allyTarget)
 				then
@@ -655,14 +649,15 @@ function X.ConsiderChemicalRage()
 	end
 
 	if J.IsGoingOnSomeone(bot) then
-		if  J.IsValidTarget(botTarget)
-		and J.CanBeAttacked(botTarget)
+		if  J.IsValidHero(botTarget)
 		and J.IsInRange(bot, botTarget, 800)
 		and not J.IsSuspiciousIllusion(botTarget)
 		and not botTarget:HasModifier('modifier_faceless_void_chronosphere_freeze')
 		and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
 		then
-			return BOT_ACTION_DESIRE_HIGH
+			if J.CanBeAttacked(botTarget) or botHP < 0.4 then
+				return BOT_ACTION_DESIRE_HIGH
+			end
 		end
 	end
 

@@ -286,13 +286,12 @@ function X.ConsiderPurification()
 		return BOT_ACTION_DESIRE_NONE, nil
 	end
 
-	local nCastRange = J.GetProperCastRange(false, bot, Purification:GetCastRange())
+	local nCastRange = Purification:GetCastRange()
 	local nRadius = Purification:GetSpecialValueInt('radius')
 	local nDamage = Purification:GetSpecialValueInt('heal')
 	local nManaCost = Purification:GetManaCost()
 	local fManaAfter = J.GetManaAfter(nManaCost)
 	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {Repel, GuardianAngel})
-	local fManaThreshold2 = J.GetManaThreshold(bot, nManaCost, {Purification, Repel, GuardianAngel})
 
 	for _, enemyHero in pairs(nEnemyHeroes) do
 		if J.IsValidHero(enemyHero)
@@ -310,7 +309,7 @@ function X.ConsiderPurification()
 
 			for _, allyHero in pairs(nAllyHeroes) do
 				if J.IsValidHero(allyHero)
-				and J.IsInRange(bot, allyHero, nCastRange + 150)
+				and J.IsInRange(bot, allyHero, nCastRange + 300)
 				and J.IsInRange(allyHero, enemyHero, nRadius)
 				and not J.IsSuspiciousIllusion(allyHero)
 				then
@@ -324,7 +323,7 @@ function X.ConsiderPurification()
 
 			if hBestTarget == nil then
 				hBestTargetHP = 1
-				local nAllyCreeps = bot:GetNearbyCreeps(nCastRange, false)
+				local nAllyCreeps = bot:GetNearbyCreeps(Min(nCastRange + 300, 1600), false)
 				for _, creep in pairs(nAllyCreeps) do
 					if J.IsValid(creep) and J.IsInRange(creep, enemyHero, nRadius) then
 						local creepHP = J.GetHP(creep)
@@ -398,16 +397,17 @@ function X.ConsiderPurification()
 		for _, enemyHero in pairs(nEnemyHeroes) do
 			if J.IsValidHero(enemyHero)
 			and J.CanBeAttacked(enemyHero)
-			and J.IsInRange(bot, enemyHero, nRadius)
-			and not enemyHero:IsMagicImmune()
 			and not J.IsSuspiciousIllusion(enemyHero)
 			and bot:WasRecentlyDamagedByHero(enemyHero, 3.0)
 			and bot:GetMaxHealth() - bot:GetHealth() > nDamage
 			then
-				if J.IsChasingTarget(enemyHero, bot)
-				or (#nEnemyHeroes > #nAllyHeroes and enemyHero:GetAttackTarget() == bot)
-				or botHP < 0.3
-				then
+				if J.IsInRange(bot, enemyHero, nRadius) and botHP < 0.55 then
+					if not enemyHero:IsMagicImmune() then
+						return BOT_ACTION_DESIRE_HIGH, bot
+					end
+				end
+
+				if J.GetAttackProjectileDamageByRange(bot, 1200) > bot:GetHealth() then
 					return BOT_ACTION_DESIRE_HIGH, bot
 				end
 			end
@@ -461,7 +461,7 @@ function X.ConsiderPurification()
 				return BOT_ACTION_DESIRE_HIGH, member
 			end
 
-			if fManaAfter > fManaThreshold2 + 0.1 and J.GetHP(member) < 0.5 then
+			if fManaAfter > fManaThreshold1 + 0.1 and J.GetHP(member) < 0.5 then
 				return BOT_ACTION_DESIRE_HIGH, member
 			end
 		end
@@ -487,23 +487,23 @@ function X.ConsiderPurification()
 			end
 		end
 
-		for _, allyHero in pairs(nAllyHeroes) do
-			if J.IsValidHero(allyHero)
-			and J.CanBeAttacked(allyHero)
-			and J.IsInRange(bot, allyHero, nCastRange)
-			and not J.IsSuspiciousIllusion(allyHero)
-			and J.GetHP(allyHero) < 0.5
-			then
-				for _, enemyHero in pairs(nEnemyHeroes) do
-					if J.IsValidHero(enemyHero)
-					and J.CanBeAttacked(enemyHero)
-					and J.IsInRange(bot, enemyHero, nRadius - 50)
-					and not J.IsSuspiciousIllusion(enemyHero)
-					and not enemyHero:IsMagicImmune()
-					and not enemyHero:HasModifier('modifier_abaddon_borrowed_time')
-					and not enemyHero:HasModifier('modifier_necrolyte_reapers_scythe')
-					then
-						if fManaAfter > fManaThreshold2 then
+		if fManaAfter > fManaThreshold1 + 0.1 then
+			for _, allyHero in pairs(nAllyHeroes) do
+				if J.IsValidHero(allyHero)
+				and J.CanBeAttacked(allyHero)
+				and J.IsInRange(bot, allyHero, nCastRange)
+				and not J.IsSuspiciousIllusion(allyHero)
+				and J.GetHP(allyHero) < 0.5
+				then
+					for _, enemyHero in pairs(nEnemyHeroes) do
+						if J.IsValidHero(enemyHero)
+						and J.CanBeAttacked(enemyHero)
+						and J.IsInRange(bot, enemyHero, nRadius - 50)
+						and not J.IsSuspiciousIllusion(enemyHero)
+						and not enemyHero:IsMagicImmune()
+						and not enemyHero:HasModifier('modifier_abaddon_borrowed_time')
+						and not enemyHero:HasModifier('modifier_necrolyte_reapers_scythe')
+						then
 							return BOT_ACTION_DESIRE_HIGH, allyHero
 						end
 					end
@@ -515,30 +515,29 @@ function X.ConsiderPurification()
 	local nEnemyCreeps = bot:GetNearbyCreeps(nRadius, true)
 
 	if J.IsPushing(bot)
-	and fManaAfter > fManaThreshold2
+	and fManaAfter > fManaThreshold1 + 0.1
 	and #nAllyHeroes <= 3
 	and bAttacking
 	then
 		if J.IsValid(nEnemyCreeps[1]) and J.CanBeAttacked(nEnemyCreeps[1]) then
-			if #nEnemyCreeps >= 4 or ((#nEnemyCreeps >= 3 and fManaAfter > 0.65) or (#nEnemyCreeps >= 3 and fManaAfter > fManaThreshold1)) then
+			if #nEnemyCreeps >= 4 or ((#nEnemyCreeps >= 3 and fManaAfter > 0.65) or (#nEnemyCreeps >= 3 and fManaAfter > 0.8)) then
 				return BOT_ACTION_DESIRE_HIGH, bot
 			end
 		end
 
-		local nAllyCreeps = bot:GetNearbyCreeps(nCastRange, false)
+		local nAllyCreeps = bot:GetNearbyCreeps(Min(nCastRange + 300, 1600), false)
 		for _, creep in pairs(nAllyCreeps) do
 			if J.IsValid(creep) and J.CanBeAttacked(creep) then
 				local nLocationAoE1 = bot:FindAoELocation(true, false, creep:GetLocation(), 0, nRadius, 0, 0)
 				local nLocationAoE2 = bot:FindAoELocation(true, false, creep:GetLocation(), 0, nRadius, 0, nDamage)
-				if nLocationAoE1.count >= 4 or ((nLocationAoE1.count >= 3 and fManaAfter > 0.65) or (nLocationAoE2.count >= 3 and fManaAfter > fManaThreshold1)) then
+				if nLocationAoE1.count >= 4 or ((nLocationAoE1.count >= 3 and fManaAfter > 0.65) or (nLocationAoE2.count >= 3 and fManaAfter > 0.8)) then
 					return BOT_ACTION_DESIRE_HIGH, creep
 				end
 			end
 		end
 	end
 
-	if J.IsDefending(bot) and fManaAfter > fManaThreshold2 and botHP < 0.9 then
-		nEnemyCreeps = bot:GetNearbyCreeps(nRadius, true)
+	if J.IsDefending(bot) and fManaAfter > fManaThreshold1 and botHP < 0.9 then
 		local nLocationAoE = bot:FindAoELocation(true, false, bot:GetLocation(), 0, nRadius, 0, nDamage)
 		if J.IsValid(nEnemyCreeps[1]) and J.CanBeAttacked(nEnemyCreeps[1]) then
 			if #nEnemyCreeps >= 4 or ((#nEnemyCreeps >= 3 and fManaAfter > 0.65) or (nLocationAoE.count >= 3 and fManaAfter > fManaThreshold1)) then
@@ -564,7 +563,6 @@ function X.ConsiderPurification()
 	end
 
 	if J.IsFarming(bot) and fManaAfter > fManaThreshold1 and bAttacking and botHP < 0.85 then
-		nEnemyCreeps = bot:GetNearbyCreeps(nRadius, true)
 		if J.IsValid(nEnemyCreeps[1]) and J.CanBeAttacked(nEnemyCreeps[1]) then
 			if #nEnemyCreeps >= 3 or (#nEnemyCreeps >= 2 and nEnemyCreeps[1]:IsAncientCreep()) then
 				return BOT_ACTION_DESIRE_HIGH, bot
@@ -615,13 +613,12 @@ function X.ConsiderRepel()
 		return BOT_ACTION_DESIRE_NONE, nil
 	end
 
-	local nCastRange = J.GetProperCastRange(false, bot, Repel:GetCastRange())
+	local nCastRange = Repel:GetCastRange()
 	local nDuration = Repel:GetSpecialValueInt('duration')
 	local nHealHealth = Repel:GetSpecialValueInt('hp_regen') * nDuration
 	local nManaCost = Repel:GetManaCost()
 	local fManaAfter = J.GetManaAfter(nManaCost)
 	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {Purification, GuardianAngel})
-	local fManaThreshold2 = J.GetManaThreshold(bot, nManaCost, {Purification, Repel, GuardianAngel})
 
 	for _, allyHero in pairs(nAllyHeroes) do
 		if J.IsValidHero(allyHero)
@@ -631,57 +628,31 @@ function X.ConsiderRepel()
 		and not allyHero:HasModifier('modifier_omniknight_repel')
 		and not allyHero:HasModifier('modifier_necrolyte_reapers_scythe')
 		then
-			local nEnemyHeroesAttackingAlly = J.GetHeroesTargetingUnit(nEnemyHeroes, allyHero)
-
-			if J.IsGoingOnSomeone(allyHero) then
-				local allyHeroTarget = J.GetProperTarget(allyHero)
-
-				if J.IsValidHero(allyHeroTarget)
-				and J.IsInRange(allyHero, allyHeroTarget, allyHeroTarget:GetAttackRange() + 150)
-				and allyHeroTarget:IsFacingLocation(allyHeroTarget:GetLocation(), 45)
-				and (allyHero:WasRecentlyDamagedByAnyHero(3.0) or #nEnemyHeroesAttackingAlly > 0)
-				then
-					if fManaAfter > fManaThreshold1 then
-						return BOT_ACTION_DESIRE_HIGH, allyHero
-					end
-				end
-			end
+			local allyHeroHP = J.GetHP(allyHero)
 
 			if J.IsRetreating(allyHero)
 			and not J.IsRealInvisible(allyHero)
 			and not J.IsRealInvisible(bot)
 			and not allyHero:HasModifier('modifier_fountain_aura_buff')
 			and allyHero:GetMaxHealth() - allyHero:GetHealth() >= nHealHealth
-			and allyHero:WasRecentlyDamagedByAnyHero(3.0)
+			and allyHero:WasRecentlyDamagedByAnyHero(2.0)
 			then
-				if #nEnemyHeroes > 0 or fManaAfter > fManaThreshold1 then
-					return BOT_ACTION_DESIRE_HIGH, hCastTarget, sCastMotive
-				end
-			end
-
-			if (J.IsCore(allyHero) or fManaAfter > fManaThreshold1)
-			and allyHero:GetLevel() >= 6
-			and allyHero:GetMaxHealth() - allyHero:GetHealth() >= nHealHealth
-			then
-				local allyHeroTarget = allyHero:GetAttackTarget()
-				if J.IsValidHero(allyHeroTarget) and not J.IsSuspiciousIllusion(allyHeroTarget) and #nEnemyHeroesAttackingAlly >= 1 then
+				if fManaAfter > fManaThreshold1 or allyHeroHP < 0.3 then
 					return BOT_ACTION_DESIRE_HIGH, allyHero
 				end
 			end
 
-			if J.IsDisabled(allyHero)
+			if  J.IsDisabled(allyHero)
 			and allyHero:WasRecentlyDamagedByAnyHero(3.0)
-			and #nEnemyHeroesAttackingAlly >= 1
-			and (fManaAfter > fManaThreshold2 or J.IsInTeamFight(bot, 1200))
+			and (fManaAfter > fManaThreshold1 or J.IsInTeamFight(bot, 1200))
 			then
 				return BOT_ACTION_DESIRE_HIGH, allyHero
 			end
 
-			if J.GetHP(allyHero) < 0.5
-			and ((allyHero:WasRecentlyDamagedByAnyHero(5.0) and #nEnemyHeroesAttackingAlly > 0) or J.GetHP(allyHero) < 0.25)
-			and not allyHero:HasModifier('modifier_fountain_aura_buff')
-			then
-				return BOT_ACTION_DESIRE_HIGH, allyHero
+			if allyHeroHP < 0.5 and not allyHero:HasModifier('modifier_fountain_aura_buff') then
+				if allyHero:WasRecentlyDamagedByAnyHero(5.0) or allyHeroHP < 0.25 then
+					return BOT_ACTION_DESIRE_HIGH, allyHero
+				end
 			end
 		end
 	end
@@ -694,7 +665,7 @@ function X.ConsiderHammerOfPurity()
 		return BOT_ACTION_DESIRE_NONE, nil
 	end
 
-	local nCastRange = J.GetProperCastRange(false, bot, HammerOfPurity:GetCastRange())
+	local nCastRange = HammerOfPurity:GetCastRange()
 	local nCastPoint = HammerOfPurity:GetCastPoint()
 	local nBaseDamage = HammerOfPurity:GetSpecialValueInt('base_damage')
 	local fDamageFactor = 1.55 + (HammerOfPurity:GetLevel() - 1) * 0.15
@@ -726,6 +697,7 @@ function X.ConsiderHammerOfPurity()
 		and J.IsInRange(bot, botTarget, nCastRange + 300)
 		and J.CanCastOnNonMagicImmune(botTarget)
 		and J.CanCastOnTargetAdvanced(botTarget)
+		and not J.IsDisabled(botTarget)
 		and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
 		and not botTarget:HasModifier('modifier_item_blade_mail_reflect')
 		then
@@ -780,6 +752,7 @@ function X.ConsiderHammerOfPurity()
 			if J.IsValid(creep)
 			and J.CanBeAttacked(creep)
 			and string.find(creep:GetUnitName(), 'range')
+			and not J.IsOtherAllysTarget(creep)
 			then
 				local eta = (GetUnitToUnitDistance(bot, creep) / bot:GetCurrentMovementSpeed()) + nCastPoint
 				if J.WillKillTarget(creep, nDamage, DAMAGE_TYPE_PURE, eta) then
@@ -817,7 +790,7 @@ function X.ConsiderGuardianAngel()
 		return BOT_ACTION_DESIRE_NONE, 0
 	end
 
-	local nCastRange = J.GetProperCastRange(false, bot, GuardianAngel:GetCastRange())
+	local nCastRange = GuardianAngel:GetCastRange()
 	local nRadius = GuardianAngel:GetSpecialValueInt( 'radius' )
 
 	for i = 1, 5 do
@@ -835,7 +808,7 @@ function X.ConsiderGuardianAngel()
 					for _, aAllyHero in pairs(nInRangeAlly) do
 						if J.IsValidHero(aAllyHero)
 						and J.CanBeAttacked(aAllyHero)
-						and aAllyHero:WasRecentlyDamagedByAnyHero(5.0)
+						and aAllyHero:WasRecentlyDamagedByAnyHero(2.0)
 						and not aAllyHero:HasModifier('modifier_necrolyte_reapers_scythe')
 						then
 							count = count + 1
@@ -851,15 +824,11 @@ function X.ConsiderGuardianAngel()
 				end
 			end
 
-			if J.IsRetreating(allyHero)
-			and not J.IsRealInvisible(allyHero)
-			and allyHero:WasRecentlyDamagedByAnyHero(5.0)
-			then
+			if J.IsRetreating(allyHero) and not J.IsRealInvisible(allyHero) and allyHero:WasRecentlyDamagedByAnyHero(2.0) then
 				local nInRangeAlly_Attack = allyHero:GetNearbyHeroes(nRadius, false, BOT_MODE_ATTACK)
 				local nInRangeAlly_Retreat = allyHero:GetNearbyHeroes(nRadius, false, BOT_MODE_RETREAT)
 				local nInRangeEnemy = J.GetEnemiesNearLoc(allyHero:GetLocation(), 1200)
-				local nEnemyHeroesTargetingAllyHero = J.GetHeroesTargetingUnit(nInRangeEnemy, allyHero)
-				if (#nInRangeAlly_Attack >= 2 or (#nInRangeAlly_Attack >= 1 and #nInRangeAlly_Retreat >= 2)) and #nEnemyHeroesTargetingAllyHero > 0 then
+				if (#nInRangeAlly_Attack >= 2 or (#nInRangeAlly_Attack >= 1 and #nInRangeAlly_Retreat >= 2)) then
 					return BOT_ACTION_DESIRE_HIGH, allyHero:GetLocation()
 				end
 			end
@@ -873,9 +842,8 @@ function X.ConsiderGuardianAngel()
 		and not J.IsSuspiciousIllusion(botTarget)
 		and not J.IsChasingTarget(bot, botTarget)
 		and not botTarget:IsDisarmed()
-		and botTarget:GetAttackTarget() == bot
+		and bot:WasRecentlyDamagedByAnyHero(2.0)
 		and botHP < (#nEnemyHeroes >= 3 and 0.65 or 0.45)
-		and bot:WasRecentlyDamagedByAnyHero(3.0)
 		then
 			return BOT_ACTION_DESIRE_HIGH, bot:GetLocation()
 		end

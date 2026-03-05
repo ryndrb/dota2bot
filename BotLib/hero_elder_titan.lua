@@ -298,7 +298,8 @@ end
 function X.ConsiderEchoStomp(hUnit)
     if not J.CanCastAbility(EchoStomp)
     or not J.IsValid(hUnit)
-    or X.HasShard() then
+    or X.HasShard()
+    then
         return BOT_ACTION_DESIRE_NONE
     end
 
@@ -325,17 +326,20 @@ function X.ConsiderEchoStomp(hUnit)
                 end
             end
 
-            local nDamage_P = enemy:GetActualIncomingDamage(nDamage, DAMAGE_TYPE_PHYSICAL) - enemy:GetHealthRegen() * (fCastTime + fCastPoint)
-            local nDamage_M = enemy:GetActualIncomingDamage(nDamage, DAMAGE_TYPE_MAGICAL) - enemy:GetHealthRegen() * (fCastTime + fCastPoint)
-
-            if (nDamage_P + nDamage_M) > enemy:GetHealth()
-            and not J.IsChasingTarget(bot, enemy)
-            and not (#nInRangeAlly >= #nInRangeEnemy + 2)
-            and not enemy:HasModifier('modifier_abaddon_borrowed_time')
-            and not enemy:HasModifier('modifier_dazzle_shallow_grave')
-            and not enemy:HasModifier('modifier_necrolyte_reapers_scythe')
+            if (J.IsDisabled(enemy))
+            or (enemy:GetCurrentMovementSpeed() <= 250)
             then
-                return BOT_ACTION_DESIRE_HIGH
+                local nDamage_P = enemy:GetActualIncomingDamage(nDamage, DAMAGE_TYPE_PHYSICAL) - enemy:GetHealthRegen() * (fCastTime + fCastPoint)
+                local nDamage_M = enemy:GetActualIncomingDamage(nDamage, DAMAGE_TYPE_MAGICAL) - enemy:GetHealthRegen() * (fCastTime + fCastPoint)
+
+                if (nDamage_P + nDamage_M) > enemy:GetHealth()
+                and not (#nInRangeAlly >= #nInRangeEnemy + 2)
+                and not enemy:HasModifier('modifier_abaddon_borrowed_time')
+                and not enemy:HasModifier('modifier_dazzle_shallow_grave')
+                and not enemy:HasModifier('modifier_necrolyte_reapers_scythe')
+                then
+                    return BOT_ACTION_DESIRE_HIGH
+                end
             end
         end
     end
@@ -345,14 +349,17 @@ function X.ConsiderEchoStomp(hUnit)
         for _, enemy in pairs(nInRangeEnemy) do
             if J.IsValidHero(enemy)
             and J.CanBeAttacked(enemy)
-            and J.IsInRange(hUnit, enemy, nRadius)
+            and J.IsInRange(hUnit, enemy, nRadius * 0.9)
             and J.CanCastOnNonMagicImmune(enemy)
-            and not J.IsChasingTarget(bot, enemy)
             and not enemy:HasModifier('modifier_enigma_black_hole_pull')
             and not enemy:HasModifier('modifier_faceless_void_chronosphere_freeze')
             and not enemy:HasModifier('modifier_necrolyte_reapers_scythe')
             then
-                nNonMagicImmuneEnemyCount = nNonMagicImmuneEnemyCount + 1
+                if (J.IsDisabled(enemy))
+                or (enemy:GetCurrentMovementSpeed() <= 250)
+                then
+                    nNonMagicImmuneEnemyCount = nNonMagicImmuneEnemyCount + 1
+                end
             end
         end
 
@@ -361,27 +368,31 @@ function X.ConsiderEchoStomp(hUnit)
         end
 
         if J.IsValidHero(botTarget)
-        and J.IsInRange(hUnit, botTarget, nRadius)
+        and J.IsInRange(hUnit, botTarget, nRadius * 0.9)
         and J.CanCastOnNonMagicImmune(botTarget)
-        and not J.IsChasingTarget(bot, botTarget)
         and not botTarget:HasModifier('modifier_enigma_black_hole_pull')
         and not botTarget:HasModifier('modifier_faceless_void_chronosphere_freeze')
         and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
         then
-            return BOT_ACTION_DESIRE_HIGH
+            if (J.IsDisabled(botTarget))
+            or (botTarget:GetCurrentMovementSpeed() <= 250)
+            then
+                nNonMagicImmuneEnemyCount = nNonMagicImmuneEnemyCount + 1
+            end
         end
     end
 
-    if J.IsRetreating(bot) and not J.IsRealInvisible(bot) and bot:WasRecentlyDamagedByAnyHero(3.5) then
+    if J.IsRetreating(bot) and not J.IsRealInvisible(bot) then
         for _, enemy in pairs(nInRangeEnemy) do
             if J.IsValidHero(enemy)
+            and J.CanBeAttacked(enemy)
             and J.IsInRange(hUnit, enemy, nRadius)
             and J.CanCastOnNonMagicImmune(enemy)
-            and J.IsChasingTarget(enemy, bot)
             and not J.IsDisabled(enemy)
+            and bot:WasRecentlyDamagedByHero(enemy, 2.0)
             then
-                if J.IsChasingTarget(enemy, bot)
-                or ((#nInRangeEnemy > #nInRangeAlly or botHP < 0.5) and enemy:GetAttackTarget() == bot)
+                if bot:IsRooted()
+                or bot:GetCurrentMovementSpeed() <= 200
                 then
                     if J.GetTotalEstimatedDamageToTarget(nInRangeEnemy, bot, fCastTime + fCastPoint + 0.2) < bot:GetHealth() * 1.1 then
                         return BOT_ACTION_DESIRE_HIGH
@@ -393,45 +404,29 @@ function X.ConsiderEchoStomp(hUnit)
 
     local nEnemyCreeps = hUnit:GetNearbyCreeps(nRadius, true)
 
-    if J.IsPushing(bot) and #nInRangeAlly <= 2 and fManaAfter > 0.5 and fManaAfter > fManaThreshold1 then
-        if J.IsValid(nEnemyCreeps[1])
-        and J.CanBeAttacked(nEnemyCreeps[1])
-        and not J.IsRunning(nEnemyCreeps[1])
-        and bAttacking
-        and #nInRangeEnemy == 0
-        then
+    if J.IsPushing(bot) and #nInRangeAlly <= 2 and fManaAfter > 0.5 and fManaAfter > fManaThreshold1 and bAttacking and #nInRangeEnemy == 0 then
+        if J.IsValid(nEnemyCreeps[1]) and J.CanBeAttacked(nEnemyCreeps[1]) and not J.IsRunning(nEnemyCreeps[1]) then
             if #nEnemyCreeps >= 4 then
                 return BOT_ACTION_DESIRE_HIGH
             end
         end
     end
 
-    if J.IsDefending(bot) and fManaAfter > 0.4 and fManaAfter > fManaThreshold1 then
-        if J.IsValid(nEnemyCreeps[1])
-        and J.CanBeAttacked(nEnemyCreeps[1])
-        and not J.IsRunning(nEnemyCreeps[1])
-        and bAttacking
-        and #nInRangeEnemy == 0
-        then
+    if J.IsDefending(bot) and fManaAfter > 0.4 and fManaAfter > fManaThreshold1 and bAttacking and #nInRangeEnemy == 0 then
+        if J.IsValid(nEnemyCreeps[1]) and J.CanBeAttacked(nEnemyCreeps[1]) and not J.IsRunning(nEnemyCreeps[1]) then
             if #nEnemyCreeps >= 4 then
                 return BOT_ACTION_DESIRE_HIGH
             end
         end
 
-        nInRangeEnemy = J.GetEnemiesNearLoc(hUnit:GetLocation(), nRadius)
         local nLocationAoE = hUnit:FindAoELocation(true, true, hUnit:GetLocation(), 0, nRadius, 0, 0)
-        if #nInRangeEnemy == 0 and nLocationAoE.count >= 2 then
+        if nLocationAoE.count >= 2 then
             return BOT_ACTION_DESIRE_HIGH
         end
     end
 
-    if J.IsFarming(bot) and fManaAfter > 0.4 and fManaAfter > fManaThreshold1 then
-        if J.IsValid(nEnemyCreeps[1])
-        and (#nEnemyCreeps >= 3 or #nEnemyCreeps >= 2 and nEnemyCreeps[1]:IsAncientCreep())
-        and J.CanBeAttacked(nEnemyCreeps[1])
-        and not J.IsRunning(nEnemyCreeps[1])
-        and bAttacking
-        then
+    if J.IsFarming(bot) and fManaAfter > 0.4 and fManaAfter > fManaThreshold1 and bAttacking and #nInRangeEnemy == 0 then
+        if J.IsValid(nEnemyCreeps[1]) and J.CanBeAttacked(nEnemyCreeps[1]) and not J.IsRunning(nEnemyCreeps[1]) then
             local bHaveRadiance = J.HasItem(bot, 'item_radiance')
             if (#nEnemyCreeps >= 3  and not bHaveRadiance)
             or (#nEnemyCreeps >= 2 and nEnemyCreeps[1]:IsAncientCreep())
@@ -450,7 +445,7 @@ function X.ConsiderAstralSpirit()
         return BOT_ACTION_DESIRE_NONE, 0, false
     end
 
-    local nCastRange = J.GetProperCastRange(false, bot, AstralSpirit:GetCastRange())
+    local nCastRange = AstralSpirit:GetCastRange()
     local fCastPoint = AstralSpirit:GetCastPoint()
     local nRadius = AstralSpirit:GetSpecialValueInt('radius')
     local nDamage = AstralSpirit:GetSpecialValueInt('pass_damage')
@@ -474,17 +469,20 @@ function X.ConsiderAstralSpirit()
                     return BOT_ACTION_DESIRE_HIGH, enemy:GetLocation(), true
                 end
 
-                local nDamage_P = enemy:GetActualIncomingDamage(nDamage__, DAMAGE_TYPE_PHYSICAL) - enemy:GetHealthRegen() * (fCastTime + fCastPoint)
-                local nDamage_M = enemy:GetActualIncomingDamage(nDamage__, DAMAGE_TYPE_MAGICAL) - enemy:GetHealthRegen() * (fCastTime + fCastPoint)
-
-                if (nDamage_P + nDamage_M) > enemy:GetHealth()
-                and not J.IsChasingTarget(bot, enemy)
-                and not (#nAllyHeroes >= #nEnemyHeroes + 2)
-                and not enemy:HasModifier('modifier_abaddon_borrowed_time')
-                and not enemy:HasModifier('modifier_dazzle_shallow_grave')
-                and not enemy:HasModifier('modifier_necrolyte_reapers_scythe')
+                if (J.IsDisabled(enemy))
+                or (enemy:GetCurrentMovementSpeed() <= 250)
                 then
-                    return BOT_ACTION_DESIRE_HIGH, enemy:GetLocation(), true
+                    local nDamage_P = enemy:GetActualIncomingDamage(nDamage__, DAMAGE_TYPE_PHYSICAL) - enemy:GetHealthRegen() * (fCastTime + fCastPoint)
+                    local nDamage_M = enemy:GetActualIncomingDamage(nDamage__, DAMAGE_TYPE_MAGICAL) - enemy:GetHealthRegen() * (fCastTime + fCastPoint)
+
+                    if (nDamage_P + nDamage_M) > enemy:GetHealth()
+                    and not (#nAllyHeroes >= #nEnemyHeroes + 2)
+                    and not enemy:HasModifier('modifier_abaddon_borrowed_time')
+                    and not enemy:HasModifier('modifier_dazzle_shallow_grave')
+                    and not enemy:HasModifier('modifier_necrolyte_reapers_scythe')
+                    then
+                        return BOT_ACTION_DESIRE_HIGH, enemy:GetLocation(), true
+                    end
                 end
             end
         end
@@ -634,7 +632,7 @@ function X.ConsiderEarthSplitter()
     for _, enemy in pairs(nInRangeEnemy) do
         if J.IsValidHero(enemy)
         and J.CanBeAttacked(enemy)
-        and J.CanCastOnNonMagicImmune(enemy)
+        and not J.IsSuspiciousIllusion(enemy)
         and (#nAllyHeroes_real >= #nEnemyHeroes_real or J.WeAreStronger(bot, 1300))
         then
             if enemy:HasModifier('modifier_faceless_void_chronosphere_freeze') and J.GetModifierTime(enemy, 'modifier_faceless_void_chronosphere_freeze') > 1.8

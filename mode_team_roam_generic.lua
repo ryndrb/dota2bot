@@ -48,8 +48,6 @@ function GetDesire()
 	TormentorLocation = J.GetTormentorLocation(GetTeam())
 
 	local LoneDruid = J.CheckLoneDruid()
-	bot.laneToPush = J.GetMostPushLaneDesire()
-	bot.laneToDefend = J.GetMostDefendLaneDesire()
 
 	-- fix lanes for these two
 	if botName == 'npc_dota_hero_elder_titan'

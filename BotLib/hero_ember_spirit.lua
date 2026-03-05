@@ -254,8 +254,7 @@ local ActivateFireRemnantDesire, ActivateRemnantLocation
 local FireRemnantDesire, FireRemnantLocation
 
 local remnantCast = { time = math.huge, initialLocation = nil, targetLocation = nil }
-
-local SoFLocation = nil
+local sofCast = { time = math.huge, location = nil }
 
 local bHasFarmingItem = false
 local bHasFacet_ChainGang = false
@@ -286,7 +285,8 @@ function X.SkillsComplement()
 	SleightOfFistDesire, SleightOfFistLocation, bTrySearingChains = X.ConsiderSleightOfFist()
 	if SleightOfFistDesire > 0
 	then
-		SoFLocation = bTrySearingChains and SleightOfFistLocation or nil
+		sofCast.time = DotaTime()
+		sofCast.location = bTrySearingChains and SleightOfFistLocation or nil
 
         J.SetQueuePtToINT(bot, false)
 		bot:ActionQueue_UseAbilityOnLocation(SleightOfFist, SleightOfFistLocation)
@@ -337,11 +337,10 @@ function X.ConsiderSearingChains()
 	local nDuration = SearingChains:GetSpecialValueFloat('duration')
 	local nManaCost = SearingChains:GetManaCost()
     local fManaAfter = J.GetManaAfter(nManaCost)
-    local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {SearingChains, SleightOfFist, FlameGuard, ActivateFireRemnant})
-	local fManaThreshold2 = J.GetManaThreshold(bot, nManaCost, {SleightOfFist, FlameGuard, ActivateFireRemnant})
+	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {SleightOfFist, FlameGuard, ActivateFireRemnant})
 
-	if bot:HasModifier('modifier_ember_spirit_sleight_of_fist_caster') and SoFLocation ~= nil then
-		if GetUnitToLocationDistance(bot, SoFLocation) <= nRadius then
+	if bot:HasModifier('modifier_ember_spirit_sleight_of_fist_caster') and sofCast.location ~= nil then
+		if GetUnitToLocationDistance(bot, sofCast.location) <= nRadius then
 			return BOT_ACTION_DESIRE_HIGH
 		end
 	end
@@ -352,7 +351,7 @@ function X.ConsiderSearingChains()
 		and J.CanCastOnNonMagicImmune(enemyHero)
 		and (J.IsInRange(bot, enemyHero, nRadius) or (bHasFacet_ChainGang and X.IsThereRemnantInLocation(enemyHero:GetLocation(), nRadius)))
 		then
-			if enemyHero:IsChanneling() and fManaAfter > fManaThreshold2 then
+			if enemyHero:IsChanneling() and fManaAfter > fManaThreshold1 then
 				return BOT_ACTION_DESIRE_HIGH
 			end
 
@@ -362,7 +361,7 @@ function X.ConsiderSearingChains()
             and not enemyHero:HasModifier('modifier_dazzle_shallow_grave')
             and not enemyHero:HasModifier('modifier_necrolyte_reapers_scythe')
             and not enemyHero:HasModifier('modifier_oracle_false_promise_timer')
-			and fManaAfter > fManaThreshold2
+			and fManaAfter > fManaThreshold1
 			then
 				return BOT_ACTION_DESIRE_HIGH
 			end
@@ -403,17 +402,19 @@ function X.ConsiderSearingChains()
 		end
 	end
 
-	if J.IsRetreating(bot) and not J.IsRealInvisible(bot) and bot:WasRecentlyDamagedByAnyHero(3.0) then
+	if J.IsRetreating(bot) and not J.IsRealInvisible(bot) then
 		for _, enemy in pairs(nEnemyHeroes) do
 			if J.IsValidHero(enemy)
 			and J.CanBeAttacked(enemy)
-			and J.CanCastOnNonMagicImmune(enemy)
 			and (J.IsInRange(bot, enemy, nRadius) or (not J.IsInRange(bot, enemy, nRadius) and bHasFacet_ChainGang and X.IsThereRemnantInLocation(enemy:GetLocation(), nRadius)))
+			and J.CanCastOnNonMagicImmune(enemy)
 			and not enemy:IsDisarmed()
+			and not J.IsDisabled(enemy)
+			and bot:WasRecentlyDamagedByHero(enemy, 3.0)
 			then
 				local nInRangeEnemy = bot:GetNearbyHeroes(nRadius - 50, true, BOT_MODE_NONE)
 				if J.IsChasingTarget(enemy, bot)
-				or (#nEnemyHeroes > #nAllyHeroes and enemy:GetAttackTarget() == bot)
+				or (#nEnemyHeroes > #nAllyHeroes)
 				or #nInRangeEnemy >= 2
 				then
 					return BOT_ACTION_DESIRE_HIGH
@@ -424,36 +425,29 @@ function X.ConsiderSearingChains()
 
 	local nEnemyCreeps = bot:GetNearbyCreeps(nRadius, true)
 
-	if not bHasFarmingItem then
-		if J.IsPushing(bot) and #nAllyHeroes <= 2 and bAttacking and fManaAfter > fManaThreshold1 and #nEnemyHeroes <= 1 then
-			if J.IsValid(nEnemyCreeps[1])
-			and J.CanBeAttacked(nEnemyCreeps[1])
-			and #nEnemyCreeps >= 4
-			and not J.CanCastAbility(SleightOfFist)
-			and not bot:HasModifier('modifier_ember_spirit_flame_guard')
-			then
-				return BOT_ACTION_DESIRE_HIGH
+	if not bHasFarmingItem and not J.CanCastAbility(SleightOfFist) and not bot:HasModifier('modifier_ember_spirit_flame_guard') then
+		if J.IsPushing(bot) and #nAllyHeroes <= 2 and bAttacking and fManaAfter > fManaThreshold1 + 0.15 and #nEnemyHeroes <= 1 then
+			if J.IsValid(nEnemyCreeps[1]) and J.CanBeAttacked(nEnemyCreeps[1]) then
+				if #nEnemyCreeps >= 4 then
+					return BOT_ACTION_DESIRE_HIGH
+				end
 			end
 		end
 
 		if J.IsDefending(bot) and #nAllyHeroes <= 3 and bAttacking and fManaAfter > fManaThreshold1 and #nEnemyHeroes == 0 then
-			if J.IsValid(nEnemyCreeps[1])
-			and J.CanBeAttacked(nEnemyCreeps[1])
-			and #nEnemyCreeps >= 4
-			and not J.CanCastAbility(SleightOfFist)
-			and not bot:HasModifier('modifier_ember_spirit_flame_guard')
-			then
-				return BOT_ACTION_DESIRE_HIGH
+			if J.IsValid(nEnemyCreeps[1]) and J.CanBeAttacked(nEnemyCreeps[1]) then
+				if #nEnemyCreeps >= 4 then
+					return BOT_ACTION_DESIRE_HIGH
+				end
 			end
 		end
 
-		if J.IsFarming(bot) and bAttacking and fManaAfter > fManaThreshold2 then
-			if J.IsValid(nEnemyCreeps[1])
-			and J.CanBeAttacked(nEnemyCreeps[1])
-			and not J.CanCastAbility(SleightOfFist)
-			and not bot:HasModifier('modifier_ember_spirit_flame_guard')
-			then
-				if #nEnemyCreeps >= 4 or (#nEnemyCreeps >= 2 and nEnemyCreeps[1]:IsAncientCreep()) then
+		if J.IsFarming(bot) and bAttacking and fManaAfter > fManaThreshold1 then
+			if J.IsValid(nEnemyCreeps[1]) and J.CanBeAttacked(nEnemyCreeps[1]) then
+				if (#nEnemyCreeps >= 3)
+				or (#nEnemyCreeps >= 2 and nEnemyCreeps[1]:IsAncientCreep())
+				or (#nEnemyCreeps >= 1 and nEnemyCreeps[1]:GetHealth() >= 1000)
+				then
 					return BOT_ACTION_DESIRE_HIGH
 				end
 			end
@@ -468,7 +462,8 @@ function X.ConsiderSearingChains()
 		and not J.IsDisabled(botTarget)
         and J.GetHP(botTarget) > 0.2
         and bAttacking
-		and fManaAfter > fManaThreshold2
+		and fManaAfter > fManaThreshold1
+		and #nEnemyHeroes == 0
 		then
 			return BOT_ACTION_DESIRE_HIGH
 		end
@@ -478,7 +473,8 @@ function X.ConsiderSearingChains()
 		if  J.IsTormentor(botTarget)
 		and J.IsInRange(bot, botTarget, nRadius)
         and bAttacking
-		and fManaAfter > fManaThreshold2
+		and fManaAfter > fManaThreshold1
+		and #nEnemyHeroes == 0
 		then
 			return BOT_ACTION_DESIRE_HIGH
 		end
@@ -495,16 +491,16 @@ function X.ConsiderSleightOfFist()
 		return BOT_ACTION_DESIRE_NONE, 0, false
 	end
 
-	local nCastRange = J.GetProperCastRange(false, bot, SleightOfFist:GetCastRange())
+	local nCastRange = SleightOfFist:GetCastRange()
 	local nCastPoint = SleightOfFist:GetCastPoint()
 	local nRadius = SleightOfFist:GetSpecialValueInt('radius')
 	local nDamage = SleightOfFist:GetSpecialValueInt('bonus_hero_damage')
+	local nRestoreTime = SleightOfFist:GetSpecialValueInt('AbilityChargeRestoreTime')
 	local nHeroDamage = bot:GetAttackDamage() + nDamage
 	local nAbilityLevel = SleightOfFist:GetLevel()
 	local nManaCost = SleightOfFist:GetManaCost()
     local fManaAfter = J.GetManaAfter(nManaCost)
-    local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {SearingChains, SleightOfFist, FlameGuard, ActivateFireRemnant})
-	local fManaThreshold2 = J.GetManaThreshold(bot, nManaCost, {SearingChains, FlameGuard, ActivateFireRemnant})
+    local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {SearingChains, FlameGuard, ActivateFireRemnant})
 
 	local bHaveEnoughForCombo = false
 	if SearingChains and SearingChains:IsTrained() then
@@ -528,7 +524,7 @@ function X.ConsiderSleightOfFist()
 		end
 	end
 
-	local nEnemyCreeps = bot:GetNearbyCreeps(nCastRange, true)
+	local nEnemyCreeps = bot:GetNearbyCreeps(Min(nCastRange, 1600), true)
 
 	if J.IsStunProjectileIncoming(bot, 300) then
 		if J.IsValid(nEnemyCreeps[1]) then
@@ -550,7 +546,7 @@ function X.ConsiderSleightOfFist()
 	end
 
 	if J.IsGoingOnSomeone(bot) then
-		if  J.IsValidTarget(botTarget)
+		if  J.IsValidHero(botTarget)
 		and J.CanBeAttacked(botTarget)
 		and J.IsInRange(bot, botTarget, nCastRange + nRadius)
 		and not J.IsSuspiciousIllusion(botTarget)
@@ -558,11 +554,7 @@ function X.ConsiderSleightOfFist()
 		and not botTarget:HasModifier('modifier_faceless_void_chronosphere_freeze')
         and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
 		then
-			local bShouldChains =   not botTarget:IsMagicImmune()
-								and not botTarget:IsStunned()
-								and not botTarget:IsHexed()
-								and not botTarget:IsRooted()
-								and not botTarget:IsNightmared()
+			local bShouldChains = not botTarget:IsMagicImmune() and not J.IsDisabled(botTarget)
 
 			if not J.CanCastAbility(SearingChains) and J.CanCastAbilitySoon(SearingChains, 3.0) and J.GetHP(botTarget) > 0.25 and bHaveEnoughForCombo then
 				return BOT_ACTION_DESIRE_NONE
@@ -581,23 +573,20 @@ function X.ConsiderSleightOfFist()
 		end
 	end
 
-	if J.IsRetreating(bot) and not J.IsRealInvisible(bot) and bot:WasRecentlyDamagedByAnyHero(4) then
+	if J.IsRetreating(bot) and not J.IsRealInvisible(bot) then
         for _, enemyHero in pairs(nEnemyHeroes) do
             if  J.IsValidHero(enemyHero)
             and J.CanBeAttacked(enemyHero)
             and J.IsInRange(bot, enemyHero, nCastRange)
 			and not J.IsInRange(bot, enemyHero, 400)
             and not enemyHero:IsDisarmed()
+			and bot:WasRecentlyDamagedByHero(enemyHero, 3.0)
             then
 				local bIsIllusion = J.IsSuspiciousIllusion(enemyHero)
-				local bShouldChains =   not enemyHero:IsMagicImmune()
-									and not enemyHero:IsStunned()
-									and not enemyHero:IsHexed()
-									and not enemyHero:IsRooted()
-									and not enemyHero:IsNightmared()
+				local bShouldChains = not enemyHero:IsMagicImmune() and not J.IsDisabled(enemyHero)
 
 				if (J.IsChasingTarget(enemyHero, bot) and not bIsIllusion and J.CanCastAbility(SearingChains) and bHaveEnoughForCombo)
-				or (#nEnemyHeroes > #nAllyHeroes and enemyHero:GetAttackTarget() == bot)
+				or (#nEnemyHeroes > #nAllyHeroes)
 				then
 					return BOT_ACTION_DESIRE_HIGH, enemyHero:GetLocation(), bShouldChains
 				end
@@ -605,9 +594,9 @@ function X.ConsiderSleightOfFist()
         end
 	end
 
-	if J.IsPushing(bot) and #nAllyHeroes <= 3 and fManaAfter > fManaThreshold1 and bAttacking then
+	if J.IsPushing(bot) and #nAllyHeroes <= 3 and fManaAfter > fManaThreshold1 and bAttacking and (DotaTime() >= (sofCast.time + (nRestoreTime / 2))) then
         for _, creep in pairs(nEnemyCreeps) do
-            if J.IsValid(creep) and J.CanBeAttacked(creep) and not J.IsRunning(creep) then
+            if J.IsValid(creep) and J.CanBeAttacked(creep) then
                 local nLocationAoE = bot:FindAoELocation(true, false, creep:GetLocation(), 0, nRadius, 0, 0)
                 if (nLocationAoE.count >= 4) then
                     return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc, false
@@ -616,15 +605,17 @@ function X.ConsiderSleightOfFist()
         end
 	end
 
-	if J.IsDefending(bot) and fManaAfter > fManaThreshold2 and bAttacking then
-        for _, creep in pairs(nEnemyCreeps) do
-            if J.IsValid(creep) and J.CanBeAttacked(creep) and not J.IsRunning(creep) then
-                local nLocationAoE = bot:FindAoELocation(true, false, creep:GetLocation(), 0, nRadius, 0, 0)
-                if (nLocationAoE.count >= 4) then
-                    return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc, false
-                end
-            end
-        end
+	if J.IsDefending(bot) and fManaAfter > fManaThreshold1 and bAttacking then
+		if (DotaTime() >= (sofCast.time + (nRestoreTime / 2))) then
+			for _, creep in pairs(nEnemyCreeps) do
+				if J.IsValid(creep) and J.CanBeAttacked(creep) then
+					local nLocationAoE = bot:FindAoELocation(true, false, creep:GetLocation(), 0, nRadius, 0, 0)
+					if (nLocationAoE.count >= 4) then
+						return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc, false
+					end
+				end
+			end
+		end
 
         local nLocationAoE = bot:FindAoELocation(true, true, bot:GetLocation(), nCastRange, nRadius, 0, 0)
         if nLocationAoE.count >= 3 then
@@ -632,7 +623,7 @@ function X.ConsiderSleightOfFist()
         end
     end
 
-    if J.IsFarming(bot) and fManaAfter > fManaThreshold2 and bAttacking and nAbilityLevel >= 3 then
+    if J.IsFarming(bot) and fManaAfter > fManaThreshold1 and bAttacking and nAbilityLevel >= 3 and (DotaTime() >= (sofCast.time + (nRestoreTime / 2))) then
 		for _, creep in pairs(nEnemyCreeps) do
             if J.IsValid(creep) and J.CanBeAttacked(creep) and not J.IsRunning(creep) then
                 local nLocationAoE = bot:FindAoELocation(true, false, creep:GetLocation(), 0, nRadius, 0, 0)
@@ -663,7 +654,7 @@ function X.ConsiderSleightOfFist()
 		end
 
         local nLocationAoE = bot:FindAoELocation(true, true, bot:GetLocation(), nCastRange, nRadius, 0, bot:GetAttackDamage())
-		if nLocationAoE.count >= 2 and (fManaAfter > fManaThreshold2 or #nEnemyHeroes > 0) then
+		if nLocationAoE.count >= 2 and (fManaAfter > fManaThreshold1 or #nEnemyHeroes > 0) then
 			return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc, false
 		end
 	end
@@ -674,7 +665,9 @@ function X.ConsiderSleightOfFist()
 		and J.IsInRange(bot, botTarget, nCastRange)
         and J.GetHP(botTarget) > 0.2
         and bAttacking
-		and fManaAfter > fManaThreshold2
+		and fManaAfter > fManaThreshold1
+		and #nEnemyHeroes == 0
+		and (DotaTime() >= (sofCast.time + (nRestoreTime / 1.5)))
 		then
 			return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation(), false
 		end
@@ -684,7 +677,9 @@ function X.ConsiderSleightOfFist()
 		if  J.IsTormentor(botTarget)
 		and J.IsInRange(bot, botTarget, nCastRange)
         and bAttacking
-		and fManaAfter > fManaThreshold2
+		and fManaAfter > fManaThreshold1
+		and #nEnemyHeroes == 0
+		and (DotaTime() >= (sofCast.time + (nRestoreTime / 1.5)))
 		then
 			return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation(), false
 		end
@@ -706,16 +701,14 @@ function X.ConsiderFlameGuard()
     local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {SearingChains, SleightOfFist, ActivateFireRemnant})
 	local fManaThreshold2 = J.GetManaThreshold(bot, nManaCost, {SleightOfFist, ActivateFireRemnant})
 
-	local nEnemyHeroesTargetingMe = J.GetHeroesTargetingUnit(nEnemyHeroes, bot)
-
 	if J.IsInTeamFight(bot, 1200) then
-		if #nEnemyHeroesTargetingMe >= 2 and fManaAfter > fManaThreshold2 then
+		if bot:WasRecentlyDamagedByAnyHero(1.0) and fManaAfter > fManaThreshold2 then
 			return BOT_ACTION_DESIRE_HIGH
 		end
 	end
 
 	if J.IsGoingOnSomeone(bot) then
-		if J.IsValidTarget(botTarget)
+		if J.IsValidHero(botTarget)
 		and not J.IsSuspiciousIllusion(botTarget)
 		then
 			if J.CanBeAttacked(botTarget)
@@ -726,8 +719,7 @@ function X.ConsiderFlameGuard()
 				return BOT_ACTION_DESIRE_HIGH
 			end
 
-			if (#nEnemyHeroesTargetingMe > 0 and bot:WasRecentlyDamagedByAnyHero(2.0))
-			or (#nEnemyHeroesTargetingMe > 1)
+			if (bot:WasRecentlyDamagedByAnyHero(2.0))
 			or (botHP < 0.5 and bot:WasRecentlyDamagedByTower(2.0) and fManaAfter > fManaThreshold1)
 			then
 				return BOT_ACTION_DESIRE_HIGH
@@ -736,7 +728,7 @@ function X.ConsiderFlameGuard()
 	end
 
 	if J.IsRetreating(bot) and not J.IsRealInvisible(bot) and bot:WasRecentlyDamagedByAnyHero(3.0) then
-		if (#nEnemyHeroesTargetingMe > 0 and botHP < 0.6)
+		if (botHP < 0.6)
 		or (#nEnemyHeroes > #nAllyHeroes and bot:WasRecentlyDamagedByAnyHero(1.0))
 		then
 			return BOT_ACTION_DESIRE_HIGH
@@ -745,37 +737,41 @@ function X.ConsiderFlameGuard()
 
 	local nEnemyCreeps = bot:GetNearbyCreeps(nRadius, true)
 
-	if J.IsPushing(bot) and #nAllyHeroes <= 2 and bAttacking and fManaAfter > fManaThreshold1 and #nEnemyHeroes == 0 then
-		if J.IsValid(nEnemyCreeps[1])
-		and J.CanBeAttacked(nEnemyCreeps[1])
-		and #nEnemyCreeps >= 4
-		and not bot:HasModifier('modifier_ember_spirit_flame_guard')
-		and not bHasFarmingItem
-		then
-			return BOT_ACTION_DESIRE_HIGH
-		end
-	end
-
-	if J.IsDefending(bot) and #nAllyHeroes <= 3 and bAttacking and fManaAfter > fManaThreshold1 and #nEnemyHeroes == 0 then
-		if J.IsValid(nEnemyCreeps[1])
-		and J.CanBeAttacked(nEnemyCreeps[1])
-		and not bot:HasModifier('modifier_ember_spirit_flame_guard')
-		then
-			if (#nEnemyCreeps >= 4 and not bHasFarmingItem) or #nEnemyCreeps >= 6 then
-				return BOT_ACTION_DESIRE_HIGH
+	if not bot:HasModifier('modifier_ember_spirit_flame_guard') then
+		if J.IsPushing(bot) and #nAllyHeroes <= 2 and bAttacking and fManaAfter > fManaThreshold1 and #nEnemyHeroes == 0 then
+			if J.IsValid(nEnemyCreeps[1]) and J.CanBeAttacked(nEnemyCreeps[1]) and not bHasFarmingItem then
+				if #nEnemyCreeps >= 4 then
+					return BOT_ACTION_DESIRE_HIGH
+				end
 			end
 		end
-	end
 
-	if J.IsFarming(bot) and fManaAfter > fManaThreshold2 and bAttacking and #nEnemyHeroes <= 1 then
-		if J.IsValid(nEnemyCreeps[1])
-		and J.CanBeAttacked(nEnemyCreeps[1])
-		and not bot:HasModifier('modifier_ember_spirit_flame_guard')
-		then
-			if (#nEnemyCreeps >= 3 or (#nEnemyCreeps >= 2 and nEnemyCreeps[1]:IsAncientCreep()) and bHasFarmingItem)
-			or (#nEnemyCreeps >= 5)
+		if J.IsDefending(bot) and #nAllyHeroes <= 3 and bAttacking and fManaAfter > fManaThreshold1 and #nEnemyHeroes == 0 then
+			if J.IsValid(nEnemyCreeps[1]) and J.CanBeAttacked(nEnemyCreeps[1]) then
+				if (#nEnemyCreeps >= 4 and not bHasFarmingItem) or #nEnemyCreeps >= 6 then
+					return BOT_ACTION_DESIRE_HIGH
+				end
+			end
+		end
+
+		if J.IsFarming(bot) and fManaAfter > fManaThreshold2 and bAttacking and #nEnemyHeroes <= 1 then
+			if J.IsValid(nEnemyCreeps[1])
+			and J.CanBeAttacked(nEnemyCreeps[1])
 			then
-				return BOT_ACTION_DESIRE_HIGH
+				if (#nEnemyCreeps >= 3 or (#nEnemyCreeps >= 2 and nEnemyCreeps[1]:IsAncientCreep()) and bHasFarmingItem)
+				or (#nEnemyCreeps >= 5)
+				then
+					return BOT_ACTION_DESIRE_HIGH
+				end
+			end
+
+			if J.IsValid(nEnemyCreeps[1]) and J.CanBeAttacked(nEnemyCreeps[1]) and not bHasFarmingItem then
+				if (#nEnemyCreeps >= 3)
+				or (#nEnemyCreeps >= 2 and nEnemyCreeps[1]:IsAncientCreep())
+				or (#nEnemyCreeps >= 5)
+				then
+					return BOT_ACTION_DESIRE_HIGH
+				end
 			end
 		end
 	end
@@ -787,6 +783,7 @@ function X.ConsiderFlameGuard()
 		and J.IsInRange(bot, botTarget, nRadius)
         and bAttacking
 		and fManaAfter > fManaThreshold1
+		and #nEnemyHeroes == 0
 		then
 			return BOT_ACTION_DESIRE_HIGH
 		end
@@ -797,6 +794,7 @@ function X.ConsiderFlameGuard()
 		and J.IsInRange(bot, botTarget, nRadius)
         and bAttacking
 		and fManaAfter > fManaThreshold1
+		and #nEnemyHeroes == 0
 		then
 			return BOT_ACTION_DESIRE_HIGH
 		end
@@ -882,12 +880,12 @@ function X.ConsiderActivateFireRemnant()
 		if hTarget ~= nil then
 			for _, enemyHero in pairs(nEnemyHeroes) do
 				if J.IsValidHero(enemyHero)
-				and J.IsInRange(bot, enemyHero, 1200)
+				and J.IsInRange(bot, enemyHero, 1600)
 				and not J.IsSuspiciousIllusion(enemyHero)
 				and not enemyHero:IsDisarmed()
 				then
 					if J.IsChasingTarget(enemyHero, bot)
-					or (#nEnemyHeroes > #nAllyHeroes and enemyHero:GetAttackTarget() == bot)
+					or (#nEnemyHeroes > #nAllyHeroes)
 					or botHP < 0.5
 					then
 						return BOT_ACTION_DESIRE_HIGH, hTarget:GetLocation()
@@ -954,7 +952,7 @@ function X.ConsiderFireRemnant()
 		if  J.IsValidHero(enemyHero)
 		and J.CanBeAttacked(enemyHero)
         and J.CanCastOnNonMagicImmune(enemyHero)
-		and GetUnitToLocationDistance(enemyHero, J.GetTeamFountain()) > 600
+		and GetUnitToLocationDistance(enemyHero, J.GetTeamFountain()) > 1200
         and J.IsInRange(bot, enemyHero, 1400)
         and not J.IsInRange(bot, enemyHero, 400)
 		and not enemyHero:HasModifier('modifier_abaddon_borrowed_time')
@@ -981,10 +979,10 @@ function X.ConsiderFireRemnant()
 	end
 
 	if J.IsGoingOnSomeone(bot) then
-		if  J.IsValidTarget(botTarget)
+		if  J.IsValidHero(botTarget)
 		and J.CanBeAttacked(botTarget)
 		and J.IsInRange(bot, botTarget, nCastRange)
-		and GetUnitToLocationDistance(botTarget, J.GetTeamFountain()) > 600
+		and GetUnitToLocationDistance(botTarget, J.GetTeamFountain()) > 1200
         and not J.IsInRange(bot, botTarget, bot:GetAttackRange() + 150)
 		and not botTarget:HasModifier('modifier_abaddon_borrowed_time')
 		and not botTarget:HasModifier('modifier_faceless_void_chronosphere_freeze')
@@ -1011,10 +1009,9 @@ function X.ConsiderFireRemnant()
 			if  J.IsValidHero(enemyHero)
 			and not J.IsSuspiciousIllusion(enemyHero)
 			and not J.IsDisabled(enemyHero)
-			and not enemyHero:IsDisarmed()
 			then
 				if (J.IsChasingTarget(enemyHero, bot))
-				or (#nEnemyHeroes > #nAllyHeroes and enemyHero:GetAttackTarget() == bot)
+				or (#nEnemyHeroes > #nAllyHeroes)
 				or (botHP < 0.4)
 				then
 					local vLocation = J.VectorTowards(bot:GetLocation(), J.GetTeamFountain(), RandomInt(nCastRange * 0.75, nCastRange))

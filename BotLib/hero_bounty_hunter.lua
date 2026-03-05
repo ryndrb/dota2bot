@@ -368,15 +368,14 @@ function X.ConsdierShurikenToss()
 		return BOT_ACTION_DESIRE_NONE, nil
 	end
 
-	local nCastRange = J.GetProperCastRange(false, bot, ShurikenToss:GetCastRange())
+	local nCastRange = ShurikenToss:GetCastRange()
 	local nCastPoint = ShurikenToss:GetCastPoint()
 	local nDamage = ShurikenToss:GetSpecialValueInt('bonus_damage')
 	local nRadius = ShurikenToss:GetSpecialValueInt('bounce_aoe')
 	local nSpeed = ShurikenToss:GetSpecialValueInt('speed')
 	local nManaCost = ShurikenToss:GetManaCost()
 	local fManaAfter = J.GetManaAfter(nManaCost)
-	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {ShadowWalk, Track})
-	local fManaThreshold2 = J.GetManaThreshold(bot, nManaCost, {ShurikenToss, ShadowWalk, Track})
+	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {ShadowWalk, FriendlyShadow, Track})
 
 	local nTrackEnemyList = {}
 
@@ -384,6 +383,7 @@ function X.ConsdierShurikenToss()
 		if  J.IsValidHero(enemyHero)
 		and J.CanBeAttacked(enemyHero)
 		and not J.IsSuspiciousIllusion(enemyHero)
+		and not enemyHero:HasModifier('modifier_necrolyte_reapers_scythe')
 		then
 			if enemyHero:HasModifier('modifier_bounty_hunter_track') then
 				nTrackEnemyList[#nTrackEnemyList + 1] = enemyHero
@@ -455,7 +455,6 @@ function X.ConsdierShurikenToss()
 		and J.CanBeAttacked(botTarget)
         and J.IsInRange(bot, botTarget, nCastRange + nRadius * 0.8)
         and J.CanCastOnNonMagicImmune(botTarget)
-		and fManaAfter > fManaThreshold1
 		then
 			if botTarget:HasModifier('modifier_bounty_hunter_track') and not J.IsInRange(bot, botTarget, nCastRange) then
 				for _, enemyHero_ in pairs(nEnemyHeroes) do
@@ -479,7 +478,7 @@ function X.ConsdierShurikenToss()
 		end
 	end
 
-	if J.IsRetreating(bot) and not J.IsRealInvisible(bot) and bot:WasRecentlyDamagedByAnyHero(3.0) and fManaAfter > fManaThreshold1 then
+	if J.IsRetreating(bot) and not J.IsRealInvisible(bot) then
 		for _, enemyHero in pairs(nEnemyHeroes) do
 			if J.IsValidHero(enemyHero)
 			and J.CanBeAttacked(enemyHero)
@@ -488,19 +487,16 @@ function X.ConsdierShurikenToss()
             and J.CanCastOnTargetAdvanced(enemyHero)
 			and not J.IsDisabled(enemyHero)
             and not enemyHero:IsDisarmed()
+			and bot:WasRecentlyDamagedByHero(enemyHero, 2.0)
 			then
-				if (J.IsChasingTarget(enemyHero, bot))
-				or (#nEnemyHeroes > #nAllyHeroes and enemyHero:GetAttackTarget() == bot)
-				then
-					return BOT_ACTION_DESIRE_HIGH, enemyHero
-				end
+				return BOT_ACTION_DESIRE_HIGH, enemyHero
 			end
 		end
 	end
 
-	local nEnemyCreeps = bot:GetNearbyCreeps(nCastRange, true)
+	local nEnemyCreeps = bot:GetNearbyCreeps(Min(nCastRange, 1600), true)
 
-	if (J.IsPushing(bot) or J.IsDefending(bot)) and fManaAfter > fManaThreshold2 and #nEnemyHeroes <= 1 and bAttacking then
+	if (J.IsPushing(bot) or J.IsDefending(bot)) and fManaAfter > fManaThreshold1 and #nEnemyHeroes <= 1 and bAttacking then
 		for _, creep in pairs(nEnemyCreeps) do
 			if J.IsValid(creep) and J.CanBeAttacked(creep) then
 				local sCreepName = creep:GetUnitName()
@@ -566,7 +562,7 @@ function X.ConsdierShurikenToss()
 		and J.CanCastOnTargetAdvanced(botTarget)
 		and not J.IsDisabled()
         and bAttacking
-		and fManaAfter > fManaThreshold2
+		and fManaAfter > fManaThreshold1
 		then
 			return BOT_ACTION_DESIRE_HIGH, botTarget
 		end
@@ -576,7 +572,7 @@ function X.ConsdierShurikenToss()
 		if J.IsTormentor(botTarget)
         and J.IsInRange(bot, botTarget, nCastRange)
         and bAttacking
-		and fManaAfter > fManaThreshold2
+		and fManaAfter > fManaThreshold1
 		then
 			return BOT_ACTION_DESIRE_HIGH, botTarget
 		end
@@ -598,7 +594,7 @@ function X.ConsiderShadowWalk()
 
 	local nManaCost = ShadowWalk:GetManaCost()
 	local fManaAfter = J.GetManaAfter(nManaCost)
-	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {ShurikenToss, ShadowWalk})
+	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {ShurikenToss, FriendlyShadow, ShadowWalk, Track})
 
 	local nEnemyTowers = bot:GetNearbyTowers(1600, true)
 
@@ -661,7 +657,7 @@ function X.ConsiderFriendlyShadow()
 	local nCastRange = J.GetProperCastRange(false, bot, FriendlyShadow:GetCastRange())
 	local nManaCost = FriendlyShadow:GetManaCost()
 	local fManaAfter = J.GetManaAfter(nManaCost)
-	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {ShurikenToss, ShadowWalk})
+	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {ShurikenToss, ShadowWalk, Track})
 
 	for _, allyHero in pairs(nAllyHeroes) do
         if J.IsValidHero(allyHero)
@@ -735,7 +731,7 @@ function X.ConsiderTrack()
 		return BOT_ACTION_DESIRE_NONE, nil
 	end
 
-	local nCastRange = J.GetProperCastRange(false, bot, Track:GetCastRange())
+	local nCastRange = Track:GetCastRange()
 	local nManaCost = Track:GetManaCost()
 	local fManaAfter = J.GetManaAfter(nManaCost)
 	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {ShurikenToss, ShadowWalk})
@@ -744,6 +740,7 @@ function X.ConsiderTrack()
 	local hTargetScore = 0
 	for _, enemyHero in pairs(nEnemyHeroes) do
 		if J.IsValidHero(enemyHero)
+		and J.CanBeAttacked(enemyHero)
         and J.IsInRange(bot, enemyHero, nCastRange + 300)
         and J.CanCastOnTargetAdvanced(enemyHero)
         and not enemyHero:HasModifier('modifier_bounty_hunter_track')

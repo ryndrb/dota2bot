@@ -254,18 +254,18 @@ function X.SkillsComplement()
 end
 
 function X.ConsiderGuardianSprint()
-	if not J.CanCastAbility(GuardianSprint) then
+	if not J.CanCastAbility(GuardianSprint)
+	or bot:IsRooted()
+	then
 		return BOT_ACTION_DESIRE_NONE
 	end
 
 	local nManaCost = GuardianSprint:GetManaCost()
 	local fManaAfter = J.GetManaAfter(nManaCost)
 	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {SlithereenCrush, CorrosiveHaze})
-	local fManaThreshold2 = J.GetManaThreshold(bot, nManaCost, {GuardianSprint, SlithereenCrush, CorrosiveHaze})
 
 	if J.IsGoingOnSomeone(bot) then
 		if J.IsValidHero(botTarget)
-		and J.CanBeAttacked(botTarget)
 		and J.IsInRange(bot, botTarget, 1600)
 		and not J.IsSuspiciousIllusion(botTarget)
 		and not J.IsInRange(bot, botTarget, 200)
@@ -276,7 +276,7 @@ function X.ConsiderGuardianSprint()
 		end
 	end
 
-	if J.IsRetreating( bot ) and not J.IsRealInvisible(bot) and bot:WasRecentlyDamagedByAnyHero(5.0) then
+	if J.IsRetreating(bot) and not J.IsRealInvisible(bot) and bot:WasRecentlyDamagedByAnyHero(5.0) then
 		if #nEnemyHeroes > 0 and J.IsRunning(bot) then
 			return BOT_ACTION_DESIRE_HIGH
 		end
@@ -285,7 +285,7 @@ function X.ConsiderGuardianSprint()
 	if J.IsDoingRoshan(bot) then
 		local vRoshanLocation = J.GetCurrentRoshanLocation()
 		if  GetUnitToLocationDistance(bot, vRoshanLocation) > 2000
-		and fManaAfter > fManaThreshold2 + 0.15
+		and fManaAfter > fManaThreshold1 + 0.15
 		then
 			return BOT_ACTION_DESIRE_HIGH
 		end
@@ -294,7 +294,7 @@ function X.ConsiderGuardianSprint()
 	if J.IsDoingTormentor(bot) then
 		local vTormentorLocation = J.GetTormentorLocation(GetTeam())
 		if  GetUnitToLocationDistance(bot, vTormentorLocation) > 2000
-		and fManaAfter > fManaThreshold2 + 0.15
+		and fManaAfter > fManaThreshold1 + 0.15
 		then
 			return BOT_ACTION_DESIRE_HIGH
 		end
@@ -313,8 +313,7 @@ function X.ConsiderSlithereenCrush()
 	local nDamage = SlithereenCrush:GetSpecialValueInt('crush_damage')
 	local nManaCost = SlithereenCrush:GetManaCost()
 	local fManaAfter = J.GetManaAfter(nManaCost)
-	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {SlithereenCrush, CorrosiveHaze})
-	local fManaThreshold2 = J.GetManaThreshold(bot, nManaCost, {GuardianSprint, SlithereenCrush, CorrosiveHaze})
+	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {GuardianSprint, CorrosiveHaze})
 
 	for _, enemyHero in pairs(nEnemyHeroes) do
 		if J.IsValidHero(enemyHero)
@@ -377,20 +376,18 @@ function X.ConsiderSlithereenCrush()
 			and J.CanBeAttacked(enemyHero)
 			and J.IsInRange(bot, enemyHero, nRadius)
 			and J.CanCastOnNonMagicImmune(enemyHero)
-			and bot:WasRecentlyDamagedByHero(enemyHero, 5.0)
+			and bot:WasRecentlyDamagedByHero(enemyHero, 3.0)
 			and not J.IsDisabled(enemyHero)
 			and not enemyHero:IsDisarmed()
 			then
-				if enemyHero:GetAttackTarget() == bot or #nEnemyHeroes > #nAllyHeroes then
-					return BOT_ACTION_DESIRE_HIGH
-				end
+				return BOT_ACTION_DESIRE_HIGH
 			end
 		end
 	end
 
 	local nEnemyCreeps = bot:GetNearbyCreeps(nRadius, true)
 
-	if J.IsPushing(bot) and #nAllyHeroes <= 3 and fManaAfter > fManaThreshold2 and bAttacking then
+	if J.IsPushing(bot) and #nAllyHeroes <= 3 and fManaAfter > fManaThreshold1 + 0.1 and bAttacking then
 		if J.IsValid(nEnemyCreeps[1]) and J.CanBeAttacked(nEnemyCreeps[1]) then
 			if #nEnemyCreeps >= 4 or (#nEnemyCreeps >= 3 and fManaAfter > 0.65) then
 				return BOT_ACTION_DESIRE_HIGH
@@ -398,7 +395,7 @@ function X.ConsiderSlithereenCrush()
 		end
 	end
 
-	if J.IsDefending(bot) and fManaAfter > fManaThreshold2 and bAttacking then
+	if J.IsDefending(bot) and fManaAfter > fManaThreshold1 and bAttacking then
 		if J.IsValid(nEnemyCreeps[1]) and J.CanBeAttacked(nEnemyCreeps[1]) then
 			if #nEnemyCreeps >= 4 or (#nEnemyCreeps >= 3 and fManaAfter > 0.65) then
 				return BOT_ACTION_DESIRE_HIGH
@@ -413,13 +410,16 @@ function X.ConsiderSlithereenCrush()
 
 	if J.IsFarming(bot) and fManaAfter > fManaThreshold1 and bAttacking then
 		if J.IsValid(nEnemyCreeps[1]) and J.CanBeAttacked(nEnemyCreeps[1]) then
-			if #nEnemyCreeps >= 3 or (#nEnemyCreeps >= 2 and nEnemyCreeps[1]:IsAncientCreep()) then
+			if #nEnemyCreeps >= 3
+			or (#nEnemyCreeps >= 2 and nEnemyCreeps[1]:IsAncientCreep())
+			or (#nEnemyCreeps >= 1 and nEnemyCreeps[1]:GetHealth() >= 800)
+			then
 				return BOT_ACTION_DESIRE_HIGH
 			end
 		end
 	end
 
-	if fManaAfter > fManaThreshold2 and (#nEnemyHeroes == 0 or not J.IsRealInvisible(bot)) then
+	if fManaAfter > fManaThreshold1 + 0.1 and (#nEnemyHeroes == 0 or not J.IsRealInvisible(bot)) then
 		local nLocationAoE = bot:FindAoELocation(true, false, bot:GetLocation(), 0, nRadius, 0, nDamage)
 		if nLocationAoE.count >= 3 then
 			return BOT_ACTION_DESIRE_HIGH
@@ -432,7 +432,6 @@ function X.ConsiderSlithereenCrush()
 		and not J.CanKillTarget(botTarget, nDamage * 1.5, DAMAGE_TYPE_PHYSICAL)
 		and not J.CanKillTarget(botTarget, bot:GetAttackDamage() * 3, DAMAGE_TYPE_PHYSICAL)
 		and bAttacking
-		and fManaAfter > fManaThreshold2 + 0.15
 		then
 			return BOT_ACTION_DESIRE_HIGH
 		end
@@ -445,7 +444,7 @@ function X.ConsiderSlithereenCrush()
 		and not J.IsDisabled(botTarget)
 		and not botTarget:IsDisarmed()
 		and bAttacking
-		and fManaAfter > fManaThreshold2
+		and fManaAfter > fManaThreshold1 + 0.1
 		then
 			return BOT_ACTION_DESIRE_HIGH
 		end
@@ -455,7 +454,7 @@ function X.ConsiderSlithereenCrush()
 		if J.IsTormentor(botTarget)
         and J.IsInRange(bot, botTarget, nRadius)
         and bAttacking
-		and fManaAfter > fManaThreshold2
+		and fManaAfter > fManaThreshold1 + 0.1
 		then
 			return BOT_ACTION_DESIRE_HIGH
 		end
@@ -469,10 +468,10 @@ function X.ConsiderCorrosiveHaze()
 		return BOT_ACTION_DESIRE_NONE, nil
 	end
 
-	local nCastRange = J.GetProperCastRange(false, bot, CorrosiveHaze:GetCastRange())
+	local nCastRange = CorrosiveHaze:GetCastRange()
 	local nManaCost = CorrosiveHaze:GetManaCost()
 	local fManaAfter = J.GetManaAfter(nManaCost)
-	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {GuardianSprint, SlithereenCrush, CorrosiveHaze})
+	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {GuardianSprint, SlithereenCrush})
 
 	if J.IsInTeamFight(bot, 1200) then
 		local hTarget = nil
@@ -504,26 +503,25 @@ function X.ConsiderCorrosiveHaze()
 		and J.CanBeAttacked(botTarget)
 		and J.IsInRange(bot, botTarget, nCastRange)
 		and J.CanCastOnTargetAdvanced(botTarget)
+		and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
 		and not botTarget:HasModifier('modifier_slardar_amplify_damage')
 		then
 			return BOT_ACTION_DESIRE_HIGH, botTarget
 		end
 	end
 
-	if J.IsRetreating(bot) and not J.IsRealInvisible(bot) and bot:WasRecentlyDamagedByAnyHero(3.0)
-	and #nAllyHeroes >= 2
-	and fManaAfter > fManaThreshold1
-	then
+	if J.IsRetreating(bot) and not J.IsRealInvisible(bot) and #nAllyHeroes >= 2 and fManaAfter > fManaThreshold1 then
 		for _, enemyHero in pairs(nEnemyHeroes) do
 			if J.IsValidHero(enemyHero)
 			and J.CanBeAttacked(enemyHero)
+			and J.IsInRange(bot, enemyHero, nCastRange)
 			and J.CanCastOnTargetAdvanced(enemyHero)
 			and not J.IsDisabled(enemyHero)
 			and not enemyHero:IsDisarmed()
+			and not enemyHero:HasModifier('modifier_slardar_amplify_damage')
+			and bot:WasRecentlyDamagedByHero(enemyHero, 2.0)
 			then
-				if enemyHero:GetAttackTarget() == bot or #nEnemyHeroes > #nAllyHeroes then
-					return BOT_ACTION_DESIRE_HIGH, enemyHero
-				end
+				return BOT_ACTION_DESIRE_HIGH, enemyHero
 			end
 		end
 	end
@@ -532,6 +530,7 @@ function X.ConsiderCorrosiveHaze()
 		if J.IsValid(botTarget)
 		and J.CanBeAttacked(botTarget)
 		and J.IsInRange(bot, botTarget, nCastRange)
+		and not botTarget:IsBuilding()
 		and not botTarget:HasModifier( 'modifier_slardar_amplify_damage' )
 		and not J.CanKillTarget(botTarget, bot:GetAttackDamage() * 3, DAMAGE_TYPE_PHYSICAL)
 		and not J.IsOtherAllysTarget(botTarget)

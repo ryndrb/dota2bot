@@ -275,13 +275,12 @@ function X.ConsiderInsatiableHunger()
     local nManaCost = InsatiableHunger:GetManaCost()
     local fManaAfter = J.GetManaAfter(nManaCost)
     local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost , {InsatiableHunger, SpawnSpiderlings})
-    local fManaThreshold2 = J.GetManaThreshold(bot, nManaCost , {SpawnSpiderlings})
 
     if J.IsGoingOnSomeone(bot) then
-		if  J.IsValidTarget(botTarget)
+		if  J.IsValidHero(botTarget)
         and J.IsInRange(bot, botTarget, botAttackRange + 150)
         and J.CanBeAttacked(botTarget)
-        and J.IsAttacking(bot)
+        and bAttacking
         and not J.IsSuspiciousIllusion(botTarget)
         and not botTarget:HasModifier('modifier_abaddon_borrowed_time')
         and not botTarget:HasModifier('modifier_dazzle_shallow_grave')
@@ -298,8 +297,8 @@ function X.ConsiderInsatiableHunger()
     and J.CanBeAttacked(botTarget)
     and botTarget:IsCreep()
     and bAttacking
-    and botHP < 0.25
-    and fManaAfter > fManaThreshold2
+    and botHP < 0.15
+    and fManaAfter > fManaThreshold1
     and not J.CanKillTarget(botTarget, bot:GetAttackDamage() * 3, DAMAGE_TYPE_PHYSICAL)
     and #nEnemyHeroes <= 1
     then
@@ -312,6 +311,8 @@ function X.ConsiderInsatiableHunger()
         and J.IsInRange(bot, botTarget, 800)
         and bAttacking
         and fManaAfter > fManaThreshold1
+        and botHP < 0.5
+        and #nEnemyHeroes == 0
 		then
 			return BOT_ACTION_DESIRE_HIGH
 		end
@@ -322,6 +323,8 @@ function X.ConsiderInsatiableHunger()
         and J.IsInRange(bot, botTarget, 800)
         and bAttacking
         and fManaAfter > fManaThreshold1
+        and botHP < 0.5
+        and #nEnemyHeroes == 0
         then
             return BOT_ACTION_DESIRE_HIGH
         end
@@ -337,7 +340,7 @@ function X.ConsiderSpinWeb()
 
     local botLocation = bot:GetLocation()
 
-	local nCastRange = J.GetProperCastRange(false, bot, SpinWeb:GetCastRange())
+	local nCastRange = SpinWeb:GetCastRange()
     local nRadius = SpinWeb:GetSpecialValueInt('radius')
     local nCharges = SpinWeb:GetSpecialValueInt('AbilityCharges')
     local nChargeRestoreTime = SpinWeb:GetSpecialValueInt('AbilityChargeRestoreTime')
@@ -363,14 +366,14 @@ function X.ConsiderSpinWeb()
 	end
 
     if J.IsGoingOnSomeone(bot) then
-		if  J.IsValidTarget(botTarget)
+		if  J.IsValidHero(botTarget)
         and J.IsInRange(bot, botTarget, nCastRange)
         and not J.IsSuspiciousIllusion(botTarget)
         and not J.IsDisabled(botTarget)
+        and not J.IsLocationInChrono(botTarget:GetLocation())
         and not botTarget:HasModifier('modifier_abaddon_borrowed_time')
         and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
         and not X.DoesLocationHaveWeb(botTarget:GetLocation(), nRadius * 2)
-        and not J.IsLocationInChrono(botTarget:GetLocation())
         and fManaAfter > fManaThreshold1
 		then
             return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation()
@@ -379,13 +382,11 @@ function X.ConsiderSpinWeb()
 
     if J.IsRetreating(bot) and not J.IsRealInvisible(bot) and not X.DoesLocationHaveWeb(botLocation, nRadius * 2) then
         for _, enemyHero in pairs(nEnemyHeroes) do
-            if J.IsValidHero(enemyHero)
-            and J.IsInRange(bot, enemyHero, 800)
-            and not J.IsSuspiciousIllusion(enemyHero)
-            and not enemyHero:IsDisarmed()
+            if  J.IsValidHero(enemyHero)
+            and J.IsInRange(bot, enemyHero, 1200)
             then
                 if (J.IsChasingTarget(enemyHero, bot))
-                or (#nEnemyHeroes > #nAllyHeroes and enemyHero:GetAttackTarget() == bot)
+                or (#nEnemyHeroes > #nAllyHeroes)
                 then
                     return BOT_ACTION_DESIRE_HIGH, botLocation
                 end
@@ -480,7 +481,7 @@ function X.ConsiderSpinnerSnare()
         return BOT_ACTION_DESIRE_NONE, 0
     end
 
-	local nCastRange = J.GetProperCastRange(false, bot, SpinnersSnare:GetCastRange())
+	local nCastRange = SpinnersSnare:GetCastRange()
     local nWidth = SpinnersSnare:GetSpecialValueInt('width')
     local nManaCost = SpinnersSnare:GetManaCost()
     local fManaAfter = J.GetManaAfter(nManaCost)
@@ -500,7 +501,7 @@ function X.ConsiderSpinnerSnare()
 	end
 
     if J.IsGoingOnSomeone(bot) then
-		if  J.IsValidTarget(botTarget)
+		if  J.IsValidHero(botTarget)
         and J.CanBeAttacked(botTarget)
         and J.IsInRange(bot, botTarget, nCastRange)
         and J.CanCastOnNonMagicImmune(botTarget)
@@ -521,13 +522,10 @@ function X.ConsiderSpinnerSnare()
             and not enemyHero:IsMagicImmune()
             and not J.IsSuspiciousIllusion(enemyHero)
             and not enemyHero:IsDisarmed()
+            and bot:WasRecentlyDamagedByHero(enemyHero, 2.0)
             then
-                if (J.IsChasingTarget(enemyHero, bot))
-                or (#nEnemyHeroes > #nAllyHeroes and enemyHero:GetAttackTarget() == bot)
-                then
-                    if SpinnersSnareLocation == nil or (type(SpinnersSnareLocation) == 'userdata' and GetUnitToLocationDistance(bot, SpinnersSnareLocation) > nWidth) then
-                        return BOT_ACTION_DESIRE_HIGH, bot:GetLocation()
-                    end
+                if SpinnersSnareLocation == nil or (type(SpinnersSnareLocation) == 'userdata' and GetUnitToLocationDistance(bot, SpinnersSnareLocation) > nWidth) then
+                    return BOT_ACTION_DESIRE_HIGH, bot:GetLocation()
                 end
             end
         end
@@ -541,7 +539,7 @@ function X.ConsiderSpawnSpiderlings()
 		return BOT_ACTION_DESIRE_NONE, 0
 	end
 
-	local nCastRange = J.GetProperCastRange(false, bot, SpawnSpiderlings:GetCastRange())
+	local nCastRange = SpawnSpiderlings:GetCastRange()
     local nCastPoint = SpawnSpiderlings:GetCastPoint()
 	local nDamage = SpawnSpiderlings:GetSpecialValueInt('damage')
     local nSpeed = SpawnSpiderlings:GetSpecialValueInt('projectile_speed')
@@ -584,12 +582,14 @@ function X.ConsiderSpawnSpiderlings()
         and not botTarget:HasModifier('modifier_templar_assassin_refraction_absorb')
         and fManaAfter > fManaThreshold1 + 0.15
 		then
-			return BOT_ACTION_DESIRE_HIGH, botTarget
+            if J.IsChasingTarget(bot, botTarget) or J.GetHP(botTarget) < 0.15 then
+                return BOT_ACTION_DESIRE_HIGH, botTarget
+            end
 		end
 	end
 
     if not J.IsRetreating(bot) and not J.IsRealInvisible(bot) and fManaAfter > fManaThreshold2 and bAttacking then
-        local nEnemyCreeps = bot:GetNearbyCreeps(nCastRange, true)
+        local nEnemyCreeps = bot:GetNearbyCreeps(Min(nCastRange, 1600), true)
         for _, creep in pairs(nEnemyCreeps) do
             if  J.IsValid(creep)
             and J.CanBeAttacked(creep)

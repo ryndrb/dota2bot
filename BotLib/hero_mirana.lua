@@ -300,7 +300,6 @@ function X.ConsiderStarstorm()
 	local nManaCost = Starstorm:GetManaCost()
 	local fManaAfter = J.GetManaAfter(nManaCost)
 	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {SacredArrow, Leap, MoonlightShadow})
-	local fManaThreshold2 = J.GetManaThreshold(bot, nManaCost, {Starstorm, SacredArrow, Leap, MoonlightShadow})
 
 	for _, enemyHero in pairs(nEnemyHeroes) do
 		if J.IsValidHero(enemyHero)
@@ -335,15 +334,13 @@ function X.ConsiderStarstorm()
 		for _, enemyHero in pairs(nEnemyHeroes) do
 			if J.IsValidHero(enemyHero)
 			and J.CanBeAttacked(enemyHero)
-			and J.IsInRange(bot, enemyHero, nRadius)
+			and J.IsInRange(bot, enemyHero, nRadius - 75)
 			and J.CanCastOnNonMagicImmune(enemyHero)
 			and not J.IsDisabled(enemyHero)
 			and not enemyHero:IsDisarmed()
+			and bot:WasRecentlyDamagedByHero(enemyHero, 3.0)
 			then
-				if J.IsChasingTarget(enemyHero, bot)
-				or (#nEnemyHeroes > #nAllyHeroes and enemyHero:GetAttackTarget() == bot)
-				or (botHP < 0.5 and fManaAfter > fManaThreshold1)
-				then
+				if J.IsChasingTarget(enemyHero, bot) or bot:IsRooted() then
 					return BOT_ACTION_DESIRE_HIGH
 				end
 			end
@@ -352,7 +349,7 @@ function X.ConsiderStarstorm()
 
 	local nEnemyCreeps = bot:GetNearbyCreeps(nRadius, true)
 
-	if J.IsPushing(bot) and #nEnemyHeroes == 0 and fManaAfter > fManaThreshold2 and bAttacking then
+	if J.IsPushing(bot) and #nEnemyHeroes == 0 and fManaAfter > fManaThreshold1 + 0.1 and bAttacking then
 		if J.IsValid(nEnemyCreeps[1]) and J.CanBeAttacked(nEnemyCreeps[1]) then
 			if (#nEnemyCreeps >= 4 and #nAllyHeroes <= 2)
 			or (#nEnemyCreeps >= 6)
@@ -459,7 +456,6 @@ function X.ConsiderSacredArrow()
 	local nManaCost = SacredArrow:GetManaCost()
 	local fManaAfter = J.GetManaAfter(nManaCost)
 	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {Starstorm, Leap, MoonlightShadow})
-	local fManaThreshold2 = J.GetManaThreshold(bot, nManaCost, {Starstorm, SacredArrow, Leap, MoonlightShadow})
 
 	local unitList = GetUnitList(UNIT_LIST_ENEMY_HEROES)
 
@@ -516,14 +512,13 @@ function X.ConsiderSacredArrow()
             and J.CanBeAttacked(creep)
 			and not J.IsRunning(creep)
             and string.find(creep:GetUnitName(), 'range')
-			and (J.IsCore(bot) or not J.IsOtherAllysTarget(creep))
+			and not J.IsOtherAllysTarget(creep)
 			and not J.IsEnemyUnitBetweenSourceAndTarget(bot, creep, creep:GetLocation(), nCastRange, nRadius)
             then
                 local nDelay = (GetUnitToUnitDistance(bot, creep) / nSpeed) + nCastPoint
                 if J.WillKillTarget(creep, nDamage, DAMAGE_TYPE_PHYSICAL, nDelay) then
-					local nLocationAoE = bot:FindAoELocation(true, true, creep:GetLocation(), 0, 600, 0, 0)
-					if nLocationAoE.count > 0
-					or J.IsUnitTargetedByTower(creep, false)
+					if J.IsUnitTargetedByTower(creep, false)
+					or J.IsEnemyTargetUnit(creep, 1200)
 					then
 						return BOT_ACTION_DESIRE_HIGH, creep:GetLocation()
 					end
@@ -544,13 +539,13 @@ function X.ConsiderSacredArrow()
 		end
 	end
 
-    if (fManaAfter > 0.7 or J.IsFarming(bot) and fManaAfter > 0.4) and fManaAfter > fManaThreshold2 then
+    if (fManaAfter > 0.7 or J.IsFarming(bot) and fManaAfter > 0.4) and fManaAfter > fManaThreshold1 + 0.1 then
         local nNeutralCreeps = bot:GetNearbyNeutralCreeps(1600)
         for _, creep in pairs(nNeutralCreeps) do
             if  J.IsValid(creep)
             and not J.IsRunning(creep)
             and J.CanBeAttacked(creep)
-			and not J.IsEnemyUnitBetweenSourceAndTarget(bot, creep, creep:GetLocation(), nCastRange, nRadius)
+			and not J.IsEnemyUnitBetweenSourceAndTarget(bot, creep, creep:GetLocation(), nCastRange, nRadius + creep:GetBoundingRadius())
             and not creep:IsAncientCreep()
             then
                 local sCreepName = creep:GetUnitName()
@@ -582,7 +577,6 @@ function X.ConsiderLeap()
 	local nManaCost = Leap:GetManaCost()
 	local fManaAfter = J.GetManaAfter(nManaCost)
 	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {Starstorm, SacredArrow, MoonlightShadow})
-	local fManaThreshold2 = J.GetManaThreshold(bot, nManaCost, {Starstorm, SacredArrow, Leap, MoonlightShadow})
 
 	local bHasLeapBuff = bot:HasModifier('modifier_mirana_leap_buff')
 
@@ -622,7 +616,7 @@ function X.ConsiderLeap()
 			and (not J.IsSuspiciousIllusion(enemyHero) or botHP < 0.4)
 			then
 				if J.IsChasingTarget(enemyHero, bot)
-				or (#nEnemyHeroes > #nAllyHeroes and enemyHero:GetAttackTarget() == bot)
+				or (#nEnemyHeroes > #nAllyHeroes)
 				or (botHP < 0.4)
 				then
 					if IsLocationPassable(vLocation) then
@@ -633,7 +627,7 @@ function X.ConsiderLeap()
 		end
 	end
 
-    if J.IsPushing(bot) and fManaAfter > fManaThreshold2 and not bAttacking and #nEnemyHeroes == 0 then
+    if J.IsPushing(bot) and fManaAfter > fManaThreshold1 and not bAttacking and #nEnemyHeroes == 0 then
 		local nLane = LANE_MID
 		if bot:GetActiveMode() == BOT_MODE_PUSH_TOWER_TOP then nLane = LANE_TOP end
 		if bot:GetActiveMode() == BOT_MODE_PUSH_TOWER_BOT then nLane = LANE_BOT end
@@ -781,7 +775,7 @@ function X.ConsiderMoonlightShadow()
 					and not enemyHero:IsDisarmed()
 					then
 						if (J.IsChasingTarget(enemyHero, allyHero))
-						or (#nEnemyHeroes > #nAllyHeroes and enemyHero:GetAttackTarget() == allyHero)
+						or (#nEnemyHeroes > #nAllyHeroes)
 						then
 							return BOT_ACTION_DESIRE_HIGH
 						end

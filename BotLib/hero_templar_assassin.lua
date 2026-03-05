@@ -329,6 +329,7 @@ function X.ConsiderRefraction()
 
 		if J.IsNotAttackProjectileIncoming(bot, 1600)
 		or J.GetAttackProjectileDamageByRange(bot, 1600) >= 110
+		or J.IsStunProjectileIncoming(bot, 800)
 		then
 			return BOT_ACTION_DESIRE_HIGH
 		end
@@ -341,8 +342,8 @@ function X.ConsiderRefraction()
 
 		if not J.IsEarlyGame() and fManaAfter > fManaThreshold1 then
 			local nInRangeEnemy = bot:GetNearbyHeroes(800, true, BOT_MODE_NONE)
-			local nEnemyLaneCreeps = bot:GetNearbyLaneCreeps(1600, true)
-			local nEnemyTowers = bot:GetNearbyTowers(1600, true)
+			local nEnemyLaneCreeps = bot:GetNearbyLaneCreeps(800, true)
+			local nEnemyTowers = bot:GetNearbyTowers(800, true)
 
 			if #nInRangeEnemy > 0
 			or #nEnemyLaneCreeps > 1
@@ -366,22 +367,16 @@ function X.ConsiderRefraction()
 	end
 
 	if J.IsRetreating(bot) and not J.IsRealInvisible(bot) then
-		for _, enemyHero in pairs(nEnemyHeroes) do
-			if J.IsValid(enemyHero)
-			and J.IsInRange(bot, enemyHero, 1200)
-			and not J.IsDisabled(enemyHero)
-			and enemyHero:GetAttackTarget() == bot
-			then
-				if bot:WasRecentlyDamagedByAnyHero(2.0) or botHP < 0.25 then
-					return BOT_ACTION_DESIRE_HIGH
-				end
+		if #nEnemyHeroes > 0 then
+			if bot:WasRecentlyDamagedByAnyHero(2.0) or botHP < 0.5 or #nEnemyHeroes > #nAllyHeroes then
+				return BOT_ACTION_DESIRE_HIGH
 			end
 		end
 	end
 
 	local nEnemyCreeps = bot:GetNearbyCreeps(800, true)
 
-	if (J.IsPushing(bot) or J.IsDefending(bot) or J.IsFarming(bot)) and fManaAfter > fManaThreshold1 then
+	if (J.IsPushing(bot) or J.IsDefending(bot) or J.IsFarming(bot)) and fManaAfter > fManaThreshold1 + 0.15 then
 		local mostHealthCreep = J.GetMostHpUnit(nEnemyCreeps)
 		if J.IsValid(nEnemyCreeps[1]) and J.CanBeAttacked(nEnemyCreeps[1]) and J.IsValid(mostHealthCreep) then
 			if (#nEnemyCreeps >= 4 and #nEnemyHeroes > 0)
@@ -408,9 +403,9 @@ function X.ConsiderRefraction()
 		end
 	end
 
-	if J.IsLaning(bot) and J.IsInLaningPhase() and fManaAfter > fManaThreshold1 then
+	if J.IsLaning(bot) and J.IsInLaningPhase() and fManaAfter > fManaThreshold1 + 0.1 then
 		local nEnemyLaneCreeps = bot:GetNearbyLaneCreeps(800, true)
-		if #nEnemyLaneCreeps >= 4 then
+		if #nEnemyLaneCreeps >= 4 and #nEnemyHeroes > 0 then
 			for _, creep in pairs(nEnemyLaneCreeps) do
 				if J.IsValid(creep)
 				and J.CanBeAttacked(creep)
@@ -479,7 +474,6 @@ function X.ConsiderMeld()
 	local nManaCost = Meld:GetManaCost()
 	local fManaAfter = J.GetManaAfter(nManaCost)
 	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {Refraction, PsionicProjection, PsionicTrap})
-	local fManaThreshold2 = J.GetManaThreshold(bot, nManaCost, {Refraction, Meld, PsionicProjection, PsionicTrap})
 
 	if not J.IsRealInvisible(bot) then
 		local nIncomingProjectileDamage = J.GetAttackProjectileDamageByRange(bot, 1600)
@@ -494,23 +488,24 @@ function X.ConsiderMeld()
 	if J.IsGoingOnSomeone(bot) then
 		if J.IsValidHero(botTarget)
 		and J.CanBeAttacked(botTarget)
-		and J.IsInRange(bot, botTarget, botAttackRange + botTarget:GetBoundingRadius())
+		and J.IsInRange(bot, botTarget, botAttackRange)
 		and not J.IsSuspiciousIllusion(botTarget)
 		and not botTarget:HasModifier('modifier_abaddon_borrowed_time')
 		and not botTarget:HasModifier('modifier_dazzle_shallow_grave')
 		then
-			if not J.IsChasingTarget(bot, botTarget) or J.IsInRange(bot, botTarget, botAttackRange / 2) then
+			if not J.IsChasingTarget(bot, botTarget)
+			or J.IsInRange(bot, botTarget, botAttackRange / 2)
+			or J.IsDisabled(botTarget)
+			then
 				return BOT_ACTION_DESIRE_HIGH
 			end
 		end
 	end
 
-	if  (J.IsPushing(bot) or J.IsDefending(bot) or J.IsFarming(bot))
-	and bAttacking and fManaAfter > fManaThreshold2 and #nEnemyHeroes == 0
-	then
-		if J.IsValid(botTarget)
+	if (J.IsPushing(bot) or J.IsDefending(bot) or J.IsFarming(bot)) and bAttacking and fManaAfter > fManaThreshold1 + 0.1 and #nEnemyHeroes == 0 then
+		if  J.IsValid(botTarget)
 		and J.CanBeAttacked(botTarget)
-		and J.IsInRange(bot, botTarget, botAttackRange + botTarget:GetBoundingRadius())
+		and J.IsInRange(bot, botTarget, botAttackRange)
 		and not botTarget:IsBuilding()
 		and not J.CanKillTarget(botTarget, bot:GetAttackDamage(), DAMAGE_TYPE_PHYSICAL)
 		and not J.CanKillTarget(botTarget, nDamage, DAMAGE_TYPE_PHYSICAL)
@@ -522,7 +517,7 @@ function X.ConsiderMeld()
 	if J.IsLaning(bot) and J.IsInLaningPhase() and fManaAfter > fManaThreshold1 then
 		if J.IsValid(botTarget)
 		and J.CanBeAttacked(botTarget)
-		and J.IsInRange(bot, botTarget, botAttackRange + botTarget:GetBoundingRadius())
+		and J.IsInRange(bot, botTarget, botAttackRange)
 		and botTarget:IsCreep()
 		and not J.CanKillTarget(botTarget, bot:GetAttackDamage(), DAMAGE_TYPE_PHYSICAL)
 		and J.CanKillTarget(botTarget, nDamage, DAMAGE_TYPE_PHYSICAL)
@@ -539,7 +534,7 @@ function X.ConsiderMeld()
 	if J.IsDoingRoshan(bot) then
 		if  J.IsRoshan(botTarget)
 		and J.CanBeAttacked(botTarget)
-		and J.IsInRange(bot, botTarget, botAttackRange + botTarget:GetBoundingRadius())
+		and J.IsInRange(bot, botTarget, botAttackRange)
 		and bAttacking
 		and fManaAfter > fManaThreshold1
 		then
@@ -549,7 +544,7 @@ function X.ConsiderMeld()
 
 	if J.IsDoingTormentor(bot) then
 		if J.IsTormentor(botTarget)
-        and J.IsInRange(bot, botTarget, botAttackRange + botTarget:GetBoundingRadius())
+        and J.IsInRange(bot, botTarget, botAttackRange)
         and bAttacking
 		and fManaAfter > fManaThreshold1
 		then
@@ -557,10 +552,10 @@ function X.ConsiderMeld()
 		end
 	end
 
-	if not J.IsEarlyGame() and bAttacking and fManaAfter > fManaThreshold2 then
-		if J.IsValid(botTarget)
+	if not J.IsEarlyGame() and bAttacking and fManaAfter > fManaThreshold1 + 0.15 and #nEnemyHeroes == 0 then
+		if  J.IsValid(botTarget)
 		and J.CanBeAttacked(botTarget)
-		and J.IsInRange(bot, botTarget, botAttackRange + botTarget:GetBoundingRadius())
+		and J.IsInRange(bot, botTarget, botAttackRange)
 		and not botTarget:IsBuilding()
 		and not J.CanKillTarget(botTarget, bot:GetAttackDamage() * 3.5, DAMAGE_TYPE_PHYSICAL)
 		then
@@ -618,10 +613,9 @@ function X.ConsiderPsionicProjection()
 			if J.IsValid(enemyHero)
 			and J.IsInRange(bot, enemyHero, 1200)
 			and not J.IsDisabled(enemyHero)
-			and enemyHero:GetAttackTarget() == bot
 			then
 				if J.IsChasingTarget(enemyHero, bot)
-				or (#nEnemyHeroes > #nAllyHeroes and enemyHero:GetAttackTarget() == bot)
+				or (#nEnemyHeroes > #nAllyHeroes)
 				or (botHP < 0.5 and (J.GetTotalEstimatedDamageToTarget(nEnemyHeroes, bot, 3.0) > bot:GetHealth() * 1.15 or not bot:WasRecentlyDamagedByAnyHero(2.0)))
 				then
 					local trap = X.GetClosestTrapToLocation(J.GetTeamFountain())
@@ -742,7 +736,7 @@ function X.ConsiderPsionicTrap()
 			and not J.IsInRange(bot, enemyHero, enemyHero:GetAttackRange() + 200)
 			and not X.IsThereTrapInLocation(enemyHero:GetLocation(), nRadius)
 			then
-				return BOT_ACTION_DESIRE_HIGH, enemyHero:GetLocation()
+				return BOT_ACTION_DESIRE_HIGH, J.VectorTowards(enemyHero:GetLocation(), bot:GetLocation(), nRadius / 2)
 			end
 		end
 	end
@@ -752,8 +746,23 @@ function X.ConsiderPsionicTrap()
 	and not bot:WasRecentlyDamagedByAnyHero(3.0)
 	and not J.IsRetreating(bot)
 	and not J.IsRealInvisible(bot)
+	and fManaAfter > fManaThreshold1
 	and fManaAfter > 0.4
 	then
+		for _, camp in pairs(GetNeutralSpawners()) do
+			if  camp
+			and camp.team == GetTeam()
+			and GetUnitToLocationDistance(bot, camp.location) <= nCastRange
+			and IsLocationVisible(camp.location)
+			and not X.IsThereTrapInLocation(camp.location, nRadius)
+			then
+				local nLocationAoE = bot:FindAoELocation(true, false, camp.location, 0, 400, 0, 0)
+				if nLocationAoE.count == 0 then
+					return BOT_ACTION_DESIRE_HIGH, camp.location
+				end
+			end
+		end
+
 		for _, location in pairs(tRuneLocations) do
 			if GetUnitToLocationDistance(bot, location) < nCastRange then
 				if not IsLocationVisible(location) and not X.IsThereTrapInLocation(location, nRadius) then

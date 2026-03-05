@@ -243,14 +243,13 @@ function X.ConsiderShrapnel()
 	local nManaCost = Shrapnel:GetManaCost()
 	local fManaAfter = J.GetManaAfter(nManaCost)
 	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {TakeAim, ConcussiveGrenade, Assassinate})
-	local fManaThreshold2 = J.GetManaThreshold(bot, nManaCost, {Shrapnel, TakeAim, ConcussiveGrenade, Assassinate})
 
 	if DotaTime() < sniperShrapnel.cast_time + nDamageDelay + nCastPoint then
 		return BOT_ACTION_DESIRE_NONE, 0
 	end
 
 	for _, enemyHero in pairs(nEnemyHeroes) do
-		if  J.IsValidTarget(enemyHero)
+		if  J.IsValidHero(enemyHero)
         and J.CanBeAttacked(enemyHero)
         and J.IsInRange(bot, enemyHero, nCastRange)
         and J.CanCastOnNonMagicImmune(enemyHero)
@@ -259,23 +258,21 @@ function X.ConsiderShrapnel()
         and not enemyHero:HasModifier('modifier_dazzle_shallow_grave')
         and not enemyHero:HasModifier('modifier_necrolyte_reapers_scythe')
         and not enemyHero:HasModifier('modifier_oracle_false_promise_timer')
-		and not X.IsShrapnelCastedHere(enemyHero:GetLocation(), nRadius)
+		and not X.IsShrapnelCastedHere(enemyHero:GetLocation(), nRadius, nDuration)
 		then
 			return BOT_ACTION_DESIRE_HIGH, enemyHero:GetLocation()
 		end
 	end
 
 	if J.IsGoingOnSomeone(bot) then
-		if  J.IsValidTarget(botTarget)
+		if  J.IsValidHero(botTarget)
         and J.CanBeAttacked(botTarget)
         and J.IsInRange(bot, botTarget, nCastRange)
         and J.CanCastOnNonMagicImmune(botTarget)
-		and fManaAfter > fManaThreshold2
+		and fManaAfter > fManaThreshold1
 		then
 			local vLocation = J.GetCorrectLoc(botTarget, nDamageDelay + nCastPoint)
-			if GetUnitToLocationDistance(bot, vLocation) <= nCastRange
-			and not X.IsShrapnelCastedHere(vLocation, nRadius)
-			then
+			if GetUnitToLocationDistance(bot, vLocation) <= nCastRange and not X.IsShrapnelCastedHere(vLocation, nRadius, nDuration) then
 				return BOT_ACTION_DESIRE_HIGH, vLocation
 			end
 		end
@@ -285,22 +282,18 @@ function X.ConsiderShrapnel()
         for _, enemyHero in pairs(nEnemyHeroes) do
             if  J.IsValidHero(enemyHero)
             and J.CanBeAttacked(enemyHero)
-            and J.IsInRange(bot, enemyHero, 1000)
+            and J.IsInRange(bot, enemyHero, nCastRange)
+			and not J.IsInRange(bot, enemyHero, nRadius * 0.8)
 			and bot:WasRecentlyDamagedByHero(enemyHero, 3.0)
+			and not J.IsDisabled(enemyHero)
 			and not J.IsSuspiciousIllusion(enemyHero)
 			and not enemyHero:HasModifier('modifier_sniper_shrapnel_slow')
             then
-				local nLocationAoE = bot:FindAoELocation(true, true, enemyHero:GetLocation(), 0, nRadius, 0, 0)
+				local enemyHeroLocation = enemyHero:GetLocation()
+				local nLocationAoE = bot:FindAoELocation(true, true, enemyHeroLocation, 0, nRadius, 0, 0)
 				if J.CanCastOnNonMagicImmune(enemyHero) or nLocationAoE.count >= 2 then
-					if (J.IsChasingTarget(enemyHero, bot))
-					or (#nEnemyHeroes > #nAllyHeroes and enemyHero:GetAttackTarget() == bot)
-					or (botHP < 0.5)
-					or bot:IsRooted()
-					then
-						local vLocation = J.VectorTowards(enemyHero:GetLocation(), bot:GetLocation(), nRadius)
-						if not X.IsShrapnelCastedHere(vLocation, nRadius) then
-							return BOT_ACTION_DESIRE_HIGH, vLocation
-						end
+					if not X.IsShrapnelCastedHere(enemyHeroLocation, nRadius) then
+						return BOT_ACTION_DESIRE_HIGH, enemyHeroLocation
 					end
 				end
             end
@@ -310,7 +303,7 @@ function X.ConsiderShrapnel()
     local nEnemyCreeps = bot:GetNearbyCreeps(800, true)
 	local bHasFarmingItem = J.HasItem(bot, 'item_mjollnir')
 
-    if J.IsPushing(bot) and #nAllyHeroes <= 3 and bAttacking and fManaAfter > fManaThreshold2 then
+    if J.IsPushing(bot) and #nAllyHeroes <= 3 and bAttacking and fManaAfter > fManaThreshold1 + 0.15 then
         for _, creep in pairs(nEnemyCreeps) do
             if J.IsValid(creep)
 			and J.CanBeAttacked(creep)
@@ -358,7 +351,7 @@ function X.ConsiderShrapnel()
                 local nLocationAoE = bot:FindAoELocation(true, false, creep:GetLocation(), 0, nRadius, 0, 0)
                 if (nLocationAoE.count >= 3 and not bHasFarmingItem)
                 or (nLocationAoE.count >= 2 and creep:IsAncientCreep())
-                or (nLocationAoE.count >= 1 and creep:IsAncientCreep() and not J.CanKillTarget(creep, bot:GetAttackDamage() * 5, DAMAGE_TYPE_PHYSICAL))
+                or (nLocationAoE.count >= 1 and not J.CanKillTarget(creep, bot:GetAttackDamage() * 5, DAMAGE_TYPE_PHYSICAL))
                 then
 					if not X.IsShrapnelCastedHere(nLocationAoE.targetloc, nRadius) then
 						return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc
@@ -368,7 +361,7 @@ function X.ConsiderShrapnel()
         end
     end
 
-    if  J.IsLaning(bot) and J.IsInLaningPhase()
+    if  J.IsLaning(bot) and J.IsEarlyGame()
 	and bot:GetLevel() >= 6
     and fManaAfter > fManaThreshold1
     and bAttacking
@@ -389,7 +382,7 @@ function X.ConsiderShrapnel()
         end
 	end
 
-	if not J.IsRetreating(bot) and not J.IsRealInvisible(bot) and #nEnemyHeroes == 0 and fManaAfter > fManaThreshold2 then
+	if not J.IsRetreating(bot) and not J.IsRealInvisible(bot) and #nEnemyHeroes == 0 and fManaAfter > fManaThreshold1 + 0.15 then
 		local nLocationAoE = bot:FindAoELocation(true, false, bot:GetLocation(), nCastRange, nRadius, 0, nDamage * nDuration / 2)
 		if (nLocationAoE.count >= 6) then
 			return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc
@@ -404,7 +397,7 @@ function X.ConsiderShrapnel()
 		and not botTarget:HasModifier('modifier_sniper_shrapnel_slow')
 		and not X.IsShrapnelCastedHere(botTarget:GetLocation(), nRadius)
 		and bAttacking
-		and fManaAfter > fManaThreshold2
+		and fManaAfter > fManaThreshold1
 		then
 			return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation()
 		end
@@ -416,7 +409,7 @@ function X.ConsiderShrapnel()
 		and not botTarget:HasModifier('modifier_sniper_shrapnel_slow')
 		and not X.IsShrapnelCastedHere(botTarget:GetLocation(), nRadius)
 		and bAttacking
-		and fManaAfter > fManaThreshold2
+		and fManaAfter > fManaThreshold1
 		then
 			return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation()
 		end
@@ -437,7 +430,7 @@ function X.ConsiderTakeAim()
 	local fManaAfter = J.GetManaAfter(nManaCost)
 	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {Shrapnel, ConcussiveGrenade, Assassinate})
 
-	local nInRangeEnemy = J.GetEnemiesNearLoc(bot:GetLocation(), 550)
+	local nInRangeEnemy = J.GetEnemiesNearLoc(bot:GetLocation(), 700)
 
 	if J.IsGoingOnSomeone(bot) then
 		if J.IsValidHero(botTarget)
@@ -489,43 +482,18 @@ function X.ConsiderConcussiveGrenade()
 		end
 	end
 
-	if J.IsRetreating(bot) and not J.IsRealInvisible(bot) then
+	if J.IsRetreating(bot) and not J.IsRealInvisible(bot) and J.IsRunning(bot) then
 		for _, enemyHero in pairs(nEnemyHeroes) do
 			if J.IsValidHero(enemyHero)
+			and J.CanBeAttacked(enemyHero)
 			and J.IsInRange(bot, enemyHero, nRadius)
 			and J.CanCastOnNonMagicImmune(enemyHero)
 			and not J.IsDisabled(enemyHero)
 			and not enemyHero:IsDisarmed()
+			and bot:WasRecentlyDamagedByHero(enemyHero, 2.0)
 			then
-				if (J.IsChasingTarget(enemyHero, bot))
-				or (#nEnemyHeroes > #nAllyHeroes and enemyHero:GetAttackTarget() == bot)
-				or botHP < 0.55
-				then
-					return BOT_ACTION_DESIRE_HIGH, bot:GetLocation()
-				end
+				return BOT_ACTION_DESIRE_HIGH, (bot:GetLocation() + enemyHero:GetLocation()) / 2
 			end
-		end
-	end
-
-	if J.IsInTeamFight( bot, 1400 ) then
-		local nLocationAoE = bot:FindAoELocation(true, true, bot:GetLocation(), nCastRange, nRadius, 0, 0)
-		local nInRangeEnemy = J.GetEnemiesNearLoc(nLocationAoE.targetloc, nRadius)
-		local count = 0
-
-		for _, enemyHero in pairs(nInRangeEnemy) do
-			if  J.IsValidHero(enemyHero)
-			and J.CanBeAttacked(enemyHero)
-			and J.IsInRange(bot, enemyHero, nCastRange)
-			and J.CanCastOnNonMagicImmune(enemyHero)
-			and not J.IsDisabled(enemyHero)
-			and not J.IsChasingTarget(bot, enemyHero)
-			then
-				count = count + 1
-			end
-		end
-
-		if count >= 2 then
-			return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc
 		end
 	end
 
@@ -541,6 +509,10 @@ function X.ConsiderAssassinate()
 	local nCastPoint = Assassinate:GetCastPoint()
 	local nDamage = Assassinate:GetSpecialValueInt('damage')
 	local nSpeed = Assassinate:GetSpecialValueInt('projectile_speed')
+
+	if J.GetTotalEstimatedDamageToTarget(nEnemyHeroes, bot, nCastPoint + 1) > bot:GetHealth() then
+		return BOT_ACTION_DESIRE_NONE
+	end
 
 	if not J.IsRetreating(bot) then
 		for _, enemyHero in pairs(nEnemyHeroes) do
@@ -589,9 +561,7 @@ function X.ConsiderAssassinate()
 			if (not J.IsInRange(bot, botTarget, botAttackRange))
 			or (bot:IsDisarmed())
 			then
-				if  J.GetTotalEstimatedDamageToTarget(nEnemyHeroes, bot, nCastPoint + 1) < bot:GetHealth()
-				and (J.GetHP(botTarget) < 0.5 or #nAllyHeroesAttackingTarget >= 4)
-				then
+				if (J.GetHP(botTarget) < 0.5 or #nAllyHeroesAttackingTarget >= 4) then
 					return BOT_ACTION_DESIRE_HIGH, botTarget
 				end
 			end
@@ -601,8 +571,8 @@ function X.ConsiderAssassinate()
 	return BOT_ACTION_DESIRE_NONE, nil
 end
 
-function X.IsShrapnelCastedHere(vLocation, nRadius)
-	if sniperShrapnel.location then
+function X.IsShrapnelCastedHere(vLocation, nRadius, nDuration)
+	if sniperShrapnel.location and DotaTime() <= sniperShrapnel.cast_time + nDuration then
 		if J.GetDistance(vLocation, sniperShrapnel.location) <= nRadius + nRadius / 2 then
 			return true
 		end

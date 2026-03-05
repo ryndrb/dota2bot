@@ -12,7 +12,7 @@ then
 
 local RI = require(GetScriptDirectory()..'/FunLib/util_role_item')
 
-local sUtility = {}
+local sUtility = {"item_lotus_orb", "item_pipe"}
 local sUtilityItem = RI.GetBestUtilityItem(sUtility)
 
 local HeroBuild = {
@@ -631,6 +631,47 @@ function X.ConsiderAmphibianRhapsody()
                 end
             end
         end
+
+        local nEnemyCreeps = bot:GetNearbyCreeps(nRadius, true)
+
+        if J.IsPushing(bot) and #nAllyHeroes <= 3 and botMP > 0.4 and (bAttacking or bot:WasRecentlyDamagedByCreep(5.0)) then
+            if J.IsValid(nEnemyCreeps[1]) and J.CanBeAttacked(nEnemyCreeps[1]) then
+                if #nEnemyCreeps >= 4 or (#nEnemyCreeps >= 3 and botMP > 0.65) then
+                    if not bIsToggled then
+                        return BOT_ACTION_DESIRE_HIGH
+                    else
+                        X.Strum(BullbellyBlitz, IslandElixir)
+                        return BOT_ACTION_DESIRE_NONE
+                    end
+                end
+            end
+        end
+
+        if J.IsDefending(bot) and botMP > 0.35 and (bAttacking or bot:WasRecentlyDamagedByCreep(5.0)) then
+            if J.IsValid(nEnemyCreeps[1]) and J.CanBeAttacked(nEnemyCreeps[1]) then
+                if #nEnemyCreeps >= 4 or (#nEnemyCreeps >= 3 and botMP > 0.65) then
+                    if not bIsToggled then
+                        return BOT_ACTION_DESIRE_HIGH
+                    else
+                        X.Strum(BullbellyBlitz, IslandElixir)
+                        return BOT_ACTION_DESIRE_NONE
+                    end
+                end
+            end
+        end
+
+        if J.IsFarming(bot) and botMP > 0.35 and (bAttacking or bot:WasRecentlyDamagedByCreep(5.0)) then
+            if J.IsValid(nEnemyCreeps[1]) and J.CanBeAttacked(nEnemyCreeps[1]) then
+                if #nEnemyCreeps >= 3 or (#nEnemyCreeps >= 2 and nEnemyCreeps[1]:IsAncientCreep()) then
+                    if not bIsToggled then
+                        return BOT_ACTION_DESIRE_HIGH
+                    else
+                        X.Strum(BullbellyBlitz, IslandElixir)
+                        return BOT_ACTION_DESIRE_NONE
+                    end
+                end
+            end
+        end
     end
 
     for _, allyHero in pairs(nAllyHeroes) do
@@ -691,7 +732,7 @@ function X.ConsiderAmphibianRhapsody()
                     end
                 end
 
-                if allyHeroHp < 0.5 and X.IsGoodToHeal(allyHero) then
+                if allyHeroHp < 0.5 and X.IsGoodToHeal(allyHero) and not J.IsFarming(bot) then
                     if botMP > fManaThreshold1 + 0.1 then
                         if not bIsToggled then
                             return BOT_ACTION_DESIRE_HIGH

@@ -306,10 +306,10 @@ function X.ConsiderTheSwarm()
     local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {Shukuchi, TimeLapse})
 
     if J.IsGoingOnSomeone(bot) then
-		if  J.IsValidTarget(botTarget)
+		if  J.IsValidHero(botTarget)
         and J.CanBeAttacked(botTarget)
-        and J.CanCastOnMagicImmune(botTarget)
         and J.IsInRange(bot, botTarget, nCastRange / 2)
+        and J.CanCastOnMagicImmune(botTarget)
         and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
         and fManaAfter > fManaThreshold1
 		then
@@ -326,7 +326,7 @@ function X.ConsiderTheSwarm()
 	end
 
 	if J.IsRetreating(bot) and not J.IsRealInvisible(bot) and bot:WasRecentlyDamagedByAnyHero(4.0) then
-        if J.IsValidHero(nEnemyHeroes[1])
+        if  J.IsValidHero(nEnemyHeroes[1])
         and J.IsChasingTarget(nEnemyHeroes[1], bot)
         and not J.IsSuspiciousIllusion(nEnemyHeroes[1])
         then
@@ -339,6 +339,7 @@ function X.ConsiderTheSwarm()
 			and J.IsChasingTarget(enemyHero, bot)
             and not J.IsSuspiciousIllusion(enemyHero)
             and not J.IsDisabled(enemyHero)
+            and bot:WasRecentlyDamagedByHero(enemyHero, 2.0)
             then
                 return BOT_ACTION_DESIRE_HIGH, enemyHero:GetLocation()
             end
@@ -351,7 +352,7 @@ function X.ConsiderTheSwarm()
         and J.IsInRange(bot, botTarget, nCastRange)
         and J.GetHP(botTarget) > 0.2
         and bAttacking
-        and fManaAfter > fManaThreshold1
+        and fManaAfter > fManaThreshold1 + 0.1
         then
             return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation()
         end
@@ -361,36 +362,9 @@ function X.ConsiderTheSwarm()
         if  J.IsTormentor(botTarget)
         and J.IsInRange(bot, botTarget, nCastRange)
         and bAttacking
-        and fManaAfter > fManaThreshold1
+        and fManaAfter > fManaThreshold1 + 0.1
         then
             return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation()
-        end
-    end
-
-    if  not J.IsRetreating(bot)
-    and not J.IsRealInvisible(bot)
-    and not J.IsInTeamFight(bot, 1200)
-    and fManaAfter > fManaThreshold1
-    then
-        for _, allyHero in pairs(nAllyHeroes) do
-            if  J.IsValidHero(allyHero)
-            and bot ~= allyHero
-            and J.IsRetreating(allyHero)
-            and allyHero:WasRecentlyDamagedByAnyHero(3.0)
-            and not J.IsSuspiciousIllusion(allyHero)
-            then
-                for _, enemyHero in pairs(nEnemyHeroes) do
-                    if  J.IsValidHero(enemyHero)
-                    and J.IsInRange(bot, enemyHero, nCastRange / 2)
-                    and J.CanCastOnNonMagicImmune(enemyHero)
-                    and J.CanCastOnTargetAdvanced(enemyHero)
-                    and J.IsChasingTarget(enemyHero, allyHero)
-                    and not J.IsDisabled(enemyHero)
-                    then
-                        return BOT_ACTION_DESIRE_HIGH, J.GetCorrectLoc(enemyHero, 1.0 + nCastPoint)
-                    end
-                end
-            end
         end
     end
 
@@ -410,11 +384,11 @@ function X.ConsiderShukuchi()
     local nDamageRadius = Shukuchi:GetSpecialValueInt('radius')
     local nManaCost = Shukuchi:GetManaCost()
     local fManaAfter = J.GetManaAfter(nManaCost)
-    local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {Shukuchi, TimeLapse})
+    local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {TheSwarm, Shukuchi, TimeLapse})
 
     if not bot:IsMagicImmune() then
-        if (J.IsStunProjectileIncoming(bot, 350))
-        or (J.IsUnitTargetProjectileIncoming(bot, 400))
+        if (J.IsStunProjectileIncoming(bot, 550))
+        or (J.IsUnitTargetProjectileIncoming(bot, 550))
         or (not bot:HasModifier('modifier_sniper_assassinate') and J.IsWillBeCastUnitTargetSpell(bot, 400))
         then
             return BOT_ACTION_DESIRE_HIGH
@@ -422,7 +396,7 @@ function X.ConsiderShukuchi()
     end
 
     if J.IsGoingOnSomeone(bot) then
-		if J.IsValidTarget(botTarget)
+		if  J.IsValidHero(botTarget)
         and not J.IsInRange(bot, botTarget, nAttackRange)
         and not botTarget:HasModifier('modifier_enigma_black_hole_pull')
         and not botTarget:HasModifier('modifier_faceless_void_chronosphere_freeze')
@@ -483,7 +457,7 @@ function X.ConsiderShukuchi()
 		end
 	end
 
-    if J.IsLaning(bot) and J.IsInLaningPhase() then
+    if J.IsLaning(bot) and J.IsEarlyGame() then
 		if  fManaAfter > 0.8
 		and bot:DistanceFromFountain() > 100
 		and bot:DistanceFromFountain() < 6000
@@ -565,7 +539,7 @@ function X.ConsiderTimeLapse()
         and botHP < 0.5
         and (bot:WasRecentlyDamagedByAnyHero(3)
             or J.IsChasingTarget(nEnemyHeroes[1], bot)
-            or (#nEnemyHeroes > #nAllyHeroes and nEnemyHeroes[1]:GetAttackTarget() == bot))
+            or (#nEnemyHeroes > #nAllyHeroes))
         then
             local vPrevLocation = bot.history[nLapseTime].location
             if vPrevLocation then

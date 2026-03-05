@@ -57,31 +57,30 @@ local HeroBuild = {
                 "item_tango",
                 "item_double_branches",
                 "item_quelling_blade",
-                "item_circlet",
-                "item_gauntlets",
+                "item_double_gauntlets",
             
                 "item_magic_wand",
                 "item_boots",
-                "item_bracer",
+                "item_soul_ring",
                 "item_phase_boots",
-                "item_echo_sabre",
+                "item_blade_mail",
                 "item_crimson_guard",--
-                "item_black_king_bar",--
-                "item_harpoon",--
                 "item_blink",
+                "item_black_king_bar",--
                 "item_ultimate_scepter",
                 "item_aghanims_shard",
-                "item_overwhelming_blink",--
                 "item_heart",--
                 "item_ultimate_scepter_2",
+                "item_nullifier",--
+                "item_overwhelming_blink",--
                 "item_moon_shard",
                 "item_travel_boots_2",--
             },
             ['sell_list'] = {
-                "item_quelling_blade", "item_black_king_bar",
-                "item_magic_wand", "item_blink",
-                "item_magic_wand", "item_blink",
-                "item_bracer", "item_ultimate_scepter",
+                "item_quelling_blade", "item_blink",
+                "item_magic_wand", "item_black_king_bar",
+                "item_soul_ring", "item_ultimate_scepter",
+                "item_blade_mail", "item_nullifier",
             },
         },
     },
@@ -283,13 +282,11 @@ function X.ConsiderNaturesGrasp()
         return BOT_ACTION_DESIRE_NONE, 0
     end
 
-	local nCastRange = J.GetProperCastRange(false, bot, NaturesGrasp:GetCastRange())
+	local nCastRange = NaturesGrasp:GetCastRange()
     local nRadius = NaturesGrasp:GetSpecialValueInt('latch_range')
     local nManaCost = NaturesGrasp:GetManaCost()
 	local fManaAfter = J.GetManaAfter(nManaCost)
 	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {LeechSeed, LivingArmor, EyesInTheForest, Overgrowth})
-    local fManaThreshold2 = J.GetManaThreshold(bot, nManaCost, {LeechSeed, Overgrowth})
-    local fManaThreshold3 = J.GetManaThreshold(bot, nManaCost, {Overgrowth})
 
     if J.IsInTeamFight(bot, 1200) then
         local nLocationAoE = bot:FindAoELocation(true, true, bot:GetLocation(), nCastRange * 0.8, nRadius, 0, 0)
@@ -312,31 +309,28 @@ function X.ConsiderNaturesGrasp()
     end
 
     if J.IsGoingOnSomeone(bot) then
-		if  J.IsValidTarget(botTarget)
-        and J.CanCastOnNonMagicImmune(botTarget)
+		if  J.IsValidHero(botTarget)
+        and J.CanBeAttacked(botTarget)
         and J.IsInRange(bot, botTarget, nCastRange)
+        and J.CanCastOnNonMagicImmune(botTarget)
         and not J.IsDisabled(botTarget)
         and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
-        and fManaAfter > fManaThreshold3
 		then
             return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation()
 		end
 	end
 
-    if J.IsRetreating(bot) and not J.IsRealInvisible(bot) and bot:WasRecentlyDamagedByAnyHero(4.0) then
+    if J.IsRetreating(bot) and not J.IsRealInvisible(bot) then
         for _, enemyHero in pairs(nEnemyHeroes) do
 			if J.IsValid(enemyHero)
             and J.CanBeAttacked(enemyHero)
-			and J.IsInRange(bot, enemyHero, 1000)
+			and J.IsInRange(bot, enemyHero, nCastRange)
 			and J.CanCastOnNonMagicImmune(enemyHero)
 			and not J.IsDisabled(enemyHero)
 			and not enemyHero:IsDisarmed()
+            and bot:WasRecentlyDamagedByHero(enemyHero, 2.0)
 			then
-				if (J.IsChasingTarget(enemyHero, bot) and botHP < 0.75)
-				or (#nEnemyHeroes > #nAllyHeroes and enemyHero:GetAttackTarget() == bot)
-				then
-					return BOT_ACTION_DESIRE_HIGH, enemyHero:GetLocation()
-				end
+                return BOT_ACTION_DESIRE_HIGH, enemyHero:GetLocation()
 			end
 		end
     end
@@ -370,7 +364,7 @@ function X.ConsiderNaturesGrasp()
         end
 	end
 
-    if J.IsFarming(bot) and (J.IsCore(bot) or not J.IsThereCoreNearby(800)) and fManaAfter > fManaThreshold2 + 0.15 and bAttacking then
+    if J.IsFarming(bot) and (J.IsCore(bot) or not J.IsThereCoreNearby(800)) and fManaAfter > fManaThreshold1 and bAttacking then
         for _, creep in pairs(nEnemyCreeps) do
             if J.IsValid(creep) and J.CanBeAttacked(creep) and not J.IsRunning(bot) then
                 local nLocationAoE = bot:FindAoELocation(true, false, creep:GetLocation(), 0, nRadius, 0, 0)
@@ -390,6 +384,7 @@ function X.ConsiderNaturesGrasp()
         and J.IsInRange(bot, botTarget, nCastRange)
         and bAttacking
         and fManaAfter > fManaThreshold1 + 0.1
+        and #nEnemyHeroes == 0
         then
             return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation()
         end
@@ -400,6 +395,7 @@ function X.ConsiderNaturesGrasp()
         and J.IsInRange(bot, botTarget, nCastRange)
         and bAttacking
         and fManaAfter > fManaThreshold1 + 0.1
+        and #nEnemyHeroes == 0
         then
             return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation()
         end
@@ -409,12 +405,11 @@ function X.ConsiderNaturesGrasp()
 end
 
 function X.ConsiderLeechSeed()
-    if not J.CanCastAbility(LeechSeed)
-    then
+    if not J.CanCastAbility(LeechSeed) then
         return BOT_ACTION_DESIRE_NONE, nil
     end
 
-    local nCastRange = J.GetProperCastRange(false, bot, LeechSeed:GetCastRange())
+    local nCastRange = LeechSeed:GetCastRange()
     local nHealFlat = LeechSeed:GetSpecialValueInt('flat_heal')
     local nHealDamagePct = LeechSeed:GetSpecialValueInt('leech_heal') / 100
     local nHeal = nHealFlat + (bot:GetAttackDamage() * nHealDamagePct)
@@ -443,8 +438,7 @@ function X.ConsiderLivingArmor()
     local nDuration = LivingArmor:GetSpecialValueInt('duration')
     local nManaCost = LivingArmor:GetManaCost()
 	local fManaAfter = J.GetManaAfter(nManaCost)
-	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {LeechSeed, LivingArmor, Overgrowth})
-    local fManaThreshold2 = J.GetManaThreshold(bot, nManaCost, {Overgrowth})
+	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {NaturesGrasp, LeechSeed, EyesInTheForest, Overgrowth})
 
     if J.IsGoingOnSomeone(bot) then
         local hTarget = nil
@@ -466,7 +460,7 @@ function X.ConsiderLivingArmor()
             end
         end
 
-        if hTarget and fManaAfter > fManaThreshold2 then
+        if hTarget then
             return BOT_ACTION_DESIRE_HIGH, hTarget
         end
     end
@@ -503,7 +497,7 @@ function X.ConsiderLivingArmor()
     if  botHP < 0.75
     and not bot:HasModifier('modifier_treant_living_armor')
     and not bot:HasModifier('modifier_fountain_aura')
-    and fManaAfter > fManaThreshold2 + 0.2
+    and fManaAfter > fManaThreshold1 + 0.05
     then
         return BOT_ACTION_DESIRE_HIGH, bot
     end
@@ -516,12 +510,12 @@ function X.ConsiderEyesInTheForest()
         return BOT_ACTION_DESIRE_NONE, nil
     end
 
-    local nCastRange = J.GetProperCastRange(false, bot, EyesInTheForest:GetCastRange())
+    local nCastRange = EyesInTheForest:GetCastRange()
     local nRadius = EyesInTheForest:GetSpecialValueInt('vision_aoe')
     local nDuration = EyesInTheForest:GetSpecialValueInt('AbilityChargeRestoreTime')
 
     if J.IsGoingOnSomeone(bot) then
-        if  J.IsValidTarget(botTarget)
+        if  J.IsValidHero(botTarget)
         and J.CanBeAttacked(botTarget)
         and J.IsInRange(bot, botTarget, nRadius)
         and not J.IsChasingTarget(bot, botTarget)
@@ -559,10 +553,7 @@ function X.ConsiderOvergrowth()
 			if J.IsValidHero(enemyHero)
 			and J.CanBeAttacked(enemyHero)
 			and J.IsInRange(bot, enemyHero, nRadius * 0.95)
-			and not enemyHero:IsStunned()
-            and not enemyHero:IsRooted()
-            and not enemyHero:IsHexed()
-            and not enemyHero:IsNightmared()
+			and not J.IsDisabled(enemyHero)
 			and not enemyHero:HasModifier('modifier_enigma_black_hole_pull')
 			and not enemyHero:HasModifier('modifier_faceless_void_chronosphere_freeze')
 			and not J.IsSuspiciousIllusion(enemyHero)
@@ -585,10 +576,7 @@ function X.ConsiderOvergrowth()
 		and J.CanBeAttacked(botTarget)
 		and J.IsInRange(bot, botTarget, nRadius * 0.5)
 		and J.IsCore(botTarget)
-		and not botTarget:IsStunned()
-        and not botTarget:IsRooted()
-        and not botTarget:IsHexed()
-        and not botTarget:IsNightmared()
+		and not J.IsDisabled(botTarget)
 		and not botTarget:HasModifier('modifier_abaddon_borrowed_time')
 		and not botTarget:HasModifier('modifier_dazzle_shallow_grave')
 		and not botTarget:HasModifier('modifier_enigma_black_hole_pull')
@@ -598,7 +586,6 @@ function X.ConsiderOvergrowth()
 		and not J.IsSuspiciousIllusion(botTarget)
 		and not J.IsLateGame()
         and bAttacking
-		and botTarget:GetAttackTarget() == bot
 		and J.GetHP(botTarget) < 0.4
 		then
 			if #nAllyHeroes <= 1 and #nEnemyHeroes <= 1 then

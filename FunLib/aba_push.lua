@@ -5,19 +5,9 @@ local pingTimeDelta = 5
 local tUrgentDefend = {false, nil}
 
 function Push.GetPushDesire(bot, lane)
-    if bot.laneToPush == nil then bot.laneToPush = lane end
-
     local nMaxDesire = 0.75
     local botActiveMode = bot:GetActiveMode()
     local bMyLane = bot:GetAssignedLane() == lane
-
-    if botActiveMode == BOT_MODE_PUSH_TOWER_TOP then
-		bot.laneToPush = LANE_TOP
-	elseif botActiveMode == BOT_MODE_PUSH_TOWER_MID then
-		bot.laneToPush = LANE_MID
-	elseif botActiveMode == BOT_MODE_PUSH_TOWER_BOT then
-		bot.laneToPush = LANE_BOT
-	end
 
 	if (not bMyLane and J.IsCore(bot) and J.IsInLaningPhase())
     or ((#J.GetAlliesNearLoc(J.GetTormentorLocation(GetTeam()), 1600) >= 3) or #J.GetAlliesNearLoc(J.GetTormentorWaitingLocation(GetTeam()), 2500) >= 3)
@@ -76,7 +66,7 @@ function Push.GetPushDesire(bot, lane)
     local aAliveCoreCount = J.GetAliveCoreCount(false)
     local eAliveCoreCount = J.GetAliveCoreCount(true)
     local hAncient = GetAncient(GetTeam())
-    local nPushDesire = GetPushLaneDesire(lane)
+    local nPushDesire = RemapValClamped(GetPushLaneDesire(lane), 0, 1, 0, nMaxDesire)
 
     if J.IsValidBuilding(hAncient) then
         if Push.IsHealthyInsideFountain(bot) then
@@ -126,19 +116,21 @@ function Push.GetPushDesire(bot, lane)
         or (aAliveCoreCount >= 1 and aAliveCount >= eAliveCount + 2)
         or (GetUnitToUnitDistance(bot, GetAncient(GetOpposingTeam())) < 3500 and #nInRangeAlly >= #nInRangeEnemy)
         then
-            if J.DoesTeamHaveAegis() and aAliveCount >= 4 then
-                nPushDesire = nPushDesire + 0.25
+            if not J.IsEarlyGame() then
+                if J.DoesTeamHaveAegis() and aAliveCount >= 4 then
+                    nPushDesire = nPushDesire + 0.25
+                end
+
+                if aAliveCount >= eAliveCount
+                and J.GetAverageLevel(GetTeam()) >= 12
+                -- and (DotaTime() < (J.IsModeTurbo() and 30 * 60 or 50 * 60))
+                then
+                    local teamNetworth, enemyNetworth = J.GetInventoryNetworth()
+                    nPushDesire = nPushDesire + RemapValClamped(teamNetworth - enemyNetworth, 5000, (J.IsModeTurbo() and 15000) or 10000, 0.0, 0.5)
+                end
             end
 
-            if aAliveCount >= eAliveCount
-            and J.GetAverageLevel(GetTeam()) >= 12
-            -- and (DotaTime() < (J.IsModeTurbo() and 30 * 60 or 50 * 60))
-            then
-                local teamNetworth, enemyNetworth = J.GetInventoryNetworth()
-                nPushDesire = nPushDesire + RemapValClamped(teamNetworth - enemyNetworth, 5000, (J.IsModeTurbo() and 15000) or 10000, 0.0, 0.5)
-            end
-
-            return RemapValClamped(nPushDesire, 0, 1, 0, nMaxDesire)
+            return Clamp(nPushDesire, 0, nMaxDesire)
         end
     end
 

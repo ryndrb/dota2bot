@@ -938,7 +938,6 @@ function Site.IsModeSuitableToFarm( bot )
 
 end
 
-
 function Site.IsTimeToFarm( bot )
 	if Site.IsInLaningPhase(bot) or DotaTime() > 90 * 60 then return false end
 
@@ -2323,7 +2322,7 @@ function Site.IsHaveItem( bot, itemName )
 
     local slot = bot:FindItemSlot( itemName )
 
-	if slot >= 0 and slot <= 5
+	if slot >= 0 and slot <= 8
 	then
 		return true
 	end
@@ -2351,19 +2350,17 @@ function Site.GetAroundAllyCount( bot, nRadius )
 end
 
 function Site.GetPosition(bot)
-	local heroID = GetTeamPlayers(bot:GetTeam())
-	local pos = 1
-
-	if GetSelectedHeroName(heroID[1]) == bot:GetUnitName() then
-		pos = 2
-	elseif GetSelectedHeroName(heroID[2]) == bot:GetUnitName() then
-		pos = 3
-	elseif GetSelectedHeroName(heroID[3]) == bot:GetUnitName() then
-		pos = 1
-	elseif GetSelectedHeroName(heroID[4]) == bot:GetUnitName() then
-		pos = 5
-	elseif GetSelectedHeroName(heroID[5]) == bot:GetUnitName() then
-		pos = 4
+	local pos = -1
+	local nIDs = GetTeamPlayers(bot:GetTeam())
+	for i = 1, #nIDs do
+		if GetSelectedHeroName(nIDs[i]) == bot:GetUnitName() then
+			if     i == 1 then pos = 2
+			elseif i == 2 then pos = 3
+			elseif i == 3 then pos = 1
+			elseif i == 4 then pos = 5
+			elseif i == 5 then pos = 4
+			end
+		end
 	end
 
 	return pos

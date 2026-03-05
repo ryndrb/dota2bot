@@ -222,7 +222,7 @@ function X.ConsiderReflection()
 	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {ConjureImage, Metamorphosis, TerrorWave, Sunder})
 
 	if J.IsGoingOnSomeone(bot) then
-		if  J.IsValidTarget(botTarget)
+		if  J.IsValidHero(botTarget)
 		and J.CanBeAttacked(botTarget)
 		and J.IsInRange(bot, botTarget, nCastRange)
 		and J.CanCastOnNonMagicImmune(botTarget)
@@ -230,7 +230,7 @@ function X.ConsiderReflection()
 		and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
 		then
 			local nLocationAoE = bot:FindAoELocation(true, true, botTarget:GetLocation(), 0, nRadius, 0, 0)
-			if J.IsInLaningPhase() then
+			if J.IsEarlyGame() then
 				if J.IsChasingTarget(bot, botTarget)
 				or J.GetHP(botTarget) < 0.5
 				or nLocationAoE.count >= 2
@@ -238,53 +238,22 @@ function X.ConsiderReflection()
 					return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc
 				end
 			else
-				return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc
+				return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation()
 			end
 		end
 	end
 
-	if J.IsRetreating(bot) and not J.IsRealInvisible(bot) then
+	if J.IsRetreating(bot) and not J.IsRealInvisible(bot) and fManaAfter > fManaThreshold1 then
 		for _, enemy in pairs(nEnemyHeroes) do
 			if J.IsValidHero(enemy)
 			and J.CanBeAttacked(enemy)
-			and J.CanCastOnNonMagicImmune(enemy)
 			and J.IsInRange(bot, enemy, nCastRange)
+			and J.CanCastOnNonMagicImmune(enemy)
 			and not J.IsDisabled(enemy)
 			and not enemy:IsDisarmed()
 			and bot:WasRecentlyDamagedByHero(enemy, 3.0)
 			then
-				if J.IsChasingTarget(enemy, bot)
-				or (#nEnemyHeroes > #nAllyHeroes and enemy:GetAttackTarget() == bot)
-				or (botHP < 0.5)
-				then
-					return BOT_ACTION_DESIRE_HIGH, enemy:GetLocation()
-				end
-			end
-		end
-	end
-
-	if  not J.IsRealInvisible(bot)
-	and not J.IsGoingOnSomeone(bot)
-	and fManaAfter > fManaThreshold1
-	then
-		for _, allyHero in pairs(nAllyHeroes) do
-			if  J.IsValidHero(allyHero)
-			and bot ~= allyHero
-			and J.IsRetreating(allyHero)
-			and allyHero:WasRecentlyDamagedByAnyHero(3.0)
-			and not J.IsSuspiciousIllusion(allyHero)
-			then
-				for _, enemy in pairs(nEnemyHeroes) do
-					if J.IsValidHero(enemy)
-					and J.CanBeAttacked(enemy)
-					and J.CanCastOnNonMagicImmune(enemy)
-					and J.IsInRange(bot, enemy, nCastRange)
-					and J.IsChasingTarget(enemy, bot)
-					and not J.IsDisabled(enemy)
-					then
-						return BOT_ACTION_DESIRE_HIGH, enemy:GetLocation()
-					end
-				end
+				return BOT_ACTION_DESIRE_HIGH, enemy:GetLocation()
 			end
 		end
 	end
@@ -301,7 +270,6 @@ function X.ConsiderConjureImage()
 	local nManaCost = ConjureImage:GetManaCost()
 	local fManaAfter = J.GetManaAfter(nManaCost)
 	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {Reflection, Metamorphosis, TerrorWave, Sunder})
-	local fManaThreshold2 = J.GetManaThreshold(bot, nManaCost, {Reflection, ConjureImage, Metamorphosis, TerrorWave, Sunder})
 
 	if not bot:IsMagicImmune() then
 		if (J.GetAttackProjectileDamageByRange(bot, 600) > bot:GetHealth())
@@ -314,7 +282,7 @@ function X.ConsiderConjureImage()
 	end
 
 	if J.IsGoingOnSomeone(bot) then
-		if J.IsValidTarget(botTarget)
+		if J.IsValidHero(botTarget)
 		and J.CanBeAttacked(botTarget)
 		and J.IsInRange(bot, botTarget, nRadius)
 		and not botTarget:HasModifier('modifier_abaddon_borrowed_time')
@@ -325,25 +293,15 @@ function X.ConsiderConjureImage()
 	end
 
 	if J.IsRetreating(bot) and not J.IsRealInvisible(bot) and bot:WasRecentlyDamagedByAnyHero(3.0) then
-		for _, enemy in pairs(nEnemyHeroes) do
-			if J.IsValidHero(enemy)
-			and not J.IsDisabled(enemy)
-			and (not J.IsSuspiciousIllusion(enemy) or botHP < 0.2)
-			then
-				if J.IsChasingTarget(enemy, bot)
-				or (#nEnemyHeroes > #nAllyHeroes and enemy:GetAttackTarget() == bot)
-				or (botHP < 0.4)
-				then
-					return BOT_ACTION_DESIRE_HIGH
-				end
-			end
+		if J.GetEstimatedDamageToTarget(nEnemyHeroes, bot, 5.0) > bot:GetHealth() then
+			return BOT_ACTION_DESIRE_HIGH
 		end
 	end
 
 	local nEnemyCreeps = bot:GetNearbyCreeps(800, true)
 
-	if (J.IsPushing(bot) and fManaAfter > fManaThreshold2 and #nAllyHeroes <= 3)
-	or (J.IsLaning(bot) and J.IsInLaningPhase() and fManaAfter > fManaThreshold1)
+	if (J.IsPushing(bot) and fManaAfter > fManaThreshold1 + 0.1 and #nAllyHeroes <= 3)
+	or (J.IsLaning(bot) and J.IsEarlyGame() and fManaAfter > fManaThreshold1)
 	then
 		if J.IsValid(nEnemyCreeps[1]) and J.CanBeAttacked(nEnemyCreeps[1]) and #nEnemyCreeps >= 3 then
 			return BOT_ACTION_DESIRE_HIGH
@@ -360,7 +318,7 @@ function X.ConsiderConjureImage()
 		end
 	end
 
-	if J.IsDefending(bot) and fManaAfter > fManaThreshold1 and #nAllyHeroes <= 3 then
+	if J.IsDefending(bot) and fManaAfter > fManaThreshold1 then
 		if J.IsValid(nEnemyCreeps[1]) and J.CanBeAttacked(nEnemyCreeps[1]) and #nEnemyCreeps >= 3 then
 			return BOT_ACTION_DESIRE_HIGH
 		end
@@ -384,7 +342,7 @@ function X.ConsiderConjureImage()
 		and J.CanBeAttacked(botTarget)
 		and J.IsInRange(bot, botTarget, 800)
 		and bAttacking
-		and fManaAfter > fManaThreshold1
+		and fManaAfter > fManaThreshold1 + 0.1
 		then
 			return BOT_ACTION_DESIRE_HIGH
 		end
@@ -394,7 +352,7 @@ function X.ConsiderConjureImage()
 		if  J.IsTormentor(botTarget)
 		and J.IsInRange(bot, botTarget, 800)
 		and bAttacking
-		and fManaAfter > fManaThreshold1
+		and fManaAfter > fManaThreshold1 + 0.1
 		then
 			return BOT_ACTION_DESIRE_HIGH
 		end
@@ -431,7 +389,7 @@ function X.ConsiderMetamorphosis()
 		and not botTarget:HasModifier('modifier_abaddon_borrowed_time')
 		and not botTarget:HasModifier('modifier_dazzle_shallow_grave')
 		then
-			if J.IsInLaningPhase() and bot:GetLevel() < 6 then
+			if J.IsEarlyGame() and bot:GetLevel() < 6 then
 				if J.GetHP(botTarget) < 0.5 and bAttacking and not J.IsChasingTarget(bot, botTarget) then
 					return BOT_ACTION_DESIRE_HIGH
 				end
@@ -447,7 +405,8 @@ function X.ConsiderMetamorphosis()
 		and J.IsInRange(bot, botTarget, nRadius)
 		and bAttacking
 		and fManaAfter > fManaThreshold1
-		and bot:GetNetWorth() < 17500
+		and bot:GetNetWorth() < 15000
+		and bot:GetLevel() < 18
 		then
 			return BOT_ACTION_DESIRE_HIGH
 		end
@@ -472,9 +431,9 @@ function X.ConsiderDemonZeal()
 	end
 
 	if J.IsGoingOnSomeone(bot) then
-		if  J.IsValidTarget(botTarget)
+		if  J.IsValidHero(botTarget)
 		and J.CanBeAttacked(botTarget)
-		and J.IsInRange(bot, botTarget, 800)
+		and J.IsInRange(bot, botTarget, 1200)
 		and not J.IsSuspiciousIllusion(botTarget)
 		and not botTarget:HasModifier('modifier_abaddon_borrowed_time')
 		and not botTarget:HasModifier('modifier_dazzle_shallow_grave')
@@ -561,7 +520,7 @@ function X.ConsiderTerrorWave()
 	end
 
 	if J.IsGoingOnSomeone(bot) and botHP > 0.15 then
-		if J.IsValidTarget(botTarget)
+		if J.IsValidHero(botTarget)
 		and J.CanBeAttacked(botTarget)
 		and J.IsInRange(bot, botTarget, nRadius)
 		and not J.IsSuspiciousIllusion(botTarget)
@@ -578,7 +537,7 @@ function X.ConsiderTerrorWave()
 		and J.IsInRange(bot, botTarget, nRadius)
 		and bAttacking
 		and fManaAfter > fManaThreshold1
-		and bot:GetNetWorth() < 17500
+		and bot:GetNetWorth() < 15000
 		then
 			return BOT_ACTION_DESIRE_HIGH
 		end
@@ -589,7 +548,7 @@ function X.ConsiderTerrorWave()
 		and J.IsInRange(bot, botTarget, nRadius)
 		and bAttacking
 		and fManaAfter > fManaThreshold1
-		and bot:GetNetWorth() < 17500
+		and bot:GetNetWorth() < 15000
 		then
 			return BOT_ACTION_DESIRE_HIGH
 		end
@@ -599,7 +558,9 @@ function X.ConsiderTerrorWave()
 end
 
 function X.ConsiderSunder()
-	if not J.CanCastAbility(Sunder) then
+	if not J.CanCastAbility(Sunder)
+	or botHP > 0.5
+	then
 		return BOT_ACTION_DESIRE_NONE, nil
 	end
 
@@ -608,6 +569,7 @@ function X.ConsiderSunder()
 	if not J.IsRealInvisible(bot) or J.IsInTeamFight(bot, 1200) then
 		for _, enemy in pairs(nEnemyHeroes) do
 			if J.IsValidHero(enemy)
+			and J.CanBeAttacked(enemy)
 			and J.IsInRange(bot, enemy, nCastRange + 300)
 			and J.CanCastOnNonMagicImmune(enemy)
 			and J.CanCastOnTargetAdvanced(enemy)

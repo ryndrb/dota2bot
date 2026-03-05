@@ -281,10 +281,7 @@ function X.ConsiderWhirlingDeath()
 	local nDamage = WhirlingDeath:GetSpecialValueInt('whirling_damage')
 	local nManaCost = WhirlingDeath:GetManaCost()
 	local fManaAfter = J.GetManaAfter(nManaCost)
-	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {TimberChain, ReactiveArmor, Flamethrower, Chakram})
-	local fManaThreshold2 = J.GetManaThreshold(bot, nManaCost, {TimberChain, Chakram})
-	local fManaThreshold3 = J.GetManaThreshold(bot, nManaCost, {TimberChain})
-	local fManaThreshold4 = J.GetManaThreshold(bot, nManaCost, {WhirlingDeath, TimberChain, Flamethrower, Chakram})
+	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {TimberChain, ReactiveArmor, Flamethrower, TwistedChakram, Chakram})
 
 	local nTrees = bot:GetNearbyTrees(nRadius)
 	if #nTrees > 0 then
@@ -310,14 +307,14 @@ function X.ConsiderWhirlingDeath()
 		and J.IsInRange(bot, enemyHero, nRadius - 50)
 		and J.IsInEtherealForm(enemyHero)
 		and not J.IsSuspiciousIllusion(enemyHero)
-		and fManaAfter > fManaThreshold3
+		and fManaAfter > fManaThreshold1
 		then
 			return BOT_ACTION_DESIRE_HIGH
 		end
 	end
 
 	if J.IsGoingOnSomeone(bot) then
-		if J.IsValidTarget(botTarget)
+		if J.IsValidHero(botTarget)
 		and J.CanBeAttacked(botTarget)
 		and J.CanCastOnNonMagicImmune(botTarget)
 		and J.IsInRange(bot, botTarget, nRadius - 50)
@@ -326,27 +323,23 @@ function X.ConsiderWhirlingDeath()
 		and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
 		and not botTarget:HasModifier('modifier_oracle_false_promise_timer')
 		and not botTarget:HasModifier('modifier_templar_assassin_refraction_absorb')
-		and fManaAfter > fManaThreshold3
 		then
 			return BOT_ACTION_DESIRE_HIGH
 		end
 	end
 
-	if J.IsRetreating(bot)
-	and not J.IsRealInvisible(bot)
-	and bot:WasRecentlyDamagedByAnyHero(3.0)
-	and fManaAfter > fManaThreshold3
-	then
+	if J.IsRetreating(bot) and not J.IsRealInvisible(bot) then
 		for _, enemyHero in pairs(nEnemyHeroes) do
 			if J.IsValidHero(enemyHero)
+			and J.CanBeAttacked(enemyHero)
 			and J.IsInRange(bot, enemyHero, nRadius - 50)
 			and J.CanCastOnNonMagicImmune(enemyHero)
 			and not J.IsDisabled(enemyHero)
 			and not enemyHero:IsDisarmed()
 			then
-				if J.IsChasingTarget(enemyHero, bot)
-				or (#nEnemyHeroes > #nAllyHeroes and enemyHero:GetAttackTarget() == bot)
-				then
+				local nInRangeEnemy = J.GetEnemiesNearLoc(bot:GetLocation(), nRadius)
+				if bot:WasRecentlyDamagedByHero(enemyHero, 2.0)
+				or #nInRangeEnemy >= 2 then
 					return BOT_ACTION_DESIRE_HIGH
 				end
 			end
@@ -355,7 +348,7 @@ function X.ConsiderWhirlingDeath()
 
 	local nEnemyCreeps = bot:GetNearbyCreeps(nRadius, true)
 
-	if J.IsPushing(bot) and fManaAfter > fManaThreshold4 and bAttacking then
+	if J.IsPushing(bot) and fManaAfter > fManaThreshold1 + 0.1 and bAttacking then
 		if J.IsValid(nEnemyCreeps[1]) and J.CanBeAttacked(nEnemyCreeps[1]) then
 			if #nEnemyCreeps >= 3 then
 				return BOT_ACTION_DESIRE_HIGH
@@ -369,12 +362,13 @@ function X.ConsiderWhirlingDeath()
 		and not J.CanKillTarget(botTarget, nDamage, DAMAGE_TYPE_PURE)
 		and not J.CanKillTarget(botTarget, bot:GetAttackDamage() * 4, DAMAGE_TYPE_PURE)
 		and fManaAfter > 0.5
+		and #nEnemyHeroes == 0
 		then
 			return BOT_ACTION_DESIRE_HIGH
 		end
 	end
 
-	if J.IsDefending(bot) and fManaAfter > fManaThreshold4 and bAttacking and #nEnemyHeroes <= 1 then
+	if J.IsDefending(bot) and fManaAfter > fManaThreshold1 and bAttacking and #nEnemyHeroes <= 1 then
 		if J.IsValid(nEnemyCreeps[1]) and J.CanBeAttacked(nEnemyCreeps[1]) then
 			if #nEnemyCreeps >= 3 then
 				return BOT_ACTION_DESIRE_HIGH
@@ -398,7 +392,7 @@ function X.ConsiderWhirlingDeath()
 		end
 	end
 
-	if J.IsFarming(bot) and fManaAfter > fManaThreshold2 and bAttacking then
+	if J.IsFarming(bot) and fManaAfter > fManaThreshold1 and bAttacking then
 		if J.IsValid(nEnemyCreeps[1]) and J.CanBeAttacked(nEnemyCreeps[1]) then
 			if #nEnemyCreeps >= 2 or nEnemyCreeps[1]:IsAncientCreep() then
 				return BOT_ACTION_DESIRE_HIGH
@@ -417,13 +411,12 @@ function X.ConsiderWhirlingDeath()
 		end
 	end
 
-	if J.IsLaning(bot) and J.IsInLaningPhase() then
+	if J.IsLaning(bot) and J.IsInLaningPhase() and fManaAfter > fManaThreshold1 then
 		for _, creep in pairs(nEnemyCreeps) do
 			if  J.IsValid(creep)
 			and J.CanBeAttacked(creep)
 			and J.IsInRange(bot, creep, nRadius - 50)
 			and J.CanKillTarget(creep, nDamage, DAMAGE_TYPE_PURE)
-			and fManaAfter > fManaThreshold3
 			then
 				if J.IsKeyWordUnit('ranged', creep) then
 					local nLocationAoE = bot:FindAoELocation(true, true, bot:GetLocation(), 0, nRadius, 0, 0)
@@ -437,7 +430,6 @@ function X.ConsiderWhirlingDeath()
 				and J.IsInRange(bot, nEnemyHeroes[1], nRadius - 50)
 				and not J.IsSuspiciousIllusion(nEnemyHeroes[1])
 				and nEnemyHeroes[1]:GetPrimaryAttribute() == ATTRIBUTE_STRENGTH
-				and fManaAfter > fManaThreshold3
 				then
 					return BOT_ACTION_DESIRE_HIGH
 				end
@@ -445,7 +437,7 @@ function X.ConsiderWhirlingDeath()
 		end
 
 		local nLocationAoE = bot:FindAoELocation(true, true, bot:GetLocation(), 0, nRadius, 0, nDamage)
-		if nLocationAoE.count >= 2 and fManaAfter > fManaThreshold3 then
+		if nLocationAoE.count >= 2 then
 			return BOT_ACTION_DESIRE_HIGH
 		end
 	end
@@ -454,7 +446,6 @@ function X.ConsiderWhirlingDeath()
         if J.IsRoshan(botTarget)
 		and J.CanBeAttacked(botTarget)
         and J.IsInRange(bot, botTarget, nRadius)
-        and J.GetHP(botTarget) > 0.25
         and bAttacking
 		and fManaAfter > fManaThreshold1
         then
@@ -473,7 +464,7 @@ function X.ConsiderWhirlingDeath()
     end
 
 	local nInRangeEnemy = bot:GetNearbyHeroes(nRadius - 50, true, BOT_MODE_NONE)
-	if #nInRangeEnemy >= 2 and fManaAfter > fManaThreshold2 then
+	if #nInRangeEnemy >= 2 and fManaAfter > fManaThreshold1 + 0.1 then
 		return BOT_ACTION_DESIRE_HIGH
 	end
 
@@ -500,7 +491,7 @@ function X.ConsiderTimberChain()
 	if J.IsGoingOnSomeone(bot) then
 		if J.IsValidHero(botTarget)
 		and J.CanBeAttacked(botTarget)
-		and GetUnitToLocationDistance(botTarget, J.GetEnemyFountain()) > 800
+		and GetUnitToLocationDistance(botTarget, J.GetEnemyFountain()) > 1200
 		and not botTarget:HasModifier('modifier_faceless_void_chronosphere_freeze')
 		and fManaAfter > fManaThreshold2
 		then
@@ -523,22 +514,13 @@ function X.ConsiderTimberChain()
 	if J.IsRetreating(bot)
 	and not J.IsRealInvisible(bot)
 	and not bot:HasModifier('modifier_fountain_aura_buff')
-	and bot:WasRecentlyDamagedByAnyHero(3.0)
+	and bot:WasRecentlyDamagedByAnyHero(2.0)
 	then
 		local nTargetTree = X.GetBestTreeTowardsLocation(nCastRange, nChainRadius, J.GetTeamFountain(), 600, 60)
 
-		for _, enemyHero in pairs(nEnemyHeroes) do
-			if J.IsValid(enemyHero)
-			and J.IsInRange(bot, enemyHero, 1200)
-			and not enemyHero:IsDisarmed()
-			then
-				if J.IsChasingTarget(enemyHero, bot)
-				or (#nEnemyHeroes > #nAllyHeroes and enemyHero:GetAttackTarget() == bot)
-				then
-					if nTargetTree then
-						return BOT_ACTION_DESIRE_HIGH, GetTreeLocation(nTargetTree)
-					end
-				end
+		if bot:WasRecentlyDamagedByAnyHero(2.0) or (#nEnemyHeroes > #nAllyHeroes and J.IsRunning(bot)) then
+			if nTargetTree then
+				return BOT_ACTION_DESIRE_HIGH, GetTreeLocation(nTargetTree)
 			end
 		end
 
@@ -685,8 +667,8 @@ function X.ConsiderReactiveArmor()
 	end
 
 	if J.IsGoingOnSomeone(bot) then
-		if  J.IsValidTarget(botTarget)
-		and J.IsInRange(bot, botTarget, 600)
+		if  J.IsValidHero(botTarget)
+		and J.IsInRange(bot, botTarget, 900)
 		and not J.IsSuspiciousIllusion(botTarget)
 		then
 			if bot:WasRecentlyDamagedByAnyHero(2.0) and (#nEnemyHeroesTargetingMe >= 2 or botHP < 0.65) then
@@ -735,13 +717,13 @@ function X.ConsiderFlamethrower()
 	local nFrontRange = Flamethrower:GetSpecialValueInt('length')
 	local nManaCost = Flamethrower:GetManaCost()
 	local fManaAfter = J.GetManaAfter(nManaCost)
-	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {WhirlingDeath, TimberChain, Chakram})
+	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {WhirlingDeath, TimberChain, ReactiveArmor, TwistedChakram, Chakram})
 
 	if J.IsGoingOnSomeone(bot) then
-		if  J.IsValidTarget(botTarget)
+		if  J.IsValidHero(botTarget)
 		and J.CanBeAttacked(botTarget)
-		and J.CanCastOnNonMagicImmune(botTarget)
 		and J.IsInRange(bot, botTarget, nFrontRange)
+		and J.CanCastOnNonMagicImmune(botTarget)
 		and bot:IsFacingLocation(botTarget:GetLocation(), 45)
 		and not botTarget:HasModifier('modifier_abaddon_borrowed_time')
 		and not botTarget:HasModifier('modifier_dazzle_shallow_grave')
@@ -804,15 +786,13 @@ function X.ConsiderTwistedChakram()
 	local nSpeed = TwistedChakram:GetSpecialValueFloat('speed')
 	local nManaCost = TwistedChakram:GetManaCost()
 	local fManaAfter = J.GetManaAfter(nManaCost)
-	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {WhirlingDeath, TimberChain, ReactiveArmor, Chakram})
-	local fManaThreshold2 = J.GetManaThreshold(bot, nManaCost, {WhirlingDeath, TimberChain, ReactiveArmor, TwistedChakram, Chakram})
+	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {WhirlingDeath, TimberChain, ReactiveArmor, Flamethrower, Chakram})
 
 	for _, enemyHero in pairs(nEnemyHeroes) do
 		if J.IsValidHero(enemyHero)
 		and J.CanBeAttacked(enemyHero)
 		and J.CanCastOnNonMagicImmune(enemyHero)
 		and J.IsInRange(bot, enemyHero, nCastRange)
-		and J.CanKillTarget(enemyHero, nDamage, DAMAGE_TYPE_PURE)
 		and not enemyHero:HasModifier('modifier_abaddon_borrowed_time')
 		and not enemyHero:HasModifier('modifier_dazzle_shallow_grave')
 		and not enemyHero:HasModifier('modifier_necrolyte_reapers_scythe')
@@ -821,15 +801,17 @@ function X.ConsiderTwistedChakram()
 		and not enemyHero:HasModifier('modifier_ursa_enrage')
 		then
 			local eta = (GetUnitToUnitDistance(bot, enemyHero) / nSpeed) + nCastPoint
-			return BOT_ACTION_DESIRE_HIGH, J.GetCorrectLoc(enemyHero, eta)
+			if J.WillKillTarget(enemyHero, nDamage, DAMAGE_TYPE_PURE, eta) then
+				return BOT_ACTION_DESIRE_HIGH, J.GetCorrectLoc(enemyHero, eta)
+			end
 		end
 	end
 
 	if J.IsGoingOnSomeone(bot) then
-		if J.IsValidTarget(botTarget)
+		if J.IsValidHero(botTarget)
 		and J.CanBeAttacked(botTarget)
-		and J.CanCastOnNonMagicImmune(botTarget)
 		and J.IsInRange(bot, botTarget, nCastRange)
+		and J.CanCastOnNonMagicImmune(botTarget)
 		and not botTarget:HasModifier('modifier_abaddon_borrowed_time')
 		and not botTarget:HasModifier('modifier_dazzle_shallow_grave')
 		and not botTarget:HasModifier('modifier_oracle_false_promise_timer')
@@ -843,28 +825,25 @@ function X.ConsiderTwistedChakram()
 
 	if J.IsRetreating(bot)
 	and not J.IsRealInvisible(bot)
-	and bot:WasRecentlyDamagedByAnyHero(3.0)
 	and not J.CanCastAbility(TimberChain)
 	then
 		for _, enemy in pairs(nEnemyHeroes) do
 			if J.IsValidHero(enemy)
-			and J.CanCastOnNonMagicImmune(enemy)
+			and J.CanBeAttacked(enemy)
 			and J.IsInRange(bot, enemy, nCastRange)
+			and J.CanCastOnNonMagicImmune(enemy)
 			and not J.IsDisabled(enemy)
 			and not enemy:IsDisarmed()
+			and bot:WasRecentlyDamagedByHero(enemy, 2.0)
 			then
-				if J.IsChasingTarget(enemy, bot)
-				or (#nEnemyHeroes > #nAllyHeroes and enemy:GetAttackTarget() == bot)
-				then
-					return BOT_ACTION_DESIRE_HIGH, enemy:GetLocation()
-				end
+				return BOT_ACTION_DESIRE_HIGH, enemy:GetLocation()
 			end
 		end
 	end
 
-	local nEnemyCreeps = bot:GetNearbyCreeps(nCastRange, true)
+	local nEnemyCreeps = bot:GetNearbyCreeps(Min(nCastRange, 1600), true)
 
-	if J.IsPushing(bot) and #nAllyHeroes <= 3 and fManaAfter > fManaThreshold1 and bAttacking then
+	if J.IsPushing(bot) and #nAllyHeroes <= 3 and fManaAfter > fManaThreshold1 + 0.1 and bAttacking then
 		for _, creep in pairs(nEnemyCreeps) do
             if J.IsValid(creep) and J.CanBeAttacked(creep) and not J.IsRunning(creep) then
                 local nLocationAoE = bot:FindAoELocation(true, false, creep:GetLocation(), 0, nRadius, 0, 0)
@@ -890,8 +869,9 @@ function X.ConsiderTwistedChakram()
 		for _, creep in pairs(nEnemyCreeps) do
             if J.IsValid(creep) and J.CanBeAttacked(creep) and not J.IsRunning(creep) then
                 local nLocationAoE = bot:FindAoELocation(true, false, creep:GetLocation(), 0, nRadius, 0, 0)
-                if (nLocationAoE.count >= 3)
-				or (nLocationAoE.count == 1 and creep:IsAncientCreep() and not J.CanKillTarget(creep, bot:GetAttackDamage() * 4, DAMAGE_TYPE_PHYSICAL))
+				if (nLocationAoE.count >= 3)
+				or (nLocationAoE.count >= 2 and creep:IsAncientCreep())
+				or (nLocationAoE.count >= 1 and not J.CanKillTarget(creep, bot:GetAttackDamage() * 4, DAMAGE_TYPE_PHYSICAL))
 				then
                     return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc
                 end
@@ -900,8 +880,7 @@ function X.ConsiderTwistedChakram()
 	end
 
 	if J.IsLaning(bot) and J.IsInLaningPhase() and fManaAfter > fManaThreshold1 then
-		local nEnemyLaneCreeps = bot:GetNearbyLaneCreeps(nCastRange, true)
-		for _, creep in pairs(nEnemyLaneCreeps) do
+		for _, creep in pairs(nEnemyCreeps) do
             if J.IsValid(creep) and J.CanBeAttacked(creep) and not J.IsRunning(creep) then
                 local nLocationAoE = bot:FindAoELocation(true, false, creep:GetLocation(), 0, nRadius, 0, nDamage)
                 if (nLocationAoE.count >= 3) then
@@ -942,7 +921,7 @@ function X.ConsiderChakram()
 		return BOT_ACTION_DESIRE_NONE, 0, 0
 	end
 
-	local nCastRange = J.GetProperCastRange(false, bot, Chakram:GetCastRange())
+	local nCastRange = Chakram:GetCastRange()
 	local nCastPoint = Chakram:GetCastPoint()
 	local nRadius = Chakram:GetSpecialValueFloat('radius')
 	local nSpeed = Chakram:GetSpecialValueFloat('speed')
@@ -950,8 +929,7 @@ function X.ConsiderChakram()
 	local nDPS = Chakram:GetSpecialValueInt('damage_per_second')
 	local nManaCost = Chakram:GetManaCost()
 	local fManaAfter = J.GetManaAfter(nManaCost)
-	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {WhirlingDeath, TimberChain, ReactiveArmor})
-	local fManaThreshold2 = J.GetManaThreshold(bot, nManaCost, {WhirlingDeath, TimberChain, ReactiveArmor, Chakram})
+	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {WhirlingDeath, TimberChain, ReactiveArmor, Flamethrower, TwistedChakram})
 
 	for _, enemyHero in pairs(nEnemyHeroes) do
 		if J.IsValidHero(enemyHero)
@@ -963,7 +941,6 @@ function X.ConsiderChakram()
 		and not enemyHero:HasModifier('modifier_necrolyte_reapers_scythe')
 		and not enemyHero:HasModifier('modifier_oracle_false_promise_timer')
 		and not enemyHero:HasModifier('modifier_templar_assassin_refraction_absorb')
-		and fManaAfter > fManaThreshold1
 		then
 			local eta = (GetUnitToUnitDistance(bot, enemyHero) / nSpeed) + nCastPoint
 			local vLocation = J.GetCorrectLoc(enemyHero, eta)
@@ -974,7 +951,7 @@ function X.ConsiderChakram()
 	end
 
 	if J.IsGoingOnSomeone(bot) then
-		if J.IsValidTarget(botTarget)
+		if J.IsValidHero(botTarget)
 		and J.CanBeAttacked(botTarget)
 		and J.CanCastOnNonMagicImmune(botTarget)
 		and not botTarget:HasModifier('modifier_abaddon_borrowed_time')
@@ -992,19 +969,20 @@ function X.ConsiderChakram()
 
 	if J.IsRetreating(bot)
 	and not J.IsRealInvisible(bot)
-	and bot:WasRecentlyDamagedByAnyHero(3.0)
 	and not J.CanCastAbility(TimberChain)
 	and not J.CanCastAbility(ReactiveArmor)
 	then
 		for _, enemyHero in pairs(nEnemyHeroes) do
-			if J.IsValid(enemyHero)
-			and J.IsInRange(bot, enemyHero, 600)
+			if J.IsValidHero(enemyHero)
+			and J.CanBeAttacked(enemyHero)
+			and J.IsInRange(bot, enemyHero, nCastRange)
 			and J.CanCastOnNonMagicImmune(enemyHero)
 			and not J.IsDisabled(enemyHero)
 			and not enemyHero:IsDisarmed()
+			and bot:WasRecentlyDamagedByHero(enemyHero, 2.0)
 			then
 				if J.IsChasingTarget(enemyHero, bot)
-				or (#nEnemyHeroes > #nAllyHeroes and enemyHero:GetAttackTarget() == bot)
+				or (#nEnemyHeroes > #nAllyHeroes)
 				then
 					local eta = (GetUnitToUnitDistance(bot, enemyHero) / nSpeed) + nCastPoint
 					return BOT_ACTION_DESIRE_HIGH, enemyHero:GetLocation(), eta
@@ -1013,9 +991,9 @@ function X.ConsiderChakram()
 		end
 	end
 
-	local nEnemyCreeps = bot:GetNearbyCreeps(nCastRange, true)
+	local nEnemyCreeps = bot:GetNearbyCreeps(Min(nCastRange, 1600), true)
 
-	if J.IsPushing(bot) and #nAllyHeroes <= 3 and fManaAfter > fManaThreshold2 and bAttacking then
+	if J.IsPushing(bot) and #nAllyHeroes <= 3 and fManaAfter > fManaThreshold1 + 0.1 and bAttacking then
 		for _, creep in pairs(nEnemyCreeps) do
             if J.IsValid(creep) and J.CanBeAttacked(creep) and not J.IsRunning(creep) then
                 local nLocationAoE = bot:FindAoELocation(true, false, creep:GetLocation(), 0, nRadius, 0, 0)
@@ -1027,7 +1005,7 @@ function X.ConsiderChakram()
         end
 	end
 
-	if J.IsDefending(bot) and fManaAfter > fManaThreshold2 and bAttacking then
+	if J.IsDefending(bot) and fManaAfter > fManaThreshold1 and bAttacking then
 		for _, creep in pairs(nEnemyCreeps) do
             if J.IsValid(creep) and J.CanBeAttacked(creep) and not J.IsRunning(creep) then
                 local nLocationAoE = bot:FindAoELocation(true, false, creep:GetLocation(), 0, nRadius, 0, 0)
@@ -1044,7 +1022,8 @@ function X.ConsiderChakram()
             if J.IsValid(creep) and J.CanBeAttacked(creep) and not J.IsRunning(creep) then
                 local nLocationAoE = bot:FindAoELocation(true, false, creep:GetLocation(), 0, nRadius, 0, 0)
                 if (nLocationAoE.count >= 3)
-				or (nLocationAoE.count == 1 and creep:IsAncientCreep() and not J.CanKillTarget(creep, bot:GetAttackDamage() * 4, DAMAGE_TYPE_PHYSICAL))
+				or (nLocationAoE.count >= 2 and creep:IsAncientCreep())
+				or (nLocationAoE.count >= 1 and not J.CanKillTarget(creep, bot:GetAttackDamage() * 4, DAMAGE_TYPE_PHYSICAL))
 				then
 					local eta = (GetUnitToLocationDistance(bot, nLocationAoE.targetloc) / nSpeed) + nCastPoint
                     return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc, eta
@@ -1054,8 +1033,7 @@ function X.ConsiderChakram()
 	end
 
 	if J.IsLaning(bot) and J.IsInLaningPhase() and fManaAfter > fManaThreshold1 then
-		local nEnemyLaneCreeps = bot:GetNearbyLaneCreeps(nCastRange, true)
-		for _, creep in pairs(nEnemyLaneCreeps) do
+		for _, creep in pairs(nEnemyCreeps) do
             if J.IsValid(creep) and J.CanBeAttacked(creep) and not J.IsRunning(creep) then
                 local nLocationAoE = bot:FindAoELocation(true, false, creep:GetLocation(), 0, nRadius, 0, nDamage + nDPS * 2)
                 if (nLocationAoE.count >= 3) then
@@ -1235,13 +1213,13 @@ end
 
 function X.IsChakramStillTraveling(cType)
 	local proj = GetLinearProjectiles()
-	for _, p in pairs(proj)
-	do
-		if  p ~= nil
-		and ((cType == 1 and p.ability:GetName() == 'shredder_chakram')
-			or (cType == 2 and p.ability:GetName() == 'shredder_chakram_2'))
-		then
-			return true
+	for _, p in pairs(proj) do
+		if p ~= nil then
+			if (cType == 1 and p.ability:GetName() == 'shredder_chakram')
+			or (cType == 2 and p.ability:GetName() == 'shredder_chakram_2')
+			then
+				return true
+			end
 		end
 	end
 

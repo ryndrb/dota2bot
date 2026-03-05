@@ -261,15 +261,14 @@ function X.ConsiderChaosBolt()
 		return BOT_ACTION_DESIRE_NONE, nil
 	end
 
-	local nCastRange = J.GetProperCastRange(false, bot, ChaosBolt:GetCastRange())
+	local nCastRange = ChaosBolt:GetCastRange()
 	local nCastPoint = ChaosBolt:GetCastPoint()
 	local nProjectileSpeed = ChaosBolt:GetSpecialValueInt('chaos_bolt_speed')
 	local nMinDamage = ChaosBolt:GetSpecialValueInt('damage_min')
 	local nMaxDamage = ChaosBolt:GetSpecialValueInt('damage_max')
 	local nManaCost = ChaosBolt:GetManaCost()
 	local fManaAfter = J.GetManaAfter(nManaCost)
-	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {ChaosBolt, RealityRift, Phantasm})
-	local fManaThreshold2 = J.GetManaThreshold(bot, nManaCost, {RealityRift, Phantasm})
+	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {RealityRift, Phantasm})
 
 	for _, enemyHero in ipairs(nEnemyHeroes) do
 		if J.IsValidHero(enemyHero)
@@ -299,34 +298,6 @@ function X.ConsiderChaosBolt()
 		end
 	end
 
-	if J.IsInTeamFight(bot, 1200) then
-		local hTarget = nil
-		local hTargetDamage = 0
-		for _, enemyHero in pairs(nEnemyHeroes) do
-			if J.IsValidHero(enemyHero)
-			and J.CanBeAttacked(enemyHero)
-			and J.IsInRange(bot, enemyHero, nCastRange)
-            and J.CanCastOnNonMagicImmune(enemyHero)
-            and J.CanCastOnTargetAdvanced(enemyHero)
-            and not J.IsDisabled(enemyHero)
-            and not enemyHero:IsDisarmed()
-            and not enemyHero:HasModifier('modifier_necrolyte_reapers_scythe')
-			then
-				local enemyHeroDamage = enemyHero:GetEstimatedDamageToTarget(false, bot, 3.0, DAMAGE_TYPE_ALL)
-				if enemyHeroDamage > hTargetDamage then
-					hTarget = enemyHero
-					hTargetDamage = enemyHeroDamage
-				end
-			end
-		end
-
-		if hTarget ~= nil then
-			if fManaAfter > fManaThreshold2 then
-				return BOT_ACTION_DESIRE_HIGH, hTarget
-			end
-		end
-	end
-
 	if J.IsGoingOnSomeone(bot) then
 		if J.IsValidHero(botTarget)
 		and J.CanBeAttacked(botTarget)
@@ -338,7 +309,7 @@ function X.ConsiderChaosBolt()
 		and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
 		then
 			if not J.IsChasingTarget(bot, botTarget) then
-				if fManaAfter > fManaThreshold2 then
+				if fManaAfter > fManaThreshold1 then
 					return BOT_ACTION_DESIRE_HIGH, botTarget
 				end
 			else
@@ -347,7 +318,7 @@ function X.ConsiderChaosBolt()
 		end
 	end
 
-	if J.IsRetreating(bot) and not J.IsRealInvisible(bot) and bot:WasRecentlyDamagedByAnyHero(4.0) then
+	if J.IsRetreating(bot) and not J.IsRealInvisible(bot) then
 		for _, enemyHero in pairs(nEnemyHeroes) do
             if  J.IsValidHero(enemyHero)
 			and J.CanBeAttacked(enemyHero)
@@ -356,20 +327,19 @@ function X.ConsiderChaosBolt()
             and J.CanCastOnTargetAdvanced(enemyHero)
             and not J.IsDisabled(enemyHero)
 			and not enemyHero:IsDisarmed()
+			and bot:WasRecentlyDamagedByHero(enemyHero, 3.0)
             then
-				if J.IsChasingTarget(enemyHero, bot) or botHP < 0.5 or (#nEnemyHeroes > #nAllyHeroes and enemyHero:GetAttackTarget() == bot) then
-					return BOT_ACTION_DESIRE_HIGH, enemyHero
-				end
+				return BOT_ACTION_DESIRE_HIGH, enemyHero
             end
         end
 	end
 
-	if J.IsLaning(bot) and J.IsInLaningPhase() and fManaAfter > fManaThreshold2 then
-		local nEnemyCreeps = bot:GetNearbyCreeps(nCastRange, true)
+	if J.IsLaning(bot) and J.IsInLaningPhase() and fManaAfter > fManaThreshold1 then
+		local nEnemyCreeps = bot:GetNearbyCreeps(Min(nCastRange, 1600), true)
 		for _, creep in pairs(nEnemyCreeps) do
 			if  J.IsValid(creep)
-			and J.IsInRange(bot, creep, nCastRange)
 			and J.CanBeAttacked(creep)
+			and J.IsInRange(bot, creep, nCastRange)
 			and string.find(creep:GetUnitName(), 'ranged')
 			then
 				local eta = (GetUnitToUnitDistance(bot, creep) / nProjectileSpeed) + nCastPoint
@@ -386,13 +356,13 @@ function X.ConsiderChaosBolt()
 	if J.IsDoingRoshan(bot) then
 		if J.IsRoshan(botTarget)
 		and J.CanBeAttacked(botTarget)
-		and J.CanCastOnTargetAdvanced(botTarget)
 		and J.IsInRange(bot, botTarget, nCastRange)
+		and J.CanCastOnTargetAdvanced(botTarget)
         and not J.IsDisabled(botTarget)
         and not botTarget:IsDisarmed()
         and J.GetHP(botTarget) > 0.2
         and bAttacking
-		and fManaAfter > fManaThreshold1
+		and fManaAfter > fManaThreshold1 + 0.15
 		then
 			return BOT_ACTION_DESIRE_HIGH, botTarget
 		end
@@ -402,7 +372,7 @@ function X.ConsiderChaosBolt()
 		if J.IsTormentor(botTarget)
 		and J.IsInRange(bot, botTarget, nCastRange)
         and bAttacking
-		and fManaAfter > fManaThreshold1
+		and fManaAfter > fManaThreshold1 + 0.15
 		then
 			return BOT_ACTION_DESIRE_HIGH, botTarget
 		end
@@ -412,11 +382,16 @@ function X.ConsiderChaosBolt()
 end
 
 function X.ConsiderRealityRift()
-	if not J.CanCastAbility(RealityRift) or bot:IsRooted() then return BOT_ACTION_DESIRE_NONE, nil end
+	if not J.CanCastAbility(RealityRift)
+	or bot:IsRooted()
+	then
+		return BOT_ACTION_DESIRE_NONE, nil
+	end
 
-	local nCastRange = J.GetProperCastRange(false, bot, RealityRift:GetCastRange())
-	local botAttackRange = bot:GetAttackRange() + bot:GetBoundingRadius()
-	local fManaAfter = J.GetManaAfter(RealityRift:GetManaCost())
+	local botAttackRange = bot:GetAttackRange()
+	local nCastRange = RealityRift:GetCastRange()
+	local nManaCost = RealityRift:GetManaCost()
+	local fManaAfter = J.GetManaAfter(nManaCost)
 	local bIgnoreMagicImmune = false
 
     if bot:GetUnitName() == 'npc_dota_hero_chaos_knight' then
@@ -440,23 +415,22 @@ function X.ConsiderRealityRift()
 		end
 	end
 
-	local nEnemyCreeps = bot:GetNearbyCreeps(nCastRange, true)
+	local nEnemyCreeps = bot:GetNearbyCreeps(Min(nCastRange, 1600), true)
 
-	if J.IsRetreating(bot) and not J.IsRealInvisible(bot) and bot:WasRecentlyDamagedByAnyHero(4.0) then
+	if J.IsRetreating(bot) and not J.IsRealInvisible(bot) and J.IsRunning(bot) then
 		for _, enemyHero in pairs(nEnemyHeroes) do
             if  J.IsValidHero(enemyHero)
             and J.IsInRange(bot, enemyHero, 800)
 			and not enemyHero:IsDisarmed()
+			and bot:WasRecentlyDamagedByHero(enemyHero, 3.0)
             then
-				if (J.IsChasingTarget(enemyHero, bot) and botHP < 0.75) or #nEnemyHeroes > #nAllyHeroes then
-					for _, creep in ipairs(nEnemyCreeps) do
-						if J.IsValid(creep)
-						and not J.IsInRange(bot, creep, nCastRange * 0.6)
-						and bot:IsFacingLocation(creep:GetLocation(), 30)
-						and bot:IsFacingLocation(J.VectorAway(bot:GetLocation(), enemyHero:GetLocation(), 800), 45)
-						then
-							return BOT_ACTION_DESIRE_HIGH, creep
-						end
+				for _, creep in ipairs(nEnemyCreeps) do
+					if J.IsValid(creep)
+					and not J.IsInRange(bot, creep, nCastRange * 0.6)
+					and bot:IsFacingLocation(creep:GetLocation(), 30)
+					and bot:IsFacingLocation(J.VectorAway(bot:GetLocation(), enemyHero:GetLocation(), 800), 45)
+					then
+						return BOT_ACTION_DESIRE_HIGH, creep
 					end
 				end
             end
@@ -466,7 +440,7 @@ function X.ConsiderRealityRift()
 	if J.IsFarming(bot)
 	or ((J.IsPushing(bot) or J.IsDefending(bot) or (J.IsLaning(bot) and J.IsInLaningPhase())) and #nEnemyHeroes == 0)
 	then
-		if J.IsAttacking(bot) and fManaAfter > 0.5 then
+		if bAttacking and fManaAfter > 0.5 then
 			if J.IsValid(botTarget)
 			and J.CanBeAttacked(botTarget)
 			and botTarget:IsCreep()
@@ -474,18 +448,6 @@ function X.ConsiderRealityRift()
 			then
 				return BOT_ACTION_DESIRE_HIGH, botTarget
 			end
-		end
-	end
-
-	if J.IsDoingRoshan(bot) then
-		if J.IsRoshan(botTarget)
-		and J.CanBeAttacked(botTarget)
-        and not J.IsDisabled(botTarget)
-        and not botTarget:IsDisarmed()
-		and fManaAfter > 0.5
-		and bAttacking
-		then
-			return BOT_ACTION_DESIRE_HIGH, botTarget
 		end
 	end
 
@@ -541,22 +503,6 @@ function X.ConsiderPhantasm()
 		end
 	end
 
-	if J.IsRetreating(bot) and not J.IsRealInvisible(bot) and botHP > 0.5 then
-		if J.IsValidHero(nEnemyHeroes[1])
-		and J.IsInRange(bot, nEnemyHeroes[1], 800)
-		and not nEnemyHeroes[1]:IsDisarmed()
-		and not J.IsSuspiciousIllusion(nEnemyHeroes[1])
-		and not J.IsInTeamFight(bot, 1200)
-		and not (#nEnemyHeroes >= #nAllyHeroes + 3)
-		then
-			if J.IsChasingTarget(nEnemyHeroes[1], bot)
-			or (#nEnemyHeroes > #nAllyHeroes and #J.GetHeroesTargetingUnit(nEnemyHeroes, bot) >= 2)
-			then
-				return BOT_ACTION_DESIRE_HIGH
-			end
-		end
-	end
-
 	if J.IsDoingRoshan(bot) then
 		if J.IsRoshan(botTarget)
 		and J.IsInRange(bot, botTarget, 800)
@@ -573,7 +519,6 @@ function X.ConsiderPhantasm()
 	if J.IsDoingTormentor(bot) then
 		if J.IsTormentor(botTarget)
 		and J.IsInRange(bot, botTarget, 800)
-		and J.CanBeAttacked(botTarget)
 		and bot:GetNetWorth() < 20000
 		and bAttacking
 		and fManaAfter > 0.35

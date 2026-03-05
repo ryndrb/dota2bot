@@ -241,8 +241,7 @@ function X.ConsiderBerserkersCall()
 	local nRadius = BerserkersCall:GetSpecialValueInt('radius')
 	local nManaCost = BerserkersCall:GetManaCost()
 	local fManaAfter = J.GetManaAfter(nManaCost)
-	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {CullingBlade, 75})
-	local fManaThreshold2 = J.GetManaThreshold(bot, nManaCost, {BerserkersCall, BattleHunger, CullingBlade})
+	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {BattleHunger, CullingBlade})
 
 	for _, enemyHero in pairs(nEnemyHeroes) do
 		if  J.IsValidHero(enemyHero)
@@ -269,21 +268,19 @@ function X.ConsiderBerserkersCall()
 		end
 	end
 
-	local nEnemyCreeps = bot:GetNearbyCreeps(800, true)
+	local nEnemyCreeps = bot:GetNearbyCreeps(nRadius, true)
 
-	if J.IsPushing(bot) and fManaAfter > fManaThreshold2 and #nAllyHeroes <= 2 and #nEnemyHeroes == 0 then
+	if J.IsPushing(bot) and bAttacking and fManaAfter > fManaThreshold1 + 0.15 and #nAllyHeroes <= 2 and #nEnemyHeroes == 0 then
 		if J.IsValid(nEnemyCreeps[1]) and J.CanBeAttacked(nEnemyCreeps[1]) then
-			local nLocationAoE = bot:FindAoELocation(true, false, bot:GetLocation(), 0, nRadius, 0, 0)
-			if nLocationAoE.count >= 4 then
+			if #nEnemyCreeps >= 4 then
 				return BOT_ACTION_DESIRE_HIGH
 			end
 		end
 	end
 
-	if J.IsDefending(bot) and fManaAfter > fManaThreshold2 and #nAllyHeroes <= 1 then
-		if J.IsValid(nEnemyCreeps[1]) and J.CanBeAttacked(nEnemyCreeps[1]) then
-			local nLocationAoE = bot:FindAoELocation(true, false, bot:GetLocation(), 0, nRadius, 0, 0)
-			if nLocationAoE.count >= 4 and #nEnemyHeroes == 0 then
+	if J.IsDefending(bot) and bAttacking and fManaAfter > fManaThreshold1 and #nAllyHeroes <= 1 then
+		if J.IsValid(nEnemyCreeps[1]) and J.CanBeAttacked(nEnemyCreeps[1]) and #nEnemyHeroes == 0 then
+			if #nEnemyCreeps >= 4 then
 				return BOT_ACTION_DESIRE_HIGH
 			end
 		end
@@ -297,11 +294,10 @@ function X.ConsiderBerserkersCall()
 		end
 	end
 
-	if J.IsFarming(bot) and fManaAfter > fManaThreshold2 and bAttacking then
-		local nLocationAoE = bot:FindAoELocation(true, false, bot:GetLocation(), 0, nRadius, 0, 0)
+	if J.IsFarming(bot) and bAttacking and fManaAfter > fManaThreshold1 then
 		if J.IsValid(nEnemyCreeps[1]) and J.CanBeAttacked(nEnemyCreeps[1]) then
-			if (nLocationAoE.count >= 3 and not J.IsLateGame())
-			or (nLocationAoE.count >= 2 and nEnemyCreeps[1]:IsAncientCreep())
+			if (#nEnemyCreeps >= 3 and not J.IsLateGame())
+			or (#nEnemyCreeps >= 2 and nEnemyCreeps[1]:IsAncientCreep())
 			then
 				return BOT_ACTION_DESIRE_HIGH
 			end
@@ -311,11 +307,11 @@ function X.ConsiderBerserkersCall()
 	if J.IsDoingRoshan(bot) then
 		if  J.IsRoshan(botTarget)
 		and J.CanBeAttacked(botTarget)
+        and J.IsInRange(bot, botTarget, nRadius)
         and not J.IsDisabled(botTarget)
         and not botTarget:IsDisarmed()
-        and J.IsInRange(bot, botTarget, nRadius)
 		and bAttacking
-		and fManaAfter > fManaThreshold2
+		and fManaAfter > fManaThreshold1
 		then
 			return BOT_ACTION_DESIRE_HIGH
 		end
@@ -329,14 +325,12 @@ function X.ConsiderBattleHunger()
 		return BOT_ACTION_DESIRE_NONE, nil
 	end
 
-	local nCastRange = J.GetProperCastRange(false, bot, BattleHunger:GetCastRange())
+	local nCastRange = BattleHunger:GetCastRange()
 	local nDuration = BattleHunger:GetSpecialValueInt('duration')
 	local nDamage = BattleHunger:GetSpecialValueInt('damage_per_second') * nDuration
 	local nManaCost = BattleHunger:GetManaCost()
 	local fManaAfter = J.GetManaAfter(nManaCost)
-	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {BerserkersCall, BattleHunger, CullingBlade})
-	local fManaThreshold2 = J.GetManaThreshold(bot, nManaCost, {BerserkersCall, CullingBlade})
-	local fManaThreshold3 = J.GetManaThreshold(bot, nManaCost, {CullingBlade})
+	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {BerserkersCall, CullingBlade})
 
 	for _, enemyHero in pairs(nEnemyHeroes) do
 		if  J.IsValidHero(enemyHero)
@@ -344,11 +338,10 @@ function X.ConsiderBattleHunger()
 		and J.IsInRange(bot, enemyHero, nCastRange)
         and J.CanCastOnNonMagicImmune(enemyHero)
         and J.CanCastOnTargetAdvanced(enemyHero)
-        and J.WillMagicKillTarget(bot, enemyHero, nDamage, nDuration)
+        and J.WillKillTarget(enemyHero, nDamage * nDuration, DAMAGE_TYPE_PURE, nDuration)
         and not enemyHero:HasModifier('modifier_abaddon_borrowed_time')
         and not enemyHero:HasModifier('modifier_axe_battle_hunger')
         and not enemyHero:HasModifier('modifier_necrolyte_reapers_scythe')
-		and fManaAfter > fManaThreshold2
 		then
 			return BOT_ACTION_DESIRE_HIGH, enemyHero
 		end
@@ -370,16 +363,14 @@ function X.ConsiderBattleHunger()
 			then
 				local enemyHeroDamage = enemyHero:GetActualIncomingDamage(nDamage * nDuration, DAMAGE_TYPE_PURE)
 				if enemyHeroDamage > hTargetDamage then
-					hTargetDamage = enemyHeroDamage
 					hTarget = enemyHero
+					hTargetDamage = enemyHeroDamage
 				end
 			end
 		end
 
-		if hTarget ~= nil and fManaAfter > fManaThreshold3 then
-			if fManaAfter > fManaThreshold2 then
-				return BOT_ACTION_DESIRE_HIGH, hTarget
-			end
+		if hTarget ~= nil and fManaAfter > fManaThreshold1 then
+			return BOT_ACTION_DESIRE_HIGH, hTarget
 		end
 	end
 
@@ -393,15 +384,13 @@ function X.ConsiderBattleHunger()
 		and not botTarget:HasModifier('modifier_dazzle_shallow_grave')
 		and not botTarget:HasModifier('modifier_axe_battle_hunger')
         and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
-		and fManaAfter > fManaThreshold2
+		and fManaAfter > fManaThreshold1
 		then
 			return BOT_ACTION_DESIRE_HIGH, botTarget
 		end
 	end
 
-	if J.IsRetreating(bot) and not J.IsRealInvisible(bot) and bot:WasRecentlyDamagedByAnyHero(3.0) then
-		local hTarget = nil
-		local hTargetDamage = 0
+	if J.IsRetreating(bot) and not J.IsRealInvisible(bot) then
 		for _, enemyHero in pairs(nEnemyHeroes) do
 			if  J.IsValidHero(enemyHero)
 			and J.CanBeAttacked(enemyHero)
@@ -411,23 +400,16 @@ function X.ConsiderBattleHunger()
             and not enemyHero:HasModifier('modifier_abaddon_borrowed_time')
             and not enemyHero:HasModifier('modifier_axe_battle_hunger')
             and not enemyHero:HasModifier('modifier_necrolyte_reapers_scythe')
+			and bot:WasRecentlyDamagedByHero(enemyHero, 3.0)
 			then
-				local enemyHeroDamage = enemyHero:GetActualIncomingDamage(nDamage * nDuration, DAMAGE_TYPE_PURE)
-				if enemyHeroDamage > hTargetDamage then
-					hTargetDamage = enemyHeroDamage
-					hTarget = enemyHero
-				end
+				return BOT_ACTION_DESIRE_HIGH, enemyHero
 			end
-		end
-
-		if hTarget ~= nil then
-			return BOT_ACTION_DESIRE_HIGH, hTarget
 		end
 	end
 
-	if J.IsFarming(bot) and bAttacking then
-		local nNeutralCreeps = bot:GetNearbyCreeps(nCastRange, true)
-		local hTargetCreep = J.GetMostHpUnit(nNeutralCreeps)
+	if J.IsFarming(bot) and bAttacking and fManaAfter > fManaThreshold1 + 0.1 and #nEnemyHeroes == 0 then
+		local nEnemyCreeps = bot:GetNearbyCreeps(Min(nCastRange, 1600), true)
+		local hTargetCreep = J.GetMostHpUnit(nEnemyCreeps)
 
 		if J.IsValid(hTargetCreep)
 		and J.CanBeAttacked(hTargetCreep)
@@ -435,8 +417,6 @@ function X.ConsiderBattleHunger()
         and not J.IsTormentor(hTargetCreep)
         and not hTargetCreep:HasModifier('modifier_axe_battle_hunger')
         and not J.CanKillTarget(hTargetCreep, bot:GetAttackDamage() * 3, DAMAGE_TYPE_PHYSICAL)
-		and fManaAfter > 0.5
-		and fManaAfter > fManaThreshold2
 		and not J.IsLateGame()
 		then
 			return BOT_ACTION_DESIRE_HIGH, hTargetCreep
@@ -449,9 +429,8 @@ function X.ConsiderBattleHunger()
         and J.IsInRange(bot, botTarget, nCastRange)
         and not J.IsDisabled(botTarget)
         and not botTarget:HasModifier('modifier_axe_battle_hunger')
-		and fManaAfter > 0.5
-		and fManaAfter > fManaThreshold1
 		and bAttacking
+		and fManaAfter > fManaThreshold1
 		then
 			return BOT_ACTION_DESIRE_HIGH, botTarget
 		end
@@ -461,9 +440,8 @@ function X.ConsiderBattleHunger()
 		if  J.IsTormentor(botTarget)
         and J.IsInRange(bot, botTarget, nCastRange)
         and not botTarget:HasModifier('modifier_axe_battle_hunger')
-		and fManaAfter > 0.5
-		and fManaAfter > fManaThreshold1
 		and bAttacking
+		and fManaAfter > fManaThreshold1
 		then
 			return BOT_ACTION_DESIRE_HIGH, botTarget
 		end
@@ -475,7 +453,7 @@ end
 function X.ConsiderCullingBlade()
     if not J.CanCastAbility(CullingBlade) then return BOT_ACTION_DESIRE_NONE, nil end
 
-	local nCastRange = J.GetProperCastRange(false, bot, CullingBlade:GetCastRange())
+	local nCastRange = CullingBlade:GetCastRange()
 	local nDamage = CullingBlade:GetSpecialValueInt('damage')
 
 	for _, enemyHero in pairs(nEnemyHeroes) do
@@ -483,7 +461,6 @@ function X.ConsiderCullingBlade()
 		and J.CanBeAttacked(enemyHero)
 		and J.IsInRange(bot, enemyHero, nCastRange + 300)
 		and (enemyHero:GetHealth() + enemyHero:GetHealthRegen() * 0.8 < nDamage)
-		and J.CanCastOnMagicImmune(enemyHero)
 		and J.CanCastOnTargetAdvanced(enemyHero)
         and not J.IsHaveAegis(enemyHero)
 		and not enemyHero:HasModifier('modifier_necrolyte_reapers_scythe')

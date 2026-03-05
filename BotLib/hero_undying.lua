@@ -303,11 +303,11 @@ function X.ConsiderDecay()
         end
 	end
 
-    local nEnemyCreeps = bot:GetNearbyCreeps(nCastRange, true)
+    local nEnemyCreeps = bot:GetNearbyCreeps(Min(nCastRange + 300, 1600), true)
 
     if J.IsPushing(bot) and fManaAfter > fManaThreshold1 and #nAllyHeroes <= 3 and bAttacking then
         for _, creep in pairs(nEnemyCreeps) do
-            if J.IsValid(creep) and J.CanBeAttacked(creep) and not J.IsRunning(creep) then
+            if J.IsValid(creep) and J.CanBeAttacked(creep) then
                 local nLocationAoE = bot:FindAoELocation(true, false, creep:GetLocation(), 0, nRadius, 0, 0)
                 if (nLocationAoE.count >= 4) then
                     return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc
@@ -318,7 +318,7 @@ function X.ConsiderDecay()
 
     if J.IsDefending(bot) and fManaAfter > fManaThreshold1 and #nEnemyHeroes <= 1 and bAttacking then
         for _, creep in pairs(nEnemyCreeps) do
-            if J.IsValid(creep) and J.CanBeAttacked(creep) and not J.IsRunning(creep) then
+            if J.IsValid(creep) and J.CanBeAttacked(creep) then
                 local nLocationAoE = bot:FindAoELocation(true, false, creep:GetLocation(), 0, nRadius, 0, 0)
                 if (nLocationAoE.count >= 4) then
                     return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc
@@ -329,7 +329,7 @@ function X.ConsiderDecay()
 
     if J.IsFarming(bot) and fManaAfter > fManaThreshold2 and bAttacking then
         for _, creep in pairs(nEnemyCreeps) do
-            if J.IsValid(creep) and J.CanBeAttacked(creep) and not J.IsRunning(creep) then
+            if J.IsValid(creep) and J.CanBeAttacked(creep) then
                 local nLocationAoE = bot:FindAoELocation(true, false, creep:GetLocation(), 0, nRadius, 0, 0)
                 if (nLocationAoE.count >= 3)
                 or (nLocationAoE.count >= 2 and creep:IsAncientCreep())
@@ -354,8 +354,8 @@ function X.ConsiderDecay()
     if J.IsDoingRoshan(bot) then
         if  J.IsRoshan(botTarget)
         and J.CanBeAttacked(botTarget)
-        and J.CanCastOnNonMagicImmune(botTarget)
         and J.IsInRange(bot, botTarget, nCastRange)
+        and J.CanCastOnNonMagicImmune(botTarget)
         and bAttacking
         and fManaAfter > fManaThreshold1
         and nAbilityLevel >= 3
@@ -377,7 +377,7 @@ function X.ConsiderDecay()
 
     if fManaAfter > fManaThreshold3 then
         for _, creep in pairs(nEnemyCreeps) do
-            if J.IsValid(creep) and J.CanBeAttacked(creep) and not J.IsRunning(creep) then
+            if J.IsValid(creep) and J.CanBeAttacked(creep) then
                 local nLocationAoE = bot:FindAoELocation(true, false, creep:GetLocation(), 0, nRadius, 0, nDamage * 2)
                 if (nLocationAoE.count >= 4) then
                     return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc
@@ -394,7 +394,7 @@ function X.ConsiderSoulRip()
         return BOT_ACTION_DESIRE_NONE, nil
     end
 
-    local nCastRange = J.GetProperCastRange(false, bot, SoulRip:GetCastRange())
+    local nCastRange = SoulRip:GetCastRange()
 	local nRadius = SoulRip:GetSpecialValueInt('radius')
     local nDamage = SoulRip:GetSpecialValueInt('damage_per_unit')
     local nManaCost = SoulRip:GetManaCost()
@@ -509,22 +509,19 @@ function X.ConsiderSoulRip()
             and botHP < 0.8
             then
                 local nInRangeAlly = J.GetAlliesNearLoc(bot:GetLocation(), nRadius)
-                local nInRangeEnemy = J.GetEnemiesNearLoc(bot:GetLocation(), nRadius)
-                if J.IsChasingTarget(enemyHero, bot) or (#nInRangeEnemy > #nInRangeAlly and botHP < 0.6) then
-                    local unitCount = X.GetAllHeroCreepNearbyCount(bot:GetLocation(), nRadius)
-                    local totalHeal = nDamage * (Min(10, 1 + unitCount))
+                local unitCount = X.GetAllHeroCreepNearbyCount(bot:GetLocation(), nRadius)
+                local totalHeal = nDamage * (Min(10, 1 + unitCount))
 
-                    local bAllyHeroCanDie = false
-                    for _, allyHero in pairs(nInRangeAlly) do
-                        if bot ~= allyHero and J.IsValidHero(allyHero) and allyHero:GetHealth() <= totalHeal*2 then
-                            bAllyHeroCanDie = true
-                            break
-                        end
+                local bAllyHeroCanDie = false
+                for _, allyHero in pairs(nInRangeAlly) do
+                    if bot ~= allyHero and J.IsValidHero(allyHero) and allyHero:GetHealth() <= totalHeal*2 then
+                        bAllyHeroCanDie = true
+                        break
                     end
+                end
 
-                    if not bAllyHeroCanDie then
-                        return BOT_ACTION_DESIRE_HIGH, bot
-                    end
+                if not bAllyHeroCanDie then
+                    return BOT_ACTION_DESIRE_HIGH, bot
                 end
             end
         end

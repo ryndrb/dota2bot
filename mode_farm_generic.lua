@@ -21,6 +21,7 @@ local FARM_STATE__STACK = 2
 if _G.NeutralCamps == nil then _G.NeutralCamps = {} end
 
 local bShouldCreepAggroToStack = { check = false, attack = false }
+local allyBuilds = {}
 
 function GetDesire()
 	X.InitFarm()
@@ -144,9 +145,40 @@ function GetDesire()
         return BOT_MODE_DESIRE_ABSOLUTE
     end
 
-	if  J.Site.IsTimeToFarm(bot)
+	local bIsTimeToFarm = J.Site.IsTimeToFarm(bot)
+	local bWaitForItem, bContinueFarm = false, true
+
+	for i = 1, 5 do
+		local member = GetTeamMember(i)
+		if  member
+		and member:IsBot()
+		and allyBuilds[member:GetPlayerID()] == nil
+		and member:GetUnitName() ~= 'npc_dota_hero_lone_druid'
+		then
+			allyBuilds[member:GetPlayerID()] = require(GetScriptDirectory() .. "/BotLib/" .. string.gsub(member:GetUnitName(), "npc_dota_", ""))
+		end
+	end
+
+	for i = 1, 5 do
+		local member = GetTeamMember(i)
+		if member:IsBot() and J.GetPosition(member) <= 3 and allyBuilds[member:GetPlayerID()] ~= nil then
+			local sBuyList = allyBuilds[member:GetPlayerID()]['sBuyList']
+			for j = 1, #sBuyList do
+				if sBuyList[j] == 'item_black_king_bar' and not J.Site.IsHaveItem(member, 'item_black_king_bar') then
+					bWaitForItem = true
+				end
+			end
+		end
+	end
+
+	if not bWaitForItem or (networthAdvantage > 12000 and not J.IsEarlyGame()) then
+		bContinueFarm = (networthAdvantage < 10000 or (enemyNetworth - teamNetworth) > 10000)
+	end
+
+	if  bIsTimeToFarm
+	and bContinueFarm
+	and not J.IsEarlyGame()
 	and (bot:GetUnitName() ~= 'npc_dota_hero_lone_druid_bear' or (bot:HasScepter() and not J.IsValid(LoneDruid.hero)))
-	and (networthAdvantage < 10000 or (enemyNetworth - teamNetworth) > 10000)
 	then
 		local nEnemyLaneCreeps = bot:GetNearbyLaneCreeps(900, true)
 		if #nEnemyLaneCreeps > 0 then
@@ -201,6 +233,7 @@ function Think()
 	local StaticRemnant = bot:GetAbilityByName('storm_spirit_static_remnant')
 	local Firefly = bot:GetAbilityByName('batrider_firefly')
 	local ShadowWave = bot:GetAbilityByName('dazzle_shadow_wave')
+	local InnerFire = bot:GetAbilityByName('huskar_inner_fire')
 
 	local nEnemyLaneCreeps = bot:GetNearbyLaneCreeps(900, true)
 	if J.IsValid(nEnemyLaneCreeps[1]) and bot.farm.state ~= FARM_STATE__STACK then
@@ -242,6 +275,8 @@ function Think()
 				range = Firefly:GetSpecialValueInt('radius')
 			elseif J.CanCastAbility(ShadowWave) then
 				range = ShadowWave:GetSpecialValueInt('damage_radius')
+			elseif J.CanCastAbility(InnerFire) then
+				range = InnerFire:GetSpecialValueInt('radius')
 			end
 
 			if GetUnitToUnitDistance(bot, farmTarget) > range then
@@ -353,6 +388,8 @@ function Think()
 					nRadius = Firefly:GetSpecialValueInt('radius')
 				elseif J.CanCastAbility(ShadowWave) then
 					nRadius = ShadowWave:GetSpecialValueInt('damage_radius')
+				elseif J.CanCastAbility(InnerFire) then
+					nRadius = InnerFire:GetSpecialValueInt('radius')
 				end
 
 				if nRadius > 0 then

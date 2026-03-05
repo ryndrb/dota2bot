@@ -254,8 +254,6 @@ function X.ConsiderMirrorImage()
 	local nManaCost = MirrorImage:GetManaCost()
 	local fManaAfter = J.GetManaAfter(nManaCost)
 	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {Ensnare, Deluge, SongOfTheSiren})
-	local fManaThreshold2 = J.GetManaThreshold(bot, nManaCost, {MirrorImage, Ensnare, Deluge, SongOfTheSiren})
-	local fManaThreshold3 = J.GetManaThreshold(bot, nManaCost, {Ensnare, SongOfTheSiren})
 
 	if not bot:IsMagicImmune() and not J.IsRealInvisible(bot) then
 		if (J.GetAttackProjectileDamageByRange(bot, 600) > bot:GetHealth())
@@ -268,7 +266,7 @@ function X.ConsiderMirrorImage()
 	end
 
 	if J.IsInTeamFight(bot, 1200) then
-		if #nEnemyHeroes >= 2 and fManaAfter > fManaThreshold3 then
+		if #nEnemyHeroes >= 2 then
 			return BOT_ACTION_DESIRE_HIGH
 		end
 	end
@@ -276,7 +274,7 @@ function X.ConsiderMirrorImage()
 	if J.IsGoingOnSomeone(bot) then
 		if J.IsValidHero(botTarget)
 		and J.IsInRange(bot, botTarget, 800)
-		and fManaAfter > fManaThreshold3
+		and fManaAfter > fManaThreshold1
 		then
 			return BOT_ACTION_DESIRE_HIGH
 		end
@@ -288,7 +286,7 @@ function X.ConsiderMirrorImage()
 			and J.CanBeAttacked(enemyHero)
 			then
 				if (J.IsChasingTarget(enemyHero, bot))
-				or (#nEnemyHeroes > #nAllyHeroes and enemyHero:GetAttackTarget() == bot)
+				or (#nEnemyHeroes > #nAllyHeroes)
 				or (botHP < 0.6 and bot:WasRecentlyDamagedByAnyHero(5.0))
 				then
 					return BOT_ACTION_DESIRE_HIGH
@@ -301,7 +299,7 @@ function X.ConsiderMirrorImage()
 	local nEnemyTowers = bot:GetNearbyTowers(800, true)
 	local nEnemyBarracks = bot:GetNearbyBarracks(800, true)
 
-	if (J.IsPushing(bot) or J.IsDefending(bot) or J.IsFarming(bot)) and fManaAfter > fManaThreshold1 then
+	if (J.IsPushing(bot) or J.IsDefending(bot) or J.IsFarming(bot)) and fManaAfter > fManaThreshold1 + 0.1 then
 		if (#nEnemyCreeps > 0 or #nEnemyTowers > 0 or #nEnemyBarracks > 0) then
 			if J.CanBeAttacked(botTarget) then
 				return BOT_ACTION_DESIRE_HIGH
@@ -313,28 +311,11 @@ function X.ConsiderMirrorImage()
 		end
 	end
 
-	if J.IsFarming(bot) and bAttacking and fManaAfter > fManaThreshold1 then
-		if J.IsValid(botTarget)
-		and J.IsInRange(bot, botTarget, 600)
-		then
+	if J.IsLaning(bot) and J.IsInLaningPhase() and fManaAfter > fManaThreshold1 then
+		if J.IsValidHero(botTarget) and J.IsInRange(bot, botTarget, 600) then
 			if J.CanBeAttacked(botTarget) or bot:WasRecentlyDamagedByAnyHero(3.0) then
 				return BOT_ACTION_DESIRE_HIGH
 			end
-		end
-	end
-
-	if J.IsLaning(bot) and J.IsInLaningPhase() and fManaAfter > fManaThreshold3 then
-		if J.IsValidHero(botTarget)
-		and J.IsInRange(bot, botTarget, 600)
-		then
-			if J.CanBeAttacked(botTarget) or bot:WasRecentlyDamagedByAnyHero(3.0) then
-				return BOT_ACTION_DESIRE_HIGH
-			end
-		end
-
-		local nEnemyHeroesTargetingMe = J.GetHeroesTargetingUnit(nEnemyHeroes, bot)
-		if bot:WasRecentlyDamagedByAnyHero(3.0) and #nEnemyHeroesTargetingMe > 0 then
-			return BOT_ACTION_DESIRE_HIGH
 		end
 	end
 
@@ -342,7 +323,7 @@ function X.ConsiderMirrorImage()
 	and not J.IsDoingRoshan(bot)
 	and not J.IsDoingTormentor(bot)
 	then
-		if nAbilityLevel >= 4 and fManaAfter > fManaThreshold2 then
+		if nAbilityLevel >= 4 and fManaAfter > fManaThreshold1 + 0.15 then
 			return BOT_ACTION_DESIRE_HIGH
 		end
 	end
@@ -376,17 +357,17 @@ function X.ConsiderEnsnare()
 		return BOT_ACTION_DESIRE_NONE, nil
 	end
 
-	local nCastRange = J.GetProperCastRange(false, bot, Ensnare:GetCastRange())
+	local nCastRange = Ensnare:GetCastRange()
 	local nCastPoint = Ensnare:GetCastPoint()
 	local nSpeed = Ensnare:GetSpecialValueInt('net_speed')
 	local nManaCost = Ensnare:GetManaCost()
 	local fManaAfter = J.GetManaAfter(nManaCost)
 	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {MirrorImage, Deluge, SongOfTheSiren})
-	local fManaThreshold2 = J.GetManaThreshold(bot, nManaCost, {MirrorImage, Ensnare, Deluge, SongOfTheSiren})
 	local bHasScepter = bot:HasScepter()
 
 	for _, enemyHero in pairs(nEnemyHeroes) do
 		if J.IsValidHero(enemyHero)
+		and J.CanBeAttacked(enemyHero)
 		and J.IsInRange(bot, enemyHero, nCastRange + 300)
 		and (J.CanCastOnNonMagicImmune(enemyHero) or (J.CanCastOnMagicImmune(enemyHero) and bHasScepter))
 		and J.CanCastOnTargetAdvanced(enemyHero)
@@ -415,7 +396,7 @@ function X.ConsiderEnsnare()
 		end
 	end
 
-	if J.IsRetreating(bot) and not J.IsRealInvisible(bot) and bot:WasRecentlyDamagedByAnyHero(5.0) then
+	if J.IsRetreating(bot) and not J.IsRealInvisible(bot) then
 		for _, enemyHero in pairs(nEnemyHeroes) do
 			if J.IsValidHero(enemyHero)
 			and J.IsInRange(bot, enemyHero, nCastRange)
@@ -423,10 +404,9 @@ function X.ConsiderEnsnare()
 			and J.CanCastOnTargetAdvanced(enemyHero)
 			and not J.IsDisabled(enemyHero)
 			and not enemyHero:IsDisarmed()
+			and not bot:WasRecentlyDamagedByHero(enemyHero, 3.0)
 			then
-				if J.IsRunning(bot) then
-					return BOT_ACTION_DESIRE_HIGH, enemyHero
-				end
+				return BOT_ACTION_DESIRE_HIGH, enemyHero
 			end
 		end
 	end
@@ -517,6 +497,7 @@ function X.ConsiderSongOfTheSiren()
 	end
 
 	local nRadius = SongOfTheSiren:GetSpecialValueInt('radius')
+	local nDuration = SongOfTheSiren:GetSpecialValueInt('duration')
 
 	if J.IsGoingOnSomeone(bot) then
 		if J.IsValidHero(botTarget)
@@ -528,23 +509,63 @@ function X.ConsiderSongOfTheSiren()
 			local nInRangeEnemy = J.GetEnemiesNearLoc(bot:GetLocation(), 1000)
 			local nInRangeAlly_Near = J.GetAlliesNearLoc(botTarget:GetLocation(), 700)
 
-			if #nInRangeAlly_Near == 0 and not (#nInRangeAlly >= #nInRangeEnemy + 2) then
+			if #nInRangeAlly_Near <= 1 and not (#nInRangeAlly >= #nInRangeEnemy + 2) then
 				return BOT_ACTION_DESIRE_HIGH
 			end
 		end
 	end
 
 	if J.IsRetreating(bot) and not J.IsRealInvisible(bot) and bot:WasRecentlyDamagedByAnyHero(3.0) then
-		for _, enemyHero in pairs(nEnemyHeroes) do
-			if J.IsValidHero(enemyHero)
-			and J.IsInRange(bot, enemyHero, nRadius)
-			and J.CanCastOnNonMagicImmune(enemyHero)
-			and not J.IsDisabled(enemyHero)
-			and not enemyHero:IsDisarmed()
-			then
-				if botHP < 0.3 or (#nEnemyHeroes > #nAllyHeroes and botHP > 0.5) then
-					return BOT_ACTION_DESIRE_HIGH
+		if J.GetTotalEstimatedDamageToTarget(nEnemyHeroes, bot, nDuration - 1) > bot:GetHealth() then
+			local bNoGrief = true
+			for _, enemyHero in pairs(nEnemyHeroes) do
+				if J.IsValidHero(enemyHero)
+				and J.IsInRange(bot, enemyHero, nRadius)
+				and J.CanCastOnNonMagicImmune(enemyHero)
+				and not J.IsDisabled(enemyHero)
+				then
+					if enemyHero:HasModifier('modifier_enigma_black_hole_pull')
+					or enemyHero:HasModifier('modifier_faceless_void_chronosphere_freeze')
+					or enemyHero:HasModifier('modifier_lich_chainfrost_slow')
+					or enemyHero:HasModifier('modifier_legion_commander_duel')
+					or enemyHero:HasModifier('modifier_earth_spirit_magnetize')
+					or enemyHero:HasModifier('modifier_phoenix_sun_debuff')
+					or enemyHero:HasModifier('modifier_disruptor_static_storm')
+					or enemyHero:HasModifier('modifier_jakiro_macropyre_burn')
+					or enemyHero:HasModifier('modifier_necrolyte_reapers_scythe')
+					or enemyHero:HasModifier('modifier_queenofpain_sonic_wave_damage')
+					or enemyHero:HasModifier('modifier_winter_wyvern_winters_curse')
+					or enemyHero:HasModifier('modifier_bane_fiends_grip')
+					or enemyHero:HasModifier('modifier_batrider_flaming_lasso')
+					or enemyHero:HasModifier('modifier_sand_king_epicenter_slow')
+					then
+						bNoGrief = false
+					end
 				end
+			end
+
+			if bNoGrief then
+				for i = 1, 5 do
+					local allyHero = GetTeamMember(i)
+					if  bot ~= allyHero
+					and J.IsValidHero(allyHero)
+					and J.IsInRange(bot, allyHero, nRadius + 300)
+					then
+						if allyHero:HasModifier('modifier_juggernaut_omnislash')
+						or allyHero:HasModifier('modifier_luna_eclipse')
+						or allyHero:HasModifier('modifier_medusa_stone_gaze')
+						or allyHero:HasModifier('modifier_monkey_king_fur_army_bonus_damage')
+						or allyHero:HasModifier('modifier_troll_warlord_battle_trance')
+						or allyHero:HasModifier('modifier_snapfire_mortimer_kisses')
+						then
+							return BOT_ACTION_DESIRE_HIGH
+						end
+					end
+				end
+			end
+
+			if bNoGrief then
+				return BOT_ACTION_DESIRE_HIGH
 			end
 		end
 	end
@@ -558,9 +579,7 @@ function X.ConsiderSongOfTheSirenEnd()
 	end
 
 	if J.IsGoingOnSomeone(bot) then
-		if J.IsValidHero(botTarget)
-		and J.IsInRange(bot, botTarget, bot:GetAttackRange() + 150)
-		then
+		if J.IsValidHero(botTarget) and #nAllyHeroes >= #nEnemyHeroes then
 			local nInRangeAlly = J.GetAlliesNearLoc(botTarget:GetLocation(), 700)
 			if #nInRangeAlly >= 3 then
 				return BOT_ACTION_DESIRE_HIGH

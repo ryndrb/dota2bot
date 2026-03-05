@@ -188,7 +188,7 @@ function X.ConsiderFirestorm()
         return BOT_ACTION_DESIRE_NONE, 0
     end
 
-    local nCastRange = J.GetProperCastRange(false, bot, Firestorm:GetCastRange())
+    local nCastRange = Firestorm:GetCastRange()
     local nCastPoint = Firestorm:GetCastPoint()
     local nRadius = Firestorm:GetSpecialValueInt('radius')
     local nManaCost = Firestorm:GetManaCost()
@@ -209,31 +209,34 @@ function X.ConsiderFirestorm()
                 end
             end
 
-            if count >= 1.5 then
+            if count >= 2 then
                 return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc
             end
         end
     end
 
 	if J.IsGoingOnSomeone(bot) then
-		if  J.IsValidTarget(botTarget)
+		if  J.IsValidHero(botTarget)
         and J.CanBeAttacked(botTarget)
         and J.IsInRange(bot, botTarget, nCastRange + nRadius)
         and J.CanCastOnNonMagicImmune(botTarget)
-        and not J.IsChasingTarget(bot, botTarget)
         and not botTarget:HasModifier('modifier_abaddon_borrowed_time')
         and not botTarget:HasModifier('modifier_dazzle_shallow_grave')
         and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
         and not botTarget:HasModifier('modifier_oracle_false_promise_timer')
 		then
-            local vLocation = (J.IsInRange(bot, botTarget, nCastRange) and botTarget:GetLocation()) or (J.VectorTowards(bot:GetLocation(), botTarget:GetLocation(), nCastRange))
-            return BOT_ACTION_DESIRE_HIGH, vLocation
+            if J.IsDisabled(botTarget)
+            or botTarget:GetCurrentMovementSpeed() <= 250
+            then
+                local vLocation = (J.IsInRange(bot, botTarget, nCastRange) and botTarget:GetLocation()) or (J.VectorTowards(bot:GetLocation(), botTarget:GetLocation(), nCastRange))
+                return BOT_ACTION_DESIRE_HIGH, vLocation
+            end
 		end
 	end
 
-    local nEnemyCreeps = bot:GetNearbyCreeps(nCastRange, true)
+    local nEnemyCreeps = bot:GetNearbyCreeps(Min(nCastRange + 300, 1600), true)
 
-    if J.IsPushing(bot) and #nAllyHeroes <= 3 and bAttacking and fManaAfter > fManaThreshold1 and #nEnemyHeroes == 0 then
+    if J.IsPushing(bot) and #nAllyHeroes <= 2 and bAttacking and fManaAfter > fManaThreshold1 + 0.1 and #nEnemyHeroes == 0 then
         for _, creep in pairs(nEnemyCreeps) do
             if J.IsValid(creep) and J.CanBeAttacked(creep) and not J.IsRunning(creep) then
                 local nLocationAoE = bot:FindAoELocation(true, false, creep:GetLocation(), 0, nRadius, 0, 0)
@@ -244,7 +247,7 @@ function X.ConsiderFirestorm()
         end
     end
 
-    if J.IsDefending(bot) and #nAllyHeroes <= 2 and bAttacking and fManaAfter > fManaThreshold1 then
+    if J.IsDefending(bot) and #nAllyHeroes <= 3 and bAttacking and fManaAfter > fManaThreshold1 then
         for _, creep in pairs(nEnemyCreeps) do
             if J.IsValid(creep) and J.CanBeAttacked(creep) and not J.IsRunning(creep) then
                 local nLocationAoE = bot:FindAoELocation(true, false, creep:GetLocation(), 0, nRadius, 0, 0)
@@ -261,7 +264,7 @@ function X.ConsiderFirestorm()
                 local nLocationAoE = bot:FindAoELocation(true, false, creep:GetLocation(), 0, nRadius, 0, 0)
                 if (nLocationAoE.count >= 3)
                 or (nLocationAoE.count >= 2 and creep:IsAncientCreep())
-                or (nLocationAoE.count >= 1 and creep:IsAncientCreep() and creep:GetHealth() >= 1000 and fManaAfter > 0.75)
+                or (nLocationAoE.count >= 1 and creep:GetHealth() >= 1000 and fManaAfter > 0.75)
                 then
                     return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc
                 end
@@ -273,7 +276,7 @@ function X.ConsiderFirestorm()
     and fManaAfter > fManaThreshold1
     and bAttacking
     and #nAllyHeroes <= 2
-    and #nEnemyHeroes == 0
+    and #nEnemyHeroes <= 1
 	then
         for _, creep in pairs(nEnemyCreeps) do
             if J.IsValid(creep) and J.CanBeAttacked(creep) and not J.IsRunning(creep) then
@@ -292,6 +295,7 @@ function X.ConsiderFirestorm()
         and J.IsInRange(bot, botTarget, nCastPoint)
         and bAttacking
         and fManaAfter > fManaThreshold1
+        and  #nEnemyHeroes == 0
         then
             return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation()
         end
@@ -302,6 +306,7 @@ function X.ConsiderFirestorm()
         and J.IsInRange(bot, botTarget, nCastPoint)
         and bAttacking
         and fManaAfter > fManaThreshold1
+        and  #nEnemyHeroes == 0
         then
             return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation()
         end
@@ -315,7 +320,7 @@ function X.ConsiderPitOfMalice()
         return BOT_ACTION_DESIRE_NONE, 0
     end
 
-	local nCastRange = J.GetProperCastRange(false, bot, PitOfMalice:GetCastRange())
+	local nCastRange = PitOfMalice:GetCastRange()
     local nCastPoint = PitOfMalice:GetCastPoint()
 	local nRadius = PitOfMalice:GetSpecialValueInt('radius')
     local nManaCost = Firestorm:GetManaCost()
@@ -336,8 +341,7 @@ function X.ConsiderPitOfMalice()
                     return BOT_ACTION_DESIRE_HIGH, vLocation
                 end
             elseif enemyHero:IsChanneling() and fManaAfter > fManaThreshold2 then
-                local nAllyHeroesAttackingTarget = J.GetHeroesTargetingUnit(nAllyHeroes, enemyHero)
-                if #nAllyHeroesAttackingTarget >= 2 then
+                if J.GetTotalEstimatedDamageToTarget(nAllyHeroes, bot, 5.0) > botTarget:GetHealth() then
                     return BOT_ACTION_DESIRE_HIGH, vLocation
                 end
             end
@@ -353,10 +357,8 @@ function X.ConsiderPitOfMalice()
                 if J.IsValidHero(enemyHero)
                 and J.CanBeAttacked(enemyHero)
                 and J.CanCastOnNonMagicImmune(enemyHero)
-                and not enemyHero:IsStunned()
-                and not enemyHero:IsRooted()
-                and not enemyHero:IsHexed()
-                and not enemyHero:IsNightmared()
+                and not J.IsDisabled(enemyHero)
+                and not enemyHero:HasModifier('modifier_necrolyte_reapers_scythe')
                 then
                     count = count + 1
                 end
@@ -369,14 +371,11 @@ function X.ConsiderPitOfMalice()
     end
 
 	if J.IsGoingOnSomeone(bot) then
-		if  J.IsValidTarget(botTarget)
+		if  J.IsValidHero(botTarget)
         and J.CanBeAttacked(botTarget)
-        and J.CanCastOnNonMagicImmune(botTarget)
         and J.IsInRange(bot, botTarget, nCastRange + nRadius)
-        and not botTarget:IsStunned()
-        and not botTarget:IsRooted()
-        and not botTarget:IsHexed()
-        and not botTarget:IsNightmared()
+        and J.CanCastOnNonMagicImmune(botTarget)
+        and not J.IsDisabled(botTarget)
         and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
 		then
             local vLocation = (J.IsInRange(bot, botTarget, nCastRange) and botTarget:GetLocation()) or (J.VectorTowards(bot:GetLocation(), botTarget:GetLocation(), nCastRange))
@@ -384,16 +383,17 @@ function X.ConsiderPitOfMalice()
 		end
 	end
 
-	if J.IsRetreating(bot) and not J.IsRealInvisible(bot) and bot:WasRecentlyDamagedByAnyHero(4.0) then
+	if J.IsRetreating(bot) and not J.IsRealInvisible(bot) then
         for _, enemyHero in pairs(nEnemyHeroes) do
             if  J.IsValidHero(enemyHero)
             and J.CanBeAttacked(enemyHero)
             and J.IsInRange(bot, enemyHero, nCastRange + nRadius)
             and J.CanCastOnNonMagicImmune(enemyHero)
             and not enemyHero:IsDisarmed()
+            and bot:WasRecentlyDamagedByHero(enemyHero, 2.0)
             then
-                if (J.IsChasingTarget(enemyHero, bot) and botHP < 0.65)
-                or (#nEnemyHeroes > #nAllyHeroes and enemyHero:GetAttackTarget() == bot)
+                if (J.IsChasingTarget(enemyHero, bot))
+                or (#nEnemyHeroes > #nAllyHeroes)
                 then
                     local vHalfLocation = (bot:GetLocation() + enemyHero:GetLocation()) / 2
                     local vLocation = (J.IsInRange(bot, enemyHero, nCastRange) and vHalfLocation) or (J.VectorTowards(bot:GetLocation(), enemyHero:GetLocation(), nCastRange))
@@ -437,7 +437,7 @@ function X.ConsiderFiendsGate()
     end
 
 	if J.IsGoingOnSomeone(bot) then
-		if  J.IsValidTarget(botTarget)
+		if  J.IsValidHero(botTarget)
         and J.CanBeAttacked(botTarget)
         and not J.IsSuspiciousIllusion(botTarget)
         and not J.IsInLaningPhase()

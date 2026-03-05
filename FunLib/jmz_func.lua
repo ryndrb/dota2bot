@@ -1030,6 +1030,7 @@ function J.IsDisabled( npcTarget )
 				or npcTarget:HasModifier('modifier_eul_cyclone')
 				or npcTarget:HasModifier('modifier_brewmaster_storm_cyclone')
 				or npcTarget:HasModifier('modifier_naga_siren_song_of_the_siren')
+				or npcTarget:HasModifier('modifier_teleporting')
 	else
 
 		if npcTarget:IsStunned() and J.GetRemainStunTime( npcTarget ) > 0.8
@@ -1053,6 +1054,7 @@ function J.IsDisabled( npcTarget )
 				or npcTarget:HasModifier('modifier_eul_cyclone')
 				or npcTarget:HasModifier('modifier_brewmaster_storm_cyclone')
 				or npcTarget:HasModifier('modifier_naga_siren_song_of_the_siren')
+				or npcTarget:HasModifier('modifier_teleporting')
 
 	end
 
@@ -3395,21 +3397,8 @@ function J.CanSpamSpell(bot, manaCost)
 	return ( bot:GetMana() - manaCost ) / bot:GetMaxMana() >= ( initialRatio - bot:GetLevel()/(3*30) );
 end
 
-local maxAddedRange = 200
-local maxGetRange = 1600
 function J.GetProperCastRange(bIgnore, hUnit, abilityCR)
-	local attackRng = hUnit:GetAttackRange();
-	if bIgnore then
-		return abilityCR;
-	elseif abilityCR <= attackRng then
-		return attackRng + maxAddedRange;
-	elseif abilityCR + maxAddedRange <= maxGetRange then
-		return abilityCR + maxAddedRange;
-	elseif abilityCR > maxGetRange then
-		return maxGetRange;
-	else
-		return abilityCR;
-	end
+	return Min(abilityCR, 1600)
 end
 
 function J.IsValidTarget(npcTarget)
@@ -3551,39 +3540,28 @@ end
 
 function J.IsCore(bot)
 
-	local heroID = GetTeamPlayers(bot:GetTeam())
-
-	if GetSelectedHeroName(heroID[1]) == bot:GetUnitName()
-	or GetSelectedHeroName(heroID[2]) == bot:GetUnitName()
-	or GetSelectedHeroName(heroID[3]) == bot:GetUnitName()
-	then
-		return true
+	local nIDs = GetTeamPlayers(bot:GetTeam())
+	for i = 1, #nIDs do
+		if i <= 3 and GetSelectedHeroName(nIDs[i]) == bot:GetUnitName() then
+			return true
+		end
 	end
 
 	return false
 end
 
-function J.GetCoresTotalNetworth()
-	local totalNetworth = GetTeamMember(1):GetNetWorth()
-				  	    + GetTeamMember(2):GetNetWorth()
-				  		+ GetTeamMember(3):GetNetWorth()
-	return totalNetworth
-end
-
 function J.GetPosition(bot)
-	local heroID = GetTeamPlayers(bot:GetTeam())
 	local pos = -1
-
-	if GetSelectedHeroName(heroID[1]) == bot:GetUnitName() then
-		pos = 2
-	elseif GetSelectedHeroName(heroID[2]) == bot:GetUnitName() then
-		pos = 3
-	elseif GetSelectedHeroName(heroID[3]) == bot:GetUnitName() then
-		pos = 1
-	elseif GetSelectedHeroName(heroID[4]) == bot:GetUnitName() then
-		pos = 5
-	elseif GetSelectedHeroName(heroID[5]) == bot:GetUnitName() then
-		pos = 4
+	local nIDs = GetTeamPlayers(bot:GetTeam())
+	for i = 1, #nIDs do
+		if GetSelectedHeroName(nIDs[i]) == bot:GetUnitName() then
+			if     i == 1 then pos = 2
+			elseif i == 2 then pos = 3
+			elseif i == 3 then pos = 1
+			elseif i == 4 then pos = 5
+			elseif i == 5 then pos = 4
+			end
+		end
 	end
 
 	return pos
@@ -4086,15 +4064,14 @@ function J.GetDistance(s, t)
     return math.sqrt((s[1] - t[1]) * (s[1]-t[1]) + (s[2] - t[2]) * (s[2] - t[2]))
 end
 
-function J.IsUnitBetweenMeAndLocation(hSource, hTarget, vTargetLoc, nRadius)
+function J.IsUnitBetweenMeAndLocation(hSource, hTarget, vTargetLocation, nRadius)
 	local vStart = hSource:GetLocation()
-	local vEnd = vTargetLoc
+	local vEnd = vTargetLocation
 
-	for _, unit in pairs(GetUnitList(UNIT_LIST_ALL))
-	do
-		if J.IsValid(unit)
-		and GetUnitToUnitDistance(GetBot(), unit) <= 1600
-		and not unit:IsBuilding()
+	local unitList = GetUnitList(UNIT_LIST_ALL)
+	for _, unit in pairs(unitList) do
+		if  J.IsValid(unit)
+		and (unit:IsCreep() or unit:IsHero())
 		and not string.find(unit:GetUnitName(), 'ward')
 		and hSource ~= unit
 		and hTarget ~= unit
@@ -4810,9 +4787,13 @@ function J.GetAliveCoreCount(nEnemy)
 	end
 
 	local heroID = GetTeamPlayers(team)
-	if IsHeroAlive(heroID[1]) then count = count + 1 end
-	if IsHeroAlive(heroID[2]) then count = count + 1 end
-	if IsHeroAlive(heroID[3]) then count = count + 1 end
+	if heroID then
+		for i = 1, #heroID do
+			if i <= 3 and IsHeroAlive(heroID[i]) then
+				count = count + 1
+			end
+		end
+	end
 
 	return count
 end

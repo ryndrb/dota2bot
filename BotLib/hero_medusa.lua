@@ -308,9 +308,9 @@ function X.ConsiderSplitShot()
 		return BOT_ACTION_DESIRE_NONE
 	end
 
-	local nCastRange = bot:GetAttackRange() + 150
+	local nCastRange = Min(bot:GetAttackRange() + 150, 1600)
 	local nInRangeEnemy = bot:GetNearbyHeroes(nCastRange, true, BOT_MODE_NONE)
-	local nEnemyCreeps = bot:GetNearbyLaneCreeps(nCastRange, true)
+	local nEnemyCreeps = bot:GetNearbyCreeps(nCastRange, true)
 	local bIsToggled = SplitShot:GetToggleState()
 
 	if J.IsGoingOnSomeone(bot) then
@@ -369,7 +369,7 @@ function X.ConsiderMysticSnake()
 		return BOT_ACTION_DESIRE_NONE, nil
 	end
 
-	local nCastRange = J.GetProperCastRange(false, bot, MysticSnake:GetCastRange())
+	local nCastRange = MysticSnake:GetCastRange()
 	local nCastPoint = MysticSnake:GetCastPoint()
 	local nRadius = MysticSnake:GetSpecialValueInt('radius')
 	local nDamage = MysticSnake:GetSpecialValueInt('snake_damage')
@@ -378,7 +378,6 @@ function X.ConsiderMysticSnake()
 	local nManaCost = MysticSnake:GetManaCost()
 	local fManaAfter = J.GetManaAfter(nManaCost)
 	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {GorgonGrasp, StoneGaze})
-	local fManaThreshold2 = J.GetManaThreshold(bot, nManaCost, {MysticSnake, GorgonGrasp, StoneGaze})
 
 	local fMissingMP = (1 - (bot:GetMana() / bot:GetMaxMana()))
 
@@ -425,9 +424,9 @@ function X.ConsiderMysticSnake()
 	if J.IsGoingOnSomeone(bot) then
 		if J.IsValidHero(botTarget)
 		and J.CanBeAttacked(botTarget)
+		and J.IsInRange(bot, botTarget, nCastRange + 300)
 		and J.CanCastOnNonMagicImmune(botTarget)
 		and J.CanCastOnTargetAdvanced(botTarget)
-		and J.IsInRange(bot, botTarget, nCastRange + 300)
 		and not botTarget:HasModifier('modifier_faceless_void_chronosphere_freeze')
 		and not botTarget:HasModifier('modifier_templar_assassin_refraction_absorb')
 		and fMissingMP >= fManaSteal
@@ -437,7 +436,7 @@ function X.ConsiderMysticSnake()
 		end
 	end
 
-	if J.IsRetreating(bot) and not J.IsRealInvisible(bot) and bot:WasRecentlyDamagedByAnyHero(3.0) then
+	if J.IsRetreating(bot) and not J.IsRealInvisible(bot) then
         for _, enemyHero in pairs(nEnemyHeroes) do
             if  J.IsValidHero(enemyHero)
 			and J.CanBeAttacked(enemyHero)
@@ -445,10 +444,10 @@ function X.ConsiderMysticSnake()
             and J.CanCastOnNonMagicImmune(enemyHero)
 			and J.CanCastOnTargetAdvanced(enemyHero)
             and not J.IsDisabled(enemyHero)
+			and bot:WasRecentlyDamagedByHero(enemyHero, 3.0)
             then
 				local nInRangeEnemy = J.GetEnemiesNearLoc(enemyHero:GetLocation(), nRadius)
-				if J.IsChasingTarget(enemyHero, bot)
-				or (#nEnemyHeroes > #nAllyHeroes and enemyHero:GetAttackTarget() == bot)
+				if (J.IsChasingTarget(enemyHero, bot) and J.IsRunning(bot))
 				or (J.GetMP(bot) < 0.5)
 				or (#nInRangeEnemy >= 2 and fMissingMP >= fManaSteal)
 				then
@@ -458,9 +457,9 @@ function X.ConsiderMysticSnake()
         end
     end
 
-	local nEnemyCreeps = bot:GetNearbyCreeps(nCastRange, true)
+	local nEnemyCreeps = bot:GetNearbyCreeps(Min(nCastRange + 300, 1600), true)
 
-	if J.IsPushing(bot) and bAttacking and fManaAfter > fManaThreshold2 then
+	if J.IsPushing(bot) and bAttacking and fManaAfter > fManaThreshold1 + 0.1 then
 		for _, creep in pairs(nEnemyCreeps) do
 			if J.IsValid(creep) and J.CanBeAttacked(creep) and J.CanCastOnTargetAdvanced(creep) then
 				local nLocationAoE = bot:FindAoELocation(true, false, creep:GetLocation(), 0, nRadius, 0, 0)
@@ -485,14 +484,16 @@ function X.ConsiderMysticSnake()
 			end
 		end
 
-		for _, enemyHero in pairs(nEnemyHeroes) do
-			if J.IsValid(enemyHero)
-			and J.CanBeAttacked(enemyHero)
-			and J.CanCastOnTargetAdvanced(enemyHero)
-			then
-				local nLocationAoE = bot:FindAoELocation(true, true, enemyHero:GetLocation(), 0, nRadius, 0, 0)
-				if nLocationAoE.count >= 3 then
-					return BOT_ACTION_DESIRE_HIGH, enemyHero
+		if fMissingMP > fManaSteal then
+			for _, enemyHero in pairs(nEnemyHeroes) do
+				if J.IsValid(enemyHero)
+				and J.CanBeAttacked(enemyHero)
+				and J.CanCastOnTargetAdvanced(enemyHero)
+				then
+					local nLocationAoE = bot:FindAoELocation(true, true, enemyHero:GetLocation(), 0, nRadius, 0, 0)
+					if nLocationAoE.count >= 3 then
+						return BOT_ACTION_DESIRE_HIGH, enemyHero
+					end
 				end
 			end
 		end
@@ -531,7 +532,7 @@ function X.ConsiderGorgonGrasp()
 		return BOT_ACTION_DESIRE_NONE, 0
 	end
 
-	local nCastRange = J.GetProperCastRange(false, bot, GorgonGrasp:GetCastRange())
+	local nCastRange = GorgonGrasp:GetCastRange()
 	local nCastPoint = GorgonGrasp:GetCastPoint()
 	local nRadius = GorgonGrasp:GetSpecialValueInt('radius')
 	local nRadiusGrow = GorgonGrasp:GetSpecialValueInt('radius_grow')
@@ -540,7 +541,6 @@ function X.ConsiderGorgonGrasp()
 	local nManaCost = GorgonGrasp:GetManaCost()
 	local fManaAfter = J.GetManaAfter(nManaCost)
 	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {MysticSnake, StoneGaze})
-	local fManaThreshold2 = J.GetManaThreshold(bot, nManaCost, {MysticSnake, GorgonGrasp, StoneGaze})
 
 	for _, enemyHero in pairs(nEnemyHeroes) do
 		if J.IsValidHero(enemyHero)
@@ -561,58 +561,31 @@ function X.ConsiderGorgonGrasp()
 	if J.IsGoingOnSomeone(bot) then
 		if J.IsValidHero(botTarget)
 		and J.CanBeAttacked(botTarget)
-		and J.CanCastOnNonMagicImmune(botTarget)
 		and J.IsInRange(bot, botTarget, nCastRange)
+		and J.CanCastOnNonMagicImmune(botTarget)
 		and not J.IsDisabled(botTarget)
 		and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
 		then
-			if not J.IsChasingTarget(bot, botTarget)
-			or J.IsInRange(bot, botTarget, nCastRange * 0.75)
+			if botTarget:GetCurrentMovementSpeed() <= 250
+			or J.IsInRange(bot, botTarget, nCastRange * 55)
 			then
 				return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation()
 			end
 		end
 	end
 
-	if J.IsRetreating(bot) and not J.IsRealInvisible(bot) and bot:WasRecentlyDamagedByAnyHero(3.0) then
+	if J.IsRetreating(bot) and not J.IsRealInvisible(bot) then
 		for _, enemyHero in pairs(nEnemyHeroes) do
 			if J.IsValidHero(enemyHero)
 			and J.CanBeAttacked(enemyHero)
 			and J.IsInRange(bot, enemyHero, nCastRange)
+			and not J.IsInRange(bot, enemyHero, nCastRange * 0.3)
 			and J.CanCastOnNonMagicImmune(enemyHero)
 			and not J.IsDisabled(enemyHero)
 			and not enemyHero:HasModifier('modifier_necrolyte_reapers_scythe')
-			and fManaAfter > fManaThreshold1
+			and bot:WasRecentlyDamagedByHero(enemyHero, 3.0)
 			then
-				if J.IsChasingTarget(enemyHero, bot)
-				or (#nEnemyHeroes > #nAllyHeroes and enemyHero:GetAttackTarget() == bot)
-				then
-					return BOT_ACTION_DESIRE_HIGH, (bot:GetLocation() + enemyHero:GetLocation()) / 2
-				end
-			end
-		end
-	end
-
-	if not J.IsRetreating(bot) and not J.IsRealInvisible(bot) and fManaAfter > fManaThreshold1 then
-		for _, allyHero in pairs(nAllyHeroes) do
-			if  J.IsValidHero(allyHero)
-			and bot ~= allyHero
-			and J.IsRetreating(allyHero)
-			and allyHero:WasRecentlyDamagedByAnyHero(3.0)
-			and not J.IsSuspiciousIllusion(allyHero)
-			then
-				for _, enemyHero in pairs(nEnemyHeroes) do
-					if J.IsValidHero(enemyHero)
-					and J.CanBeAttacked(enemyHero)
-					and J.IsInRange(bot, enemyHero, nCastRange)
-					and J.CanCastOnNonMagicImmune(enemyHero)
-					and J.IsChasingTarget(enemyHero, allyHero)
-					and not J.IsDisabled(enemyHero)
-					and not enemyHero:HasModifier('modifier_necrolyte_reapers_scythe')
-					then
-						return BOT_ACTION_DESIRE_HIGH, J.GetCorrectLoc(enemyHero, nDelay + nCastPoint)
-					end
-				end
+				return BOT_ACTION_DESIRE_HIGH, (bot:GetLocation() + enemyHero:GetLocation()) / 2
 			end
 		end
 	end

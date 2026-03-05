@@ -245,7 +245,7 @@ function X.ConsiderEarthBind()
         return BOT_ACTION_DESIRE_NONE, 0
     end
 
-	local nCastRange = J.GetProperCastRange(false, bot, EarthBind:GetCastRange())
+	local nCastRange = EarthBind:GetCastRange()
     local nCastPoint = EarthBind:GetCastPoint()
 	local nRadius = EarthBind:GetSpecialValueInt('radius')
 	local nSpeed = EarthBind:GetSpecialValueInt('speed')
@@ -253,7 +253,6 @@ function X.ConsiderEarthBind()
     local nManaCost = EarthBind:GetManaCost()
     local fManaAfter = J.GetManaAfter(nManaCost)
     local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {Poof, Dig})
-    local fManaThreshold2 = J.GetManaThreshold(bot, nManaCost, {EarthBind, Poof, Dig})
 
     for _, enemyHero in pairs(nEnemyHeroes) do
         if  J.IsValidHero(enemyHero)
@@ -279,13 +278,11 @@ function X.ConsiderEarthBind()
         if #nInRangeEnemy >= 2 and fManaAfter > fManaThreshold1 then
             local count = 0
             for _, enemyHero in pairs(nInRangeEnemy) do
-                if  J.IsValidTarget(enemyHero)
+                if  J.IsValidHero(enemyHero)
                 and J.CanBeAttacked(enemyHero)
                 and J.CanCastOnNonMagicImmune(enemyHero)
                 and J.IsInRange(bot, enemyHero, nCastRange)
                 and not J.IsDisabled(enemyHero)
-                and not enemyHero:HasModifier('modifier_enigma_black_hole_pull')
-                and not enemyHero:HasModifier('modifier_faceless_void_chronosphere_freeze')
                 and not enemyHero:HasModifier('modifier_meepo_earthbind')
                 then
                     count = count + 1
@@ -301,14 +298,12 @@ function X.ConsiderEarthBind()
     end
 
     if J.IsGoingOnSomeone(bot) then
-        if  J.IsValidTarget(botTarget)
+        if  J.IsValidHero(botTarget)
         and J.CanBeAttacked(botTarget)
         and J.CanCastOnNonMagicImmune(botTarget)
         and J.IsInRange(bot, botTarget, nCastRange)
         and not J.IsSuspiciousIllusion(botTarget)
         and not J.IsDisabled(botTarget)
-        and not botTarget:HasModifier('modifier_enigma_black_hole_pull')
-        and not botTarget:HasModifier('modifier_faceless_void_chronosphere_freeze')
         and not botTarget:HasModifier('modifier_meepo_earthbind')
         then
             local eta = (GetUnitToUnitDistance(bot, botTarget) / nSpeed) + nCastPoint
@@ -323,7 +318,7 @@ function X.ConsiderEarthBind()
         end
 	end
 
-    if J.IsRetreating(bot) and not J.IsRealInvisible(bot) and bot:WasRecentlyDamagedByAnyHero(3.0) then
+    if J.IsRetreating(bot) and not J.IsRealInvisible(bot) then
         for _, enemyHero in pairs(nEnemyHeroes) do
             if J.IsValidHero(enemyHero)
             and J.CanBeAttacked(enemyHero)
@@ -332,10 +327,11 @@ function X.ConsiderEarthBind()
             and not J.IsDisabled(enemyHero)
             and not enemyHero:IsDisarmed()
             and not enemyHero:HasModifier('modifier_meepo_earthbind')
+            and bot:WasRecentlyDamagedByHero(enemyHero, 3.0)
             then
                 local nLocationAoE = bot:FindAoELocation(true, true, enemyHero:GetLocation(), 0, nRadius, 0, 0)
                 if J.IsChasingTarget(enemyHero, bot)
-                or (#nEnemyHeroes > #nAllyHeroes and enemyHero:GetAttackTarget() == bot)
+                or (#nEnemyHeroes > #nAllyHeroes)
                 or (nLocationAoE.count >= 2)
                 then
                     if not DidMeepoCloneThrewEarthBind(enemyHero:GetLocation(), nCastPoint, nSpeed, nDuration, nRadius) then
@@ -346,7 +342,7 @@ function X.ConsiderEarthBind()
         end
     end
 
-    if not J.IsRetreating(bot) and not J.IsRealInvisible(bot) and fManaAfter > fManaThreshold2 then
+    if not J.IsRetreating(bot) and not J.IsRealInvisible(bot) and fManaAfter > fManaThreshold1 + 0.1 then
         for _, meepo in pairs(Meepos) do
             if J.IsValidHero(meepo)
             and bot ~= meepo
@@ -362,10 +358,9 @@ function X.ConsiderEarthBind()
                     and not J.IsDisabled(enemyHero)
                     and not enemyHero:IsDisarmed()
                     and not enemyHero:HasModifier('modifier_meepo_earthbind')
+                    and meepo:WasRecentlyDamagedByHero(enemyHero, 3.0)
                     then
-                        if J.IsChasingTarget(enemyHero, meepo)
-                        or (#nEnemyHeroes > #nAllyHeroes and enemyHero:GetAttackTarget() == meepo)
-                        then
+                        if J.IsChasingTarget(enemyHero, meepo) then
                             local eta = (GetUnitToUnitDistance(bot, enemyHero) / nSpeed) + nCastPoint
                             local vLocation = J.GetCorrectLoc(enemyHero, eta)
                             if not DidMeepoCloneThrewEarthBind(vLocation, nCastPoint, nSpeed, nDuration, nRadius) then
@@ -392,9 +387,6 @@ function X.ConsiderPoof()
     local nManaCost = Poof:GetManaCost()
     local fManaAfter = J.GetManaAfter(nManaCost)
     local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {EarthBind, Dig})
-    local fManaThreshold2 = J.GetManaThreshold(bot, nManaCost, {EarthBind, Poof, Dig})
-
-    local nEnemyHeroesTargetingMe = J.GetHeroesTargetingUnit(nEnemyHeroes, bot)
 
     for _, meepo in pairs(Meepos) do
         local meepoTarget = J.GetProperTarget(meepo)
@@ -404,7 +396,7 @@ function X.ConsiderPoof()
 
         if bot ~= meepo then
             if J.IsGoingOnSomeone(meepo) then
-                if  J.IsValidTarget(meepoTarget)
+                if  J.IsValidHero(meepoTarget)
                 and J.IsInRange(meepo, meepoTarget, 800)
                 and not J.IsRetreating(bot)
                 and GetUnitToUnitDistance(bot, meepo) > 1600
@@ -422,7 +414,7 @@ function X.ConsiderPoof()
                 end
             end
 
-            if J.IsPushing(bot) and J.IsPushing(meepo) and fManaAfter > fManaThreshold2 and not bot:WasRecentlyDamagedByAnyHero(5.0) then
+            if J.IsPushing(bot) and J.IsPushing(meepo) and fManaAfter > fManaThreshold1 and not bot:WasRecentlyDamagedByAnyHero(5.0) then
                 local nLane = LANE_MID
                 if meepo:GetActiveMode() == BOT_MODE_PUSH_TOWER_TOP then nLane = LANE_TOP end
                 if meepo:GetActiveMode() == BOT_MODE_PUSH_TOWER_BOT then nLane = LANE_BOT end
@@ -447,7 +439,7 @@ function X.ConsiderPoof()
             if  J.IsLaning(bot)
             and J.IsLaning(meepo)
             and J.IsInLaningPhase()
-            and fManaAfter > fManaThreshold2
+            and fManaAfter > fManaThreshold1 + 0.1
             then
                 local vLaneFrontLocation = GetLaneFrontLocation(GetTeam(), bot:GetAssignedLane(), 0)
                 if  GetUnitToLocationDistance(bot, vLaneFrontLocation) > 1600
@@ -476,7 +468,7 @@ function X.ConsiderPoof()
             and J.CanBeAttacked(botTarget)
             and J.IsInRange(bot, botTarget, nRadius)
             and bAttacking
-            and fManaAfter > fManaThreshold2
+            and fManaAfter > fManaThreshold1
             then
                 return BOT_ACTION_DESIRE_HIGH, bot
             end
@@ -498,20 +490,20 @@ function X.ConsiderPoof()
             if J.IsTormentor(botTarget)
             and J.IsInRange(bot, botTarget, nRadius)
             and bAttacking
-            and fManaAfter > fManaThreshold2
+            and fManaAfter > fManaThreshold1
             then
                 return BOT_ACTION_DESIRE_HIGH, bot
             end
         end
 
-        if botHP > 0.5 and not J.IsRetreating(bot) and #nEnemyHeroesTargetingMe <= 1 then
+        if botHP > 0.5 and not J.IsRetreating(bot) then
             if J.IsRetreating(meepo) and not J.IsRealInvisible(meepo) then
                 if (#nInRangeAlly >= #nInRangeEnemy)
                 or (#Meepos >= #nInRangeEnemy)
                 then
                     for _, enemyHero in pairs(nEnemyHeroes) do
                         if J.IsValidHero(enemyHero)
-                        and J.IsInRange(meepo, enemyHero, 800)
+                        and J.IsInRange(meepo, enemyHero, 1200)
                         and not J.IsSuspiciousIllusion(enemyHero)
                         and not J.IsDisabled(enemyHero)
                         and not enemyHero:IsDisarmed()
@@ -582,7 +574,7 @@ function X.ConsiderPoof()
 
     local nEnemyCreeps = bot:GetNearbyCreeps(nRadius, true)
 
-    if J.IsPushing(bot) and bAttacking and fManaAfter > fManaThreshold2 then
+    if J.IsPushing(bot) and bAttacking and fManaAfter > fManaThreshold1 + 0.1 then
         if J.IsValid(nEnemyCreeps[1]) and J.CanBeAttacked(nEnemyCreeps[1]) then
             if #nEnemyCreeps >= 4 then
                 return BOT_ACTION_DESIRE_HIGH, bot
@@ -606,7 +598,7 @@ function X.ConsiderPoof()
         end
     end
 
-    if J.IsLaning(bot) and J.IsInLaningPhase() and fManaAfter > fManaThreshold2 then
+    if J.IsLaning(bot) and J.IsInLaningPhase() and fManaAfter > fManaThreshold1 then
         local nLocationAoE = bot:FindAoELocation(true, false, bot:GetLocation(), 0, nRadius, 0, nDamage)
         if nLocationAoE.count >= 3 then
             return BOT_ACTION_DESIRE_HIGH, bot
@@ -661,8 +653,7 @@ function X.ConsiderDig()
     if bot:HasModifier('modifier_doom_bringer_doom_aura_enemy')
     or bot:HasModifier('modifier_ice_blast')
     then
-        local nEnemyHeroesTargetingMe = J.GetHeroesTargetingUnit(nEnemyHeroes, bot)
-        if #nEnemyHeroesTargetingMe > 0 then
+        if bot:WasRecentlyDamagedByAnyHero(4.0) then
             return BOT_ACTION_DESIRE_HIGH
         else
             return BOT_ACTION_DESIRE_NONE
@@ -697,10 +688,12 @@ function X.ConsiderMegaMeepo()
             end
         end
 
-        local nInRangeEnemy = J.GetEnemiesNearLoc(bot:GetLocation(), 800)
-
-        if count >= 2 and #nInRangeEnemy > 0 then
-            return BOT_ACTION_DESIRE_HIGH
+        if count >= 2 then
+            if (J.GetTotalEstimatedDamageToTarget(nEnemyHeroes, bot, 8.0) > bot:GetHealth())
+            or (J.IsInTeamFight(bot, 800))
+            then
+                return BOT_ACTION_DESIRE_HIGH
+            end
         end
     end
 
@@ -712,13 +705,13 @@ function X.ConsiderMegaMeepoFling()
         return BOT_ACTION_DESIRE_NONE, nil
     end
 
-    local nCastRange = J.GetProperCastRange(false, bot, MegaMeepoFling:GetCastRange())
+    local nCastRange = MegaMeepoFling:GetCastRange()
 
     if J.IsGoingOnSomeone(bot) then
         if J.IsValidHero(botTarget)
         and J.CanBeAttacked(botTarget)
         and J.CanCastOnTargetAdvanced(botTarget)
-        and GetUnitToLocationDistance(botTarget, J.GetEnemyFountain()) > 800
+        and GetUnitToLocationDistance(botTarget, J.GetEnemyFountain()) > 1200
         and J.IsChasingTarget(bot, botTarget)
         and J.IsInRange(bot, botTarget, nCastRange)
         and not J.IsInRange(bot, botTarget, bot:GetAttackRange() + 200)

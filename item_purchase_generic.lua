@@ -706,7 +706,7 @@ function ItemPurchaseThink()
 					nItemToCheckSlot_lastComponent = bot:FindItemSlot(tItemComponent[#tItemComponent])
 				end
 
-				if (nItemToCheckSlot >= 0 or nItemToCheckSlot_lastComponent >= 0) and nItemToSellSlot >= 0
+				if (nItemToCheckSlot >= 0 --[[or nItemToCheckSlot_lastComponent >= 0]]) and nItemToSellSlot >= 0
 				then
 					bot:ActionImmediate_SellItem( bot:GetItemInSlot( nItemToSellSlot ) )
 					table.remove(bot.sItemSellList, i)

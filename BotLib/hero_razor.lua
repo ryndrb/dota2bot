@@ -258,7 +258,6 @@ function X.ConsiderPlasmaField()
 	local nManaCost = PlasmaField:GetManaCost()
 	local fManaAfter = J.GetManaAfter(nManaCost)
 	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {StaticLink, EyeOfTheStorm})
-	local fManaThreshold2 = J.GetManaThreshold(bot, nManaCost, {PlasmaField, StaticLink, EyeOfTheStorm})
 
 	for _, enemyHero in pairs(nEnemyHeroes) do
         if  J.IsValidHero(enemyHero)
@@ -288,9 +287,9 @@ function X.ConsiderPlasmaField()
 				return BOT_ACTION_DESIRE_HIGH
 			end
 
-			if J.IsRetreating(bot) and not J.IsRealInvisible(bot) and bot:WasRecentlyDamagedByAnyHero(3.0) then
+			if J.IsRetreating(bot) and not J.IsRealInvisible(bot) and bot:WasRecentlyDamagedByHero(enemyHero, 2.0) then
 				if J.IsChasingTarget(enemyHero, bot)
-				or (#nEnemyHeroes > #nAllyHeroes and enemyHero:GetAttackTarget() == bot)
+				or (#nEnemyHeroes > #nAllyHeroes)
 				or (botHP < 0.5)
 				then
 					return BOT_ACTION_DESIRE_HIGH
@@ -315,7 +314,7 @@ function X.ConsiderPlasmaField()
 
 	local nEnemyCreeps = bot:GetNearbyCreeps(nRadius, true)
 
-	if J.IsPushing(bot) and bAttacking and fManaAfter > fManaThreshold2 and #nAllyHeroes <= 3 then
+	if J.IsPushing(bot) and bAttacking and fManaAfter > fManaThreshold1 + 0.15 and #nAllyHeroes <= 3 then
 		local nCanKillCount = 0
 		local nCanHurtCount = 0
 		for _, creep in pairs(nEnemyCreeps) do
@@ -348,7 +347,7 @@ function X.ConsiderPlasmaField()
 			end
 		end
 
-		if nCanKillCount >= 3 or nCanHurtCount >= 5 then
+		if nCanKillCount >= 3 or nCanHurtCount >= 4 then
 			return BOT_ACTION_DESIRE_HIGH
 		end
 	end
@@ -421,11 +420,10 @@ function X.ConsiderStaticLink()
 		return BOT_ACTION_DESIRE_NONE, nil
 	end
 
-	local nCastRange = J.GetProperCastRange(false, bot, StaticLink:GetCastRange())
+	local nCastRange = StaticLink:GetCastRange()
 	local nManaCost = StaticLink:GetManaCost()
 	local fManaAfter = J.GetManaAfter(nManaCost)
 	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {PlasmaField, EyeOfTheStorm})
-	local fManaThreshold2 = J.GetManaThreshold(bot, nManaCost, {PlasmaField, StaticLink, EyeOfTheStorm})
 
 	if J.IsGoingOnSomeone(bot) then
 		local hTarget = nil
@@ -445,7 +443,7 @@ function X.ConsiderStaticLink()
 			end
 		end
 
-		if hTarget and J.IsInRange(bot, hTarget, nCastRange * 0.8) then
+		if hTarget and J.IsInRange(bot, hTarget, nCastRange * 0.75) then
 			return BOT_ACTION_DESIRE_HIGH, hTarget
 		end
 	end
@@ -455,7 +453,6 @@ function X.ConsiderStaticLink()
 			if J.IsValidHero(enemyHero)
 			and J.CanBeAttacked(enemyHero)
 			and J.IsInRange(bot, enemyHero, nCastRange)
-			and J.CanCastOnNonMagicImmune(enemyHero)
 			and J.CanCastOnTargetAdvanced(enemyHero)
 			and not enemyHero:HasModifier('modifier_razor_static_link_debuff')
 			and bot:WasRecentlyDamagedByHero(enemyHero, 3.0)

@@ -240,12 +240,11 @@ function X.ConsiderOverwhelmingOdds()
 	local nDamage = nBaseDamage
 	local nManaCost = OverwhelmingOdds:GetManaCost()
 	local fManaAfter = J.GetManaAfter(nManaCost)
-	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {OverwhelmingOdds, PressTheAttack, Duel})
-	local fManaThreshold2 = J.GetManaThreshold(bot, nManaCost, {PressTheAttack, Duel})
-	local fManaThreshold3 = J.GetManaThreshold(bot, nManaCost, {Duel})
+	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {PressTheAttack, Duel})
 
 	local nLocationAoE_Heroes = bot:FindAoELocation(true, true, bot:GetLocation(), 0, nRadius, 0, 0)
 	local nLocationAoE_Creeps = bot:FindAoELocation(true, false, bot:GetLocation(), 0, nRadius, 0, 0)
+	local bDisarmed = bot:IsDisarmed()
 
 	nDamage = nDamage + (nLocationAoE_Heroes.count * nBonusDamageHero) + (nLocationAoE_Creeps.count * nBonusDamageCreep)
 
@@ -280,10 +279,8 @@ function X.ConsiderOverwhelmingOdds()
 				end
 			end
 
-			if count >= 2 and bAttacking then
-				if fManaAfter > fManaThreshold3 then
-					return BOT_ACTION_DESIRE_HIGH
-				end
+			if count >= 2 and not bDisarmed and fManaAfter > fManaThreshold1  then
+				return BOT_ACTION_DESIRE_HIGH
 			end
 		end
 	end
@@ -296,18 +293,15 @@ function X.ConsiderOverwhelmingOdds()
 		and not botTarget:HasModifier('modifier_abaddon_borrowed_time')
 		and not botTarget:HasModifier('modifier_dazzle_shallow_grave')
 		and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
-		and bAttacking
+		and not bDisarmed
 		then
-			if fManaAfter > fManaThreshold2 then
-				return BOT_ACTION_DESIRE_HIGH
-			end
+			return BOT_ACTION_DESIRE_HIGH
 		end
 	end
 
 	if J.IsRetreating(bot)
 	and not J.IsRealInvisible(bot)
 	and not bot:HasModifier('modifier_legion_commander_overwhelming_odds')
-	and bot:WasRecentlyDamagedByAnyHero(3.0)
 	then
 		local nInRangeEnemy = J.GetEnemiesNearLoc(bot:GetLocation(), nRadius)
 		for _, enemyHero in pairs(nEnemyHeroes) do
@@ -315,14 +309,12 @@ function X.ConsiderOverwhelmingOdds()
 			and J.CanBeAttacked(enemyHero)
 			and J.IsInRange(bot, enemyHero, nRadius - 80)
 			and J.CanCastOnNonMagicImmune(enemyHero)
+			and not J.IsDisabled(enemyHero)
 			then
-				if #nInRangeEnemy >= 2 then
-					if J.IsChasingTarget(enemyHero, bot) and botHP < 0.5
-					or #nEnemyHeroes > #nAllyHeroes
-					or (botHP < 0.5 and enemyHero:GetAttackTarget() == bot)
-					then
-						return BOT_ACTION_DESIRE_HIGH
-					end
+				if #nInRangeEnemy >= 2
+				or bot:WasRecentlyDamagedByHero(enemyHero, 2.0)
+				then
+					return BOT_ACTION_DESIRE_HIGH
 				end
 			end
 		end
@@ -332,8 +324,7 @@ function X.ConsiderOverwhelmingOdds()
 
 	if not bot:HasModifier('modifier_legion_commander_overwhelming_odds') then
 		if J.IsPushing(bot) and #nAllyHeroes <= 2 and #nEnemyHeroes == 0
-		and fManaAfter > fManaThreshold1
-		and fManaAfter > 0.5
+		and fManaAfter > fManaThreshold1 + 0.1
 		and bAttacking
 		then
 			if J.IsValid(nEnemyCreeps[1]) and J.CanBeAttacked(nEnemyCreeps[1]) then
@@ -344,8 +335,7 @@ function X.ConsiderOverwhelmingOdds()
 		end
 
 		if J.IsDefending(bot)
-		and fManaAfter > fManaThreshold2
-		and fManaAfter > 0.5
+		and fManaAfter > fManaThreshold1
 		and bAttacking
 		then
 			if J.IsValid(nEnemyCreeps[1]) and J.CanBeAttacked(nEnemyCreeps[1]) then
@@ -359,11 +349,12 @@ function X.ConsiderOverwhelmingOdds()
 			end
 		end
 
-		if J.IsFarming(bot) and fManaAfter > fManaThreshold2 and bAttacking and nAbilityLevel >= 3 then
+		if J.IsFarming(bot) and fManaAfter > fManaThreshold1 and bAttacking and nAbilityLevel >= 3 then
 			if J.IsValid(nEnemyCreeps[1]) and J.CanBeAttacked(nEnemyCreeps[1]) then
-				if #nEnemyCreeps >= 3
+				if (#nEnemyCreeps >= 3)
 				or (#nEnemyCreeps >= 2 and nEnemyCreeps[1]:IsAncientCreep())
 				or (#nEnemyCreeps >= 2 and fManaAfter > 0.65 and nEnemyCreeps[1]:GetHealth() > bot:GetAttackDamage() * 3)
+				or (#nEnemyCreeps >= 1 and nEnemyCreeps[1]:GetHealth() >= 1000)
 				then
 					return BOT_ACTION_DESIRE_HIGH
 				end
@@ -372,29 +363,34 @@ function X.ConsiderOverwhelmingOdds()
 
 		if J.IsLaning(bot) and J.IsInLaningPhase() and bAttacking and fManaAfter > 0.5 then
 			local nInRangeEnemy = J.GetEnemiesNearLoc(bot:GetLocation(), nRadius)
-			if #nInRangeEnemy >= 2 then
-				local count = 0
-				for _, enemyHero in pairs(nInRangeEnemy) do
-					if J.IsValidHero(enemyHero)
-					and J.CanBeAttacked(enemyHero)
-					and J.CanCastOnNonMagicImmune(enemyHero)
-					and not enemyHero:HasModifier('modifier_abaddon_borrowed_time')
-					and not enemyHero:HasModifier('modifier_dazzle_shallow_grave')
-					and not enemyHero:HasModifier('modifier_necrolyte_reapers_scythe')
-					then
-						count = count + 1
-					end
-				end
+			for _, creep in pairs(nEnemyCreeps) do
+				if J.IsValid(creep)
+				and J.CanBeAttacked(creep)
+				and not J.IsOtherAllysTarget(creep)
+				and J.CanKillTarget(creep, nDamage, DAMAGE_TYPE_MAGICAL)
+				then
+					local sCreepName = creep:GetUnitName()
+					local nLocationAoE = bot:FindAoELocation(true, true, creep:GetLocation(), 0, 600, 0, 0)
 
-				if count >= 2 and bAttacking then
-					if fManaAfter > fManaThreshold2 then
-						return BOT_ACTION_DESIRE_HIGH
+					if string.find(sCreepName, 'ranged') then
+						if nLocationAoE.count > 0 or J.IsUnitTargetedByTower(creep, false) or J.IsEnemyTargetUnit(creep, 1000) then
+							return BOT_ACTION_DESIRE_HIGH, creep:GetLocation()
+						end
+					end
+
+					if #nInRangeEnemy > 0 then
+						return BOT_ACTION_DESIRE_HIGH, creep:GetLocation()
+					end
+
+					nLocationAoE = bot:FindAoELocation(true, false, creep:GetLocation(), 0, nRadius, 0, nDamage)
+					if nLocationAoE.count >= 2 and (#nEnemyHeroes > 0 or nLocationAoE.count >= 3) then
+						return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc
 					end
 				end
 			end
 		end
 
-		if fManaAfter > fManaThreshold3 then
+		if fManaAfter > fManaThreshold1 and not J.IsRealInvisible(bot) then
 			nLocationAoE_Creeps = bot:FindAoELocation(true, false, bot:GetLocation(), 0, nRadius, 0, nDamage)
 			if nLocationAoE_Creeps.count >= 4 then
 				return BOT_ACTION_DESIRE_HIGH
@@ -406,8 +402,7 @@ function X.ConsiderOverwhelmingOdds()
 			and J.CanBeAttacked(botTarget)
 			and J.IsInRange(bot, botTarget, nRadius)
 			and J.CanCastOnNonMagicImmune(botTarget)
-			and fManaAfter > fManaThreshold2
-			and fManaAfter > 0.5
+			and fManaAfter > fManaThreshold1 + 0.1
 			and bAttacking
 			then
 				return BOT_ACTION_DESIRE_HIGH
@@ -417,8 +412,7 @@ function X.ConsiderOverwhelmingOdds()
 		if J.IsDoingTormentor(bot) then
 			if J.IsTormentor(botTarget)
 			and J.IsInRange(bot, botTarget, nRadius)
-			and fManaAfter > fManaThreshold2
-			and fManaAfter > 0.5
+			and fManaAfter > fManaThreshold1 + 0.1
 			and bAttacking
 			then
 				return BOT_ACTION_DESIRE_HIGH
@@ -434,17 +428,17 @@ function X.ConsiderPressTheAttack()
 		return BOT_ACTION_DESIRE_NONE, nil
 	end
 
-	local nCastRange = J.GetProperCastRange(false, bot, PressTheAttack:GetCastRange())
+	local nCastRange = PressTheAttack:GetCastRange()
 	local nHPRegen = PressTheAttack:GetSpecialValueInt('hp_regen')
 	local nDuration = PressTheAttack:GetSpecialValueInt('duration')
 	local nManaCost = PressTheAttack:GetManaCost()
 	local fManaAfter = J.GetManaAfter(nManaCost)
-	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {Duel})
+	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {OverwhelmingOdds, Duel})
 
 	for _, allyHero in pairs(nAllyHeroes) do
 		if J.IsValidHero(allyHero)
-		and J.IsInRange(bot, allyHero, nCastRange)
 		and J.CanBeAttacked(allyHero)
+		and J.IsInRange(bot, allyHero, nCastRange)
 		and not allyHero:HasModifier('modifier_legion_commander_press_the_attack')
 		and not allyHero:HasModifier('modifier_necrolyte_reapers_scythe')
 		then
@@ -497,7 +491,7 @@ function X.ConsiderDuel()
 		return BOT_ACTION_DESIRE_NONE, nil
 	end
 
-	local nCastRange = J.GetProperCastRange(false, bot, Duel:GetCastRange())
+	local nCastRange = Duel:GetCastRange()
 	local fDuration = Duel:GetSpecialValueInt('duration')
 	local bWeAreStronger = J.WeAreStronger(bot, 1200)
 
@@ -519,8 +513,8 @@ function X.ConsiderDuel()
 						end
 					end
 
-					local totalDamage = enemyHero:GetActualIncomingDamage(bot:GetAttackDamage() * bot:GetAttackSpeed() * fDuration, DAMAGE_TYPE_PHYSICAL)
-					local allyDamage = X.GetAllyToTargetDamage(enemyHero, fDuration, DAMAGE_TYPE_PHYSICAL)
+					local totalDamage = enemyHero:GetActualIncomingDamage(bot:GetAttackDamage() * bot:GetAttackSpeed() * (fDuration - 1), DAMAGE_TYPE_PHYSICAL)
+					local allyDamage = X.GetAllyToTargetDamage(enemyHero, (fDuration - 1), DAMAGE_TYPE_PHYSICAL)
 					totalDamage = totalDamage * 1.2 + allyDamage * 0.8 - 100
 
 					if  (totalDamage > enemyHero:GetHealth() + enemyHero:GetHealthRegen() * fDuration)
@@ -542,16 +536,16 @@ function X.ConsiderDuel()
 	if J.IsGoingOnSomeone(bot) then
 		if J.IsValidHero(botTarget)
 		and J.CanBeAttacked(botTarget)
-		and J.CanCastOnTargetAdvanced(botTarget)
 		and J.IsInRange(bot, botTarget, nCastRange + 300)
+		and J.CanCastOnTargetAdvanced(botTarget)
 		and not botTarget:HasModifier('modifier_abaddon_borrowed_time')
 		and not botTarget:HasModifier('modifier_dazzle_shallow_grave')
 		and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
 		and not botTarget:HasModifier('modifier_ursa_enrage')
 		and not botTarget:HasModifier('modifier_item_aeon_disk_buff')
 		then
-			local totalDamage = botTarget:GetActualIncomingDamage(bot:GetAttackDamage() * bot:GetAttackSpeed() * fDuration, DAMAGE_TYPE_PHYSICAL)
-			local allyDamage = X.GetAllyToTargetDamage(botTarget, fDuration, DAMAGE_TYPE_ALL)
+			local totalDamage = botTarget:GetActualIncomingDamage(bot:GetAttackDamage() * bot:GetAttackSpeed() * (fDuration - 1), DAMAGE_TYPE_PHYSICAL)
+			local allyDamage = X.GetAllyToTargetDamage(botTarget, (fDuration - 1), DAMAGE_TYPE_ALL)
 			totalDamage = totalDamage * 1.2 + allyDamage * 0.8 - 100
 
 			if totalDamage > (botTarget:GetHealth() + botTarget:GetHealthRegen() * fDuration) then

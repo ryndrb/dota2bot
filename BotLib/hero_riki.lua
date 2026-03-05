@@ -230,7 +230,6 @@ function X.ConsiderSmokeScreen()
 	local nManaCost = SmokeScreen:GetManaCost()
 	local fManaAfter = J.GetManaAfter(nManaCost)
 	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {BlinkStrike, TricksOfTheTrade})
-	local fManaThreshold2 = J.GetManaThreshold(bot, nManaCost, {SmokeScreen, BlinkStrike, TricksOfTheTrade})
 
 	if fManaAfter > fManaThreshold1 then
 		for _, enemyHero in pairs(nEnemyHeroes) do
@@ -286,7 +285,7 @@ function X.ConsiderSmokeScreen()
 		end
 	end
 
-	if J.IsRetreating(bot) then
+	if J.IsRetreating(bot) and not J.IsRealInvisible(bot) then
         for _, enemyHero in pairs(nEnemyHeroes) do
             if J.IsValidHero(enemyHero)
             and J.CanBeAttacked(enemyHero)
@@ -297,25 +296,20 @@ function X.ConsiderSmokeScreen()
 			and not enemyHero:IsSilenced()
             then
 				local bIsChasingMe = J.IsChasingTarget(enemyHero, bot)
-                if bIsChasingMe
-                or (#nEnemyHeroes > #nAllyHeroes and enemyHero:GetAttackTarget() == bot)
-				or (botHP < 0.5)
-                then
-                    if J.IsInRange(bot, enemyHero, nRadius) then
-						return BOT_ACTION_DESIRE_HIGH, bot:GetLocation()
+				if J.IsInRange(bot, enemyHero, nRadius) then
+					return BOT_ACTION_DESIRE_HIGH, bot:GetLocation()
+				else
+					if bIsChasingMe then
+						return BOT_ACTION_DESIRE_HIGH, (bot:GetLocation() + enemyHero:GetLocation()) / 2
 					else
-						if bIsChasingMe then
-							return BOT_ACTION_DESIRE_HIGH, (bot:GetLocation() + enemyHero:GetLocation()) / 2
-						else
-							return BOT_ACTION_DESIRE_HIGH, enemyHero:GetLocation()
-						end
+						return BOT_ACTION_DESIRE_HIGH, enemyHero:GetLocation()
 					end
-                end
+				end
             end
         end
 	end
 
-	if fManaAfter > fManaThreshold2 then
+	if fManaAfter > fManaThreshold1 then
 		for _, id in pairs( GetTeamPlayers(GetOpposingTeam())) do
 			if IsHeroAlive(id) then
 				local info = GetHeroLastSeenInfo(id)
@@ -361,14 +355,12 @@ function X.ConsiderBlinkStrike()
 	local nManaCost = BlinkStrike:GetManaCost()
 	local fManaAfter = J.GetManaAfter(nManaCost)
 	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {SmokeScreen, TricksOfTheTrade})
-	local fManaThreshold2 = J.GetManaThreshold(bot, nManaCost, {SmokeScreen, BlinkStrike, TricksOfTheTrade})
 
 	if J.IsGoingOnSomeone(bot) then
 		if J.IsValidHero(botTarget)
 		and J.CanBeAttacked(botTarget)
 		and J.IsInRange(bot, botTarget, nCastRange + 300)
-		and GetUnitToLocationDistance(botTarget, J.GetEnemyFountain()) > 600
-		and J.CanCastOnNonMagicImmune(botTarget)
+		and GetUnitToLocationDistance(botTarget, J.GetEnemyFountain()) > 1200
 		and J.CanCastOnTargetAdvanced(botTarget)
 		then
 			if (not J.IsInRange(bot, botTarget, bot:GetAttackRange() + 200))
@@ -380,20 +372,16 @@ function X.ConsiderBlinkStrike()
 	end
 
 	if J.IsRetreating(bot) and not J.IsRealInvisible(bot) and bot:WasRecentlyDamagedByAnyHero(3.0) then
-		local nAllyCreeps = bot:GetNearbyCreeps(nCastRange, false)
-		local nEnemyCreeps = bot:GetNearbyCreeps(nCastRange, true)
-
-		local nAllyUnits = J.CombineTwoTable(nAllyHeroes, nAllyCreeps)
-		local nAllUnits = J.CombineTwoTable(nAllyUnits, nEnemyCreeps)
-
 		local targetUnit = nil
 		local targetUnitDistance = math.huge
-		for _, unit in pairs(nAllUnits) do
-			if J.IsValid(unit)
+		local unitList = GetUnitList(UNIT_LIST_ALL)
+		for _, unit in pairs(unitList) do
+			if  J.IsValid(unit)
+			and (unit:IsCreep() or unit:IsHero())
 			and J.IsInRange(bot, unit, nCastRange)
 			and not J.IsInRange(bot, unit, nCastRange / 2)
 			and J.CanCastOnTargetAdvanced(unit)
-			and J.GetDistanceFromAllyFountain( unit ) < targetUnitDistance
+			and J.GetDistanceFromAllyFountain(unit) < targetUnitDistance
 			then
 				local unitDistance = GetUnitToLocationDistance(bot, J.GetTeamFountain())
 				if unitDistance < targetUnitDistance then
@@ -411,19 +399,14 @@ function X.ConsiderBlinkStrike()
 				and not J.IsDisabled(enemyHero)
 				and not enemyHero:IsDisarmed()
 				then
-					if J.IsChasingTarget(enemyHero, bot)
-					or (#nEnemyHeroes > #nAllyHeroes and enemyHero:GetAttackTarget() == bot)
-					or (botHP < 0.5)
-					then
-						return BOT_ACTION_DESIRE_HIGH, targetUnit
-					end
+					return BOT_ACTION_DESIRE_HIGH, targetUnit
 				end
 			end
 		end
 	end
 
-	if (J.IsPushing(bot) and fManaAfter > fManaThreshold2 and #nEnemyHeroes == 0 and not J.IsEarlyGame())
-	or (J.IsDefending(bot) and fManaAfter > fManaThreshold1 and #nEnemyHeroes == 0 and not J.IsEarlyGame())
+	if (J.IsPushing(bot) and fManaAfter > fManaThreshold1 + 0.1 and #nEnemyHeroes == 0 and not J.IsEarlyGame())
+	or (J.IsDefending(bot) and fManaAfter > fManaThreshold1 + 0.1 and #nEnemyHeroes == 0 and not J.IsEarlyGame())
 	then
 		if J.IsValid(botTarget)
 		and J.CanBeAttacked(botTarget)
@@ -477,11 +460,11 @@ function X.ConsiderTricksOfTheTrade()
 	local fDamageReduction = TricksOfTheTrade:GetSpecialValueInt('damage_pct') / 100
 	local nManaCost = TricksOfTheTrade:GetManaCost()
 	local fManaAfter = J.GetManaAfter(nManaCost)
-	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {BlinkStrike, SmokeScreen})
-	local fManaThreshold2 = J.GetManaThreshold(bot, nManaCost, {SmokeScreen, BlinkStrike, TricksOfTheTrade})
+	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {SmokeScreen, BlinkStrike})
 
 	if (J.IsNotAttackProjectileIncoming(bot, 1000))
 	or (J.GetAttackProjectileDamageByRange(bot, 1600) > bot:GetHealth())
+	or (J.IsStunProjectileIncoming(bot, 450))
 	then
 		return BOT_ACTION_DESIRE_HIGH, J.VectorTowards(bot:GetLocation(), J.GetTeamFountain(), nCastRange)
 	end
@@ -511,7 +494,7 @@ function X.ConsiderTricksOfTheTrade()
 	end
 
 	if J.IsGoingOnSomeone(bot) then
-		if  J.IsValidTarget(botTarget)
+		if  J.IsValidHero(botTarget)
         and J.CanBeAttacked(botTarget)
         and J.IsInRange(bot, botTarget, nCastRange)
 		and not J.IsSuspiciousIllusion(botTarget)
@@ -534,16 +517,16 @@ function X.ConsiderTricksOfTheTrade()
 			and not enemyHero:IsDisarmed()
 			then
 				if J.IsChasingTarget(enemyHero, bot)
-				or (#nEnemyHeroes > #nAllyHeroes and enemyHero:GetAttackTarget() == bot)
+				or (#nEnemyHeroes > #nAllyHeroes)
 				or (botHP < 0.5)
 				then
-					return BOT_ACTION_DESIRE_HIGH, J.VectorTowards(bot:GetLocation(), J.GetTeamFountain(), nCastRange)
 				end
+				return BOT_ACTION_DESIRE_HIGH, J.VectorTowards(bot:GetLocation(), J.GetTeamFountain(), nCastRange)
 			end
 		end
 	end
 
-    local nEnemyCreeps = bot:GetNearbyCreeps(nCastRange, true)
+    local nEnemyCreeps = bot:GetNearbyCreeps(Min(nCastRange, 1600), true)
 	local bHasFarmingItem = J.HasItem(bot, 'item_maelstrom') or J.HasItem(bot, 'item_mjollnir') or J.HasItem(bot, 'item_bfury') or J.HasItem(bot, 'item_radiance')
 
     if J.IsPushing(bot) and #nAllyHeroes <= 3 and bAttacking and fManaAfter > fManaThreshold1 and #nEnemyHeroes == 0 then

@@ -99,7 +99,7 @@ local sHeroList = {										-- pos    1,   2,   3,   4,   5
 	{name = 'npc_dota_hero_pangolier', 					role = {  0, 100, 100,   0,   0},	weak = false},
 	{name = 'npc_dota_hero_phantom_lancer', 			role = {100,   0,   0,   0,   0},	weak = false},
 	{name = 'npc_dota_hero_phantom_assassin', 			role = {100,   0,   0,   0,   0},	weak = false},
-	{name = 'npc_dota_hero_phoenix', 					role = {  0,   0,   0, 100, 100},	weak = false},
+	{name = 'npc_dota_hero_phoenix', 					role = {  0,  80,   0, 100, 100},	weak = false},
 	{name = 'npc_dota_hero_primal_beast', 				role = {  0, 100,  90,   0,   0},	weak = false},
 	{name = 'npc_dota_hero_puck', 						role = {  0, 100,   0,   0,   0},	weak = false},
 	{name = 'npc_dota_hero_pudge', 						role = {  0, 100,  90,  95,  85},	weak = false},
@@ -327,10 +327,37 @@ function X.GetRandomNameList( sStarList )
 	return sNameList
 end
 
-local tIDs = U.shuffleWeighted({1,2,3,4,5}, {1,1.5,3,6,6})
-print(tIDs[1],tIDs[2],tIDs[3],tIDs[4],tIDs[5], GetTeam())
-print('====')
+local IDMap = {
+	[1] = 3,
+	[2] = 1,
+	[3] = 2,
+	[4] = 5,
+	[5] = 4,
+}
+
+local tIDs = {}
+local bShuffleSelection = false
 function Think()
+	if not bShuffleSelection and GetTeamPlayers(GetTeam()) ~= nil then
+		local posWeights = { [1] = 1, [2] = 1.5, [3] = 3, [4] = 6, [5] = 6, }
+		local available = { pos = {}, weights = {}}
+		for i = 1, #GetTeamPlayers(GetTeam()) do
+			for k, v in pairs(IDMap) do
+				if i == v then
+					available.pos[#available.pos + 1] = k
+					available.weights[#available.weights + 1] = posWeights[k]
+				end
+			end
+		end
+
+		tIDs = U.shuffleWeighted(available.pos, available.weights)
+		for i = 1, #tIDs do print(tIDs[i]) end
+		print('====')
+		bShuffleSelection = true
+	end
+
+	if #tIDs == 0 then return end
+
 	if GetGameState() == GAME_STATE_HERO_SELECTION then
 		InstallChatCallback( function ( tChat ) X.SetChatHeroBan( tChat.string ) end )
 	end
@@ -345,29 +372,20 @@ function Think()
 
 	-- init IDs for Dire
 	local nIDs = GetTeamPlayers(GetTeam())
-	if GetTeam() == TEAM_DIRE
-	then
+	if GetTeam() == TEAM_DIRE then
 		-- Update Lane Roles
-		local pRoles = {
-			[nIDs[1]] = LANE_MID,
-			[nIDs[2]] = LANE_BOT,
-			[nIDs[3]] = LANE_TOP,
-			[nIDs[4]] = LANE_TOP,
-			[nIDs[5]] = LANE_BOT,
-		}
+		local pRoles = {}
+		local laneOrder = { LANE_MID, LANE_BOT, LANE_TOP, LANE_TOP, LANE_BOT }
+		for i = 1, #nIDs do pRoles[nIDs[i]] = laneOrder[i] end
 
 		local temp = {}
 		for i, v in ipairs(nIDs) do temp[i] = v end
 
 		table.sort(temp)
 
-		tLaneAssignList = {
-			[1] = pRoles[temp[1]],
-			[2] = pRoles[temp[2]],
-			[3] = pRoles[temp[3]],
-			[4] = pRoles[temp[4]],
-			[5] = pRoles[temp[5]],
-		}
+		for i = 1, #pRoles do
+			if temp[i] then tLaneAssignList[i] = pRoles[temp[i]] end
+		end
 	end
 
 	if nDelayTime == nil then nDelayTime = GameTime() fLastRand = RandomInt(12, 34) / 10 end
@@ -375,16 +393,12 @@ function Think()
 
 	local nOwnTeam = X.GetCurrentTeam(GetTeam())
 	local nEnmTeam = X.GetCurrentTeam(GetOpposingTeam())
+	local ownMax = #GetTeamPlayers(GetTeam())
+	local enmMax = #GetTeamPlayers(GetOpposingTeam())
+	local ownRatio = #nOwnTeam / ownMax
+	local enmRatio = #nEnmTeam / enmMax
 
-	local IDMap = {
-		[1] = 3,
-		[2] = 1,
-		[3] = 2,
-		[4] = 5,
-		[5] = 4,
-	}
-
-	if #nOwnTeam <= #nEnmTeam then
+	if ownRatio <= enmRatio or (--[[GetGameMode() == 23 and]] ownMax ~= enmMax) then -- if imbalance, just pick; scoring below will be useless if not early picking though
 		for i = 1, #nIDs do
 			local botID = nIDs[IDMap[tIDs[i]]]
 			local poolID = IDMap[tIDs[i]]

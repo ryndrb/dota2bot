@@ -40,7 +40,7 @@ local HeroBuild = {
                 }
             },
             ['ability'] = {
-                [1] = {1,2,1,3,1,7,1,2,2,2,7,3,3,3,7},
+                [1] = {1,2,1,3,1,6,1,2,2,2,6,3,3,3,6},
             },
             ['buy_list'] = {
                 "item_tango",
@@ -97,7 +97,7 @@ local HeroBuild = {
                 }
             },
             ['ability'] = {
-                [1] = {1,2,1,3,1,7,1,2,2,2,7,3,3,3,7},
+                [1] = {1,2,1,3,1,6,1,2,2,2,6,3,3,3,6},
             },
             ['buy_list'] = {
                 "item_tango",
@@ -137,7 +137,7 @@ local HeroBuild = {
                 }
             },
             ['ability'] = {
-                [1] = {1,2,1,3,1,7,1,2,2,2,7,3,3,3,7},
+                [1] = {1,2,1,3,1,6,1,2,2,2,6,3,3,3,6},
             },
             ['buy_list'] = {
                 "item_tango",
@@ -306,7 +306,7 @@ function X.ConsiderAcornShot()
         return BOT_ACTION_DESIRE_NONE, 0, true
     end
 
-	local nCastRange = J.GetProperCastRange(false, bot, AcornShot:GetCastRange())
+	local nCastRange = AcornShot:GetCastRange()
 	local nCastPoint = AcornShot:GetCastPoint()
 	local nRadius = AcornShot:GetSpecialValueInt('bounce_range')
     local nBounceCount = AcornShot:GetSpecialValueInt('bounce_count')
@@ -316,9 +316,7 @@ function X.ConsiderAcornShot()
     local nAbilityLevel = AcornShot:GetLevel()
     local nManaCost = AcornShot:GetManaCost()
     local fManaAfter = J.GetManaAfter(nManaCost)
-    local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {Bushwhack, Scurry, Sharpshooter})
-    local fManaThreshold2 = J.GetManaThreshold(bot, nManaCost, {AcornShot, Bushwhack, Scurry, Sharpshooter})
-    local fManaThreshold3 = J.GetManaThreshold(bot, nManaCost, {Sharpshooter})
+    local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {Bushwhack, Scurry, Decoy, HuntersBoomerang, Sharpshooter})
 
     for _, enemyHero in pairs(nEnemyHeroes) do
         if  J.IsValidHero(enemyHero)
@@ -373,6 +371,7 @@ function X.ConsiderAcornShot()
                 and not J.IsInEtherealForm(enemy)
                 and not J.IsDisabled(enemy)
                 and not enemy:IsDisarmed()
+                and allyHero:WasRecentlyDamagedByHero(enemy, 2.0)
                 then
                     local nDelay = (GetUnitToUnitDistance(bot, enemy) / nSpeed) + nCastPoint
                     local nLocationAoE = bot:FindAoELocation(true, true, enemy:GetLocation(), 0, nRadius, nDelay, 0)
@@ -394,7 +393,6 @@ function X.ConsiderAcornShot()
         and not J.IsInEtherealForm(botTarget)
         and not botTarget:HasModifier('modifier_abaddon_borrowed_time')
         and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
-        and fManaAfter > fManaThreshold3
 		then
             local nTrees = botTarget:GetNearbyTrees(nRadius)
             if J.IsInRange(bot, botTarget, nCastRange) then
@@ -418,7 +416,7 @@ function X.ConsiderAcornShot()
 		end
 	end
 
-    if J.IsRetreating(bot) and not J.IsRealInvisible(bot) and bot:WasRecentlyDamagedByAnyHero(4.0) then
+    if J.IsRetreating(bot) and not J.IsRealInvisible(bot) then
         for _, enemy in pairs(nEnemyHeroes) do
             if J.IsValidHero(enemy)
             and J.CanBeAttacked(enemy)
@@ -426,24 +424,21 @@ function X.ConsiderAcornShot()
             and J.CanCastOnNonMagicImmune(enemy)
             and not J.IsDisabled(enemy)
             and not enemy:IsDisarmed()
+            and bot:WasRecentlyDamagedByHero(enemy, 2.0)
             then
-                if J.IsChasingTarget(enemy, bot)
-                or (#nEnemyHeroes > #nAllyHeroes and enemy:GetAttackTarget() == bot)
-                then
-                    local nTrees = enemy:GetNearbyTrees(nRadius)
-                    if #nTrees > 0 then
-                        return BOT_ACTION_DESIRE_HIGH, enemy, true
-                    else
-                        return BOT_ACTION_DESIRE_HIGH, enemy:GetLocation(), false
-                    end
+                local nTrees = enemy:GetNearbyTrees(nRadius)
+                if #nTrees > 0 then
+                    return BOT_ACTION_DESIRE_HIGH, enemy, true
+                else
+                    return BOT_ACTION_DESIRE_HIGH, enemy:GetLocation(), false
                 end
             end
         end
 	end
 
-    local nEnemyCreeps = bot:GetNearbyCreeps(nCastRange, true)
+    local nEnemyCreeps = bot:GetNearbyCreeps(Min(nCastRange, 1600), true)
 
-    if J.IsPushing(bot) and #nAllyHeroes <= 3 and bAttacking and fManaAfter > fManaThreshold2 and #nEnemyHeroes <= 1
+    if J.IsPushing(bot) and #nAllyHeroes <= 3 and bAttacking and fManaAfter > fManaThreshold1 + 0.1 and #nEnemyHeroes <= 1
     and nAbilityLevel >= 2
     and (J.IsCore(bot) or not J.IsThereCoreNearby(800))
     then
@@ -526,16 +521,15 @@ function X.ConsiderBushwhack()
         return BOT_ACTION_DESIRE_NONE, 0, false
     end
 
-	local nCastRange = J.GetProperCastRange(false, bot, Bushwhack:GetCastRange())
+	local nCastRange = Bushwhack:GetCastRange()
     local nCastPoint = Bushwhack:GetCastPoint()
     local nDamage = Bushwhack:GetSpecialValueInt('total_damage')
 	local nRadius = Bushwhack:GetSpecialValueInt('trap_radius')
     local nSpeed = Bushwhack:GetSpecialValueInt('projectile_speed')
     local nManaCost = Bushwhack:GetManaCost()
     local fManaAfter = J.GetManaAfter(nManaCost)
-    local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {AcornShot, Scurry, Sharpshooter})
-    local fManaThreshold2 = J.GetManaThreshold(bot, nManaCost, {AcornShot, Bushwhack, Scurry, Sharpshooter})
-    local fManaThreshold3 = J.GetManaThreshold(bot, nManaCost, {Sharpshooter})
+    local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {AcornShot, Scurry, Decoy, HuntersBoomerang, Sharpshooter})
+    local fManaThreshold2 = J.GetManaThreshold(bot, nManaCost, {Sharpshooter})
 
     local combo = { canCast = false, neededMana = 0 }
     if J.CanCastAbility(AcornShot) then
@@ -561,7 +555,7 @@ function X.ConsiderBushwhack()
                     if #nTrees > 0 then
                         return BOT_ACTION_DESIRE_HIGH, enemyHero:GetLocation(), false
                     else
-                        if combo.canCast and J.GetManaAfter(combo.neededMana) > fManaThreshold3 then
+                        if combo.canCast and J.GetManaAfter(combo.neededMana) > fManaThreshold2 then
                             return BOT_ACTION_DESIRE_HIGH, enemyHero:GetLocation(), true
                         end
                     end
@@ -581,7 +575,7 @@ function X.ConsiderBushwhack()
                 end
 
                 if  GetUnitToLocationDistance(bot, vLocation) <= nCastRange
-                and combo.canCast and J.GetManaAfter(combo.neededMana) > fManaThreshold3
+                and combo.canCast and J.GetManaAfter(combo.neededMana) > fManaThreshold2
                 then
                     local nBaseDamagePct = AcornShot:GetSpecialValueInt('base_damage_pct')
                     local nDamage_Acorn = AcornShot:GetSpecialValueInt('acorn_shot_damage') + (bot:GetAttackDamage() * (nBaseDamagePct / 100))
@@ -601,19 +595,20 @@ function X.ConsiderBushwhack()
         and J.CanCastOnNonMagicImmune(botTarget)
         and J.IsInRange(bot, botTarget, nCastRange)
         and not J.IsDisabled(botTarget)
+        and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
 		then
             local nTrees = botTarget:GetNearbyTrees(nRadius)
             if #nTrees > 0 then
                 return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation(), false
             else
-                if combo.canCast and J.GetManaAfter(combo.neededMana) > fManaThreshold3 then
+                if combo.canCast and J.GetManaAfter(combo.neededMana) > fManaThreshold2 then
                     return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation(), true
                 end
             end
 		end
 	end
 
-	if J.IsRetreating(bot) and not J.IsRealInvisible(bot) then
+	if J.IsRetreating(bot) and not J.IsRealInvisible(bot) and J.IsRunning(bot) then
         for _, enemy in pairs(nEnemyHeroes) do
             if J.IsValidHero(enemy)
             and J.CanBeAttacked(enemy)
@@ -622,23 +617,19 @@ function X.ConsiderBushwhack()
             and bot:WasRecentlyDamagedByHero(enemy, 4.0)
             and not J.IsDisabled(enemy)
             then
-                if J.IsChasingTarget(enemy, bot)
-                or (#nEnemyHeroes > #nAllyHeroes and enemy:GetAttackTarget() == bot)
-                then
-                    local nTrees = enemy:GetNearbyTrees(nRadius)
-                    if #nTrees > 0 then
-                        return BOT_ACTION_DESIRE_HIGH, enemy:GetLocation(), false
-                    else
-                        if combo.canCast and J.GetManaAfter(combo.neededMana) > fManaThreshold3 then
-                            return BOT_ACTION_DESIRE_HIGH, enemy:GetLocation(), true
-                        end
+                local nTrees = enemy:GetNearbyTrees(nRadius)
+                if #nTrees > 0 then
+                    return BOT_ACTION_DESIRE_HIGH, enemy:GetLocation(), false
+                else
+                    if combo.canCast and J.GetManaAfter(combo.neededMana) > fManaThreshold2 then
+                        return BOT_ACTION_DESIRE_HIGH, enemy:GetLocation(), true
                     end
                 end
             end
         end
 	end
 
-    if not J.IsRetreating(bot) and not J.IsRealInvisible(bot) and fManaAfter > fManaThreshold3 then
+    if not J.IsRetreating(bot) and not J.IsRealInvisible(bot) and fManaAfter > fManaThreshold2 then
         for _, allyHero in pairs(nAllyHeroes) do
             if  J.IsValidHero(allyHero)
             and J.CanBeAttacked(allyHero)
@@ -664,7 +655,7 @@ function X.ConsiderBushwhack()
         end
     end
 
-    local nEnemyCreeps = bot:GetNearbyCreeps(nCastRange, true)
+    local nEnemyCreeps = bot:GetNearbyCreeps(Min(nCastRange, 1600), true)
 
     if J.IsPushing(bot) and bAttacking and #nEnemyHeroes == 0 then
 		for _, creep in pairs(nEnemyCreeps) do
@@ -675,7 +666,7 @@ function X.ConsiderBushwhack()
                         return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc, false
                     end
 
-                    if combo.canCast and J.GetManaAfter(combo.neededMana) > fManaThreshold3 and #nAllyHeroes <= 3 then
+                    if combo.canCast and J.GetManaAfter(combo.neededMana) > fManaThreshold2 and #nAllyHeroes <= 3 then
                         return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc, true
                     end
                 end
@@ -683,7 +674,7 @@ function X.ConsiderBushwhack()
         end
     end
 
-    if J.IsDefending(bot) and bAttacking and fManaAfter > fManaThreshold3 and #nEnemyHeroes == 0 then
+    if J.IsDefending(bot) and bAttacking and fManaAfter > fManaThreshold2 and #nEnemyHeroes == 0 then
 		for _, creep in pairs(nEnemyCreeps) do
             if J.IsValid(creep) and J.CanBeAttacked(creep) and not J.IsRunning(creep) then
                 local nLocationAoE = bot:FindAoELocation(true, false, creep:GetLocation(), 0, nRadius, 0, 0)
@@ -705,7 +696,7 @@ function X.ConsiderBushwhack()
         end
     end
 
-    if J.IsFarming(bot) and bAttacking and fManaAfter > fManaThreshold3 then
+    if J.IsFarming(bot) and bAttacking and fManaAfter > fManaThreshold1 then
 		for _, creep in pairs(nEnemyCreeps) do
             if J.IsValid(creep) and J.CanBeAttacked(creep) and not J.IsRunning(creep) then
                 local nLocationAoE = bot:FindAoELocation(true, false, creep:GetLocation(), 0, nRadius, 0, 0)
@@ -716,7 +707,7 @@ function X.ConsiderBushwhack()
                         return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc, false
                     end
 
-                    if combo.canCast and J.GetManaAfter(combo.neededMana) > fManaThreshold3 then
+                    if combo.canCast and J.GetManaAfter(combo.neededMana) > fManaThreshold2 then
                         return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc, true
                     end
                 end
@@ -748,8 +739,8 @@ function X.ConsiderScurry()
             and not enemy:IsDisarmed()
             then
                 if (J.IsChasingTarget(enemy, bot) and bot:WasRecentlyDamagedByAnyHero(4.0))
-                or (#nEnemyHeroes > #nAllyHeroes and enemy:GetAttackTarget() == bot)
-                or (botHP < 0.5 and enemy:GetAttackTarget() == bot)
+                or (#nEnemyHeroes > #nAllyHeroes)
+                or (botHP < 0.5 and J.IsRunning(bot))
                 then
                     return BOT_ACTION_DESIRE_HIGH
                 end
@@ -775,7 +766,7 @@ function X.ConsiderDecoy()
                 and J.CanBeAttacked(enemy)
                 and J.CanCastOnNonMagicImmune(enemy)
                 and J.IsInRange(bot, enemy, nCastRange)
-                and bot:IsFacingLocation(enemy:GetLocation(), 30)
+                and bot:IsFacingLocation(enemy:GetLocation(), 15)
                 and not J.IsChasingTarget(bot, enemy)
                 then
                     local enemyName = enemy:GetUnitName()
@@ -814,14 +805,14 @@ function X.ConsiderDecoy()
 
             if  J.IsValidHero(botTarget)
             and J.CanBeAttacked(botTarget)
-            and J.CanCastOnNonMagicImmune(botTarget)
             and J.IsInRange(bot, botTarget, Min(1600, nCastRange))
+            and J.CanCastOnNonMagicImmune(botTarget)
             and not botTarget:HasModifier('modifier_abaddon_borrowed_time')
             and not botTarget:HasModifier('modifier_dazzle_shallow_grave')
             and not botTarget:HasModifier('modifier_oracle_false_promise_timer')
             and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
             and not botTarget:HasModifier('modifier_templar_assassin_refraction_absorb')
-            and bot:IsFacingLocation(botTarget:GetLocation(), 30)
+            and bot:IsFacingLocation(botTarget:GetLocation(), 15)
             then
                 return BOT_ACTION_DESIRE_HIGH
             end
@@ -836,14 +827,14 @@ function X.ConsiderHuntersBoomerang()
         return BOT_ACTION_DESIRE_NONE, nil
     end
 
-    local nCastRange = J.GetProperCastRange(false, bot, HuntersBoomerang:GetCastRange())
+    local nCastRange = HuntersBoomerang:GetCastRange()
     local nCastPoint = HuntersBoomerang:GetCastPoint()
     local nDamage = HuntersBoomerang:GetSpecialValueInt('damage')
     local nRadius = HuntersBoomerang:GetSpecialValueInt('radius')
     local nSpeed = HuntersBoomerang:GetSpecialValueInt('speed')
     local nManaCost = HuntersBoomerang:GetManaCost()
     local fManaAfter = J.GetManaAfter(nManaCost)
-    local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {AcornShot, Bushwhack, Sharpshooter})
+    local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {AcornShot, Bushwhack, Scurry, Decoy, Sharpshooter})
 
     for _, enemy in pairs(nEnemyHeroes) do
         if  J.IsValidHero(enemy)
@@ -858,7 +849,6 @@ function X.ConsiderHuntersBoomerang()
         and not enemy:HasModifier('modifier_oracle_false_promise_timer')
         and not enemy:HasModifier('modifier_templar_assassin_refraction_absorb')
         and not J.IsRetreating(bot)
-        and fManaAfter > fManaThreshold1
         then
             local eta = (GetUnitToUnitDistance(bot, enemy) / nSpeed) + nCastPoint
             if J.WillKillTarget(enemy, nDamage, DAMAGE_TYPE_MAGICAL, eta) then

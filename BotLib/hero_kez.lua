@@ -362,8 +362,7 @@ function X.ConsiderEchoSlash()
     local nStrikeCount = EchoSlash:GetSpecialValueInt('katana_strikes')
     local nManaCost = EchoSlash:GetManaCost()
     local fManaAfter = J.GetManaAfter(nManaCost)
-    local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {RaptorDance, FalconRush, TalonToss, RavensVeil})
-    local fManaThreshold2 = J.GetManaThreshold(bot, nManaCost, {EchoSlash, RaptorDance, FalconRush, TalonToss, RavensVeil})
+    local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {GrapplingClaw, KazuraiKatana, RaptorDance})
 
     for _, enemy in pairs(nEnemyHeroes) do
         if J.IsValidHero(enemy)
@@ -403,13 +402,12 @@ function X.ConsiderEchoSlash()
         end
     end
 
-    if J.IsRetreating(bot) and not J.IsRealInvisible(bot) and bot:WasRecentlyDamagedByAnyHero(3.0) and J.CanBeAttacked(bot) then
+    if J.IsRetreating(bot) and not J.IsRealInvisible(bot) and bot:WasRecentlyDamagedByAnyHero(3.0) and J.CanBeAttacked(bot) and J.IsRunning(bot) then
         for _, enemyHero in pairs(nEnemyHeroes) do
             if J.IsValidHero(enemyHero)
-            and J.IsInRange(bot, enemyHero, 800)
-            and not J.IsSuspiciousIllusion(enemyHero)
+            and J.IsInRange(bot, enemyHero, 1200)
             then
-                if J.IsChasingTarget(enemyHero, bot) or (#nEnemyHeroes > #nAllyHeroes and enemyHero:GetAttackTarget() == bot) then
+                if J.IsChasingTarget(enemyHero, bot) or (#nEnemyHeroes > #nAllyHeroes) then
                     local vAwayLocation = J.VectorAway(bot:GetLocation(), enemyHero:GetLocation(), 800)
                     if bot:IsFacingLocation(J.GetTeamFountain(), 45) or bot:IsFacingLocation(vAwayLocation, 45) then
                         return BOT_ACTION_DESIRE_HIGH
@@ -421,7 +419,7 @@ function X.ConsiderEchoSlash()
 
     local nEnemyCreeps = bot:GetNearbyCreeps(nDistance, true)
 
-    if J.IsPushing(bot) and fManaAfter > fManaThreshold2 and #nEnemyHeroes <= 1 and #nAllyHeroes <= 3 then
+    if J.IsPushing(bot) and fManaAfter > fManaThreshold1 and #nEnemyHeroes <= 1 and #nAllyHeroes <= 3 then
         local count = 0
         for _, creep in pairs(nEnemyCreeps) do
             if J.IsValid(creep) and J.CanBeAttacked(creep) and not J.IsRunning(creep) then
@@ -436,7 +434,7 @@ function X.ConsiderEchoSlash()
         end
     end
 
-    if J.IsDefending(bot) and fManaAfter > fManaThreshold2 then
+    if J.IsDefending(bot) and fManaAfter > fManaThreshold1 then
         local count = 0
         if #nEnemyHeroes == 0 and #nAllyHeroes <= 2 then
             for _, creep in pairs(nEnemyCreeps) do
@@ -487,7 +485,7 @@ function X.ConsiderEchoSlash()
         and bot:IsFacingLocation(botTarget:GetLocation(), 15)
         and J.IsInRange(bot, botTarget, nDistance)
         and bAttacking
-        and fManaAfter > fManaThreshold2
+        and fManaAfter > fManaThreshold1
         then
             return BOT_ACTION_DESIRE_HIGH
         end
@@ -499,7 +497,7 @@ function X.ConsiderEchoSlash()
         and bot:IsFacingLocation(botTarget:GetLocation(), 15)
         and J.IsInRange(bot, botTarget, nDistance)
         and bAttacking
-        and fManaAfter > fManaThreshold2
+        and fManaAfter > fManaThreshold1
         then
             return BOT_ACTION_DESIRE_HIGH
         end
@@ -513,7 +511,7 @@ function X.ConsiderGrapplingClaw()
         return BOT_ACTION_DESIRE_NONE, nil, ''
     end
 
-    local nCastRange = J.GetProperCastRange(false, bot, GrapplingClaw:GetCastRange())
+    local nCastRange = GrapplingClaw:GetCastRange()
     local nManaCost = GrapplingClaw:GetManaCost()
     local fManaAfter = J.GetManaAfter(nManaCost)
 
@@ -551,11 +549,11 @@ function X.ConsiderGrapplingClaw()
 
         for _, enemyHero in pairs(nEnemyHeroes) do
 			if J.IsValid(enemyHero)
-			and J.IsInRange(bot, enemyHero, 1200)
+			and J.IsInRange(bot, enemyHero, 1600)
 			and not enemyHero:IsDisarmed()
 			then
 				if J.IsChasingTarget(enemyHero, bot)
-				or (#nEnemyHeroes > #nAllyHeroes and enemyHero:GetAttackTarget() == bot)
+				or (#nEnemyHeroes > #nAllyHeroes)
 				then
 					if hTarget then
 						return BOT_ACTION_DESIRE_HIGH, hTarget, sTargetType
@@ -739,7 +737,7 @@ function X.ConsiderKazuraiKatana()
                 return BOT_ACTION_DESIRE_HIGH, enemy
             end
 
-            local nDamage = J.GetModifierCount(bot, 'modifier_kez_katana_bleed')
+            local nDamage = J.GetModifierCount(enemy, 'modifier_kez_katana_bleed')
             if J.WillKillTarget(enemy, nDamage, DAMAGE_TYPE_PHYSICAL, nDuration)
             and not enemy:HasModifier('modifier_abaddon_borrowed_time')
             and not enemy:HasModifier('modifier_dazzle_shallow_grave')
@@ -765,7 +763,7 @@ function X.ConsiderKazuraiKatana()
         and not botTarget:HasModifier('modifier_troll_warlord_battle_trance')
         and not botTarget:HasModifier('modifier_ursa_enrage')
         then
-            local nDamage = J.GetModifierCount(bot, 'modifier_kez_katana_bleed')
+            local nDamage = J.GetModifierCount(botTarget, 'modifier_kez_katana_bleed')
             if nDamage > 300 and J.GetHP(botTarget) < 0.5 then
                 return BOT_ACTION_DESIRE_HIGH, botTarget
             end
@@ -788,32 +786,16 @@ function X.ConsiderRaptorDance()
     local nStrikesInterval = RaptorDance:GetSpecialValueFloat('strike_interval')
     local nManaCost = RaptorDance:GetManaCost()
     local fManaAfter = J.GetManaAfter(nManaCost)
-    local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {EchoSlash, FalconRush, TalonToss, RavensVeil})
+    local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {EchoSlash, GrapplingClaw, KazuraiKatana})
 
-    local nEnemyHeroesTargetingMe = J.GetHeroesTargetingUnit(nEnemyHeroes, bot)
-
-    for _, enemy in pairs(nEnemyHeroes) do
-        if J.IsValidHero(enemy)
-        and J.IsInRange(bot, enemy, nRadius * 0.8)
-        and J.CanBeAttacked(enemy)
-        and not J.IsChasingTarget(bot, enemy)
-        and not enemy:HasModifier('modifier_abaddon_borrowed_time')
-        and not enemy:HasModifier('modifier_dazzle_shallow_grave')
-        and not enemy:HasModifier('modifier_necrolyte_reapers_scythe')
-        and not enemy:HasModifier('modifier_oracle_false_promise_timer')
-        and not enemy:HasModifier('modifier_troll_warlord_battle_trance')
-        and not enemy:HasModifier('modifier_ursa_enrage')
-        and not (#nAllyHeroes >= #nEnemyHeroes + 3)
-        then
-            if J.WillKillTarget(enemy, (nBaseDamage + fMaxHealthAsDamagePercentage * enemy:GetMaxHealth()) * nStrikesCount, DAMAGE_TYPE_PURE, nCastPoint + (nStrikesCount * nStrikesInterval)) then
-                return BOT_ACTION_DESIRE_HIGH
-            end
+    if not bot:IsMagicImmune() then
+        if J.IsStunProjectileIncoming(bot, 800) then
+            return BOT_ACTION_DESIRE_NONE
         end
     end
 
-    if J.IsInTeamFight(bot, 1200) then
-        if #nEnemyHeroesTargetingMe <= 2
-        or bot:IsMagicImmune()
+    if J.IsInTeamFight(bot, 1200) and botHP < 0.75 then
+        if bot:IsMagicImmune()
         or bot:IsInvulnerable()
         or bot:HasModifier('modifier_dazzle_shallow_grave')
         or bot:HasModifier('modifier_oracle_false_promise_timer')
@@ -821,8 +803,8 @@ function X.ConsiderRaptorDance()
             local count = 0
             for _, enemyHero in pairs(nEnemyHeroes) do
                 if J.IsValidHero(enemyHero)
-                and J.IsInRange(bot, enemyHero, nRadius * 0.8)
                 and J.CanBeAttacked(enemyHero)
+                and J.IsInRange(bot, enemyHero, nRadius * 0.8)
                 and not J.IsChasingTarget(bot, enemyHero)
                 and not enemyHero:HasModifier('modifier_abaddon_borrowed_time')
                 and not enemyHero:HasModifier('modifier_dazzle_shallow_grave')
@@ -837,10 +819,10 @@ function X.ConsiderRaptorDance()
         end
     end
 
-    if J.IsGoingOnSomeone(bot) then
+    if J.IsGoingOnSomeone(bot) and botHP < 0.75 then
         if J.IsValidHero(botTarget)
-        and J.IsInRange(bot, botTarget, nRadius * 0.75)
         and J.CanBeAttacked(botTarget)
+        and J.IsInRange(bot, botTarget, nRadius * 0.75)
         and not J.IsChasingTarget(bot, botTarget)
         and not botTarget:HasModifier('modifier_abaddon_borrowed_time')
         and not botTarget:HasModifier('modifier_dazzle_shallow_grave')
@@ -850,11 +832,10 @@ function X.ConsiderRaptorDance()
         and not botTarget:HasModifier('modifier_ursa_enrage')
         then
             local nInRangeEnemy = J.GetEnemiesNearLoc(bot:GetLocation(), nRadius * 0.8)
-            local nAllyHeroesAttackingTarget = J.GetHeroesTargetingUnit(nAllyHeroes, botTarget)
             local nDamage = bot:GetEstimatedDamageToTarget(true, botTarget, nCastPoint + (nStrikesCount * nStrikesInterval), DAMAGE_TYPE_ALL)
-            if #nAllyHeroesAttackingTarget >= 2
-            or (nDamage / botTarget:GetHealth() > 0.5)
-            or (botHP < 0.5 and #nInRangeEnemy >= 3)
+            if (nDamage / botTarget:GetHealth() > 0.5)
+            or (botHP < 0.65 and #nInRangeEnemy >= 2)
+            or (#nInRangeEnemy >= 3)
             then
                 return BOT_ACTION_DESIRE_HIGH
             end
@@ -868,6 +849,8 @@ function X.ConsiderRaptorDance()
         and J.GetHP(botTarget) > 0.25
         and bAttacking
         and fManaAfter > fManaThreshold1
+        and #nEnemyHeroes == 0
+        and botHP < 0.55
         and not J.IsLateGame()
         then
             return BOT_ACTION_DESIRE_HIGH
@@ -879,6 +862,9 @@ function X.ConsiderRaptorDance()
         and J.IsInRange(bot, botTarget, nRadius)
         and bAttacking
         and fManaAfter > fManaThreshold1
+        and #nEnemyHeroes == 0
+        and botHP < 0.55
+        and not J.IsLateGame()
         then
             return BOT_ACTION_DESIRE_HIGH
         end
@@ -895,8 +881,7 @@ function X.ConsiderFalconRush()
     local nRushRange = FalconRush:GetSpecialValueInt('rush_range')
     local nManaCost = FalconRush:GetManaCost()
     local fManaAfter = J.GetManaAfter(nManaCost)
-    local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {EchoSlash, RaptorDance, TalonToss, RavensVeil})
-    local fManaThreshold2 = J.GetManaThreshold(bot, nManaCost, {EchoSlash, RaptorDance, FalconRush, TalonToss, RavensVeil})
+    local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {TalonToss, RavensVeil})
 
     if J.IsGoingOnSomeone(bot) then
         if J.IsValidHero(botTarget)
@@ -927,7 +912,7 @@ function X.ConsiderFalconRush()
         and J.CanBeAttacked(botTarget)
         and J.IsInRange(bot, botTarget, 500)
         and bAttacking
-        and fManaAfter > fManaThreshold2
+        and fManaAfter > fManaThreshold1
         then
             return BOT_ACTION_DESIRE_HIGH
         end
@@ -937,7 +922,7 @@ function X.ConsiderFalconRush()
         if J.IsTormentor(botTarget)
         and J.IsInRange(bot, botTarget, 500)
         and bAttacking
-        and fManaAfter > fManaThreshold2
+        and fManaAfter > fManaThreshold1
         then
             return BOT_ACTION_DESIRE_HIGH
         end
@@ -951,7 +936,7 @@ function X.ConsiderTalonToss()
         return BOT_ACTION_DESIRE_NONE, nil
     end
 
-    local nCastRange = J.GetProperCastRange(false, bot, TalonToss:GetCastRange())
+    local nCastRange = TalonToss:GetCastRange()
     local nCastPoint = TalonToss:GetCastPoint()
     local nRadius = TalonToss:GetSpecialValueInt('radius')
     local nDamage = TalonToss:GetSpecialValueInt('damage')
@@ -962,9 +947,9 @@ function X.ConsiderTalonToss()
     for _, enemy in pairs(nEnemyHeroes) do
         if J.IsValidHero(enemy)
         and J.CanBeAttacked(enemy)
+        and J.IsInRange(bot, enemy, nCastRange)
         and J.CanCastOnNonMagicImmune(enemy)
         and J.CanCastOnTargetAdvanced(enemy)
-        and J.IsInRange(bot, enemy, nCastRange)
         then
             if enemy:IsChanneling() and fManaAfter > 0.3 and not enemy:IsSilenced() then
                 return BOT_ACTION_DESIRE_HIGH, enemy
@@ -985,13 +970,11 @@ function X.ConsiderTalonToss()
     if J.IsGoingOnSomeone(bot) then
         if J.IsValidHero(botTarget)
         and J.CanBeAttacked(botTarget)
+        and J.IsInRange(bot, botTarget, nCastRange)
         and J.CanCastOnNonMagicImmune(botTarget)
         and J.CanCastOnTargetAdvanced(botTarget)
-        and J.IsInRange(bot, botTarget, nCastRange)
         and not J.IsDisabled(botTarget)
         and not botTarget:IsSilenced()
-        and not botTarget:HasModifier('modifier_enigma_black_hole_pull')
-        and not botTarget:HasModifier('modifier_faceless_void_chronosphere_freeze')
         and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
         then
             return BOT_ACTION_DESIRE_HIGH, botTarget
@@ -1003,14 +986,12 @@ function X.ConsiderTalonToss()
 		for _, creep in pairs(nEnemyLaneCreeps) do
 			if  J.IsValid(creep)
 			and J.CanBeAttacked(creep)
-			and not J.IsInRange(bot, creep, bot:GetAttackRange() * 2.5)
 			and J.IsKeyWordUnit('ranged', creep)
 			and J.WillKillTarget(creep, nDamage, DAMAGE_TYPE_PHYSICAL, (GetUnitToUnitDistance(bot, creep) / nSpeed) + nCastPoint)
+            and not J.IsOtherAllysTarget(creep)
 			then
-                local nLocationAoE = bot:FindAoELocation(true, true, creep:GetLocation(), 0, 600, 0, 0)
-				if nLocationAoE.count > 0
-                or J.IsUnitTargetedByTower(creep, false)
-                or not J.IsOtherAllysTarget(creep)
+				if J.IsUnitTargetedByTower(creep, false)
+                or J.IsEnemyTargetUnit(creep, 1200)
 				then
                     return BOT_ACTION_DESIRE_HIGH, creep
 				end
@@ -1034,8 +1015,9 @@ function X.ConsiderShodoSai()
 			for _, enemyHero in pairs(nInRangeEnemy) do
 				if  J.IsValidHero(enemyHero)
 				and bot:IsFacingLocation(enemyHero:GetLocation(), 30)
+                and J.IsAttacking(enemyHero)
 				and not J.IsDisabled(enemyHero)
-				and enemyHero:GetAttackTarget() == bot
+                and bot:WasRecentlyDamagedByHero(enemyHero, 3.0)
 				then
 					numFacing = numFacing + 1
                     if numFacing >= 1 and #nInRangeEnemy > #nInRangeAlly then
@@ -1061,7 +1043,6 @@ function X.ConsiderShodoSaiCancel()
 			local numFacing = 0
 			for _, enemy in pairs(nInRangeEnemy) do
 				if  J.IsValidHero(enemy)
-				and J.CanCastOnMagicImmune(enemy)
 				and bot:IsFacingLocation(enemy:GetLocation(), 15)
 				and not J.IsDisabled(enemy)
 				then
@@ -1091,7 +1072,7 @@ function X.ConsiderRavensVeil()
     local nRadius = RavensVeil:GetSpecialValueInt('blast_radius')
     local nManaCost = RavensVeil:GetManaCost()
     local fManaAfter = J.GetManaAfter(nManaCost)
-    local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {EchoSlash, RaptorDance, FalconRush})
+    local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {FalconRush, TalonToss})
 
     if J.IsInTeamFight(bot, 1200) and fManaAfter > fManaThreshold1 then
         local nInRangeEnemy = J.GetEnemiesNearLoc(bot:GetLocation(), nRadius * 0.6)

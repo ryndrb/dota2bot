@@ -293,7 +293,7 @@ function X.ConsiderPoisonAttack()
 					return BOT_ACTION_DESIRE_HIGH, enemyHero
 				end
 
-				if J.IsInLaningPhase()
+				if  J.IsEarlyGame()
 				and J.IsInRange(bot, enemyHero, nCastRange + 150)
 				and not bot:WasRecentlyDamagedByTower(5.0)
 				and not bot:WasRecentlyDamagedByCreep(2.0)
@@ -312,7 +312,7 @@ function X.ConsiderPoisonAttack()
     end
 
 	if J.IsGoingOnSomeone(bot) then
-		if  J.IsValidTarget(botTarget)
+		if  J.IsValidHero(botTarget)
 		and J.CanBeAttacked(botTarget)
 		and J.IsInRange(bot, botTarget, nAttackRange + 150)
 		and J.CanCastOnNonMagicImmune(botTarget)
@@ -334,54 +334,32 @@ function X.ConsiderPoisonAttack()
 	if J.IsRetreating(bot) and not J.IsRealInvisible(bot) then
         for _, enemyHero in pairs(nEnemyHeroes) do
             if  J.IsValidHero(enemyHero)
+			and J.CanBeAttacked(enemyHero)
             and J.IsInRange(bot, enemyHero, nCastRange)
             and J.CanCastOnNonMagicImmune(enemyHero)
             and not J.IsDisabled(enemyHero)
 			and not enemyHero:HasModifier('modifier_viper_poison_attack_slow')
-			and enemyHero:GetAttackTarget() == bot
+			and bot:WasRecentlyDamagedByHero(enemyHero, 5.0)
             then
 				return BOT_ACTION_DESIRE_HIGH, enemyHero
             end
         end
 	end
 
-    if fManaAfter > fManaThreshold1 + 0.1 then
-        for _, allyHero in pairs(nAllyHeroes) do
-            if  J.IsValidHero(allyHero)
-            and bot ~= allyHero
-            and J.IsRetreating(allyHero)
-            and allyHero:WasRecentlyDamagedByAnyHero(3.0)
-            and not J.IsSuspiciousIllusion(allyHero)
-            then
-                for _, enemyHero in pairs(nEnemyHeroes) do
-                    if  J.IsValidHero(enemyHero)
-                    and J.IsInRange(bot, enemyHero, nCastRange)
-                    and J.CanCastOnNonMagicImmune(enemyHero)
-                    and J.IsChasingTarget(enemyHero, allyHero)
-                    and not J.IsDisabled(enemyHero)
-					and not enemyHero:HasModifier('modifier_viper_poison_attack_slow')
-                    then
-						return BOT_ACTION_DESIRE_HIGH, enemyHero
-                    end
-                end
-            end
-        end
-
-		if fManaAfter > 0.5 then
-			if J.IsPushing(bot) or J.IsDefending(bot) or J.IsFarming(bot) then
-				if  J.IsValid(botTarget)
-				and J.CanBeAttacked(botTarget)
-				and J.IsInRange(bot, botTarget, nAttackRange)
-				and J.CanCastOnNonMagicImmune(botTarget)
-				and not J.CanKillTarget(botTarget, bot:GetAttackDamage() * 5, DAMAGE_TYPE_PHYSICAL)
-				and not J.IsRoshan(botTarget)
-				and not J.IsTormentor(botTarget)
-				and not botTarget:IsBuilding()
-				then
-					local nCurrentStacks = J.GetModifierCount(botTarget, 'modifier_viper_poison_attack_slow')
-					if nMaxStacks > nCurrentStacks then
-						return BOT_ACTION_DESIRE_HIGH, botTarget
-					end
+    if fManaAfter > fManaThreshold1 + 0.1 and fManaAfter > 0.5 and bAttacking then
+		if J.IsPushing(bot) or J.IsDefending(bot) or J.IsFarming(bot) then
+			if  J.IsValid(botTarget)
+			and J.CanBeAttacked(botTarget)
+			and J.IsInRange(bot, botTarget, nAttackRange)
+			and J.CanCastOnNonMagicImmune(botTarget)
+			and not J.CanKillTarget(botTarget, bot:GetAttackDamage() * 3, DAMAGE_TYPE_PHYSICAL)
+			and not J.IsRoshan(botTarget)
+			and not J.IsTormentor(botTarget)
+			and not botTarget:IsBuilding()
+			then
+				local nCurrentStacks = J.GetModifierCount(botTarget, 'modifier_viper_poison_attack_slow')
+				if nMaxStacks > nCurrentStacks then
+					return BOT_ACTION_DESIRE_HIGH, botTarget
 				end
 			end
 		end
@@ -390,8 +368,8 @@ function X.ConsiderPoisonAttack()
 	if J.IsDoingRoshan(bot) then
         if  J.IsRoshan(botTarget)
 		and J.CanBeAttacked(botTarget)
-		and J.CanCastOnNonMagicImmune(botTarget)
         and J.IsInRange(bot, botTarget, nAttackRange)
+		and J.CanCastOnNonMagicImmune(botTarget)
 		and bAttacking
 		and fManaAfter > fManaThreshold1 + 0.1
         then
@@ -428,18 +406,17 @@ function X.ConsiderNetherToxin()
 	local nManaCost = NetherToxin:GetManaCost()
 	local fManaAfter = J.GetManaAfter(nManaCost)
 	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {Nosedive, ViperStrike})
-	local fManaThreshold2 = J.GetManaThreshold(bot, nManaCost, {NetherToxin, Nosedive, ViperStrike})
 
 	if J.IsGoingOnSomeone(bot) then
 		if  J.IsValidHero(botTarget)
 		and J.CanBeAttacked(botTarget)
-		and J.CanCastOnNonMagicImmune(botTarget)
 		and J.IsInRange(bot, botTarget, nCastRange)
+		and J.CanCastOnNonMagicImmune(botTarget)
 		and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
 		and not botTarget:HasModifier('modifier_viper_nethertoxin')
 		then
 			if J.IsDisabled(botTarget)
-			or not J.IsChasingTarget(bot, botTarget)
+			or J.IsInRange(bot, botTarget, nCastRange * 0.3)
 			or bot:GetCurrentMovementSpeed() < 200
 			then
 				if J.IsInTeamFight(bot, 1200) then
@@ -461,24 +438,20 @@ function X.ConsiderNetherToxin()
 			and J.IsInRange(bot, enemyHero, nRadius)
 			and J.CanCastOnNonMagicImmune(enemyHero)
             and not J.IsSuspiciousIllusion(enemyHero)
+			and bot:WasRecentlyDamagedByHero(enemyHero, 2.0)
             then
-				if (#nEnemyHeroes > #nAllyHeroes and enemyHero:GetAttackTarget() == bot)
-				or (botHP < 0.5)
+				if J.IsDisabled(enemyHero)
+				or bot:GetCurrentMovementSpeed() < 200
 				then
-					if J.IsDisabled(enemyHero)
-					or not J.IsChasingTarget(bot, enemyHero)
-					or bot:GetCurrentMovementSpeed() < 200
-					then
-						return BOT_ACTION_DESIRE_HIGH, (bot:GetLocation() + enemyHero:GetLocation()) / 2
-					end
+					return BOT_ACTION_DESIRE_HIGH, (bot:GetLocation() + enemyHero:GetLocation()) / 2
 				end
             end
         end
 	end
 
-	local nEnemyCreeps = bot:GetNearbyCreeps(nRadius, true)
+	local nEnemyCreeps = bot:GetNearbyCreeps(Min(nCastRange + 300, 1600), true)
 
-	if J.IsPushing(bot) and bAttacking and fManaAfter > fManaThreshold2 and #nAllyHeroes <= 2 and #nEnemyHeroes == 0 then
+	if J.IsPushing(bot) and bAttacking and fManaAfter > fManaThreshold1 and #nAllyHeroes <= 2 and #nEnemyHeroes == 0 then
         for _, creep in pairs(nEnemyCreeps) do
             if J.IsValid(creep) and J.CanBeAttacked(creep) and not J.IsRunning(creep) and not creep:HasModifier('modifier_viper_nethertoxin') then
                 local nLocationAoE = bot:FindAoELocation(true, false, creep:GetLocation(), 0, nRadius, 0, 0)
@@ -518,7 +491,7 @@ function X.ConsiderNetherToxin()
 		and J.CanBeAttacked(botTarget)
         and J.IsInRange(bot, botTarget, nCastRange)
         and bAttacking
-		and fManaAfter > fManaThreshold2
+		and fManaAfter > fManaThreshold1 + 0.1
 		and not botTarget:HasModifier('modifier_viper_nethertoxin')
         then
 			return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation()
@@ -529,7 +502,7 @@ function X.ConsiderNetherToxin()
         if  J.IsTormentor(botTarget)
         and J.IsInRange(bot, botTarget, nCastRange)
         and bAttacking
-		and fManaAfter > fManaThreshold2
+		and fManaAfter > fManaThreshold1 + 0.1
 		and not botTarget:HasModifier('modifier_viper_nethertoxin')
         then
 			return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation()
@@ -550,7 +523,7 @@ function X.ConsiderNosedive()
 	local nRadius = Nosedive:GetSpecialValueInt('corrosive_radius')
 
 	if J.IsGoingOnSomeone(bot) then
-		if  J.IsValidTarget(botTarget)
+		if  J.IsValidHero(botTarget)
 		and J.CanBeAttacked(botTarget)
 		and J.CanCastOnNonMagicImmune(botTarget)
         and not J.IsSuspiciousIllusion(botTarget)
@@ -569,20 +542,12 @@ function X.ConsiderNosedive()
 		end
 	end
 
-	if J.IsRetreating(bot) and not J.IsRealInvisible(bot) then
-        for _, enemyHero in pairs(nEnemyHeroes) do
-            if  J.IsValidHero(enemyHero)
-			and J.IsInRange(bot, enemyHero, 1200)
-			and bot:IsFacingLocation(J.GetTeamFountain(), 30)
-            and not J.IsSuspiciousIllusion(enemyHero)
-            and not J.IsDisabled(enemyHero)
-			and enemyHero:GetAttackTarget() == bot
-            then
-				if J.IsRunning(bot) then
-					return BOT_ACTION_DESIRE_HIGH, J.VectorTowards(bot:GetLocation(), J.GetTeamFountain(), nCastRange)
-				end
-            end
-        end
+	if J.IsRetreating(bot) and not J.IsRealInvisible(bot) and J.IsRunning(bot) and bot:WasRecentlyDamagedByAnyHero(5.0) then
+		if (#nEnemyHeroes > #nAllyHeroes)
+		or (J.GetTotalEstimatedDamageToTarget(nEnemyHeroes, bot, 5.0) > bot:GetHealth())
+		then
+			return BOT_ACTION_DESIRE_HIGH, J.VectorTowards(bot:GetLocation(), J.GetTeamFountain(), nCastRange)
+		end
 	end
 
 	return BOT_ACTION_DESIRE_NONE, 0
@@ -599,7 +564,7 @@ function X.ConsiderViperStrike()
 
 	if J.IsGoingOnSomeone(bot) then
         for _, enemyHero in pairs(nEnemyHeroes) do
-            if  J.IsValidTarget(enemyHero)
+            if  J.IsValidHero(enemyHero)
 			and J.CanBeAttacked(enemyHero)
 			and J.IsInRange(bot, enemyHero, nCastRange + 300)
 			and J.CanCastOnTargetAdvanced(enemyHero)
@@ -648,17 +613,13 @@ function X.ConsiderViperStrike()
 			and J.CanBeAttacked(enemyHero)
             and J.IsInRange(bot, enemyHero, nCastRange)
 			and not J.IsInRange(bot, enemyHero, nCastRange / 2)
-            and J.CanCastOnNonMagicImmune(enemyHero)
             and J.CanCastOnTargetAdvanced(enemyHero)
 			and J.GetHP(enemyHero) > 0.25
             and not J.IsDisabled(enemyHero)
             and not enemyHero:IsDisarmed()
+			and bot:WasRecentlyDamagedByHero(enemyHero, 2.0)
             then
-                if J.IsChasingTarget(enemyHero, bot)
-                or (#nEnemyHeroes > #nAllyHeroes and enemyHero:GetAttackTarget() == bot)
-                then
-                    return BOT_ACTION_DESIRE_HIGH, enemyHero
-                end
+				return BOT_ACTION_DESIRE_HIGH, enemyHero
             end
         end
 	end
@@ -666,10 +627,11 @@ function X.ConsiderViperStrike()
 	if J.IsDoingRoshan(bot) then
 		if  J.IsRoshan(botTarget)
 		and J.CanBeAttacked(botTarget)
+		and J.IsInRange(bot, botTarget, nCastRange)
 		and J.CanCastOnNonMagicImmune(botTarget)
 		and J.CanCastOnTargetAdvanced(botTarget)
-		and J.IsInRange(bot, botTarget, nCastRange)
 		and bAttacking
+		and #nEnemyHeroes == 0
 		then
 			return BOT_ACTION_DESIRE_HIGH, botTarget
 		end

@@ -209,7 +209,7 @@ function X.SkillsComplement()
     nEnemyHeroes = bot:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
 
 	BlinkVoidDesire, BlinkVoidTarget = X.ConsiderBlinkVoid()
-	if BlinkVoidDesire > 0 then
+	if BlinkVoidDesire > 0 and BlinkVoidTarget then
 		J.SetQueuePtToINT(bot, false)
 		bot:ActionQueue_UseAbilityOnLocation(Blink, BlinkVoidTarget:GetLocation())
 		bot:ActionQueue_UseAbilityOnEntity(ManaVoid, BlinkVoidTarget)
@@ -275,10 +275,10 @@ function X.ConsiderBlink()
 	end
 
 	if J.IsGoingOnSomeone(bot) then
-		if  J.IsValidTarget(botTarget)
+		if  J.IsValidHero(botTarget)
 		and J.CanBeAttacked(botTarget)
 		and J.IsInRange(bot, botTarget, 1600)
-		and GetUnitToLocationDistance(botTarget, J.GetEnemyFountain()) > 600
+		and GetUnitToLocationDistance(botTarget, J.GetEnemyFountain()) > 1200
 		and not J.IsInRange(bot, botTarget, nCastRangeMin)
 		and not botTarget:HasModifier('modifier_abaddon_borrowed_time')
 		and not botTarget:HasModifier('modifier_faceless_void_chronosphere_freeze')

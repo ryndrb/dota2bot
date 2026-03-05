@@ -190,13 +190,12 @@ function X.ConsiderLucentBeam()
 		return BOT_ACTION_DESIRE_NONE, nil
 	end
 
-	local nCastRange = J.GetProperCastRange(false, bot, LucentBeam:GetCastRange())
+	local nCastRange = LucentBeam:GetCastRange()
 	local nCastPoint = LucentBeam:GetCastPoint()
 	local nDamage = LucentBeam:GetSpecialValueInt('beam_damage')
 	local nManaCost = LucentBeam:GetManaCost()
     local fManaAfter = J.GetManaAfter(nManaCost)
     local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {LunarOrbit, Eclipse})
-	local fManaThreshold2 = J.GetManaThreshold(bot, nManaCost, {LucentBeam, LunarOrbit, Eclipse})
 
 	for _, enemyHero in pairs(nEnemyHeroes) do
 		if  J.IsValidHero(enemyHero)
@@ -250,7 +249,7 @@ function X.ConsiderLucentBeam()
 	end
 
 	if J.IsGoingOnSomeone(bot) then
-		if  J.IsValidTarget(botTarget)
+		if  J.IsValidHero(botTarget)
 		and J.CanBeAttacked(botTarget)
 		and J.IsInRange(bot, botTarget, nCastRange + 300)
 		and J.CanCastOnNonMagicImmune(botTarget)
@@ -266,7 +265,7 @@ function X.ConsiderLucentBeam()
 		end
 	end
 
-	if J.IsRetreating(bot) and not J.IsRealInvisible(bot) and bot:WasRecentlyDamagedByAnyHero(3.0) then
+	if J.IsRetreating(bot) and not J.IsRealInvisible(bot) and J.IsRunning(bot) then
         for _, enemyHero in pairs(nEnemyHeroes) do
             if  J.IsValidHero(enemyHero)
 			and J.CanBeAttacked(enemyHero)
@@ -275,20 +274,16 @@ function X.ConsiderLucentBeam()
             and J.CanCastOnNonMagicImmune(enemyHero)
 			and J.CanCastOnTargetAdvanced(enemyHero)
             and not J.IsDisabled(enemyHero)
+			and bot:WasRecentlyDamagedByHero(enemyHero, 2.0)
             then
-				if J.IsChasingTarget(enemyHero, bot)
-				or (#nEnemyHeroes > #nAllyHeroes and enemyHero:GetAttackTarget() == bot)
-				or (botHP < 0.5 and bot:WasRecentlyDamagedByHero(enemyHero, 2.0))
-				then
-					return BOT_ACTION_DESIRE_HIGH, enemyHero
-				end
+				return BOT_ACTION_DESIRE_HIGH, enemyHero
             end
         end
     end
 
-	local nEnemyCreeps = bot:GetNearbyCreeps(nCastRange + 300, true)
+	local nEnemyCreeps = bot:GetNearbyCreeps(Min(nCastRange + 300, 1600), true)
 
-	if J.IsFarming(bot) and bAttacking and fManaAfter > fManaThreshold2 then
+	if (J.IsPushing(bot) or J.IsDefending(bot) or J.IsFarming(bot)) and bAttacking and fManaAfter > fManaThreshold1 then
 		local botTarget_Creep = J.GetMostHpUnit(nEnemyCreeps)
 
 		if  J.IsValid(botTarget_Creep)
@@ -311,9 +306,8 @@ function X.ConsiderLucentBeam()
 			and J.CanKillTarget(creep, nDamage, DAMAGE_TYPE_MAGICAL)
 			and (J.IsCore(bot) or not J.IsOtherAllysTarget(creep))
 			then
-				local nLocationAoE = bot:FindAoELocation(true, true, creep:GetLocation(), 0, 650, 0, 0)
-				if nLocationAoE.count > 0 or J.IsUnitTargetedByTower(creep, false) then
-					if string.find(creep:GetUnitName(), 'ranged') or fManaAfter > fManaThreshold2 then
+				if J.IsUnitTargetedByTower(creep, false) or J.IsEnemyTargetUnit(creep, 1200) then
+					if string.find(creep:GetUnitName(), 'ranged') or fManaAfter > fManaThreshold1 + 0.1 then
 						return BOT_ACTION_DESIRE_HIGH, creep
 					end
 				end
@@ -328,7 +322,7 @@ function X.ConsiderLucentBeam()
         and J.IsInRange(bot, botTarget, nCastRange)
         and not J.IsDisabled(botTarget)
 		and bAttacking
-		and fManaAfter > fManaThreshold2
+		and fManaAfter > fManaThreshold1
         then
             return BOT_ACTION_DESIRE_HIGH, botTarget
         end
@@ -338,40 +332,11 @@ function X.ConsiderLucentBeam()
         if  J.IsTormentor(botTarget)
         and J.IsInRange(bot, botTarget, nCastRange)
         and bAttacking
-		and fManaAfter > fManaThreshold2
+		and fManaAfter > fManaThreshold1
         then
             return BOT_ACTION_DESIRE_HIGH, botTarget
         end
     end
-
-	if not J.IsRetreating(bot) and not J.IsRealInvisible(bot) then
-		local nEnemyHeroesTargetingMe = J.GetHeroesTargetingUnit(nEnemyHeroes, bot)
-
-		if fManaAfter > fManaThreshold2 and #nEnemyHeroesTargetingMe <= 1 then
-			for _, allyHero in pairs(nAllyHeroes) do
-				if  J.IsValidHero(allyHero)
-				and bot ~= allyHero
-				and J.CanBeAttacked(allyHero)
-				and J.IsRetreating(allyHero)
-				and allyHero:WasRecentlyDamagedByAnyHero(3.0)
-				and not J.IsSuspiciousIllusion(allyHero)
-				then
-					for _, enemyHero in pairs(nEnemyHeroes) do
-						if  J.IsValidHero(enemyHero)
-						and J.CanBeAttacked(enemyHero)
-						and J.IsInRange(bot, enemyHero, nCastRange)
-						and J.CanCastOnNonMagicImmune(enemyHero)
-						and J.CanCastOnTargetAdvanced(enemyHero)
-						and J.IsChasingTarget(enemyHero, allyHero)
-						and not J.IsDisabled(enemyHero)
-						then
-							return BOT_ACTION_DESIRE_HIGH, enemyHero
-						end
-					end
-				end
-			end
-		end
-	end
 
 	return BOT_ACTION_DESIRE_NONE, nil
 end
@@ -385,17 +350,13 @@ function X.ConsiderLunarOrbit()
 	local nManaCost = LunarOrbit:GetManaCost()
     local fManaAfter = J.GetManaAfter(nManaCost)
     local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {LucentBeam, Eclipse})
-	local fManaThreshold2 = J.GetManaThreshold(bot, nManaCost, {LucentBeam, LunarOrbit, Eclipse})
 
-	local nInRangeEnemy = bot:GetNearbyHeroes(nRadius, true, BOT_MODE_NONE)
-	local nEnemyHeroesTargetingMe = J.GetHeroesTargetingUnit(nInRangeEnemy, bot)
-
-	if botHP < 0.5 and bot:WasRecentlyDamagedByAnyHero(2.0) and #nEnemyHeroesTargetingMe > 0 and fManaAfter > fManaThreshold1 then
+	if botHP < 0.5 and bot:WasRecentlyDamagedByAnyHero(2.0) and fManaAfter > fManaThreshold1 then
 		return BOT_ACTION_DESIRE_HIGH
 	end
 
 	if J.IsGoingOnSomeone(bot) then
-		if  J.IsValidTarget(botTarget)
+		if  J.IsValidHero(botTarget)
 		and J.CanBeAttacked(botTarget)
 		and J.IsInRange(bot, botTarget, nRadius)
 		and not J.IsChasingTarget(bot, botTarget)
@@ -407,20 +368,20 @@ function X.ConsiderLunarOrbit()
 		end
 	end
 
-	if J.IsRetreating(bot) and not J.IsRealInvisible(bot) and bot:WasRecentlyDamagedByAnyHero(3.0) then
+	if J.IsRetreating(bot) and not J.IsRealInvisible(bot) then
         for _, enemyHero in pairs(nEnemyHeroes) do
             if  J.IsValidHero(enemyHero)
 			and J.CanBeAttacked(enemyHero)
 			and J.IsInRange(bot, enemyHero, nRadius)
             and not J.IsDisabled(enemyHero)
-			and enemyHero:GetAttackTarget() == bot
+			and bot:WasRecentlyDamagedByHero(enemyHero, 2.0)
             then
 				return BOT_ACTION_DESIRE_HIGH
             end
         end
     end
 
-	if J.IsFarming(bot) and fManaAfter > fManaThreshold2 and bAttacking then
+	if J.IsFarming(bot) and fManaAfter > fManaThreshold1 + 0.1 and bAttacking then
 		local nEnemyCreeps = bot:GetNearbyCreeps(nRadius, true)
 		if J.IsValid(nEnemyCreeps[1]) and J.CanBeAttacked(nEnemyCreeps[1]) then
 			if #nEnemyCreeps >= 3 or (#nEnemyCreeps >= 2 and nEnemyCreeps[1]:IsAncientCreep()) then
@@ -435,7 +396,7 @@ function X.ConsiderLunarOrbit()
         and J.IsInRange(bot, botTarget, nRadius)
         and not J.IsDisabled(botTarget)
 		and bAttacking
-		and fManaAfter > fManaThreshold2
+		and fManaAfter > fManaThreshold1
         then
             return BOT_ACTION_DESIRE_HIGH
         end
@@ -445,7 +406,7 @@ function X.ConsiderLunarOrbit()
         if  J.IsTormentor(botTarget)
         and J.IsInRange(bot, botTarget, nRadius)
         and bAttacking
-		and fManaAfter > fManaThreshold2
+		and fManaAfter > fManaThreshold1
         then
             return BOT_ACTION_DESIRE_HIGH
         end
@@ -490,7 +451,7 @@ function X.ConsiderEclipse()
 	end
 
 	if J.IsGoingOnSomeone(bot) then
-		if  J.IsValidTarget(botTarget)
+		if  J.IsValidHero(botTarget)
 		and J.CanBeAttacked(botTarget)
 		and J.CanCastOnNonMagicImmune(botTarget)
 		and J.IsInRange(bot, botTarget, nRadius)

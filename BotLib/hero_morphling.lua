@@ -484,11 +484,11 @@ function X.SkillsComplement()
 end
 
 function X.ConsiderWaveform()
-    if not J.CanCastAbility(Waveform) then
+    if not J.CanCastAbility(Waveform) or bot:IsRooted() then
         return BOT_ACTION_DESIRE_NONE, 0
     end
 
-    local nCastRange = J.GetProperCastRange(false, bot, Waveform:GetCastRange())
+    local nCastRange = Waveform:GetCastRange()
 	local nCastPoint = Waveform:GetCastPoint()
 	local nSpeed = Waveform:GetSpecialValueInt('speed')
     local nDamage = Waveform:GetSpecialValueInt('#AbilityDamage')
@@ -507,7 +507,6 @@ function X.ConsiderWaveform()
 
     if not J.IsRealInvisible(bot) and not bot:IsMagicImmune() then
         if (J.IsStunProjectileIncoming(bot, 500))
-        or (J.IsUnitTargetProjectileIncoming(bot, 500))
         or (not bot:HasModifier('modifier_sniper_assassinate') and J.IsWillBeCastUnitTargetSpell(bot, 400))
         then
             return BOT_ACTION_DESIRE_HIGH, vLocationTeamFountain
@@ -517,7 +516,7 @@ function X.ConsiderWaveform()
 	if J.IsGoingOnSomeone(bot) then
 		if J.IsValidHero(botTarget)
         and J.CanBeAttacked(botTarget)
-        and GetUnitToLocationDistance(botTarget, J.GetEnemyFountain()) > 800
+        and GetUnitToLocationDistance(botTarget, J.GetEnemyFountain()) > 1200
         and not J.IsInRange(bot, botTarget, bot:GetAttackRange())
 		and not J.IsSuspiciousIllusion(botTarget)
         and not botTarget:HasModifier('modifier_faceless_void_chronosphere_freeze')
@@ -532,7 +531,7 @@ function X.ConsiderWaveform()
 
                 if GetUnitToLocationDistance(bot, vLocation) <= nCastRange then
                     if IsLocationPassable(vLocation) then
-                        if J.IsInLaningPhase() then
+                        if J.IsEarlyGame() then
                             if not bTowerNearby or (J.WillKillTarget(botTarget, nDamage, DAMAGE_TYPE_MAGICAL, eta)) then
                                 return BOT_ACTION_DESIRE_HIGH, vLocation
                             end
@@ -544,7 +543,7 @@ function X.ConsiderWaveform()
 
                 if GetUnitToLocationDistance(bot, vLocation) > nCastRange and GetUnitToLocationDistance(bot, vLocation) < nCastRange + 350 then
                     if IsLocationPassable(vLocation) then
-                        if J.IsInLaningPhase() then
+                        if J.IsEarlyGame() then
                             if not bTowerNearby or (J.WillKillTarget(botTarget, nDamage, DAMAGE_TYPE_MAGICAL, eta)) then
                                 return BOT_ACTION_DESIRE_HIGH, vLocation
                             end
@@ -563,7 +562,7 @@ function X.ConsiderWaveform()
             and not J.IsSuspiciousIllusion(enemyHero)
             then
                 if (J.IsChasingTarget(enemyHero, bot) and not J.IsInTeamFight(bot, 1200) and bot:WasRecentlyDamagedByAnyHero(3.0))
-                or (#nEnemyHeroes > #nAllyHeroes and enemyHero:GetAttackTarget() == bot)
+                or (#nEnemyHeroes > #nAllyHeroes)
                 or (botHP < 0.65 and bot:WasRecentlyDamagedByAnyHero(3.0))
                 then
                     return BOT_ACTION_DESIRE_HIGH, vLocationTeamFountain
@@ -572,13 +571,13 @@ function X.ConsiderWaveform()
         end
 	end
 
-    local nEnemyCreeps = bot:GetNearbyCreeps(nCastRange, true)
+    local nEnemyCreeps = bot:GetNearbyCreeps(Min(nCastRange + 300, 1600), true)
 
-	if J.IsPushing(bot) and bAttacking and fManaAfter > fManaThreshold2 and fManaAfter > 0.5 and (J.IsCore(bot) or not J.IsThereCoreNearby(800)) and #nEnemyHeroes == 0 then
+	if J.IsPushing(bot) and bAttacking and fManaAfter > fManaThreshold2 and fManaAfter > 0.5 and #nAllyHeroes <= 3 and #nEnemyHeroes == 0 then
         for _, creep in pairs(nEnemyCreeps) do
-            if J.IsValid(creep) and J.CanBeAttacked(creep) and not J.IsRunning(creep) then
+            if J.IsValid(creep) and J.CanBeAttacked(creep) then
                 local nLocationAoE = bot:FindAoELocation(true, false, creep:GetLocation(), 0, nRadius, 0, 0)
-                if nLocationAoE.count >= 4 then
+                if nLocationAoE.count >= 4 and IsLocationPassable(nLocationAoE.targetloc) then
                     return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc
                 end
             end
@@ -587,9 +586,9 @@ function X.ConsiderWaveform()
 
 	if J.IsDefending(bot) and bAttacking and fManaAfter > fManaThreshold1 and #nEnemyHeroes == 0 then
         for _, creep in pairs(nEnemyCreeps) do
-            if J.IsValid(creep) and J.CanBeAttacked(creep) and not J.IsRunning(creep) then
+            if J.IsValid(creep) and J.CanBeAttacked(creep) then
                 local nLocationAoE = bot:FindAoELocation(true, false, creep:GetLocation(), 0, nRadius, 0, 0)
-                if nLocationAoE.count >= 4 then
+                if nLocationAoE.count >= 4 and IsLocationPassable(nLocationAoE.targetloc) then
                     return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc
                 end
             end
@@ -598,7 +597,7 @@ function X.ConsiderWaveform()
 
 	if J.IsFarming(bot) and fManaAfter > fManaThreshold2 and #nEnemyHeroes == 0 and not J.IsLateGame() then
         for _, creep in pairs(nEnemyCreeps) do
-            if J.IsValid(creep) and J.CanBeAttacked(creep) and not J.IsRunning(creep) then
+            if J.IsValid(creep) and J.CanBeAttacked(creep) then
                 local nLocationAoE = bot:FindAoELocation(true, false, creep:GetLocation(), 0, nRadius, 0, 0)
                 if (nLocationAoE.count >= 3)
                 or (nLocationAoE.count >= 2 and creep:IsAncientCreep())
@@ -613,7 +612,7 @@ function X.ConsiderWaveform()
 	end
 
 	if J.IsGoingToRune(bot) and fManaAfter > fManaThreshold2 and DotaTime() >= 6 * 60 then
-		if bot.rune and bot.rune.location then
+		if bot.rune and bot.rune.location and (#nEnemyHeroes > 0 or bot:WasRecentlyDamagedByAnyHero(8.0)) then
 			local distance = GetUnitToLocationDistance(bot, bot.rune.location)
 			local vLocation = J.VectorTowards(bot:GetLocation(), bot.rune.location, Min(nCastRange, distance))
 			if J.IsRunning(bot) and distance > nCastRange / 2 and distance < 1600 and IsLocationPassable(vLocation) then
@@ -622,14 +621,14 @@ function X.ConsiderWaveform()
 		end
 	end
 
-	if J.IsDoingRoshan(bot) and fManaAfter > fManaThreshold2 and fManaAfter > 0.5 then
+	if J.IsDoingRoshan(bot) and fManaAfter > fManaThreshold2 + 0.15 and fManaAfter > 0.5 then
 		local vRoshanLocation = J.GetCurrentRoshanLocation()
         if GetUnitToLocationDistance(bot, vRoshanLocation) > 2000 and #nEnemyHeroes == 0 and IsLocationPassable(vRoshanLocation) then
             return BOT_ACTION_DESIRE_HIGH, J.VectorTowards(bot:GetLocation(), vRoshanLocation, nCastRange)
         end
     end
 
-	if J.IsDoingTormentor(bot) and fManaAfter > fManaThreshold2 and fManaAfter > 0.5 then
+	if J.IsDoingTormentor(bot) and fManaAfter > fManaThreshold2 + 0.15 and fManaAfter > 0.5 then
 		local vTormentorLocation = J.GetTormentorWaitingLocation(GetTeam())
         if GetUnitToLocationDistance(bot, vTormentorLocation) > 2000 and #nEnemyHeroes == 0 and IsLocationPassable(vTormentorLocation) then
             return BOT_ACTION_DESIRE_HIGH, J.VectorTowards(bot:GetLocation(), vTormentorLocation, nCastRange)
@@ -637,7 +636,7 @@ function X.ConsiderWaveform()
     end
 
     local nLocationAoE = bot:FindAoELocation(true, false, bot:GetLocation(), nCastRange, nRadius, 0, nDamage)
-    if nLocationAoE.count >= 5 and #nEnemyHeroes == 0 and fManaAfter > fManaThreshold2 then
+    if nLocationAoE.count >= 5 and #nEnemyHeroes <= 1 and fManaAfter > fManaThreshold2 then
         return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc
     end
 
@@ -649,7 +648,7 @@ function X.ConsiderAdaptiveStrikeAGI()
         return BOT_ACTION_DESIRE_NONE, nil
     end
 
-    local nCastRange = J.GetProperCastRange(false, bot, AdaptiveStrikeAGI:GetCastRange())
+    local nCastRange = AdaptiveStrikeAGI:GetCastRange()
     local nCastPoint = AdaptiveStrikeAGI:GetCastPoint()
 	local nMinAGI = AdaptiveStrikeAGI:GetSpecialValueFloat('damage_min')
 	local nMaxAGI = AdaptiveStrikeAGI:GetSpecialValueFloat('damage_max')
@@ -698,7 +697,7 @@ function X.ConsiderAdaptiveStrikeAGI()
         end
 	end
 
-    if J.IsInTeamFight(bot, 1200) or J.IsGoingOnSomeone(bot) and bUsingMax then
+    if J.IsInTeamFight(bot, 1200) and bUsingMax then
         local hTarget = nil
         local hTargetScore = 0
         for _, enemyHero in pairs(nEnemyHeroes) do
@@ -732,11 +731,12 @@ function X.ConsiderAdaptiveStrikeAGI()
     end
 
 	if J.IsGoingOnSomeone(bot) and bUsingMax then
-		if  J.IsValidTarget(botTarget)
+		if  J.IsValidHero(botTarget)
         and J.CanBeAttacked(botTarget)
         and J.IsInRange(bot, botTarget, nCastRange)
         and J.CanCastOnNonMagicImmune(botTarget)
         and J.CanCastOnTargetAdvanced(botTarget)
+        and J.GetHP(botTarget) < 0.6
 		and not botTarget:HasModifier('modifier_abaddon_borrowed_time')
         and not botTarget:HasModifier('modifier_dazzle_shallow_grave')
         and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
@@ -754,18 +754,15 @@ function X.ConsiderAdaptiveStrikeAGI()
             and J.IsInRange(bot, enemyHero, nCastRange)
             and J.CanCastOnNonMagicImmune(enemyHero)
             and J.CanCastOnTargetAdvanced(enemyHero)
+            and not J.IsDisabled(enemyHero)
+            and bot:WasRecentlyDamagedByHero(enemyHero, 3.0)
 			then
-                if (botHP < 0.75 and bot:WasRecentlyDamagedByAnyHero(3.0))
-                or (J.IsChasingTarget(enemyHero, bot))
-                or (#nEnemyHeroes > #nAllyHeroes and enemyHero:GetAttackTarget() == bot)
-                then
-                    return BOT_ACTION_DESIRE_HIGH, enemyHero
-                end
+                return BOT_ACTION_DESIRE_HIGH, enemyHero
 			end
         end
 	end
 
-    local nEnemyCreeps = bot:GetNearbyCreeps(nCastRange, true)
+    local nEnemyCreeps = bot:GetNearbyCreeps(Min(nCastRange + 300, 1600), true)
 
     if J.IsFarming(bot) and fManaAfter > fManaThreshold1 and (bFlowFacet or bUsingMax) then
         local creepTarget = nil
@@ -838,8 +835,7 @@ function X.ConsiderAdaptiveStrikeAGI()
 end
 
 function X.ConsiderAdaptiveStrikeSTR()
-    if not J.CanCastAbility(AdaptiveStrikeSTR)
-    then
+    if not J.CanCastAbility(AdaptiveStrikeSTR) then
         return BOT_ACTION_DESIRE_NONE, nil
     end
 
@@ -904,7 +900,7 @@ function X.ConsiderAtttributeShift()
 	local nCurrSTR = bot:GetAttributeValue(ATTRIBUTE_STRENGTH)
     local nCurrAGIRatio = nCurrAGI / nCurrSTR * 1.5
 
-    if (J.IsRetreating(bot) and not J.IsRealInvisible(bot) and bot:WasRecentlyDamagedByAnyHero(4.0)) then
+    if (J.IsRetreating(bot) and not J.IsRealInvisible(bot) and bot:WasRecentlyDamagedByAnyHero(5.0)) then
         if bot:WasRecentlyDamagedByAnyHero(3.0) then
             if bToggleState__STR == false then
                 return BOT_ACTION_DESIRE_HIGH, 'str'
@@ -1097,7 +1093,7 @@ function X.ConsiderMorph()
         return BOT_ACTION_DESIRE_NONE, nil
     end
 
-    local nCastRange = J.GetProperCastRange(false, bot, Morph:GetCastRange())
+    local nCastRange = Morph:GetCastRange()
 
     if J.IsInTeamFight(bot, 1200) then
         local target = nil
@@ -1186,7 +1182,6 @@ function X.ConsiderMorph()
             if J.IsValidHero(enemyHero)
             and J.IsInRange(bot, enemyHero, nCastRange)
             and J.CanCastOnTargetAdvanced(enemyHero)
-            and enemyHero:GetAttackTarget() == bot
             then
                 local score = GetMorphRetreatScore(enemyHero:GetUnitName())
                 if score > 0 and score > targetScore then

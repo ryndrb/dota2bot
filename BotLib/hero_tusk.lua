@@ -316,14 +316,13 @@ function X.ConsiderIceShards()
     local nAbilityLevel = IceShards:GetLevel()
     local nManaCost = IceShards:GetManaCost()
 	local fManaAfter = J.GetManaAfter(nManaCost)
-	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {IceShards, TagTeam, DrinkingBuddies, WalrusPunch})
-    local fManaThreshold2 = J.GetManaThreshold(bot, nManaCost, {TagTeam, DrinkingBuddies, WalrusPunch})
+	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {TagTeam, DrinkingBuddies, WalrusPunch})
 
     for _, enemyHero in pairs(nEnemyHeroes) do
         if  J.IsValidHero(enemyHero)
         and J.CanBeAttacked(enemyHero)
-        and J.CanCastOnNonMagicImmune(enemyHero)
         and J.IsInRange(bot, enemyHero, nCastRange)
+        and J.CanCastOnNonMagicImmune(enemyHero)
         and not enemyHero:HasModifier('modifier_abaddon_borrowed_time')
         and not enemyHero:HasModifier('modifier_dazzle_shallow_grave')
         and not enemyHero:HasModifier('modifier_necrolyte_reapers_scythe')
@@ -338,10 +337,10 @@ function X.ConsiderIceShards()
     end
 
 	if J.IsGoingOnSomeone(bot) then
-		if  J.IsValidTarget(botTarget)
+		if  J.IsValidHero(botTarget)
         and J.CanBeAttacked(botTarget)
-        and J.CanCastOnMagicImmune(botTarget)
         and J.IsInRange(bot, botTarget, nCastRange)
+        and J.CanCastOnMagicImmune(botTarget)
         and not botTarget:HasModifier('modifier_enigma_black_hole_pull')
         and not botTarget:HasModifier('modifier_faceless_void_chronosphere_freeze')
         and not botTarget:HasModifier('modifier_legion_commander_duel')
@@ -358,13 +357,15 @@ function X.ConsiderIceShards()
 		end
 	end
 
-    if J.IsRetreating(bot) and not J.IsRealInvisible(bot) and bot:WasRecentlyDamagedByAnyHero(4.0) then
+    if J.IsRetreating(bot) and not J.IsRealInvisible(bot) then
         for _, enemyHero in pairs(nEnemyHeroes) do
 			if J.IsValidHero(enemyHero)
+            and J.CanBeAttacked(enemyHero)
 			and J.IsInRange(bot, enemyHero, 800)
             and not J.IsInRange(bot, enemyHero, nDistance + 100)
 			and not J.IsDisabled(enemyHero)
 			and not enemyHero:IsDisarmed()
+            and bot:WasRecentlyDamagedByHero(enemyHero, 3.0)
             and J.IsChasingTarget(enemyHero, bot)
 			then
                 local vLocation = (bot:GetLocation() + enemyHero:GetLocation()) / 2
@@ -379,7 +380,7 @@ function X.ConsiderIceShards()
 
     if  J.IsPushing(bot)
     and nAbilityLevel >= 3
-    and #nAllyHeroes <= 2 and bAttacking and fManaAfter > fManaThreshold1 and #nEnemyHeroes == 0
+    and #nAllyHeroes <= 2 and bAttacking and fManaAfter > fManaThreshold1 + 0.1 and #nEnemyHeroes == 0
     then
         for _, creep in pairs(nEnemyCreeps) do
             if J.IsValid(creep) and J.CanBeAttacked(creep) and not J.IsRunning(creep) then
@@ -393,7 +394,7 @@ function X.ConsiderIceShards()
 
     if  J.IsDefending(bot)
     and nAbilityLevel >= 3
-    and #nAllyHeroes <= 2 and bAttacking and fManaAfter > fManaThreshold2 and #nEnemyHeroes == 0
+    and #nAllyHeroes <= 2 and bAttacking and fManaAfter > fManaThreshold1 and #nEnemyHeroes == 0
     then
         for _, creep in pairs(nEnemyCreeps) do
             if J.IsValid(creep) and J.CanBeAttacked(creep) and not J.IsRunning(creep) then
@@ -408,7 +409,7 @@ function X.ConsiderIceShards()
     if  J.IsFarming(bot)
     and nAbilityLevel >= 3
     and (J.IsCore(bot) or not J.IsThereCoreNearby(800))
-    and fManaAfter > fManaThreshold2 and bAttacking
+    and fManaAfter > fManaThreshold1 and bAttacking
     then
         for _, creep in pairs(nEnemyCreeps) do
             if J.IsValid(creep) and J.CanBeAttacked(creep) and not J.IsRunning(creep) then
@@ -423,17 +424,18 @@ function X.ConsiderIceShards()
     end
 
     if  J.IsLaning(bot) and J.IsInLaningPhase()
-    and fManaAfter > fManaThreshold2 and bAttacking
+    and fManaAfter > fManaThreshold1 and bAttacking
     and (J.IsCore(bot) or not J.IsThereCoreNearby(800))
 	then
         for _, creep in pairs(nEnemyCreeps) do
             if  J.IsValid(creep) and J.CanBeAttacked(creep) and not J.IsRunning(creep)
+            and not J.IsOtherAllysTarget(creep)
             and string.find(creep:GetUnitName(), 'ranged')
             then
                 local eta = (GetUnitToUnitDistance(bot, creep) / nSpeed) + nCastPoint
                 if J.WillKillTarget(creep, nDamage, DAMAGE_TYPE_MAGICAL, eta) then
-                    local nInRangeEnemy = J.GetEnemiesNearLoc(creep:GetLocation(), 500)
-                    if #nInRangeEnemy > 0 or J.IsUnitTargetedByTower(creep, false) then
+                    local nLocationAoE = bot:FindAoELocation(true, true, creep:GetLocation(), 0, 600, 0, 0)
+                    if nLocationAoE.count > 0 or J.IsUnitTargetedByTower(creep, false) then
                         return BOT_ACTION_DESIRE_HIGH, J.VectorAway(creep:GetLocation(), bot:GetLocation(), 500)
                     end
                 end
@@ -451,8 +453,9 @@ function X.ConsiderSnowball()
         return BOT_ACTION_DESIRE_NONE, nil
     end
 
-    local nCastRange = J.GetProperCastRange(false, bot, Snowball:GetCastRange())
+    local nCastRange = Snowball:GetCastRange()
     local nDuration = Snowball:GetSpecialValueFloat('snowball_duration')
+    local nAllyGrabRadius = Snowball:GetSpecialValueFloat('snowball_grab_radius')
     local nManaCost = Snowball:GetManaCost()
 	local fManaAfter = J.GetManaAfter(nManaCost)
 	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {IceShards, WalrusPunch})
@@ -460,6 +463,7 @@ function X.ConsiderSnowball()
 	if J.IsGoingOnSomeone(bot) then
         if J.IsValidHero(botTarget)
         and J.CanBeAttacked(botTarget)
+        and J.IsInRange(bot, botTarget, nCastRange)
         and J.CanCastOnNonMagicImmune(botTarget)
         and J.CanCastOnTargetAdvanced(botTarget)
         and GetUnitToLocationDistance(botTarget, J.GetEnemyFountain()) > 800
@@ -472,7 +476,11 @@ function X.ConsiderSnowball()
             local nInRangeAlly = J.GetAlliesNearLoc(bot:GetLocation(), 1200)
             local nInRangeEnemy = J.GetEnemiesNearLoc(botTarget:GetLocation(), 1200)
             if #nInRangeAlly >= #nInRangeEnemy then
-                return BOT_ACTION_DESIRE_HIGH, botTarget
+                if (J.CanCastAbility(WalrusPunch))
+                or (J.IsChasingTarget(bot, botTarget) and not J.IsInRange(bot, botTarget, nCastRange * 0.4))
+                then
+                    return BOT_ACTION_DESIRE_HIGH, botTarget
+                end
             end
         end
 	end
@@ -515,7 +523,7 @@ function X.ConsiderSnowball()
                         if hItem then
                             local sItemName = hItem:GetName()
                             if sItemName == 'item_blink' or sItemName == 'item_overwhelming_blink' or sItemName == 'item_swift_blink' or sItemName == 'item_arcane_blink' then
-                                if hItem:GetCooldownTimeRemaining() <= nDuration then
+                                if hItem:GetCooldownTimeRemaining() < nDuration then
                                     bSnowBallHold = true
                                     return BOT_ACTION_DESIRE_HIGH, enemyHero
                                 end
@@ -537,10 +545,10 @@ function X.ConsiderSnowball()
 
     if J.IsDoingRoshan(bot) then
         if  J.IsRoshan(botTarget)
-        and J.CanCastOnNonMagicImmune(botTarget)
-        and J.CanCastOnTargetAdvanced(botTarget)
+        and J.CanBeAttacked(botTarget)
         and J.IsInRange(bot, botTarget, 800)
-        and J.CanKillTarget(botTarget, botTarget:GetAttackTarget() * 3, DAMAGE_TYPE_PHYSICAL)
+        and J.CanCastOnTargetAdvanced(botTarget)
+        and J.CanKillTarget(bot, botTarget:GetAttackTarget() * 3, DAMAGE_TYPE_PHYSICAL)
         and botTarget:GetAttackTarget() == bot
         and bAttacking
         then
@@ -594,11 +602,10 @@ function X.ConsiderTagTeam()
 	end
 
 	if J.IsGoingOnSomeone(bot) then
-		if  J.IsValidTarget(botTarget)
+		if  J.IsValidHero(botTarget)
         and J.CanBeAttacked(botTarget)
         and J.IsInRange(bot, botTarget, nRadius)
         and not J.IsSuspiciousIllusion(botTarget)
-        and not J.IsDisabled(botTarget)
         and not botTarget:IsMagicImmune()
         and not botTarget:HasModifier('modifier_abaddon_borrowed_time')
         and not botTarget:HasModifier('modifier_dazzle_shallow_grave')
@@ -611,6 +618,8 @@ function X.ConsiderTagTeam()
 		end
 	end
 
+    local nInRangeAlly = bot:GetNearbyHeroes(nRadius, false, BOT_MODE_NONE)
+
     if J.IsDoingRoshan(bot) then
         if  J.IsRoshan(botTarget)
         and J.CanBeAttacked(botTarget)
@@ -618,7 +627,6 @@ function X.ConsiderTagTeam()
         and bAttacking
         and fManaAfter > fManaThreshold1
         then
-            local nInRangeAlly = bot:GetNearbyHeroes(nRadius, false, BOT_MODE_NONE)
             if #nInRangeAlly >= 2 then
                 return BOT_ACTION_DESIRE_HIGH
             end
@@ -631,7 +639,6 @@ function X.ConsiderTagTeam()
         and bAttacking
         and fManaAfter > fManaThreshold1
         then
-            local nInRangeAlly = bot:GetNearbyHeroes(nRadius, false, BOT_MODE_NONE)
             if #nInRangeAlly >= 2 then
                 return BOT_ACTION_DESIRE_HIGH
             end
@@ -649,7 +656,7 @@ function X.ConsiderDrinkingBuddies()
         return BOT_ACTION_DESIRE_NONE, nil
     end
 
-    local nCastRange = J.GetProperCastRange(false, bot, DrinkingBuddies:GetCastRange())
+    local nCastRange = DrinkingBuddies:GetCastRange()
     local nManaCost = DrinkingBuddies:GetManaCost()
 	local fManaAfter = J.GetManaAfter(nManaCost)
 	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {IceShards, Snowball, WalrusPunch})
@@ -706,7 +713,7 @@ function X.ConsiderDrinkingBuddies()
     end
 
     if J.IsGoingOnSomeone(bot) and hTarget ~= nil then
-		if  J.IsValidTarget(botTarget)
+		if  J.IsValidHero(botTarget)
         and J.CanBeAttacked(botTarget)
         and J.IsInRange(bot, botTarget, 1200)
         and not J.IsSuspiciousIllusion(botTarget)
@@ -761,7 +768,7 @@ function X.ConsiderWalrusPunch()
         return BOT_ACTION_DESIRE_NONE, nil
     end
 
-    local nCastRange = J.GetProperCastRange(false, bot, WalrusPunch:GetCastRange())
+    local nCastRange = WalrusPunch:GetCastRange()
     local nBonusDamage = WalrusPunch:GetSpecialValueInt('bonus_damage')
     local nCritMul = WalrusPunch:GetSpecialValueInt('crit_multiplier') / 100
     local nDamage = (bot:GetAttackDamage() + nBonusDamage) * nCritMul
@@ -772,6 +779,7 @@ function X.ConsiderWalrusPunch()
 	for _, enemyHero in pairs(nEnemyHeroes) do
 		if J.IsValidHero(enemyHero)
 		and J.CanBeAttacked(enemyHero)
+        and J.IsInRange(bot, enemyHero, 700 + nCastRange)
 		and J.CanCastOnTargetAdvanced(enemyHero)
 		then
             if enemyHero:IsChanneling() then

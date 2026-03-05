@@ -228,7 +228,6 @@ function X.ConsiderEarthshock()
 	local nManaCost = Earthshock:GetManaCost()
 	local fManaAfter = J.GetManaAfter(nManaCost)
 	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {Overpower, Enrage})
-	local fManaThreshold2 = J.GetManaThreshold(bot, nManaCost, {Earthshock, Overpower, Enrage})
 
 	for _, enemyHero in pairs(nEnemyHeroes) do
 		if  J.IsValidHero(enemyHero)
@@ -251,7 +250,7 @@ function X.ConsiderEarthshock()
 	end
 
 	if J.IsGoingOnSomeone(bot) then
-		if  J.IsValidTarget(botTarget)
+		if  J.IsValidHero(botTarget)
 		and J.CanBeAttacked(botTarget)
 		and bot:IsFacingLocation(botTarget:GetLocation(), 15)
 		and not J.IsSuspiciousIllusion(botTarget)
@@ -269,39 +268,31 @@ function X.ConsiderEarthshock()
 	end
 
 	if J.IsRetreating(bot) and not J.IsRealInvisible(bot) and bot:WasRecentlyDamagedByAnyHero(3.0) and bot:IsFacingLocation(J.GetTeamFountain(), 30) then
-		for _, enemyHero in pairs(nEnemyHeroes) do
-			if  J.IsValidHero(enemyHero)
-			and J.IsInRange(bot, enemyHero, 800)
-			and not J.IsSuspiciousIllusion(enemyHero)
-			and not enemyHero:IsDisarmed()
-			and enemyHero:GetAttackTarget()
-			then
-				if J.IsRunning(bot) then
-					return BOT_ACTION_DESIRE_HIGH
-				end
-			end
+		if #nEnemyHeroes > #nAllyHeroes or J.GetTotalEstimatedDamageToTarget(nEnemyHeroes, bot, 5.0) > bot:GetHealth() then
+			return BOT_ACTION_DESIRE_HIGH
 		end
 	end
 
+	local nEnemyCreeps = bot:GetNearbyCreeps(nRadius, true)
+
 	if J.IsLaning(bot) and not bot:WasRecentlyDamagedByAnyHero(4.0) then
 		local nEnemyTowers = bot:GetNearbyTowers(1000, true)
-		local nEnemyLaneCreeps = bot:GetNearbyLaneCreeps(nRadius, true)
 		if #nEnemyHeroes <= 1 and #nEnemyTowers == 0 and fManaAfter > fManaThreshold1 then
-			for _, creep in pairs(nEnemyLaneCreeps) do
+			for _, creep in pairs(nEnemyCreeps) do
 				if  J.IsValid(creep)
 				and J.CanBeAttacked(creep)
-				and (J.IsKeyWordUnit('ranged', creep) or J.IsKeyWordUnit('siege', creep))
+				and J.IsKeyWordUnit('ranged', creep)
 				and J.CanKillTarget(creep, nDamage, DAMAGE_TYPE_MAGICAL)
 				and bot:IsFacingLocation(creep:GetLocation(), 15)
+				and not J.IsOtherAllysTarget(creep)
 				then
-					bot:SetTarget(creep)
 					return BOT_ACTION_DESIRE_HIGH
 				end
 			end
 		end
 
 		if fManaAfter > 0.85
-		and bot:DistanceFromFountain() > 100
+		and bot:DistanceFromFountain() > 1200
 		and bot:DistanceFromFountain() < 6000
 		then
 			local vLaneFrontLocation = GetLaneFrontLocation(GetTeam(), bot:GetAssignedLane(), 0)
@@ -314,15 +305,9 @@ function X.ConsiderEarthshock()
 		end
 	end
 
-	if not J.IsRetreating(bot) and not J.IsRealInvisible(bot) then
-		local nEnemyCreeps = bot:GetNearbyCreeps(nRadius, true)
+	if not J.IsRetreating(bot) and not J.IsRealInvisible(bot) and fManaAfter > fManaThreshold1 + 0.1 then
 		local nLocationAoE = bot:FindAoELocation(true, false, bot:GetLocation(), 0, nRadius, 0, nDamage)
-		if nLocationAoE.count >= 3
-		and bot:IsFacingLocation(nLocationAoE.targetloc, 15)
-		and J.IsValid(nEnemyCreeps[1])
-		and J.CanBeAttacked(nEnemyCreeps[1])
-		and not J.IsRunning(nEnemyCreeps[1])
-		then
+		if nLocationAoE.count >= 3 and bot:IsFacingLocation(nLocationAoE.targetloc, 15) then
 			return BOT_ACTION_DESIRE_HIGH
 		end
 	end
@@ -340,10 +325,9 @@ function X.ConsiderOverpower()
 	local nManaCost = Overpower:GetManaCost()
 	local fManaAfter = J.GetManaAfter(nManaCost)
 	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {Earthshock, Enrage})
-	local fManaThreshold2 = J.GetManaThreshold(bot, nManaCost, {Earthshock, Overpower, Enrage})
 
 	if J.IsGoingOnSomeone(bot) then
-		if  J.IsValidTarget(botTarget)
+		if  J.IsValidHero(botTarget)
 		and J.CanBeAttacked(botTarget)
 		and J.IsInRange(bot, botTarget, 1200)
 		and not J.IsSuspiciousIllusion(botTarget)
@@ -359,7 +343,7 @@ function X.ConsiderOverpower()
 
 	local nEnemyCreeps = bot:GetNearbyCreeps(500, true)
 
-	if J.IsPushing(bot) and fManaAfter > fManaThreshold2 and bAttacking then
+	if J.IsPushing(bot) and fManaAfter > fManaThreshold1 and bAttacking then
 		if J.IsValid(nEnemyCreeps[1]) and J.CanBeAttacked(nEnemyCreeps[1]) then
 			if #nEnemyCreeps >= 3 then
 				return BOT_ACTION_DESIRE_HIGH
@@ -416,54 +400,44 @@ function X.ConsiderEnrage()
 		return BOT_ACTION_DESIRE_NONE
 	end
 
+	local nDuration = Enrage:GetSpecialValueFloat('duration')
+
 	if J.IsGoingOnSomeone(bot) then
-		if  J.IsValidTarget(botTarget)
+		if  J.IsValidHero(botTarget)
 		and J.IsInRange(bot, botTarget, 700)
-		and not J.IsSuspiciousIllusion(botTarget)
-		and (not bot:IsMagicImmune() or botHP < 0.7)
 		and bot:WasRecentlyDamagedByAnyHero(2.0)
 		then
-			local nEnemyHeroesTargetingMe = J.GetHeroesTargetingUnit(nEnemyHeroes, bot)
-			if not bot:IsMagicImmune()
-			or (bot:IsMagicImmune() and #nEnemyHeroesTargetingMe >= (botHP < 0.5 and 2 or 3))
-			or botHP < 0.7
+			if (botHP < 0.65 and J.GetTotalEstimatedDamageToTarget(nEnemyHeroes, bot, nDuration) > bot:GetHealth())
+			or (botHP < 0.2)
 			then
 				return BOT_ACTION_DESIRE_HIGH
 			end
 		end
 	end
 
-	if J.IsRetreating(bot) and not J.IsRealInvisible(bot) then
-		local nInRangeAlly = J.GetAlliesNearLoc(bot:GetLocation(), 1200)
-		local nInRangeEnemy = J.GetEnemiesNearLoc(bot:GetLocation(), 1200)
-		for _, enemyHero in pairs(nInRangeEnemy) do
-			if  J.IsValidHero(enemyHero)
-			and J.IsInRange(bot, enemyHero, 1200)
-			and not J.IsSuspiciousIllusion(enemyHero)
-			and enemyHero:GetAttackTarget() == bot
-			then
-				if (J.IsChasingTarget(enemyHero, bot) and botHP < 0.5)
-				or (#nInRangeEnemy > #nInRangeAlly and enemyHero:GetAttackTarget() == bot)
-				or (botHP < 0.4)
-				then
-					return BOT_ACTION_DESIRE_HIGH
-				end
-			end
+	if J.IsRetreating(bot) and not J.IsRealInvisible(bot) and bot:WasRecentlyDamagedByAnyHero(2.0) then
+		if J.GetTotalEstimatedDamageToTarget(nEnemyHeroes, bot, nDuration) > bot:GetHealth() then
+			return BOT_ACTION_DESIRE_HIGH
 		end
 	end
 
 	if J.IsFarming(bot) and botHP < 0.25 then
 		if  J.IsValid(botTarget)
-		and botTarget:IsCreep()
 		and J.IsInRange(bot, botTarget, 500)
 		and bot:WasRecentlyDamagedByCreep(2.0)
 		then
-			return BOT_ACTION_DESIRE_HIGH
+			if bot:WasRecentlyDamagedByCreep(2.0)
+			or bot:WasRecentlyDamagedByTower(2.0)
+			then
+				return BOT_ACTION_DESIRE_HIGH
+			end
 		end
 	end
 
 	if J.IsDoingRoshan(bot) then
 		if J.IsRoshan(botTarget)
+		and J.CanBeAttacked(botTarget)
+		and J.IsInRange(bot, botTarget, 800)
 		and botHP < 0.25
 		then
 			return BOT_ACTION_DESIRE_HIGH
@@ -472,6 +446,7 @@ function X.ConsiderEnrage()
 
 	if J.IsDoingTormentor(bot) then
 		if J.IsTormentor(botTarget)
+		and J.IsInRange(bot, botTarget, 800)
 		and botHP < 0.3
 		then
 			return BOT_ACTION_DESIRE_HIGH

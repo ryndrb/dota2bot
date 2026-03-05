@@ -36,7 +36,6 @@ local HeroBuild = {
                 "item_double_gauntlets",
             
                 "item_magic_wand",
-                "item_orb_of_corrosion",
                 "item_phase_boots",
                 "item_armlet",
                 "item_radiance",--
@@ -51,11 +50,11 @@ local HeroBuild = {
                 "item_travel_boots_2",--
             },
             ['sell_list'] = {
-                "item_gauntlets", "item_armlet",
                 "item_gauntlets", "item_radiance",
-                "item_quelling_blade", "item_sange_and_yasha",
-                "item_magic_wand", "item_basher",
-                "item_orb_of_corrosion", "item_bloodthorn",
+                "item_gauntlets", "item_sange_and_yasha",
+                "item_quelling_blade", "item_basher",
+                "item_quelling_blade", "item_abyssal_blade",
+                "item_magic_wand", "item_bloodthorn",
                 "item_armlet", "item_skadi"
             },
         },
@@ -235,44 +234,43 @@ function X.ConsiderRage()
     end
 
     local nInRangeEnemy = J.GetEnemiesNearLoc(bot:GetLocation(), 1200)
+	local bIsGoingOnSomeone = J.IsGoingOnSomeone(bot)
+	local bIsRetreating = J.IsRetreating(bot)
 
-    if #nInRangeEnemy > 0 then
-        if J.IsNotAttackProjectileIncoming(bot, 350)
-        or J.IsWillBeCastUnitTargetSpell(bot, 500)
-        or J.IsWillBeCastPointSpell(bot, 500)
-        then
-            if not J.IsRealInvisible(bot) then
-                return BOT_ACTION_DESIRE_HIGH
-            end
-        end
+	if #nInRangeEnemy > 0 and (bIsGoingOnSomeone or bIsRetreating) and not bot:IsMagicImmune() then
+		if bot:IsRooted() then
+			if (bIsGoingOnSomeone and J.IsValidHero(botTarget) and not J.IsInRange(bot, botTarget, bot:GetAttackRange() + 150))
+			or (bIsRetreating and (bot:WasRecentlyDamagedByAnyHero(2.0) or #nEnemyHeroes > #nAllyHeroes or botHP < 0.15))
+			then
+				return BOT_ACTION_DESIRE_HIGH
+			end
+		end
 
-        if (J.IsGoingOnSomeone(bot) or (J.IsRetreating(bot) and not J.IsRealInvisible(bot))) then
-            if bot:IsRooted() then
-                return BOT_ACTION_DESIRE_HIGH
-            end
+		if  bot:IsSilenced()
+		and not bot:HasModifier('modifier_item_mask_of_madness_berserk')
+		and J.GetEnemyCount(bot, 800) >= 2
+		and bIsGoingOnSomeone
+		then
+			return BOT_ACTION_DESIRE_HIGH
+		end
 
-            nInRangeEnemy = J.GetEnemiesNearLoc(bot:GetLocation(), 600)
-            if bot:IsSilenced()
-            and #nInRangeEnemy >= 2
-            and not bot:HasModifier('modifier_item_mask_of_madness_berserk')
-            then
-                return BOT_ACTION_DESIRE_HIGH
-            end
+		if bot:WasRecentlyDamagedByAnyHero(3.0) then
+			if (J.IsWillBeCastUnitTargetSpell(bot, 800))
+			or (J.IsWillBeCastPointSpell(bot, 800))
+			or (J.IsStunProjectileIncoming(bot, 550))
+			then
+				if (bIsGoingOnSomeone and J.IsValidHero(botTarget) and not J.IsInRange(bot, botTarget, bot:GetAttackRange() + 150))
+				or (bIsRetreating and botHP < 0.55)
+				then
+					return BOT_ACTION_DESIRE_HIGH
+				end
+			end
+		end
 
-            local nInRangeAlly = J.GetAlliesNearLoc(bot:GetLocation(), 1200)
-            if #nInRangeEnemy >= #nInRangeAlly
-            and botHP < 0.6
-            and J.IsValidHero(nInRangeEnemy[1])
-            and (J.IsChasingTarget(nInRangeEnemy[1], bot) or nInRangeEnemy[1]:GetAttackTarget() == bot)
-            then
-                return BOT_ACTION_DESIRE_HIGH
-            end
-
-            if #nInRangeEnemy >= 3 and J.IsInTeamFight(bot, 1200) and #J.GetHeroesTargetingUnit(nInRangeEnemy, bot) then
-                return BOT_ACTION_DESIRE_HIGH
-            end
-        end
-    end
+		if J.GetEnemyCount(bot, 800) >= 3 and (J.IsInTeamFight(bot, 1200) or not J.IsRealInvisible(bot)) then
+			return BOT_ACTION_DESIRE_HIGH
+		end
+	end
 
     if bot:HasModifier('modifier_jakiro_macropyre_burn')
     or bot:HasModifier('modifier_lich_chainfrost_slow')
@@ -295,29 +293,28 @@ function X.ConsiderOpenWounds()
         return BOT_ACTION_DESIRE_NONE, nil
     end
 
-	local nCastRange = J.GetProperCastRange(false, bot, OpenWounds:GetCastRange())
+	local nCastRange = OpenWounds:GetCastRange()
     local nManaCost = OpenWounds:GetManaCost()
     local fManaAfter = J.GetManaAfter(nManaCost)
     local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {Rage, Infest})
 
 	if J.IsGoingOnSomeone(bot) then
-        if  J.IsValidTarget(botTarget)
+        if  J.IsValidHero(botTarget)
         and J.CanBeAttacked(botTarget)
+        and J.IsInRange(bot, botTarget, nCastRange)
         and J.CanCastOnNonMagicImmune(botTarget)
         and J.CanCastOnTargetAdvanced(botTarget)
-        and J.IsInRange(bot, botTarget, nCastRange)
         and not J.IsDisabled(botTarget)
         and not botTarget:HasModifier('modifier_abaddon_borrowed_time')
         and not botTarget:HasModifier('modifier_dazzle_shallow_grave')
         and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
         and not botTarget:HasModifier('modifier_templar_assassin_refraction_absorb')
+        and fManaAfter > fManaThreshold1
 		then
             if J.IsChasingTarget(bot, botTarget)
             or (#J.GetHeroesTargetingUnit(nAllyHeroes, botTarget) >= 2 and J.GetHP(botTarget) > 0.2)
             then
-                if fManaAfter > fManaThreshold1 then
-                    return BOT_ACTION_DESIRE_HIGH, botTarget
-                end
+                return BOT_ACTION_DESIRE_HIGH, botTarget
             end
         end
 	end
@@ -325,25 +322,24 @@ function X.ConsiderOpenWounds()
     if J.IsRetreating(bot) and not J.IsRealInvisible(bot) then
         for _, enemy in pairs(nEnemyHeroes) do
             if J.IsValidHero(enemy)
+            and J.CanBeAttacked(enemy)
             and J.IsInRange(bot, enemy, nCastRange)
             and J.CanCastOnNonMagicImmune(enemy)
             and J.CanCastOnTargetAdvanced(enemy)
             and bot:WasRecentlyDamagedByHero(enemy, 3.0)
-            and J.IsChasingTarget(enemy, bot)
+            and enemy:IsFacingLocation(bot:GetLocation(), 45)
             and not J.IsDisabled(enemy)
             and not enemy:IsDisarmed()
             then
-                if J.IsChasingTarget(enemy, bot) or #nEnemyHeroes > #nAllyHeroes and botHP < 0.5 then
-                    return BOT_ACTION_DESIRE_HIGH, enemy
-                end
+                return BOT_ACTION_DESIRE_HIGH, enemy
             end
         end
     end
 
 	if (J.IsPushing(bot) or J.IsDefending(bot) or J.IsFarming(bot)) and botHP < 0.5 and (fManaAfter > fManaThreshold1 or botHP < 0.2) and bAttacking then
-		if J.IsValid(botTarget)
+		if  J.IsValid(botTarget)
         and J.CanBeAttacked(botTarget)
-        and botTarget:IsCreep()
+        and (botTarget:IsCreep() or botTarget:IsHero())
         and J.GetHP(botTarget) >= 0.75
         and not J.CanKillTarget(botTarget, bot:GetAttackDamage() * 4, DAMAGE_TYPE_PHYSICAL)
         then
@@ -354,8 +350,8 @@ function X.ConsiderOpenWounds()
 	if J.IsDoingRoshan(bot) then
         if  J.IsRoshan(botTarget)
         and J.CanBeAttacked(botTarget)
-        and J.CanCastOnTargetAdvanced(botTarget)
         and J.IsInRange(bot, botTarget, nCastRange)
+        and J.CanCastOnTargetAdvanced(botTarget)
         and J.GetHP(botTarget) > 0.2
         and bAttacking
         and botHP < 0.5

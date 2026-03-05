@@ -231,9 +231,7 @@ function X.ConsiderTimeWalk()
 	local nDamageWindow = TimeWalk:GetSpecialValueInt('backtrack_duration')
 	local nManaCost = TimeWalk:GetManaCost()
     local fManaAfter = J.GetManaAfter(nManaCost)
-    local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {TimeWalk, TimeDilation, Timezone, Chronosphere})
-	local fManaThreshold2 = J.GetManaThreshold(bot, nManaCost, {TimeDilation, Timezone, Chronosphere})
-	local fManaThreshold3 = J.GetManaThreshold(bot, nManaCost, {Timezone, Chronosphere})
+    local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {TimeDilation, Timezone, Chronosphere})
 
     local nEnemyTowers = bot:GetNearbyTowers(1600, true)
 
@@ -257,7 +255,7 @@ function X.ConsiderTimeWalk()
 		return BOT_ACTION_DESIRE_HIGH, vLocation
 	end
 
-	if not bot:IsMagicImmune() and fManaAfter > fManaThreshold2 then
+	if not bot:IsMagicImmune() and fManaAfter > fManaThreshold1 then
 		if (J.IsStunProjectileIncoming(bot, 350))
 		or (J.IsUnitTargetProjectileIncoming(bot, 350))
 		or (J.IsWillBeCastUnitTargetSpell(bot, 350) and not bot:HasModifier('modifier_sniper_assassinate'))
@@ -266,8 +264,8 @@ function X.ConsiderTimeWalk()
 		end
 	end
 
-	if J.IsGoingOnSomeone(bot) then
-		if bot:HasScepter() and fManaAfter > fManaThreshold3 then
+	if J.IsGoingOnSomeone(bot) and fManaAfter > fManaThreshold1 then
+		if bot:HasScepter() then
 			for _, enemy in pairs(nEnemyHeroes) do
 				if J.IsValidHero(enemy)
 				and J.CanBeAttacked(enemy)
@@ -280,12 +278,11 @@ function X.ConsiderTimeWalk()
 			end
 		end
 
-		if  J.IsValidTarget(botTarget)
+		if  J.IsValidHero(botTarget)
 		and J.CanBeAttacked(botTarget)
-		and GetUnitToLocationDistance(botTarget, J.GetEnemyFountain()) > 600
+		and GetUnitToLocationDistance(botTarget, J.GetEnemyFountain()) > 1200
 		and not J.IsSuspiciousIllusion(botTarget)
 		and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
-		and fManaAfter > fManaThreshold3
 		then
 			local eta = (GetUnitToUnitDistance(bot, botTarget) / nSpeed) + nCastPoint
 			local targetLocation = J.GetCorrectLoc(botTarget, eta)
@@ -304,12 +301,12 @@ function X.ConsiderTimeWalk()
 	if J.IsRetreating(bot) and not J.IsRealInvisible(bot) and not bInsideChronosphere then
 		for _, enemy in pairs(nEnemyHeroes) do
 			if  J.IsValidHero(enemy)
-			and J.IsInRange(bot, enemy, 1000)
+			and J.IsInRange(bot, enemy, 1600)
 			and bot:WasRecentlyDamagedByHero(enemy, nDamageWindow)
 			and not J.IsSuspiciousIllusion(enemy)
 			then
 				if J.IsChasingTarget(enemy, bot)
-				or (#nEnemyHeroes > #nAllyHeroes and enemy:GetAttackTarget() == bot)
+				or (#nEnemyHeroes > #nAllyHeroes)
 				then
 					return BOT_ACTION_DESIRE_HIGH, vLocation
 				end
@@ -317,7 +314,7 @@ function X.ConsiderTimeWalk()
 		end
 	end
 
-	if J.IsPushing(bot) and fManaAfter > fManaThreshold1 and #nEnemyHeroes == 0 and #nEnemyTowers == 0 then
+	if J.IsPushing(bot) and fManaAfter > fManaThreshold1 + 0.15 and #nEnemyHeroes == 0 and #nEnemyTowers == 0 then
 		local nEnemyLaneCreeps = bot:GetNearbyLaneCreeps(nCastRange, true)
 		if J.IsValid(nEnemyLaneCreeps[1]) and J.CanBeAttacked(nEnemyLaneCreeps[1]) then
 			local vCenterOfUnits = J.GetCenterOfUnits(nEnemyLaneCreeps)
@@ -353,7 +350,7 @@ function X.ConsiderTimeWalk()
 		end
 	end
 
-	if J.IsFarming(bot) and fManaAfter > fManaThreshold2 and #nEnemyHeroes == 0 and #nEnemyTowers == 0 then
+	if J.IsFarming(bot) and fManaAfter > fManaThreshold1 + 0.05 and #nEnemyHeroes == 0 and #nEnemyTowers == 0 then
 		if bot.farm and bot.farm.location then
 			local distance = GetUnitToLocationDistance(bot, bot.farm.location)
 			vLocation = J.VectorTowards(bot:GetLocation(), bot.farm.location, Min(nCastRange, distance))
@@ -372,7 +369,7 @@ function X.ConsiderTimeWalk()
 		end
 	end
 
-	if J.IsGoingToRune(bot) and fManaAfter > fManaThreshold2 and #nEnemyTowers == 0 then
+	if J.IsGoingToRune(bot) and fManaAfter > fManaThreshold1 + 0.05 and #nEnemyTowers == 0 then
 		if bot.rune and bot.rune.location then
 			local distance = GetUnitToLocationDistance(bot, bot.rune.location)
 			vLocation = J.VectorTowards(bot:GetLocation(), bot.rune.location, Min(nCastRange, distance))
@@ -386,7 +383,7 @@ function X.ConsiderTimeWalk()
 		local vRoshanLocation = J.GetCurrentRoshanLocation()
 		if  GetUnitToLocationDistance(bot, vRoshanLocation) > 2000
 		and #nEnemyHeroes <= 1
-		and fManaAfter > fManaThreshold2 + 0.1
+		and fManaAfter > fManaThreshold1 + 0.1
 		then
 			if bot:IsFacingLocation(vRoshanLocation, 45) and IsLocationPassable(vRoshanLocation) then
 				return BOT_ACTION_DESIRE_HIGH, vRoshanLocation
@@ -398,7 +395,7 @@ function X.ConsiderTimeWalk()
 		local vTormentorLocation = J.GetTormentorLocation(GetTeam())
 		if  GetUnitToLocationDistance(bot, vTormentorLocation) > 2000
 		and #nEnemyHeroes <= 1
-		and fManaAfter > fManaThreshold2 + 0.1
+		and fManaAfter > fManaThreshold1 + 0.1
 		then
 			if bot:IsFacingLocation(vTormentorLocation, 45) and IsLocationPassable(vTormentorLocation) then
 				return BOT_ACTION_DESIRE_HIGH, vTormentorLocation
@@ -418,7 +415,6 @@ function X.ConsiderTimeDilation()
 	local nManaCost = TimeDilation:GetManaCost()
     local fManaAfter = J.GetManaAfter(nManaCost)
 	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {TimeWalk, Timezone, Chronosphere})
-	local fManaThreshold2 = J.GetManaThreshold(bot, nManaCost, {Timezone, Chronosphere})
 
 	if J.IsInTeamFight(bot, 1200) and fManaAfter > fManaThreshold1 then
 		local nInRangeEnemy = J.GetEnemiesNearLoc(bot:GetLocation(), nRadius)
@@ -441,14 +437,14 @@ function X.ConsiderTimeDilation()
 	end
 
 	if J.IsGoingOnSomeone(bot) then
-		if  J.IsValidTarget(botTarget)
+		if  J.IsValidHero(botTarget)
 		and J.CanBeAttacked(botTarget)
 		and J.CanCastOnNonMagicImmune(botTarget)
 		and J.IsInRange(bot, botTarget, nRadius * 0.85)
 		and not J.IsDisabled(botTarget)
 		and not botTarget:HasModifier('modifier_doom_bringer_doom_aura_enemy')
 		and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
-		and fManaAfter > fManaThreshold2
+		and fManaAfter > fManaThreshold1
 		then
 			local nInRangeEnemy = J.GetEnemiesNearLoc(botTarget:GetLocation(), nRadius * 0.85)
 			if (#nInRangeEnemy >= 2)
@@ -460,17 +456,18 @@ function X.ConsiderTimeDilation()
 		end
 	end
 
-	if J.IsRetreating(bot) and not J.IsRealInvisible(bot) and bot:WasRecentlyDamagedByAnyHero(4.0) and fManaAfter > fManaThreshold2 then
+	if J.IsRetreating(bot) and not J.IsRealInvisible(bot) and fManaAfter > fManaThreshold1 then
 		for _, enemy in pairs(nEnemyHeroes) do
 			if J.IsValidHero(enemy)
+			and J.CanBeAttacked(enemy)
 			and J.IsInRange(bot, enemy, nRadius * 0.9)
 			and J.CanCastOnNonMagicImmune(enemy)
 			and not J.IsDisabled(enemy)
 			and not enemy:IsDisarmed()
+			and bot:WasRecentlyDamagedByHero(enemy, 2.0)
 			then
 				local nInRangeEnemy = bot:GetNearbyHeroes(nRadius * 0.9, true, BOT_MODE_NONE)
 				if (J.IsChasingTarget(enemy, bot))
-				or (#nEnemyHeroes > #nAllyHeroes and enemy:GetAttackTarget() == bot)
 				or #nInRangeEnemy >= 2
 				then
 					return BOT_ACTION_DESIRE_HIGH
@@ -503,7 +500,7 @@ function X.ConsiderTimeWalkReverse()
 
 	if not bInsideChronosphere and TimeWalkLocationPrev ~= nil then
 		if J.IsGoingOnSomeone(bot) then
-			if J.IsValidTarget(botTarget)
+			if J.IsValidHero(botTarget)
 			and J.IsInRange(bot, botTarget, 1600)
 			and not J.IsSuspiciousIllusion(botTarget)
 			and #nInRangeAlly >= #nInRangeEnemy
@@ -518,7 +515,7 @@ function X.ConsiderTimeWalkReverse()
 
 		if J.IsRetreating(bot) and not J.IsRealInvisible(bot) and #nEnemyHeroes > 0 then
 			if #nInRangeAlly >= #nInRangeEnemy
-			and GetUnitToLocationDistance(bot, J.GetTeamFountain()) > J.GetDistance(TimeWalkLocationPrev, J.GetTeamFountain())
+			and GetUnitToLocationDistance(bot, J.GetTeamFountain()) > J.GetDistance(TimeWalkLocationPrev, J.GetTeamFountain()) + 300
 			and bot:IsFacingLocation(J.GetTeamFountain(), 45)
 			then
 				return BOT_ACTION_DESIRE_HIGH
@@ -552,7 +549,7 @@ function X.ConsiderChronosphere()
 		return BOT_ACTION_DESIRE_NONE, 0
 	end
 
-	local nCastRange = J.GetProperCastRange(false, bot, Chronosphere:GetCastRange())
+	local nCastRange = Chronosphere:GetCastRange()
 	local nCastPoint = Chronosphere:GetCastPoint()
 	local nRadius = Chronosphere:GetSpecialValueInt('radius')
 	local nDuration = Chronosphere:GetSpecialValueInt('duration')
@@ -569,7 +566,6 @@ function X.ConsiderChronosphere()
 				if  J.IsValidHero(enemyHero)
 				and J.CanBeAttacked(enemyHero)
 				and not J.IsSuspiciousIllusion(enemyHero)
-				and not J.IsMeepoClone(enemyHero)
 				and not enemyHero:HasModifier('modifier_abaddon_borrowed_time')
 				and not enemyHero:HasModifier('modifier_dazzle_shallow_grave')
 				and not enemyHero:HasModifier('modifier_necrolyte_reapers_scythe')
@@ -588,7 +584,7 @@ function X.ConsiderChronosphere()
 		end
 	else
 		if J.IsGoingOnSomeone(bot) then
-			if  J.IsValidTarget(botTarget)
+			if  J.IsValidHero(botTarget)
 			and J.CanBeAttacked(botTarget)
 			and J.IsInRange(bot, botTarget, nCastRange * 0.9)
 			and not J.IsHaveAegis(botTarget)
@@ -618,7 +614,7 @@ function X.ConsiderChronosphere()
 					end
 				end
 
-				if #nInRangeAlly <= 2 and enemyCount == 1 then
+				if #nInRangeAlly <= 2 and enemyCount >= 1 then
 					if J.WillKillTarget(botTarget, nAttackDamage * nAttackSpeed, DAMAGE_TYPE_PHYSICAL, nDuration) then
 						bot:SetTarget(botTarget)
 						return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation()
@@ -632,6 +628,7 @@ function X.ConsiderChronosphere()
 		and bot:WasRecentlyDamagedByAnyHero(5)
 		and bot:GetActiveModeDesire() >= 0.95
 		and not J.IsLateGame()
+		and not bot:IsRooted()
 		and #nAllyHeroes <= 2
 		then
 			for _, enemy in pairs(nEnemyHeroes) do

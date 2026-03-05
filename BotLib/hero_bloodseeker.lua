@@ -273,7 +273,7 @@ function X.ConsiderBloodrage()
 		return BOT_ACTION_DESIRE_NONE, nil
 	end
 
-	local nCastRange = J.GetProperCastRange(false, bot, Bloodrage:GetCastRange())
+	local nCastRange = Bloodrage:GetCastRange()
 	local nDuration = Bloodrage:GetSpecialValueInt('duration')
 	local fMaxHealthDPS = Bloodrage:GetSpecialValueFloat('damage_pct')
 	local fHealthAfter = J.GetHealthAfter(((fMaxHealthDPS / 100) * bot:GetHealth() * nDuration))
@@ -285,7 +285,6 @@ function X.ConsiderBloodrage()
 		for _, allyHero in pairs(nAllyHeroes) do
 			if J.IsValidHero(allyHero)
 			and J.IsInRange(bot, allyHero, nCastRange + 300)
-			and allyHero:GetAttackTarget() ~= nil
 			and not J.IsSuspiciousIllusion(allyHero)
 			and not J.IsRetreating(allyHero)
 			and not allyHero:HasModifier('modifier_bloodseeker_bloodrage')
@@ -388,7 +387,7 @@ function X.ConsiderBloodrite()
 		return BOT_ACTION_DESIRE_NONE, 0
 	end
 
-	local nCastRange = J.GetProperCastRange(false, bot, Bloodrite:GetCastRange())
+	local nCastRange = Bloodrite:GetCastRange()
 	local nCastPoint = Bloodrite:GetCastPoint()
 	local nRadius = Bloodrite:GetSpecialValueInt('radius')
 	local nDamage = Bloodrite:GetSpecialValueInt('damage')
@@ -396,13 +395,11 @@ function X.ConsiderBloodrite()
 	local nManaCost = Bloodrite:GetManaCost()
 	local bHasBloodrage = bot:HasModifier('modifier_bloodseeker_bloodrage')
 	local fManaAfter = J.GetManaAfter(nManaCost)
-	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {Bloodrite, Rupture})
-	local fManaThreshold2 = J.GetManaThreshold(bot, nManaCost, {Rupture})
+	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {Rupture})
 
 	local hTalent = bot:GetAbilityByName('special_bonus_unique_bloodseeker_rupture_charges')
 	if hTalent and hTalent:IsTrained() then
-		fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {Bloodrite, Rupture, Rupture})
-		fManaThreshold2 = J.GetManaThreshold(bot, nManaCost, {Rupture, Rupture})
+		fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {Rupture, Rupture})
 	end
 
 	for _, enemyHero in pairs(nEnemyHeroes) do
@@ -410,7 +407,7 @@ function X.ConsiderBloodrite()
 		and J.CanBeAttacked(enemyHero)
         and J.IsInRange(bot, enemyHero, nCastRange + nRadius)
         and J.CanCastOnNonMagicImmune(enemyHero)
-		and fManaAfter > fManaThreshold2
+		and fManaAfter > fManaThreshold1
 		then
 			local eta = nDelay + nCastPoint
 			if J.WillKillTarget(enemyHero, nDamage, DAMAGE_TYPE_PURE, eta)
@@ -434,13 +431,14 @@ function X.ConsiderBloodrite()
 	if J.IsInTeamFight(bot, 1200) then
 		local nLocationAoE = bot:FindAoELocation(true, true, bot:GetLocation(), nCastRange - 200, nRadius, 0, 0)
 		local nInRangeEnemy = J.GetEnemiesNearLoc(nLocationAoE.targetloc, nRadius / 2)
-		if #nInRangeEnemy >= 2 and fManaAfter > fManaThreshold2 then
+		if #nInRangeEnemy >= 2 and fManaAfter > fManaThreshold1 then
 			local count = 0
 			for _, enemyHero in pairs(nInRangeEnemy) do
 				if J.IsValidHero(enemyHero)
 				and J.CanBeAttacked(enemyHero)
 				and not J.IsChasingTarget(bot, enemyHero)
 				and not J.IsDisabled(enemyHero)
+				and not enemyHero:IsSilenced()
 				and not enemyHero:HasModifier('modifier_enigma_black_hole_pull')
 				and not enemyHero:HasModifier('modifier_faceless_void_chronosphere_freeze')
 				and not J.IsSuspiciousIllusion(enemyHero)
@@ -461,8 +459,8 @@ function X.ConsiderBloodrite()
         and J.IsInRange(bot, botTarget, nCastRange + nRadius)
         and J.CanCastOnNonMagicImmune(botTarget)
 		and not J.IsSuspiciousIllusion(botTarget)
-		and not J.IsDisabled(botTarget)
-		and fManaAfter > fManaThreshold2
+		and not botTarget:IsSilenced()
+		and fManaAfter > fManaThreshold1
 		then
 			local nInRangeEnemy = J.GetEnemiesNearLoc(botTarget:GetLocation(), nRadius)
 			if #nInRangeEnemy <= 1
@@ -472,47 +470,34 @@ function X.ConsiderBloodrite()
 				and not botTarget:HasModifier('modifier_templar_assassin_refraction_absorb')
 				and not botTarget:HasModifier('modifier_item_aeon_disk_buff'))
 			then
-				local bChasingTarget = J.IsChasingTarget(bot, botTarget)
-				if J.IsInRange(bot, botTarget, nCastRange) then
-					if not bChasingTarget then
-						return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation()
-					else
-						if J.IsInRange(bot, botTarget, nCastRange / 2) then
-							return BOT_ACTION_DESIRE_HIGH, J.GetCorrectLoc(botTarget, nDelay + nCastPoint)
-						end
-					end
-				else
-					if not bChasingTarget then
-						return BOT_ACTION_DESIRE_HIGH, J.VectorTowards(bot:GetLocation(), botTarget:GetLocation(), nCastRange)
-					end
+				if J.IsDisabled(botTarget)
+				or botTarget:GetCurrentMovementSpeed() <= 250 then
+					return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation()
 				end
 			end
 		end
 	end
 
-	if J.IsRetreating(bot) and not J.IsRealInvisible(bot) and bot:WasRecentlyDamagedByAnyHero(3.0) then
+	if J.IsRetreating(bot) and not J.IsRealInvisible(bot) then
         for _, enemyHero in pairs(nEnemyHeroes) do
             if  J.IsValidHero(enemyHero)
             and J.CanBeAttacked(enemyHero)
-            and J.IsInRange(bot, enemyHero, nCastRange)
+            and J.IsInRange(bot, enemyHero, nRadius)
             and J.CanCastOnNonMagicImmune(enemyHero)
+			and not J.IsDisabled(enemyHero)
             and not enemyHero:IsDisarmed()
 			and not enemyHero:IsSilenced()
+			and bot:WasRecentlyDamagedByHero(enemyHero, 2.0)
             then
-                if (J.IsChasingTarget(enemyHero, bot) and botHP < 0.65)
-                or (#nEnemyHeroes > #nAllyHeroes and enemyHero:GetAttackTarget() == bot)
-                then
-                    local vHalfLocation = (bot:GetLocation() + enemyHero:GetLocation()) / 2
-                    local vLocation = (not J.IsInRange(bot, enemyHero, nCastRange / 2) and vHalfLocation) or bot:GetLocation()
-                    return BOT_ACTION_DESIRE_HIGH, vLocation
-                end
+				local vLocation = (bot:GetLocation() + enemyHero:GetLocation()) / 2
+				return BOT_ACTION_DESIRE_HIGH, vLocation
             end
         end
 	end
 
     local nEnemyCreeps = bot:GetNearbyCreeps(800, true)
 
-    if J.IsPushing(bot) and #nAllyHeroes <= 3 and bAttacking and fManaAfter > fManaThreshold1 and #nEnemyHeroes <= 1 and not bHasBloodrage then
+    if J.IsPushing(bot) and #nAllyHeroes <= 3 and bAttacking and fManaAfter > fManaThreshold1 + 0.1 and #nEnemyHeroes <= 1 and not bHasBloodrage then
         for _, creep in pairs(nEnemyCreeps) do
             if J.IsValid(creep) and J.CanBeAttacked(creep) and not J.IsRunning(creep) then
                 local nLocationAoE = bot:FindAoELocation(true, false, creep:GetLocation(), 0, nRadius, 0, 0)
@@ -539,7 +524,7 @@ function X.ConsiderBloodrite()
 		end
     end
 
-    if J.IsFarming(bot) and bAttacking and fManaAfter > fManaThreshold2 and not bHasBloodrage then
+    if J.IsFarming(bot) and bAttacking and fManaAfter > fManaThreshold1 and not bHasBloodrage then
         for _, creep in pairs(nEnemyCreeps) do
             if J.IsValid(creep) and J.CanBeAttacked(creep) and not J.IsRunning(creep) then
                 local nLocationAoE = bot:FindAoELocation(true, false, creep:GetLocation(), 0, nRadius, 0, 0)
@@ -557,7 +542,7 @@ function X.ConsiderBloodrite()
     and fManaAfter > fManaThreshold1
     and bAttacking
     and #nAllyHeroes <= 2
-    and #nEnemyHeroes == 0
+    and #nEnemyHeroes <= 1
 	then
         for _, creep in pairs(nEnemyCreeps) do
             if J.IsValid(creep) and J.CanBeAttacked(creep) and not J.IsRunning(creep) then
@@ -583,11 +568,12 @@ function X.ConsiderBloodrite()
     if J.IsDoingRoshan(bot) then
 		if J.IsRoshan(botTarget)
 		and J.CanBeAttacked(botTarget)
+        and J.IsInRange(bot, botTarget, nCastRange)
 		and J.CanCastOnNonMagicImmune(botTarget)
 		and not J.IsDisabled(botTarget)
-        and J.IsInRange(bot, botTarget, nCastRange)
 		and bAttacking
 		and fManaAfter > fManaThreshold1
+		and #nEnemyHeroes == 0
 		then
 			return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation()
 		end
@@ -598,6 +584,7 @@ function X.ConsiderBloodrite()
         and J.IsInRange(bot, botTarget, nCastRange)
         and bAttacking
 		and fManaAfter > fManaThreshold1
+		and #nEnemyHeroes == 0
 		then
 			return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation()
 		end
@@ -615,22 +602,17 @@ function X.ConsiderBloodMist()
 
 	local nRadius = BloodMist:GetSpecialValueInt('radius')
 
-	if BloodMist:GetToggleState() == true
-	then
-		if J.GetHP(bot) < 0.2
-		then
+	if BloodMist:GetToggleState() == true then
+		if botHP < 0.2 then
 			return BOT_ACTION_DESIRE_HIGH
 		end
 
-		if nEnemyHeroes ~= nil and #nEnemyHeroes == 0
-		then
+		if #nEnemyHeroes == 0 then
 			return BOT_ACTION_DESIRE_HIGH
 		end
 	end
 
-	if not BloodMist:GetToggleState() == false
-	and J.GetHP(bot) > 0.5
-	then
+	if not BloodMist:GetToggleState() == false and botHP > 0.5 then
 		if J.IsValidHero(botTarget)
 		and J.IsInRange(bot, botTarget, nRadius * 0.8)
 		and J.CanCastOnNonMagicImmune(botTarget)
@@ -707,7 +689,7 @@ function X.ConsiderRupture()
         return BOT_ACTION_DESIRE_NONE, nil
     end
 
-	local nCastRange = J.GetProperCastRange(false, bot, Rupture:GetCastRange())
+	local nCastRange = Rupture:GetCastRange()
 
 	if J.IsInTeamFight(bot, 1200) then
         -- mobile heroes
@@ -775,7 +757,7 @@ function X.ConsiderRupture()
 		end
 	end
 
-	if J.IsRetreating(bot) and not J.IsRealInvisible(bot) then
+	if J.IsRetreating(bot) and not J.IsRealInvisible(bot) and not bot:IsRooted() then
 		for _, enemyHero in pairs(nEnemyHeroes) do
 			if J.IsValidHero(enemyHero)
 			and J.CanBeAttacked(enemyHero)
@@ -787,10 +769,10 @@ function X.ConsiderRupture()
             and not enemyHero:HasModifier('modifier_bloodseeker_rupture')
             and not enemyHero:HasModifier('modifier_necrolyte_reapers_scythe')
 			and not enemyHero:HasModifier('modifier_item_blade_mail_reflect')
-			and bot:WasRecentlyDamagedByHero(enemyHero, 5.0)
+			and bot:WasRecentlyDamagedByHero(enemyHero, 2.0)
 			then
 				if J.IsChasingTarget(enemyHero, bot)
-				or (#nEnemyHeroes > #nAllyHeroes and enemyHero:GetAttackTarget() == bot)
+				or (#nEnemyHeroes > #nAllyHeroes)
 				then
 					return BOT_ACTION_DESIRE_HIGH, enemyHero
 				end

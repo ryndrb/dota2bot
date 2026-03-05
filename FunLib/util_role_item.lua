@@ -5,6 +5,7 @@ Item['item_crimson_guard'] = {
 	['npc_dota_hero_arc_warden'] = true,
 	['npc_dota_hero_broodmother'] = true,
 	['npc_dota_hero_chaos_knight'] = true,
+	['npc_dota_hero_death_prophet'] = true,
 	['npc_dota_hero_gyrocopter'] = true,
 	['npc_dota_hero_juggernaut'] = true,
 	['npc_dota_hero_luna'] = true,
@@ -20,7 +21,6 @@ Item['item_crimson_guard'] = {
 
 Item['item_pipe'] = {
 	['npc_dota_hero_crystal_maiden'] = true,
-	['npc_dota_hero_death_prophet'] = true,
 	['npc_dota_hero_earth_spirit'] = true,
 	['npc_dota_hero_earthshaker'] = true,
 	['npc_dota_hero_invoker'] = true,

@@ -196,14 +196,13 @@ function X.ConsiderSpiritLance()
 		return BOT_ACTION_DESIRE_NONE, nil
 	end
 
-	local nCastRange = J.GetProperCastRange(false, bot, SpiritLance:GetCastRange())
+	local nCastRange = SpiritLance:GetCastRange()
 	local nCastPoint = SpiritLance:GetCastPoint()
 	local nDamage = SpiritLance:GetSpecialValueInt('lance_damage')
 	local nSpeed = SpiritLance:GetSpecialValueInt('lance_speed')
 	local nManaCost = SpiritLance:GetManaCost()
 	local fManaAfter = J.GetManaAfter(nManaCost)
 	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {Doppelganger})
-	local fManaThreshold2 = J.GetManaThreshold(bot, nManaCost, {SpiritLance, Doppelganger})
 
 	for _, enemyHero in pairs(nEnemyHeroes) do
         if  J.IsValidHero(enemyHero)
@@ -231,6 +230,7 @@ function X.ConsiderSpiritLance()
 		and J.IsInRange(bot, botTarget, nCastRange + 300)
 		and J.CanCastOnNonMagicImmune(botTarget)
 		and J.CanCastOnTargetAdvanced(botTarget)
+		and J.IsChasingTarget(bot, botTarget)
 		and not J.IsDisabled(botTarget)
 		and not botTarget:HasModifier('modifier_abaddon_borrowed_time')
 		and not botTarget:HasModifier('modifier_dazzle_shallow_grave')
@@ -267,7 +267,7 @@ function X.ConsiderSpiritLance()
 		end
 	end
 
-	if J.IsRetreating(bot) and not J.IsRealInvisible(bot) and bot:WasRecentlyDamagedByAnyHero(3.0) then
+	if J.IsRetreating(bot) and not J.IsRealInvisible(bot) and J.IsRunning(bot) then
         for _, enemyHero in pairs(nEnemyHeroes) do
             if  J.IsValidHero(enemyHero)
 			and J.CanBeAttacked(enemyHero)
@@ -276,20 +276,16 @@ function X.ConsiderSpiritLance()
             and J.CanCastOnNonMagicImmune(enemyHero)
 			and J.CanCastOnTargetAdvanced(enemyHero)
             and not J.IsDisabled(enemyHero)
+			and bot:WasRecentlyDamagedByHero(enemyHero, 3.0)
             then
-				if J.IsChasingTarget(enemyHero, bot)
-				or (#nEnemyHeroes > #nAllyHeroes and enemyHero:GetAttackTarget() == bot)
-				or botHP < 0.55
-				then
-					return BOT_ACTION_DESIRE_HIGH, enemyHero
-				end
+				return BOT_ACTION_DESIRE_HIGH, enemyHero
             end
         end
     end
 
-	local nEnemyCreeps = bot:GetNearbyCreeps(nCastRange, true)
+	local nEnemyCreeps = bot:GetNearbyCreeps(Min(nCastRange + 300, 1600), true)
 
-	if (J.IsPushing(bot) and bAttacking and fManaAfter > fManaThreshold2 and #nAllyHeroes <= 2)
+	if (J.IsPushing(bot) and bAttacking and fManaAfter > fManaThreshold1 + 0.1 and #nAllyHeroes <= 2)
 	or (J.IsDefending(bot) and bAttacking and fManaAfter > fManaThreshold1 and #nEnemyHeroes == 0)
 	or (J.IsFarming(bot) and bAttacking and fManaAfter > fManaThreshold1 and #nEnemyHeroes == 0)
 	then
@@ -318,8 +314,8 @@ function X.ConsiderSpiritLance()
 		and J.CanBeAttacked(botTarget)
 		and botTarget:IsCreep()
 		and J.IsInRange(bot, botTarget, nCastRange)
-		and not J.CanKillTarget( botTarget, bot:GetAttackDamage() * 1.1, DAMAGE_TYPE_PHYSICAL)
-		and not J.CanKillTarget( botTarget, nDamage, DAMAGE_TYPE_MAGICAL)
+		and not J.CanKillTarget(botTarget, bot:GetAttackDamage() * 1.1, DAMAGE_TYPE_PHYSICAL)
+		and not J.CanKillTarget(botTarget, nDamage, DAMAGE_TYPE_MAGICAL)
 		then
 			return BOT_ACTION_DESIRE_HIGH, botTarget
 		end
@@ -330,6 +326,7 @@ function X.ConsiderSpiritLance()
 			if J.IsValid(creep)
 			and J.CanBeAttacked(creep)
 			and J.CanCastOnTargetAdvanced(creep)
+			and not J.IsOtherAllysTarget(creep)
 			then
 				local eta = (GetUnitToUnitDistance(bot, creep) / nSpeed) + nCastPoint
 				if J.WillKillTarget(creep, nDamage, DAMAGE_TYPE_PHYSICAL, eta) then
@@ -374,19 +371,18 @@ function X.ConsiderDoppelganger()
 		return BOT_ACTION_DESIRE_NONE
 	end
 
-	local nCastRange = J.GetProperCastRange(false, bot, Doppelganger:GetCastRange())
+	local nCastRange = Doppelganger:GetCastRange()
 	local nAbilityLevel = Doppelganger:GetLevel()
 	local nManaCost = Doppelganger:GetManaCost()
 	local fManaAfter = J.GetManaAfter(nManaCost)
 	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {SpiritLance})
-	local fManaThreshold2 = J.GetManaThreshold(bot, nManaCost, {SpiritLance, Doppelganger})
-	local nEnemyHeroesTargetingMe = J.GetHeroesTargetingUnit(nEnemyHeroes, bot)
 
 	local vTeamFountain = J.GetTeamFountain()
 	local botLocation = bot:GetLocation()
 
 	if (J.IsNotAttackProjectileIncoming(bot, 500))
 	or (J.GetAttackProjectileDamageByRange(bot, 1600) >= bot:GetHealth())
+	or (J.IsStunProjectileIncoming(bot, 550))
 	then
 		return BOT_ACTION_DESIRE_HIGH, J.VectorTowards(botLocation, vTeamFountain, nCastRange)
 	end
@@ -410,14 +406,14 @@ function X.ConsiderDoppelganger()
 		end
 	end
 
-	if J.IsRetreating(bot) and not J.IsRealInvisible(bot) and bot:WasRecentlyDamagedByAnyHero(2.0) then
-		if #nEnemyHeroesTargetingMe > 0 or (#nEnemyHeroes > #nAllyHeroes) then
+	if J.IsRetreating(bot) and not J.IsRealInvisible(bot) and bot:WasRecentlyDamagedByAnyHero(1.0) then
+		if J.IsRunning(bot) then
 			return BOT_ACTION_DESIRE_HIGH, J.VectorTowards(botLocation, vTeamFountain, nCastRange)
 		end
 	end
 
 	if not bot:HasModifier('modifier_phantom_lancer_phantom_edge_agility') then
-		if J.IsPushing(bot) and bAttacking and #nAllyHeroes <= 3 and #nEnemyHeroes == 0 and fManaAfter > fManaThreshold2 then
+		if J.IsPushing(bot) and bAttacking and #nAllyHeroes <= 3 and #nEnemyHeroes == 0 and fManaAfter > fManaThreshold1 + 0.2 then
 			if  J.IsValid(botTarget)
 			and J.CanBeAttacked(botTarget)
 			and J.IsInRange(bot, botTarget, nCastRange)
@@ -443,7 +439,7 @@ function X.ConsiderDoppelganger()
 			end
 		end
 
-		if J.IsFarming(bot) and bAttacking and #nEnemyHeroes == 0 and fManaAfter > fManaThreshold2 then
+		if J.IsFarming(bot) and bAttacking and #nEnemyHeroes == 0 and fManaAfter > fManaThreshold1 + 0.1 then
 			if  J.IsValid(botTarget)
 			and J.CanBeAttacked(botTarget)
 			and J.IsInRange(bot, botTarget, nCastRange)

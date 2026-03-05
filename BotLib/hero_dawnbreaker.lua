@@ -312,9 +312,10 @@ function X.SkillsComplement()
             end
         end
 
+        fCelestialHammerTime = CelestialHammer:GetCastPoint() + (GetUnitToLocationDistance(bot, CelestialHammerLocation) / nSpeed)
+
         J.SetQueuePtToINT(bot, false)
         bot:ActionQueue_UseAbilityOnLocation(CelestialHammer, CelestialHammerLocation)
-        fCelestialHammerTime = DotaTime() + CelestialHammer:GetCastPoint() + (GetUnitToLocationDistance(bot, CelestialHammerLocation) / nSpeed)
         return
     end
 
@@ -361,8 +362,6 @@ function X.ConsiderStarBreaker()
     local nManaCost = Starbreaker:GetManaCost()
     local fManaAfter = J.GetManaAfter(nManaCost)
     local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {CelestialHammer, SolarGuardian})
-    local fManaThreshold2 = J.GetManaThreshold(bot, nManaCost, {Starbreaker, CelestialHammer, SolarGuardian})
-    local fManaThreshold3 = J.GetManaThreshold(bot, nManaCost, {SolarGuardian})
 
     for _, enemyHero in pairs(nEnemyHeroes) do
         if  J.IsValidHero(enemyHero)
@@ -374,7 +373,7 @@ function X.ConsiderStarBreaker()
                 if J.GetModifierTime(enemyHero, 'modifier_teleporting') > fComboDuration then
                     return BOT_ACTION_DESIRE_HIGH, enemyHero:GetLocation()
                 end
-            elseif enemyHero:IsChanneling() and fManaAfter > fManaThreshold2 then
+            elseif enemyHero:IsChanneling() and fManaAfter > fManaThreshold1 then
                 return BOT_ACTION_DESIRE_HIGH, enemyHero:GetLocation()
             end
 
@@ -409,7 +408,7 @@ function X.ConsiderStarBreaker()
         and not botTarget:HasModifier('modifier_dazzle_shallow_grave')
         and not botTarget:HasModifier('modifier_faceless_void_chronosphere_freeze')
         and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
-        and fManaAfter > fManaThreshold3
+        and fManaAfter > fManaThreshold1
 		then
             if not J.IsChasingTarget(bot, botTarget) or botTarget:GetCurrentMovementSpeed() <= 200 then
                 return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation()
@@ -419,7 +418,7 @@ function X.ConsiderStarBreaker()
 
     local nEnemyCreeps = bot:GetNearbyCreeps(nRadius + 300, true)
 
-    if J.IsPushing(bot) and #nAllyHeroes <= 2 and fManaAfter > fManaThreshold2 and bAttacking and #nEnemyHeroes <= 1 then
+    if J.IsPushing(bot) and #nAllyHeroes <= 2 and fManaAfter > fManaThreshold1 + 0.1 and bAttacking and #nEnemyHeroes <= 1 then
 		for _, creep in pairs(nEnemyCreeps) do
             if J.IsValid(creep) and J.CanBeAttacked(creep) and not J.IsRunning(creep) then
                 local nLocationAoE = bot:FindAoELocation(true, false, creep:GetLocation(), 0, nRadius, 0, 0)
@@ -475,7 +474,7 @@ function X.ConsiderStarBreaker()
         and J.CanBeAttacked(botTarget)
         and J.IsInRange(bot, botTarget, nRadius + 300)
         and J.GetHP(botTarget) > 0.5
-        and fManaAfter > fManaThreshold2
+        and fManaAfter > fManaThreshold1
         and bAttacking
         then
             return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation()
@@ -485,14 +484,14 @@ function X.ConsiderStarBreaker()
     if J.IsDoingTormentor(bot) then
         if  J.IsTormentor(botTarget)
         and J.IsInRange(bot, botTarget, nRadius + 300)
-        and fManaAfter > fManaThreshold2
+        and fManaAfter > fManaThreshold1
         and bAttacking
         then
             return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation()
         end
     end
 
-    if fManaAfter > fManaThreshold2 and #nEnemyHeroes <= 1 then
+    if fManaAfter > fManaThreshold1 + 0.15 and #nEnemyHeroes <= 1 then
 		for _, creep in pairs(nEnemyCreeps) do
             if J.IsValid(creep) and J.CanBeAttacked(creep) and not J.IsRunning(creep) then
                 local nLocationAoE = bot:FindAoELocation(true, false, creep:GetLocation(), 0, nRadius, 0, nDamage)
@@ -515,12 +514,12 @@ function X.ConsiderCelestialHammer()
 
     local nCastRange = CelestialHammer:GetSpecialValueInt('range')
 	local nCastPoint = CelestialHammer:GetCastPoint()
+    local nRadius = CelestialHammer:GetSpecialValueInt('projectile_radius')
     local nSpeed = CelestialHammer:GetSpecialValueInt('projectile_speed')
     local nDamage = CelestialHammer:GetSpecialValueInt('hammer_damage')
     local nManaCost = CelestialHammer:GetManaCost()
     local fManaAfter = J.GetManaAfter(nManaCost)
     local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {Starbreaker, SolarGuardian})
-    local fManaThreshold2 = J.GetManaThreshold(bot, nManaCost, {SolarGuardian})
 
     if bot:GetUnitName() == 'npc_dota_hero_dawnbreaker' then
         if CelestialHammerCastRangeTalent and CelestialHammerCastRangeTalent:IsTrained() then
@@ -532,13 +531,12 @@ function X.ConsiderCelestialHammer()
     for _, enemyHero in pairs(nEnemyHeroes) do
 		if  J.IsValidHero(enemyHero)
         and J.CanBeAttacked(enemyHero)
-        and J.IsInRange(bot, enemyHero, 1600)
+        and J.IsInRange(bot, enemyHero, nCastRange)
         and J.CanCastOnNonMagicImmune(enemyHero)
 		and not enemyHero:HasModifier('modifier_abaddon_borrowed_time')
 		and not enemyHero:HasModifier('modifier_dazzle_shallow_grave')
         and not enemyHero:HasModifier('modifier_necrolyte_reapers_scythe')
         and not enemyHero:HasModifier('modifier_oracle_false_promise_timer')
-        and fManaAfter > fManaThreshold2
         then
             local fDelay = (GetUnitToUnitDistance(bot, enemyHero) / nSpeed) + nCastPoint
             if J.WillKillTarget(enemyHero, nDamage, DAMAGE_TYPE_MAGICAL, fDelay) then
@@ -564,12 +562,16 @@ function X.ConsiderCelestialHammer()
 		end
 	end
 
-    if J.IsRetreating(bot) and not J.IsRealInvisible(bot) and bot:WasRecentlyDamagedByAnyHero(4) then
+    if J.IsRetreating(bot) and not J.IsRealInvisible(bot) then
         for _, enemyHero in ipairs(nEnemyHeroes) do
             if J.IsValidHero(enemyHero)
+            and J.IsInRange(bot, enemyHero, Min(nCastRange, 1200))
             and J.CanCastOnNonMagicImmune(enemyHero)
+            and not J.IsDisabled(enemyHero)
+            and not enemyHero:IsDisarmed()
+            and bot:WasRecentlyDamagedByHero(enemyHero, 3.0)
             then
-                if J.IsChasingTarget(enemyHero, bot) or botHP < 0.5 or (#nEnemyHeroes > #nAllyHeroes and enemyHero:GetAttackTarget() == bot) then
+                if J.IsChasingTarget(enemyHero, bot) or botHP < 0.5 or #nEnemyHeroes > #nAllyHeroes then
                     local fDelay = (GetUnitToUnitDistance(bot, enemyHero) / nSpeed) + nCastPoint
                     if GetUnitToUnitDistance(bot, enemyHero) > 600 then
                         bIsHammerCastedWhenRetreatingToEnemy = true
@@ -590,16 +592,29 @@ function X.ConsiderCelestialHammer()
             if  J.IsValid(creep)
             and J.CanBeAttacked(creep)
             and not J.IsRunning(creep)
-            and (J.IsKeyWordUnit('ranged', creep) or J.IsKeyWordUnit('siege', creep))
+            and not J.IsOtherAllysTarget(creep)
             then
                 local fDelay = (GetUnitToUnitDistance(bot, creep) / nSpeed) + nCastPoint
-                if J.WillKillTarget(creep, nDamage, DAMAGE_TYPE_MAGICAL, fDelay) then
-                    if (J.IsValidHero(nEnemyHeroes[1]) and not J.IsSuspiciousIllusion(nEnemyHeroes[1]) and GetUnitToUnitDistance(creep, nEnemyHeroes[1]) <= 600)
-                    or J.IsUnitTargetedByTower(creep, false)
-                    then
-                        return BOT_ACTION_DESIRE_HIGH, creep:GetLocation()
-                    end
-                end
+				if J.WillKillTarget(creep, nDamage, DAMAGE_TYPE_MAGICAL, fDelay) then
+					local sCreepName = creep:GetUnitName()
+					local nLocationAoE = bot:FindAoELocation(true, true, creep:GetLocation(), 0, 600, 0, 0)
+
+					if string.find(sCreepName, 'ranged') then
+						if nLocationAoE.count > 0 or J.IsUnitTargetedByTower(creep, false) or J.IsEnemyTargetUnit(creep, 1000) then
+							return BOT_ACTION_DESIRE_HIGH, creep:GetLocation()
+						end
+					end
+
+					local nInRangeEnemy = J.GetEnemiesNearLoc(creep:GetLocation(), nRadius)
+					if #nInRangeEnemy > 0 then
+						return BOT_ACTION_DESIRE_HIGH, creep:GetLocation()
+					end
+
+					nLocationAoE = bot:FindAoELocation(true, false, creep:GetLocation(), 0, nRadius, 0, nDamage)
+					if nLocationAoE.count >= 2 and #nEnemyHeroes > 0 then
+						return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc
+					end
+				end
             end
         end
 	end
@@ -612,6 +627,8 @@ function X.ConsiderConverge()
         return BOT_ACTION_DESIRE_NONE
     end
 
+    local fElapsedTime = CelestialHammer:GetCooldown() - CelestialHammer:GetCooldownTimeRemaining()
+
     if J.IsGoingOnSomeone(bot) and vConvergeHammerLocation ~= nil then
 		if  J.IsValidHero(botTarget)
         and J.CanBeAttacked(botTarget)
@@ -620,8 +637,8 @@ function X.ConsiderConverge()
         and not J.IsSuspiciousIllusion(botTarget)
         and not botTarget:HasModifier('modifier_faceless_void_chronosphere_freeze')
 		then
-            if GetUnitToLocationDistance(botTarget, vConvergeHammerLocation) < GetUnitToLocationDistance(bot, vConvergeHammerLocation)
-            and DotaTime() > fCelestialHammerTime
+            if  GetUnitToLocationDistance(botTarget, vConvergeHammerLocation) < GetUnitToLocationDistance(bot, vConvergeHammerLocation)
+            and fElapsedTime > fCelestialHammerTime
             then
                 return BOT_ACTION_DESIRE_HIGH
             end
@@ -630,7 +647,7 @@ function X.ConsiderConverge()
 
     if not bIsHammerCastedWhenRetreatingToEnemy then
         if J.IsRetreating(bot) and not J.IsRealInvisible(bot) then
-            if  bot:IsFacingLocation(J.GetTeamFountain(), 45) and DotaTime() > fCelestialHammerTime then
+            if fElapsedTime > fCelestialHammerTime then
                 return BOT_ACTION_DESIRE_HIGH
             end
         end

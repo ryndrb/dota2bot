@@ -360,7 +360,7 @@ function X.ConsiderBoulderSmash()
 		return BOT_ACTION_DESIRE_NONE, 0, false, false
 	end
 
-	local nCastRange = J.GetProperCastRange(false, bot, BoulderSmash:GetCastRange())
+	local nCastRange = BoulderSmash:GetCastRange()
 	local nSpeed = BoulderSmash:GetSpecialValueInt('speed')
 	local nDamage = BoulderSmash:GetSpecialValueInt('rock_damage')
 	local nRadius = BoulderSmash:GetSpecialValueInt('radius')
@@ -369,7 +369,7 @@ function X.ConsiderBoulderSmash()
 	local bStoneNearby = X.IsStoneNearby(botLocation, nCastRange)
 	local nManaCost = BoulderSmash:GetManaCost()
 	local fManaAfter = J.GetManaAfter(nManaCost)
-	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {RollingBoulder, Magnetize})
+	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {RollingBoulder, GeomagneticGrip, EnchantRemnant, Magnetize})
 
 	local nEnemyTowers = bot:GetNearbyTowers(1600, false)
 
@@ -502,34 +502,33 @@ function X.ConsiderBoulderSmash()
 		end
 	end
 
-	if J.IsRetreating(bot) and not J.IsRealInvisible(bot) and bot:WasRecentlyDamagedByAnyHero(4.0) then
+	if J.IsRetreating(bot) and not J.IsRealInvisible(bot) then
 		for _, enemy in pairs(nEnemyHeroes) do
 			if J.IsValidHero(enemy)
+			and J.CanBeAttacked(enemy)
 			and J.IsInRange(bot, enemy, 700)
-			and J.IsChasingTarget(enemy, bot)
+			and not J.IsDisabled(enemy)
+			and not enemy:IsDisarmed()
+			and bot:WasRecentlyDamagedByHero(enemy, 2.0)
 			then
-				if (J.IsChasingTarget(enemy, bot))
-				or ((#nEnemyHeroes > #nAllyHeroes or botHP < 0.5) and enemy:GetAttackTarget() == bot)
-				then
-					-- don't use stone
-					local vEnemyLocation = enemy:GetLocation()
-					if bStoneNearby then
-						return BOT_ACTION_DESIRE_HIGH, vEnemyLocation, false, true
-					else
-						if J.IsInRange(bot, enemy, nCastRange) then
-							return BOT_ACTION_DESIRE_HIGH, J.VectorAway(vEnemyLocation, botLocation, nUnitKickDist), false, true
-						end
+				-- don't use stone
+				local vEnemyLocation = enemy:GetLocation()
+				if bStoneNearby then
+					return BOT_ACTION_DESIRE_HIGH, vEnemyLocation, false, true
+				else
+					if J.IsInRange(bot, enemy, nCastRange) then
+						return BOT_ACTION_DESIRE_HIGH, J.VectorAway(vEnemyLocation, botLocation, nUnitKickDist), false, true
 					end
 				end
 			end
 		end
 	end
 
-	local nEnemyCreeps = bot:GetNearbyCreeps(1600, true)
+	local nEnemyCreeps = bot:GetNearbyCreeps(800, true)
 
-	if J.IsPushing(bot) and #nAllyHeroes <= 2 and fManaAfter > fManaThreshold1 then
+	if J.IsPushing(bot) and bAttacking and #nAllyHeroes <= 2 and fManaAfter > fManaThreshold1 then
 		for _, creep in pairs(nEnemyCreeps) do
-            if J.IsValid(creep) and J.CanBeAttacked(creep) and J.IsInRange(bot, creep, 800) and not J.IsRunning(creep) then
+            if J.IsValid(creep) and J.CanBeAttacked(creep) and not J.IsRunning(creep) then
                 local nLocationAoE = bot:FindAoELocation(true, false, creep:GetLocation(), 0, nRadius, 0, 0)
                 if (nLocationAoE.count >= 4) then
 					if X.IsUnitClosestToUnit(creep, bot) then
@@ -545,9 +544,9 @@ function X.ConsiderBoulderSmash()
         end
 	end
 
-	if J.IsDefending(bot) and #nEnemyHeroes == 0 and #nAllyHeroes <= 2 and fManaAfter > 0.4 then
+	if J.IsDefending(bot) and bAttacking and #nEnemyHeroes == 0 and #nAllyHeroes <= 2 and fManaAfter > 0.4 then
 		for _, creep in pairs(nEnemyCreeps) do
-            if J.IsValid(creep) and J.CanBeAttacked(creep) and J.IsInRange(bot, creep, 800) and not J.IsRunning(creep) then
+            if J.IsValid(creep) and J.CanBeAttacked(creep) and not J.IsRunning(creep) then
                 local nLocationAoE = bot:FindAoELocation(true, false, creep:GetLocation(), 0, nRadius, 0, 0)
                 if (nLocationAoE.count >= 4) then
 					if X.IsUnitClosestToUnit(creep, bot) then
@@ -564,9 +563,8 @@ function X.ConsiderBoulderSmash()
 	end
 
 	if J.IsFarming(bot) and fManaAfter > 0.4 and bAttacking then
-		nEnemyCreeps = bot:GetNearbyCreeps(800, true)
 		for _, creep in pairs(nEnemyCreeps) do
-            if J.IsValid(creep) and J.CanBeAttacked(creep) and J.IsInRange(bot, creep, 800) and not J.IsRunning(creep) then
+            if J.IsValid(creep) and J.CanBeAttacked(creep) and not J.IsRunning(creep) then
                 local nLocationAoE = bot:FindAoELocation(true, false, creep:GetLocation(), 0, nRadius, 0, 0)
                 if (nLocationAoE.count >= 3)
 				or (nLocationAoE.count >= 2 and creep:IsAncientCreep())
@@ -585,28 +583,42 @@ function X.ConsiderBoulderSmash()
         end
 	end
 
-	if  J.IsLaning(bot)
-	and J.IsInLaningPhase()
-	and (J.IsCore(bot) or not J.IsThereCoreNearby(1000))
-	and fManaAfter > 0.5
-	then
+	if J.IsLaning(bot) and J.IsInLaningPhase() and (J.IsCore(bot) or not J.IsThereCoreNearby(1000)) and fManaAfter > fManaThreshold1 + 0.05 then
 		for _, creep in pairs(nEnemyCreeps) do
 			if  J.IsValid(creep)
 			and J.CanBeAttacked(creep)
 			and not J.IsInRange(bot, creep, bot:GetAttackRange() * 2.5)
-			and J.IsKeyWordUnit('ranged', creep)
 			and not J.IsRunning(creep)
+			and not J.IsOtherAllysTarget(creep)
 			then
 				local eta = GetUnitToUnitDistance(bot, creep) / nSpeed
 				if J.WillKillTarget(creep, nDamage, DAMAGE_TYPE_MAGICAL, eta) then
-					if (J.IsValidHero(nEnemyHeroes[1]) and not J.IsSuspiciousIllusion(nEnemyHeroes[1]) and J.IsInRange(creep, nEnemyHeroes[1], 550))
-					or J.IsUnitTargetedByTower(creep, false)
-					then
+					local sCreepName = creep:GetUnitName()
+					local nLocationAoE = bot:FindAoELocation(true, true, creep:GetLocation(), 0, 600, 0, 0)
+
+					if string.find(sCreepName, 'ranged') then
+						if nLocationAoE.count > 0 or J.IsUnitTargetedByTower(creep, false) or J.IsEnemyTargetUnit(creep, 1000) then
+							if bStoneNearby then
+								return BOT_ACTION_DESIRE_HIGH, creep:GetLocation(), false, true
+							elseif nStone >= 1 then
+								return BOT_ACTION_DESIRE_HIGH, creep:GetLocation(), true, false
+							end
+						end
+					end
+
+					local nInRangeEnemy = J.GetEnemiesNearLoc(creep:GetLocation(), nRadius)
+					if #nInRangeEnemy > 0 then
 						if bStoneNearby then
 							return BOT_ACTION_DESIRE_HIGH, creep:GetLocation(), false, true
-						elseif nStone >= 1 then
+						elseif nStone >= 1 and DotaTime() > fBoulderSmashFarmTime + 15 then
+							fBoulderSmashFarmTime = DotaTime()
 							return BOT_ACTION_DESIRE_HIGH, creep:GetLocation(), true, false
 						end
+					end
+
+					nLocationAoE = bot:FindAoELocation(true, false, creep:GetLocation(), 0, nRadius, 0, nDamage)
+					if nLocationAoE.count >= 2 and #nEnemyHeroes > 0 then
+						return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc
 					end
 				end
 			end
@@ -771,7 +783,7 @@ function X.ConsiderRollingBoulder()
 				and not J.IsRealInvisible(bot)
 				then
 					if (J.IsChasingTarget(enemy, bot) and bot:WasRecentlyDamagedByAnyHero(4.0))
-					or ((#nEnemyHeroes > #nAllyHeroes or botHP < 0.6) and enemy:GetAttackTarget() == bot)
+					or ((#nEnemyHeroes > #nAllyHeroes or botHP < 0.6))
 					then
 						if X.IsStoneInPath(botLocation, vLocation, nRadius, nDistance) then
 							return BOT_ACTION_DESIRE_HIGH, vLocation, false
@@ -898,7 +910,6 @@ function X.ConsiderRollingBoulder()
 				end
 			end
 		end
-
 	end
 
 	return BOT_ACTION_DESIRE_NONE, 0, false
@@ -909,7 +920,7 @@ function X.ConsiderGeomagneticGrip()
 		return BOT_ACTION_DESIRE_NONE, 0, false
 	end
 
-	local nCastRange = J.GetProperCastRange(false, bot, GeomagneticGrip:GetCastRange())
+	local nCastRange = GeomagneticGrip:GetCastRange()
 	local nCastRange_ally = GeomagneticGrip:GetSpecialValueInt('cast_range_heroes')
 	local nDamage = GeomagneticGrip:GetSpecialValueInt('rock_damage')
 	local nRadius = GeomagneticGrip:GetSpecialValueInt('radius')
@@ -918,6 +929,7 @@ function X.ConsiderGeomagneticGrip()
 	for _, allyHero in pairs(nAllyHeroes) do
 		if J.IsValidHero(allyHero)
 		and bot ~= allyHero
+		and J.CanBeAttacked(allyHero)
 		and J.IsInRange(bot, allyHero, nCastRange_ally + 300)
 		and not J.IsInRange(bot, allyHero, nCastRange_ally * 0.8)
 		and not J.IsDisabled(allyHero)
@@ -994,78 +1006,72 @@ function X.ConsiderGeomagneticGrip()
         end
     end
 
-	local nEnemyCreeps = bot:GetNearbyCreeps(nCastRange, true)
+	local nEnemyCreeps = bot:GetNearbyCreeps(Min(nCastRange, 1600), true)
 
-	if J.IsPushing(bot) and #nAllyHeroes <= 2 and fManaAfter > 0.5 then
-		if J.IsValid(nEnemyCreeps[1])
-		and J.CanBeAttacked(nEnemyCreeps[1])
-		and J.IsInRange(bot, nEnemyCreeps[1], 800)
-		and not J.IsRunning(nEnemyCreeps[1])
-		then
-			local nLocationAoE = bot:FindAoELocation(true, false, nEnemyCreeps[1]:GetLocation(), 0, nRadius, 0, 0)
-			if nLocationAoE.count >= 4 then
-				if X.IsStoneNearLocation(nLocationAoE.targetloc, nRadius) then
-					return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc, false
-				end
+	if J.IsPushing(bot) and bAttacking and #nAllyHeroes <= 2 and fManaAfter > 0.5 then
+		for _, creep in pairs(nEnemyCreeps) do
+			if J.IsValid(creep) and J.CanBeAttacked(creep) and not J.IsRunning(creep) then
+				local nLocationAoE = bot:FindAoELocation(true, false, creep:GetLocation(), 0, nRadius, 0, 0)
+				if nLocationAoE.count >= 4 then
+					if X.IsStoneNearLocation(nLocationAoE.targetloc, nRadius) then
+						return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc, false
+					end
 
-				local bLocationBetween, vLocation = X.IsEnemyInBetweenMeAndStone(botLocation, nLocationAoE.targetloc, nRadius, nCastRange)
-				if bLocationBetween then
-					return BOT_ACTION_DESIRE_HIGH, vLocation, false
-				end
+					local bLocationBetween, vLocation = X.IsEnemyInBetweenMeAndStone(botLocation, nLocationAoE.targetloc, nRadius, nCastRange)
+					if bLocationBetween then
+						return BOT_ACTION_DESIRE_HIGH, vLocation, false
+					end
 
-				if nStone >= 1 then
-					return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc, true
+					if nStone >= 1 then
+						return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc, true
+					end
 				end
 			end
 		end
 	end
 
-	if J.IsDefending(bot) and #nEnemyHeroes == 0 and #nAllyHeroes <= 2 and fManaAfter > 0.4 then
-		if J.IsValid(nEnemyCreeps[1])
-		and J.CanBeAttacked(nEnemyCreeps[1])
-		and J.IsInRange(bot, nEnemyCreeps[1], 800)
-		and not J.IsRunning(nEnemyCreeps[1])
-		then
-			local nLocationAoE = bot:FindAoELocation(true, false, nEnemyCreeps[1]:GetLocation(), 0, nRadius, 0, 0)
-			if nLocationAoE.count >= 4 then
-				if X.IsStoneNearLocation(nLocationAoE.targetloc, nRadius) then
-					return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc, false
-				end
+	if J.IsDefending(bot) and bAttacking and #nEnemyHeroes == 0 and #nAllyHeroes <= 2 and fManaAfter > 0.4 then
+		for _, creep in pairs(nEnemyCreeps) do
+			if J.IsValid(creep) and J.CanBeAttacked(creep) and not J.IsRunning(creep) then
+				local nLocationAoE = bot:FindAoELocation(true, false, creep:GetLocation(), 0, nRadius, 0, 0)
+				if nLocationAoE.count >= 4 then
+					if X.IsStoneNearLocation(nLocationAoE.targetloc, nRadius) then
+						return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc, false
+					end
 
-				local bLocationBetween, vLocation = X.IsEnemyInBetweenMeAndStone(botLocation, nLocationAoE.targetloc, nRadius, nCastRange)
-				if bLocationBetween then
-					return BOT_ACTION_DESIRE_HIGH, vLocation, false
-				end
+					local bLocationBetween, vLocation = X.IsEnemyInBetweenMeAndStone(botLocation, nLocationAoE.targetloc, nRadius, nCastRange)
+					if bLocationBetween then
+						return BOT_ACTION_DESIRE_HIGH, vLocation, false
+					end
 
-				if nStone >= 1 then
-					return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc, true
+					if nStone >= 1 then
+						return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc, true
+					end
 				end
 			end
 		end
 	end
 
 	if J.IsFarming(bot) and fManaAfter > 0.4 and bAttacking then
-		nEnemyCreeps = bot:GetNearbyCreeps(800, true)
-		if J.IsValid(nEnemyCreeps[1])
-		and J.CanBeAttacked(nEnemyCreeps[1])
-		and not J.IsRunning(nEnemyCreeps[1])
-		then
-			local nLocationAoE = bot:FindAoELocation(true, false, nEnemyCreeps[1]:GetLocation(), 0, nRadius, 0, 0)
-			if (nLocationAoE.count >= 3)
-			or (nLocationAoE.count >= 2 and nEnemyCreeps[1]:IsAncientCreep())
-			or (nLocationAoE.count >= 2 and fManaAfter > 0.6)
-			then
-				if X.IsStoneNearLocation(nLocationAoE.targetloc, nRadius) then
-					return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc, false
-				end
+		for _, creep in pairs(nEnemyCreeps) do
+			if J.IsValid(creep) and J.CanBeAttacked(creep) and not J.IsRunning(creep) then
+				local nLocationAoE = bot:FindAoELocation(true, false, creep:GetLocation(), 0, nRadius, 0, 0)
+				if (nLocationAoE.count >= 3)
+				or (nLocationAoE.count >= 2 and creep:IsAncientCreep())
+				or (nLocationAoE.count >= 2 and fManaAfter > 0.6)
+				then
+					if X.IsStoneNearLocation(nLocationAoE.targetloc, nRadius) then
+						return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc, false
+					end
 
-				local bLocationBetween, vLocation = X.IsEnemyInBetweenMeAndStone(botLocation, nLocationAoE.targetloc, nRadius, nCastRange)
-				if bLocationBetween then
-					return BOT_ACTION_DESIRE_HIGH, vLocation, false
-				end
+					local bLocationBetween, vLocation = X.IsEnemyInBetweenMeAndStone(botLocation, nLocationAoE.targetloc, nRadius, nCastRange)
+					if bLocationBetween then
+						return BOT_ACTION_DESIRE_HIGH, vLocation, false
+					end
 
-				if nStone >= 1 then
-					return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc, true
+					if nStone >= 1 then
+						return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc, true
+					end
 				end
 			end
 		end
@@ -1076,17 +1082,40 @@ function X.ConsiderGeomagneticGrip()
             if  J.IsValid(creep)
             and J.CanBeAttacked(creep)
             and not J.IsRunning(creep)
-            and J.IsKeyWordUnit('ranged', creep)
             and J.CanKillTarget(creep, nDamage, DAMAGE_TYPE_MAGICAL)
             then
-                if (J.IsValidHero(nEnemyHeroes[1]) and not J.IsSuspiciousIllusion(nEnemyHeroes[1]) and GetUnitToUnitDistance(creep, nEnemyHeroes[1]) <= 600)
-				or J.IsUnitTargetedByTower(creep, false)
-                then
-					if X.IsStoneNearLocation(creep:GetLocation(), nRadius) then
+				local sCreepName = creep:GetUnitName()
+				local nLocationAoE = bot:FindAoELocation(true, true, creep:GetLocation(), 0, 600, 0, 0)
+
+				local bStoneNearCreep = X.IsStoneNearLocation(creep:GetLocation(), nRadius)
+				local bCreepBetween, vLocation = X.IsEnemyInBetweenMeAndStone(botLocation, creep:GetLocation(), nRadius, nCastRange)
+
+				if string.find(sCreepName, 'ranged') then
+					if nLocationAoE.count > 0 or J.IsUnitTargetedByTower(creep, false) or J.IsEnemyTargetUnit(creep, 1000) then
+						if bStoneNearCreep then
+							return BOT_ACTION_DESIRE_HIGH, creep:GetLocation(), false
+						end
+
+						if bCreepBetween then
+							return BOT_ACTION_DESIRE_HIGH, vLocation, false
+						end
+
+						if nStone >= 1 then
+							return BOT_ACTION_DESIRE_HIGH, creep:GetLocation(), true
+						end
+					end
+				end
+
+				nLocationAoE = bot:FindAoELocation(true, false, creep:GetLocation(), 0, nRadius, 0, nDamage)
+				local nInRangeEnemy = J.GetEnemiesNearLoc(creep:GetLocation(), nRadius)
+
+				if (#nInRangeEnemy > 0)
+				or (nLocationAoE.count >= 2 and (#nEnemyHeroes > 0 or nLocationAoE.count >= 3))
+				then
+					if bStoneNearCreep then
 						return BOT_ACTION_DESIRE_HIGH, creep:GetLocation(), false
 					end
 
-					local bCreepBetween, vLocation = X.IsEnemyInBetweenMeAndStone(botLocation, creep:GetLocation(), nRadius, nCastRange)
 					if bCreepBetween then
 						return BOT_ACTION_DESIRE_HIGH, vLocation, false
 					end
@@ -1094,29 +1123,28 @@ function X.ConsiderGeomagneticGrip()
 					if nStone >= 1 then
 						return BOT_ACTION_DESIRE_HIGH, creep:GetLocation(), true
 					end
-                end
+				end
             end
         end
 	end
 
 	if fManaAfter > 0.3 and #nAllyHeroes <= 2 then
-		if J.IsValid(nEnemyCreeps[1])
-		and J.CanBeAttacked(nEnemyCreeps[1])
-		and not J.IsRunning(nEnemyCreeps[1])
-		then
-			local nLocationAoE = bot:FindAoELocation(true, false, nEnemyCreeps[1]:GetLocation(), 0, nRadius, 0, nDamage)
-			if nLocationAoE.count >= 3 then
-				if X.IsStoneNearLocation(nLocationAoE.targetloc, nRadius) then
-					return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc, false
-				end
+		for _, creep in pairs(nEnemyCreeps) do
+			if J.IsValid(creep) and J.CanBeAttacked(creep) and not J.IsRunning(creep) then
+				local nLocationAoE = bot:FindAoELocation(true, false, creep:GetLocation(), 0, nRadius, 0, 0)
+				if nLocationAoE.count >= 3 then
+					if X.IsStoneNearLocation(nLocationAoE.targetloc, nRadius) then
+						return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc, false
+					end
 
-				local bCreepBetween, vLocation = X.IsEnemyInBetweenMeAndStone(botLocation, nLocationAoE.targetloc, nRadius, nCastRange)
-				if bCreepBetween then
-					return BOT_ACTION_DESIRE_HIGH, vLocation, false
-				end
+					local bCreepBetween, vLocation = X.IsEnemyInBetweenMeAndStone(botLocation, nLocationAoE.targetloc, nRadius, nCastRange)
+					if bCreepBetween then
+						return BOT_ACTION_DESIRE_HIGH, vLocation, false
+					end
 
-				if nStone >= 1 then
-					return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc, true
+					if nStone >= 1 then
+						return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc, true
+					end
 				end
 			end
 		end
@@ -1220,12 +1248,13 @@ function X.ConsiderMagnetize()
 		local nEnemyCount = 0
 		for _, enemy in pairs(nEnemyHeroes) do
 			if J.IsValidHero(enemy)
-			and J.IsInRange(bot, enemy, nRadius)
 			and J.CanBeAttacked(enemy)
+			and J.IsInRange(bot, enemy, nRadius)
 			and (J.IsLateGame() or not enemy:IsMagicImmune())
 			and not J.IsSuspiciousIllusion(enemy)
 			and not enemy:HasModifier('modifier_abaddon_borrowed_time')
 			and not enemy:HasModifier('modifier_dazzle_shallow_grave')
+			and not enemy:HasModifier('modifier_necrolyte_reapers_scythe')
 			and not enemy:HasModifier('modifier_oracle_false_promise_timer')
 			then
 				nEnemyCount = nEnemyCount + 1
@@ -1238,21 +1267,22 @@ function X.ConsiderMagnetize()
 	end
 
 	if J.IsGoingOnSomeone(bot) then
-		if  J.IsValidTarget(botTarget)
+		if  J.IsValidHero(botTarget)
 		and J.CanBeAttacked(botTarget)
-		and J.GetHP(botTarget) > 0.45
 		and J.IsInRange(bot, botTarget, nRadius)
+		and J.GetHP(botTarget) > 0.45
 		and GetUnitToLocationDistance(botTarget, J.GetEnemyFountain()) > 1200
 		and not botTarget:IsMagicImmune()
         and not botTarget:HasModifier('modifier_abaddon_borrowed_time')
         and not botTarget:HasModifier('modifier_dazzle_shallow_grave')
+		and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
 		and not botTarget:HasModifier('modifier_templar_assassin_refraction_absorb')
 		then
 			local nInRangeAlly = J.GetAlliesNearLoc(botTarget:GetLocation(), 1200)
 			local nInRangeEnemy = J.GetEnemiesNearLoc(botTarget:GetLocation(), 1200)
 			if not (#nInRangeAlly >= #nInRangeEnemy + 2) then
 				if #nInRangeAlly <= 1 then
-					if bot:GetEstimatedDamageToTarget(true, botTarget, fDuration, DAMAGE_TYPE_ALL) > (botTarget:GetHealth() + bot:GetHealthRegen() * fDuration * 0.75) then
+					if J.GetTotalEstimatedDamageToTarget(nAllyHeroes, botTarget, fDuration - 1) > (botTarget:GetHealth() + bot:GetHealthRegen() * fDuration * 0.75) then
 						return BOT_ACTION_DESIRE_HIGH
 					end
 				else
@@ -1262,11 +1292,12 @@ function X.ConsiderMagnetize()
 		end
 	end
 
-	if J.IsRetreating(bot) and not J.IsRealInvisible(bot) and bot:WasRecentlyDamagedByAnyHero(3) and botHP < 0.4 and not J.IsInTeamFight(bot, 1200) and #nAllyHeroes <= 2 then
+	if J.IsRetreating(bot) and not J.IsRealInvisible(bot) and bot:WasRecentlyDamagedByAnyHero(2.0) and botHP < 0.4 and not J.IsInTeamFight(bot, 1200) and #nAllyHeroes <= 2 then
 		for _, enemy in pairs(nEnemyHeroes) do
 			if J.IsValidHero(enemy)
-			and J.IsInRange(bot, enemy, nRadius)
 			and J.CanBeAttacked(enemy)
+			and J.IsInRange(bot, enemy, nRadius)
+			and not J.IsDisabled(enemy)
 			and not enemy:IsMagicImmune()
 			and not enemy:HasModifier('modifier_abaddon_borrowed_time')
 			and not enemy:HasModifier('modifier_dazzle_shallow_grave')
@@ -1274,7 +1305,7 @@ function X.ConsiderMagnetize()
 			then
 				local nInRangeEnemy = J.GetEnemiesNearLoc(enemy:GetLocation(), nRadius)
 				if #nInRangeEnemy >= 2 then
-					if J.IsChasingTarget(enemy, bot) or (#nEnemyHeroes > #nAllyHeroes and enemy:GetAttackTarget() == bot) then
+					if J.IsChasingTarget(enemy, bot) or (#nEnemyHeroes > #nAllyHeroes) then
 						if J.WillKillTarget(enemy, nDamage, DAMAGE_TYPE_MAGICAL, fDuration) then
 							return BOT_ACTION_DESIRE_HIGH
 						end
@@ -1302,6 +1333,7 @@ function X.RefreshMagnetize()
 			and GetUnitToLocationDistance(enemy, J.GetEnemyFountain()) > 1200
 			and not enemy:HasModifier('modifier_abaddon_borrowed_time')
 			and not enemy:HasModifier('modifier_dazzle_shallow_grave')
+			and not enemy:HasModifier('modifier_necrolyte_reapers_scythe')
 			and not enemy:HasModifier('modifier_oracle_false_promise_timer')
 			then
 				if J.GetModifierTime(enemy, 'modifier_earth_spirit_magnetize') <= fDuration * 0.45 then

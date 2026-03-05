@@ -209,13 +209,14 @@ function X.ConsiderSavageRoar()
 		end
 	end
 
-    if J.IsRetreating(bot) and not J.IsRealInvisible(bot) and bot:WasRecentlyDamagedByAnyHero(3.0) then
+    if J.IsRetreating(bot) and not J.IsRealInvisible(bot) then
         for _, enemyHero in pairs(nEnemyHeroes) do
             if  J.IsValidHero(enemyHero)
+            and J.CanBeAttacked(enemyHero)
             and J.IsInRange(bot, enemyHero, nRadius)
-            and J.IsChasingTarget(enemyHero, bot)
             and J.CanCastOnNonMagicImmune(enemyHero)
             and not J.IsDisabled(enemyHero)
+            and bot:WasRecentlyDamagedByHero(enemyHero, 2.0)
             then
                 return BOT_ACTION_DESIRE_HIGH
             end

@@ -128,15 +128,15 @@ local HeroBuild = {
                 "item_crimson_guard",--
                 "item_helm_of_the_overlord",--
                 "item_black_king_bar",--
-                sUtilityItem,--
-                "item_assault",--
                 "item_aghanims_shard",
-                "item_moon_shard",
+                "item_nullifier",--
+                "item_assault",--
                 "item_ultimate_scepter_2",
+                "item_moon_shard",
                 "item_travel_boots_2",--
             },
             ['sell_list'] = {
-                "item_quelling_blade", sUtilityItem,
+                "item_quelling_blade", "item_nullifier",
                 "item_magic_wand", "item_assault",
             },
         },
@@ -298,8 +298,7 @@ function X.ConsiderSummonWolves()
 
     local nManaCost = SummonWolves:GetManaCost()
     local fManaAfter = J.GetManaAfter(nManaCost)
-    local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {SummonWolves, Howl, ShapeShift})
-    local fManaThreshold2 = J.GetManaThreshold(bot, nManaCost, {Howl, ShapeShift})
+    local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {Howl, ShapeShift})
 
     for _, unit in pairs(GetUnitList(UNIT_LIST_ALLIES)) do
         if J.IsValid(unit) then
@@ -311,7 +310,7 @@ function X.ConsiderSummonWolves()
     end
 
     if J.IsGoingOnSomeone(bot) then
-		if  J.IsValidTarget(botTarget)
+		if  J.IsValidHero(botTarget)
         and J.IsInRange(bot, botTarget, 800)
         and not J.IsSuspiciousIllusion(botTarget)
 		then
@@ -320,10 +319,8 @@ function X.ConsiderSummonWolves()
             if J.CanBeAttacked(botTarget)
             or #nInRangeEnemy >= 2
             then
-                if #nInRangeAlly >= #nInRangeEnemy then
-                    if fManaAfter > fManaThreshold2 then
-                        return BOT_ACTION_DESIRE_HIGH
-                    end
+                if #nInRangeAlly >= #nInRangeEnemy and fManaAfter > fManaThreshold1 then
+                    return BOT_ACTION_DESIRE_HIGH
                 end
             end
 		end
@@ -336,10 +333,10 @@ function X.ConsiderSummonWolves()
             and J.IsInRange(bot, enemyHero, 800)
             and J.GetHP(enemyHero) < 0.5
             and not J.IsSuspiciousIllusion(enemyHero)
+            and bot:WasRecentlyDamagedByHero(enemyHero, 2.0)
+            and enemyHero:IsFacingLocation(bot:GetLocation(), 45)
             then
-                if enemyHero:GetAttackTarget() == bot and fManaAfter > fManaThreshold2 then
-                    return BOT_ACTION_DESIRE_HIGH
-                end
+                return BOT_ACTION_DESIRE_HIGH
             end
         end
     end
@@ -348,7 +345,7 @@ function X.ConsiderSummonWolves()
 
     if J.IsPushing(bot) and fManaAfter > fManaThreshold1 and fManaAfter > 0.3 and bAttacking and #nAllyHeroes <= 3 then
         if J.IsValid(nEnemyCreeps[1]) and J.CanBeAttacked(nEnemyCreeps[1]) then
-            if #nEnemyCreeps >= 3 then
+            if #nEnemyCreeps >= 4 then
                 return BOT_ACTION_DESIRE_HIGH
             end
 
@@ -365,9 +362,8 @@ function X.ConsiderSummonWolves()
             end
         end
 
-        local nInRangeEnemy = J.GetEnemiesNearLoc(bot:GetLocation(), 1600)
         local nLocationAoE = bot:FindAoELocation(true, true, bot:GetLocation(), 0, 800, 0, 0)
-        if #nInRangeEnemy == 0 and nLocationAoE.count >= 2 then
+        if nLocationAoE.count >= 2 then
             return BOT_ACTION_DESIRE_HIGH
         end
     end
@@ -422,10 +418,11 @@ function X.ConsiderHowl()
                 if bot ~= allyHero
                 and J.IsValidHero(allyHero)
                 and not J.IsSuspiciousIllusion(allyHero)
+                and not allyHero:HasModifier('modifier_necrolyte_reapers_scythe')
                 then
                     if J.IsCore(allyHero) and J.IsGoingOnSomeone(allyHero) then
                         local allyTarget = allyHero:GetAttackTarget()
-                        if  J.IsValidTarget(allyTarget)
+                        if  J.IsValidHero(allyTarget)
                         and J.CanBeAttacked(allyTarget)
                         and J.IsInRange(bot, allyTarget, allyHero:GetAttackRange() + 300)
                         and J.IsAttacking(allyHero)
@@ -451,7 +448,7 @@ function X.ConsiderHowl()
     end
 
     if J.IsGoingOnSomeone(bot) then
-		if  J.IsValidTarget(botTarget)
+		if  J.IsValidHero(botTarget)
         and J.CanBeAttacked(botTarget)
         and J.IsInRange(bot, botTarget, 800)
         and not J.IsSuspiciousIllusion(botTarget)
@@ -462,17 +459,16 @@ function X.ConsiderHowl()
 		end
 	end
 
-	if J.IsRetreating(bot) and not J.IsRealInvisible(bot) and bot:WasRecentlyDamagedByAnyHero(3.0) then
+	if J.IsRetreating(bot) and not J.IsRealInvisible(bot) then
         for _, enemyHero in pairs(nEnemyHeroes) do
             if J.IsValidHero(enemyHero)
             and J.IsInRange(bot, enemyHero, 800)
             and enemyHero:IsFacingLocation(bot:GetLocation(), 45)
             and not J.IsSuspiciousIllusion(enemyHero)
             and not enemyHero:IsDisarmed()
+            and bot:WasRecentlyDamagedByHero(enemyHero, 2.0)
             then
-                if enemyHero:GetAttackTarget() == bot and (botHP < 0.5 or #nEnemyHeroes > #nAllyHeroes) then
-                    return BOT_ACTION_DESIRE_HIGH
-                end
+                return BOT_ACTION_DESIRE_HIGH
             end
         end
 	end
@@ -513,6 +509,7 @@ function X.ConsiderHowl()
         and bAttacking
         and fManaAfter > fManaThreshold1
         and fManaAfter > 0.4
+        and #nEnemyHeroes == 0
         then
             return BOT_ACTION_DESIRE_HIGH
         end
@@ -524,6 +521,7 @@ function X.ConsiderHowl()
         and bAttacking
         and fManaAfter > fManaThreshold1
         and fManaAfter > 0.4
+        and #nEnemyHeroes == 0
         then
             return BOT_ACTION_DESIRE_HIGH
         end
@@ -537,7 +535,7 @@ function X.ConsiderWolfBite()
         return BOT_ACTION_DESIRE_NONE, nil
     end
 
-    local nCastRange = J.GetProperCastRange(false, bot, WolfBite:GetCastRange())
+    local nCastRange = WolfBite:GetCastRange()
     local nManaCost = WolfBite:GetManaCost()
     local fManaAfter = J.GetManaAfter(nManaCost)
     local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {ShapeShift})
@@ -585,12 +583,18 @@ function X.ConsiderShapeShift()
         and J.IsInRange(bot, botTarget, 800)
         and not J.IsSuspiciousIllusion(botTarget)
         then
-            local nInRangeAlly = J.GetAlliesNearLoc(botTarget:GetLocation(), 1200)
-            local nInRangeEnemy = J.GetEnemiesNearLoc(botTarget:GetLocation(), 1200)
-            if not (#nInRangeAlly >= #nInRangeEnemy + 2)
-            or (J.IsInTeamFight(bot, 1200) and J.IsInRange(bot, botTarget, bot:GetAttackRange() + 300))
-            then
+            if J.IsInTeamFight(bot, 1200) and J.IsInRange(bot, botTarget, bot:GetAttackRange() + 300) then
                 return BOT_ACTION_DESIRE_HIGH
+            end
+
+            if  not botTarget:HasModifier('modifier_abaddon_borrowed_time')
+            and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
+            then
+                local nInRangeAlly = J.GetAlliesNearLoc(botTarget:GetLocation(), 1200)
+                local nInRangeEnemy = J.GetEnemiesNearLoc(botTarget:GetLocation(), 1200)
+                if not (#nInRangeAlly >= #nInRangeEnemy + 2) then
+                    return BOT_ACTION_DESIRE_HIGH
+                end
             end
         end
     end
