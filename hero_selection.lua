@@ -30,7 +30,7 @@ local sHeroList = {										-- pos    1,   2,   3,   4,   5
 	{name = 'npc_dota_hero_axe',	 					role = {  0, 100, 100,   0,   0},	weak = false},
 	{name = 'npc_dota_hero_bane', 						role = {  0,  80,   0, 100, 100},	weak = false},
 	{name = 'npc_dota_hero_batrider', 					role = {  0,  90,  85, 100, 100},	weak = false},
-	{name = 'npc_dota_hero_beastmaster', 				role = {  0, 100, 100,   0,   0},	weak = false},
+	{name = 'npc_dota_hero_beastmaster', 				role = { 90, 100, 100,   0,   0},	weak = false},
 	{name = 'npc_dota_hero_bloodseeker', 				role = {100,  95,  90,   0,   0},	weak = false},
 	{name = 'npc_dota_hero_bounty_hunter', 				role = { 80, 100,  95, 100, 100},	weak = false},
 	{name = 'npc_dota_hero_brewmaster', 				role = {  0,   0, 100,   0,   0},	weak = false},
