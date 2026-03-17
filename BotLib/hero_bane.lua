@@ -297,9 +297,9 @@ function X.ConsiderEnfeeble()
 	if J.IsGoingOnSomeone(bot) then
         if  J.IsValidHero(botTarget)
 		and J.CanBeAttacked(botTarget)
+        and J.IsInRange(bot, botTarget, nCastRange)
         and J.CanCastOnNonMagicImmune(botTarget)
         and J.CanCastOnTargetAdvanced(botTarget)
-        and J.IsInRange(bot, botTarget, nCastRange)
         and not botTarget:HasModifier('modifier_bane_enfeeble')
         and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
 		and not botTarget:HasModifier('modifier_teleporting')
@@ -316,7 +316,6 @@ function X.ConsiderEnfeeble()
 			and J.IsInRange(bot, enemyHero, nCastRange)
 			and J.CanCastOnNonMagicImmune(enemyHero)
 			and J.CanCastOnTargetAdvanced(enemyHero)
-			and J.IsAttacking(enemyHero)
 			and not J.IsDisabled(enemyHero)
 			and not enemyHero:IsDisarmed()
 			and not enemyHero:HasModifier('modifier_bane_enfeeble')
@@ -364,9 +363,9 @@ function X.ConsiderBrainSap()
 	if J.IsGoingOnSomeone(bot) then
 		if  J.IsValidHero(botTarget)
 		and J.CanBeAttacked(botTarget)
+        and J.IsInRange(bot, botTarget, nCastRange)
         and J.CanCastOnNonMagicImmune(botTarget)
         and J.CanCastOnTargetAdvanced(botTarget)
-        and J.IsInRange(bot, botTarget, nCastRange)
         and not botTarget:HasModifier('modifier_abaddon_borrowed_time')
         and not botTarget:HasModifier('modifier_dazzle_shallow_grave')
         and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
@@ -480,7 +479,7 @@ function X.ConsiderBrainSap()
 		end
 	end
 
-    if  J.IsLaning(bot) and J.IsInLaningPhase() and fManaAfter > fManaThreshold1 then
+    if  J.IsLaning(bot) and J.IsEarlyGame() and fManaAfter > fManaThreshold1 then
 		for _, creep in pairs(nEnemyCreeps) do
 			if  J.IsValid(creep)
             and J.CanBeAttacked(creep)
@@ -650,7 +649,7 @@ function X.ConsiderFiendsGrip()
 	local fDuration = FiendsGrip:GetSpecialValueFloat('AbilityChannelTime')
 
 	if not bot:IsMagicImmune() then
-		if J.IsStunProjectileIncoming(bot, 550) then
+		if J.IsStunProjectileIncoming(bot, 900) then
 			return BOT_ACTION_DESIRE_NONE, nil
 		end
 	end
@@ -663,8 +662,8 @@ function X.ConsiderFiendsGrip()
 
 	for _, enemyHero in pairs(nEnemyHeroes) do
 		if  J.IsValidHero(enemyHero)
+		and J.CanBeAttacked(enemyHero)
         and J.IsInRange(bot, enemyHero, nCastRange + 300)
-        and J.CanCastOnNonMagicImmune(enemyHero)
         and J.CanCastOnTargetAdvanced(enemyHero)
 		then
 			if J.GetModifierTime(enemyHero, 'modifier_teleporting') > nCastPoint + 0.1 then

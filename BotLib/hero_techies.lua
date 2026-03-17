@@ -371,7 +371,8 @@ function X.ConsiderStickyBomb()
             and not J.IsDisabled(enemyHero)
             and bot:WasRecentlyDamagedByHero(enemyHero, 3.0)
             then
-                return BOT_ACTION_DESIRE_HIGH, J.VectorTowards(enemyHero:GetLocation(), bot:GetLocation(), nRadius)
+                local distance = GetUnitToUnitDistance(bot, enemyHero)
+                return BOT_ACTION_DESIRE_HIGH, J.VectorTowards(enemyHero:GetLocation(), bot:GetLocation(), Min(nRadius, distance))
             end
         end
 	end
@@ -414,7 +415,7 @@ function X.ConsiderStickyBomb()
         end
     end
 
-	if J.IsLaning(bot) and J.IsInLaningPhase() and fManaAfter > fManaThreshold1 then
+	if J.IsLaning(bot) and J.IsEarlyGame() and fManaAfter > fManaThreshold1 then
 		for _, creep in pairs(nEnemyCreeps) do
 			if  J.IsValid(creep)
             and J.CanBeAttacked(creep)
@@ -546,7 +547,9 @@ function X.ConsiderReactiveTazer()
                         and not enemyHero:HasModifier('modifier_techies_reactive_tazer_disarmed')
                         and allyHero:WasRecentlyDamagedByHero(enemyHero, 4.0)
                         then
-                            return BOT_ACTION_DESIRE_HIGH, allyHero
+                            if enemyHero:GetCurrentMovementSpeed() >= allyHero:GetCurrentMovementSpeed() then
+                                return BOT_ACTION_DESIRE_HIGH, allyHero
+                            end
                         end
                     end
                 end
@@ -562,7 +565,9 @@ function X.ConsiderReactiveTazer()
                 and not enemyHero:HasModifier('modifier_techies_reactive_tazer_disarmed')
                 and bot:WasRecentlyDamagedByHero(enemyHero, 4.0)
                 then
-                    return BOT_ACTION_DESIRE_HIGH, nil
+                    if enemyHero:GetCurrentMovementSpeed() >= bot:GetCurrentMovementSpeed() then
+                        return BOT_ACTION_DESIRE_HIGH, nil
+                    end
                 end
             end
         end
@@ -757,7 +762,7 @@ function X.ConsiderBlastOff()
 
     if J.IsPushing(bot) and bAttacking and fManaAfter > fManaThreshold1 + 0.1 and #nAllyHeroes <= 1 and #nEnemyHeroes == 0 and fHealthAfter > 0.55 then
         for _, creep in pairs(nEnemyCreeps) do
-            if J.IsValid(creep) and J.CanBeAttacked(creep) then
+            if J.IsValid(creep) and J.CanBeAttacked(creep) and not J.IsRunning(creep) then
                 local nLocationAoE = bot:FindAoELocation(true, false, creep:GetLocation(), 0, nRadius, 0, 0)
                 if (nLocationAoE.count >= 4) then
                     return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc
@@ -768,7 +773,7 @@ function X.ConsiderBlastOff()
 
     if J.IsDefending(bot) and bAttacking and fManaAfter > fManaThreshold1 + 0.1 and fHealthAfter > 0.4 then
         for _, creep in pairs(nEnemyCreeps) do
-            if J.IsValid(creep) and J.CanBeAttacked(creep) then
+            if J.IsValid(creep) and J.CanBeAttacked(creep) and not J.IsRunning(creep) then
                 local nLocationAoE = bot:FindAoELocation(true, false, creep:GetLocation(), 0, nRadius, 0, 0)
                 if (nLocationAoE.count >= 4) then
                     return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc
@@ -779,7 +784,7 @@ function X.ConsiderBlastOff()
 
     if J.IsFarming(bot) and bAttacking and fManaAfter > fManaThreshold1 and fHealthAfter > 0.4 then
         for _, creep in pairs(nEnemyCreeps) do
-            if J.IsValid(creep) and J.CanBeAttacked(creep) then
+            if J.IsValid(creep) and J.CanBeAttacked(creep) and not J.IsRunning(creep) then
                 local nLocationAoE = bot:FindAoELocation(true, false, creep:GetLocation(), 0, nRadius, 0, 0)
                 if (nLocationAoE.count >= 3)
                 or (nLocationAoE.count >= 2 and creep:IsAncientCreep())
@@ -869,8 +874,13 @@ function X.ConsiderProximityMines()
         and not enemyHero:HasModifier('modifier_troll_warlord_battle_trance')
         and not enemyHero:HasModifier('modifier_ursa_enrage')
         then
-            if not X.IsOtherMinesClose(enemyHero:GetLocation(), nMinRadius) then
-                return BOT_ACTION_DESIRE_HIGH, enemyHero:GetLocation()
+            if J.IsDisabled(enemyHero)
+            or enemyHero:GetCurrentMovementSpeed() < 250
+            or J.IsInRange(bot, enemyHero, 200)
+            then
+                if not X.IsOtherMinesClose(enemyHero:GetLocation(), nMinRadius) then
+                    return BOT_ACTION_DESIRE_HIGH, enemyHero:GetLocation()
+                end
             end
         end
     end
@@ -889,8 +899,13 @@ function X.ConsiderProximityMines()
         and not botTarget:HasModifier('modifier_troll_warlord_battle_trance')
         and not botTarget:HasModifier('modifier_ursa_enrage')
 		then
-            if not X.IsOtherMinesClose(botTarget:GetLocation(), nRadius) then
-                return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation()
+            if J.IsDisabled(botTarget)
+            or botTarget:GetCurrentMovementSpeed() < 250
+            or J.IsInRange(bot, botTarget, 200)
+            then
+                if not X.IsOtherMinesClose(botTarget:GetLocation(), nRadius) then
+                    return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation()
+                end
             end
 		end
 	end
@@ -949,6 +964,7 @@ function X.ConsiderProximityMines()
                 local nLocationAoE = bot:FindAoELocation(true, false, creep:GetLocation(), 0, nRadius, 0, 0)
                 if (nLocationAoE.count >= 3)
                 or (nLocationAoE.count >= 2 and creep:IsAncientCreep())
+                or (nLocationAoE.count >= 1 and creep:GetHealth() >= 800)
                 then
                     if not X.IsOtherMinesClose(nLocationAoE.targetloc, nRadius) then
                         return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc

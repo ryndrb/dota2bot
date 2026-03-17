@@ -62,7 +62,7 @@ function GetDesire()
 
     if not bAlive
 	or J.IsInLaningPhase()
-	or J.IsDefending(bot)
+	or (J.IsDefending(bot) and botActiveModeDesire > BOT_MODE_DESIRE_MODERATE)
 	or (J.IsDoingRoshan(bot) and bNotClone)
 	or (J.IsDoingTormentor(bot) and bNotClone)
     or DotaTime() < 50
@@ -177,7 +177,7 @@ function GetDesire()
 
 	if  bIsTimeToFarm
 	and bContinueFarm
-	and not J.IsEarlyGame()
+	and not J.IsInLaningPhase()
 	and (bot:GetUnitName() ~= 'npc_dota_hero_lone_druid_bear' or (bot:HasScepter() and not J.IsValid(LoneDruid.hero)))
 	then
 		local nEnemyLaneCreeps = bot:GetNearbyLaneCreeps(900, true)
@@ -400,7 +400,7 @@ function Think()
 				end
 
 				bot:SetTarget(farmTarget)
-				bot:Action_AttackUnit(farmTarget, true)
+				bot:Action_AttackUnit(farmTarget, false)
 				return
 			end
 		end

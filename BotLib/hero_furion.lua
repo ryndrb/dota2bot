@@ -372,6 +372,7 @@ function X.ConsiderSprout()
             and not J.IsDisabled(enemyHero)
             and not enemyHero:HasModifier('modifier_hoodwink_scurry_active')
             and not enemyHero:HasModifier('modifier_necrolyte_reapers_scythe')
+            and not enemyHero:HasModifier('modifier_item_spider_legs_active')
             then
                 local enemyHeroDamage = enemyHero:GetEstimatedDamageToTarget(false, bot, 5.0, DAMAGE_TYPE_ALL)
                 if enemyHeroDamage > hTargetDamage then
@@ -394,6 +395,7 @@ function X.ConsiderSprout()
         and not J.IsDisabled(botTarget)
         and not botTarget:HasModifier('modifier_hoodwink_scurry_active')
         and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
+        and not botTarget:HasModifier('modifier_item_spider_legs_active')
         then
             return BOT_ACTION_DESIRE_HIGH, botTarget, true
         end
@@ -404,9 +406,12 @@ function X.ConsiderSprout()
             if  J.IsValidHero(enemyHero)
 			and J.CanBeAttacked(enemyHero)
             and J.IsInRange(bot, enemyHero, nCastRange)
+            and not J.IsInRange(bot, enemyHero, nRadius)
             and J.CanCastOnTargetAdvanced(enemyHero)
             and not J.IsSuspiciousIllusion(enemyHero)
             and not J.IsDisabled(enemyHero)
+            and not enemyHero:HasModifier('modifier_hoodwink_scurry_active')
+            and not enemyHero:HasModifier('modifier_item_spider_legs_active')
             and bot:WasRecentlyDamagedByHero(enemyHero, 2.0)
             then
                 return BOT_ACTION_DESIRE_HIGH, enemyHero, true
@@ -458,7 +463,7 @@ function X.ConsiderSprout()
             end
         end
 
-        if J.IsLaning(bot) and J.IsInLaningPhase() and fManaAfter > fManaThreshold1 then
+        if J.IsLaning(bot) and J.IsEarlyGame() and fManaAfter > fManaThreshold1 then
             for _, creep in pairs(nEnemyCreeps) do
                 if  J.IsValid(creep)
                 and J.CanBeAttacked(creep)
@@ -496,7 +501,7 @@ function X.ConsiderTeleportation()
     local fTimeToFountain = bot:DistanceFromFountain() / bot:GetCurrentMovementSpeed()
 
 	if not bot:IsMagicImmune() then
-		if (J.IsStunProjectileIncoming(bot, 900))
+		if (J.IsStunProjectileIncoming(bot, 1200))
         or (J.GetAttackProjectileDamageByRange(bot, 1200) > bot:GetHealth())
         then
 			return BOT_ACTION_DESIRE_NONE, 0
@@ -643,7 +648,7 @@ function X.ConsiderNaturesCall()
     local fManaAfter = J.GetManaAfter(nManaCost)
 	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {Sprout, Teleportation, CurseOfTheOldGrowth, WrathOfNature})
 
-    local nTrees = bot:GetNearbyTrees(nCastRange)
+    local nTrees = bot:GetNearbyTrees(Min(nCastRange + 300, 1600))
 
     if #nTrees >= 1 then
         if J.IsInTeamFight(bot, 800) then

@@ -62,6 +62,7 @@ function Defend.GetDefendDesire(bot, lane)
 	end
 
 	local furthestBuilding = Defend.GetFurthestBuildingOnLane(bot, lane)
+	if furthestBuilding == nil then return 0 end
 
 	if nEnemyAroundAncient > 0 and lane == LANE_MID
 	and nEnemyAroundAncient >= 2
@@ -78,25 +79,24 @@ function Defend.GetDefendDesire(bot, lane)
 	local hTier3Tower = hTowerTable[lane][3]
 	local bDefendingOtherLane = IsDefendingOtherLane(bot, lane)
 
-	local vLaneFrontLocation = GetLaneFrontLocation(nTeam, lane, 0)
-	local nDistanceFromLaneFront = GetUnitToLocationDistance(bot, vLaneFrontLocation)
-	local fWalkTimeToLaneFront = nDistanceFromLaneFront / Max(1, bot:GetCurrentMovementSpeed())
-	local nUnitCount__Total, nUnitCount__Hero, nUnit__Creep = Defend.GetEnemiesAroundLocation(vLaneFrontLocation, 1600)
+	local nDistanceFromBuilding = GetUnitToUnitDistance(bot, furthestBuilding)
+	local fWalkTimeToLaneFront = nDistanceFromBuilding / Max(1, bot:GetCurrentMovementSpeed())
+	local nUnitCount__Total, nUnitCount__Hero, nUnit__Creep = Defend.GetEnemiesAroundLocation(furthestBuilding:GetLocation(), 1600)
 
 	local bCanGetThereFast = false
 	local hItem = bot:GetItemInSlot(15)
-	if J.CanCastAbility(hItem) or fWalkTimeToLaneFront <= 11 then
-		bCanGetThereFast = true
-	end
+	if J.CanCastAbility(hItem) then bCanGetThereFast = true end
 
 	local hAbility = bot:GetAbilityByName('tinker_keen_teleport')
-	if J.CanCastAbility(hAbility) or fWalkTimeToLaneFront <= 11 then bCanGetThereFast = true end
+	if J.CanCastAbility(hAbility) then bCanGetThereFast = true end
+
+	if fWalkTimeToLaneFront <= 11 then bCanGetThereFast = true end
 
 	hAbility = bot:GetAbilityByName('furion_teleportation')
 	if J.CanCastAbility(hAbility) then bCanGetThereFast = true end
 
 	if J.IsValidBuilding(hTier1Tower) then
-		if (J.GetHP(hTier1Tower) < 0.2 and nUnitCount__Hero > 0)
+		if (J.GetHP(hTier1Tower) < 0.25 and nUnitCount__Hero > 0)
 		or (not bCanGetThereFast)
 		then
 			nDesire = 0
@@ -106,7 +106,7 @@ function Defend.GetDefendDesire(bot, lane)
 			end
 		end
 	elseif J.IsValidBuilding(hTier2Tower) then
-		if (J.GetHP(hTier2Tower) < 0.2 and nUnitCount__Hero > 0)
+		if (J.GetHP(hTier2Tower) < 0.25 and nUnitCount__Hero > 0)
 		or (not bCanGetThereFast)
 		then
 			nDesire = 0
@@ -128,7 +128,7 @@ function Defend.GetDefendDesire(bot, lane)
 	end
 
 	local _, closestLane = J.GetClosestTeamLane(bot)
-	if closestLane == lane then
+	if closestLane == lane and nDesire < 0.5 then
 		nDesire = Max(BOT_MODE_DESIRE_VERYLOW, nDesire)
 	end
 
@@ -202,7 +202,7 @@ function Defend.ShouldDefend(bot, hBuilding, nRadius)
 	local nEnemyCreepNearbyCount = 0
 	local unitList = GetUnitList(UNIT_LIST_ENEMIES)
 	for _, unit in pairs(unitList) do
-		if J.IsValid(unit) and GetUnitToUnitDistance(hBuilding, unit) <= nRadius then
+		if J.IsValid(unit) and GetUnitToUnitDistance(hBuilding, unit) <= nRadius and not unit:HasModifier('modifier_teleporting') then
 			local sUnitName = unit:GetUnitName()
 			if string.find(sUnitName, 'siege') and not string.find(sUnitName, 'upgraded')
 			then
@@ -425,6 +425,7 @@ function Defend.GetEnemyCountInLane(lane, nRadius)
 		if J.IsValid(unit)
 		and J.IsValidBuilding(furthestBuilding)
 		and GetUnitToUnitDistance(unit, furthestBuilding) <= nRadius
+		and not unit:HasModifier('modifier_teleporting')
 		then
 			local unitName = unit:GetUnitName()
 			if J.IsValidHero(unit) and not J.IsSuspiciousIllusion(unit) then
@@ -493,7 +494,7 @@ function Defend.GetEnemiesAroundLocation(vLocation, nRadius)
 	local nHeroCount = 0
 
 	for _, unit in pairs(GetUnitList(UNIT_LIST_ENEMIES)) do
-		if J.IsValid(unit) and GetUnitToLocationDistance(unit, vLocation) <= nRadius then
+		if J.IsValid(unit) and GetUnitToLocationDistance(unit, vLocation) <= nRadius and not unit:HasModifier('modifier_teleporting') then
 			local sUnitName = unit:GetUnitName()
 
 			if J.IsValidHero(unit) and not J.IsSuspiciousIllusion(unit) then

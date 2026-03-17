@@ -426,7 +426,7 @@ function X.ConsiderMistCoil()
         return BOT_ACTION_DESIRE_HIGH, hTargetAlly
     end
 
-    if J.IsLaning(bot) and J.IsInLaningPhase() and fManaAfter > fManaThreshold1 + 0.1 then
+    if J.IsLaning(bot) and J.IsEarlyGame() and fManaAfter > fManaThreshold1 + 0.1 then
 		local nEnemyLaneCreeps = bot:GetNearbyLaneCreeps(Min(nCastRange + 300, 1600), true)
 
 		for _, creep in pairs(nEnemyLaneCreeps) do

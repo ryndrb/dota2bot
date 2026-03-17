@@ -300,12 +300,15 @@ function X.ConsiderDisruption()
         and J.CanCastOnNonMagicImmune(botTarget)
         and J.CanCastOnTargetAdvanced(botTarget)
         and not J.IsDisabled(botTarget)
-        and not botTarget:HasModifier('modifier_abaddon_borrowed_time')
         and not botTarget:HasModifier('modifier_dazzle_shallow_grave')
         and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
         and not botTarget:HasModifier('modifier_shadow_demon_disseminate')
         and not botTarget:HasModifier('modifier_shadow_demon_purge_slow')
         then
+            if botTarget:HasModifier('modifier_abaddon_borrowed_time') then
+                return BOT_ACTION_DESIRE_HIGH, botTarget
+            end
+
             local nInRangeAlly = J.GetAlliesNearLoc(bot:GetLocation(), 1200)
             local nInRangeEnemy = J.GetEnemiesNearLoc(bot:GetLocation(), 1200)
             if not (#nInRangeAlly >= #nInRangeEnemy + 1) then
@@ -322,6 +325,7 @@ function X.ConsiderDisruption()
     if J.IsRetreating(bot) and not J.IsRealInvisible(bot) and not J.IsInTeamFight(bot, 1200) then
         for _, enemyHero in pairs(nEnemyHeroes) do
             if J.IsValidHero(enemyHero)
+            and J.CanBeAttacked(enemyHero)
             and J.IsInRange(bot, enemyHero, nCastRange)
             and J.CanCastOnNonMagicImmune(enemyHero)
             and J.CanCastOnTargetAdvanced(enemyHero)
@@ -339,11 +343,12 @@ function X.ConsiderDisruption()
 
     for _, allyHero in pairs(nAllyHeroes) do
         if  J.IsValidHero(allyHero)
-        and J.IsInRange(bot, allyHero, nCastRange)
         and J.CanBeAttacked(allyHero)
+        and J.IsInRange(bot, allyHero, nCastRange + 300)
         and not allyHero:IsIllusion()
         and not allyHero:HasModifier('modifier_obsidian_destroyer_astral_imprisonment_prison')
         then
+            local sAllyHeroName = allyHero:GetUnitName()
             if allyHero:HasModifier('modifier_enigma_black_hole_pull')
             or allyHero:HasModifier('modifier_faceless_void_chronosphere_freeze')
             or allyHero:HasModifier('modifier_legion_commander_duel')
@@ -352,19 +357,37 @@ function X.ConsiderDisruption()
                 return BOT_ACTION_DESIRE_HIGH, allyHero
             end
 
+            if (J.IsPushing(bot) or J.IsDefending(bot)) and J.IsLateGame() and bAttacking and #nEnemyHeroes == 0 and fManaAfter > fManaThreshold1 then
+                if sAllyHeroName == 'npc_dota_hero_medusa' then
+                    local SplitShot = allyHero:GetAbilityByName('medusa_split_shot')
+                    if SplitShot and SplitShot:IsTrained() and SplitShot:GetToggleState() == true then
+                        return BOT_ACTION_DESIRE_HIGH, allyHero
+                    end
+                end
+
+                if sAllyHeroName == 'npc_dota_hero_terrorblade' and allyHero:HasModifier('modifier_terrorblade_metamorphosis') then
+                    return BOT_ACTION_DESIRE_HIGH, allyHero
+                end
+
+                if J.IsCore(allyHero) and allyHero:GetAttackDamage() >= 300 then
+                    return BOT_ACTION_DESIRE_HIGH, allyHero
+                end
+            end
+
             if not J.IsRetreating(bot) and not J.IsRealInvisible(bot) and fManaAfter > fManaThreshold1 then
                 if J.IsRetreating(allyHero)
                 and bot ~= allyHero
-                and allyHero:WasRecentlyDamagedByAnyHero(2)
                 then
                     for _, enemyHero in pairs(nEnemyHeroes) do
                         if J.IsValidHero(enemyHero)
+                        and J.CanBeAttacked(enemyHero)
                         and J.IsInRange(bot, enemyHero, nCastRange)
                         and J.CanCastOnNonMagicImmune(enemyHero)
                         and J.CanCastOnTargetAdvanced(enemyHero)
                         and J.IsChasingTarget(enemyHero, allyHero)
                         and not J.IsDisabled(enemyHero)
                         and not enemyHero:HasModifier('modifier_necrolyte_reapers_scythe')
+                        and allyHero:WasRecentlyDamagedByHero(enemyHero, 2.0)
                         then
                             return BOT_ACTION_DESIRE_HIGH, enemyHero
                         end
@@ -406,7 +429,6 @@ function X.ConsiderDisseminate()
             if J.IsValidHero(enemyHero)
             and J.CanBeAttacked(enemyHero)
             and J.IsInRange(bot, enemyHero, nCastRange)
-            and J.CanCastOnNonMagicImmune(enemyHero)
             and J.CanCastOnTargetAdvanced(enemyHero)
             and not J.IsDisabled(enemyHero)
             and not enemyHero:HasModifier('modifier_abaddon_borrowed_time')
@@ -423,7 +445,6 @@ function X.ConsiderDisseminate()
         if J.IsValidHero(botTarget)
         and J.CanBeAttacked(botTarget)
         and J.IsInRange(bot, botTarget, nCastRange)
-        and J.CanCastOnNonMagicImmune(botTarget)
         and J.CanCastOnTargetAdvanced(botTarget)
         and not J.IsChasingTarget(bot, botTarget)
         and not botTarget:HasModifier('modifier_abaddon_borrowed_time')
@@ -442,7 +463,6 @@ function X.ConsiderDisseminate()
             if J.IsValidHero(enemyHero)
             and J.CanBeAttacked(enemyHero)
             and J.IsInRange(bot, enemyHero, nCastRange)
-            and J.CanCastOnNonMagicImmune(enemyHero)
             and J.CanCastOnTargetAdvanced(enemyHero)
             and not J.IsDisabled(enemyHero)
             and not enemyHero:HasModifier('modifier_abaddon_borrowed_time')
@@ -480,10 +500,10 @@ function X.ConsiderShadowPoison()
     local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {Disruption, Disseminate, ShadowPoison, DemonicCleanse, DemonicPurge})
 
 	if J.IsGoingOnSomeone(bot) then
-		if  J.IsValidTarget(botTarget)
+		if  J.IsValidHero(botTarget)
         and J.CanBeAttacked(botTarget)
-        and J.CanCastOnNonMagicImmune(botTarget)
         and J.IsInRange(bot, botTarget, nCastRange)
+        and not J.IsSuspiciousIllusion(botTarget)
         and not botTarget:HasModifier('modifier_abaddon_borrowed_time')
         and not botTarget:HasModifier('modifier_dazzle_shallow_graves')
         and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
@@ -494,7 +514,20 @@ function X.ConsiderShadowPoison()
 		end
 	end
 
-    local nEnemyCreeps = bot:GetNearbyCreeps(nCastRange, true)
+    local nEnemyCreeps = bot:GetNearbyCreeps(Min(nCastRange, 1600), true)
+
+    if J.IsPushing(bot) and bAttacking and fManaAfter > fManaThreshold1 and #nAllyHeroes <= 1 then
+        for _, creep in pairs(nEnemyCreeps) do
+            if J.IsValid(creep) and J.CanBeAttacked(creep) and not J.IsRunning(creep) then
+                local nLocationAoE = bot:FindAoELocation(true, false, creep:GetLocation(), 0, nRadius, 0, 0)
+                if (nLocationAoE.count >= 3)
+                or (nLocationAoE.count >= 2 and creep:GetHealth() >= 550)
+                then
+                    return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc
+                end
+            end
+        end
+    end
 
 	if J.IsDefending(bot) and bAttacking and fManaAfter > fManaThreshold1 and #nAllyHeroes <= 2 then
         for _, creep in pairs(nEnemyCreeps) do
@@ -528,14 +561,14 @@ function X.ConsiderShadowPoison()
         end
     end
 
-    if J.IsLaning(bot) and J.IsInLaningPhase() and fManaAfter > fManaThreshold1 then
+    if J.IsLaning(bot) and J.IsEarlyGame() and fManaAfter > fManaThreshold1 then
         local hTarget = nil
         local hTargetDamage = 0
         for _, enemyHero in pairs(nEnemyHeroes) do
             if J.IsValidHero(enemyHero)
             and J.CanBeAttacked(enemyHero)
             and J.IsInRange(bot, enemyHero, nCastRange)
-            and J.CanCastOnNonMagicImmune(enemyHero)
+            and not J.IsSuspiciousIllusion(enemyHero)
             and not enemyHero:HasModifier('modifier_abaddon_borrowed_time')
             and not enemyHero:HasModifier('modifier_dazzle_shallow_grave')
             and not enemyHero:HasModifier('modifier_necrolyte_reapers_scythe')
@@ -719,18 +752,11 @@ function X.ConsiderDemonicCleanse()
     end
 
     if J.IsRetreating(bot) and not J.IsRealInvisible(bot) and not J.IsInTeamFight(bot, 1200) then
-        for _, enemyHero in pairs(nEnemyHeroes) do
-            if J.IsValidHero(enemyHero)
-            and J.IsInRange(bot, enemyHero, nCastRange)
-            and not J.IsSuspiciousIllusion(enemyHero)
-            then
-                local nEnemyHeroesTargetingMe = J.GetHeroesTargetingUnit(nEnemyHeroes, bot)
-                if  (J.IsChasingTarget(enemyHero, bot))
-                and (#nEnemyHeroesTargetingMe >= 2 or (botHP < 0.5 and bot:WasRecentlyDamagedByAnyHero(3.0)))
-                then
-                    return BOT_ACTION_DESIRE_HIGH, bot
-                end
-            end
+        if (J.GetTotalEstimatedDamageToTarget(nEnemyHeroes, bot, 5.5) > bot:GetHealth())
+        or (bot:WasRecentlyDamagedByAnyHero(3.0) and bot:IsRooted())
+        or (bot:WasRecentlyDamagedByAnyHero(2.0) and J.IsRunning(bot))
+        then
+            return BOT_ACTION_DESIRE_HIGH, bot
         end
 	end
 
@@ -746,10 +772,9 @@ function X.ConsiderDemonicPurge()
 
     if J.IsInTeamFight(bot, 1200) then
         for _, enemyHero in pairs(nEnemyHeroes) do
-            if  J.IsValidTarget(enemyHero)
+            if  J.IsValidHero(enemyHero)
             and J.CanBeAttacked(enemyHero)
             and J.IsInRange(bot, enemyHero, nCastRange)
-            and J.CanCastOnNonMagicImmune(enemyHero)
             and J.CanCastOnTargetAdvanced(enemyHero)
             and not J.IsDisabled(enemyHero)
             and not enemyHero:HasModifier('modifier_abaddon_borrowed_time')
@@ -781,7 +806,6 @@ function X.ConsiderDemonicPurge()
             if J.IsValidHero(enemyHero)
             and J.CanBeAttacked(enemyHero)
             and J.IsInRange(bot, enemyHero, nCastRange)
-            and J.CanCastOnNonMagicImmune(enemyHero)
             and J.CanCastOnTargetAdvanced(enemyHero)
             and not J.IsDisabled(enemyHero)
             and not enemyHero:HasModifier('modifier_abaddon_borrowed_time')
@@ -812,7 +836,6 @@ function X.ConsiderDemonicPurge()
         if J.IsValidHero(botTarget)
         and J.CanBeAttacked(botTarget)
         and J.IsInRange(bot, botTarget, nCastRange)
-        and J.CanCastOnNonMagicImmune(botTarget)
         and J.CanCastOnTargetAdvanced(botTarget)
         and not J.IsDisabled(botTarget)
         and not botTarget:HasModifier('modifier_abaddon_borrowed_time')
@@ -822,10 +845,9 @@ function X.ConsiderDemonicPurge()
         and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
         and not botTarget:HasModifier('modifier_shadow_demon_purge_slow')
         then
-            local bStronger = J.WeAreStronger(bot, 1200)
             local nInRangeAlly = J.GetAlliesNearLoc(botTarget:GetLocation(), 1200)
             local nInRangeEnemy = J.GetEnemiesNearLoc(botTarget:GetLocation(), 1200)
-            if not (#nInRangeAlly >= #nInRangeEnemy + 1 and bStronger) and #nInRangeEnemy >= 2 then
+            if not (#nInRangeAlly >= #nInRangeEnemy + 1) and #nInRangeEnemy >= 2 then
                 return BOT_ACTION_DESIRE_HIGH, botTarget
             end
         end

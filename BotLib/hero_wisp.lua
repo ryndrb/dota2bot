@@ -297,6 +297,7 @@ function X.ConsiderTether()
         and not ally:HasModifier('modifier_doom_bringer_doom_aura_enemy')
         and not ally:HasModifier('modifier_necrolyte_reapers_scythe')
         and not ally:HasModifier('modifier_skeleton_king_reincarnation_scepter_active')
+        and not ally:HasModifier('modifier_teleporting')
         then
             if J.IsDisabled(ally) and #nAllyHeroes >= #nEnemyHeroes then
                 return BOT_ACTION_DESIRE_HIGH, ally
@@ -313,18 +314,6 @@ function X.ConsiderTether()
 
             local bCore = J.IsCore(ally)
             local allyScore = ally:GetAttackDamage() * ally:GetAttackSpeed()
-            -- if (J.IsLaning(ally) and bCore and bot:GetAssignedLane() == ally:GetAssignedLane())
-            -- or (J.IsFarming(ally) and bCore)
-            -- or J.IsGoingOnSomeone(ally)
-            -- or J.IsPushing(ally)
-            -- or J.IsDoingRoshan(ally)
-            -- or J.IsDoingTormentor(ally)
-            -- then
-            --     if allyScore > targetScore then
-            --         targetScore = allyScore
-            --         target = ally
-            --     end
-            -- end
 
             if (J.IsLaning(ally) and bCore and bot:GetAssignedLane() == ally:GetAssignedLane())
             or (J.IsGoingOnSomeone(ally))
@@ -344,25 +333,26 @@ function X.ConsiderTether()
         return BOT_ACTION_DESIRE_HIGH, target
     end
 
-    if J.IsRetreating(bot)
-    and not J.IsRealInvisible(bot)
-    and bot:WasRecentlyDamagedByAnyHero(2.0)
-	then
-        local targetDir = (J.GetTeamFountain() - bot:GetLocation()):Normalized()
-        for _, ally in pairs(GetUnitList(UNIT_LIST_ALLIES)) do
-            if  J.IsValid(ally)
-            and bot ~= ally
-            and (ally:IsCreep() or ally:IsHero())
-            and J.IsInRange(bot, ally, nCastRange)
-            and not J.IsInRange(bot, ally, nCastRange / 2)
-            and ally:DistanceFromFountain() < bot:DistanceFromFountain()
-            then
-                local allyDir = (ally:GetLocation() - bot:GetLocation()):Normalized()
-                local dot = J.DotProduct(targetDir, allyDir)
-                local nAngle = J.GetAngleFromDotProduct(dot)
+    if J.IsRetreating(bot) and not J.IsRealInvisible(bot) then
+        if (#nEnemyHeroes > #nAllyHeroes and bot:WasRecentlyDamagedByAnyHero(5.0))
+        or (J.GetTotalEstimatedDamageToTarget(nEnemyHeroes, bot, 5.0) > bot:GetHealth())
+        then
+            local targetDir = (J.GetTeamFountain() - bot:GetLocation()):Normalized()
+            for _, ally in pairs(GetUnitList(UNIT_LIST_ALLIES)) do
+                if  J.IsValid(ally)
+                and bot ~= ally
+                and (ally:IsCreep() or ally:IsHero())
+                and J.IsInRange(bot, ally, nCastRange)
+                and not J.IsInRange(bot, ally, nCastRange / 2)
+                and ally:DistanceFromFountain() < bot:DistanceFromFountain()
+                then
+                    local allyDir = (ally:GetLocation() - bot:GetLocation()):Normalized()
+                    local dot = J.DotProduct(targetDir, allyDir)
+                    local nAngle = J.GetAngleFromDotProduct(dot)
 
-                if nAngle <= 45 then
-                    return BOT_ACTION_DESIRE_HIGH, ally
+                    if nAngle <= 45 then
+                        return BOT_ACTION_DESIRE_HIGH, ally
+                    end
                 end
             end
         end
@@ -479,7 +469,7 @@ function X.ConsiderSpirits_IO()
 
     if J.IsValid(botTarget)
     and J.CanBeAttacked(botTarget)
-    and botTarget:IsCreep()
+    and not botTarget:IsBuilding()
     and not J.IsRunning(botTarget)
     then
         local distance = GetUnitToUnitDistance(bot, botTarget)
@@ -562,6 +552,7 @@ function X.ConsiderOvercharge()
         if J.IsValidHero(tetheredAlly)
         and not tetheredAlly:HasModifier('modifier_necrolyte_reapers_scythe')
         and not tetheredAlly:HasModifier('modifier_skeleton_king_reincarnation_scepter_active')
+        and not tetheredAlly:HasModifier('modifier_teleporting')
         then
             local allyTarget = J.GetProperTarget(tetheredAlly)
             if J.IsGoingOnSomeone(tetheredAlly) then

@@ -290,6 +290,7 @@ function X.ConsiderSwashbuckle()
         if  J.IsValidHero(botTarget)
         and J.CanBeAttacked(botTarget)
         and J.IsInRange(bot, botTarget, nCastRange)
+        and GetUnitToLocationDistance(botTarget, J.GetEnemyFountain()) > 1200
         and not J.IsSuspiciousIllusion(botTarget)
         and not botTarget:HasModifier('modifier_abaddon_borrowed_time')
         and not botTarget:HasModifier('modifier_dazzle_shallow_grave')
@@ -359,7 +360,7 @@ function X.ConsiderSwashbuckle()
 
     local nEnemyTowers = bot:GetNearbyTowers(1200, true)
 
-	if J.IsLaning(bot) and J.IsInLaningPhase() and fManaAfter > fManaThreshold1 and #nEnemyTowers == 0 then
+	if J.IsLaning(bot) and J.IsEarlyGame() and fManaAfter > fManaThreshold1 and #nEnemyTowers == 0 then
 		for _, creep in pairs(nEnemyCreeps) do
 			if  J.IsValid(creep)
             and J.CanBeAttacked(creep)
@@ -544,7 +545,7 @@ function X.ConsiderShieldCrash()
         end
     end
 
-	if J.IsLaning(bot) and J.IsInLaningPhase() and fManaAfter > fManaThreshold1 then
+	if J.IsLaning(bot) and J.IsEarlyGame() and fManaAfter > fManaThreshold1 then
 		for _, creep in pairs(nEnemyCreeps) do
 			if  J.IsValid(creep)
             and J.CanBeAttacked(creep)
@@ -604,7 +605,7 @@ function X.ConsiderRollUp()
     end
 
     if not bot:IsMagicImmune() then
-        if J.IsStunProjectileIncoming(bot, 400)
+        if (J.IsStunProjectileIncoming(bot, 400) and (J.IsInTeamFight(bot, 1200) or J.IsRetreating(bot)))
         or (not bot:HasModifier('modifier_sniper_assassinate') and J.IsWillBeCastUnitTargetSpell(bot, 600))
         then
             return BOT_ACTION_DESIRE_HIGH
@@ -629,8 +630,7 @@ function X.ConsiderRollUp()
 end
 
 function X.ConsiderEndRollUp()
-    if not J.CanCastAbility(EndRollUp)
-    then
+    if not J.CanCastAbility(EndRollUp) then
         return BOT_ACTION_DESIRE_NONE
     end
 
@@ -685,7 +685,7 @@ function X.ConsiderEndRollingThunder()
         return BOT_ACTION_DESIRE_NONE
     end
 
-    if #nEnemyHeroes == 0 and not bot:WasRecentlyDamagedByAnyHero(6.0) then
+    if #nEnemyHeroes == 0 and not bot:WasRecentlyDamagedByAnyHero(8.0) then
         return BOT_ACTION_DESIRE_HIGH
     end
 

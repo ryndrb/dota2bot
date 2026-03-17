@@ -315,7 +315,6 @@ function X.ConsiderScatterBlast()
             for _, enemyHero in pairs(nInRangeEnemy) do
                 if  J.IsValidHero(enemyHero)
                 and J.CanBeAttacked(enemyHero)
-                and not J.IsChasingTarget(bot, enemyHero)
                 and not enemyHero:HasModifier('modifier_abaddon_borrowed_time')
                 and not enemyHero:HasModifier('modifier_dazzle_shallow_grave')
                 and not enemyHero:HasModifier('modifier_oracle_false_promise_timer')
@@ -400,11 +399,10 @@ function X.ConsiderScatterBlast()
         end
     end
 
-	if J.IsLaning(bot) and J.IsInLaningPhase() and fManaAfter > fManaThreshold1 then
+	if J.IsLaning(bot) and J.IsEarlyGame() and fManaAfter > fManaThreshold1 then
 		for _, creep in pairs(nEnemyCreeps) do
 			if  J.IsValid(creep)
             and J.CanBeAttacked(creep)
-			and not J.IsRunning(creep)
 			and not J.IsOtherAllysTarget(creep)
 			then
                 local damage = nDamage
@@ -509,7 +507,11 @@ function X.ConsiderFiresnapCookie()
                     and not J.IsDisabled(enemyHero)
                     and not enemyHero:HasModifier('modifier_necrolyte_reapers_scythe')
                     then
-                        return BOT_ACTION_DESIRE_HIGH, allyHero
+                        if J.IsChasingTarget(allyHero, enemyHero)
+                        or #nInRangeEnemy >= 2
+                        then
+                            return BOT_ACTION_DESIRE_HIGH, allyHero
+                        end
                     end
                 end
 
@@ -552,7 +554,25 @@ function X.ConsiderFiresnapCookie()
         end
     end
 
-    local nEnemyCreeps = bot:GetNearbyCreeps(nJumpDistance, true)
+    local nEnemyCreeps = bot:GetNearbyCreeps(Min(nCastRange + 300, 1600), true)
+
+    for _, creep in pairs(nEnemyCreeps) do
+        if J.IsValid(creep) then
+            local vJumpLocation = J.GetFaceTowardDistanceLocation(creep, nJumpDistance)
+            local nInRangeEnemy = J.GetEnemiesNearLoc(vJumpLocation, nJumpDistance)
+            for _, enemyHero in pairs(nInRangeEnemy) do
+                if  J.IsValidHero(enemyHero)
+                and J.CanBeAttacked(enemyHero)
+                and J.CanCastOnNonMagicImmune(enemyHero)
+                and enemyHero:IsChanneling()
+                then
+                    return BOT_ACTION_DESIRE_HIGH, creep
+                end
+            end
+        end
+    end
+
+    nEnemyCreeps = bot:GetNearbyCreeps(nJumpDistance, true)
     local vJumpLocation = J.GetFaceTowardDistanceLocation(bot, nJumpDistance)
     local bIsLilShredding = bot:HasModifier('modifier_snapfire_lil_shredder_buff')
 
@@ -654,6 +674,7 @@ function X.ConsiderLilShredder()
         if J.IsValid(nEnemyCreeps[1]) and J.CanBeAttacked(nEnemyCreeps[1]) then
             if (#nEnemyCreeps >= 3)
             or (#nEnemyCreeps >= 2 and nEnemyCreeps[1]:GetHealth() >= 550)
+            or (#nEnemyCreeps >= 1 and nEnemyCreeps[1]:GetHealth() >= 1000)
             then
                 return BOT_ACTION_DESIRE_HIGH
             end
@@ -817,7 +838,7 @@ function X.ConsiderMortimerKisses()
         if  J.IsValidHero(allyHero)
         and J.IsInTeamFight(allyHero, 1200)
         then
-            local nInRangeEnemy = J.GetEnemiesNearLoc(allyHero:GetLocation(), 1600)
+            nInRangeEnemy = J.GetEnemiesNearLoc(allyHero:GetLocation(), 1600)
             if #nInRangeEnemy >= 2 then
                 local hTarget = nil
                 local hTargetHealth = math.huge
@@ -858,7 +879,7 @@ function X.ConsiderMortimerKisses()
         if  J.IsValidHero(botTarget)
         and J.CanBeAttacked(botTarget)
         and J.IsInRange(bot, botTarget, nCastRange)
-        and not J.IsInRange(bot, botTarget, nMinDistance)
+        and not J.IsInRange(bot, botTarget, nMinDistance * 1.1)
         and J.CanCastOnMagicImmune(botTarget)
         and not botTarget:HasModifier('modifier_abaddon_borrowed_time')
         and not botTarget:HasModifier('modifier_dazzle_shallow_grave')

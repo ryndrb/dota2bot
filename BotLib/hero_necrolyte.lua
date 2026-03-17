@@ -321,6 +321,7 @@ function X.ConsiderDeathPulse()
 		local nLowHealthAllyNearby = 0
 		for _, allyHero in pairs(nInRangeAlly) do
 			if  J.IsValidHero(allyHero)
+			and J.CanBeAttacked(allyHero)
 			and not allyHero:IsIllusion()
 			and not allyHero:HasModifier('modifier_doom_bringer_doom_aura_enemy')
 			and not allyHero:HasModifier('modifier_ice_blast')
@@ -338,8 +339,9 @@ function X.ConsiderDeathPulse()
 
 	if J.IsGoingOnSomeone(bot) then
 		if J.IsValidHero(botTarget)
+		and J.CanBeAttacked(botTarget)
 		and J.IsInRange(bot, botTarget, nRadius)
-		and J.CanCastOnNonMagicImmune(botTarget)
+		and not botTarget:IsIllusion()
 		and not botTarget:HasModifier('modifier_abaddon_borrowed_time')
 		and not botTarget:HasModifier('modifier_dazzle_shallow_grave')
 		then
@@ -392,18 +394,18 @@ function X.ConsiderDeathPulse()
 		if J.IsValid(nEnemyCreeps[1]) and J.CanBeAttacked(nEnemyCreeps[1]) then
 			if (#nEnemyCreeps >= 2)
 			or (#nEnemyCreeps >= 1 and nEnemyCreeps[1]:IsAncientCreep())
-			or (#nEnemyCreeps >= 1 and nEnemyCreeps[1]:GetHealth() >= 500)
+			or (#nEnemyCreeps >= 1 and nEnemyCreeps[1]:GetHealth() > nDamage)
 			then
 				return BOT_ACTION_DESIRE_HIGH
 			end
 		end
     end
 
-	if J.IsLaning(bot) and J.IsInLaningPhase() and fManaAfter > fManaThreshold1 then
+	if J.IsLaning(bot) and J.IsEarlyGame() and fManaAfter > fManaThreshold1 then
 		for _, creep in pairs(nEnemyCreeps) do
 			if J.IsValid(creep) and J.CanBeAttacked(creep) and (J.IsCore(bot) or not J.IsOtherAllysTarget(creep)) then
 				local sCreepName = creep:GetUnitName()
-				if J.CanKillTarget(creep, nDamage + 2, DAMAGE_TYPE_MAGICAL) then
+				if J.CanKillTarget(creep, nDamage - 1, DAMAGE_TYPE_MAGICAL) then
 					if string.find(sCreepName, 'ranged') then
 						return BOT_ACTION_DESIRE_HIGH
 					end
@@ -447,6 +449,7 @@ function X.ConsiderDeathPulse()
 		local nAllyCount = 0
 		for _, allyHero in pairs(nInRangeAlly) do
 			if  J.IsValidHero(allyHero)
+			and J.CanBeAttacked(allyHero)
 			and not allyHero:IsIllusion()
 			and not allyHero:HasModifier('modifier_doom_bringer_doom_aura_enemy')
 			and not allyHero:HasModifier('modifier_ice_blast')
@@ -504,7 +507,7 @@ function X.ConsiderGhostShroud()
 	end
 
 	if J.IsRetreating(bot) then
-		local nInRangeEnemy = bot:GetNearbyHeroes(nRadius * 1.5, true, BOT_MODE_NONE)
+		local nInRangeEnemy = bot:GetNearbyHeroes(Min(nRadius * 1.5, 1600), true, BOT_MODE_NONE)
 		if (bot:WasRecentlyDamagedByAnyHero(2.0) and #nInRangeEnemy > 0)
 		or (botHP < 0.15)
 		then
@@ -601,7 +604,7 @@ function X.ConsiderDeathSeeker()
 	end
 
 	if J.IsRetreating(bot) and not J.IsRealInvisible(bot) then
-		if bot:WasRecentlyDamagedByAnyHero(1.0) and #nEnemyHeroes > 0 then
+		if bot:WasRecentlyDamagedByAnyHero(3.0) and #nEnemyHeroes > 0 then
 			if target then
 				return BOT_ACTION_DESIRE_HIGH, target
 			end
@@ -611,7 +614,7 @@ function X.ConsiderDeathSeeker()
 	local nEnemyCreeps = bot:GetNearbyCreeps(Min(nCastRange + 300, 1600), true)
 
 	if not J.IsRetreating(bot) and not J.IsRealInvisible(bot) and fManaAfter > fManaThreshold1 then
-		if not J.IsInLaningPhase() and (J.IsCore(bot) or not J.IsThereCoreNearby(600)) and #nEnemyHeroes == 0 then
+		if not J.IsEarlyGame() and (J.IsCore(bot) or not J.IsThereCoreNearby(600)) and #nEnemyHeroes == 0 then
 			for _, creep in pairs(nEnemyCreeps) do
 				if J.IsValid(creep) and J.CanBeAttacked(creep) then
 					local nLocationAoE = bot:FindAoELocation(true, false, creep:GetLocation(), 0, nRadius, 0, nDamage)

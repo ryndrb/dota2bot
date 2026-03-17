@@ -333,18 +333,20 @@ function X.ConsiderFatesEdict()
 		and J.IsInRange(bot, botTarget, nCastRange)
 		and J.CanCastOnNonMagicImmune(botTarget)
 		and J.CanCastOnTargetAdvanced(botTarget)
-		and J.IsAttacking(botTarget)
 		and not J.IsDisabled(botTarget)
 		and not J.IsChasingTarget(bot, botTarget)
 		and not botTarget:IsDisarmed()
 		then
-			return BOT_ACTION_DESIRE_HIGH, botTarget
+			if J.IsAttacking(botTarget) or J.IsValidHero(botTarget:GetAttackTarget()) then
+				return BOT_ACTION_DESIRE_HIGH, botTarget
+			end
 		end
 	end
 
 	if J.IsRetreating(bot) and not J.IsRealInvisible(bot) then
 		for _, enemyHero in pairs(nEnemyHeroes) do
 			if J.IsValidHero(enemyHero)
+			and J.CanBeAttacked(enemyHero)
 			and J.IsInRange(bot, enemyHero, nCastRange)
 			and J.CanCastOnNonMagicImmune(enemyHero)
 			and J.CanCastOnTargetAdvanced(enemyHero)
@@ -482,7 +484,7 @@ function X.ConsiderPurifyingFlames()
 		end
 	end
 
-    if J.IsLaning(bot) and J.IsInLaningPhase() and fManaAfter > fManaThreshold1 then
+    if J.IsLaning(bot) and J.IsEarlyGame() and fManaAfter > fManaThreshold1 then
 		for _, creep in pairs(nEnemyCreeps) do
 			if  J.IsValid(creep)
             and J.CanBeAttacked(creep)

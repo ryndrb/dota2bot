@@ -335,7 +335,6 @@ function X.ConsiderLaser()
     local nManaCost = Laser:GetManaCost()
     local fManaAfter = J.GetManaAfter(nManaCost)
     local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {MarchOfTheMachines, DefenseMatrix, WarpFlare, KeenConveyance, Rearm})
-    local fManaThreshold2 = J.GetManaThreshold(bot, nManaCost, {Laser, MarchOfTheMachines, DefenseMatrix, WarpFlare, KeenConveyance, Rearm})
 
     for _, enemyHero in pairs(nEnemyHeroes) do
         if  J.IsValidHero(enemyHero)
@@ -361,7 +360,7 @@ function X.ConsiderLaser()
             and J.CanBeAttacked(enemyHero)
             and J.IsInRange(bot, enemyHero, nCastRange)
             and J.CanCastOnTargetAdvanced(enemyHero)
-            and not J.IsMeepoClone(enemyHero)
+            and not enemyHero:HasModifier('modifier_necrolyte_reapers_scythe')
             then
                 local enemyHeroDamage = enemyHero:GetAttackDamage() * enemyHero:GetAttackSpeed()
                 if enemyHeroDamage > hTargetDamage then
@@ -383,6 +382,8 @@ function X.ConsiderLaser()
             and J.IsInRange(bot, enemyHero, nCastRange)
             and not J.IsInRange(bot, enemyHero, nCastRange / 2)
             and J.CanCastOnTargetAdvanced(enemyHero)
+            and not J.IsDisabled(enemyHero)
+            and not enemyHero:IsDisarmed()
             and bot:WasRecentlyDamagedByHero(enemyHero, 4.0)
             then
                 return BOT_ACTION_DESIRE_HIGH, enemyHero
@@ -432,11 +433,10 @@ function X.ConsiderLaser()
         end
     end
 
-    if J.IsLaning(bot) and fManaAfter > fManaThreshold1 and J.IsInLaningPhase() then
+    if J.IsLaning(bot) and fManaAfter > fManaThreshold1 and J.IsEarlyGame() then
 		for _, creep in pairs(nEnemyCreeps) do
 			if  J.IsValid(creep)
             and J.CanBeAttacked(creep)
-            and J.IsInRange(bot, creep, nCastRange + 150)
 			and J.WillKillTarget(creep, nDamage, DAMAGE_TYPE_MAGICAL, nCastPoint)
             and (J.IsCore(bot) or not J.IsOtherAllysTarget(creep))
 			then
@@ -461,7 +461,7 @@ function X.ConsiderLaser()
         and J.CanBeAttacked(botTarget)
         and J.IsInRange(bot, botTarget, nCastRange)
         and bAttacking
-        and fManaAfter > fManaThreshold2
+        and fManaAfter > fManaThreshold1
         then
             return BOT_ACTION_DESIRE_HIGH, botTarget
         end
@@ -471,7 +471,7 @@ function X.ConsiderLaser()
         if  J.IsTormentor(botTarget)
         and J.IsInRange(bot, botTarget, nCastRange)
         and bAttacking
-        and fManaAfter > fManaThreshold2
+        and fManaAfter > fManaThreshold1
         then
             return BOT_ACTION_DESIRE_HIGH, botTarget
         end
@@ -616,7 +616,6 @@ function X.ConsiderMarchOfTheMachines()
     local nManaCost = MarchOfTheMachines:GetManaCost()
     local fManaAfter = J.GetManaAfter(nManaCost)
     local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {Laser, DefenseMatrix, WarpFlare, KeenConveyance, Rearm})
-    local fManaThreshold2 = J.GetManaThreshold(bot, nManaCost, {Laser, MarchOfTheMachines, DefenseMatrix, WarpFlare, KeenConveyance, Rearm})
 
 	if J.IsGoingOnSomeone(bot) then
         if J.IsValidHero(botTarget)
@@ -683,7 +682,7 @@ function X.ConsiderMarchOfTheMachines()
             and J.CanBeAttacked(botTarget)
             and J.IsInRange(bot, botTarget, nRadius)
             and bAttacking
-            and fManaAfter > fManaThreshold2
+            and fManaAfter > fManaThreshold1
             then
                 return BOT_ACTION_DESIRE_HIGH, J.VectorTowards(bot:GetLocation(), botTarget:GetLocation(), 10)
             end
@@ -693,7 +692,7 @@ function X.ConsiderMarchOfTheMachines()
             if  J.IsTormentor(botTarget)
             and J.IsInRange(bot, botTarget, nRadius)
             and bAttacking
-            and fManaAfter > fManaThreshold2
+            and fManaAfter > fManaThreshold1
             then
                 return BOT_ACTION_DESIRE_HIGH, J.VectorTowards(bot:GetLocation(), botTarget:GetLocation(), 10)
             end
@@ -716,14 +715,14 @@ function X.ConsiderDefenseMatrix()
 	if J.IsGoingOnSomeone(bot) then
         if not bot:HasModifier('modifier_tinker_defense_matrix')
         and not bot:HasModifier('modifier_item_nullifier_mute')
-        and bot:WasRecentlyDamagedByAnyHero(4.0)
+        and bot:WasRecentlyDamagedByAnyHero(5.0)
         then
             return BOT_ACTION_DESIRE_HIGH, bot
         end
     end
 
 	if J.IsRetreating(bot) and not J.IsRealInvisible(bot) then
-        if bot:WasRecentlyDamagedByAnyHero(2.0)
+        if bot:WasRecentlyDamagedByAnyHero(5.0)
         and not bot:HasModifier('modifier_tinker_defense_matrix')
         and not bot:HasModifier('modifier_item_nullifier_mute')
         and (J.IsRunning(bot) or bot:IsRooted())
@@ -763,14 +762,14 @@ function X.ConsiderDefenseMatrix()
                 end
 
                 if J.IsRetreating(allyHero) and not J.IsRealInvisible(allyHero) then
-                    if bot:WasRecentlyDamagedByAnyHero(2.0) and J.IsRunning(allyHero) and #nEnemyHeroesTargetingAlly > 0 then
+                    if allyHero:WasRecentlyDamagedByAnyHero(2.0) and #nEnemyHeroesTargetingAlly > 0 then
                         return BOT_ACTION_DESIRE_HIGH, allyHero
                     end
                 end
 
                 if fManaAfter > fManaThreshold1 then
-                    if (J.IsPushing(bot) and (bot:WasRecentlyDamagedByAnyHero(5.0) or botHP < 0.5))
-                    or (J.IsDefending(bot) and #nEnemyHeroes > 0)
+                    if (J.IsPushing(allyHero) and (allyHero:WasRecentlyDamagedByAnyHero(5.0) or allyHP < 0.5))
+                    or (J.IsDefending(allyHero) and #nEnemyHeroes > 0)
                     or (allyHero:WasRecentlyDamagedByAnyHero(3.0) and allyHP < 0.75)
                     then
                         return BOT_ACTION_DESIRE_HIGH, allyHero
@@ -814,21 +813,14 @@ function X.ConsiderWarpFlare()
             then
                 return BOT_ACTION_DESIRE_HIGH, enemyHero
             end
-        end
-    end
 
-    if J.IsRetreating(bot) and not J.IsRealInvisible(bot) then
-        for _, enemyHero in pairs(nEnemyHeroes) do
-            if  J.IsValidHero(enemyHero)
-            and J.IsInRange(bot, enemyHero, nCastRange)
-            and not J.IsSuspiciousIllusion(enemyHero)
-            and not J.IsDisabled(enemyHero)
-            and bot:WasRecentlyDamagedByHero(enemyHero, 3.0)
-            then
-                return BOT_ACTION_DESIRE_HIGH, enemyHero
+            if J.IsRetreating(bot) and not J.IsRealInvisible(bot) then
+                if not J.IsDisabled(enemyHero) and bot:WasRecentlyDamagedByHero(enemyHero, 3.0) then
+                    return BOT_ACTION_DESIRE_HIGH, enemyHero
+                end
             end
         end
-	end
+    end
 
     return BOT_ACTION_DESIRE_NONE, nil
 end
@@ -894,7 +886,7 @@ function X.ConsiderKeenConveyance()
         return BOT_ACTION_DESIRE_NONE, 0, ''
     end
 
-    if J.IsLaning(bot) and J.IsInLaningPhase() then
+    if J.IsLaning(bot) and J.IsEarlyGame() then
         local vLocationTP, bShouldTP = X.GetLaningTPLocation(botMovementSpeed * nChannelTime * 2, bot:GetLocation())
         if bShouldTP then
             return BOT_ACTION_DESIRE_HIGH, vLocationTP, 'loc'

@@ -238,7 +238,6 @@ function X.SkillsComplement()
 
     X.ConsiderBlinkSkewer()
     X.ConsiderBlinkRP()
-    X.ConsiderBlinkHornTossSkewer()
 
     ReversePolarityDesire = X.ConsiderReversePolarity()
     if ReversePolarityDesire > 0 then
@@ -290,8 +289,8 @@ function X.ConsiderShockwave()
     for _, enemyHero in pairs(nEnemyHeroes) do
         if  J.IsValidHero(enemyHero)
         and J.CanBeAttacked(enemyHero)
-        and J.CanCastOnNonMagicImmune(enemyHero)
         and J.IsInRange(bot, enemyHero, nCastRange)
+        and J.CanCastOnNonMagicImmune(enemyHero)
         and not enemyHero:HasModifier('modifier_abaddon_borrowed_time')
         and not enemyHero:HasModifier('modifier_dazzle_shallow_grave')
         and not enemyHero:HasModifier('modifier_necrolyte_reapers_scythe')
@@ -308,8 +307,8 @@ function X.ConsiderShockwave()
 	if J.IsGoingOnSomeone(bot) then
         if  J.IsValidHero(botTarget)
         and J.CanBeAttacked(botTarget)
-        and J.CanCastOnNonMagicImmune(botTarget)
         and J.IsInRange(bot, botTarget, nCastRange * 0.8)
+        and J.CanCastOnNonMagicImmune(botTarget)
         and not J.IsInRange(bot, botTarget, bot:GetAttackRange())
         and not J.IsDisabled(botTarget)
         and not botTarget:HasModifier('modifier_enigma_black_hole_pull')
@@ -321,7 +320,7 @@ function X.ConsiderShockwave()
         end
 	end
 
-    local nEnemyCreeps = bot:GetNearbyCreeps(nCastRange, true)
+    local nEnemyCreeps = bot:GetNearbyCreeps(Min(nCastRange + 300, 1600), true)
 
     if J.IsPushing(bot) and bAttacking and fManaAfter > fManaThreshold1 + 0.1 and #nAllyHeroes <= 2 then
         for _, creep in pairs(nEnemyCreeps) do
@@ -368,7 +367,7 @@ function X.ConsiderShockwave()
         end
     end
 
-    if J.IsLaning(bot) and J.IsInLaningPhase() and fManaAfter > fManaThreshold1 then
+    if J.IsLaning(bot) and J.IsEarlyGame() and fManaAfter > fManaThreshold1 then
 		for _, creep in pairs(nEnemyCreeps) do
 			if  J.IsValid(creep)
             and J.CanBeAttacked(creep)
@@ -492,12 +491,6 @@ function X.ConsiderEmpower()
 
     local nEnemyCreeps = bot:GetNearbyCreeps(600, true)
 
-    if J.IsFarming(bot) and not bEmpowered and bAttacking and fManaAfter > fManaThreshold1 + 0.1 then
-        if J.IsValid(nEnemyCreeps[1]) and J.CanBeAttacked(nEnemyCreeps[1]) then
-            return BOT_ACTION_DESIRE_HIGH, bot
-        end
-    end
-
 	if (J.IsPushing(bot) or J.IsDefending(bot)) and bAttacking and fManaAfter > fManaThreshold1 + 0.1 then
         if J.IsValid(nEnemyCreeps[1]) and J.CanBeAttacked(nEnemyCreeps[1]) and not bEmpowered then
             if #nEnemyCreeps >= 3 then
@@ -506,7 +499,13 @@ function X.ConsiderEmpower()
         end
 	end
 
-    if J.IsLaning(bot) and J.IsInLaningPhase() and not bEmpowered and fManaAfter > fManaThreshold1 then
+    if J.IsFarming(bot) and not bEmpowered and bAttacking and fManaAfter > fManaThreshold1 + 0.1 then
+        if J.IsValid(nEnemyCreeps[1]) and J.CanBeAttacked(nEnemyCreeps[1]) then
+            return BOT_ACTION_DESIRE_HIGH, bot
+        end
+    end
+
+    if J.IsLaning(bot) and J.IsEarlyGame() and not bEmpowered and fManaAfter > fManaThreshold1 then
         local nEnemyLaneCreeps = bot:GetNearbyLaneCreeps(600, true)
         if J.IsValid(nEnemyLaneCreeps[1]) and J.CanBeAttacked(nEnemyLaneCreeps[1]) and not bEmpowered then
             if #nEnemyLaneCreeps >= 3 then
@@ -523,7 +522,7 @@ function X.ConsiderEmpower()
             and not allyTarget:HasModifier('modifier_backdoor_protection')
             and not allyTarget:HasModifier('modifier_backdoor_protection_active')
             and not allyTarget:HasModifier('modifier_backdoor_protection_in_base')
-            and J.IsAttacking(hTargetAlly)
+            and J.GetProperTarget(allyTarget) ~= nil
             then
                 return BOT_ACTION_DESIRE_HIGH, hTargetAlly
             end
@@ -576,14 +575,14 @@ function X.ConsiderSkewer()
         and J.CanCastOnNonMagicImmune(enemyHero)
         then
             local fDelay = (GetUnitToUnitDistance(bot, enemyHero) / nSpeed) + nCastPoint
-            if J.GetModifierTime(enemyHero, 'modifier_teleporting') > fDelay then
+            if J.GetModifierTime(enemyHero, 'modifier_teleporting') > fDelay and not J.IsRetreating(bot) then
                 if #nAllyHeroes >= #nEnemyHeroes or J.IsInRange(bot, enemyHero, 550) then
                     return BOT_ACTION_DESIRE_HIGH, enemyHero:GetLocation()
                 end
             end
 
             if not J.IsRetreating(bot)
-            and J.IsInLaningPhase()
+            and J.IsEarlyGame()
             and J.IsInRange(bot, enemyHero, nRadius)
             then
                 local nAllyTowers = bot:GetNearbyTowers(1000, false)
@@ -671,13 +670,15 @@ function X.ConsiderSkewer()
 
 	if J.IsRetreating(bot) and not J.IsRealInvisible(bot) then
 		if not bot:HasModifier('modifier_fountain_aura_buff') then
-            if #nEnemyHeroes > #nAllyHeroes or bot:WasRecentlyDamagedByAnyHero(4.0) then
+            if (#nEnemyHeroes > #nAllyHeroes)
+            or (J.GetTotalEstimatedDamageToTarget(nEnemyHeroes, bot, 5.0) > bot:GetHealth() and bot:WasRecentlyDamagedByAnyHero(4.0))
+            then
                 return BOT_ACTION_DESIRE_HIGH, J.GetTeamFountain()
             end
 		end
 	end
 
-	if J.IsFarming(bot) and fManaAfter > 0.88 then
+	if J.IsFarming(bot) and fManaAfter > 0.85 then
 		if bot.farm and bot.farm.location then
 			local distance = GetUnitToLocationDistance(bot, bot.farm.location)
 			if J.IsRunning(bot) and distance > nDistance * 0.8 and IsLocationPassable(bot.farm.location) then
@@ -708,6 +709,17 @@ function X.ConsiderHornToss()
 
     local nRadius = HornToss:GetSpecialValueInt('radius')
     local nPullAngle = HornToss:GetSpecialValueInt('pull_angle')
+
+    for _, enemyHero in pairs(nEnemyHeroes) do
+        if  J.IsValidHero(enemyHero)
+        and J.CanBeAttacked(enemyHero)
+        and J.IsInRange(bot, enemyHero, nRadius)
+        and J.CanCastOnNonMagicImmune(enemyHero)
+        and enemyHero:IsChanneling()
+        then
+            return BOT_ACTION_DESIRE_HIGH
+        end
+    end
 
     if J.IsGoingOnSomeone(bot) then
         if  J.IsValidHero(botTarget)
@@ -828,7 +840,7 @@ function X.ConsiderBlinkRP()
                 end
 
                 if count >= 1.5 then
-                    bot:Action_ClearActions(false)
+                    bot:Action_ClearActions(true)
 
                     local BlackKingBar = J.IsItemAvailable('item_black_king_bar')
                     if J.CanCastAbility(BlackKingBar) and (bot:GetMana() > (ReversePolarity:GetManaCost() + BlackKingBar:GetManaCost() + 100)) and not bot:IsMagicImmune() then
@@ -865,7 +877,7 @@ function X.ConsiderBlinkSkewer()
                 local nInRangeAlly = J.GetAlliesNearLoc(botTarget:GetLocation(), nDistance + 350)
                 local nInRangeEnemy = J.GetEnemiesNearLoc(botTarget:GetLocation(), nDistance + 350)
 
-                if #nInRangeAlly >= 2 and #nInRangeAlly >= #nInRangeEnemy then
+                if #nAllyHeroes >= 2 and #nInRangeAlly >= #nInRangeEnemy then
                     local hTargetAlly = nil
                     local hTargetAllyScore = 0
                     for _ , allyHero in pairs(nAllyHeroes) do
@@ -879,6 +891,7 @@ function X.ConsiderBlinkSkewer()
                         and not allyHero:HasModifier('modifier_doom_bringer_doom_aura_enemy')
                         and not allyHero:HasModifier('modifier_necrolyte_reapers_scythe')
                         and not allyHero:HasModifier('modifier_ice_blast')
+                        and not allyHero:HasModifier('modifier_teleporting')
                         then
                             local allyHeroScore = allyHero:GetEstimatedDamageToTarget(true, botTarget, 5.0, DAMAGE_TYPE_ALL)
                             if allyHeroScore > hTargetAllyScore then
@@ -889,9 +902,9 @@ function X.ConsiderBlinkSkewer()
                     end
 
                     if hTargetAlly then
-                        bot:Action_ClearActions(false)
+                        bot:Action_ClearActions(true)
 
-                        if J.IsInTeamFight(hTargetAlly, 1200) then
+                        if J.IsInTeamFight(hTargetAlly, 2000) then
                             local BlackKingBar = J.IsItemAvailable('item_black_king_bar')
                             if J.CanCastAbility(BlackKingBar) and (bot:GetMana() > (Skewer:GetManaCost() + BlackKingBar:GetManaCost() + 100)) and not bot:IsMagicImmune() then
                                 bot:ActionQueue_UseAbility(BlackKingBar)
@@ -901,71 +914,6 @@ function X.ConsiderBlinkSkewer()
 
                         bot:ActionQueue_UseAbilityOnLocation(bot.Blink, botTarget:GetLocation())
                         bot:ActionQueue_Delay(0.1)
-                        bot:ActionQueue_UseAbilityOnLocation(Skewer, hTargetAlly:GetLocation())
-                        return
-                    end
-                end
-            end
-        end
-    end
-end
-
-function X.ConsiderBlinkHornTossSkewer()
-    if J.CanBlinkDagger(bot) and J.CanCastAbility(HornToss) and J.CanCastAbility(Skewer) and (bot:GetMana() > (HornToss:GetManaCost() + Skewer:GetManaCost() + 100)) then
-        local nCastRange = Max(bot.Blink:GetCastRange(), 1200)
-        local nDistance = Skewer:GetSpecialValueInt('range')
-
-        if J.IsGoingOnSomeone(bot) then
-            if  J.IsValidHero(botTarget)
-            and J.CanBeAttacked(botTarget)
-            and J.IsInRange(bot, botTarget, nCastRange)
-            and not J.IsInRange(bot, botTarget, 650)
-            and J.CanCastOnNonMagicImmune(botTarget)
-            and GetUnitToLocationDistance(botTarget, J.GetEnemyFountain()) > 1200
-            and not botTarget:HasModifier('modifier_enigma_black_hole_pull')
-            and not botTarget:HasModifier('modifier_faceless_void_chronosphere_freeze')
-            and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
-            then
-                local nInRangeAlly = J.GetAlliesNearLoc(botTarget:GetLocation(), nDistance + 350)
-                local nInRangeEnemy = J.GetEnemiesNearLoc(botTarget:GetLocation(), nDistance + 350)
-
-                if #nInRangeAlly >= 2 and #nInRangeAlly >= #nInRangeEnemy then
-                    local hTargetAlly = nil
-                    local hTargetAllyScore = 0
-                    for _ , allyHero in pairs(nAllyHeroes) do
-                        if J.IsValidHero(allyHero)
-                        and bot ~= allyHero
-                        and J.IsGoingOnSomeone(allyHero)
-                        and J.IsInRange(allyHero, botTarget, nDistance + allyHero:GetAttackRange())
-                        and not J.IsInRange(allyHero, botTarget, 650)
-                        and not J.IsDisabled(allyHero)
-                        and not allyHero:IsIllusion()
-                        and not allyHero:HasModifier('modifier_doom_bringer_doom_aura_enemy')
-                        and not allyHero:HasModifier('modifier_necrolyte_reapers_scythe')
-                        and not allyHero:HasModifier('modifier_ice_blast')
-                        then
-                            local allyHeroScore = allyHero:GetEstimatedDamageToTarget(true, botTarget, 5.0, DAMAGE_TYPE_ALL)
-                            if allyHeroScore > hTargetAllyScore then
-                                hTargetAlly = allyHero
-                                hTargetAllyScore = allyHeroScore
-                            end
-                        end
-                    end
-
-                    if hTargetAlly then
-                        bot:Action_ClearActions(false)
-
-                        if J.IsInTeamFight(hTargetAlly, 1200) then
-                            local BlackKingBar = J.IsItemAvailable('item_black_king_bar')
-                            if J.CanCastAbility(BlackKingBar) and (bot:GetMana() > (HornToss:GetManaCost() + Skewer:GetManaCost() + BlackKingBar:GetManaCost() + 100)) and not bot:IsMagicImmune() then
-                                bot:ActionQueue_UseAbility(BlackKingBar)
-                                bot:ActionQueue_Delay(0.1)
-                            end
-                        end
-
-                        bot:ActionQueue_UseAbilityOnLocation(bot.Blink, J.VectorTowards(botTarget:GetLocation(), bot:GetLocation(), 325 / 2))
-                        bot:ActionQueue_Delay(0.1)
-                        bot:ActionQueue_UseAbility(HornToss)
                         bot:ActionQueue_UseAbilityOnLocation(Skewer, hTargetAlly:GetLocation())
                         return
                     end

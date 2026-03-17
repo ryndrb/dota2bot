@@ -199,10 +199,10 @@ function X.SkillsComplement()
 
     InkSwellDesire, InkSwellTarget = X.ConsiderInkSwell()
     if InkSwellDesire > 0 then
-        J.SetQueuePtToINT(bot, false)
-        bot:ActionQueue_UseAbilityOnEntity(InkSwell, InkSwellTarget)
         inkswell.cast_time = DotaTime()
         inkswell.wearer = InkSwellTarget
+        J.SetQueuePtToINT(bot, false)
+        bot:ActionQueue_UseAbilityOnEntity(InkSwell, InkSwellTarget)
         return
     end
 
@@ -248,13 +248,12 @@ function X.ConsiderStrokeOfFate()
     local nManaCost = StrokeOfFate:GetManaCost()
     local fManaAfter = J.GetManaAfter(nManaCost)
     local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {PhantomsEmbrace, InkSwell, DarkPortrait, SoulBind})
-    local fManaThreshold2 = J.GetManaThreshold(bot, nManaCost, {StrokeOfFate, PhantomsEmbrace, InkSwell, DarkPortrait, SoulBind})
 
     for _, enemyHero in pairs(nEnemyHeroes) do
         if  J.IsValidHero(enemyHero)
         and J.CanBeAttacked(enemyHero)
-        and J.CanCastOnNonMagicImmune(enemyHero)
         and J.IsInRange(bot, enemyHero, nCastRange)
+        and J.CanCastOnNonMagicImmune(enemyHero)
         and not enemyHero:HasModifier('modifier_abaddon_borrowed_time')
         and not enemyHero:HasModifier('modifier_dazzle_shallow_grave')
         and not enemyHero:HasModifier('modifier_oracle_false_promise_timer')
@@ -268,10 +267,10 @@ function X.ConsiderStrokeOfFate()
     end
 
 	if J.IsGoingOnSomeone(bot) then
-		if  J.IsValidTarget(botTarget)
+		if  J.IsValidHero(botTarget)
         and J.CanBeAttacked(botTarget)
-        and J.CanCastOnNonMagicImmune(botTarget)
         and J.IsInRange(bot, botTarget, nCastRange)
+        and J.CanCastOnNonMagicImmune(botTarget)
         and not J.IsDisabled(botTarget)
         and not botTarget:HasModifier('modifier_abaddon_borrowed_time')
         and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
@@ -281,15 +280,15 @@ function X.ConsiderStrokeOfFate()
 		end
 	end
 
-    if J.IsRetreating(bot) and not J.IsRealInvisible(bot) and bot:WasRecentlyDamagedByAnyHero(4.0) then
+    if J.IsRetreating(bot) and not J.IsRealInvisible(bot) then
         for _, enemyHero in pairs(nEnemyHeroes) do
             if  J.IsValidHero(enemyHero)
             and J.CanBeAttacked(enemyHero)
             and J.IsInRange(bot, enemyHero, nCastRange)
-            and J.CanCastOnNonMagicImmune(enemyHero)
             and not J.IsInRange(bot, enemyHero, 300)
+            and J.CanCastOnNonMagicImmune(enemyHero)
             and not J.IsDisabled(enemyHero)
-            and bot:WasRecentlyDamagedByHero(enemyHero, 3.0)
+            and bot:WasRecentlyDamagedByHero(enemyHero, 2.0)
             then
                 return BOT_ACTION_DESIRE_HIGH, enemyHero:GetLocation()
             end
@@ -298,12 +297,11 @@ function X.ConsiderStrokeOfFate()
 
     local nEnemyCreeps = bot:GetNearbyCreeps(Min(nCastRange, 1600), true)
 
-    if not J.IsRetreating(bot) and not J.IsRealInvisible(bot) and fManaAfter > fManaThreshold1 then
+    if not J.IsRetreating(bot) and not J.IsRealInvisible(bot) and fManaAfter > fManaThreshold1 + 0.1 then
         for _, allyHero in pairs(nAllyHeroes) do
             if  J.IsValidHero(allyHero)
             and bot ~= allyHero
             and J.IsRetreating(allyHero)
-            and allyHero:WasRecentlyDamagedByAnyHero(2.0)
             and not allyHero:IsIllusion()
             then
                 for _, enemyHero in pairs(nEnemyHeroes) do
@@ -324,12 +322,13 @@ function X.ConsiderStrokeOfFate()
             end
         end
 
-        if not J.IsInLaningPhase() then
+        if not J.IsEarlyGame() then
             for _, creep in pairs(nEnemyCreeps) do
                 if J.IsValid(creep)
                 and J.CanBeAttacked(creep)
                 and not J.IsRunning(creep)
                 and not J.IsUnitTargetedByTower(creep, false)
+                and not J.IsOtherAllysTarget(creep)
                 and (J.IsCore(bot) or not J.IsThereCoreInLocation(creep:GetLocation(), 800))
                 then
                     local nLocationAoE = bot:FindAoELocation(true, true, creep:GetLocation(), 0, nRadius, 0, nDamage)
@@ -376,7 +375,7 @@ function X.ConsiderStrokeOfFate()
                 local nLocationAoE = bot:FindAoELocation(true, false, creep:GetLocation(), 0, nRadius, 0, 0)
                 if (nLocationAoE.count >= 3)
                 or (nLocationAoE.count >= 2 and creep:IsAncientCreep() and creep:GetHealth() > nDamage)
-                or (nLocationAoE.count >= 1 and creep:IsAncientCreep() and creep:GetHealth() > nDamage and fManaAfter > fManaThreshold2)
+                or (nLocationAoE.count >= 1 and creep:GetHealth() >= 550)
                 then
                     return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc
                 end
@@ -384,13 +383,12 @@ function X.ConsiderStrokeOfFate()
         end
     end
 
-    if J.IsLaning(bot) and J.IsInLaningPhase(bot) and fManaAfter > fManaThreshold1
-    and (J.IsCore(bot) or not J.IsThereCoreNearby(800))
-    then
+    if J.IsLaning(bot) and J.IsEarlyGame(bot) and fManaAfter > fManaThreshold1 and (J.IsCore(bot) or not J.IsThereCoreNearby(800)) then
         for _, creep in pairs(nEnemyCreeps) do
             if J.IsValid(creep)
             and J.CanBeAttacked(creep)
             and not J.IsRunning(creep)
+            and not J.IsOtherAllysTarget(creep)
             then
                 if string.find(creep:GetUnitName(), 'range') then
                     local nDelay = (GetUnitToUnitDistance(bot, creep) / nSpeed) + nCastPoint
@@ -413,11 +411,11 @@ function X.ConsiderStrokeOfFate()
     if J.IsDoingRoshan(bot) then
         if  J.IsRoshan(botTarget)
         and J.CanBeAttacked(botTarget)
+        and J.IsInRange(bot, botTarget, nCastRange)
         and J.GetHP(botTarget) > 0.2
         and J.CanCastOnNonMagicImmune(botTarget)
-        and J.IsInRange(bot, botTarget, nCastRange)
         and bAttacking
-        and fManaAfter > fManaThreshold2
+        and fManaAfter > fManaThreshold1
         then
             return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation()
         end
@@ -427,7 +425,7 @@ function X.ConsiderStrokeOfFate()
         if  J.IsTormentor(botTarget)
         and J.IsInRange(bot, botTarget, nCastRange)
         and bAttacking
-        and fManaAfter > fManaThreshold2
+        and fManaAfter > fManaThreshold1
         then
             return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation()
         end
@@ -450,7 +448,6 @@ function X.ConsiderPhantomsEmbrace()
     local nManaCost = PhantomsEmbrace:GetManaCost()
     local fManaAfter = J.GetManaAfter(nManaCost)
     local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {StrokeOfFate, InkSwell, DarkPortrait, SoulBind})
-    local fManaThreshold2 = J.GetManaThreshold(bot, nManaCost, {StrokeOfFate, PhantomsEmbrace, InkSwell, DarkPortrait, SoulBind})
 
     for _, enemyHero in pairs(nEnemyHeroes) do
         if  J.IsValidHero(enemyHero)
@@ -459,12 +456,10 @@ function X.ConsiderPhantomsEmbrace()
         and J.CanCastOnNonMagicImmune(enemyHero)
         and J.CanCastOnTargetAdvanced(enemyHero)
 		then
-            if  enemyHero:IsChanneling()
-            and fManaAfter > fManaThreshold2
-            and not enemyHero:HasModifier('modifier_teleporting')
-            then
+            if enemyHero:IsChanneling() and not enemyHero:HasModifier('modifier_teleporting') then
                 return BOT_ACTION_DESIRE_HIGH, enemyHero
             end
+
             if  not enemyHero:HasModifier('modifier_abaddon_borrowed_time')
             and not enemyHero:HasModifier('modifier_dazzle_shallow_grave')
             and not enemyHero:HasModifier('modifier_necrolyte_reapers_scythe')
@@ -485,7 +480,7 @@ function X.ConsiderPhantomsEmbrace()
     end
 
 	if J.IsGoingOnSomeone(bot) then
-		if  J.IsValidTarget(botTarget)
+		if  J.IsValidHero(botTarget)
         and J.CanBeAttacked(botTarget)
         and J.IsInRange(bot, botTarget, nCastRange)
         and J.CanCastOnNonMagicImmune(botTarget)
@@ -503,9 +498,9 @@ function X.ConsiderPhantomsEmbrace()
         for _, enemyHero in pairs(nEnemyHeroes) do
             if  J.IsValidHero(enemyHero)
             and J.CanBeAttacked(enemyHero)
+            and J.IsInRange(bot, enemyHero, nCastRange)
             and J.CanCastOnNonMagicImmune(enemyHero)
             and J.CanCastOnTargetAdvanced(enemyHero)
-            and J.IsInRange(bot, enemyHero, nCastRange)
             and not J.IsDisabled(enemyHero)
             and not enemyHero:IsSilenced()
             and bot:WasRecentlyDamagedByHero(enemyHero, 3.0)
@@ -521,36 +516,6 @@ function X.ConsiderPhantomsEmbrace()
         end
 	end
 
-    if not J.IsRetreating(bot) and not J.IsRealInvisible(bot) and fManaAfter > fManaThreshold1 then
-        for _, allyHero in pairs(nAllyHeroes) do
-            if  J.IsValidHero(allyHero)
-            and bot ~= allyHero
-            and J.IsRetreating(allyHero)
-            and allyHero:WasRecentlyDamagedByAnyHero(3.0)
-            and not allyHero:IsIllusion()
-            then
-                for _, enemyHero in pairs(nEnemyHeroes) do
-                    if  J.IsValidHero(enemyHero)
-                    and J.CanBeAttacked(enemyHero)
-                    and J.IsInRange(bot, enemyHero, nCastRange)
-                    and J.CanCastOnNonMagicImmune(enemyHero)
-                    and J.IsChasingTarget(enemyHero, allyHero)
-                    and not J.IsDisabled(enemyHero)
-                    and not enemyHero:IsSilenced()
-                    and allyHero:WasRecentlyDamagedByHero(enemyHero, 2.0)
-                    then
-                        if enemyHero:IsUsingAbility()
-                        or enemyHero:IsCastingAbility()
-                        or (enemyHero:IsChanneling() and not enemyHero:HasModifier('modifier_teleporting'))
-                        then
-                            return BOT_ACTION_DESIRE_HIGH, enemyHero
-                        end
-                    end
-                end
-            end
-        end
-    end
-
     return BOT_ACTION_DESIRE_NONE, nil
 end
 
@@ -564,9 +529,8 @@ function X.ConsiderInkSwell()
     local nManaCost = InkSwell:GetManaCost()
     local fManaAfter = J.GetManaAfter(nManaCost)
     local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {StrokeOfFate, PhantomsEmbrace, DarkPortrait, SoulBind})
-    local fManaThreshold2 = J.GetManaThreshold(bot, nManaCost, {StrokeOfFate, PhantomsEmbrace, InkSwell, DarkPortrait, SoulBind})
 
-    for _, allyHero in pairs(nEnemyHeroes) do
+    for _, allyHero in pairs(nAllyHeroes) do
         if J.IsValidHero(allyHero)
         and J.IsInRange(bot, allyHero, nCastRange)
         then
@@ -586,98 +550,80 @@ function X.ConsiderInkSwell()
     end
 
     if J.IsGoingOnSomeone(bot) then
-        if  J.IsValidTarget(botTarget)
+        if  J.IsValidHero(botTarget)
         and J.CanBeAttacked(botTarget)
         and J.IsInRange(bot, botTarget, 1600)
         and J.CanCastOnNonMagicImmune(botTarget)
         and not J.IsDisabled(botTarget)
-        and not botTarget:HasModifier('modifier_enigma_black_hole_pull')
-        and not botTarget:HasModifier('modifier_faceless_void_chronosphere_freeze')
         and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
         then
+            local hTarget = nil
+            local hTargetScore = math.huge
             for _, allyHero in pairs(nAllyHeroes) do
                 if J.IsValidHero(allyHero)
                 and J.IsGoingOnSomeone(allyHero)
+                and J.IsInRange(bot, allyHero, nCastRange)
                 and J.IsInRange(allyHero, botTarget, 1200)
                 and not J.IsSuspiciousIllusion(allyHero)
                 and not J.IsMeepoClone(allyHero)
                 and not allyHero:HasModifier('modifier_necrolyte_reapers_scythe')
                 then
-                    local nInRangeEnemy = J.GetEnemiesNearLoc(allyHero:GetLocation(), nRadius + 75)
-                    if #nInRangeEnemy > 0 then
+                    if J.IsInRange(allyHero, botTarget, nRadius + 75) then
                         return BOT_ACTION_DESIRE_HIGH, allyHero
                     end
+
+                    local damage = allyHero:GetActualIncomingDamage(10000, DAMAGE_TYPE_ALL)
+                    if damage < hTargetScore then
+                        hTarget = allyHero
+                        hTargetScore = damage
+                    end
                 end
+            end
+
+            if hTarget then
+                return BOT_ACTION_DESIRE_HIGH, hTarget
+            end
+        end
+    end
+
+    if J.IsRetreating(bot) and not J.IsRealInvisible(bot) then
+        for _, enemyHero in pairs(nEnemyHeroes) do
+            if  J.IsValidHero(enemyHero)
+            and J.CanBeAttacked(enemyHero)
+            and J.IsInRange(bot, enemyHero, nRadius + 100)
+            and J.CanCastOnNonMagicImmune(enemyHero)
+            and not J.IsDisabled(enemyHero)
+            and bot:WasRecentlyDamagedByHero(enemyHero, 3.0)
+            then
+                return BOT_ACTION_DESIRE_HIGH, bot
             end
         end
     end
 
     for _, allyHero in pairs(nAllyHeroes) do
         if J.IsValidHero(allyHero)
+        and J.CanBeAttacked(allyHero)
         and J.IsInRange(bot, allyHero, nCastRange)
         and not J.IsSuspiciousIllusion(allyHero)
-        and not J.IsMeepoClone(allyHero)
         and not allyHero:HasModifier('modifier_necrolyte_reapers_scythe')
         and not J.IsRealInvisible(allyHero)
-        and not J.IsSuspiciousIllusion(allyHero)
         then
-            if J.IsRetreating(allyHero) then
-                if bot == allyHero then
-                    for _, enemyHero in pairs(nEnemyHeroes) do
-                        if  J.IsValidHero(enemyHero)
-                        and J.CanBeAttacked(enemyHero)
-                        and J.IsInRange(bot, enemyHero, nRadius * 1.5)
-                        and J.CanCastOnNonMagicImmune(enemyHero)
-                        and not J.IsDisabled(enemyHero)
-                        and bot:WasRecentlyDamagedByHero(enemyHero, 3.0)
-                        then
-                            return BOT_ACTION_DESIRE_HIGH, bot
-                        end
+            if J.IsRetreating(allyHero) and fManaAfter > fManaThreshold1 then
+                for _, enemyHero in pairs(nEnemyHeroes) do
+                    if  J.IsValidHero(enemyHero)
+                    and J.CanBeAttacked(enemyHero)
+                    and J.IsInRange(allyHero, enemyHero, nRadius)
+                    and J.CanCastOnNonMagicImmune(enemyHero)
+                    and J.IsChasingTarget(enemyHero, allyHero)
+                    and not J.IsDisabled(enemyHero)
+                    and allyHero:WasRecentlyDamagedByHero(enemyHero, 2.0)
+                    then
+                        return BOT_ACTION_DESIRE_HIGH, allyHero
                     end
-                else
-                    if not J.IsRetreating(bot) and not J.IsRealInvisible(bot) and fManaAfter > fManaThreshold1 then
-                        if allyHero:WasRecentlyDamagedByAnyHero(2.0) then
-                            for _, enemyHero in pairs(nEnemyHeroes) do
-                                if  J.IsValidHero(enemyHero)
-                                and J.CanBeAttacked(enemyHero)
-                                and J.IsInRange(allyHero, enemyHero, nRadius)
-                                and J.CanCastOnNonMagicImmune(enemyHero)
-                                and J.IsChasingTarget(enemyHero, allyHero)
-                                and not J.IsDisabled(enemyHero)
-                                and allyHero:WasRecentlyDamagedByHero(enemyHero, 2.0)
-                                then
-                                    return BOT_ACTION_DESIRE_HIGH, allyHero
-                                end
-                            end
-                        end
-                    end
-                end
-            end
-
-            if J.IsDoingRoshan(bot) then
-                if  J.IsRoshan(botTarget)
-                and J.CanBeAttacked(botTarget)
-                and J.CanCastOnNonMagicImmune(botTarget)
-                and J.IsInRange(allyHero, botTarget, nRadius)
-                and J.IsAttacking(allyHero)
-                and fManaAfter > fManaThreshold2
-                then
-                    return BOT_ACTION_DESIRE_HIGH, allyHero
-                end
-            end
-
-            if J.IsDoingTormentor(bot) then
-                if  J.IsTormentor(botTarget)
-                and J.IsInRange(allyHero, botTarget, nRadius)
-                and J.IsAttacking(allyHero)
-                and fManaAfter > fManaThreshold2
-                then
-                    return BOT_ACTION_DESIRE_HIGH, allyHero
                 end
             end
         end
     end
-
 
     return BOT_ACTION_DESIRE_NONE, nil
 end
@@ -694,6 +640,21 @@ function X.ConsiderInkExplosion()
 
     if inkswell.detonate then
         return BOT_ACTION_DESIRE_HIGH
+    end
+
+    for _, allyHero in pairs(nAllyHeroes) do
+        if J.IsValidHero(allyHero) and allyHero:HasModifier('modifier_grimstroke_spirit_walk_buff') then
+            for _, enemyHero in pairs(nEnemyHeroes) do
+                if  J.IsValidHero(enemyHero)
+                and J.IsInRange(allyHero, enemyHero, nRadius)
+                and J.CanCastOnNonMagicImmune(enemyHero)
+                then
+                    if enemyHero:IsChanneling() then
+                        return BOT_ACTION_DESIRE_HIGH
+                    end
+                end
+            end
+        end
     end
 
     if inkswell.wearer and inkswell.wearer:HasModifier('modifier_grimstroke_spirit_walk_buff') then
@@ -775,6 +736,7 @@ function X.ConsiderSoulBind()
             and J.IsInRange(bot, enemy, nCastRange)
             and J.CanCastOnTargetAdvanced(enemy)
             and not J.IsDisabled(enemy)
+            and not enemy:HasModifier('modifier_legion_commander_duel')
             and not enemy:HasModifier('modifier_necrolyte_reapers_scythe')
             then
                 local enemyScore = enemy:GetEstimatedDamageToTarget(false, bot, nDuration, DAMAGE_TYPE_ALL)

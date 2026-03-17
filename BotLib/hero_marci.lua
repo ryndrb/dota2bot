@@ -338,7 +338,6 @@ function X.ConsiderRebound()
     local nManaCost = Rebound:GetManaCost()
     local fManaAfter = J.GetManaAfter(nManaCost)
 	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {Rebound, Bodyguard, Unleash})
-    local fManaThreshold2 = J.GetManaThreshold(bot, nManaCost, {Dispose, Rebound, Bodyguard, Unleash})
 
     for _, ally in pairs(GetUnitList(UNIT_LIST_ALLIES)) do
         if J.IsValid(ally)
@@ -383,7 +382,6 @@ function X.ConsiderRebound()
             end
 
             if ally:IsHero() then
-
                 local nEnemyCreeps = ally:GetNearbyCreeps(nRadius, true)
 
                 if J.IsPushing(bot) and bAttacking and fManaAfter > fManaThreshold1 and #nAllyHeroes <= 2 and #nEnemyHeroes == 0 then
@@ -413,7 +411,7 @@ function X.ConsiderRebound()
                     end
                 end
 
-                if J.IsLaning(bot) and J.IsInLaningPhase() and fManaAfter > fManaThreshold1 and #nEnemyHeroes == 0 then
+                if J.IsLaning(bot) and J.IsEarlyGame() and fManaAfter > fManaThreshold1 and #nEnemyHeroes == 0 then
                     local nLocationAoE = bot:FindAoELocation(true, false, ally:GetLocation(), 0, nRadius - 75, 0, nDamage)
                     if nLocationAoE.count >= 3 then
                         return BOT_ACTION_DESIRE_HIGH, ally
@@ -476,7 +474,6 @@ function X.ConsiderSidekick()
     end
 
     local nCastRange = J.GetProperCastRange(false, bot, Sidekick:GetCastRange())
-    local botTarget = J.GetProperTarget(bot)
 
     local tEnemyLaneCreeps = bot:GetNearbyLaneCreeps(1200, true)
 
@@ -530,8 +527,8 @@ function X.ConsiderBodyguard()
     or J.IsPushing(bot)
     or J.IsDefending(bot)
     or (J.IsLaning(bot) and #nEnemyLaneCreeps >= 3)
-    or (J.IsDoingRoshan(bot) and J.IsRoshan(botTarget) and J.IsInRange(bot, botTarget, 800) and J.IsAttacking(bot) and J.CanBeAttacked(botTarget))
-    or (J.IsDoingTormentor(bot) and J.IsTormentor(botTarget) and J.IsInRange(bot, botTarget, 800) and J.IsAttacking(bot) and J.CanBeAttacked(botTarget))
+    or (J.IsDoingRoshan(bot) and J.IsRoshan(botTarget) and J.IsInRange(bot, botTarget, 800) and bAttacking and J.CanBeAttacked(botTarget))
+    or (J.IsDoingTormentor(bot) and J.IsTormentor(botTarget) and J.IsInRange(bot, botTarget, 800) and bAttacking and J.CanBeAttacked(botTarget))
     then
         local target = nil
         local targetAttackDamage = 0
@@ -577,7 +574,7 @@ function X.ConsiderUnleash()
             end
         end
 
-        if nCoreCount > 0 or J.IsLateGame() then
+        if nCoreCount > 0 or (J.IsLateGame() or bot:HasModifier('modifier_dazzle_shallow_grave') or bot:HasModifier('modifier_oracle_false_promise_timer')) then
             return BOT_ACTION_DESIRE_HIGH
         end
     end
@@ -586,7 +583,6 @@ function X.ConsiderUnleash()
         if J.IsValidHero(botTarget)
         and J.CanBeAttacked(botTarget)
         and J.IsInRange(bot, botTarget, 800)
-        and J.CanBeAttacked(botTarget)
         and botTarget:GetHealth() > (nPulseDamage + bot:GetAttackDamage() * (nPunchCount + 2))
         and not J.IsChasingTarget(bot, botTarget)
         and not botTarget:HasModifier('modifier_abaddon_borrowed_time')
@@ -594,13 +590,12 @@ function X.ConsiderUnleash()
         and not botTarget:HasModifier('modifier_faceless_void_chronosphere_freeze')
         and not botTarget:HasModifier('modifier_item_blade_mail_reflect')
         and not botTarget:HasModifier('modifier_item_aeon_disk_buff')
-        and not (#nAllyHeroes >= #nEnemyHeroes + 2)
         then
             local nInRangeAlly = J.GetAlliesNearLoc(bot:GetLocation(), 800)
             local nInRangeEnemy = J.GetEnemiesNearLoc(bot:GetLocation(), 800)
             if not (#nInRangeAlly >= #nInRangeEnemy + 2) then
                 if (J.GetTotalEstimatedDamageToTarget(nInRangeAlly, botTarget, 8.0) > botTarget:GetHealth())
-                or (J.IsAttacking(bot) and botHP < 0.35)
+                or (bAttacking and botHP < 0.35)
                 then
                     return BOT_ACTION_DESIRE_HIGH
                 end

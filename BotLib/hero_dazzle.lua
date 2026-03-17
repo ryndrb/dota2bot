@@ -268,12 +268,11 @@ function X.ConsiderPoisonTouch()
 	local nManaCost = PoisonTouch:GetManaCost()
 	local fManaAfter = J.GetManaAfter(nManaCost)
     local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {ShallowGrave, ShadowWave, NothlProjection})
-	local fManaThreshold2 = J.GetManaThreshold(bot, nManaCost, {PoisonTouch, ShallowGrave, ShadowWave, NothlProjection})
 
 	for _, enemyHero in pairs(nEnemyHeroes) do
 		if J.IsValidHero(enemyHero)
 		and J.CanBeAttacked(enemyHero)
-        and J.IsInRange(bot, enemyHero, nCastRange + 200)
+        and J.IsInRange(bot, enemyHero, nCastRange + 300)
 		and J.CanCastOnNonMagicImmune(enemyHero)
 		and J.CanCastOnTargetAdvanced(enemyHero)
 		and J.CanKillTarget(enemyHero, nDamage * nDuration, DAMAGE_TYPE_MAGICAL)
@@ -292,7 +291,7 @@ function X.ConsiderPoisonTouch()
         for _, enemyHero in pairs(nEnemyHeroes) do
             if  J.IsValidHero(enemyHero)
             and J.CanBeAttacked(enemyHero)
-            and J.IsInRange(bot, enemyHero, nCastRange + 150)
+            and J.IsInRange(bot, enemyHero, nCastRange)
 			and J.CanCastOnNonMagicImmune(enemyHero)
             and J.CanCastOnTargetAdvanced(enemyHero)
             and not J.IsDisabled(enemyHero)
@@ -315,7 +314,7 @@ function X.ConsiderPoisonTouch()
 	if J.IsGoingOnSomeone(bot) then
 		if J.IsValidHero(botTarget)
 		and J.CanBeAttacked(botTarget)
-        and J.IsInRange(bot, botTarget, nCastRange + 100)
+        and J.IsInRange(bot, botTarget, nCastRange)
 		and J.CanCastOnNonMagicImmune(botTarget)
 		and J.CanCastOnTargetAdvanced(botTarget)
 		and not botTarget:HasModifier('modifier_dazzle_poison_touch')
@@ -331,6 +330,7 @@ function X.ConsiderPoisonTouch()
             and J.CanBeAttacked(enemyHero)
             and J.IsInRange(bot, enemyHero, nCastRange)
             and J.CanCastOnNonMagicImmune(enemyHero)
+			and J.CanCastOnTargetAdvanced(enemyHero)
             and bot:WasRecentlyDamagedByHero(enemyHero, 3.0)
             and not J.IsDisabled(enemyHero)
 			and not enemyHero:HasModifier('modifier_dazzle_poison_touch')
@@ -444,7 +444,6 @@ function X.ConsiderShallowGrave()
 		and not allyHero:HasModifier('modifier_dazzle_shallow_grave')
 		and not allyHero:HasModifier('modifier_necrolyte_reapers_scythe')
 		then
-			local nEnemyHeroesTargetingAlly = J.GetHeroesTargetingUnit(nEnemyHeroes, allyHero)
 			local eta = (GetUnitToUnitDistance(bot, allyHero) / bot:GetCurrentMovementSpeed()) + nCastPoint
 			local allyHeroHealth = allyHero:GetHealth()
 
@@ -452,7 +451,9 @@ function X.ConsiderShallowGrave()
 				return BOT_ACTION_DESIRE_HIGH, allyHero
 			end
 
-			if J.GetAttackProjectileDamageByRange(allyHero, 1200) > allyHero:GetHealth() then
+			if (J.GetAttackProjectileDamageByRange(allyHero, 1200) > allyHero:GetHealth())
+			or (J.IsStunProjectileIncoming(allyHero, 550) and J.GetHP(allyHero) < 0.15)
+			then
 				return BOT_ACTION_DESIRE_HIGH, allyHero
 			end
 
@@ -461,8 +462,10 @@ function X.ConsiderShallowGrave()
 					return BOT_ACTION_DESIRE_HIGH, allyHero
 				end
 
-				if allyHero:HasModifier('modifier_huskar_burning_spear_counter')
+				if allyHero:HasModifier('modifier_enigma_black_hole_pull')
+				or allyHero:HasModifier('modifier_huskar_burning_spear_counter')
                 or allyHero:HasModifier('modifier_jakiro_macropyre_burn')
+				or allyHero:HasModifier('modifier_legion_commander_duel')
                 or allyHero:HasModifier('modifier_necrolyte_reapers_scythe')
                 or allyHero:HasModifier('modifier_viper_viper_strike_slow')
                 or allyHero:HasModifier('modifier_viper_nethertoxin')
@@ -472,7 +475,7 @@ function X.ConsiderShallowGrave()
 					return BOT_ACTION_DESIRE_HIGH, allyHero
 				end
 
-				if J.IsInRange(bot, allyHero, nCastRange + 300) and #nEnemyHeroesTargetingAlly >= 1 then
+				if J.IsInRange(bot, allyHero, nCastRange + 300) and bot:WasRecentlyDamagedByAnyHero(4.0) then
 					return BOT_ACTION_DESIRE_HIGH, allyHero
 				end
 			end
@@ -534,7 +537,7 @@ function X.ConsiderShadowWave()
 		if J.IsValidHero(enemyHero)
 		and J.CanBeAttacked(enemyHero)
         and J.IsInRange(bot, enemyHero, nCastRange + 300)
-		and J.CanCastOnTargetAdvanced(enemyHero)
+		and J.CanCastOnNonMagicImmune(enemyHero)
 		then
 			local nAllyUnitNearbyCount = J.GetUnitAllyCountAroundEnemyTarget(enemyHero, nDamageRadius)
 
@@ -544,7 +547,7 @@ function X.ConsiderShadowWave()
 			and not enemyHero:HasModifier('modifier_necrolyte_reapers_scythe')
 			and not enemyHero:HasModifier('modifier_oracle_false_promise_timer')
 			then
-				local hTargetAlly = X.GetBestHealTarget(enemyHero, nDamageRadius)
+				local hTargetAlly = X.GetBestHealTarget(enemyHero, nDamageRadius, nCastRange)
 				if J.IsValid(hTargetAlly) then
 					return BOT_ACTION_DESIRE_HIGH, hTargetAlly
 				end
@@ -565,8 +568,8 @@ function X.ConsiderShadowWave()
 	if J.IsGoingOnSomeone(bot) then
 		if  J.IsValidHero(botTarget)
 		and J.CanBeAttacked(botTarget)
-        and J.IsInRange(bot, botTarget, nCastRange + 200)
-		and J.CanCastOnTargetAdvanced(botTarget)
+        and J.IsInRange(bot, botTarget, nCastRange + 3300)
+		and J.CanCastOnNonMagicImmune(botTarget)
 		and not botTarget:HasModifier('modifier_abaddon_borrowed_time')
 		and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
 		then
@@ -574,7 +577,7 @@ function X.ConsiderShadowWave()
 			if (nAllyUnitNearbyCount >= nMaxHealCount - 2)
 			or (nAllyUnitNearbyCount >= 4)
 			then
-				local hTargetAlly = X.GetBestHealTarget(botTarget, nDamageRadius)
+				local hTargetAlly = X.GetBestHealTarget(botTarget, nDamageRadius, nCastRange)
 				if J.IsValid(hTargetAlly) then
 					return BOT_ACTION_DESIRE_HIGH, hTargetAlly
 				end
@@ -619,7 +622,7 @@ function X.ConsiderShadowWave()
 		end
     end
 
-    if J.IsLaning(bot) and J.IsInLaningPhase() and fManaAfter > fManaThreshold1 then
+    if J.IsLaning(bot) and J.IsEarlyGame() and fManaAfter > fManaThreshold1 then
 		for _, creep in pairs(nEnemyCreeps) do
 			if  J.IsValid(creep)
             and J.CanBeAttacked(creep)
@@ -627,7 +630,7 @@ function X.ConsiderShadowWave()
 			then
 				local nAllyUnitNearbyCount = J.GetUnitAllyCountAroundEnemyTarget(creep, nDamageRadius)
 				if J.CanKillTarget(creep, nAllyUnitNearbyCount * nDamage, DAMAGE_TYPE_MAGICAL) then
-					local hTargetAlly = X.GetBestHealTarget(creep, nDamageRadius)
+					local hTargetAlly = X.GetBestHealTarget(creep, nDamageRadius, nCastRange)
 					if hTargetAlly then
 						local sCreepName = creep:GetUnitName()
 						local nLocationAoE = bot:FindAoELocation(true, true, creep:GetLocation(), 0, 600, 0, 0)
@@ -657,8 +660,7 @@ function X.ConsiderShadowWave()
 	local nInRangeEnemy = J.GetEnemiesNearLoc(bot:GetLocation(), 1200)
 
 	if #nInRangeAlly <= 3 and #nInRangeEnemy == 0 and fManaAfter > fManaThreshold1 then
-		local nAllyLaneCreeps = bot:GetNearbyLaneCreeps(Min(nCastRange + 300, 1600), false)
-		for _, creep in pairs(nAllyLaneCreeps) do
+		for _, creep in pairs(nAllyCreeps) do
             if J.IsValid(creep) then
 				local needHealCount = 0
 				local nLocationAoE1 = bot:FindAoELocation(false, false, creep:GetLocation(), 0, nHealRadius, 0, nDamage)
@@ -739,6 +741,10 @@ function X.ConsiderNothlProjection()
 	local nCastRange = NothlProjection:GetCastRange()
 	local bSpellsAvailable = J.CanCastAbility(PoisonTouch)
 
+	if J.GetTotalEstimatedDamageToTarget(nEnemyHeroes, bot, 5.0) > bot:GetHealth() then
+		return BOT_ACTION_DESIRE_NONE
+	end
+
 	if J.IsInTeamFight(bot, 800) and bSpellsAvailable then
 		return BOT_ACTION_DESIRE_HIGH, bot:GetLocation() + RandomVector(nCastRange)
 	end
@@ -802,7 +808,7 @@ function X.ConsiderNothlProjectionEnd()
 	return BOT_ACTION_DESIRE_NONE
 end
 
-function X.GetBestHealTarget(hUnit, nRadius)
+function X.GetBestHealTarget(hUnit, nRadius, nCastRange)
 	local bestTarget = nil
 	local bestTargetLostHealth = -1
 
@@ -812,6 +818,7 @@ function X.GetBestHealTarget(hUnit, nRadius)
 	for _, unit in pairs(nAllyList) do
 		if  J.IsValid(unit)
         and J.IsInRange(unit, hUnit, nRadius)
+		and J.IsInRange(bot, unit, nCastRange + 300)
 		then
 			local unitHealth = unit:GetHealth()
 			local unitHealthMax = unit:GetMaxHealth()
@@ -828,10 +835,9 @@ function X.GetBestHealTarget(hUnit, nRadius)
 end
 
 function X.GetEnemyDamageToAlly(hUnit, nDelay)
-	local nEnemyHeroesTargetingAlly = J.GetHeroesTargetingUnit(nEnemyHeroes, hUnit)
 	local totalDamage = 0
-
-	for _, enemyHero in pairs(nEnemyHeroesTargetingAlly) do
+	local nInRangeEnemy = J.GetEnemiesNearLoc(hUnit:GetLocation(), 1600)
+	for _, enemyHero in pairs(nInRangeEnemy) do
 		if J.IsValidHero(enemyHero) then
 			totalDamage = totalDamage + enemyHero:GetEstimatedDamageToTarget(false, enemyHero, nDelay, DAMAGE_TYPE_ALL)
 		end

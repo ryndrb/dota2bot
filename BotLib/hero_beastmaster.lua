@@ -19,13 +19,44 @@ local HeroBuild = {
     ['pos_1'] = {
         [1] = {
             ['talent'] = {
-                [1] = {},
+				[1] = {
+					['t25'] = {10, 0},
+					['t20'] = {0, 10},
+					['t15'] = {10, 0},
+					['t10'] = {10, 0},
+				}
             },
             ['ability'] = {
-                [1] = {},
+                [1] = {2,4,2,4,2,6,2,4,4,1,6,1,1,1,6},
             },
-            ['buy_list'] = {},
-            ['sell_list'] = {},
+            ['buy_list'] = {
+                "item_double_branches",
+				"item_circlet",
+                "item_slippers",
+                "item_quelling_blade",
+				"item_tango",
+			
+				"item_magic_wand",
+                "item_wraith_band",
+				"item_power_treads",
+                "item_echo_sabre",
+                "item_ultimate_scepter",
+                "item_harpoon",--
+				"item_black_king_bar",--
+				"item_blink",
+                "item_aghanims_shard",
+                "item_skadi",--
+                "item_satanic",--
+                "item_ultimate_scepter_2",
+                "item_swift_blink",--
+                "item_moon_shard",
+                "item_travel_boots_2",--
+			},
+            ['sell_list'] = {
+                "item_quelling_blade", "item_black_king_bar",
+				"item_magic_wand", "item_blink",
+                "item_wraith_band", "item_skadi",
+			},
         },
     },
     ['pos_2'] = {
@@ -333,12 +364,9 @@ function X.ConsiderWildAxes()
         and not botTarget:HasModifier('modifier_templar_assassin_refraction_absorb')
 		then
             local eta = RemapValClamped(GetUnitToUnitDistance(bot, botTarget), 0, nCastRange, fThrowDurationMin, fThrowDurationMax)
-            local vLocation = J.GetCorrectLoc(botTarget, eta)
+            local vLocation = J.VectorAway(J.GetCorrectLoc(botTarget, eta), bot:GetLocation(), 350)
             if GetUnitToLocationDistance(bot, vLocation) <= nCastRange then
-                vLocation = J.VectorAway(vLocation, bot:GetLocation(), 350)
-                if GetUnitToLocationDistance(bot, vLocation) <= nCastRange then
-                    return BOT_ACTION_DESIRE_HIGH, vLocation
-                end
+                return BOT_ACTION_DESIRE_HIGH, vLocation
             end
 		end
 	end
@@ -401,7 +429,7 @@ function X.ConsiderWildAxes()
         end
     end
 
-    if J.IsLaning(bot) and J.IsInLaningPhase() and fManaAfter > fManaThreshold1 then
+    if J.IsLaning(bot) and J.IsEarlyGame() and fManaAfter > fManaThreshold1 then
 		for _, creep in pairs(nEnemyCreeps) do
 			if  J.IsValid(creep)
             and J.CanBeAttacked(creep)
@@ -450,8 +478,8 @@ function X.ConsiderWildAxes()
     if J.IsDoingRoshan(bot) then
         if  J.IsRoshan(botTarget)
         and J.CanBeAttacked(botTarget)
-        and J.CanCastOnNonMagicImmune(botTarget)
         and J.IsInRange(bot, botTarget, nCastRange)
+        and J.CanCastOnNonMagicImmune(botTarget)
         and bAttacking
         and fManaAfter > fManaThreshold1
         then
@@ -540,6 +568,19 @@ function X.ConsiderCallOfTheWildHawk()
 
     local nRadius = CallOfTheWildHawk:GetSpecialValueInt('attack_radius')
 
+    if not J.IsRealInvisible(bot) then
+        for _, enemyHero in pairs(nEnemyHeroes) do
+            if  J.IsValidHero(enemyHero)
+            and J.CanBeAttacked(enemyHero)
+            and J.IsInRange(bot, enemyHero, nRadius)
+            and J.CanCastOnNonMagicImmune(enemyHero)
+            and enemyHero:IsChanneling()
+            then
+                return BOT_ACTION_DESIRE_HIGH
+            end
+        end
+    end
+
     if J.IsInTeamFight(bot, 1200) then
         local nInRangeEnemy = J.GetEnemiesNearLoc(bot:GetLocation(), nRadius)
         if #nInRangeEnemy >= 2 then
@@ -604,7 +645,7 @@ function X.ConsiderInnerBeast()
         if  J.IsRoshan(botTarget)
         and J.CanBeAttacked(botTarget)
         and J.IsInRange(bot, botTarget, 300)
-        and J.IsAttacking(bot)
+        and bAttacking
         then
             return BOT_ACTION_DESIRE_HIGH
         end
@@ -613,7 +654,7 @@ function X.ConsiderInnerBeast()
     if J.IsDoingTormentor(bot) then
         if  J.IsTormentor(botTarget)
         and J.IsInRange(bot, botTarget, 300)
-        and J.IsAttacking(bot)
+        and bAttacking
         then
             return BOT_ACTION_DESIRE_HIGH
         end

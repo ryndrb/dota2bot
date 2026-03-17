@@ -321,7 +321,7 @@ function X.ConsiderImpetus()
     end
 
     for _, enemyHero in pairs(nEnemyHeroes) do
-        if  J.IsValidTarget(enemyHero)
+        if  J.IsValidHero(enemyHero)
         and J.CanBeAttacked(enemyHero)
         and J.IsInRange(bot, enemyHero, botAttackRange + 300)
         and not J.IsSuspiciousIllusion(enemyHero)
@@ -342,7 +342,7 @@ function X.ConsiderImpetus()
     end
 
 	if J.IsGoingOnSomeone(bot) then
-		if  J.IsValidTarget(botTarget)
+		if  J.IsValidHero(botTarget)
 		and J.CanBeAttacked(botTarget)
 		and J.IsInRange(bot, botTarget, botAttackRange + 150)
         and not J.IsInRange(bot, botTarget, botAttackRange / 2)
@@ -383,7 +383,7 @@ function X.ConsiderImpetus()
         end
 	end
 
-    if J.IsFarming(bot) and bAttacking and fManaAfter > fManaThreshold1 + 0.1 then
+    if (J.IsPushing(bot) or J.IsDefending(bot) or J.IsFarming(bot)) and bAttacking and fManaAfter > fManaThreshold1 + 0.1 then
         if  J.IsValid(botTarget)
         and J.CanBeAttacked(botTarget)
         and J.IsInRange(bot, botTarget, botAttackRange)
@@ -398,14 +398,13 @@ function X.ConsiderImpetus()
         end
     end
 
-    local nEnemyCreeps = bot:GetNearbyCreeps(1600, true)
+    local nEnemyCreeps = bot:GetNearbyCreeps(Min(botAttackRange + 300, 1600), true)
 
-	if J.IsLaning(bot) and J.IsInLaningPhase() and fManaAfter > fManaThreshold1 then
+	if J.IsLaning(bot) and J.IsEarlyGame() and fManaAfter > fManaThreshold1 then
 		for _, creep in pairs(nEnemyCreeps) do
 			if  J.IsValid(creep)
             and J.CanBeAttacked(creep)
-            and J.IsInRange(bot, creep, botAttackRange + 300)
-            and (J.IsCore(bot) or not J.IsOtherAllysTarget(creep))
+            and not J.IsOtherAllysTarget(creep)
             then
 				local sCreepName = creep:GetUnitName()
 				local dist = GetUnitToUnitDistance(bot, creep)
@@ -414,7 +413,7 @@ function X.ConsiderImpetus()
 
 				if J.WillKillTarget(creep, nDamage, DAMAGE_TYPE_PURE, eta) then
 					local nLocationAoE = bot:FindAoELocation(true, true, creep:GetLocation(), 0, 600, 0, 0)
-					if nLocationAoE.count > 0 or J.IsUnitTargetedByTower(creep, false) then
+					if nLocationAoE.count > 0 or J.IsUnitTargetedByTower(creep, false) or J.IsEnemyTargetUnit(creep, 1200) then
 						if (string.find(sCreepName, 'ranged'))
 						or (string.find(sCreepName, 'melee') and bot:WasRecentlyDamagedByAnyHero(3.0))
 						then
@@ -426,12 +425,11 @@ function X.ConsiderImpetus()
 		end
 	end
 
-    if (not J.IsInLaningPhase() or #nEnemyHeroes == 0) and not J.IsRetreating(bot) and not J.IsRealInvisible(bot) and fManaAfter > fManaThreshold1 then
+    if (not J.IsEarlyGame() or #nEnemyHeroes == 0) and not J.IsRetreating(bot) and not J.IsRealInvisible(bot) and fManaAfter > fManaThreshold1 then
 		for _, creep in pairs(nEnemyCreeps) do
 			if  J.IsValid(creep)
             and J.CanBeAttacked(creep)
-            and J.IsInRange(bot, creep, botAttackRange + 300)
-            and (J.IsCore(bot) or not J.IsOtherAllysTarget(creep))
+            and not J.IsOtherAllysTarget(creep)
             then
 				local dist = GetUnitToUnitDistance(bot, creep)
                 local nDamage = botAttackDamage + dist * RemapValClamped(dist, 0, nDistanceCap, 0, nDistancePct)
@@ -481,30 +479,13 @@ function X.ConsiderEnchant()
 	local fManaAfter = J.GetManaAfter(nManaCost)
 	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {NaturesAttendant, Sproink, LittleFriends})
 
-    for _, allyHero in pairs(nAllyHeroes)
-    do
-        if J.IsValidHero(allyHero)
-        and J.IsRetreating(allyHero)
-        and not allyHero:IsIllusion()
-        then
-            local nAllyInRangeEnemy = allyHero:GetNearbyHeroes(nCastRange, true, BOT_MODE_NONE)
-
-            if J.IsValidHero(nAllyInRangeEnemy[1])
-            and J.IsChasingTarget(nAllyInRangeEnemy[1], allyHero)
-            and not J.IsSuspiciousIllusion(nAllyInRangeEnemy[1])
-            and not J.IsDisabled(nAllyInRangeEnemy[1])
-            then
-                return BOT_ACTION_DESIRE_HIGH, nAllyInRangeEnemy[1]
-            end
-        end
-    end
-
     if J.IsGoingOnSomeone(bot) then
-        if  J.IsValidTarget(botTarget)
+        if  J.IsValidHero(botTarget)
         and J.CanBeAttacked(botTarget)
+        and J.IsInRange(bot, botTarget, nCastRange)
+        and not J.IsInRange(bot, botTarget, botAttackRange / 2)
         and J.CanCastOnNonMagicImmune(botTarget)
         and J.CanCastOnTargetAdvanced(botTarget)
-        and J.IsInRange(bot, botTarget, nCastRange)
         and J.IsChasingTarget(bot, botTarget)
         and not J.IsDisabled(botTarget)
         then
@@ -512,7 +493,7 @@ function X.ConsiderEnchant()
         end
     end
 
-    if J.IsRetreating(bot) and not J.IsRealInvisible(bot) then
+    if J.IsRetreating(bot) and not J.IsRealInvisible(bot) and J.IsRunning(bot) then
         for _, enemyHero in pairs(nEnemyHeroes) do
             if  J.IsValidHero(enemyHero)
             and J.CanBeAttacked(enemyHero)
@@ -533,7 +514,6 @@ function X.ConsiderEnchant()
             if  J.IsValidHero(allyHero)
             and bot ~= allyHero
             and J.IsRetreating(allyHero)
-            and allyHero:WasRecentlyDamagedByAnyHero(5.0)
             and not allyHero:IsIllusion()
             then
                 for _, enemyHero in pairs(nEnemyHeroes) do
@@ -570,10 +550,11 @@ function X.ConsiderEnchant()
     }
 
     if not J.IsRealInvisible(bot) and fManaAfter > fManaThreshold1 then
-        local nEnemyCreeps = bot:GetNearbyCreeps(nCastRange, true)
+        local nEnemyCreeps = bot:GetNearbyCreeps(Min(nCastRange + 300, 1600), true)
 
         for _, creep in pairs(nEnemyCreeps) do
             if  J.IsValid(creep)
+            and J.CanBeAttacked(creep)
             and J.CanCastOnTargetAdvanced(creep)
             and not J.IsRoshan(creep)
             and not J.IsTormentor(creep)
@@ -586,7 +567,7 @@ function X.ConsiderEnchant()
                     return BOT_ACTION_DESIRE_HIGH, creep
                 end
 
-                if J.IsInLaningPhase() then
+                if J.IsLaning(bot) then
                     if string.find(sCreepName, 'beastmaster_boar')
                     or string.find(sCreepName, 'forge_spirit')
                     or string.find(sCreepName, 'lycan_wolf')
@@ -608,8 +589,8 @@ function X.ConsiderNaturesAttendant()
 
     local nRadius = NaturesAttendant:GetSpecialValueInt('radius')
 
-    if (botHP < 0.65 and bot:DistanceFromFountain() > 800)
-    or (botHP < 0.80 and bot:IsRooted() and bot:WasRecentlyDamagedByAnyHero(2.0))
+    if (botHP < 0.55 and bot:DistanceFromFountain() > 1200 and not bot:HasModifier('modifier_fountain_aura_buff'))
+    or (botHP < 0.75 and bot:IsRooted() and bot:WasRecentlyDamagedByAnyHero(2.0))
     then
         return BOT_ACTION_DESIRE_HIGH
     end
@@ -644,7 +625,7 @@ function X.ConsiderSproink()
     end
 
     if J.IsGoingOnSomeone(bot) then
-        if  J.IsValidTarget(botTarget)
+        if  J.IsValidHero(botTarget)
         and J.IsInRange(bot, botTarget, botAttackRange / 2)
         and bot:IsFacingLocation(botTarget:GetLocation(), 15)
         and not J.IsSuspiciousIllusion(botTarget)
@@ -653,16 +634,12 @@ function X.ConsiderSproink()
         end
     end
 
-    if J.IsRetreating(bot) and not J.IsRealInvisible(bot) and bot:WasRecentlyDamagedByAnyHero(3.0) then
-        for _, enemyHero in pairs(nEnemyHeroes) do
-            if  J.IsValidHero(enemyHero)
-            and J.CanBeAttacked(enemyHero)
-            and J.IsInRange(bot, enemyHero, 1200)
-            then
-                if GetUnitToLocationDistance(bot, J.GetTeamFountain()) < GetUnitToLocationDistance(enemyHero, J.GetTeamFountain()) then
-                    return BOT_ACTION_DESIRE_HIGH
-                end
-            end
+    if J.IsRetreating(bot) and not J.IsRealInvisible(bot) and bot:IsFacingLocation(J.GetEnemyFountain(), 20) then
+        if (#nEnemyHeroes > #nAllyHeroes)
+        or (J.GetTotalEstimatedDamageToTarget(nEnemyHeroes, bot, 5.0) > bot:GetHealth())
+        or (bot:WasRecentlyDamagedByAnyHero(2.0) and botHP < 0.5)
+        then
+            return BOT_ACTION_DESIRE_HIGH
         end
     end
 

@@ -567,7 +567,7 @@ function X.ConsiderToss()
 	local nAllyCreeps = bot:GetNearbyCreeps(nGrabRadius, false)
 	local nEnemyCreeps = bot:GetNearbyCreeps(nGrabRadius, true)
 
-	local hClosestAlly = X.GetClosestAlly(nAllyHeroes, nGrabRadius)
+	local hClosestAlly = X.GetClosestAlly(nGrabRadius)
 
 	for _, enemyHero in pairs(nEnemyHeroes) do
 		if  J.IsValidHero(enemyHero)
@@ -667,6 +667,7 @@ function X.ConsiderToss()
 				and not J.IsSuspiciousIllusion(hClosestAlly)
 				and not hClosestAlly:HasModifier('modifier_necrolyte_reapers_scythe')
 				and not hClosestAlly:HasModifier('modifier_legion_commander_duel')
+				and not hClosestAlly:IsChanneling()
 				and #nEnemyTowers == 0
 				then
 					return BOT_ACTION_DESIRE_HIGH, botTarget, false
@@ -1055,20 +1056,25 @@ function X.ConsiderBlinkToss()
     return BOT_ACTION_DESIRE_NONE
 end
 
-function X.GetClosestAlly(hUnitList, nGrabRadius)
+function X.GetClosestAlly(nGrabRadius)
 	local closest = nil
 	local closestDistance = math.huge
-	for _, ally in ipairs(hUnitList) do
-		if J.IsValidHero(ally) and not J.IsSuspiciousIllusion(ally) and ally ~= bot and J.IsInRange(bot, ally, nGrabRadius) then
-			local allyDistance = GetUnitToUnitDistance(bot, ally)
-			if allyDistance < closestDistance then
-				closest = ally
-				closestDistance = allyDistance
+	local unitList = GetUnitList(UNIT_LIST_ALL)
+	for _, unit in ipairs(unitList) do
+		if J.IsValid(unit) and unit ~= bot and (unit:IsCreep() or unit:IsHero()) and J.IsInRange(bot, unit, nGrabRadius) then
+			local unitDistance = GetUnitToUnitDistance(bot, unit)
+			if unitDistance < closestDistance then
+				closest = unit
+				closestDistance = unitDistance
 			end
 		end
 	end
 
-	return closest
+	if closest ~= nil and closest:GetTeam() == GetTeam() then
+		return closest
+	end
+
+	return nil
 end
 
 return X

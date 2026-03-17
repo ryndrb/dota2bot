@@ -254,16 +254,6 @@ function X.ConsiderThunderClap()
 	end
 
     if J.IsRetreating(bot) and not J.IsRealInvisible(bot) then
-        if  J.IsValidHero(nEnemyHeroes[1])
-        and bot:WasRecentlyDamagedByAnyHero(1.5)
-        and J.IsInRange(bot, nEnemyHeroes[1], nRadius)
-        and J.IsChasingTarget(nEnemyHeroes[1], bot)
-        and not J.IsDisabled(nEnemyHeroes[1])
-        and not nEnemyHeroes[1]:HasModifier('modifier_brewmaster_cinder_brew')
-        then
-            return BOT_ACTION_DESIRE_HIGH
-        end
-
         for _, enemyHero in pairs(nEnemyHeroes) do
             if J.IsValidHero(enemyHero)
             and J.CanBeAttacked(enemyHero)
@@ -306,7 +296,7 @@ function X.ConsiderThunderClap()
         end
     end
 
-    if J.IsLaning(bot) and J.IsInLaningPhase() and fManaAfter > fManaThreshold1 then
+    if J.IsLaning(bot) and J.IsEarlyGame() and fManaAfter > fManaThreshold1 then
 		for _, creep in pairs(nEnemyCreeps) do
 			if  J.IsValid(creep)
             and J.CanBeAttacked(creep)
@@ -371,10 +361,8 @@ function X.ConsiderCinderBrew()
     local nManaCost = CinderBrew:GetManaCost()
     local fManaAfter = J.GetManaAfter(nManaCost)
     local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {ThunderClap, PrimalSplit})
-    local fManaThreshold2 = J.GetManaThreshold(bot, nManaCost, {ThunderClap, CinderBrew, PrimalSplit})
-    local fManaThreshold3 = J.GetManaThreshold(bot, nManaCost, {PrimalSplit})
 
-	if J.IsInTeamFight(bot, 1200) and fManaAfter > fManaThreshold3 then
+	if J.IsInTeamFight(bot, 1200) and fManaAfter > fManaThreshold1 then
         local nLocationAoE = bot:FindAoELocation(true, true, bot:GetLocation(), nCastRange, nRadius, 0, 0)
         local nInRangeEnemy = J.GetEnemiesNearLoc(nLocationAoE.targetloc, nRadius)
         if #nInRangeEnemy >= 2 then
@@ -406,7 +394,7 @@ function X.ConsiderCinderBrew()
         and not botTarget:HasModifier('modifier_abaddon_borrowed_time')
         and not botTarget:HasModifier('modifier_brewmaster_cinder_brew')
         and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
-        and fManaAfter > fManaThreshold3
+        and fManaAfter > fManaThreshold1
 		then
             return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation()
 		end
@@ -427,9 +415,9 @@ function X.ConsiderCinderBrew()
         end
     end
 
-    local nEnemyCreeps = bot:GetNearbyCreeps(nRadius, true)
+    local nEnemyCreeps = bot:GetNearbyCreeps(Min(nCastRange + 300, 1600), true)
 
-    if J.IsPushing(bot) and bAttacking and fManaAfter > fManaThreshold2 and #nAllyHeroes <= 2 and #nEnemyHeroes == 0 then
+    if J.IsPushing(bot) and bAttacking and fManaAfter > fManaThreshold1 and #nAllyHeroes <= 2 and #nEnemyHeroes == 0 then
         for _, creep in pairs(nEnemyCreeps) do
             if J.IsValid(creep) and J.CanBeAttacked(creep) then
                 local nLocationAoE = bot:FindAoELocation(true, false, creep:GetLocation(), 0, nRadius, 0, 0)
@@ -467,10 +455,10 @@ function X.ConsiderCinderBrew()
     if J.IsDoingRoshan(bot) then
 		if  J.IsRoshan(botTarget)
         and J.CanBeAttacked(botTarget)
-        and J.CanCastOnNonMagicImmune(botTarget)
         and J.IsInRange(bot, botTarget, nCastRange)
+        and J.CanCastOnNonMagicImmune(botTarget)
         and bAttacking
-        and fManaAfter > fManaThreshold2
+        and fManaAfter > fManaThreshold1 + 0.1
 		then
 			return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation()
 		end
@@ -480,7 +468,7 @@ function X.ConsiderCinderBrew()
         if  J.IsTormentor(botTarget)
         and J.IsInRange(bot, botTarget, nCastRange)
         and bAttacking
-        and fManaAfter > fManaThreshold2
+        and fManaAfter > fManaThreshold1 + 0.1
         then
             return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation()
         end
@@ -595,30 +583,27 @@ function X.ConsiderPrimalSplit()
         return BOT_ACTION_DESIRE_NONE
     end
 
-    if  J.GetHP(bot) < 0.33
-    and nEnemyHeroes ~= nil and #nEnemyHeroes >= 2
-    and nAllyHeroes ~= nil and #nAllyHeroes == 0
-    then
+    local nInRangeAlly = J.GetAlliesNearLoc(bot:GetLocation(), 1200)
+    local nInRangeEnemy = J.GetEnemiesNearLoc(bot:GetLocation(), 1200)
+
+    if botHP < 0.33 and #nInRangeEnemy >= 2 and #nInRangeAlly <=1 then
         return BOT_ACTION_DESIRE_HIGH
     end
 
 	if J.IsInTeamFight(bot, 1200) then
-        local nInRangeEnemy = J.GetEnemiesNearLoc(bot:GetLocation(), 1200)
         if #nInRangeEnemy >= 2 or botHP < 0.25 then
 			return BOT_ACTION_DESIRE_HIGH
         end
 	end
 
     if J.IsGoingOnSomeone(bot) then
-		if  J.IsValidTarget(botTarget)
+		if  J.IsValidHero(botTarget)
         and J.CanBeAttacked(botTarget)
         and J.IsInRange(bot, botTarget, 800)
         and not J.IsSuspiciousIllusion(botTarget)
         and not J.IsDisabled(botTarget)
         and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
 		then
-            local nInRangeAlly = J.GetAlliesNearLoc(bot:GetLocation(), 1200)
-            local nInRangeEnemy = J.GetEnemiesNearLoc(bot:GetLocation(), 1200)
             if not (#nInRangeAlly >= #nInRangeEnemy + 2) then
                 if J.IsCore(botTarget) or botHP < 0.3 then
                     return BOT_ACTION_DESIRE_HIGH

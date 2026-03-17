@@ -279,7 +279,7 @@ function X.ConsiderImpale()
                 return BOT_ACTION_DESIRE_HIGH, enemyHero:GetLocation()
             end
 
-            if J.IsInLaningPhase() and not J.IsRetreating(bot) then
+            if J.IsEarlyGame() and not J.IsRetreating(bot) then
                 if J.IsValidBuilding(nAllyTowers[1]) and J.IsInRange(nAllyTowers[1], enemyHero, 400) then
                     if nAllyTowers[1]:GetAttackTarget() == enemyHero then
                         return BOT_ACTION_DESIRE_HIGH, enemyHero:GetLocation()
@@ -356,6 +356,7 @@ function X.ConsiderImpale()
                     and J.CanCastOnNonMagicImmune(enemyHero)
                     and J.IsChasingTarget(enemyHero, allyHero)
                     and not J.IsDisabled(enemyHero)
+                    and allyHero:WasRecentlyDamagedByHero(enemyHero, 2.0)
                     then
                         return BOT_ACTION_DESIRE_HIGH, enemyHero:GetLocation()
                     end
@@ -406,7 +407,7 @@ function X.ConsiderImpale()
         end
     end
 
-	if J.IsLaning(bot) and J.IsInLaningPhase() and fManaAfter > fManaThreshold1 then
+	if J.IsLaning(bot) and J.IsEarlyGame() and fManaAfter > fManaThreshold1 then
 		for _, creep in pairs(nEnemyCreeps) do
 			if  J.IsValid(creep)
             and J.CanBeAttacked(creep)
@@ -429,7 +430,7 @@ function X.ConsiderImpale()
 					end
 
 					nLocationAoE = bot:FindAoELocation(true, false, creep:GetLocation(), 0, nWidth, 0, nDamage)
-					if nLocationAoE.count >= 2 then
+					if nLocationAoE.count >= 2 and (#nEnemyHeroes > 0 or nLocationAoE.count >= 3) then
 						return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc
 					end
 				end
@@ -440,8 +441,8 @@ function X.ConsiderImpale()
     if J.IsDoingRoshan(bot) then
         if  J.IsRoshan(botTarget)
         and J.CanBeAttacked(botTarget)
-        and J.CanCastOnNonMagicImmune(botTarget)
         and J.IsInRange(bot, botTarget, nCastRange)
+        and J.CanCastOnNonMagicImmune(botTarget)
         and not J.IsDisabled(botTarget)
         and bAttacking
         and fManaAfter > fManaThreshold1
@@ -515,8 +516,8 @@ function X.ConsiderSpikedCarapace()
         return BOT_ACTION_DESIRE_NONE
     end
 
-    if J.IsUnitTargetProjectileIncoming(bot, 500)
-    or J.IsWillBeCastUnitTargetSpell(bot, 1200)
+    if J.IsUnitTargetProjectileIncoming(bot, 400)
+    or J.IsStunProjectileIncoming(bot, 400)
 	then
 		return BOT_ACTION_DESIRE_HIGH
 	end
@@ -595,7 +596,11 @@ function X.ConsiderVendetta()
 	end
 
     if J.IsRetreating(bot) and not J.IsRealInvisible(bot) then
-        return BOT_ACTION_DESIRE_HIGH
+        if (#nEnemyHeroes > #nAllyHeroes and bot:WasRecentlyDamagedByAnyHero(8.0))
+        or (J.GetTotalEstimatedDamageToTarget(nEnemyHeroes, bot, 5.0) > bot:GetHealth())
+        then
+            return BOT_ACTION_DESIRE_HIGH
+        end
     end
 
     return BOT_ACTION_DESIRE_NONE

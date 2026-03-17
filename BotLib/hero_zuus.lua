@@ -352,6 +352,7 @@ function X.ConsiderArcLightning()
 			and J.IsInRange(bot, enemyHero, nCastRange)
 			and J.CanCastOnNonMagicImmune(enemyHero)
 			and J.CanCastOnTargetAdvanced(enemyHero)
+			and not J.IsDisabled(enemyHero)
 			and bot:WasRecentlyDamagedByHero(enemyHero, 3.0)
 			then
 				if not J.IsInRange(bot, enemyHero, nCastRange / 2)
@@ -405,11 +406,10 @@ function X.ConsiderArcLightning()
         end
     end
 
-	if J.IsLaning(bot) and J.IsInLaningPhase() and fManaAfter > fManaThreshold1 then
+	if J.IsLaning(bot) and J.IsEarlyGame() and fManaAfter > fManaThreshold1 then
 		for _, creep in pairs(nEnemyCreeps) do
 			if J.IsValid(creep)
 			and J.CanBeAttacked(creep)
-			and J.IsEnemyTargetUnit(creep, 1400)
 			and J.WillKillTarget(creep, nDamage, DAMAGE_TYPE_MAGICAL, nCastPoint)
 			and not J.IsOtherAllysTarget(creep)
 			then
@@ -508,6 +508,7 @@ function X.ConsiderLightningBolt()
 			and J.IsInRange(bot, enemyHero, nCastRange)
 			and not J.IsInRange(bot, enemyHero, nCastRange * 0.6)
 			and J.CanCastOnNonMagicImmune(enemyHero)
+			and not J.IsDisabled(enemyHero)
 			and bot:WasRecentlyDamagedByHero(enemyHero, 3.0)
 			then
 				return BOT_ACTION_DESIRE_HIGH, enemyHero:GetLocation()
@@ -557,7 +558,7 @@ function X.ConsiderLightningBolt()
         end
     end
 
-    if J.IsLaning(bot) and J.IsInLaningPhase() and fManaAfter > fManaThreshold1 then
+    if J.IsLaning(bot) and J.IsEarlyGame() and fManaAfter > fManaThreshold1 then
 		for _, creep in pairs(nEnemyCreeps) do
 			if  J.IsValid(creep)
             and J.CanBeAttacked(creep)
@@ -622,7 +623,7 @@ function X.ConsiderHeavenlyJump()
 		end
 	end
 
-	if J.IsRetreating(bot) and not J.IsRealInvisible(bot) then
+	if J.IsRetreating(bot) and not J.IsRealInvisible(bot) and not bot:IsRooted() then
 		if J.IsRunning(bot) and bot:IsFacingLocation(J.GetTeamFountain(), 45) and #nEnemyHeroes > 0 then
 			return BOT_ACTION_DESIRE_HIGH
 		end
@@ -673,7 +674,9 @@ function X.ConsiderNimbus()
 			if J.IsValidHero(enemyHero)
 			and J.CanBeAttacked(enemyHero)
 			and J.IsInRange(bot, enemyHero, 1200)
+			and not J.IsInRange(bot, enemyHero, 450)
 			and J.CanCastOnNonMagicImmune(enemyHero)
+			and not J.IsDisabled(enemyHero)
 			and bot:WasRecentlyDamagedByHero(enemyHero, 2.0)
 			and enemyHero:IsFacingLocation(bot:GetLocation(), 20)
 			then
@@ -738,7 +741,7 @@ function X.ConsiderThundergodsWrath()
 	for i = 1, 5 do
 		local allyHero =  GetTeamMember(i)
 
-		if J.IsValidHero(allyHero) and J.IsGoingOnSomeone(allyHero) then
+		if J.IsValidHero(allyHero) and J.IsGoingOnSomeone(allyHero) and J.IsAttacking(allyHero) then
 			local count = 0
 			local nInRangeEnemy = J.GetEnemiesNearLoc(allyHero:GetLocation(), 1600)
 			for _, enemyHero in pairs(nInRangeEnemy) do

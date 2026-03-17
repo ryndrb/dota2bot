@@ -489,7 +489,7 @@ function X.ConsiderBurrowstrike()
         end
     end
 
-	if J.IsLaning(bot) and J.IsInLaningPhase() and fManaAfter > fManaThreshold1 then
+	if J.IsLaning(bot) and J.IsEarlyGame() and fManaAfter > fManaThreshold1 then
 		for _, creep in pairs(nEnemyCreeps) do
 			if  J.IsValid(creep)
             and J.CanBeAttacked(creep)
@@ -521,6 +521,7 @@ function X.ConsiderBurrowstrike()
 		and not J.IsDisabled(botTarget)
         and bAttacking
         and fManaAfter > fManaThreshold1 + 0.05
+		and #nEnemyHeroes == 0
         then
             return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation()
         end
@@ -531,6 +532,7 @@ function X.ConsiderBurrowstrike()
         and J.IsInRange(bot, botTarget, nCastRange)
         and bAttacking
         and fManaAfter > fManaThreshold1 + 0.05
+		and #nEnemyHeroes == 0
         then
             return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation()
         end
@@ -588,8 +590,7 @@ function X.ConsiderSandstorm()
 			and bot:WasRecentlyDamagedByHero(enemyHero, 4.0)
 			then
 				if (J.IsInRange(bot, enemyHero, nRadius))
-				or (#nEnemyHeroes > #nAllyHeroes)
-				or (#nEnemyHeroes > #nAllyHeroes)
+				or (#nEnemyHeroes > #nAllyHeroes and bot:WasRecentlyDamagedByAnyHero(5.0))
 				then
 					return BOT_ACTION_DESIRE_HIGH
 				end
@@ -649,8 +650,7 @@ function X.ConsiderSandstorm()
 
     if J.IsDoingTormentor(bot) then
 		if J.IsTormentor(botTarget)
-        and J.IsInRange( botTarget, bot, nRadius )
-        and J.IsAttacking(bot)
+        and J.IsInRange(bot, botTarget, nRadius)
 		and bAttacking
 		and fManaAfter > fManaThreshold1
 		then
@@ -689,7 +689,7 @@ function X.ConsiderStinger()
 		end
 	end
 
-	if J.IsRetreating(bot) then
+	if J.IsRetreating(bot) and not J.IsRealInvisible(bot) then
 		for _, enemyHero in pairs(nEnemyHeroes) do
 			if J.IsValidHero(enemyHero)
 			and J.CanBeAttacked(enemyHero)
@@ -742,12 +742,11 @@ function X.ConsiderStinger()
         end
     end
 
-	if J.IsLaning(bot) and J.IsInLaningPhase() and fManaAfter > fManaThreshold1 then
+	if J.IsLaning(bot) and J.IsEarlyGame() and fManaAfter > fManaThreshold1 then
 		for _, creep in pairs(nEnemyCreeps) do
 			if  J.IsValid(creep)
             and J.CanBeAttacked(creep)
             and J.CanKillTarget(creep, nDamage, DAMAGE_TYPE_PHYSICAL)
-			and not J.IsRunning(creep)
 			and not J.IsOtherAllysTarget(creep)
 			then
                 local sCreepName = creep:GetUnitName()
@@ -807,7 +806,7 @@ function X.ConsiderEpicenter()
 	local nRadius = nBaseRadius + nPulses * nRadiusIncrement
 
     if not bot:IsMagicImmune() then
-        if J.IsStunProjectileIncoming(bot, 600)
+        if J.IsStunProjectileIncoming(bot, 1000)
         or (not bot:HasModifier('modifier_sniper_assassinate') and J.IsWillBeCastUnitTargetSpell(bot, 600))
         then
             return BOT_ACTION_DESIRE_NONE
@@ -818,7 +817,7 @@ function X.ConsiderEpicenter()
 		return BOT_ACTION_DESIRE_NONE
 	end
 
-	if J.IsInTeamFight( bot, 1600 ) then
+	if J.IsInTeamFight(bot, 1600) then
 		local count = 0
         for _, enemyHero in pairs(nEnemyHeroes) do
             if  J.IsValidHero(enemyHero)
@@ -828,6 +827,7 @@ function X.ConsiderEpicenter()
             and not enemyHero:HasModifier('modifier_abaddon_borrowed_time')
             and not enemyHero:HasModifier('modifier_dazzle_shallow_grave')
             and not enemyHero:HasModifier('modifier_necrolyte_reapers_scythe')
+			and not enemyHero:HasModifier('modifier_teleporting')
             then
 				if not J.IsChasingTarget(bot, enemyHero)
 				or J.IsDisabled(enemyHero)
@@ -848,11 +848,11 @@ function X.ConsiderEpicenter()
 		and J.CanBeAttacked(botTarget)
 		and J.IsInRange(bot, botTarget, nRadius)
 		and J.IsCore(botTarget)
-		and not J.IsChasingTarget(bot, botTarget)
 		and not J.IsSuspiciousIllusion(botTarget)
 		and not botTarget:HasModifier('modifier_abaddon_borrowed_time')
 		and not botTarget:HasModifier('modifier_dazzle_shallow_grave')
 		and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
+		and not botTarget:HasModifier('modifier_teleporting')
 		then
 			local nInRangeAlly = J.GetAlliesNearLoc(bot:GetLocation(), 900)
 			local nInRangeEnemy = J.GetAlliesNearLoc(bot:GetLocation(), 900)

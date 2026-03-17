@@ -277,7 +277,7 @@ function X.ConsiderFlux()
 	local nDamage = nDPS * nDuration
 	local nManaCost = Flux:GetManaCost()
 	local fManaAfter = J.GetManaAfter(nManaCost)
-	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {Flux, MagneticField, SparkWraith})
+	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {MagneticField, SparkWraith})
 
 	for _, enemyHero in pairs(nEnemyHeroes) do
 		if  J.IsValidHero(enemyHero)
@@ -380,7 +380,7 @@ end
 
 function X.ConsiderMagneticField()
 	if not J.CanCastAbility(MagneticField)
-	or X.IsDoubleCasting()
+	or (X.IsDoubleCasting() and J.IsInRange(bot, bot.TempestDouble, 1600))
 	then
 		return BOT_ACTION_DESIRE_NONE, 0
 	end
@@ -389,7 +389,7 @@ function X.ConsiderMagneticField()
 	local nRadius = MagneticField:GetSpecialValueInt('radius')
 	local nManaCost = MagneticField:GetManaCost()
 	local fManaAfter = J.GetManaAfter(nManaCost)
-	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {Flux, MagneticField, SparkWraith})
+	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {Flux, SparkWraith})
 
 	local botAttackRange = bot:GetAttackRange()
 
@@ -399,7 +399,7 @@ function X.ConsiderMagneticField()
 		if  J.IsValidHero(enemyHero)
 		and not J.IsSuspiciousIllusion(enemyHero)
 		and enemyHero:GetAttackTarget() == hAncient
-		and J.IsInRange(bot, hAncient, nCastRange)
+		and J.IsInRange(bot, hAncient, nCastRange + 300)
 		then
 			return BOT_ACTION_DESIRE_HIGH, hAncient:GetLocation()
 		end
@@ -410,23 +410,43 @@ function X.ConsiderMagneticField()
 		and J.IsInRange(bot, botTarget, botAttackRange)
 		and not J.IsSuspiciousIllusion(botTarget)
 		then
-			for _, allyHero in pairs(nAllyHeroes) do
-				if  J.IsValidHero(allyHero)
-				and J.CanBeAttacked(allyHero)
-				and J.IsInRange(bot, allyHero, nCastRange)
-				and J.IsGoingOnSomeone(allyHero)
-				and not J.IsSuspiciousIllusion(allyHero)
-				and not X.IsUnderMagneticField(allyHero)
+			if J.IsInTeamFight(bot, botAttackRange + 200) then
+				return BOT_ACTION_DESIRE_HIGH, bot:GetLocation()
+			end
+
+			if  J.CanBeAttacked(botAttackRange)
+			and not botTarget:HasModifier('modifier_abaddon_borrowed_time')
+			and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
+			then
+				if J.IsDisabled(botTarget)
+				or botTarget:GetCurrentMovementSpeed() < 220
+				or (botHP < 0.45 and bot:WasRecentlyDamagedByAnyHero(2.0))
 				then
-					local allyTarget = allyHero:GetAttackTarget()
-					if J.IsValidHero(allyTarget)
-					and J.IsInRange(allyHero, allyTarget, allyHero:GetAttackRange())
-					and not J.IsChasingTarget(allyHero, allyTarget)
-					and not J.IsSuspiciousIllusion(allyTarget)
+					return BOT_ACTION_DESIRE_HIGH, bot:GetLocation()
+				end
+			end
+		end
+
+		for _, allyHero in pairs(nAllyHeroes) do
+			if  J.IsValidHero(allyHero)
+			and bot ~= allyHero
+			and J.IsInRange(bot, allyHero, nCastRange)
+			and J.IsGoingOnSomeone(allyHero)
+			and not J.IsSuspiciousIllusion(allyHero)
+			and not X.IsUnderMagneticField(allyHero)
+			then
+				local allyTarget = J.GetProperTarget(allyHero)
+				if J.IsValidHero(allyTarget)
+				and J.CanBeAttacked(allyTarget)
+				and J.IsInRange(allyHero, allyTarget, allyHero:GetAttackRange())
+				and not J.IsSuspiciousIllusion(allyTarget)
+				and not allyTarget:HasModifier('modifier_abaddon_borrowed_time')
+				and not allyTarget:HasModifier('modifier_necrolyte_reapers_scythe')
+				then
+					if J.IsDisabled(botTarget)
+					or botTarget:GetCurrentMovementSpeed() < 220
 					then
-						if bot == allyHero or allyHero:WasRecentlyDamagedByAnyHero(2.0) then
-							return BOT_ACTION_DESIRE_HIGH, allyHero:GetLocation()
-						end
+						return BOT_ACTION_DESIRE_HIGH, allyHero:GetLocation()
 					end
 				end
 			end
@@ -436,16 +456,20 @@ function X.ConsiderMagneticField()
 	if not X.IsUnderMagneticField(bot) then
 		local botLocation = bot:GetLocation()
 
+		if J.GetAttackProjectileDamageByRange(bot, 1200) > bot:GetHealth() then
+			return BOT_ACTION_DESIRE_HIGH, bot:GetLocation()
+		end
+
 		if J.IsRetreating(bot) and not J.IsRealInvisible(bot) and fManaAfter > fManaThreshold1 then
 			for _, enemyHero in pairs(nEnemyHeroes) do
 				if  J.IsValidHero(enemyHero)
-				and J.IsInRange(bot, enemyHero, nCastRange)
-				and not J.IsInRange(bot, enemyHero, nRadius)
+				and J.IsInRange(bot, enemyHero, 1200)
+				and not J.IsInRange(bot, enemyHero, nRadius + nRadius / 2)
 				and not J.IsDisabled(enemyHero)
 				and not J.IsSuspiciousIllusion(enemyHero)
 				then
 					if bot:IsRooted()
-					or bot:WasRecentlyDamagedByHero(enemyHero, 3.0)
+					or (bot:WasRecentlyDamagedByHero(enemyHero, 2.0) and botHP < 0.5)
 					or J.IsStunProjectileIncoming(bot, 600)
 					then
 						return BOT_ACTION_DESIRE_HIGH, botLocation
@@ -464,7 +488,7 @@ function X.ConsiderMagneticField()
 			end
 
 			if J.IsValidBuilding(botTarget) and J.CanBeAttacked(botTarget) and J.GetHP(botTarget) > 0.25 then
-				if not J.IsInRange(bot, botTarget, nRadius) then
+				if J.IsInRange(bot, botTarget, botAttackRange) and not J.IsInRange(bot, botTarget, nRadius) then
 					return BOT_ACTION_DESIRE_HIGH, botLocation
 				end
 			end
@@ -472,7 +496,7 @@ function X.ConsiderMagneticField()
 
 		if J.IsDefending(bot) and bAttacking and fManaAfter > fManaThreshold1 then
 			if J.IsValid(nEnemyCreeps[1]) and J.CanBeAttacked(nEnemyCreeps[1]) and #nAllyHeroes <= 3 then
-				if #nEnemyCreeps >= 3 then
+				if #nEnemyCreeps >= 5 then
 					return BOT_ACTION_DESIRE_HIGH, botLocation
 				end
 			end
@@ -527,7 +551,6 @@ function X.ConsiderSparkWraith()
 	local nManaCost = MagneticField:GetManaCost()
 	local fManaAfter = J.GetManaAfter(nManaCost)
 	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {Flux, MagneticField})
-	local fManaThreshold2 = J.GetManaThreshold(bot, nManaCost, {Flux, MagneticField, SparkWraith})
 
 	for _, enemyHero in pairs(nEnemyHeroes) do
 		if  J.IsValidHero(enemyHero)
@@ -546,7 +569,7 @@ function X.ConsiderSparkWraith()
 					return BOT_ACTION_DESIRE_HIGH, J.GetCorrectLoc(enemyHero, nDelay)
 				end
 
-				if J.IsLaning(bot) and J.IsInLaningPhase() and fManaAfter > fManaThreshold2 then
+				if J.IsLaning(bot) and J.IsEarlyGame() and fManaAfter > fManaThreshold1 + 0.2 then
 					if enemyHero:HasModifier('modifier_arc_warden_flux') then
 						return BOT_ACTION_DESIRE_HIGH, enemyHero:GetLocation()
 					end
@@ -585,18 +608,17 @@ function X.ConsiderSparkWraith()
 			and J.CanCastOnNonMagicImmune(enemyHero)
 			and bot:WasRecentlyDamagedByHero(enemyHero, 2.0)
 			then
-				local vLocation = J.VectorTowards(enemyHero:GetLocation(), bot:GetLocation(), nRadius)
+				local distance = GetUnitToUnitDistance(bot, enemyHero)
+				local vLocation = J.VectorTowards(enemyHero:GetLocation(), bot:GetLocation(), Min(distance, nRadius))
 				if GetUnitToLocationDistance(bot, vLocation) <= nCastRange then
 					return BOT_ACTION_DESIRE_HIGH, vLocation
-				else
-					return BOT_ACTION_DESIRE_HIGH, bot:GetLocation()
 				end
 			end
 		end
 	end
 
 	if not bot:HasModifier('modifier_silencer_curse_of_the_silent') then
-		if not J.IsRetreating(bot) and not J.IsRealInvisible(bot) and not J.IsEarlyGame() and fManaAfter > fManaThreshold2 + 0.1 and nLevel >= 3 then
+		if not J.IsRetreating(bot) and not J.IsRealInvisible(bot) and not J.IsEarlyGame() and fManaAfter > fManaThreshold1 + 0.2 and nLevel >= 3 then
 			local nLocationAoE = bot:FindAoELocation(true, true, bot:GetLocation(), nCastRange, nRadius, nDelay, 0)
 			local nInRangeEnemy = J.GetEnemiesNearLoc(nLocationAoE.targetloc, nRadius)
 			if #nInRangeEnemy >= 2 or nLocationAoE.count >= 3 then
@@ -635,7 +657,7 @@ function X.ConsiderSparkWraith()
 			end
 		end
 
-		if J.IsLaning(bot) and J.IsInLaningPhase() and fManaAfter > fManaThreshold1 then
+		if J.IsLaning(bot) and J.IsEarlyGame() and fManaAfter > fManaThreshold1 then
 			for _, creep in pairs(nEnemyCreeps) do
 				if  J.IsValid(creep)
 				and J.CanBeAttacked(creep)
@@ -663,7 +685,7 @@ function X.ConsiderSparkWraith()
 		and J.CanBeAttacked(botTarget)
 		and J.IsInRange(bot, botTarget, nCastRange)
 		and bAttacking
-		and fManaAfter > fManaThreshold2
+		and fManaAfter > fManaThreshold1 + 0.1
 		then
 			return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation()
 		end
@@ -673,7 +695,7 @@ function X.ConsiderSparkWraith()
 		if  J.IsTormentor(botTarget)
 		and J.IsInRange(bot, botTarget, nCastRange)
 		and bAttacking
-		and fManaAfter > fManaThreshold2
+		and fManaAfter > fManaThreshold1 + 0.1
 		then
 			return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation()
 		end
@@ -745,17 +767,40 @@ function X.ConsiderTempestDouble()
 		end
 	end
 
-	if (J.IsPushing(bot) or J.IsDefending(bot) or J.IsFarming(bot)) and bAttacking then
-		local nEnemyCreeps = bot:GetNearbyCreeps(800, true)
+	local nEnemyCreeps = bot:GetNearbyCreeps(800, true)
 
+	if J.IsPushing(bot) and bAttacking and #nAllyHeroes <= 2 and #nEnemyHeroes == 0 then
 		if J.IsValid(nEnemyCreeps[1]) and J.CanBeAttacked(nEnemyCreeps[1]) then
-			if #nEnemyCreeps >= 2 then
+			if #nEnemyCreeps >= 5 then
 				return BOT_ACTION_DESIRE_HIGH, bot:GetLocation()
 			end
 		end
 
-		if J.IsValidBuilding(botTarget) and J.CanBeAttacked(botTarget) and J.GetHP(botTarget) > 0.3 then
+		if J.IsValidBuilding(botTarget) and J.CanBeAttacked(botTarget) and J.IsInRange(bot, botTarget, bot:GetAttackRange()) and J.GetHP(botTarget) > 0.3 then
 			return BOT_ACTION_DESIRE_HIGH, bot:GetLocation()
+		end
+	end
+
+	if J.IsDefending(bot) and bAttacking then
+		if J.IsValid(nEnemyCreeps[1]) and J.CanBeAttacked(nEnemyCreeps[1]) then
+			if #nEnemyCreeps >= 5 then
+				return BOT_ACTION_DESIRE_HIGH, bot:GetLocation()
+			end
+		end
+
+		if #nEnemyHeroes >= 3 then
+			return BOT_ACTION_DESIRE_HIGH, bot:GetLocation()
+		end
+	end
+
+	if J.IsFarming(bot) and bAttacking then
+		if J.IsValid(nEnemyCreeps[1]) and J.CanBeAttacked(nEnemyCreeps[1]) then
+			if (#nEnemyCreeps >= 3)
+			or (#nEnemyCreeps >= 2 and nEnemyCreeps[1]:IsAncientCreep())
+			or (#nEnemyCreeps >= 1 and nEnemyCreeps[1]:GetHealth() >= 1000)
+			then
+				return BOT_ACTION_DESIRE_HIGH, bot:GetLocation()
+			end
 		end
 	end
 

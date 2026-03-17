@@ -395,7 +395,6 @@ function X.ConsiderShackleShot()
             if J.IsValidHero(allyHero)
             and bot ~= allyHero
             and J.IsRetreating(allyHero)
-            and allyHero:WasRecentlyDamagedByAnyHero(3.0)
             and not allyHero:IsIllusion()
             and not allyHero:HasModifier('modifier_necrolyte_reapers_scythe')
             then
@@ -406,6 +405,7 @@ function X.ConsiderShackleShot()
                     and J.IsInRange(allyHero, enemyHero, 800)
                     and J.CanCastOnNonMagicImmune(enemyHero)
                     and J.CanCastOnTargetAdvanced(enemyHero)
+                    and J.IsChasingTarget(enemyHero, allyHero)
                     and not J.IsDisabled(enemyHero)
                     and not enemyHero:IsDisarmed()
                     and allyHero:WasRecentlyDamagedByHero(enemyHero, 3.0)
@@ -528,7 +528,7 @@ function X.ConsiderPowershot()
         end
     end
 
-    if J.IsLaning(bot) and J.IsInLaningPhase() and fManaAfter > fManaThreshold1 then
+    if J.IsLaning(bot) and J.IsEarlyGame() and fManaAfter > fManaThreshold1 then
 		for _, creep in pairs(nEnemyCreeps) do
 			if  J.IsValid(creep)
             and creep:GetHealth() > bot:GetAttackDamage()
@@ -545,7 +545,7 @@ function X.ConsiderPowershot()
                     end
 
                     local nLocationAoE = bot:FindAoELocation(true, false, creep:GetLocation(), 0, nRadius, 0, nDamage)
-                    if nLocationAoE.count >= 2 then
+                    if nLocationAoE.count >= 2 and (#nEnemyHeroes or nLocationAoE.count >= 3) then
                         return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc
                     end
                 end
@@ -556,8 +556,8 @@ function X.ConsiderPowershot()
     if J.IsDoingRoshan(bot) then
         if  J.IsRoshan(botTarget)
         and J.CanBeAttacked(botTarget)
-        and J.CanCastOnNonMagicImmune(botTarget)
         and J.IsInRange(bot, botTarget, nCastRange)
+        and J.CanCastOnNonMagicImmune(botTarget)
         and bAttacking
         and fManaAfter > fManaThreshold1
         then
@@ -640,6 +640,7 @@ function X.ConsiderWindrun()
         and J.IsInRange(bot, botTarget, bot:GetAttackRange())
         and bAttacking
         and botTarget:GetAttackTarget() == bot
+        and #nEnemyHeroes == 0
         then
             if botHP < 0.5 then
                 return BOT_ACTION_DESIRE_HIGH
@@ -650,6 +651,7 @@ function X.ConsiderWindrun()
     if J.IsDoingTormentor(bot) then
         if  J.IsTormentor(botTarget)
         and J.IsInRange(bot, botTarget, bot:GetAttackRange())
+        and #nEnemyHeroes == 0
         then
             if botHP < 0.5 then
                 return BOT_ACTION_DESIRE_HIGH
@@ -693,20 +695,18 @@ function X.ConsiderGaleForce()
     end
 
     if J.IsRetreating(bot) and not J.IsRealInvisible(bot) then
-        if J.IsRetreating(bot) and not J.IsRealInvisible(bot) then
-            for _, enemyHero in pairs(nEnemyHeroes) do
-                if  J.IsValidHero(enemyHero)
-                and J.CanBeAttacked(enemyHero)
-                and J.IsInRange(bot, enemyHero, nCastRange)
-                and J.CanCastOnNonMagicImmune(enemyHero)
-                and J.IsChasingTarget(enemyHero, bot)
-                and not J.IsDisabled(enemyHero)
+        for _, enemyHero in pairs(nEnemyHeroes) do
+            if  J.IsValidHero(enemyHero)
+            and J.CanBeAttacked(enemyHero)
+            and J.IsInRange(bot, enemyHero, nCastRange)
+            and J.CanCastOnNonMagicImmune(enemyHero)
+            and J.IsChasingTarget(enemyHero, bot)
+            and not J.IsDisabled(enemyHero)
+            then
+                if (bot:WasRecentlyDamagedByHero(enemyHero, 2.0))
+                or (bot:WasRecentlyDamagedByHero(enemyHero, 5.0) and #nEnemyHeroes > #nAllyHeroes)
                 then
-                    if (bot:WasRecentlyDamagedByHero(enemyHero, 2.0))
-                    or (bot:WasRecentlyDamagedByHero(enemyHero, 5.0) and #nEnemyHeroes > #nAllyHeroes)
-                    then
-                        return BOT_ACTION_DESIRE_HIGH, (bot:GetLocation() + enemyHero:GetLocation()) / 2
-                    end
+                    return BOT_ACTION_DESIRE_HIGH, (bot:GetLocation() + enemyHero:GetLocation()) / 2
                 end
             end
         end
@@ -751,7 +751,6 @@ function X.ConsiderFocusFire()
         end
 
         if hTarget then
-            bot:SetTarget(hTarget)
             return BOT_ACTION_DESIRE_HIGH, hTarget
         end
 	end

@@ -7,6 +7,8 @@ local sTalentList = J.Skill.GetTalentList( bot )
 local sAbilityList = J.Skill.GetAbilityList( bot )
 local sRole = J.Item.GetRoleItemsBuyList( bot )
 
+local hNetherWard = nil
+
 if GetBot():GetUnitName() == 'npc_dota_hero_pugna'
 then
 
@@ -209,8 +211,6 @@ local DecrepifyDesire, DecrepifyTarget
 local NetherWardDesire, NetherWardLocation
 local LifeDrainDesire, LifeDrainTarget
 
-local hNetherWard = nil
-
 local bAttacking = false
 local botTarget, botHP
 local nAllyHeroes, nEnemyHeroes
@@ -285,7 +285,6 @@ function X.ConsiderNetherBlast()
 	local nManaCost = NetherBlast:GetManaCost()
 	local fManaAfter = J.GetManaAfter(nManaCost)
 	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {Decrepify, NetherWard, LifeDrain})
-	local fManaThreshold2 = J.GetManaThreshold(bot, nManaCost, {NetherBlast, Decrepify, NetherWard, LifeDrain})
 
 	for _, enemyHero in pairs(nEnemyHeroes) do
 		if J.IsValidHero(enemyHero)
@@ -315,7 +314,7 @@ function X.ConsiderNetherBlast()
             return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation()
         end
 
-		if fManaAfter > fManaThreshold2 then
+		if fManaAfter > fManaThreshold1 + 0.1 then
 			local nLocationAoE = bot:FindAoELocation(true, true, bot:GetLocation(), nCastRange, nRadius, 0, 0)
 			if nLocationAoE.count >= 2 then
 				return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc
@@ -399,13 +398,11 @@ function X.ConsiderNetherBlast()
         end
 	end
 
-    if J.IsLaning(bot) and J.IsInLaningPhase() and fManaAfter > fManaThreshold1 then
+    if J.IsLaning(bot) and J.IsEarlyGame() and fManaAfter > fManaThreshold1 then
 		for _, creep in pairs(nEnemyCreeps) do
 			if  J.IsValid(creep)
             and J.CanBeAttacked(creep)
-            and J.IsInRange(bot, creep, nCastRange)
             and J.CanCastOnNonMagicImmune(creep)
-            and J.CanCastOnTargetAdvanced(creep)
 			and J.CanKillTarget(creep, nDamage, DAMAGE_TYPE_MAGICAL)
 			and not J.IsOtherAllysTarget(creep)
 			then
@@ -446,7 +443,7 @@ function X.ConsiderNetherBlast()
 		end
 	end
 
-	if not J.IsRetreating(bot) and not J.IsRealInvisible(bot) and fManaAfter > fManaThreshold2 then
+	if not J.IsRetreating(bot) and not J.IsRealInvisible(bot) and fManaAfter > fManaThreshold1 + 0.1 then
 		local radius = Min(nCastRange + nRadius, 1600)
 		local nEnemyTowers = bot:GetNearbyTowers(radius, true)
 		local nEnemyBarracks = bot:GetNearbyBarracks(radius, true)
@@ -531,14 +528,13 @@ function X.ConsiderDecrepify()
             if  J.IsValidHero(enemyHero)
             and J.CanBeAttacked(enemyHero)
             and J.IsInRange(bot, enemyHero, nCastRange)
-            and J.CanCastOnNonMagicImmune(enemyHero)
-			and J.CanCastOnTargetAdvanced(enemyHero)
 			and bot:WasRecentlyDamagedByHero(enemyHero, 3.0)
+			and not J.IsSuspiciousIllusion(enemyHero)
             and not J.IsDisabled(enemyHero)
 			and not enemyHero:IsDisarmed()
             then
 				local nAllyHeroesTargetingTarget = J.GetHeroesTargetingUnit(nAllyHeroes, enemyHero)
-				if #nAllyHeroesTargetingTarget == 0 then
+				if #nAllyHeroesTargetingTarget == 0 and J.CanCastOnTargetAdvanced(enemyHero) then
 					return BOT_ACTION_DESIRE_HIGH, enemyHero
 				else
 					if not bot:HasModifier('modifier_pugna_decrepify') then
@@ -586,7 +582,7 @@ function X.ConsiderDecrepify()
 					if  J.IsValidHero(enemyHero)
 					and J.IsAttacking(enemyHero)
 					and not J.IsSuspiciousIllusion(enemyHero)
-					and allyHero:WasRecentlyDamagedByHero(enemyHero, 4.0)
+					and allyHero:WasRecentlyDamagedByHero(enemyHero, 2.0)
 					then
 						return BOT_ACTION_DESIRE_HIGH, allyHero
 					end
@@ -699,15 +695,15 @@ function X.ConsiderNetherWard()
 		end
 	end
 
-	if J.IsRetreating(bot) and not J.IsRealInvisible(bot) and bot:WasRecentlyDamagedByAnyHero(3.0) then
+	if J.IsRetreating(bot) and not J.IsRealInvisible(bot) then
 		for _, enemyHero in pairs(nEnemyHeroes) do
 			if J.IsValidHero(enemyHero)
 			and J.CanBeAttacked(enemyHero)
-			and J.IsInRange(bot, enemyHero, nRadius / 2)
+			and J.IsInRange(bot, enemyHero, 600)
 			and J.CanCastOnNonMagicImmune(enemyHero)
+			and not J.IsDisabled(enemyHero)
 			then
-				local nEnemyHeroesTargetingMe = J.GetHeroesTargetingUnit(nEnemyHeroes, bot)
-				if #nEnemyHeroesTargetingMe >= 2 or (enemyHero:IsCastingAbility() or enemyHero:IsUsingAbility()) then
+				if (enemyHero:IsCastingAbility() or enemyHero:IsUsingAbility()) then
 					return BOT_ACTION_DESIRE_HIGH, bot:GetLocation()
 				end
 			end
@@ -754,6 +750,7 @@ function X.ConsiderLifeDrain()
 		then
 			if not J.IsChasingTarget(bot, botTarget)
 			or J.IsDisabled(botTarget)
+			or botTarget:GetCurrentMovementSpeed() < 220
 			then
 				return BOT_ACTION_DESIRE_HIGH, botTarget
 			end
@@ -876,9 +873,9 @@ function X.ConsiderLifeDrain()
     if J.IsDoingRoshan(bot) then
         if  J.IsRoshan(botTarget)
         and J.CanBeAttacked(botTarget)
+        and J.IsInRange(bot, botTarget, nCastRange)
         and J.CanCastOnNonMagicImmune(botTarget)
 		and J.CanCastOnTargetAdvanced(botTarget)
-        and J.IsInRange(bot, botTarget, nCastRange)
 		and botHP < 0.75
         and bAttacking
         and fManaAfter > fManaThreshold1

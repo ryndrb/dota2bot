@@ -262,10 +262,11 @@ function X.ConsiderFatalBonds()
 			and J.IsInRange(bot, enemyHero, nCastRange)
 			and J.CanCastOnNonMagicImmune(enemyHero)
 			and J.CanCastOnTargetAdvanced(enemyHero)
+			and not enemyHero:HasModifier('modifier_necrolyte_reapers_scythe')
 			and not enemyHero:HasModifier('modifier_warlock_fatal_bonds')
 			then
-				local nLocationAoE = bot:FindAoELocation(true, true, enemyHero:GetLocation(), 0, nRadius, 0, 0)
-				if nLocationAoE.count >= 2 then
+				local nInRangeEnemy = J.GetEnemiesNearLoc(enemyHero:GetLocation(), nRadius)
+				if #nInRangeEnemy >= 2 then
 					return BOT_ACTION_DESIRE_HIGH, enemyHero
 				end
 			end
@@ -335,10 +336,12 @@ function X.ConsiderShadowWord()
 			if J.IsValidHero(allyHero)
 			and J.CanBeAttacked(allyHero)
 			and J.IsInRange(bot, allyHero, nCastRange)
+			and allyHero:DistanceFromFountain() > 1200
 			and not J.IsSuspiciousIllusion(allyHero)
 			and not allyHero:HasModifier('modifier_abaddon_borrowed_time')
 			and not allyHero:HasModifier('modifier_oracle_false_promise_timer')
 			and not allyHero:HasModifier('modifier_warlock_shadow_word')
+			and not allyHero:HasModifier('modifier_fountain_aura_buff')
 			then
 				local allyHP = J.GetHP(allyHero)
 				if allyHP < hTargetAllyHP and allyHP <= 0.65 then
@@ -352,6 +355,8 @@ function X.ConsiderShadowWord()
 			return BOT_ACTION_DESIRE_HIGH, hTargetAlly
 		end
 	end
+
+	local nInRangeAlly = J.GetAlliesNearLoc(bot:GetLocation(), nCastRange + 200)
 
     for _, enemyHero in pairs(nEnemyHeroes) do
         if  J.IsValidHero(enemyHero)
@@ -368,6 +373,7 @@ function X.ConsiderShadowWord()
         and not enemyHero:HasModifier('modifier_warlock_shadow_word')
 		and not J.IsGoingOnSomeone(bot)
 		and fManaAfter > fManaThreshold1
+		and #nInRangeAlly <= 2
         then
 			return BOT_ACTION_DESIRE_HIGH, enemyHero
         end
@@ -385,6 +391,7 @@ function X.ConsiderShadowWord()
 		and not botTarget:HasModifier('modifier_templar_assassin_refraction_absorb')
 		and not botTarget:HasModifier('modifier_warlock_shadow_word')
 		and fManaAfter > fManaThreshold1
+		and #nInRangeAlly <= 2
 		then
 			return BOT_ACTION_DESIRE_HIGH, botTarget
 		end
@@ -502,7 +509,10 @@ function X.ConsiderUpheaval()
 		and not botTarget:HasModifier('modifier_dazzle_shallow_grave')
 		then
 			local nInRangeEnemy = botTarget:GetNearbyHeroes(nRadius * 0.8, false, BOT_MODE_NONE)
-			if J.IsDisabled(botTarget) or #nInRangeEnemy >= 2 then
+			if J.IsDisabled(botTarget)
+			or botTarget:GetCurrentMovementSpeed() < 220
+			or #nInRangeEnemy >= 2
+			then
 				return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation()
 			end
 		end
@@ -567,7 +577,9 @@ function X.ConsiderChaoticOffering()
 		if J.IsValidHero(botTarget)
 		and J.CanBeAttacked(botTarget)
 		and J.IsInRange(bot, botTarget, nCastRange + 300)
+		and not J.IsSuspiciousIllusion(botTarget)
 		and not botTarget:HasModifier('modifier_abaddon_borrowed_time')
+		and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
 		then
 			if not (#nAllyHeroes >= #nEnemyHeroes + 2) then
 				if (J.IsInTeamFight(bot, 1200))

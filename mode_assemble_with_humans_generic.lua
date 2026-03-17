@@ -163,15 +163,16 @@ function GetDesire()
         if not X.IsTormentorAlive() and bot.tormentor_state ~= true then
             if (nAveCoreLevel >= 13 and nAveSuppLevel >= 11)
             and GetUnitToUnitDistance(bot, hEnemyAncient) > 4000
+            and GetUnitToLocationDistance(bot, TormentorLocation) <= 9200
             and bGoodRightClickDamage
             then
                 local ally = nil
                 local allyDist = 100000
                 for i = 1, 5 do
                     local member = GetTeamMember(i)
-                    if J.IsValidHero(member) and member:IsBot() and not J.IsCore(member) then
+                    if J.IsValidHero(member) and member:IsBot() then
                         local memberDist = GetUnitToLocationDistance(member, TormentorLocation)
-                        if memberDist < allyDist then
+                        if memberDist < allyDist and (not J.IsCore(member) or memberDist < 2800) then
                             ally = member
                             allyDist = memberDist
                         end
@@ -255,7 +256,7 @@ function Think()
         if J.IsValid(nLaneCreeps[1])
         and J.CanBeAttacked(nLaneCreeps[1])
         then
-            bot:Action_AttackUnit(nLaneCreeps[1], true)
+            bot:Action_AttackUnit(nLaneCreeps[1], false)
             return
         end
     end

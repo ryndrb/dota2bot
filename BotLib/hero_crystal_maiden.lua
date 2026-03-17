@@ -311,8 +311,6 @@ function X.ConsiderCrystalNova()
 	local nManaCost = CrystalNova:GetManaCost()
 	local fManaAfter = J.GetManaAfter(nManaCost)
 	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {Frostbite, CrystalClone, FreezingField})
-	local fManaThreshold2 = J.GetManaThreshold(bot, nManaCost, {CrystalNova, Frostbite, CrystalClone, FreezingField})
-	local fManaThreshold3 = J.GetManaThreshold(bot, nManaCost, {FreezingField})
 
 	for _, enemyHero in pairs(nEnemyHeroes) do
 		if J.IsValidHero(enemyHero)
@@ -337,12 +335,12 @@ function X.ConsiderCrystalNova()
 		and not J.IsChasingTarget(bot, botTarget)
 		and not botTarget:HasModifier('modifier_abaddon_borrowed_time')
 		and not botTarget:HasModifier('modifier_dazzle_shallow_grave')
-		and fManaAfter > fManaThreshold3
+		and fManaAfter > fManaThreshold1
         then
             return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation()
         end
 
-		if fManaAfter > fManaThreshold3 then
+		if fManaAfter > fManaThreshold1 then
 			local nLocationAoE = bot:FindAoELocation(true, true, bot:GetLocation(), nCastRange, nRadius, 0, 0)
 			if nLocationAoE.count >= 2 then
 				return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc
@@ -358,28 +356,18 @@ function X.ConsiderCrystalNova()
             and J.CanCastOnNonMagicImmune(enemyHero)
 			and not J.IsDisabled(enemyHero)
             and not enemyHero:IsDisarmed()
+			and bot:WasRecentlyDamagedByHero(enemyHero, 3.0)
 			then
-				if J.IsChasingTarget(enemyHero, bot)
-				or (#nEnemyHeroes > #nAllyHeroes and bot:WasRecentlyDamagedByAnyHero(1.0))
-				or bot:IsRooted()
-				or botHP < 0.5
-				then
-					local nLocationAoE = bot:FindAoELocation(true, true, enemyHero:GetLocation(), 0, nRadius, 0, 0)
-					if nLocationAoE.count >= 2 then
-						return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc
-					else
-						return BOT_ACTION_DESIRE_HIGH, enemyHero:GetLocation()
-					end
-				end
+				return BOT_ACTION_DESIRE_HIGH, enemyHero:GetLocation()
 			end
 		end
 	end
 
-	local nEnemyCreeps = bot:GetNearbyCreeps(nCastRange, true)
+	local nEnemyCreeps = bot:GetNearbyCreeps(Min(nCastRange + 300, 1600), true)
 
-	if J.IsPushing(bot) and bAttacking and fManaAfter > fManaThreshold2 and #nAllyHeroes <= 2 then
+	if J.IsPushing(bot) and bAttacking and fManaAfter > fManaThreshold1 + 0.1 and #nAllyHeroes <= 2 then
 		for _, creep in pairs(nEnemyCreeps) do
-            if J.IsValid(creep) and J.CanBeAttacked(creep) and not J.IsRunning(creep) then
+            if J.IsValid(creep) and J.CanBeAttacked(creep) then
                 local nLocationAoE = bot:FindAoELocation(true, false, creep:GetLocation(), 0, nRadius, 0, 0)
                 if (nLocationAoE.count >= 4)
 				or (nLocationAoE.count >= 2 and string.find(creep:GetUnitName(), 'upgraded'))
@@ -392,7 +380,7 @@ function X.ConsiderCrystalNova()
 
 	if J.IsDefending(bot) and bAttacking and fManaAfter > fManaThreshold1 and #nAllyHeroes <= 2 then
 		for _, creep in pairs(nEnemyCreeps) do
-            if J.IsValid(creep) and J.CanBeAttacked(creep) and not J.IsRunning(creep) then
+            if J.IsValid(creep) and J.CanBeAttacked(creep) then
                 local nLocationAoE = bot:FindAoELocation(true, false, creep:GetLocation(), 0, nRadius, 0, 0)
                 if (nLocationAoE.count >= 4)
 				or (nLocationAoE.count >= 2 and string.find(creep:GetUnitName(), 'upgraded'))
@@ -410,11 +398,11 @@ function X.ConsiderCrystalNova()
 
 	if J.IsFarming(bot) and bAttacking and fManaAfter > fManaThreshold1 then
 		for _, creep in pairs(nEnemyCreeps) do
-            if J.IsValid(creep) and J.CanBeAttacked(creep) and not J.IsRunning(creep) then
+            if J.IsValid(creep) and J.CanBeAttacked(creep) then
                 local nLocationAoE = bot:FindAoELocation(true, false, creep:GetLocation(), 0, nRadius, 0, 0)
                 if (nLocationAoE.count >= 3)
 				or (nLocationAoE.count >= 2 and creep:IsAncientCreep())
-				or (nLocationAoE.count >= 1 and creep:IsAncientCreep() and fManaAfter > 0.75)
+				or (nLocationAoE.count >= 1 and creep:GetHealth() >= 800)
 				then
                     return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc
                 end
@@ -426,10 +414,9 @@ function X.ConsiderCrystalNova()
 		for _, creep in pairs(nEnemyCreeps) do
 			if  J.IsValid(creep)
             and J.CanBeAttacked(creep)
-            and J.IsInRange(bot, creep, nCastRange)
             and J.CanCastOnNonMagicImmune(creep)
-            and J.CanCastOnTargetAdvanced(creep)
 			and J.CanKillTarget(creep, nDamage, DAMAGE_TYPE_MAGICAL)
+			and not J.IsOtherAllysTarget(creep)
 			then
 				local sCreepName = creep:GetUnitName()
 				local nLocationAoE = bot:FindAoELocation(true, true, creep:GetLocation(), 0, nRadius, 0, 0)
@@ -440,32 +427,27 @@ function X.ConsiderCrystalNova()
 				end
 
 				nLocationAoE = bot:FindAoELocation(true, false, creep:GetLocation(), 0, nRadius, 0, nDamage)
-				if nLocationAoE.count >= 2 and (J.IsCore(bot) or not J.IsThereCoreInLocation(nLocationAoE.targetloc, 600)) then
+				if nLocationAoE.count >= 2 and (#nEnemyHeroes > 0 or nLocationAoE.count >= 3) then
 					return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc
 				end
 			end
 		end
     end
 
-	if #nEnemyHeroes == 0 and not J.IsRetreating(bot) then
+	if #nEnemyHeroes == 0 and not J.IsRetreating(bot) and fManaAfter > fManaThreshold1 then
 		local nLocationAoE = bot:FindAoELocation(true, false, bot:GetLocation(), nCastRange, nRadius, 0, nDamage)
-		if  nLocationAoE.count >= 2
-		and fManaAfter > fManaThreshold3
-		and (J.IsCore(bot) or not J.IsThereCoreInLocation(nLocationAoE.targetloc, 550))
-		then
+		if nLocationAoE.count >= 2 and (J.IsCore(bot) or not J.IsThereCoreInLocation(nLocationAoE.targetloc, 550)) then
 			return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc
 		end
 
-		if fManaAfter > fManaThreshold1 then
-			for _, creep in pairs(nEnemyCreeps) do
-				if  J.IsValid(creep)
-				and J.CanBeAttacked(creep)
-				and creep:HasModifier('modifier_crystal_maiden_frostbite')
-				and creep:GetMaxHealth() >= 550
-				and not J.IsOtherAllysTarget(creep)
-				then
-					return BOT_ACTION_DESIRE_HIGH, creep:GetLocation()
-				end
+		for _, creep in pairs(nEnemyCreeps) do
+			if  J.IsValid(creep)
+			and J.CanBeAttacked(creep)
+			and creep:HasModifier('modifier_crystal_maiden_frostbite')
+			and creep:GetMaxHealth() >= 550
+			and not J.IsOtherAllysTarget(creep)
+			then
+				return BOT_ACTION_DESIRE_HIGH, creep:GetLocation()
 			end
 		end
 	end
@@ -475,7 +457,7 @@ function X.ConsiderCrystalNova()
 		and J.CanBeAttacked(botTarget)
         and J.IsInRange(bot, botTarget, nCastRange)
         and bAttacking
-		and fManaAfter > fManaThreshold2
+		and fManaAfter > fManaThreshold1 + 0.1
 		then
 			return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation()
 		end
@@ -485,7 +467,7 @@ function X.ConsiderCrystalNova()
 		if J.IsTormentor(botTarget)
         and J.IsInRange(bot, botTarget, nCastRange)
         and bAttacking
-		and fManaAfter > fManaThreshold2
+		and fManaAfter > fManaThreshold1 + 0.1
 		then
 			return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation()
 		end
@@ -507,8 +489,6 @@ function X.ConsiderFrostbite()
 	local nManaCost = Frostbite:GetManaCost()
 	local fManaAfter = J.GetManaAfter(nManaCost)
 	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {Frostbite, CrystalClone, FreezingField})
-	local fManaThreshold2 = J.GetManaThreshold(bot, nManaCost, {CrystalNova, Frostbite, CrystalClone, FreezingField})
-	local fManaThreshold3 = J.GetManaThreshold(bot, nManaCost, {FreezingField})
 
 	for _, enemyHero in pairs(nEnemyHeroes) do
 		if J.IsValidHero(enemyHero)
@@ -545,8 +525,7 @@ function X.ConsiderFrostbite()
 			then
 				local enemyScore = (enemyHero:GetEstimatedDamageToTarget(false, bot, 3.0, DAMAGE_TYPE_ALL)) * 0.35
 								 + (enemyHero:GetAttackDamage() * enemyHero:GetAttackSpeed() * nDuration) * 0.65
-				if enemyScore > hTargetScore
-				then
+				if enemyScore > hTargetScore then
 					hTarget = enemyHero
 					hTargetScore = enemyScore
 				end
@@ -573,11 +552,12 @@ function X.ConsiderFrostbite()
 	if J.IsRetreating(bot) and not J.IsRealInvisible(bot) then
 		for _, enemyHero in pairs(nEnemyHeroes) do
 			if J.IsValidHero(enemyHero)
+			and J.CanBeAttacked(enemyHero)
 			and J.IsInRange(bot, enemyHero, nCastRange)
 			and J.CanCastOnNonMagicImmune(enemyHero)
 			and J.CanCastOnTargetAdvanced(enemyHero)
 			and not J.IsDisabled(enemyHero)
-			and bot:WasRecentlyDamagedByHero(enemyHero, 5.0)
+			and bot:WasRecentlyDamagedByHero(enemyHero, 3.0)
 			then
 				return BOT_ACTION_DESIRE_HIGH, enemyHero
 			end
@@ -590,7 +570,7 @@ function X.ConsiderFrostbite()
 		and not J.IsDisabled(botTarget)
 		and J.IsInRange(bot, botTarget, nCastRange)
 		and bAttacking
-		and fManaAfter > fManaThreshold1
+		and fManaAfter > fManaThreshold1 + 0.1
 		then
 			return BOT_ACTION_DESIRE_HIGH, botTarget
 		end
@@ -600,17 +580,18 @@ function X.ConsiderFrostbite()
 		if J.IsTormentor(botTarget)
 		and J.IsInRange(bot, botTarget, nCastRange)
 		and bAttacking
-		and fManaAfter > fManaThreshold1
+		and fManaAfter > fManaThreshold1 + 0.1
 		then
 			return BOT_ACTION_DESIRE_HIGH, botTarget
 		end
 	end
 
-	local nEnemyCreeps = bot:GetNearbyCreeps(nCastRange, true)
+	local nEnemyCreeps = bot:GetNearbyCreeps(Min(nCastRange + 300, 1600), true)
 
 	if  not J.IsInLaningPhase()
 	and not J.IsRealInvisible(bot)
 	and not J.IsGoingOnSomeone(bot)
+	and fManaAfter > fManaThreshold1
 	then
 		for _, creep in pairs(nEnemyCreeps) do
 			if  J.IsValid(creep)
@@ -619,10 +600,7 @@ function X.ConsiderFrostbite()
 			and J.CanCastOnTargetAdvanced(creep)
 			then
 				local sCreepName = creep:GetUnitName()
-				if  fManaAfter > fManaThreshold3
-				and #nEnemyHeroes == 0
-				and (J.IsCore(bot) or not J.IsThereCoreInLocation(bot:GetLocation(), 650))
-				then
+				if #nEnemyHeroes == 0 and (J.IsCore(bot) or not J.IsThereCoreInLocation(creep:GetLocation(), 800)) then
 					if  not J.IsOtherAllysTarget(creep)
 					and not J.CanKillTarget(creep, nDamage, DAMAGE_TYPE_MAGICAL)
 					then
@@ -630,14 +608,12 @@ function X.ConsiderFrostbite()
 					end
 				end
 
-				if fManaAfter > fManaThreshold2 then
-					if not J.CanKillTarget(creep, nDamage, DAMAGE_TYPE_MAGICAL) then
-						if creep:IsDominated()
-						or string.find(sCreepName, 'warlock_golem')
-						or creep:HasModifier('modifier_chen_holy_persuasion')
-						then
-							return BOT_ACTION_DESIRE_HIGH, creep
-						end
+				if not J.CanKillTarget(creep, nDamage, DAMAGE_TYPE_MAGICAL) then
+					if creep:IsDominated()
+					or string.find(sCreepName, 'warlock_golem')
+					or creep:HasModifier('modifier_chen_holy_persuasion')
+					then
+						return BOT_ACTION_DESIRE_HIGH, creep
 					end
 				end
 			end
@@ -674,7 +650,7 @@ function X.ConsiderCrystalClone()
 	end
 
 	if J.IsGoingOnSomeone(bot) then
-		if  J.IsValidTarget(botTarget)
+		if  J.IsValidHero(botTarget)
         and J.CanBeAttacked(botTarget)
 		and J.IsInRange(bot, botTarget, nSlideDistance)
 		and J.CanCastOnNonMagicImmune(botTarget)
@@ -684,8 +660,8 @@ function X.ConsiderCrystalClone()
 				return BOT_ACTION_DESIRE_HIGH, vLocation
 			else
 				if  J.IsChasingTarget(bot, botTarget)
-				and J.IsInRange(bot, botTarget, bot:GetAttackTarget() + nSlideDistance)
-				and not J.IsInRange(bot, botTarget, bot:GetAttackTarget())
+				and J.IsInRange(bot, botTarget, bot:GetAttackRange() + nSlideDistance)
+				and not J.IsInRange(bot, botTarget, bot:GetAttackRange())
 				and bot:GetCurrentMovementSpeed() > botTarget:GetCurrentMovementSpeed()
 				then
 					if bot:GetCurrentMovementSpeed() > botTarget:GetCurrentMovementSpeed()
@@ -705,9 +681,12 @@ function X.ConsiderCrystalClone()
 			and J.IsInRange(bot, enemyHero, 1200)
 			and not J.IsDisabled(enemyHero)
 			and enemyHero:IsDisarmed()
-			and bot:WasRecentlyDamagedByHero(enemyHero, 2.0)
+			and bot:WasRecentlyDamagedByAnyHero(4.0)
 			then
-				if botHP < 0.5 or bot:WasRecentlyDamagedByAnyHero(2.0) then
+				if botHP < 0.5
+				or bot:WasRecentlyDamagedByAnyHero(3.0)
+				or bot:IsRooted()
+				then
 					return BOT_ACTION_DESIRE_HIGH, vLocation
 				end
 			end
@@ -757,7 +736,7 @@ function X.ConsiderFreezingField()
         then
 			if J.IsDisabled(botTarget)
 			or J.IsInRange(bot, botTarget, 300)
-			or botTarget:GetCurrentMovementSpeed() < 200
+			or botTarget:GetCurrentMovementSpeed() < 250
 			then
 				local nInRangeAlly = J.GetAlliesNearLoc(bot:GetLocation(), 800)
 				if  J.GetTotalEstimatedDamageToTarget(nAllyHeroes, botTarget, 5.0) > botTarget:GetHealth()
@@ -767,7 +746,9 @@ function X.ConsiderFreezingField()
 				end
 			end
         end
+    end
 
+	if not J.IsRetreating(bot) then
 		for _, enemyHero in pairs(nEnemyHeroes) do
 			if J.IsValidHero(enemyHero)
 			and J.CanBeAttacked(enemyHero)
@@ -777,16 +758,16 @@ function X.ConsiderFreezingField()
 			and not enemyHero:HasModifier('modifier_dazzle_shallow_grave')
 			and enemyHero:GetHealth() > 400
 			then
-				if enemyHero:HasModifier('modifier_enigma_black_hole_pull')
-				or enemyHero:HasModifier('modifier_faceless_void_chronosphere_freeze')
-				or enemyHero:HasModifier('modifier_legion_commander_duel')
-				or J.GetModifierTime(enemyHero, 'modifier_stunned') > 3.5
+				if (enemyHero:HasModifier('modifier_enigma_black_hole_pull'))
+				or (enemyHero:HasModifier('modifier_faceless_void_chronosphere_freeze'))
+				or (enemyHero:HasModifier('modifier_legion_commander_duel'))
+				or (J.GetModifierTime(enemyHero, 'modifier_stunned') > 3.5 and J.IsGoingOnSomeone(bot))
 				then
 					return BOT_ACTION_DESIRE_HIGH
 				end
 			end
 		end
-    end
+	end
 
     return BOT_ACTION_DESIRE_NONE
 end

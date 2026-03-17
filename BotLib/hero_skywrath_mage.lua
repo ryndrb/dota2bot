@@ -357,7 +357,7 @@ function X.ConsiderArcaneBolt()
 		end
 	end
 
-	if J.IsLaning(bot) and J.IsInLaningPhase() and fManaAfter > fManaThreshold1 then
+	if J.IsLaning(bot) and J.IsEarlyGame() and fManaAfter > fManaThreshold1 then
 		local nEnemyLaneCreeps = bot:GetNearbyLaneCreeps(Min(nCastRange + 300, 1600), true)
 		for _, creep in pairs(nEnemyLaneCreeps) do
 			if J.IsValid(creep)
@@ -487,7 +487,7 @@ function X.ConsiderConcussiveShot()
 			or (nLocationAoE.count >= 2 and creep:GetHealth() >= 550)
 			or (nLocationAoE.count >= 1 and creep:GetHealth() >= 800)
 			then
-				return BOT_ACTION_DESIRE_HIGH, creep
+				return BOT_ACTION_DESIRE_HIGH
 			end
 		end
 	end
@@ -499,7 +499,7 @@ function X.ConsiderConcussiveShot()
 			if (nLocationAoE.count >= 3)
 			or (nLocationAoE.count >= 2 and creep:GetHealth() >= 550)
 			then
-				return BOT_ACTION_DESIRE_HIGH, creep
+				return BOT_ACTION_DESIRE_HIGH
 			end
 		end
 
@@ -562,7 +562,6 @@ function X.ConsiderAncientSeal()
 	local nManaCost = AncientSeal:GetManaCost()
 	local fManaAfter = J.GetManaAfter(nManaCost)
 	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {ArcaneBolt, ConcussiveShot, MysticFlare})
-	local fManaThreshold2 = J.GetManaThreshold(bot, nManaCost, {ArcaneBolt, ConcussiveShot, AncientSeal, MysticFlare})
 
 	for _, enemyHero in pairs(nEnemyHeroes) do
 		if J.IsValidHero(enemyHero)
@@ -595,7 +594,8 @@ function X.ConsiderAncientSeal()
 	if J.IsRetreating(bot) and not J.IsRealInvisible(bot) then
 		for _, enemyHero in pairs(nEnemyHeroes) do
 			if J.IsValidHero(enemyHero)
-			and J.IsInRange(bot, enemyHero, nCastRange )
+			and J.CanBeAttacked(enemyHero)
+			and J.IsInRange(bot, enemyHero, nCastRange)
 			and J.CanCastOnNonMagicImmune(enemyHero)
 			and J.CanCastOnTargetAdvanced(enemyHero)
 			and not J.IsDisabled(enemyHero)
@@ -615,7 +615,7 @@ function X.ConsiderAncientSeal()
 		and J.IsInRange(bot, botTarget, nCastRange)
 		and J.CanBeAttacked(botTarget)
 		and bAttacking
-		and fManaAfter > fManaThreshold2
+		and fManaAfter > fManaThreshold1 + 0.1
 		then
 			return BOT_ACTION_DESIRE_HIGH, botTarget
 		end
@@ -625,7 +625,7 @@ function X.ConsiderAncientSeal()
 		if J.IsTormentor(botTarget)
         and J.IsInRange(bot, botTarget, nCastRange)
         and bAttacking
-		and fManaAfter > fManaThreshold2
+		and fManaAfter > fManaThreshold1 + 0.1
 		then
 			return BOT_ACTION_DESIRE_HIGH, botTarget
 		end
@@ -648,10 +648,11 @@ function X.ConsiderMysticFlare()
 	if J.IsGoingOnSomeone(bot) then
 		if J.IsValidHero(botTarget)
 		and J.CanBeAttacked(botTarget)
-		and J.CanCastOnNonMagicImmune( botTarget )
+		and J.CanCastOnNonMagicImmune(botTarget)
 		and J.IsInRange(bot, botTarget, nCastRange)
 		and not botTarget:HasModifier('modifier_abaddon_borrowed_time')
 		and not botTarget:HasModifier('modifier_dazzle_shallow_grave')
+		and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
 		and not botTarget:HasModifier('modifier_templar_assassin_refraction_absorb')
 		and not botTarget:HasModifier('modifier_troll_warlord_battle_trance')
 		and not botTarget:HasModifier('modifier_ursa_enrage')

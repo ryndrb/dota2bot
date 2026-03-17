@@ -845,7 +845,7 @@ function Think()
 			for _, creep in pairs(nEnemyCreeps) do
 				if J.IsValid(creep) and J.CanBeAttacked(creep) then
 					if J.WillKillTarget(creep, bot:GetAttackDamage(), DAMAGE_TYPE_PHYSICAL, GetUnitToUnitDistance(bot, creep) / bot:GetCurrentMovementSpeed()) then
-						bot:Action_AttackUnit(creep, true)
+						bot:Action_AttackUnit(creep, false)
 						return
 					end
 				end
@@ -858,7 +858,7 @@ function Think()
 						and J.IsInRange(LoneDruid.hero, enemy, 500)
 						and J.CanBeAttacked(enemy)
 						then
-							bot:Action_AttackUnit(enemy, true)
+							bot:Action_AttackUnit(enemy, false)
 							return
 						end
 					end
@@ -866,7 +866,7 @@ function Think()
 			end
 
 			if J.IsValid(botTarget) and not LoneDruid.hero:IsChanneling() and J.IsInRange(bot, LoneDruid.hero, 1100) then
-				bot:Action_AttackUnit(botTarget, true)
+				bot:Action_AttackUnit(botTarget, false)
 				return
 			else
 				if DotaTime() >= fNextMovementTime then

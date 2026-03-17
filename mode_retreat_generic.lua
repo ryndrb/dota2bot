@@ -179,20 +179,9 @@ function GetDesire()
         end
     end
 
-    if J.IsInLaningPhase() or botHP < 0.35 then
-        local creepDamage = 0
-        local nEnemyCreeps = bot:GetNearbyCreeps(1200, true)
-        for _, creep in pairs(nEnemyCreeps) do
-            if J.IsValid(creep)
-            and not J.IsRoshan(creep)
-            and not J.IsTormentor(creep)
-            and creep:GetAttackTarget() == bot
-            then
-                creepDamage = creepDamage + bot:GetActualIncomingDamage(creep:GetAttackDamage() * creep:GetAttackSpeed() * 3.0, DAMAGE_TYPE_PHYSICAL)
-            end
-        end
-
-        if creepDamage / (botHealth + botHealthRegen * 3.0) > 0.15 then
+    if J.IsInLaningPhase() or (J.IsEarlyGame() and botHP < 0.35) then
+        local nEnemyCreeps = bot:GetNearbyCreeps(600, true)
+        if J.IsGoingOnSomeone(bot) and #nEnemyCreeps >= 4 and bot:WasRecentlyDamagedByCreep(3.0) then
             return BOT_MODE_DESIRE_VERYHIGH
         end
     end
@@ -225,9 +214,6 @@ function GetDesire()
     end
 
     -- fall
-    local nEnemyNearbyCount = #nEnemyHeroes
-    local nAllyNearbyCount = #nAllyHeroes
-
     local count = 0
     for _, id in pairs( GetTeamPlayers(GetOpposingTeam())) do
         if IsHeroAlive(id) then
@@ -241,7 +227,8 @@ function GetDesire()
         end
     end
 
-    if count > #nEnemyHeroes then nEnemyNearbyCount = count end
+    local nEnemyNearbyCount = Max(#nEnemyHeroes, count)
+    local nAllyNearbyCount = #nAllyHeroes
 
     unitList = GetUnitList(UNIT_LIST_ALL)
     for _, unit in ipairs(unitList) do
@@ -286,8 +273,9 @@ function GetDesire()
         end
     end
 
-    if J.IsInLaningPhase()
+    if  J.IsInLaningPhase()
     and J.IsValidBuilding(nAllyTowers[1])
+    and J.IsInRange(bot, nAllyTowers[1], 350)
     and bot:HasModifier('modifier_tower_aura_bonus')
     and #nEnemyLaneCreeps <= 1
     then
@@ -359,6 +347,10 @@ function GetDesire()
                 nDesire = nDesire - 0.25
             end
         end
+    end
+
+    if bot:HasModifier('modifier_slark_shadow_dance_passive_regen') then
+        nDesire = nDesire - 0.25
     end
 
     -- mulling

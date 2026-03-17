@@ -238,7 +238,7 @@ function X.ConsiderAetherRemnant()
 		end
 	end
 
-	if  J.IsGoingOnSomeone(bot) then
+	if J.IsGoingOnSomeone(bot) then
 		if  J.IsValidHero(botTarget)
 		and J.CanBeAttacked(botTarget)
 		and J.IsInRange(bot, botTarget, nCastRange)
@@ -379,6 +379,7 @@ function X.ConsiderDissimilate()
 		and J.IsInRange(bot, botTarget, nRadius)
 		and bAttacking
 		and fManaAfter > fManaThreshold1
+		and #nEnemyHeroes == 0
 		then
 			bot.dissimilate.status = 'miniboss'
 			bot.dissimilate.location = botTarget:GetLocation()
@@ -391,6 +392,7 @@ function X.ConsiderDissimilate()
 		and J.IsInRange(bot, botTarget, nRadius)
 		and bAttacking
 		and fManaAfter > fManaThreshold1
+		and #nEnemyHeroes == 0
 		then
 			bot.dissimilate.status = 'miniboss'
 			bot.dissimilate.location = botTarget:GetLocation()
@@ -432,6 +434,15 @@ function X.ConsiderResonantPulse()
 	or bot:HasModifier('modifier_void_spirit_resonant_pulse_ring')
 	then
 		return BOT_ACTION_DESIRE_NONE
+	end
+
+	if not bot:IsMagicImmune() then
+		if J.IsStunProjectileIncoming(bot, 550) then
+			local nInRangeEnemy = J.GetEnemiesNearLoc(bot:GetLocation(), nRadius)
+			if #nInRangeEnemy > 0 and bot:WasRecentlyDamagedByAnyHero(2.0) then
+				return BOT_ACTION_DESIRE_HIGH
+			end
+		end
 	end
 
 	if J.IsGoingOnSomeone(bot) then
@@ -493,7 +504,7 @@ function X.ConsiderResonantPulse()
 		end
 	end
 
-	if J.IsLaning(bot) and J.IsInLaningPhase() and fManaAfter > fManaThreshold1 then
+	if J.IsLaning(bot) and J.IsEarlyGame() and fManaAfter > fManaThreshold1 then
 		for _, creep in pairs(nEnemCreeps) do
 			if  J.IsValid(creep)
 			and J.CanKillTarget(creep, nDamage, DAMAGE_TYPE_MAGICAL)
@@ -578,6 +589,9 @@ function X.ConsiderAstralStep()
 	for _, enemyHero in pairs(nEnemyHeroes) do
 		if  J.IsValidHero(enemyHero)
 		and J.CanBeAttacked(enemyHero)
+		and J.IsInRange(bot, enemyHero, nMaxTravelDist)
+		and not J.IsInRange(bot, enemyHero, nMinTravelDist)
+		and not J.IsInRange(bot, enemyHero, bot:GetAttackRange())
 		and J.CanCastOnNonMagicImmune(enemyHero)
 		and GetUnitToLocationDistance(enemyHero, J.GetEnemyFountain()) > 1200
 		and J.CanKillTarget(enemyHero, nDamage, DAMAGE_TYPE_MAGICAL)
@@ -585,12 +599,12 @@ function X.ConsiderAstralStep()
 		and not enemyHero:HasModifier('modifier_dazzle_shallow_grave')
 		and not enemyHero:HasModifier('modifier_faceless_void_chronosphere_freeze')
 		and not enemyHero:HasModifier('modifier_templar_assassin_refraction_absorb')
-		and J.WeAreStronger(bot, 1600)
+		and not J.IsRetreating(bot)
 		then
 			local eta = nCastPoint + nDelay
 			if J.WillKillTarget(enemyHero, nDamage, DAMAGE_TYPE_MAGICAL, eta) then
 				nAstralInterval = 1.5
-				return BOT_ACTION_DESIRE_HIGH, J.GetCorrectLoc(enemyHero, nCastPoint)
+				return BOT_ACTION_DESIRE_HIGH, enemyHero:GetLocation()
 			end
 		end
 	end
@@ -598,8 +612,8 @@ function X.ConsiderAstralStep()
 	if J.IsGoingOnSomeone(bot) then
 		if J.IsValidHero(botTarget)
 		and J.CanBeAttacked(botTarget)
-		and J.CanCastOnNonMagicImmune(botTarget)
 		and J.IsInRange(bot, botTarget, nMaxTravelDist)
+		and J.CanCastOnNonMagicImmune(botTarget)
 		and not J.IsInRange(bot, botTarget, nMinTravelDist)
 		and not J.IsInRange(bot, botTarget, bot:GetAttackRange())
 		and not J.IsDisabled(botTarget)

@@ -286,7 +286,7 @@ function X.ConsiderTelekinesis()
     local bHasShard = Telekinesis:GetSpecialValueInt('shard_max_land_distance_bonus_pct')
     local nManaCost = Telekinesis:GetManaCost()
     local fManaAfter = J.GetManaAfter(nManaCost)
-    local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {Telekinesis, FadeBolt, SpellSteal})
+    local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {FadeBolt, SpellSteal})
 
 	for _, enemyHero in pairs(nEnemyHeroes) do
 		if  J.IsValidHero(enemyHero)
@@ -324,25 +324,25 @@ function X.ConsiderTelekinesis()
     end
 
     if J.IsGoingOnSomeone(bot) then
-		if  J.IsValidTarget(botTarget)
+		if  J.IsValidHero(botTarget)
+        and J.IsInRange(bot, botTarget, nCastRange)
         and J.CanCastOnNonMagicImmune(botTarget)
         and J.CanCastOnTargetAdvanced(botTarget)
-        and J.IsInRange(bot, botTarget, nCastRange)
         and not J.IsDisabled(botTarget)
         and not botTarget:HasModifier('modifier_furion_sprout_damage')
         and not botTarget:HasModifier('modifier_legion_commander_duel')
         and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
 		then
-            if not (#nAllyHeroes >= #nEnemyHeroes + 2) then
+            local nInRangeAlly = J.GetAlliesNearLoc(bot:GetLocation(), 1200)
+            local nInRangeEnemies = J.GetEnemiesNearLoc(bot:GetLocation(), 1200)
+            if not (#nInRangeAlly >= #nInRangeEnemies + 2) and J.IsChasingTarget(bot, botTarget) then
                 telekinesis.is_engage = true
                 return BOT_ACTION_DESIRE_HIGH, botTarget
             end
 		end
 	end
 
-    if J.IsRetreating(bot)
-    and not J.IsRealInvisible(bot)
-	then
+    if J.IsRetreating(bot) and not J.IsRealInvisible(bot) then
 		for _, enemyHero in pairs(nEnemyHeroes) do
 			if  J.IsValidHero(enemyHero)
             and J.CanBeAttacked(enemyHero)
@@ -351,7 +351,7 @@ function X.ConsiderTelekinesis()
             and J.CanCastOnTargetAdvanced(enemyHero)
             and not J.IsDisabled(enemyHero)
 			then
-                if J.IsChasingTarget(enemyHero, bot) or bot:WasRecentlyDamagedByAnyHero(3.0) then
+                if J.IsChasingTarget(enemyHero, bot) or bot:WasRecentlyDamagedByHero(enemyHero, 2.0) then
                     telekinesis.is_retreat = true
                     return BOT_ACTION_DESIRE_HIGH, enemyHero
                 end
@@ -442,7 +442,7 @@ function X.ConsiderFadeBolt()
     local nRadius = FadeBolt:GetSpecialValueInt('radius')
     local nManaCost = FadeBolt:GetManaCost()
     local fManaAfter = J.GetManaAfter(nManaCost)
-    local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {Telekinesis, FadeBolt, SpellSteal})
+    local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {Telekinesis, SpellSteal})
 
     for _, enemyHero in pairs(nEnemyHeroes) do
         if  J.IsValidHero(enemyHero)
@@ -469,7 +469,7 @@ function X.ConsiderFadeBolt()
     end
 
     if J.IsGoingOnSomeone(bot) then
-        if  J.IsValidTarget(botTarget)
+        if  J.IsValidHero(botTarget)
         and J.CanBeAttacked(botTarget)
         and J.IsInRange(bot, botTarget, nCastRange)
         and J.CanCastOnNonMagicImmune(botTarget)
@@ -485,9 +485,7 @@ function X.ConsiderFadeBolt()
         end
     end
 
-    if J.IsRetreating(bot)
-    and not J.IsRealInvisible(bot)
-    then
+    if J.IsRetreating(bot) and not J.IsRealInvisible(bot) then
         for _, enemyHero in pairs(nEnemyHeroes) do
             if  J.IsValidHero(enemyHero)
             and J.CanBeAttacked(enemyHero)
@@ -495,35 +493,13 @@ function X.ConsiderFadeBolt()
             and not J.IsInRange(bot, enemyHero, 300)
             and J.CanCastOnNonMagicImmune(enemyHero)
             and J.CanCastOnTargetAdvanced(enemyHero)
+            and not J.IsDisabled(enemyHero)
             and bot:WasRecentlyDamagedByHero(enemyHero, 3.0)
             then
                 return BOT_ACTION_DESIRE_HIGH, enemyHero
             end
         end
     end
-
-    if not J.IsRetreating(bot) and not J.IsRealInvisible(bot) and fManaAfter > fManaThreshold1 + 0.2 then
-        for _, allyHero in pairs(nAllyHeroes) do
-            if  J.IsValidHero(allyHero)
-            and bot ~= allyHero
-            and J.IsRetreating(allyHero)
-            and not allyHero:IsIllusion()
-            then
-                for _, enemyHero in pairs(nEnemyHeroes) do
-                    if J.IsValidHero(enemyHero)
-					and J.CanBeAttacked(enemyHero)
-                    and J.IsInRange(bot, enemyHero, nCastRange)
-                    and J.IsChasingTarget(enemyHero, allyHero)
-                    and J.CanCastOnNonMagicImmune(enemyHero)
-                    and not J.IsDisabled(enemyHero)
-                    and allyHero:WasRecentlyDamagedByAnyHero(3.0)
-                    then
-                        return BOT_ACTION_DESIRE_HIGH, enemyHero
-                    end
-                end
-            end
-        end
-	end
 
     local nEnemyCreeps = bot:GetNearbyCreeps(Min(nCastRange + 300, 1600), true)
 
@@ -580,7 +556,7 @@ function X.ConsiderFadeBolt()
         end
     end
 
-    if J.IsLaning(bot) and J.IsInLaningPhase() and fManaAfter > fManaThreshold1 and (J.IsCore(bot) or not J.IsThereCoreNearby(800)) then
+    if J.IsLaning(bot) and J.IsEarlyGame() and fManaAfter > fManaThreshold1 and (J.IsCore(bot) or not J.IsThereCoreNearby(800)) then
 		for _, creep in pairs(nEnemyCreeps) do
 			if  J.IsValid(creep)
             and J.CanBeAttacked(creep)
@@ -601,7 +577,7 @@ function X.ConsiderFadeBolt()
                 end
 
                 nLocationAoE = bot:FindAoELocation(true, false, creep:GetLocation(), 0, nRadius, 0, nDamage)
-                if nLocationAoE.count >= 2 and #nEnemyHeroes > 0 then
+                if nLocationAoE.count >= 2 and (#nEnemyHeroes > 0 or nLocationAoE.count >= 3) then
                     return BOT_ACTION_DESIRE_HIGH, creep
                 end
 			end
@@ -611,9 +587,9 @@ function X.ConsiderFadeBolt()
     if J.IsDoingRoshan(bot) then
         if  J.IsRoshan(botTarget)
         and J.CanBeAttacked(botTarget)
+        and J.IsInRange(bot, botTarget, nCastRange)
         and J.CanCastOnNonMagicImmune(botTarget)
         and J.CanCastOnTargetAdvanced(botTarget)
-        and J.IsInRange(bot, botTarget, nCastRange)
         and bAttacking
         and fManaAfter > fManaThreshold1 + 0.1
         then

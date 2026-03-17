@@ -172,6 +172,7 @@ function OnEnd()
 	Bottle = nil
 end
 
+local fNextMovementTime = -math.huge
 function Think()
 	if bot:IsInvulnerable() and bot:DistanceFromFountain() < 500 then
 		bot:Action_MoveToLocation(bot:GetLocation() + RandomVector(500))
@@ -234,14 +235,19 @@ function Think()
 			return
 		end
 
-		if DotaTime() < -25 then
+		if DotaTime() < -10 then
 			local vLocation = X.GetGoOutLocation()
-			if GetUnitToLocationDistance(bot, vLocation) > 500 then
+			if GetUnitToLocationDistance(bot, vLocation) > 300 then
 				bot:Action_MoveToLocation(vLocation)
 				return
+			else
+				if DotaTime() >= fNextMovementTime then
+					bot:Action_MoveToLocation(vLocation + RandomVector(150))
+					fNextMovementTime = DotaTime() + RandomFloat(1, 3)
+					return
+				end
 			end
 
-			bot:Action_ClearActions(false)
 			return
 		end
 
@@ -541,12 +547,27 @@ function X.GetScaledDesire(nBase, nCurrDist, nMaxDist)
     return nBase + math.floor(RemapValClamped(nCurrDist, nMaxDist, 800, 0, 1 - nBase) * 40) / 40
 end
 
+
+local vLocation = nil
 function X.GetGoOutLocation()
-	local vLocation = J.VectorTowards(GetTower(GetTeam(), TOWER_MID_2):GetLocation(), GetTower(GetTeam(), TOWER_MID_1):GetLocation(), 300)
-	if botAssignedLane == LANE_TOP then
-		vLocation 	= J.VectorTowards(GetTower(GetTeam(), TOWER_TOP_2):GetLocation(), GetTower(GetTeam(), TOWER_TOP_1):GetLocation(), 300)
-	elseif botAssignedLane == LANE_BOT then
-		vLocation 	= J.VectorTowards(GetTower(GetTeam(), TOWER_BOT_2):GetLocation(), GetTower(GetTeam(), TOWER_BOT_1):GetLocation(), 300)
+	if vLocation then return vLocation end
+
+	if GetTeam() == TEAM_RADIANT then
+		if botPos == 1 or botPos == 5 then
+			local locs = { Vector(526.370239, -3893.405762, 256.000000), Vector(1999.415894, -4838.790039, 256.000000) }
+			vLocation = locs[RandomInt(1, #locs)]
+		elseif botPos == 2 or botPos == 3 or botPos == 4 then
+			local locs = { Vector(-3456.702637, 649.725403, 256.000000), Vector(-1945.830322, 60.404663, 128.000000) }
+			vLocation = locs[RandomInt(1, #locs)]
+		end
+	elseif GetTeam() == TEAM_DIRE then
+		if botPos == 1 or botPos == 5 then
+			local locs = { Vector(-1051.021973, 3384.059082, 256.000000), Vector(-2415.422119, 4641.448242, 256.000000) }
+			vLocation = locs[RandomInt(1, #locs)]
+		elseif botPos == 2 or botPos == 3 or botPos == 4 then
+			local locs = { Vector(2734.819580, -1155.105225, 256.000000), Vector(1142.979614, -337.891663, 128.000000) }
+			vLocation = locs[RandomInt(1, #locs)]
+		end
 	end
 
 	return vLocation

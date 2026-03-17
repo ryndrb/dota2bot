@@ -300,7 +300,7 @@ function X.ConsiderColdFeet()
     local fManaThreshold2 = J.GetManaThreshold(bot, nManaCost, {ColdFeet, IceVortex, IceBlast})
 
     if J.IsGoingOnSomeone(bot) then
-        if  J.IsValidTarget(botTarget)
+        if  J.IsValidHero(botTarget)
         and J.CanBeAttacked(botTarget)
         and J.CanCastOnNonMagicImmune(botTarget)
         and J.CanCastOnTargetAdvanced(botTarget)
@@ -317,9 +317,9 @@ function X.ConsiderColdFeet()
         for _, enemyHero in pairs(nEnemyHeroes) do
             if J.IsValidHero(enemyHero)
             and J.CanBeAttacked(enemyHero)
+            and J.IsInRange(bot, enemyHero, nCastRange)
             and J.CanCastOnNonMagicImmune(enemyHero)
             and J.CanCastOnTargetAdvanced(enemyHero)
-            and J.IsInRange(bot, enemyHero, nCastRange)
             and not J.IsDisabled(enemyHero)
             and not enemyHero:IsDisarmed()
             and not enemyHero:HasModifier('modifier_cold_feet')
@@ -335,6 +335,7 @@ function X.ConsiderColdFeet()
     if not J.IsRetreating(bot) and not J.IsRealInvisible(bot) and fManaAfter > fManaThreshold1 then
         for _, allyHero in pairs(nAllyHeroes) do
             if  J.IsValidHero(allyHero)
+            and J.CanBeAttacked(allyHero)
             and J.IsRetreating(allyHero)
             and allyHero:WasRecentlyDamagedByAnyHero(3.0)
             and not allyHero:IsIllusion()
@@ -343,9 +344,9 @@ function X.ConsiderColdFeet()
                 for _, enemyHero in pairs(nEnemyHeroes) do
                     if J.IsValidHero(enemyHero)
                     and J.CanBeAttacked(enemyHero)
+                    and J.IsInRange(bot, enemyHero, nCastRange)
                     and J.CanCastOnNonMagicImmune(enemyHero)
                     and J.CanCastOnTargetAdvanced(enemyHero)
-                    and J.IsInRange(bot, enemyHero, nCastRange)
                     and J.IsChasingTarget(enemyHero, allyHero)
                     and not J.IsDisabled(enemyHero)
                     and not enemyHero:HasModifier('modifier_legion_commander_duel')
@@ -364,9 +365,9 @@ function X.ConsiderColdFeet()
     if J.IsDoingRoshan(bot) then
         if  J.IsRoshan(botTarget)
         and J.CanBeAttacked(botTarget)
+        and J.IsInRange(bot, botTarget, nCastRange)
         and not J.IsDisabled(botTarget)
         and J.CanCastOnNonMagicImmune(botTarget)
-        and J.IsInRange(bot, botTarget, nCastRange)
         and bAttacking
         and fManaAfter > fManaThreshold2
         and not botTarget:HasModifier('modifier_cold_feet')
@@ -402,31 +403,33 @@ function X.ConsiderIceVortex()
     local nManaCost = IceVortex:GetManaCost()
     local fManaAfter = J.GetManaAfter(nManaCost)
     local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {ColdFeet, IceBlast})
-    local fManaThreshold2 = J.GetManaThreshold(bot, nManaCost, {ColdFeet, IceVortex, IceBlast})
 
     if J.IsInTeamFight(bot, 1200) then
         local nLocationAoE = bot:FindAoELocation(true, true, bot:GetLocation(), nCastRange, nRadius, 0, 0)
         local nInRangeEnemy = J.GetEnemiesNearLoc(nLocationAoE.targetloc, nRadius)
-
         if #nInRangeEnemy >= 2 then
             return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc
         end
     end
 
     if J.IsGoingOnSomeone(bot) then
-        if  J.IsValidTarget(botTarget)
+        if  J.IsValidHero(botTarget)
         and J.CanBeAttacked(botTarget)
-        and J.CanCastOnNonMagicImmune(botTarget)
         and J.IsInRange(bot, botTarget, nCastRange)
-        and not J.IsDisabled(botTarget)
-        and not J.IsChasingTarget(bot, botTarget)
+        and J.CanCastOnNonMagicImmune(botTarget)
         and not botTarget:HasModifier('modifier_ice_vortex')
         and not botTarget:HasModifier('modifier_abaddon_borrowed_time')
         and not botTarget:HasModifier('modifier_dazzle_shallow_grave')
         and not botTarget:HasModifier('modifier_doom_bringer_doom_aura_enemy')
         and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
+        and not botTarget:HasModifier('modifier_ice_vortex')
         then
-            return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation()
+            if not J.IsRunning(botTarget)
+            or J.IsDisabled(botTarget)
+            or botTarget:GetCurrentMovementSpeed() <= 250
+            then
+                return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation()
+            end
         end
     end
 
@@ -435,8 +438,9 @@ function X.ConsiderIceVortex()
         and J.CanBeAttacked(botTarget)
         and J.CanCastOnNonMagicImmune(botTarget)
         and J.IsInRange(bot, botTarget, nCastRange)
+        and not botTarget:HasModifier('modifier_ice_vortex')
         and bAttacking
-        and fManaAfter > fManaThreshold2
+        and fManaAfter > fManaThreshold1 + 0.1
         then
             return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation()
         end
@@ -445,8 +449,9 @@ function X.ConsiderIceVortex()
     if J.IsDoingTormentor(bot) then
         if  J.IsTormentor(botTarget)
         and J.IsInRange(bot, botTarget, nCastRange)
+        and not botTarget:HasModifier('modifier_ice_vortex')
         and bAttacking
-        and fManaAfter > fManaThreshold2
+        and fManaAfter > fManaThreshold1 + 0.1
         then
             return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation()
         end
@@ -485,10 +490,10 @@ function X.ConsiderChillingTouch()
     end
 
     if J.IsGoingOnSomeone(bot) then
-        if  J.IsValidTarget(botTarget)
+        if  J.IsValidHero(botTarget)
         and J.CanBeAttacked(botTarget)
-        and J.CanCastOnNonMagicImmune(botTarget)
         and J.IsInRange(bot, botTarget, nCastRange)
+        and J.CanCastOnNonMagicImmune(botTarget)
         and not J.IsDisabled(botTarget)
         and not botTarget:HasModifier('modifier_abaddon_borrowed_time')
         and not botTarget:HasModifier('modifier_dazzle_shallow_grave')
@@ -504,8 +509,8 @@ function X.ConsiderChillingTouch()
         for _, enemyHero in pairs(nEnemyHeroes) do
             if J.IsValidHero(enemyHero)
             and J.CanBeAttacked(enemyHero)
-            and J.CanCastOnNonMagicImmune(enemyHero)
             and J.IsInRange(bot, enemyHero, nCastRange)
+            and J.CanCastOnNonMagicImmune(enemyHero)
             and not J.IsInRange(bot, enemyHero, 350)
             and not J.IsDisabled(enemyHero)
             and not enemyHero:IsDisarmed()
@@ -530,8 +535,8 @@ function X.ConsiderChillingTouch()
                 for _, enemyHero in pairs(nEnemyHeroes) do
                     if J.IsValidHero(enemyHero)
                     and J.CanBeAttacked(enemyHero)
-                    and J.CanCastOnNonMagicImmune(enemyHero)
                     and J.IsInRange(bot, enemyHero, nCastRange)
+                    and J.CanCastOnNonMagicImmune(enemyHero)
                     and J.IsChasingTarget(enemyHero, allyHero)
                     and not J.IsDisabled(enemyHero)
                     and not enemyHero:HasModifier('modifier_legion_commander_duel')
@@ -539,6 +544,7 @@ function X.ConsiderChillingTouch()
                     and not enemyHero:HasModifier('modifier_cold_feet')
                     and not enemyHero:HasModifier('modifier_chilling_touch_slow')
                     and not enemyHero:HasModifier('modifier_ice_vortex')
+                    and allyHero:WasRecentlyDamagedByHero(enemyHero, 3.0)
                     then
                         return BOT_ACTION_DESIRE_HIGH, enemyHero
                     end
@@ -583,8 +589,8 @@ function X.ConsiderChillingTouch()
     if J.IsDoingRoshan(bot) then
         if  J.IsRoshan(botTarget)
         and J.CanBeAttacked(botTarget)
-        and J.CanCastOnNonMagicImmune(botTarget)
         and J.IsInRange(bot, botTarget, nCastRange)
+        and J.CanCastOnNonMagicImmune(botTarget)
         and bAttacking
         and fManaAfter > fManaThreshold1 + 0.1
         then

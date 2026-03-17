@@ -257,7 +257,7 @@ function X.SkillsComplement()
     if BlinkPulseHoleDesire > 0 and J.CanCastAbility(bot.Blink) then
         bot:Action_ClearActions(false)
 
-        if vTeamFightLocation and J.GetDistance(vTeamFightLocation, BlinkPulseHoleLocation) <= 1200 then
+        if (vTeamFightLocation and J.GetDistance(vTeamFightLocation, BlinkPulseHoleLocation) <= 1200) or J.IsStunProjectileIncoming(bot, 900) then
             local BlackKingBar = J.IsItemAvailable('item_black_king_bar')
             if J.CanCastAbility(BlackKingBar) and (bot:GetMana() > (MidnightPulse:GetManaCost() + BlackHole:GetManaCost() + BlackKingBar:GetManaCost() + 100)) and not bot:IsMagicImmune() then
                 bot:ActionQueue_UseAbility(BlackKingBar)
@@ -276,7 +276,7 @@ function X.SkillsComplement()
     if BlinkHoleDesire > 0 and J.CanCastAbility(bot.Blink) then
         bot:Action_ClearActions(false)
 
-        if vTeamFightLocation and J.GetDistance(vTeamFightLocation, BlinkHoleLocation) <= 1200 then
+        if (vTeamFightLocation and J.GetDistance(vTeamFightLocation, BlinkHoleLocation) <= 1200) or J.IsStunProjectileIncoming(bot, 900) then
             local BlackKingBar = J.IsItemAvailable('item_black_king_bar')
             if J.CanCastAbility(BlackKingBar) and (bot:GetMana() > (BlackHole:GetManaCost() + BlackKingBar:GetManaCost() + 100)) and not bot:IsMagicImmune() then
                 bot:ActionQueue_UseAbility(BlackKingBar)
@@ -516,7 +516,7 @@ function X.ConsiderDemonicSummoning()
         end
     end
 
-    if J.IsLaning(bot) and J.IsInLaningPhase() and fManaAfter > fManaThreshold1 and fHealthAfter > 0.55 then
+    if J.IsLaning(bot) and J.IsEarlyGame() and fManaAfter > fManaThreshold1 and fHealthAfter > 0.55 then
         local nInRangeAlly = J.GetAlliesNearLoc(bot:GetLocation(), 1200)
         local nInRangeEnemy = J.GetEnemiesNearLoc(bot:GetLocation(), 1200)
         if #nInRangeAlly >= #nInRangeEnemy and not bot:WasRecentlyDamagedByAnyHero(5.0) then
@@ -564,6 +564,12 @@ function X.ConsiderMidnightPulse()
     local fManaAfter = J.GetManaAfter(nManaCost)
 	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {BlackHole})
 
+    local bCanBlackHole = J.CanCastAbilitySoon(BlackHole, 5.0) and (MidnightPulse:GetManaCost() + BlackHole:GetManaCost() + 100 < bot:GetMana())
+
+    if bCanBlackHole then
+        return BOT_ACTION_DESIRE_NONE
+    end
+
 	if J.IsInTeamFight(bot, 1200) then
         local nLocationAoE = bot:FindAoELocation(true, true, bot:GetLocation(), nCastRange, nRadius, 0, 0)
         local nInRangeEnemy = J.GetEnemiesNearLoc(nLocationAoE.targetloc, nRadius * 0.8)
@@ -575,6 +581,7 @@ function X.ConsiderMidnightPulse()
                 and not J.IsChasingTarget(bot, enemyHero)
                 and not enemyHero:HasModifier('modifier_necrolyte_reapers_scythe')
                 and not enemyHero:HasModifier('modifier_enigma_midnight_pulse_damage')
+                and not enemyHero:HasModifier('modifier_teleporting')
                 then
                     count = count + 1
                 end
@@ -595,6 +602,7 @@ function X.ConsiderMidnightPulse()
         and not botTarget:HasModifier('modifier_abaddon_borrowed_time')
         and not botTarget:HasModifier('modifier_enigma_midnight_pulse_damage')
         and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
+        and not botTarget:HasModifier('modifier_teleporting')
 		then
             if J.IsDisabled(botTarget)
             or botTarget:GetCurrentMovementSpeed() <= 250
@@ -610,7 +618,7 @@ end
 
 function X.ConsiderBlackHole()
     if not J.CanCastAbility(BlackHole) then
-        return BOT_ACTION_DESIRE_NONE, 0
+        return BOT_ACTION_DESIRE_NONE
     end
 
 	local nCastRange = J.GetProperCastRange(false, bot, BlackHole:GetCastRange())
@@ -622,12 +630,12 @@ function X.ConsiderBlackHole()
 
     if not bot:IsMagicImmune() then
 		if J.IsStunProjectileIncoming(bot, 1200) then
-			return BOT_ACTION_DESIRE_NONE, 0
+			return BOT_ACTION_DESIRE_NONE
 		end
 	end
 
     if J.GetAttackProjectileDamageByRange(bot, 1200) > bot:GetHealth() + 200 then
-        return BOT_ACTION_DESIRE_NONE, 0
+        return BOT_ACTION_DESIRE_NONE
     end
 
 	if J.IsInTeamFight(bot, 1200) then
@@ -695,7 +703,7 @@ function X.ConsiderBlackHole()
 		end
 	end
 
-    return BOT_ACTION_DESIRE_NONE, 0
+    return BOT_ACTION_DESIRE_NONE
 end
 
 function X.ConsiderBlinkHole()
@@ -703,7 +711,7 @@ function X.ConsiderBlinkHole()
 
         local nManaCost = BlackHole:GetManaCost() + 100
         if bot:GetMana() < nManaCost then
-            return BOT_ACTION_DESIRE_NONE, 0
+            return BOT_ACTION_DESIRE_NONE
         end
 
         local nRadius = BlackHole:GetSpecialValueInt('radius')
@@ -722,7 +730,7 @@ function X.ConsiderBlinkHole()
                     for _, enemyHero in pairs(nInRangeEnemy) do
                         if  J.IsValidHero(enemyHero)
                         and J.CanBeAttacked(enemyHero)
-                        and not J.IsChasingTarget(allyHero, enemyHero)
+                        and not J.IsChasingTarget(bot, enemyHero)
                         and not enemyHero:HasModifier('modifier_abaddon_borrowed_time')
                         and not enemyHero:HasModifier('modifier_dazzle_shallow_grave')
                         and not enemyHero:HasModifier('modifier_faceless_void_chronosphere_freeze')
@@ -745,7 +753,7 @@ function X.ConsiderBlinkHole()
         end
     end
 
-    return BOT_ACTION_DESIRE_NONE, 0
+    return BOT_ACTION_DESIRE_NONE
 end
 
 function X.ConsiderBlinkPulseHole()
@@ -753,7 +761,7 @@ function X.ConsiderBlinkPulseHole()
 
         local nManaCost = BlackHole:GetManaCost() + MidnightPulse:GetManaCost() + 100
         if bot:GetMana() < nManaCost then
-            return BOT_ACTION_DESIRE_NONE, 0
+            return BOT_ACTION_DESIRE_NONE
         end
 
         local nRadius = BlackHole:GetSpecialValueInt('radius')
@@ -795,7 +803,7 @@ function X.ConsiderBlinkPulseHole()
         end
     end
 
-    return BOT_ACTION_DESIRE_NONE, 0
+    return BOT_ACTION_DESIRE_NONE
 end
 
 return X

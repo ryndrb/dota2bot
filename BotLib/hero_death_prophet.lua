@@ -301,7 +301,6 @@ function X.ConsiderCryptSwarm()
 	local nManaCost = CryptSwarm:GetManaCost()
 	local fManaAfter = J.GetManaAfter(nManaCost)
     local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {Silence, SpiritSiphon, Exorcism})
-	local fManaThreshold2 = J.GetManaThreshold(bot, nManaCost, {CryptSwarm, Silence, SpiritSiphon, Exorcism})
 
     for _, enemyHero in pairs(nEnemyHeroes) do
         if  J.IsValidHero(enemyHero)
@@ -397,7 +396,7 @@ function X.ConsiderCryptSwarm()
         end
     end
 
-    if J.IsLaning(bot) and J.IsInLaningPhase() and fManaAfter > fManaThreshold1 then
+    if J.IsLaning(bot) and J.IsEarlyGame() and fManaAfter > fManaThreshold1 then
 		for _, creep in pairs(nEnemyCreeps) do
 			if  J.IsValid(creep)
             and J.CanBeAttacked(creep)
@@ -565,7 +564,7 @@ function X.ConsiderSpiritSiphon()
             and not enemyHero:HasModifier('modifier_necrolyte_reapers_scythe')
 			and bot:WasRecentlyDamagedByHero(enemyHero, 3.0)
 			then
-				if enemyHero:GetCurrentMovementSpeed() >= bot:GetCurrentMovementSpeed()
+				if enemyHero:GetCurrentMovementSpeed() > bot:GetCurrentMovementSpeed()
 				or bot:IsRooted()
 				then
 					return BOT_ACTION_DESIRE_HIGH, enemyHero
@@ -595,6 +594,7 @@ function X.ConsiderExorcism()
 			and not botTarget:HasModifier('modifier_abaddon_borrowed_time')
 			and not botTarget:HasModifier('modifier_dazzle_shallow_grave')
             and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
+			and not botTarget:HasModifier('modifier_teleporting')
 			then
 				return BOT_ACTION_DESIRE_HIGH
 			end

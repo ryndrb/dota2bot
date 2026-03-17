@@ -302,7 +302,7 @@ function X.ConsiderStickyNapalm()
     local fBuildingDamagePct = StickyNapalm:GetSpecialValueInt('building_damage_pct') / 100
 
     if J.IsGoingOnSomeone(bot) then
-		if  J.IsValidTarget(botTarget)
+		if  J.IsValidHero(botTarget)
         and J.CanBeAttacked(botTarget)
         and J.IsInRange(bot, botTarget, nCastRange)
         and J.CanCastOnNonMagicImmune(botTarget)
@@ -384,7 +384,7 @@ function X.ConsiderStickyNapalm()
                 return BOT_ACTION_DESIRE_HIGH, enemyHero:GetLocation()
             end
 
-            if J.IsLaning(bot) and J.IsInLaningPhase() then
+            if J.IsLaning(bot) and J.IsEarlyGame() then
                 local nEnemyLaneCreeps = enemyHero:GetNearbyLaneCreeps(nRadius, false)
                 if #nEnemyLaneCreeps > 0 then
                     return BOT_ACTION_DESIRE_HIGH, enemyHero:GetLocation()
@@ -407,8 +407,8 @@ function X.ConsiderStickyNapalm()
     if J.IsDoingRoshan(bot) then
 		if  J.IsRoshan(botTarget)
         and J.CanBeAttacked(botTarget)
-        and J.CanCastOnNonMagicImmune(botTarget)
         and J.IsInRange(bot, botTarget, nCastRange)
+        and J.CanCastOnNonMagicImmune(botTarget)
         and bAttacking
 		then
 			return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation()
@@ -417,7 +417,6 @@ function X.ConsiderStickyNapalm()
 
     if J.IsDoingTormentor(bot) then
 		if  J.IsTormentor(botTarget)
-        and J.CanCastOnNonMagicImmune(botTarget)
         and J.IsInRange(bot, botTarget, nCastRange)
         and bAttacking
 		then
@@ -462,18 +461,15 @@ function X.ConsiderFlamebreak()
     if J.IsGoingOnSomeone(bot) then
 		if  J.IsValidHero(botTarget)
         and J.CanBeAttacked(botTarget)
-        and J.CanCastOnNonMagicImmune(botTarget)
         and J.IsInRange(bot, botTarget, nCastRange)
+        and J.CanCastOnNonMagicImmune(botTarget)
         and not J.IsDisabled(botTarget)
         and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
 		then
             local eta = (GetUnitToUnitDistance(bot, botTarget) / nSpeed) + nCastPoint
-            local vLocation = J.GetCorrectLoc(botTarget, eta)
+            local vLocation = J.VectorAway(J.GetCorrectLoc(botTarget, eta), bot:GetLocation(), nRadius / 2)
             if GetUnitToLocationDistance(bot, vLocation) <= nCastRange then
-                vLocation = J.VectorAway(vLocation, bot:GetLocation(), nRadius / 2)
-                if GetUnitToLocationDistance(bot, vLocation) <= nCastRange then
-                    return BOT_ACTION_DESIRE_HIGH, vLocation
-                end
+                return BOT_ACTION_DESIRE_HIGH, vLocation
             end
 		end
 	end
@@ -544,7 +540,7 @@ function X.ConsiderFlamebreak()
         end
     end
 
-    if J.IsLaning(bot) and J.IsInLaningPhase() and fManaAfter > fManaThreshold1 then
+    if J.IsLaning(bot) and J.IsEarlyGame() and fManaAfter > fManaThreshold1 then
 		for _, creep in pairs(nEnemyCreeps) do
 			if  J.IsValid(creep)
             and J.CanBeAttacked(creep)
@@ -665,7 +661,7 @@ function X.ConsiderFlamingLasso()
         for _, enemyHero in pairs(nEnemyHeroes) do
             if  J.IsValidHero(enemyHero)
             and J.CanBeAttacked(enemyHero)
-            and J.IsInRange(bot, enemyHero, nCastRange + 300)
+            and J.IsInRange(bot, enemyHero, nCastRange * 2)
             and J.CanCastOnTargetAdvanced(enemyHero)
             and not J.IsDisabled(enemyHero)
             and not J.IsHaveAegis(enemyHero)
@@ -709,7 +705,7 @@ function X.ConsiderBlinkLasso()
             return BOT_ACTION_DESIRE_NONE, nil
         end
 
-        if J.IsInTeamFight(bot, 1200) then
+        if J.IsInTeamFight(bot, 2000) then
             local hTarget = nil
             local hTargetDamage = 0
             for _, enemyHero in pairs(nEnemyHeroes) do
@@ -729,8 +725,8 @@ function X.ConsiderBlinkLasso()
                 and enemyHero:GetHealth() >= 500
                 then
                     local enemyHeroDamage = enemyHero:GetAttackDamage() * enemyHero:GetAttackSpeed()
-                    local nInRangeAlly = J.GetAlliesNearLoc(bot:GetLocation(), 1200)
-                    local nInRangeEnemy = J.GetEnemiesNearLoc(bot:GetLocation(), 1200)
+                    local nInRangeAlly = J.GetAlliesNearLoc(enemyHero:GetLocation(), 1200)
+                    local nInRangeEnemy = J.GetEnemiesNearLoc(enemyHero:GetLocation(), 1200)
 
                     if enemyHeroDamage > hTargetDamage and #nInRangeAlly >= #nInRangeEnemy then
                         hTarget = enemyHero

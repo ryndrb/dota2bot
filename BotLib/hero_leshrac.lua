@@ -259,7 +259,6 @@ function X.ConsiderSplitEarth()
     local nManaCost = SplitEarth:GetManaCost()
     local fManaAfter = J.GetManaAfter(nManaCost)
     local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {DiabolicEdict, LightningStorm, Nihilism, PulseNova})
-    local fManaThreshold2 = J.GetManaThreshold(bot, nManaCost, {SplitEarth, DiabolicEdict, LightningStorm, Nihilism, PulseNova})
 
     for _, enemyHero in pairs(nEnemyHeroes) do
         if J.IsValidHero(enemyHero)
@@ -300,9 +299,9 @@ function X.ConsiderSplitEarth()
                 if J.IsValidHero(enemyHero)
                 and J.CanBeAttacked(enemyHero)
                 and J.CanCastOnNonMagicImmune(enemyHero)
-                and not J.IsChasingTarget(bot, enemyHero)
                 and not enemyHero:HasModifier('modifier_abaddon_borrowed_time')
                 and not enemyHero:HasModifier('modifier_dazzle_shallow_grave')
+                and not enemyHero:HasModifier('modifier_necrolyte_reapers_scythe')
                 then
                     for i = 0, enemyHero:NumModifiers() do
                         local sModifierName = enemyHero:GetModifierName(i)
@@ -333,8 +332,8 @@ function X.ConsiderSplitEarth()
         if J.IsValidHero(botTarget)
         and J.CanBeAttacked(botTarget)
         and J.CanCastOnNonMagicImmune(botTarget)
-        and not J.IsChasingTarget(bot, botTarget)
         and not botTarget:HasModifier('modifier_abaddon_borrowed_time')
+        and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
         then
             for i = 0, botTarget:NumModifiers() do
                 local sModifierName = botTarget:GetModifierName(i)
@@ -359,25 +358,25 @@ function X.ConsiderSplitEarth()
         end
     end
 
-    if J.IsRetreating(bot)
-    and not J.IsRealInvisible(bot)
-    and bot:WasRecentlyDamagedByAnyHero(3.0)
-	then
+    if J.IsRetreating(bot) and not J.IsRealInvisible(bot) then
         for _, enemyHero in pairs(nEnemyHeroes) do
             if  J.IsValidHero(enemyHero)
+            and J.CanBeAttacked(enemyHero)
             and J.IsInRange(bot, enemyHero, nRadius)
             and J.CanCastOnNonMagicImmune(enemyHero)
-            and J.IsChasingTarget(enemyHero, bot)
             and not J.IsDisabled(enemyHero)
+            and bot:WasRecentlyDamagedByHero(enemyHero, 3.0)
             then
-                return BOT_ACTION_DESIRE_HIGH, bot:GetLocation()
+                if J.IsRunning(bot) or bot:IsRooted() then
+                    return BOT_ACTION_DESIRE_HIGH, bot:GetLocation()
+                end
             end
         end
 	end
 
-    local nEnemyCreeps = bot:GetNearbyCreeps(nCastRange, true)
+    local nEnemyCreeps = bot:GetNearbyCreeps(Min(nCastRange + 300, 1600), true)
 
-	if J.IsPushing(bot) and bAttacking and fManaAfter > fManaThreshold2 and #nAllyHeroes <= 2 and #nEnemyHeroes == 0 then
+	if J.IsPushing(bot) and bAttacking and fManaAfter > fManaThreshold1 + 0.1 and #nAllyHeroes <= 2 and #nEnemyHeroes == 0 then
 		for _, creep in pairs(nEnemyCreeps) do
             if J.IsValid(creep) and J.CanBeAttacked(creep) and not J.IsRunning(creep) then
                 local nLocationAoE = bot:FindAoELocation(true, false, creep:GetLocation(), 0, nRadius, 0, 0)
@@ -423,17 +422,6 @@ function X.ConsiderSplitEarth()
         end
     end
 
-    if J.IsLaning(bot) and not J.IsInLaningPhase() and fManaAfter > fManaThreshold1 and (J.IsCore(bot) or not J.IsThereCoreNearby(800)) then
-        for _, creep in pairs(nEnemyCreeps) do
-            if J.IsValid(creep) and J.CanBeAttacked(creep) and not J.IsRunning(creep) then
-                local nLocationAoE = bot:FindAoELocation(true, false, creep:GetLocation(), 0, nRadius, 0, nDamage)
-                if (nLocationAoE.count >= 3) then
-                    return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc
-                end
-            end
-        end
-    end
-
     if J.IsDoingRoshan(bot) then
         if  J.IsRoshan(botTarget)
         and J.CanBeAttacked(botTarget)
@@ -473,10 +461,10 @@ function X.ConsiderDiabolicEdict()
     local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {SplitEarth, LightningStorm, Nihilism, PulseNova})
 
     if J.IsGoingOnSomeone(bot) then
-        if  J.IsValidTarget(botTarget)
+        if  J.IsValidHero(botTarget)
         and J.CanBeAttacked(botTarget)
-        and J.CanCastOnNonMagicImmune(botTarget)
         and J.IsInRange(bot, botTarget, nRadius)
+        and J.CanCastOnNonMagicImmune(botTarget)
         and not botTarget:HasModifier('modifier_abaddon_borrowed_time')
         and not botTarget:HasModifier('modifier_dazzle_shallow_grave')
         and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
@@ -484,19 +472,16 @@ function X.ConsiderDiabolicEdict()
         then
             if (J.IsChasingTarget(bot, botTarget) and J.CanKillTarget(botTarget, nDamage * nNumExplosions + 200, DAMAGE_TYPE_PURE) and J.IsInRange(bot, botTarget, nRadius * 0.8))
             or not J.IsChasingTarget(bot, botTarget)
-            or J.IsInTeamFight(bot, nRadius * 1.5)
             or J.IsDisabled(botTarget)
             or bot:GetCurrentMovementSpeed() < 200
+            or botTarget:GetCurrentMovementSpeed() < 200
             then
                 return BOT_ACTION_DESIRE_HIGH
             end
         end
     end
 
-    if J.IsRetreating(bot)
-    and not J.IsRealInvisible(bot)
-    and bot:WasRecentlyDamagedByAnyHero(3.0)
-	then
+    if J.IsRetreating(bot) and not J.IsRealInvisible(bot) then
         for _, enemyHero in pairs(nEnemyHeroes) do
             if  J.IsValidHero(enemyHero)
             and J.CanBeAttacked(enemyHero)
@@ -504,14 +489,21 @@ function X.ConsiderDiabolicEdict()
             and J.CanCastOnNonMagicImmune(enemyHero)
             and J.IsChasingTarget(enemyHero, bot)
             then
-                return BOT_ACTION_DESIRE_HIGH
+                local nLocationAoE = bot:FindAoELocation(true, true, bot:GetLocation(), 0, nRadius, 0, 0)
+                if nLocationAoE.count >= 2 or bot:WasRecentlyDamagedByHero(enemyHero, 2.0) then
+                    if (J.IsRunning(bot) and bot:GetCurrentMovementSpeed() <= enemyHero:GetCurrentMovementSpeed())
+                    or (bot:IsRooted())
+                    then
+                        return BOT_ACTION_DESIRE_HIGH
+                    end
+                end
             end
         end
 	end
 
-    local nEnemyCreeps = bot:GetNearbyCreeps(nRadius, true)
+    local nEnemyCreeps = bot:GetNearbyCreeps(Min(nRadius, 1600), true)
 
-    if J.IsFarming(bot) and bAttacking and fManaAfter > fManaThreshold1 and not bot:HasModifier('modifier_leshrac_pulse_nova') then
+    if ((J.IsPushing(bot) and #nAllyHeroes <= 2) or J.IsDefending(bot) or J.IsFarming(bot)) and bAttacking and fManaAfter > fManaThreshold1 and not bot:HasModifier('modifier_leshrac_pulse_nova') then
         if J.IsValid(nEnemyCreeps[1]) and J.CanBeAttacked(nEnemyCreeps[1]) then
             if (#nEnemyCreeps >= 3)
             or (#nEnemyCreeps >= 2 and nEnemyCreeps[1]:IsAncientCreep())
@@ -540,9 +532,9 @@ function X.ConsiderDiabolicEdict()
 
     if J.IsDoingRoshan(bot) then
         if  J.IsRoshan(botTarget)
-        and J.CanCastOnNonMagicImmune(botTarget)
         and J.CanBeAttacked(botTarget)
         and J.IsInRange(bot, botTarget, nRadius)
+        and J.CanCastOnNonMagicImmune(botTarget)
         and bAttacking
         and fManaAfter > fManaThreshold1
         then
@@ -574,7 +566,6 @@ function X.ConsiderLightningStorm()
     local nManaCost = LightningStorm:GetManaCost()
     local fManaAfter = J.GetManaAfter(nManaCost)
     local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {SplitEarth, DiabolicEdict, Nihilism, PulseNova})
-    local fManaThreshold2 = J.GetManaThreshold(bot, nManaCost, {SplitEarth, DiabolicEdict, LightningStorm, Nihilism, PulseNova})
 
     for _, enemyHero in pairs(nEnemyHeroes) do
         if  J.IsValidHero(enemyHero)
@@ -593,11 +584,11 @@ function X.ConsiderLightningStorm()
     end
 
     if J.IsGoingOnSomeone(bot) then
-        if  J.IsValidTarget(botTarget)
+        if  J.IsValidHero(botTarget)
         and J.CanBeAttacked(botTarget)
+        and J.IsInRange(bot, botTarget, nCastRange + 300)
         and J.CanCastOnNonMagicImmune(botTarget)
         and J.CanCastOnTargetAdvanced(botTarget)
-        and J.IsInRange(bot, botTarget, nCastRange + 300)
         and not J.IsDisabled(botTarget)
         and not botTarget:HasModifier('modifier_abaddon_borrowed_time')
         and not botTarget:HasModifier('modifier_dazzle_shallow_grave')
@@ -610,14 +601,13 @@ function X.ConsiderLightningStorm()
         end
     end
 
-    if J.IsRetreating(bot) and not J.IsRealInvisible(bot) and bot:WasRecentlyDamagedByAnyHero(3.0) then
+    if J.IsRetreating(bot) and not J.IsRealInvisible(bot) then
         for _, enemyHero in pairs(nEnemyHeroes) do
             if  J.IsValidHero(enemyHero)
             and J.CanBeAttacked(enemyHero)
             and J.IsInRange(bot, enemyHero, nCastRange)
             and J.CanCastOnNonMagicImmune(enemyHero)
             and J.CanCastOnTargetAdvanced(enemyHero)
-            and J.IsChasingTarget(enemyHero, bot)
             and not J.IsDisabled(enemyHero)
             and bot:WasRecentlyDamagedByHero(enemyHero, 2.0)
             then
@@ -626,36 +616,11 @@ function X.ConsiderLightningStorm()
         end
     end
 
-    if not J.IsRetreating(bot) and not J.IsRealInvisible(bot) and fManaAfter > fManaThreshold2 and not J.IsInTeamFight(bot, 1200) then
-        for _, allyHero in pairs(nAllyHeroes) do
-            if  J.IsValidHero(allyHero)
-            and bot ~= allyHero
-            and J.IsRetreating(allyHero)
-            and allyHero:WasRecentlyDamagedByAnyHero(2.0)
-            and not allyHero:IsIllusion()
-            then
-                for _, enemyHero in pairs(nEnemyHeroes) do
-                    if  J.IsValidHero(enemyHero)
-                    and J.CanBeAttacked(enemyHero)
-                    and J.IsInRange(bot, enemyHero, nCastRange)
-                    and J.CanCastOnNonMagicImmune(enemyHero)
-                    and J.CanCastOnTargetAdvanced(enemyHero)
-                    and J.IsChasingTarget(enemyHero, allyHero)
-                    and not J.IsDisabled(enemyHero)
-                    and allyHero:WasRecentlyDamagedByHero(enemyHero, 2.0)
-                    then
-                        return BOT_ACTION_DESIRE_HIGH, enemyHero
-                    end
-                end
-            end
-        end
-    end
+    local nEnemyCreeps = bot:GetNearbyCreeps(Min(nCastRange + 300, 1600), true)
 
-    local nEnemyCreeps = bot:GetNearbyCreeps(nCastRange, true)
-
-	if J.IsPushing(bot) and bAttacking and fManaAfter > fManaThreshold2 and #nAllyHeroes <= 3 and #nEnemyHeroes == 0 then
+	if J.IsPushing(bot) and bAttacking and fManaAfter > fManaThreshold1 + 0.1 and #nAllyHeroes <= 3 and #nEnemyHeroes == 0 then
 		for _, creep in pairs(nEnemyCreeps) do
-            if J.IsValid(creep) and J.CanBeAttacked(creep) and not J.IsRunning(creep) then
+            if J.IsValid(creep) and J.CanBeAttacked(creep) then
                 local nLocationAoE = bot:FindAoELocation(true, false, creep:GetLocation(), 0, nRadius, 0, 0)
                 if (nLocationAoE.count >= 4)
 				or (nLocationAoE.count >= 2 and string.find(creep:GetUnitName(), 'upgraded'))
@@ -668,7 +633,7 @@ function X.ConsiderLightningStorm()
 
 	if J.IsDefending(bot) and bAttacking and fManaAfter > fManaThreshold1 then
 		for _, creep in pairs(nEnemyCreeps) do
-            if J.IsValid(creep) and J.CanBeAttacked(creep) and not J.IsRunning(creep) then
+            if J.IsValid(creep) and J.CanBeAttacked(creep) then
                 local nLocationAoE = bot:FindAoELocation(true, false, creep:GetLocation(), 0, nRadius, 0, 0)
                 if (nLocationAoE.count >= 4)
 				or (nLocationAoE.count >= 2 and string.find(creep:GetUnitName(), 'upgraded'))
@@ -681,7 +646,7 @@ function X.ConsiderLightningStorm()
 
     if J.IsFarming(bot) and bAttacking and fManaAfter > fManaThreshold1 then
         for _, creep in pairs(nEnemyCreeps) do
-            if J.IsValid(creep) and J.CanBeAttacked(creep) and not J.IsRunning(creep) then
+            if J.IsValid(creep) and J.CanBeAttacked(creep) then
                 local nLocationAoE = bot:FindAoELocation(true, false, creep:GetLocation(), 0, nRadius, 0, 0)
                 if (nLocationAoE.count >= 3)
                 or (nLocationAoE.count >= 2 and creep:GetHealth() >= 500)
@@ -694,7 +659,7 @@ function X.ConsiderLightningStorm()
         end
     end
 
-    if J.IsLaning(bot) and J.IsInLaningPhase() and fManaAfter > fManaThreshold1 then
+    if J.IsLaning(bot) and J.IsEarlyGame() and fManaAfter > fManaThreshold1 then
 		for _, creep in pairs(nEnemyCreeps) do
 			if  J.IsValid(creep)
             and J.CanBeAttacked(creep)
@@ -719,16 +684,12 @@ function X.ConsiderLightningStorm()
     if J.IsDoingRoshan(bot) then
         if  J.IsRoshan(botTarget)
         and J.CanBeAttacked(botTarget)
-        and J.CanCastOnNonMagicImmune(botTarget)
         and J.IsInRange(bot, botTarget, nCastRange)
+        and J.CanCastOnNonMagicImmune(botTarget)
         and bAttacking
         and fManaAfter > fManaThreshold1
         then
-            if J.CanCastOnTargetAdvanced(botTarget)
-            or fManaAfter > fManaThreshold2
-            then
-                return BOT_ACTION_DESIRE_HIGH, botTarget
-            end
+            return BOT_ACTION_DESIRE_HIGH, botTarget
         end
     end
 
@@ -754,18 +715,21 @@ function X.ConsiderNihilism()
 
     local nRadius = Nihilism:GetSpecialValueInt('radius')
 
-    if J.GetAttackProjectileDamageByRange(bot, 550) > bot:GetHealth() then
+    -- might grief sometimes
+
+    if J.GetAttackProjectileDamageByRange(bot, 900) > bot:GetHealth() then
         return BOT_ACTION_DESIRE_HIGH
     end
 
-    if J.IsRetreating(bot)
-    and not J.IsRealInvisible(bot)
-    and bot:WasRecentlyDamagedByAnyHero(3.0)
-    then
+    if J.IsRetreating(bot) and not J.IsRealInvisible(bot) then
         for _, enemyHero in pairs(nEnemyHeroes) do
             if  J.IsValidHero(enemyHero)
-            and J.IsInRange(bot, enemyHero, nRadius + 300)
+            and J.CanBeAttacked(enemyHero)
+            and J.IsInRange(bot, enemyHero, nRadius)
             and not J.IsSuspiciousIllusion(enemyHero)
+            and not J.IsDisabled(enemyHero)
+            and not enemyHero:IsDisarmed()
+            and enemyHero:GetUnitName() ~= 'npc_dota_hero_muerta'
             then
                 if J.IsChasingTarget(enemyHero, bot)
                 or bot:IsRooted()
@@ -791,11 +755,12 @@ function X.ConsiderPulseNova()
     local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {SplitEarth, DiabolicEdict, LightningStorm, Nihilism})
     local bIsToggled = PulseNova:GetToggleState()
 
-    local nEnemyCreeps = bot:GetNearbyCreeps(nRadius, true)
-    local nInRangeEnemy = bot:GetNearbyHeroes(nRadius, true, BOT_MODE_NONE)
+    local nEnemyCreeps = bot:GetNearbyCreeps(Min(nRadius, 1600), true)
+    local nInRangeEnemy = bot:GetNearbyHeroes(Min(nRadius, 1600), true, BOT_MODE_NONE)
+    local nInRangeEnemy_ = bot:GetNearbyHeroes(Min(nRadius + 150, 1600), true, BOT_MODE_NONE)
 
     if  bot:HasModifier('modifier_item_bloodstone_active')
-    and ((#nEnemyCreeps >= 1 and fManaAfter > fManaThreshold1) or #nEnemyHeroes > 0)
+    and ((#nEnemyCreeps >= 1 and fManaAfter > fManaThreshold1) or #nInRangeEnemy > 0)
     then
         if not bIsToggled then
             return BOT_ACTION_DESIRE_HIGH
@@ -805,7 +770,7 @@ function X.ConsiderPulseNova()
     end
 
     if J.IsInTeamFight(bot, 1200) then
-        if #nInRangeEnemy >= 1 then
+        if #nInRangeEnemy >= 1 or (#nInRangeEnemy_ >= 1 and bot:WasRecentlyDamagedByAnyHero(3.0)) then
             if not bIsToggled then
                 return BOT_ACTION_DESIRE_HIGH
             else
@@ -815,7 +780,7 @@ function X.ConsiderPulseNova()
     end
 
     if J.IsGoingOnSomeone(bot) then
-        if J.IsValidTarget(botTarget)
+        if J.IsValidHero(botTarget)
         and J.CanBeAttacked(botTarget)
         and J.CanCastOnNonMagicImmune(botTarget)
         and not botTarget:HasModifier('modifier_abaddon_borrowed_time')
@@ -850,8 +815,8 @@ function X.ConsiderPulseNova()
     if J.IsFarming(bot) then
         if J.IsValid(nEnemyCreeps[1]) and J.CanBeAttacked(nEnemyCreeps[1]) then
             if (#nEnemyCreeps >= 3)
-            or (#nEnemyCreeps >= 1 and nEnemyCreeps[1]:GetHealth() >= 800)
             or (#nEnemyCreeps >= 2 and nEnemyCreeps[1]:IsAncientCreep())
+            or (#nEnemyCreeps >= 1 and nEnemyCreeps[1]:GetHealth() >= 800)
             then
                 if fManaAfter > fManaThreshold1 + 0.1 then
                     if not bIsToggled and bAttacking then
@@ -866,9 +831,9 @@ function X.ConsiderPulseNova()
 
     if J.IsDoingRoshan(bot) then
         if  J.IsRoshan(botTarget)
-        and J.CanCastOnNonMagicImmune(botTarget)
         and J.CanBeAttacked(botTarget)
         and J.IsInRange(bot, botTarget, nRadius)
+        and J.CanCastOnNonMagicImmune(botTarget)
         then
             if fManaAfter > fManaThreshold1 + 0.2 then
                 if not bIsToggled and bAttacking then

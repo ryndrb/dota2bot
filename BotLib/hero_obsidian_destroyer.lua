@@ -269,7 +269,7 @@ function X.ConsiderArcaneOrb()
     end
 
     if J.IsGoingOnSomeone(bot) then
-		if  J.IsValidTarget(botTarget)
+		if  J.IsValidHero(botTarget)
         and J.CanBeAttacked(botTarget)
         and J.IsInRange(bot, botTarget, botAttackRange + 150)
         and not J.IsSuspiciousIllusion(botTarget)
@@ -281,7 +281,7 @@ function X.ConsiderArcaneOrb()
 		end
 	end
 
-    local nEnemyCreeps = bot:GetNearbyCreeps(botAttackRange + 300, true)
+    local nEnemyCreeps = bot:GetNearbyCreeps(Min(botAttackRange + 300, 1600), true)
 
     if (J.IsPushing(bot) or J.IsDefending(bot) or J.IsFarming(bot)) and bAttacking and fManaAfter > fManaThreshold1 + 0.1 then
         if J.IsValid(botTarget) and J.CanBeAttacked(botTarget) and botTarget:IsCreep() then
@@ -290,7 +290,7 @@ function X.ConsiderArcaneOrb()
     end
 
     if not J.IsRetreating(bot) and not J.IsRealInvisible(bot) then
-        if J.IsInLaningPhase() then
+        if J.IsEarlyGame() then
             for _, enemyHero in pairs(nEnemyHeroes) do
                 if J.IsValidHero(enemyHero)
                 and J.CanBeAttacked(enemyHero)
@@ -346,8 +346,7 @@ function X.ConsiderAstralImprisonment()
     local fManaAfter = J.GetManaAfter(nManaCost)
     local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {SanitysEclipse})
 
-
-    if #nAllyHeroes > #nEnemyHeroes then
+    if #nAllyHeroes >= #nEnemyHeroes then
         if (J.GetAttackProjectileDamageByRange(bot, 800) > bot:GetHealth()) then
             return BOT_ACTION_DESIRE_HIGH, bot
         end
@@ -389,12 +388,13 @@ function X.ConsiderAstralImprisonment()
         for _, allyHero in pairs(nAllyHeroes) do
             if  J.IsValidHero(allyHero)
             and J.CanBeAttacked(allyHero)
+            and J.IsInRange(bot, allyHero, nCastRange + 300)
             and not allyHero:IsIllusion()
             then
                 if allyHero:HasModifier('modifier_enigma_black_hole_pull')
                 or allyHero:HasModifier('modifier_faceless_void_chronosphere_freeze')
-                or allyHero:HasModifier('modifier_legion_commander_duel')
                 or allyHero:HasModifier('modifier_necrolyte_reapers_scythe')
+                or (allyHero:HasModifier('modifier_legion_commander_duel') and J.GetHP(allyHero) < 0.1)
                 or (J.GetHP(allyHero) < 0.33 and J.IsRetreating(allyHero))
                 then
                     return BOT_ACTION_DESIRE_HIGH, allyHero
@@ -434,7 +434,7 @@ function X.ConsiderAstralImprisonment()
 	end
 
     if J.IsGoingOnSomeone(bot) then
-		if  J.IsValidTarget(botTarget)
+		if  J.IsValidHero(botTarget)
         and J.CanBeAttacked(botTarget)
         and J.IsInRange(bot, botTarget, nCastRange)
         and J.CanCastOnNonMagicImmune(botTarget)
@@ -458,6 +458,7 @@ function X.ConsiderAstralImprisonment()
                     and bot ~= allyHero
                     and not allyHero:IsIllusion()
                     and not allyHero:HasModifier('modifier_necrolyte_reapers_scythe')
+                    and not allyHero:HasModifier('modifier_teleporting')
                     and (allyHero:GetAttackTarget() == botTarget or J.IsChasingTarget(allyHero, botTarget))
                     then
                         nTotalDamage = nTotalDamage + allyHero:GetEstimatedDamageToTarget(true, botTarget, nDuration, DAMAGE_TYPE_ALL)
@@ -474,6 +475,7 @@ function X.ConsiderAstralImprisonment()
     if J.IsRetreating(bot) and not J.IsRealInvisible(bot) then
         for _, enemyHero in pairs(nEnemyHeroes) do
             if J.IsValidHero(enemyHero)
+            and J.CanBeAttacked(enemyHero)
             and J.IsInRange(bot, enemyHero, nCastRange)
             and J.CanCastOnNonMagicImmune(enemyHero)
             and J.CanCastOnTargetAdvanced(enemyHero)
@@ -491,10 +493,10 @@ function X.ConsiderAstralImprisonment()
             and bot ~= allyHero
             and J.IsRetreating(allyHero)
             and not allyHero:IsIllusion()
-            and allyHero:WasRecentlyDamagedByAnyHero(3.0)
             then
                 for _, enemyHero in pairs(nEnemyHeroes) do
                     if J.IsValidHero(enemyHero)
+                    and J.CanBeAttacked(enemyHero)
                     and J.IsInRange(bot, enemyHero, nCastRange)
                     and J.CanCastOnNonMagicImmune(enemyHero)
                     and J.CanCastOnTargetAdvanced(enemyHero)
@@ -509,7 +511,7 @@ function X.ConsiderAstralImprisonment()
         end
     end
 
-    if J.IsLaning(bot) and J.IsInLaningPhase() and fManaAfter > fManaThreshold1 then
+    if J.IsLaning(bot) and J.IsEarlyGame() and fManaAfter > fManaThreshold1 then
         for _, enemyHero in pairs(nEnemyHeroes) do
             if  J.IsValidHero(enemyHero)
             and J.CanBeAttacked(enemyHero)
@@ -559,30 +561,28 @@ function X.ConsiderSanitysEclipse()
 	local nMultiplier = SanitysEclipse:GetSpecialValueFloat('damage_multiplier')
     local nBaseDamage = SanitysEclipse:GetSpecialValueFloat('base_damage')
 
-    if J.IsGoingOnSomeone(bot) then
-        for _, enemyHero in pairs(nEnemyHeroes) do
-            if  J.IsValidTarget(enemyHero)
-            and J.CanBeAttacked(enemyHero)
-            and J.IsInRange(bot, enemyHero, nCastRange + 300)
-            and J.CanCastOnNonMagicImmune(enemyHero)
-            and not enemyHero:HasModifier('modifier_abaddon_borrowed_time')
-            and not enemyHero:HasModifier('modifier_dazzle_shallow_grave')
-            and not enemyHero:HasModifier('modifier_enigma_black_hole_pull')
-            and not enemyHero:HasModifier('modifier_faceless_void_chronosphere_freeze')
-            and not enemyHero:HasModifier('modifier_legion_commander_duel')
-            and not enemyHero:HasModifier('modifier_necrolyte_reapers_scythe')
-            and not enemyHero:HasModifier('modifier_oracle_false_promise_timer')
-            then
-                local eta = (GetUnitToUnitDistance(bot, enemyHero) / bot:GetCurrentMovementSpeed()) + nCastPoint
-                local nManaDiff = math.abs(bot:GetMana() - enemyHero:GetMana())
-                local nDamage = nManaDiff * nMultiplier
+    for _, enemyHero in pairs(nEnemyHeroes) do
+        if  J.IsValidHero(enemyHero)
+        and J.CanBeAttacked(enemyHero)
+        and J.IsInRange(bot, enemyHero, nCastRange + 300)
+        and J.CanCastOnNonMagicImmune(enemyHero)
+        and not enemyHero:HasModifier('modifier_abaddon_borrowed_time')
+        and not enemyHero:HasModifier('modifier_dazzle_shallow_grave')
+        and not enemyHero:HasModifier('modifier_enigma_black_hole_pull')
+        and not enemyHero:HasModifier('modifier_faceless_void_chronosphere_freeze')
+        and not enemyHero:HasModifier('modifier_legion_commander_duel')
+        and not enemyHero:HasModifier('modifier_necrolyte_reapers_scythe')
+        and not enemyHero:HasModifier('modifier_oracle_false_promise_timer')
+        then
+            local eta = (GetUnitToUnitDistance(bot, enemyHero) / bot:GetCurrentMovementSpeed()) + nCastPoint
+            local nManaDiff = math.abs(bot:GetMana() - enemyHero:GetMana())
+            local nDamage = nManaDiff * nMultiplier
 
-                if J.WillKillTarget(enemyHero, nBaseDamage + nDamage, DAMAGE_TYPE_MAGICAL, eta) then
-                    return BOT_ACTION_DESIRE_HIGH, enemyHero:GetLocation()
-                end
+            if J.WillKillTarget(enemyHero, nBaseDamage + nDamage, DAMAGE_TYPE_MAGICAL, eta) then
+                return BOT_ACTION_DESIRE_HIGH, enemyHero:GetLocation()
             end
         end
-	end
+    end
 
     return BOT_ACTION_DESIRE_NONE, 0
 end

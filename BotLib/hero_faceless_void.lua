@@ -546,7 +546,7 @@ function X.ConsiderChronosphere()
 	if not J.CanCastAbility(Chronosphere)
 	or bInsideChronosphere
 	then
-		return BOT_ACTION_DESIRE_NONE, 0
+		return BOT_ACTION_DESIRE_NONE
 	end
 
 	local nCastRange = Chronosphere:GetCastRange()
@@ -650,7 +650,7 @@ function X.ConsiderChronosphere()
 		end
 	end
 
-	return BOT_ACTION_DESIRE_NONE, 0
+	return BOT_ACTION_DESIRE_NONE
 end
 
 function X.ConsiderTimezone()

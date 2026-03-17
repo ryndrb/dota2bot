@@ -255,15 +255,13 @@ function X.ConsiderBrambleMaze()
 		then
             local nLocationAoE = bot:FindAoELocation(true, true, botTarget:GetLocation(), 0, nRadius, 0, 0)
             if J.IsInTeamFight(bot, 1200) then
-                if nLocationAoE.count > 0 then
+                if nLocationAoE.count >= 2 then
                     return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc
                 end
             end
 
             if J.IsChasingTarget(bot, botTarget) then
-                if J.IsInRange(bot, botTarget, nCastRange) then
-                    return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation()
-                end
+                return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation()
             end
 		end
 	end
@@ -271,35 +269,16 @@ function X.ConsiderBrambleMaze()
     if J.IsRetreating(bot) and not J.IsRealInvisible(bot) then
         for _, enemy in pairs(nEnemyHeroes) do
             if J.IsValidHero(enemy)
+            and J.CanBeAttacked(enemy)
             and J.IsInRange(bot, enemy, nCastRange)
             and J.CanCastOnNonMagicImmune(enemy)
             and not J.IsDisabled(enemy)
             and bot:WasRecentlyDamagedByHero(enemy, 3.0)
-            and J.IsChasingTarget(enemy, bot)
             then
-                return BOT_ACTION_DESIRE_HIGH, enemy:GetLocation()
-            end
-        end
-    end
-
-    if not J.IsRetreating(bot) and not J.IsRealInvisible(bot) then
-        for _, allyHero in pairs(nAllyHeroes) do
-            if  J.IsValidHero(allyHero)
-            and bot ~= allyHero
-            and J.IsRetreating(allyHero)
-            and not J.IsRealInvisible(allyHero)
-            and not J.IsSuspiciousIllusion(allyHero)
-            then
-                for _, enemy in pairs(nEnemyHeroes) do
-                    if J.IsValidHero(enemy)
-                    and J.IsInRange(bot, enemy, nCastRange)
-                    and J.IsInRange(allyHero, enemy, nRadius)
-                    and J.CanCastOnNonMagicImmune(enemy)
-                    and not J.IsDisabled(enemy)
-                    and J.IsChasingTarget(enemy, bot)
-                    then
-                        return BOT_ACTION_DESIRE_HIGH, (allyHero:GetLocation() + enemy:GetLocation()) / 2
-                    end
+                if J.IsChasingTarget(enemy, bot)
+                or #nEnemyHeroes > #nAllyHeroes
+                then
+                    return BOT_ACTION_DESIRE_HIGH, enemy:GetLocation()
                 end
             end
         end
@@ -326,9 +305,7 @@ function X.ConsiderShadowRealm()
 
     local nManaCost = BrambleMaze:GetManaCost()
 	local fManaAfter = J.GetManaAfter(nManaCost)
-	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {ShadowRealm, CursedCrown, Bedlam, Terrorize})
-
-    local nEnemyHeroesTargetingMe = J.GetHeroesTargetingUnit(nEnemyHeroes, bot)
+	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {BrambleMaze, CursedCrown, Bedlam, Terrorize})
 
     if bot:HasModifier('modifier_fountain_aura_buff') and botHP < 0.75 and #nEnemyHeroes == 0 then
         return BOT_ACTION_DESIRE_HIGH
@@ -344,7 +321,7 @@ function X.ConsiderShadowRealm()
 	end
 
     if J.IsGoingOnSomeone(bot) then
-        if bot:WasRecentlyDamagedByAnyHero(1.0) and botHP < 0.5 and (#nEnemyHeroesTargetingMe > 0 or botHP < 0.2) then
+        if bot:WasRecentlyDamagedByAnyHero(1.0) and botHP < 0.5 then
             return BOT_ACTION_DESIRE_HIGH
         end
     end
@@ -356,7 +333,7 @@ function X.ConsiderShadowRealm()
             and not J.IsSuspiciousIllusion(enemy)
             then
                 if (J.IsChasingTarget(enemy, bot) and botHP < 0.6)
-                or (bot:IsRooted() and bot:WasRecentlyDamagedByAnyHero(1.0) and #nEnemyHeroesTargetingMe > 0)
+                or (bot:IsRooted() and bot:WasRecentlyDamagedByHero(enemy, 3.0))
                 or (#nEnemyHeroes > #nAllyHeroes and bot:IsFacingLocation(J.GetTeamFountain(), 20) and J.IsRunning(bot))
                 then
                     return BOT_ACTION_DESIRE_HIGH
@@ -436,10 +413,10 @@ function X.ConsiderCursedCrown()
         local hTargetDamage = 0
         for _, enemy in pairs(nEnemyHeroes) do
             if J.IsValidHero(enemy)
+            and J.CanBeAttacked(enemy)
             and J.IsInRange(bot, enemy, nCastRange + 300)
             and J.CanCastOnNonMagicImmune(enemy)
             and J.CanCastOnTargetAdvanced(enemy)
-            and J.CanBeAttacked(enemy)
             and not J.IsDisabled(enemy)
             and not enemy:HasModifier('modifier_necrolyte_reapers_scythe')
             and not enemy:HasModifier('modifier_legion_commander_duel')
@@ -453,7 +430,6 @@ function X.ConsiderCursedCrown()
         end
 
         if hTarget then
-            bot:SetTarget(hTarget)
             return BOT_ACTION_DESIRE_HIGH, hTarget
         end
 	end
@@ -465,7 +441,6 @@ function X.ConsiderCursedCrown()
             and J.IsInRange(bot, enemyHero, nCastRange)
             and J.CanCastOnNonMagicImmune(enemyHero)
             and J.CanCastOnTargetAdvanced(enemyHero)
-            and J.IsChasingTarget(enemyHero, bot)
             and not J.IsDisabled(enemyHero)
             and not enemyHero:IsDisarmed()
             and bot:WasRecentlyDamagedByHero(enemyHero, 2.0)
@@ -475,12 +450,11 @@ function X.ConsiderCursedCrown()
         end
 	end
 
-    if not J.IsRetreating(bot) and not J.IsRealInvisible(bot) then
+    if not J.IsRetreating(bot) and not J.IsRealInvisible(bot) and fManaAfter > fManaThreshold1 then
         for _, allyHero in pairs(nAllyHeroes) do
             if J.IsValidHero(allyHero)
             and bot ~= allyHero
             and J.IsRetreating(allyHero)
-            and allyHero:WasRecentlyDamagedByAnyHero(3.0)
             and not J.IsSuspiciousIllusion(allyHero)
             and not J.IsInTeamFight(bot, 1200)
             then
@@ -493,6 +467,7 @@ function X.ConsiderCursedCrown()
                     and J.IsChasingTarget(enemyHero, allyHero)
                     and not J.IsDisabled(enemyHero)
                     and not enemyHero:IsDisarmed()
+                    and allyHero:WasRecentlyDamagedByHero(enemyHero, 3.0)
                     then
                         return BOT_ACTION_DESIRE_HIGH, enemyHero
                     end
@@ -520,8 +495,11 @@ function X.ConsiderBedlam()
         if #nAllyHeroes >= #nEnemyHeroes or bot:HasModifier('modifier_dark_willow_shadow_realm_buff') then
             for _, enemyHero in pairs(nInRangeEnemy) do
                 if J.IsValidHero(enemyHero)
+                and J.CanBeAttacked(enemyHero)
                 and not enemyHero:HasModifier('modifier_abaddon_borrowed_time')
                 and not enemyHero:HasModifier('modifier_dazzle_shallow_grave')
+                and not enemyHero:HasModifier('modifier_faceless_void_chronosphere_freeze')
+                and not enemyHero:HasModifier('modifier_necrolyte_reapers_scythe')
                 and not enemyHero:HasModifier('modifier_oracle_false_promise_timer')
                 and not enemyHero:HasModifier('modifier_item_blade_mail_reflect')
                 then
@@ -554,7 +532,7 @@ function X.ConsiderTerrorize()
         if #nInRangeEnemy >= 2 then
             local count = 0
             for _, enemyHero in pairs(nInRangeEnemy) do
-                if  J.IsValidTarget(enemyHero)
+                if  J.IsValidHero(enemyHero)
                 and J.CanBeAttacked(enemyHero)
                 and J.CanCastOnNonMagicImmune(enemyHero)
                 and not J.IsChasingTarget(bot, enemyHero)

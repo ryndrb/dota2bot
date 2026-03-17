@@ -456,10 +456,10 @@ function X.ConsiderPlagueWard()
         end
     end
 
-    local nEnemyLaneCreeps = bot:GetNearbyLaneCreeps(nCastRange, true)
+    local nEnemyCreeps = bot:GetNearbyCreeps(Min(nCastRange, 1600), true)
 
     if J.IsPushing(bot) and bAttacking and #nAllyHeroes <= 1 then
-        for _, creep in pairs(nEnemyLaneCreeps) do
+        for _, creep in pairs(nEnemyCreeps) do
             if J.IsValid(creep) and J.CanBeAttacked(creep) then
                 local nLocationAoE = bot:FindAoELocation(true, false, creep:GetLocation(), 0, 500, 0, 0)
                 if (nLocationAoE.count >= 4) then
@@ -491,7 +491,7 @@ function X.ConsiderPlagueWard()
     end
 
     if J.IsDefending(bot) and bAttacking and #nAllyHeroes <= 3 then
-        for _, creep in pairs(nEnemyLaneCreeps) do
+        for _, creep in pairs(nEnemyCreeps) do
             if J.IsValid(creep) and J.CanBeAttacked(creep) then
                 local nLocationAoE = bot:FindAoELocation(true, false, creep:GetLocation(), 0, 500, 0, 0)
                 if (nLocationAoE.count >= 4) then
@@ -506,7 +506,7 @@ function X.ConsiderPlagueWard()
     end
 
     if J.IsFarming(bot) and bAttacking then
-        for _, creep in pairs(nEnemyLaneCreeps) do
+        for _, creep in pairs(nEnemyCreeps) do
             if J.IsValid(creep) and J.CanBeAttacked(creep) then
                 local nLocationAoE = bot:FindAoELocation(true, false, creep:GetLocation(), 0, 500, 0, 0)
                 if (nLocationAoE.count >= 3)

@@ -4573,8 +4573,8 @@ function J.DoesSomeoneHaveModifier(nUnitList, modifierName)
 	return false
 end
 
-function J.IsHumanPlayerInTeam()
-	for _, member in pairs(GetTeamPlayers(GetTeam()))
+function J.IsHumanPlayerInTeam(nTeam)
+	for _, member in pairs(GetTeamPlayers(nTeam))
 	do
 		if not IsPlayerBot(member)
 		then

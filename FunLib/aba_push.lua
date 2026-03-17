@@ -5,7 +5,7 @@ local pingTimeDelta = 5
 local tUrgentDefend = {false, nil}
 
 function Push.GetPushDesire(bot, lane)
-    local nMaxDesire = 0.75
+    local nMaxDesire = 0.9
     local botActiveMode = bot:GetActiveMode()
     local bMyLane = bot:GetAssignedLane() == lane
 
@@ -121,10 +121,7 @@ function Push.GetPushDesire(bot, lane)
                     nPushDesire = nPushDesire + 0.25
                 end
 
-                if aAliveCount >= eAliveCount
-                and J.GetAverageLevel(GetTeam()) >= 12
-                -- and (DotaTime() < (J.IsModeTurbo() and 30 * 60 or 50 * 60))
-                then
+                if aAliveCount >= eAliveCount and J.GetAverageLevel(GetTeam()) >= 12 then
                     local teamNetworth, enemyNetworth = J.GetInventoryNetworth()
                     nPushDesire = nPushDesire + RemapValClamped(teamNetworth - enemyNetworth, 5000, (J.IsModeTurbo() and 15000) or 10000, 0.0, 0.5)
                 end
@@ -327,7 +324,7 @@ function Push.PushThink(bot, lane)
         and not J.IsTormentor(creep)
         and not J.IsRoshan(creep)
         then
-            bot:Action_AttackUnit(creep, true)
+            bot:Action_AttackUnit(creep, false)
             return
         end
     end

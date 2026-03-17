@@ -292,10 +292,10 @@ function X.ConsiderArcticBurn()
 		end
 
 		if J.IsGoingOnSomeone(bot) then
-			if  J.IsValidTarget(botTarget)
+			if  J.IsValidHero(botTarget)
             and J.CanBeAttacked(botTarget)
-            and J.CanCastOnNonMagicImmune(botTarget)
             and J.IsInRange(bot, botTarget, botAttackRange)
+            and J.CanCastOnNonMagicImmune(botTarget)
             and not J.IsDisabled(botTarget)
             and not botTarget:HasModifier('modifier_abaddon_borrowed_time')
             and not botTarget:HasModifier('modifier_dazzle_shallow_grave')
@@ -342,8 +342,8 @@ function X.ConsiderArcticBurn()
         if J.IsDoingRoshan(bot) then
             if  J.IsRoshan(botTarget)
             and J.CanBeAttacked(botTarget)
-            and J.CanCastOnNonMagicImmune(botTarget)
             and J.IsInRange(bot, botTarget, botAttackRange)
+            and J.CanCastOnNonMagicImmune(botTarget)
             and bAttacking
             and fManaAfter > fManaThreshold1
             then
@@ -368,7 +368,7 @@ function X.ConsiderArcticBurn()
 		end
 
 		if J.IsGoingOnSomeone(bot) then
-			if  J.IsValidTarget(botTarget)
+			if  J.IsValidHero(botTarget)
             and J.CanBeAttacked(botTarget)
             and J.CanCastOnNonMagicImmune(botTarget)
             and J.IsInRange(bot, botTarget, botAttackRange)
@@ -441,8 +441,8 @@ function X.ConsiderArcticBurn()
         if J.IsDoingRoshan(bot) then
             if  J.IsRoshan(botTarget)
             and J.CanBeAttacked(botTarget)
-            and J.CanCastOnNonMagicImmune(botTarget)
             and J.IsInRange(bot, botTarget, botAttackRange)
+            and J.CanCastOnNonMagicImmune(botTarget)
             and fManaAfter > fManaThreshold1
             then
                 if fManaAfter > fManaThreshold1 + 0.2 then
@@ -497,9 +497,8 @@ function X.ConsiderSplinterBlast()
     for _, enemyHero in pairs(nEnemyHeroes) do
         if  J.IsValidHero(enemyHero)
         and J.CanBeAttacked(enemyHero)
+        and J.IsInRange(bot, enemyHero, nCastRange)
         and J.CanCastOnNonMagicImmune(enemyHero)
-        and J.CanKillTarget(enemyHero, nDamage, DAMAGE_TYPE_MAGICAL)
-        and not J.IsInRange(bot, enemyHero, nCastRange)
         and not J.IsSuspiciousIllusion(enemyHero)
         and not enemyHero:HasModifier('modifier_abaddon_borrowed_time')
         and not enemyHero:HasModifier('modifier_dazzle_shallow_grave')
@@ -518,10 +517,10 @@ function X.ConsiderSplinterBlast()
     end
 
 	if J.IsGoingOnSomeone(bot) then
-		if  J.IsValidTarget(botTarget)
+		if  J.IsValidHero(botTarget)
         and J.CanBeAttacked(botTarget)
-        and J.CanCastOnNonMagicImmune(botTarget)
         and J.IsInRange(bot, botTarget, nCastRange)
+        and J.CanCastOnNonMagicImmune(botTarget)
         and not J.IsDisabled(botTarget)
         and not botTarget:HasModifier('modifier_abaddon_borrowed_time')
         and not botTarget:HasModifier('modifier_dazzle_shallow_grave')
@@ -544,7 +543,7 @@ function X.ConsiderSplinterBlast()
             and J.CanCastOnNonMagicImmune(enemyHero)
             and not J.IsDisabled(enemyHero)
             and not enemyHero:HasModifier('modifier_winter_wyvern_arctic_burn_slow')
-            and bot:WasRecentlyDamagedByAnyHero(5.0)
+            and bot:WasRecentlyDamagedByHero(enemyHero, 3.0)
             then
                 local hTarget = X.GetNearestUnit(enemyHero, nCastRange, nRadius)
                 if hTarget then
@@ -603,7 +602,7 @@ function X.ConsiderSplinterBlast()
         end
     end
 
-    if J.IsLaning(bot) and J.IsInLaningPhase() and fManaAfter > fManaThreshold1 and (J.IsCore(bot) or not J.IsThereCoreNearby(800)) then
+    if J.IsLaning(bot) and J.IsEarlyGame() and fManaAfter > fManaThreshold1 and (J.IsCore(bot) or not J.IsThereCoreNearby(800)) then
 		for _, creep in pairs(nEnemyCreeps) do
 			if  J.IsValid(creep)
             and J.CanBeAttacked(creep)
@@ -679,11 +678,11 @@ function X.ConsiderColdEmbrace()
             end
 
             if allyHP < 0.3 and not J.IsInEtherealForm(allyHero) then
-                if not bot:WasRecentlyDamagedByAnyHero(nDuration) or #nEnemyHeroesTargetingAlly == 0 then
+                if not allyHero:WasRecentlyDamagedByAnyHero(nDuration) or #nEnemyHeroesTargetingAlly == 0 then
                     return BOT_ACTION_DESIRE_HIGH, allyHero
                 end
 
-                if  (bot:WasRecentlyDamagedByCreep(2.0) or bot:WasRecentlyDamagedByTower(2.0))
+                if  (allyHero:WasRecentlyDamagedByCreep(2.0) or allyHero:WasRecentlyDamagedByTower(2.0))
                 and allyHP < 0.15
                 and #nEnemyHeroes == 0
                 then
@@ -703,25 +702,15 @@ function X.ConsiderColdEmbrace()
         end
     end
 
-    if J.IsRetreating(bot) and not J.IsRealInvisible(bot) and bot:WasRecentlyDamagedByAnyHero(3.0) then
-        for _, enemyHero in pairs(nEnemyHeroes) do
-            if  J.IsValidHero(enemyHero)
-            and J.IsInRange(bot, enemyHero, 1200)
-            and J.IsChasingTarget(enemyHero, bot)
-            and not J.IsSuspiciousIllusion(enemyHero)
-            and not J.IsDisabled(enemyHero)
-            and not enemyHero:HasModifier('modifier_fountain_aura_buff')
-            and botHP < 0.3
-            then
-                local damage = J.GetTotalEstimatedDamageToTarget(nEnemyHeroes, bot, nDuration)
-                if damage > bot:GetHealth() then
-                    return BOT_ACTION_DESIRE_HIGH, bot
-                end
+    if J.IsRetreating(bot) and not J.IsRealInvisible(bot) and bot:WasRecentlyDamagedByAnyHero(3.0) and botHP < 0.3 then
+        if not bot:HasModifier('modifier_fountain_aura_buff') then
+            if J.GetTotalEstimatedDamageToTarget(nEnemyHeroes, bot, nDuration) > bot:GetHealth() then
+                return BOT_ACTION_DESIRE_HIGH, bot
             end
         end
     end
 
-    if J.GetHP(bot) < 0.2 and not bot:WasRecentlyDamagedByAnyHero(nDuration) then
+    if botHP < 0.2 and not bot:WasRecentlyDamagedByAnyHero(nDuration) then
         return BOT_ACTION_DESIRE_HIGH, bot
     end
 

@@ -1134,7 +1134,10 @@ X.ConsiderItemDesire["item_black_king_bar"] = function( hItem )
 		and bIsGoingOnSomeone
 		and bAttacking
 		then
-			return BOT_ACTION_DESIRE_HIGH, nil, ITEM_TARGET_TYPE_NONE
+			local fModifierTime = J.GetModifierTime(botTarget, 'modifier_item_blade_mail_reflect')
+			if (bot:GetAttackDamage() * bot:GetAttackSpeed() * (fModifierTime - 1)) > bot:GetHealth() then
+				return BOT_ACTION_DESIRE_HIGH, nil, ITEM_TARGET_TYPE_NONE
+			end
 		end
 
 		if  bot:IsSilenced()
@@ -4614,8 +4617,9 @@ X.ConsiderItemDesire["item_tpscroll"] = function( hItem )
 		local nLane, nDesire = J.GetMostFarmLaneDesire()
 		if nDesire >= BOT_MODE_DESIRE_HIGH then
 			local vLaneFrontLocation = GetLaneFrontLocation(GetTeam(), nLane, 0)
+			local nLocationAoE = bot:FindAoELocation(true, false, vLaneFrontLocation, 0, 800, 0, 0)
 			vLocation = J.GetNearbyLocationToTp(vLaneFrontLocation)
-			if vLocation and GetUnitToLocationDistance(bot, vLocation) > nMinTPDistance then
+			if vLocation and GetUnitToLocationDistance(bot, vLocation) > nMinTPDistance and nLocationAoE.count >= 6 then
 				local nInRangeAlly = J.GetAlliesNearLoc(vLaneFrontLocation, 1200)
 				if #nInRangeAlly == 0 then
 					if J.GetDistance(vLocation, vLaneFrontLocation) <= 1200 then

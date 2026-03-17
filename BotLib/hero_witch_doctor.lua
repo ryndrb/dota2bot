@@ -294,6 +294,7 @@ function X.ConsiderParalyzingClask()
 		and J.IsInRange(bot, botTarget, nCastRange)
 		and J.CanCastOnNonMagicImmune(botTarget)
 		and J.CanCastOnTargetAdvanced(botTarget)
+		and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
 		then
 			local nLocationAoE_Heroes = bot:FindAoELocation(true, true, botTarget:GetLocation(), 0, nRadius, 0, 0)
 			local nLocationAoE_Creeps = bot:FindAoELocation(true, false, botTarget:GetLocation(), 0, nRadius, 0, 0)
@@ -310,6 +311,7 @@ function X.ConsiderParalyzingClask()
 			and J.IsInRange(bot, enemyHero, nCastRange)
 			and J.CanCastOnNonMagicImmune(enemyHero)
 			and J.CanCastOnTargetAdvanced(enemyHero)
+			and not J.IsDisabled(enemyHero)
 			and bot:WasRecentlyDamagedByHero(enemyHero, 3.0)
 			then
 				local nLocationAoE_Heroes = bot:FindAoELocation(true, true, enemyHero:GetLocation(), 0, nRadius, 0, 0)
@@ -363,7 +365,7 @@ function X.ConsiderParalyzingClask()
         end
 	end
 
-    if J.IsLaning(bot) and J.IsInLaningPhase() and fManaAfter > fManaThreshold1 then
+    if J.IsLaning(bot) and J.IsEarlyGame() and fManaAfter > fManaThreshold1 then
 		for _, creep in pairs(nEnemyCreeps) do
 			if  J.IsValid(creep)
             and J.CanBeAttacked(creep)
@@ -439,7 +441,6 @@ function X.ConsiderVoodooRestoration()
 	return BOT_ACTION_DESIRE_NONE
 end
 
-
 function X.ConsiderMaledict()
 	if not J.CanCastAbility(Maledict) then
 		return BOT_ACTION_DESIRE_NONE, 0
@@ -463,6 +464,7 @@ function X.ConsiderMaledict()
 				and J.CanCastOnNonMagicImmune(enemyHero)
 				and not enemyHero:HasModifier('modifier_abaddon_borrowed_time')
 				and not enemyHero:HasModifier('modifier_dazzle_shallow_grave')
+				and not enemyHero:HasModifier('modifier_necrolyte_reapers_scythe')
 				and not enemyHero:HasModifier('modifier_maledict')
 				then
 					count = count + 1
@@ -481,6 +483,7 @@ function X.ConsiderMaledict()
 		and J.IsInRange(bot, botTarget, nCastRange)
 		and J.CanCastOnNonMagicImmune(botTarget)
 		and not botTarget:HasModifier('modifier_abaddon_borrowed_time')
+		and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
 		then
 			return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation()
 		end
@@ -591,6 +594,7 @@ function X.ConsiderDeathWard()
 			if not (#nInRangeAlly >= #nInRangeEnemy + 3) then
 				if J.GetTotalEstimatedDamageToTarget(nAllyHeroes, botTarget, nDuration - 1) > botTarget:GetHealth()
 				or J.IsDisabled(botTarget)
+				or botTarget:GetCurrentMovementSpeed() < 200
 				then
 					return BOT_ACTION_DESIRE_HIGH, J.VectorTowards(bot:GetLocation(), botTarget:GetLocation(), Min(GetUnitToUnitDistance(bot, botTarget), nCastRange)), false
 				end

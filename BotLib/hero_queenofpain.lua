@@ -305,7 +305,6 @@ function X.ConsiderShadowStrike()
 	local nManaCost = ShadowStrike:GetManaCost()
 	local fManaAfter = J.GetManaAfter(nManaCost)
 	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {Blink, ScreamOfPain, SonicWave})
-	local fManaThreshold2 = J.GetManaThreshold(bot, nManaCost, {ShadowStrike, Blink, ScreamOfPain, SonicWave})
 
 	for _, enemyHero in pairs(nEnemyHeroes) do
 		if J.IsValidHero(enemyHero)
@@ -340,13 +339,14 @@ function X.ConsiderShadowStrike()
             return BOT_ACTION_DESIRE_HIGH, botTarget
         end
 
-		if fManaAfter > fManaThreshold1 then
+		if fManaAfter > fManaThreshold1 + 0.1 then
 			for _, enemyHero in pairs(nEnemyHeroes) do
 				if J.IsValidHero(enemyHero)
 				and J.CanBeAttacked(enemyHero)
 				and J.IsInRange(bot, enemyHero, nCastRange + 300)
 				and J.CanCastOnNonMagicImmune(enemyHero)
 				and J.CanCastOnTargetAdvanced(enemyHero)
+				and not J.IsDisabled(enemyHero)
 				and not enemyHero:HasModifier('modifier_queenofpain_shadow_strike')
 				and not enemyHero:HasModifier('modifier_abaddon_borrowed_time')
 				then
@@ -365,6 +365,7 @@ function X.ConsiderShadowStrike()
 			and J.CanCastOnTargetAdvanced(enemyHero)
 			and not J.IsDisabled(enemyHero)
 			and not enemyHero:HasModifier('modifier_queenofpain_shadow_strike')
+			and bot:WasRecentlyDamagedByHero(enemyHero, 3.0)
 			then
 				return BOT_ACTION_DESIRE_HIGH, enemyHero
 			end
@@ -373,7 +374,7 @@ function X.ConsiderShadowStrike()
 
 	local nEnemyCreeps = bot:GetNearbyCreeps(Min(nCastRange + 300, 1600), true)
 
-	if (J.IsPushing(bot) and bAttacking and fManaAfter > fManaThreshold2 and #nAllyHeroes <= 2 and #nEnemyHeroes <= 1)
+	if (J.IsPushing(bot) and bAttacking and fManaAfter > fManaThreshold1 + 0.1 and #nAllyHeroes <= 2 and #nEnemyHeroes <= 1)
 	or (J.IsDefending(bot) and bAttacking and fManaAfter > fManaThreshold1 and #nEnemyHeroes == 0)
 	or (J.IsFarming(bot) and bAttacking and fManaAfter > fManaThreshold1)
 	then
@@ -482,7 +483,7 @@ function X.ConsiderBlink()
 	end
 
 	if J.IsGoingOnSomeone(bot) then
-		if  J.IsValidTarget(botTarget)
+		if  J.IsValidHero(botTarget)
 		and J.CanBeAttacked(botTarget)
 		and J.IsInRange(bot, botTarget, nCastRange + 300)
 		and GetUnitToLocationDistance(botTarget, J.GetEnemyFountain()) > 600
@@ -497,7 +498,7 @@ function X.ConsiderBlink()
 				vLocation = J.VectorAway(botTarget:GetLocation(), bot:GetLocation(), 300)
 			end
 
-			if J.IsInLaningPhase() then
+			if J.IsEarlyGame() then
 				local nEnemyTowers = botTarget:GetNearbyTowers(1000, false)
 				if #nEnemyTowers == 0 or (J.IsValidBuilding(nEnemyTowers[1]) and nEnemyTowers[1] ~= bot) then
 					return BOT_ACTION_DESIRE_HIGH, vLocation
@@ -549,7 +550,7 @@ function X.ConsiderBlink()
 		end
 	end
 
-	if J.IsLaning(bot) and J.IsInLaningPhase() and DotaTime() > 0 and fManaAfter > 0.8 then
+	if J.IsLaning(bot) and J.IsEarlyGame() and DotaTime() > 0 and fManaAfter > 0.8 then
 		local vLaneFrontLocation = GetLaneFrontLocation(GetTeam(), bot:GetAssignedLane(), 0)
 		if GetUnitToLocationDistance(bot, vLaneFrontLocation) > 2000 and #nEnemyHeroes <= 1 then
 			if J.IsRunning(bot) and IsLocationPassable(vLaneFrontLocation) then
@@ -625,7 +626,7 @@ function X.ConsiderScreamOfPain()
 		if J.IsValidHero(botTarget)
 		and J.CanBeAttacked(botTarget)
 		and J.IsInRange(bot, botTarget, nRadius - botTarget:GetBoundingRadius())
-		and J.CanCastOnMagicImmune(botTarget)
+		and J.CanCastOnNonMagicImmune(botTarget)
 		and not botTarget:HasModifier('modifier_abaddon_borrowed_time')
         and not botTarget:HasModifier('modifier_dazzle_shallow_grave')
 		then
@@ -687,14 +688,13 @@ function X.ConsiderScreamOfPain()
 		end
 	end
 
-	if J.IsLaning(bot) and J.IsInLaningPhase() and fManaAfter > fManaThreshold1 then
+	if J.IsLaning(bot) and J.IsEarlyGame() and fManaAfter > fManaThreshold1 then
 		local nCanKillOtherCount = 0
 		local nCanKillRangeCount = 0
 		for _, creep in pairs(nEnemyCreeps) do
 			if J.IsValid(creep)
 			and J.CanBeAttacked(creep)
 			and J.CanCastOnNonMagicImmune(creep)
-			and not J.IsOtherAllysTarget(creep)
 			and (J.IsCore(bot) or not J.IsThereCoreNearby(600))
 			then
 				local sCreepName = creep:GetUnitName()

@@ -305,7 +305,6 @@ function X.ConsiderArcaneCurse()
 	local nManaCost = ArcaneCurse:GetManaCost()
 	local fManaAfter = J.GetManaAfter(nManaCost)
 	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {ArcaneCurse, LastWord, GlobalSilence})
-	local fManaThreshold2 = J.GetManaThreshold(bot, nManaCost, {GlobalSilence})
 
 	for _, enemyHero in pairs(nEnemyHeroes) do
         if  J.IsValidHero(enemyHero)
@@ -326,13 +325,12 @@ function X.ConsiderArcaneCurse()
     end
 
     if J.IsGoingOnSomeone(bot) then
-        if  J.IsValidTarget(botTarget)
+        if  J.IsValidHero(botTarget)
         and J.CanBeAttacked(botTarget)
         and J.IsInRange(bot, botTarget, nCastRange)
         and J.CanCastOnNonMagicImmune(botTarget)
         and not J.IsDisabled(botTarget)
 		and not botTarget:HasModifier('modifier_silencer_curse_of_the_silent')
-		and fManaAfter > fManaThreshold2
         then
             return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation()
         end
@@ -347,6 +345,7 @@ function X.ConsiderArcaneCurse()
 			and not J.IsDisabled(enemyHero)
 			and not enemyHero:IsDisarmed()
 			and not enemyHero:HasModifier('modifier_silencer_curse_of_the_silent')
+			and bot:WasRecentlyDamagedByHero(enemyHero, 2.0)
 			then
 				return BOT_ACTION_DESIRE_HIGH, enemyHero:GetLocation()
 			end
@@ -408,7 +407,7 @@ function X.ConsiderArcaneCurse()
         end
     end
 
-	if not J.IsRetreating(bot) and not J.IsRealInvisible(bot) and fManaAfter > fManaThreshold1 + 0.1 and #nAllyHeroes <= 1 then
+	if not J.IsRetreating(bot) and not J.IsRealInvisible(bot) and fManaAfter > fManaThreshold1 + 0.1 and #nAllyHeroes <= 2 then
         for _, creep in pairs(nEnemyCreeps) do
             if J.IsValid(creep) and J.CanBeAttacked(creep) then
                 local nLocationAoE = bot:FindAoELocation(true, false, creep:GetLocation(), 0, nRadius, 0, nFirstDamage + (nDPS * nDuration))
@@ -461,7 +460,7 @@ function X.ConsiderGlaivesOfWisdom()
 	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {ArcaneCurse, LastWord, GlobalSilence})
 
 	if J.IsGoingOnSomeone(bot) then
-		if  J.IsValidTarget(botTarget)
+		if  J.IsValidHero(botTarget)
 		and J.CanBeAttacked(botTarget)
 		and J.IsInRange(bot, botTarget, botAttackRange + 150)
 		and J.CanCastOnNonMagicImmune(botTarget)
@@ -492,7 +491,7 @@ function X.ConsiderGlaivesOfWisdom()
 		end
 	end
 
-	if J.IsLaning(bot) and J.IsInLaningPhase() and fManaAfter > fManaThreshold1 + 0.1 then
+	if J.IsLaning(bot) and J.IsEarlyGame() and fManaAfter > fManaThreshold1 + 0.1 then
 		for _, enemyHero in pairs(nEnemyHeroes) do
 			if  J.IsValidHero(enemyHero)
 			and J.CanBeAttacked(enemyHero)
@@ -518,8 +517,8 @@ function X.ConsiderGlaivesOfWisdom()
 	if J.IsDoingRoshan(bot) then
         if  J.IsRoshan(botTarget)
 		and J.CanBeAttacked(botTarget)
-		and J.CanCastOnNonMagicImmune(botTarget)
         and J.IsInRange(bot, botTarget, botAttackRange)
+		and J.CanCastOnNonMagicImmune(botTarget)
 		and bAttacking
 		and fManaAfter > fManaThreshold1 + 0.1
         then
@@ -577,9 +576,9 @@ function X.ConsiderLastWord()
 	if J.IsGoingOnSomeone(bot) then
         if J.IsValidHero(botTarget)
 		and J.CanBeAttacked(botTarget)
+        and J.IsInRange(bot, botTarget, nCastRange)
         and J.CanCastOnNonMagicImmune(botTarget)
         and J.CanCastOnTargetAdvanced(botTarget)
-        and J.IsInRange(bot, botTarget, nCastRange)
 		and not J.IsDisabled(botTarget)
 		and not botTarget:IsSilenced()
 		and not botTarget:HasModifier('modifier_abaddon_borrowed_time')
@@ -595,11 +594,11 @@ function X.ConsiderLastWord()
 			if J.IsValidHero(enemyHero)
 			and J.CanBeAttacked(enemyHero)
 			and J.IsInRange(bot, enemyHero, nCastRange)
-			and bot:WasRecentlyDamagedByHero(enemyHero, 3.0)
 			and J.CanCastOnNonMagicImmune(enemyHero)
 			and J.CanCastOnTargetAdvanced(enemyHero)
 			and not J.IsDisabled(enemyHero)
 			and not enemyHero:IsSilenced()
+			and bot:WasRecentlyDamagedByHero(enemyHero, 3.0)
 			then
 				return BOT_ACTION_DESIRE_HIGH, enemyHero
 			end
