@@ -468,7 +468,7 @@ Item['item_abyssal_blade']	= GetItemComponents( 'item_abyssal_blade' )[1]
 
 Item['item_aether_lens']	= GetItemComponents( 'item_aether_lens' )[1]
 
-Item['item_arcane_boots']	= {"item_boots", "item_ring_of_basilius", "item_recipe_arcane_boots"}
+Item['item_arcane_boots']	= GetItemComponents( 'item_arcane_boots' )[1]
 
 Item['item_armlet']	= GetItemComponents( 'item_armlet' )[1]
 
@@ -702,6 +702,13 @@ Item["item_blood_grenade"] 						= GetItemComponents( 'item_blood_grenade' )[1]
 ---------- 7.35 NEW ITEMS ---------------
 Item["item_angels_demise"] 						= GetItemComponents( 'item_angels_demise' )[1]
 Item["item_devastator"] 						= GetItemComponents( 'item_devastator' )[1]
+
+-- 7.41
+Item["item_consecrated_wraps"] = GetItemComponents( 'item_consecrated_wraps' )[1]
+Item["item_crellas_crozier"] = GetItemComponents( 'item_crellas_crozier' )[1]
+Item["item_essence_distiller"] = GetItemComponents( 'item_essence_distiller' )[1]
+Item["item_specialists_array"] = GetItemComponents( 'item_specialists_array' )[1]
+Item["item_hydras_breath"] = GetItemComponents( 'item_hydras_breath' )[1]
 
 --新自定义物品
 Item['item_new_1']	= GetItemComponents( 'item_new_1' )[1]

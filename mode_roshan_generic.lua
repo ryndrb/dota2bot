@@ -40,7 +40,7 @@ function GetDesire()
     if bRoshanAlive and bEnoughDPS then
         local vRoshanLocation = J.GetCurrentRoshanLocation()
         local mul = RemapValClamped(DotaTime(), fRoshanAliveTime, fRoshanAliveTime + (2.5 * 60), 1, 2)
-        local nRoshanDesire = GetRoshanDesire() * mul
+        local nRoshanDesire = RemapValClamped(GetRoshanDesire() * mul, 0, 1, 0, BOT_MODE_DESIRE_ABSOLUTE)
 
         local human, humanPing = J.GetHumanPing()
         if human ~= nil and DotaTime() > 5.0 then
@@ -59,7 +59,7 @@ function GetDesire()
             nRoshanDesire = 0.9
         end
 
-        return Clamp(nRoshanDesire, 0, 0.9)
+        return Clamp(nRoshanDesire, 0, BOT_MODE_DESIRE_VERYHIGH)
     end
 
     return BOT_MODE_DESIRE_NONE

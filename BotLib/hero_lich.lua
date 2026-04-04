@@ -164,12 +164,14 @@ end
 local FrostBlast = bot:GetAbilityByName('lich_frost_nova')
 local FrostShield = bot:GetAbilityByName('lich_frost_shield')
 local SinisterGaze = bot:GetAbilityByName('lich_sinister_gaze')
+local Sacrifice = bot:GetAbilityByName('lich_death_charge')
 local IceSpire = bot:GetAbilityByName('lich_ice_spire')
 local ChainFrost = bot:GetAbilityByName('lich_chain_frost')
 
 local FrostBlastDesire, FrostBlastTarget
 local FrostShieldDesire, FrostShieldTarget
 local SinisterGazeDesire, SinisterGazeTarget
+local SacrificeDesire, SacrificeTarget
 local IceSpireDesire, IceSpireLocation
 local ChainFrostDesire, ChainFrostTarget
 
@@ -185,6 +187,7 @@ function X.SkillsComplement()
 	FrostBlast = bot:GetAbilityByName('lich_frost_nova')
 	FrostShield = bot:GetAbilityByName('lich_frost_shield')
 	SinisterGaze = bot:GetAbilityByName('lich_sinister_gaze')
+	Sacrifice = bot:GetAbilityByName('lich_death_charge')
 	IceSpire = bot:GetAbilityByName('lich_ice_spire')
 	ChainFrost = bot:GetAbilityByName('lich_chain_frost')
 
@@ -239,6 +242,13 @@ function X.SkillsComplement()
 		else
 			bot:ActionQueue_UseAbilityOnEntity(SinisterGaze, SinisterGazeTarget)
 		end
+		return
+	end
+
+	SacrificeDesire, SacrificeTarget = X.ConsiderSacrifice()
+	if SacrificeDesire > 0 then
+		J.SetQueuePtToINT(bot, false)
+		bot:ActionQueue_UseAbilityOnEntity(Sacrifice, SacrificeTarget)
 		return
 	end
 end
@@ -741,6 +751,45 @@ function X.ConsiderSinisterGaze()
 	end
 
 	return BOT_ACTION_DESIRE_NONE, nil
+end
+
+function X.ConsiderSacrifice()
+	if not J.CanCastAbility(Sacrifice) then
+		return BOT_ACTION_DESIRE_NONE
+	end
+
+	if bot:HasModifier('modifier_rune_regen')
+	or bot:HasModifier('modifier_fountain_aura_buff')
+	then
+		return BOT_ACTION_DESIRE_NONE
+	end
+
+	local nCastRange = Sacrifice:GetCastRange()
+	local fHealthToManaPct = Sacrifice:GetSpecialValueInt('active_mana_restore_pct_of_health') / 100
+	local fHealthToManaPctPerLevel = 3 / 100
+
+	local nAllyLaneCreeps = bot:GetNearbyLaneCreeps(Min(nCastRange + 300, 1600), false)
+
+	if J.GetMP(bot) < 0.5 then
+		local hTarget = nil
+		local hTargetManaHeal = 0
+		for _, creep in pairs(nAllyLaneCreeps) do
+			if J.IsValid(creep) and J.CanBeAttacked(creep) then
+				local creepManaHeal = creep:GetHealth() * (fHealthToManaPct + (bot:GetLevel() * fHealthToManaPctPerLevel))
+				if creepManaHeal >= 200 and creepManaHeal > hTargetManaHeal then
+					hTarget = creep
+					hTargetManaHeal = creepManaHeal
+				end
+			end
+		end
+
+		if hTarget then
+			return BOT_ACTION_DESIRE_HIGH, hTarget
+		end
+	end
+
+
+	return BOT_ACTION_DESIRE_NONE
 end
 
 function X.ConsiderIceSpire()

@@ -202,6 +202,8 @@ local StickyBomb        = bot:GetAbilityByName('techies_sticky_bomb')
 local ReactiveTazer     = bot:GetAbilityByName('techies_reactive_tazer')
 local ReactiveTazerStop = bot:GetAbilityByName('techies_reactive_tazer_stop')
 local BlastOff          = bot:GetAbilityByName('techies_suicide')
+local MAD               = bot:GetAbilityByName('techies_mutually_assured_destruction')
+local DetonateMAD       = bot:GetAbilityByName('techies_focused_detonate')
 local MineFieldSign     = bot:GetAbilityByName('techies_minefield_sign')
 local ProximityMines    = bot:GetAbilityByName('techies_land_mines')
 
@@ -210,6 +212,8 @@ local ReactiveTazerDesire, ReactiveTazerTarget
 local ReactiveTazerStopDesire
 local BlastOffDesire, BlastOffLocation
 local MineFieldSignDesire, MineFieldSignLocation
+local MADDesire, MADLocation
+local DetonateMADDesire
 local ProximityMinesDesire, ProximityMinesLocation
 
 local tMineLocations = {}
@@ -243,6 +247,8 @@ function X.SkillsComplement()
     ReactiveTazer     = bot:GetAbilityByName('techies_reactive_tazer')
     ReactiveTazerStop = bot:GetAbilityByName('techies_reactive_tazer_stop')
     BlastOff          = bot:GetAbilityByName('techies_suicide')
+    MAD               = bot:GetAbilityByName('techies_mutually_assured_destruction')
+    DetonateMAD       = bot:GetAbilityByName('techies_focused_detonate')
     MineFieldSign     = bot:GetAbilityByName('techies_minefield_sign')
     ProximityMines    = bot:GetAbilityByName('techies_land_mines')
 
@@ -293,6 +299,19 @@ function X.SkillsComplement()
             end
         end
         bot:Action_UseAbilityOnLocation(BlastOff, BlastOffLocation)
+        return
+    end
+
+    DetonateMADDesire = X.ConsiderDetonateMAD()
+    if DetonateMADDesire > 0 then
+        bot:Action_UseAbility(DetonateMAD)
+        return
+    end
+
+    MADDesire, MADLocation = X.ConsiderMAD()
+    if MADDesire > 0 then
+        J.SetQueuePtToINT(bot, false)
+        bot:ActionQueue_UseAbilityOnLocation(MAD, MADLocation)
         return
     end
 
@@ -491,83 +510,79 @@ function X.ConsiderReactiveTazer()
     local bHasShard = J.CheckBitfieldFlag(ReactiveTazer:GetBehavior(), ABILITY_BEHAVIOR_UNIT_TARGET)
 
     if  J.IsGoingOnSomeone(bot)	then
-        if bHasShard then
-            for _, allyHero in pairs(nAllyHeroes) do
-                if  J.IsValidHero(allyHero)
-                and J.IsInRange(bot, allyHero, nCastRange)
-                and not J.IsSuspiciousIllusion(allyHero)
-                and not allyHero:HasModifier('modifier_necrolyte_reapers_scythe')
+        for _, allyHero in pairs(nAllyHeroes) do
+            if  J.IsValidHero(allyHero)
+            and J.IsInRange(bot, allyHero, nCastRange)
+            and not J.IsSuspiciousIllusion(allyHero)
+            and not allyHero:HasModifier('modifier_necrolyte_reapers_scythe')
+            then
+                local allyTarget = J.GetProperTarget(allyHero)
+                if  J.IsValidHero(allyTarget)
+                and J.CanBeAttacked(allyTarget)
+                and J.IsInRange(allyHero, allyTarget, nRadius)
+                and J.CanCastOnNonMagicImmune(allyTarget)
+                and not J.IsDisabled(allyTarget)
+                and not allyTarget:IsDisarmed()
+                and not allyTarget:HasModifier('modifier_necrolyte_reapers_scythe')
+                and not allyTarget:HasModifier('modifier_techies_reactive_tazer_disarmed')
                 then
-                    local allyTarget = J.GetProperTarget(allyHero)
-                    if  J.IsValidHero(allyTarget)
-                    and J.CanBeAttacked(allyTarget)
-                    and J.IsInRange(allyHero, allyTarget, nRadius)
-                    and J.CanCastOnNonMagicImmune(allyTarget)
-                    and not J.IsDisabled(allyTarget)
-                    and not allyTarget:IsDisarmed()
-                    and not allyTarget:HasModifier('modifier_necrolyte_reapers_scythe')
-                    and not allyTarget:HasModifier('modifier_techies_reactive_tazer_disarmed')
-                    then
-                        return BOT_ACTION_DESIRE_HIGH, allyHero
-                    end
+                    return BOT_ACTION_DESIRE_HIGH, allyHero
                 end
             end
-        else
-            if  J.IsValidHero(botTarget)
-            and J.CanBeAttacked(botTarget)
-            and J.IsInRange(bot, botTarget, nRadius)
-            and J.CanCastOnNonMagicImmune(botTarget)
-            and not J.IsDisabled(botTarget)
-            and not botTarget:IsDisarmed()
-            and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
-            and not botTarget:HasModifier('modifier_techies_reactive_tazer_disarmed')
-            then
-                return BOT_ACTION_DESIRE_HIGH, nil
-            end
+        end
+
+        if  J.IsValidHero(botTarget)
+        and J.CanBeAttacked(botTarget)
+        and J.IsInRange(bot, botTarget, nRadius)
+        and J.CanCastOnNonMagicImmune(botTarget)
+        and not J.IsDisabled(botTarget)
+        and not botTarget:IsDisarmed()
+        and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
+        and not botTarget:HasModifier('modifier_techies_reactive_tazer_disarmed')
+        then
+            return BOT_ACTION_DESIRE_HIGH, nil
         end
 	end
 
     if J.IsRetreating(bot) and not J.IsRealInvisible(bot) then
-        if bHasShard then
-            for _, allyHero in pairs(nAllyHeroes) do
-                if  J.IsValidHero(allyHero)
-                and J.IsRetreating(allyHero)
-                and not J.IsRealInvisible(allyHero)
-                and J.IsInRange(bot, allyHero, nCastRange)
-                and not J.IsSuspiciousIllusion(allyHero)
-                and not allyHero:HasModifier('modifier_necrolyte_reapers_scythe')
-                then
-                    for _, enemyHero in pairs(nEnemyHeroes) do
-                        if  J.IsValidHero(enemyHero)
-                        and J.CanBeAttacked(enemyHero)
-                        and J.IsInRange(allyHero, enemyHero, nRadius)
-                        and J.CanCastOnNonMagicImmune(enemyHero)
-                        and not J.IsDisabled(enemyHero)
-                        and not enemyHero:IsDisarmed()
-                        and not enemyHero:HasModifier('modifier_techies_reactive_tazer_disarmed')
-                        and allyHero:WasRecentlyDamagedByHero(enemyHero, 4.0)
-                        then
-                            if enemyHero:GetCurrentMovementSpeed() >= allyHero:GetCurrentMovementSpeed() then
-                                return BOT_ACTION_DESIRE_HIGH, allyHero
-                            end
+        for _, allyHero in pairs(nAllyHeroes) do
+            if  J.IsValidHero(allyHero)
+            and J.IsRetreating(allyHero)
+            and not J.IsRealInvisible(allyHero)
+            and J.IsInRange(bot, allyHero, nCastRange)
+            and not J.IsSuspiciousIllusion(allyHero)
+            and not allyHero:HasModifier('modifier_necrolyte_reapers_scythe')
+            then
+                for _, enemyHero in pairs(nEnemyHeroes) do
+                    if  J.IsValidHero(enemyHero)
+                    and J.CanBeAttacked(enemyHero)
+                    and J.IsInRange(allyHero, enemyHero, nRadius)
+                    and J.CanCastOnNonMagicImmune(enemyHero)
+                    and not J.IsDisabled(enemyHero)
+                    and not enemyHero:IsDisarmed()
+                    and not enemyHero:HasModifier('modifier_techies_reactive_tazer_disarmed')
+                    and allyHero:WasRecentlyDamagedByHero(enemyHero, 4.0)
+                    then
+                        if enemyHero:GetCurrentMovementSpeed() >= allyHero:GetCurrentMovementSpeed() then
+                            return BOT_ACTION_DESIRE_HIGH, allyHero
                         end
                     end
                 end
             end
-        else
-            for _, enemyHero in pairs(nEnemyHeroes) do
-                if  J.IsValidHero(enemyHero)
-                and J.CanBeAttacked(enemyHero)
-                and J.IsInRange(bot, enemyHero, nRadius)
-                and J.CanCastOnNonMagicImmune(enemyHero)
-                and not J.IsDisabled(enemyHero)
-                and not enemyHero:IsDisarmed()
-                and not enemyHero:HasModifier('modifier_techies_reactive_tazer_disarmed')
-                and bot:WasRecentlyDamagedByHero(enemyHero, 4.0)
-                then
-                    if enemyHero:GetCurrentMovementSpeed() >= bot:GetCurrentMovementSpeed() then
-                        return BOT_ACTION_DESIRE_HIGH, nil
-                    end
+        end
+
+        for _, enemyHero in pairs(nEnemyHeroes) do
+            if  J.IsValidHero(enemyHero)
+            and J.CanBeAttacked(enemyHero)
+            and J.IsInRange(bot, enemyHero, nRadius)
+            and J.CanCastOnNonMagicImmune(enemyHero)
+            and not J.IsDisabled(enemyHero)
+            and not enemyHero:IsDisarmed()
+            and not enemyHero:HasModifier('modifier_techies_reactive_tazer_disarmed')
+            and bot:WasRecentlyDamagedByHero(enemyHero, 4.0)
+            then
+                if enemyHero:GetCurrentMovementSpeed() >= bot:GetCurrentMovementSpeed() then
+                    return BOT_ACTION_DESIRE_HIGH, nil
                 end
             end
         end
@@ -587,80 +602,76 @@ function X.ConsiderReactiveTazerStop()
     local bHasShard = J.CheckBitfieldFlag(ReactiveTazer:GetBehavior(), ABILITY_BEHAVIOR_UNIT_TARGET)
 
     if  J.IsGoingOnSomeone(bot)	then
-        if bHasShard then
-            for _, allyHero in pairs(nAllyHeroes) do
-                if  J.IsValidHero(allyHero)
-                and allyHero:HasModifier('modifier_techies_reactive_tazer')
+        for _, allyHero in pairs(nAllyHeroes) do
+            if  J.IsValidHero(allyHero)
+            and allyHero:HasModifier('modifier_techies_reactive_tazer')
+            then
+                local allyTarget = J.GetProperTarget(allyHero)
+                if  J.IsValidHero(allyTarget)
+                and J.CanBeAttacked(allyTarget)
+                and J.IsInRange(allyHero, allyTarget, nRadius)
+                and J.CanCastOnNonMagicImmune(allyTarget)
+                and not J.IsDisabled(allyTarget)
+                and not allyTarget:IsDisarmed()
+                and not allyTarget:HasModifier('modifier_necrolyte_reapers_scythe')
+                and not allyTarget:HasModifier('modifier_techies_reactive_tazer_disarmed')
+                and J.IsAttacking(allyTarget)
                 then
-                    local allyTarget = J.GetProperTarget(allyHero)
-                    if  J.IsValidHero(allyTarget)
-                    and J.CanBeAttacked(allyTarget)
-                    and J.IsInRange(allyHero, allyTarget, nRadius)
-                    and J.CanCastOnNonMagicImmune(allyTarget)
-                    and not J.IsDisabled(allyTarget)
-                    and not allyTarget:IsDisarmed()
-                    and not allyTarget:HasModifier('modifier_necrolyte_reapers_scythe')
-                    and not allyTarget:HasModifier('modifier_techies_reactive_tazer_disarmed')
-                    and J.IsAttacking(allyTarget)
+                    return BOT_ACTION_DESIRE_HIGH
+                end
+            end
+        end
+
+        if  J.IsValidHero(botTarget)
+        and J.CanBeAttacked(botTarget)
+        and J.IsInRange(bot, botTarget, nRadius)
+        and J.CanCastOnNonMagicImmune(botTarget)
+        and not J.IsDisabled(botTarget)
+        and not botTarget:IsDisarmed()
+        and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
+        and not botTarget:HasModifier('modifier_techies_reactive_tazer_disarmed')
+        and J.IsAttacking(botTarget)
+        then
+            return BOT_ACTION_DESIRE_HIGH
+        end
+	end
+
+    if J.IsRetreating(bot) and not J.IsRealInvisible(bot) then
+        for _, allyHero in pairs(nAllyHeroes) do
+            if  J.IsValidHero(allyHero)
+            and J.IsRetreating(allyHero)
+            and not J.IsRealInvisible(allyHero)
+            and allyHero:HasModifier('modifier_techies_reactive_tazer')
+            then
+                for _, enemyHero in pairs(nEnemyHeroes) do
+                    if  J.IsValidHero(enemyHero)
+                    and J.CanBeAttacked(enemyHero)
+                    and J.IsInRange(allyHero, enemyHero, nRadius)
+                    and J.CanCastOnNonMagicImmune(enemyHero)
+                    and not J.IsDisabled(enemyHero)
+                    and not enemyHero:IsDisarmed()
+                    and not enemyHero:HasModifier('modifier_techies_reactive_tazer_disarmed')
+                    and allyHero:WasRecentlyDamagedByHero(enemyHero, 4.0)
+                    and J.IsAttacking(enemyHero)
                     then
                         return BOT_ACTION_DESIRE_HIGH
                     end
                 end
             end
-        else
-            if  J.IsValidHero(botTarget)
-            and J.CanBeAttacked(botTarget)
-            and J.IsInRange(bot, botTarget, nRadius)
-            and J.CanCastOnNonMagicImmune(botTarget)
-            and not J.IsDisabled(botTarget)
-            and not botTarget:IsDisarmed()
-            and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
-            and not botTarget:HasModifier('modifier_techies_reactive_tazer_disarmed')
-            and J.IsAttacking(botTarget)
+        end
+
+        for _, enemyHero in pairs(nEnemyHeroes) do
+            if  J.IsValidHero(enemyHero)
+            and J.CanBeAttacked(enemyHero)
+            and J.IsInRange(bot, enemyHero, nRadius)
+            and J.CanCastOnNonMagicImmune(enemyHero)
+            and not J.IsDisabled(enemyHero)
+            and not enemyHero:IsDisarmed()
+            and not enemyHero:HasModifier('modifier_techies_reactive_tazer_disarmed')
+            and bot:WasRecentlyDamagedByHero(enemyHero, 4.0)
+            and J.IsAttacking(enemyHero)
             then
                 return BOT_ACTION_DESIRE_HIGH
-            end
-        end
-	end
-
-    if J.IsRetreating(bot) and not J.IsRealInvisible(bot) then
-        if bHasShard then
-            for _, allyHero in pairs(nAllyHeroes) do
-                if  J.IsValidHero(allyHero)
-                and J.IsRetreating(allyHero)
-                and not J.IsRealInvisible(allyHero)
-                and allyHero:HasModifier('modifier_techies_reactive_tazer')
-                then
-                    for _, enemyHero in pairs(nEnemyHeroes) do
-                        if  J.IsValidHero(enemyHero)
-                        and J.CanBeAttacked(enemyHero)
-                        and J.IsInRange(allyHero, enemyHero, nRadius)
-                        and J.CanCastOnNonMagicImmune(enemyHero)
-                        and not J.IsDisabled(enemyHero)
-                        and not enemyHero:IsDisarmed()
-                        and not enemyHero:HasModifier('modifier_techies_reactive_tazer_disarmed')
-                        and allyHero:WasRecentlyDamagedByHero(enemyHero, 4.0)
-                        and J.IsAttacking(enemyHero)
-                        then
-                            return BOT_ACTION_DESIRE_HIGH
-                        end
-                    end
-                end
-            end
-        else
-            for _, enemyHero in pairs(nEnemyHeroes) do
-                if  J.IsValidHero(enemyHero)
-                and J.CanBeAttacked(enemyHero)
-                and J.IsInRange(bot, enemyHero, nRadius)
-                and J.CanCastOnNonMagicImmune(enemyHero)
-                and not J.IsDisabled(enemyHero)
-                and not enemyHero:IsDisarmed()
-                and not enemyHero:HasModifier('modifier_techies_reactive_tazer_disarmed')
-                and bot:WasRecentlyDamagedByHero(enemyHero, 4.0)
-                and J.IsAttacking(enemyHero)
-                then
-                    return BOT_ACTION_DESIRE_HIGH
-                end
             end
         end
 	end
@@ -796,6 +807,188 @@ function X.ConsiderBlastOff()
     end
 
     return BOT_ACTION_DESIRE_NONE, 0
+end
+
+function X.ConsiderMAD()
+    if not J.CanCastAbility(MAD) then
+        return BOT_ACTION_DESIRE_NONE
+    end
+
+    local nCastRange = MAD:GetCastRange()
+    local nCastPoint = MAD:GetCastPoint()
+    local nRadius = MAD:GetSpecialValueInt('radius')
+    local nExplosionDelay = MAD:GetSpecialValueFloat('explosion_delay')
+    local nBaseDamage = MAD:GetSpecialValueInt('base_damage')
+    local fMaxManaAsDamagePct = MAD:GetSpecialValueInt('max_mana_pct_as_damage') / 100
+    local nDamage = (bot:GetMaxMana() * fMaxManaAsDamagePct) + nBaseDamage
+
+    for _, enemyHero in pairs(nEnemyHeroes) do
+        if  J.IsValidHero(enemyHero)
+        and J.CanBeAttacked(enemyHero)
+        and J.IsInRange(bot, enemyHero, nCastRange)
+        and J.CanCastOnNonMagicImmune(enemyHero)
+        and J.WillKillTarget(enemyHero, nDamage, DAMAGE_TYPE_MAGICAL, nExplosionDelay + nCastPoint)
+        and not J.CanKillTarget(enemyHero, nDamage * 0.75, DAMAGE_TYPE_MAGICAL)
+        and not J.IsChasingTarget(bot, enemyHero)
+        and not enemyHero:HasModifier('modifier_abaddon_borrowed_time')
+        and not enemyHero:HasModifier('modifier_dazzle_shallow_grave')
+        and not enemyHero:HasModifier('modifier_necrolyte_reapers_scythe')
+        and not enemyHero:HasModifier('modifier_oracle_false_promise_timer')
+        and not enemyHero:HasModifier('modifier_templar_assassin_refraction_absorb')
+        and not enemyHero:HasModifier('modifier_troll_warlord_battle_trance')
+        and not enemyHero:HasModifier('modifier_ursa_enrage')
+        then
+            if J.IsDisabled(enemyHero)
+            or enemyHero:GetCurrentMovementSpeed() < 250
+            or J.IsInRange(bot, enemyHero, 200)
+            then
+                return BOT_ACTION_DESIRE_HIGH, enemyHero:GetLocation()
+            end
+        end
+    end
+
+    if J.IsGoingOnSomeone(bot) then
+        if  J.IsValidHero(botTarget)
+        and J.CanBeAttacked(botTarget)
+        and J.IsInRange(bot, botTarget, nCastRange)
+        and J.CanCastOnNonMagicImmune(botTarget)
+        and not J.IsChasingTarget(bot, botTarget)
+        and not botTarget:HasModifier('modifier_abaddon_borrowed_time')
+        and not botTarget:HasModifier('modifier_dazzle_shallow_grave')
+        and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
+        and not botTarget:HasModifier('modifier_oracle_false_promise_timer')
+        and not botTarget:HasModifier('modifier_templar_assassin_refraction_absorb')
+        and not botTarget:HasModifier('modifier_troll_warlord_battle_trance')
+        and not botTarget:HasModifier('modifier_ursa_enrage')
+        and J.GetHP(botTarget) < 0.6
+        then
+            if J.IsDisabled(botTarget)
+            or botTarget:GetCurrentMovementSpeed() < 250
+            or J.IsInRange(bot, botTarget, 200)
+            then
+                return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation()
+            end
+        end
+    end
+
+    if J.IsDoingRoshan(bot) then
+        if  J.IsRoshan(botTarget)
+        and J.CanBeAttacked(botTarget)
+        and J.IsInRange(bot, botTarget, nCastRange)
+        and not J.IsDisabled(botTarget)
+        and bAttacking
+        then
+            return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation()
+        end
+    end
+
+    if J.IsDoingTormentor(bot) then
+        if  J.IsTormentor(botTarget)
+        and J.IsInRange(bot, botTarget, nCastRange)
+        and bAttacking
+        then
+            return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation()
+        end
+    end
+
+    if not J.IsRetreating(bot) and not J.IsRealInvisible(bot) and #nAllyHeroes <= 1 and #nEnemyHeroes == 0 then
+        local nLocationAoE = bot:FindAoELocation(true, false, bot:GetLocation(), nCastRange, nRadius, 0, nDamage)
+        if nLocationAoE.count >= 5 then
+            return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc
+        end
+    end
+
+    return BOT_ACTION_DESIRE_NONE
+end
+
+function X.ConsiderDetonateMAD()
+    if not J.CanCastAbility(DetonateMAD) or MAD == nil then
+        return BOT_ACTION_DESIRE_NONE
+    end
+
+    local nRadius = MAD:GetSpecialValueInt('radius')
+    local nExplosionDelay = MAD:GetSpecialValueFloat('explosion_delay')
+    local nBaseDamage = MAD:GetSpecialValueInt('base_damage')
+    local fMaxManaAsDamagePct = MAD:GetSpecialValueInt('max_mana_pct_as_damage') / 100
+    local nDamage = (bot:GetMaxMana() * fMaxManaAsDamagePct) + nBaseDamage
+
+    local nUnitList_Allies = GetUnitList(UNIT_LIST_ALLIES)
+    local nUnitList_Enemies = GetUnitList(UNIT_LIST_ENEMIES)
+
+    for _, unit in pairs(nUnitList_Allies) do
+        if J.IsValid(unit) and unit:GetUnitName() 'npc_dota_techies_innate_mine' then
+            for _, enemyHero in pairs(nUnitList_Enemies) do
+                if  J.IsValidHero(enemyHero)
+                and J.CanBeAttacked(enemyHero)
+                and J.CanCastOnNonMagicImmune(enemyHero)
+                and J.WillKillTarget(enemyHero, nDamage, DAMAGE_TYPE_MAGICAL, nExplosionDelay)
+                and not enemyHero:HasModifier('modifier_abaddon_borrowed_time')
+                and not enemyHero:HasModifier('modifier_dazzle_shallow_grave')
+                and not enemyHero:HasModifier('modifier_necrolyte_reapers_scythe')
+                and not enemyHero:HasModifier('modifier_oracle_false_promise_timer')
+                and not enemyHero:HasModifier('modifier_templar_assassin_refraction_absorb')
+                and not enemyHero:HasModifier('modifier_troll_warlord_battle_trance')
+                and not enemyHero:HasModifier('modifier_ursa_enrage')
+                then
+                    local vLocation = J.GetCorrectLoc(enemyHero, nExplosionDelay)
+                    if GetUnitToLocationDistance(unit, vLocation) <= nRadius then
+                        return BOT_ACTION_DESIRE_HIGH
+                    end
+                end
+            end
+
+            if J.IsGoingOnSomeone(bot) then
+                if  J.IsValidHero(botTarget)
+                and J.CanBeAttacked(botTarget)
+                and J.CanCastOnNonMagicImmune(botTarget)
+                and not J.IsChasingTarget(bot, botTarget)
+                and not botTarget:HasModifier('modifier_abaddon_borrowed_time')
+                and not botTarget:HasModifier('modifier_dazzle_shallow_grave')
+                and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
+                and not botTarget:HasModifier('modifier_oracle_false_promise_timer')
+                and not botTarget:HasModifier('modifier_templar_assassin_refraction_absorb')
+                and not botTarget:HasModifier('modifier_troll_warlord_battle_trance')
+                and not botTarget:HasModifier('modifier_ursa_enrage')
+                and J.GetHP(botTarget) < 0.6
+                then
+                    local vLocation = J.GetCorrectLoc(botTarget, nExplosionDelay)
+                    if GetUnitToLocationDistance(unit, vLocation) <= nRadius then
+                        return BOT_ACTION_DESIRE_HIGH
+                    end
+                end
+            end
+
+            if J.IsDoingRoshan(bot) then
+                if  J.IsRoshan(botTarget)
+                and J.CanBeAttacked(botTarget)
+                and J.IsInRange(unit, botTarget, nRadius)
+                and bAttacking
+                then
+                    return BOT_ACTION_DESIRE_HIGH
+                end
+            end
+
+            if J.IsDoingTormentor(bot) then
+                if  J.IsTormentor(botTarget)
+                and J.IsInRange(unit, botTarget, nRadius)
+                and bAttacking
+                then
+                    return BOT_ACTION_DESIRE_HIGH
+                end
+            end
+
+            local nInRangeAlly = J.GetAlliesNearLoc(unit:GetLocation(), 800)
+
+            if not J.IsRealInvisible(bot) and #nInRangeAlly <= 1 then
+                local nLocationAoE = bot:FindAoELocation(true, false, unit:GetLocation(), 0, nRadius, 0, nDamage)
+                if nLocationAoE.count >= 5 then
+                    return BOT_ACTION_DESIRE_HIGH
+                end
+            end
+        end
+    end
+
+    return BOT_ACTION_DESIRE_NONE
 end
 
 function X.ConsiderMineFieldSign()

@@ -44,6 +44,26 @@ function CDOTABaseAbility_BotScript:GetCastRange() -- wasn't giving the added ra
                         nCastRange = nCastRange + hItem:GetSpecialValueInt('bonus_cast_range')
                     end
 
+                    if string.find(sItemName, 'item_dagon') then
+                        local bHasItem = false
+                        for j = 0, 5 do
+                            local hItem__2 = bot:GetItemInSlot(j)
+                            if hItem__2 ~= nil and hItem ~= hItem__2 then
+                                local sItem__2Name = hItem__2:GetName()
+                                if string.find(sItem__2Name, 'item_aether_lens')
+                                or string.find(sItem__2Name, 'item_dagon')
+                                then
+                                    bHasItem = true
+                                    break
+                                end
+                            end
+                        end
+
+                        if not bHasItem then
+                            nCastRange = nCastRange + hItem:GetSpecialValueInt('cast_range_bonus')
+                        end
+                    end
+
                     if sItemName == 'item_magnifying_monocle' then
                         nCastRange = nCastRange + hItem:GetSpecialValueInt('bonus_cast_range')
                     end
@@ -59,7 +79,6 @@ function CDOTABaseAbility_BotScript:GetCastRange() -- wasn't giving the added ra
                     if sItemName == 'item_enhancement_boundless' then
                         nCastRange = nCastRange + hItem:GetSpecialValueInt('bonus_cast_range')
                     end
-
                 end
             end
         end

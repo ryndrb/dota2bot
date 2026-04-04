@@ -288,6 +288,10 @@ function X.ConsiderWhirlingDeath()
 		nDamage = nDamage + #nTrees * nTreeDamage
 	end
 
+	if J.IsStuck(bot) then
+		return BOT_ACTION_DESIRE_HIGH
+	end
+
 	for _, enemyHero in pairs(nEnemyHeroes) do
 		if  J.IsValidHero(enemyHero)
 		and J.CanBeAttacked(bot, enemyHero, nRadius - 50)

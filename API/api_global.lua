@@ -381,3 +381,23 @@ end
 -- { location, time_remaining, playerid } GetIncomingTeleports()
 
 -- Gets a table of all the teleports that are visibly happening.
+
+BOT_MODE_WATCHER = 28
+BOT_MODE_WISDOM_SHRINE = 29
+BOT_MODE_LOTUS_POOL = 30
+
+---
+-- since attack is capped at 0.65 with the 7.41 patch, "fix/compensate" for Valve messing things up
+-- non-overridden modes are still [0,1] though, ^ but still viable
+BOT_MODE_DESIRE_NONE 		= 0
+BOT_MODE_DESIRE_VERYLOW 	= 0.05
+BOT_MODE_DESIRE_LOW 		= 0.175
+BOT_MODE_DESIRE_MODERATE 	= 0.35
+BOT_MODE_DESIRE_HIGH		= 0.525
+BOT_MODE_DESIRE_VERYHIGH 	= 0.6
+BOT_MODE_DESIRE_ABSOLUTE 	= 0.7
+
+-- this is only used for numbers involved in returned desires (ie. adding/subtracting)
+function GetAdjustedValueCausedPatch(fNum)
+	return RemapValClamped(fNum, 0, 1, 0, BOT_MODE_DESIRE_ABSOLUTE)
+end

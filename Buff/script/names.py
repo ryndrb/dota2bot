@@ -557,6 +557,18 @@ neutral_name_table = {
         "item_weighted_dice": {
             "visibleName": "Weighted Dice",
         },
+        "item_dagger_of_ristul": {
+            "visibleName": "Dagger of Ristul",
+        },
+        "item_foragers_kit": {
+            "visibleName": "Forager's Kit",
+        },
+        "item_possessed_mask": {
+            "visibleName": "Possessed Mask",
+        },
+        "item_stonefeather_satchel": {
+            "visibleName": "Stonefeather Satchel",
+        },
     },
     2: {
         # "item_gossamer_cape": {
@@ -586,17 +598,29 @@ neutral_name_table = {
         "item_defiant_shell": {
             "visibleName": "Defiant Shell",
         },
+        "item_crippling_crossbow": {
+            "visibleName": "Crippling Crossbow",
+        },
+        "item_medallion_of_courage": {
+            "visibleName": "Medallion of Courage",
+        },
+        "item_seeds_of_serenity": {
+            "visibleName": "Seeds of Serenity",
+        },
     },
     3: {
         # "item_nemesis_curse": {
         #     "visibleName": "Nemesis Curse",
         # },
+        "item_cloak_of_flames": {
+            "visibleName": "Cloak of Flames",
+        },
         "item_psychic_headband": {
             "visibleName": "Psychic Headband",
         },
-        "item_whisper_of_the_dread": {
-            "visibleName": "Whisper of the Dread",
-        },
+        # "item_whisper_of_the_dread": {
+        #     "visibleName": "Whisper of the Dread",
+        # },
         "item_serrated_shiv": {
             "visibleName": "Serrrated Shiv",
         },
@@ -615,6 +639,15 @@ neutral_name_table = {
         "item_unrelenting_eye": {
             "visibleName": "Unrelenting Eye",
         },
+        "item_partisans_brand": {
+            "visibleName": "Partisan's Brand",
+        },
+        "item_spellslinger": {
+            "visibleName": "Spellslinger",
+        },
+        "item_stormcrafter": {
+            "visibleName": "Stormcrafter",
+        },
     },
     4: {
         # "item_mind_breaker": {
@@ -623,9 +656,9 @@ neutral_name_table = {
         # "item_ogre_seal_totem": {
         #     "visibleName": "Ogre Seal Totem",
         # },
-        "item_crippling_crossbow": {
-            "visibleName": "Crippling Crossbow",
-        },
+        # "item_crippling_crossbow": {
+        #     "visibleName": "Crippling Crossbow",
+        # },
         # "item_magnifying_monocle": {
         #     "visibleName": "Magnifying Monocle",
         # },
@@ -655,6 +688,18 @@ neutral_name_table = {
         },
         "item_metamorphic_mandible": {
             "visibleName": "Metamorphic Mandible",
+        },
+        "item_conjurers_catalyst": {
+            "visibleName": "Conjurer's Catalyst",
+        },
+        "item_dandelion_amulet": {
+            "visibleName": "Dandelion Amulet",
+        },
+        "item_enchanters_bauble": {
+            "visibleName": "Enchanter's Bauble",
+        },
+        "item_prophets_pendulum": {
+            "visibleName": "Prophet's Pendulum",
         },
     },
     5: {
@@ -697,6 +742,12 @@ neutral_name_table = {
         "item_riftshadow_prism": {
             "visibleName": "Riftshadow Prism",
         },
+        "item_harmonizer": {
+            "visibleName": "Harmonizer",
+        },
+        "item_heavy_blade": {
+            "visibleName": "Witchbane",
+        },
     }
 }
 
@@ -722,6 +773,10 @@ enhancement_name_table = {
             "visibleName": "Tough",
             "tier_unique": 1,
         },
+        "item_enhancement_vital": {
+            "visibleName": "Vital",
+            "tier_unique": 1,
+        },
     },
     2: {
         "item_enhancement_alert": {
@@ -745,10 +800,10 @@ enhancement_name_table = {
             "tier_unique": 1,
         },
         
-        "item_enhancement_vast": {
-            "visibleName": "Vast",
-            "tier_unique": 2,
-        },
+        # "item_enhancement_vast": {
+        #     "visibleName": "Vast",
+        #     "tier_unique": 2,
+        # },
         "item_enhancement_greedy": {
             "visibleName": "Greedy",
             "tier_unique": 2,
@@ -757,8 +812,20 @@ enhancement_name_table = {
             "visibleName": "Keen-eyed",
             "tier_unique": 2,
         },
-        "item_enhancement_vampiric": {
-            "visibleName": "Vampiric",
+        # "item_enhancement_vampiric": {
+        #     "visibleName": "Vampiric",
+        #     "tier_unique": 2,
+        # },
+        "item_enhancement_crude": {
+            "visibleName": "Crude",
+            "tier_unique": 2,
+        },
+        "item_enhancement_nimble": {
+            "visibleName": "Nimble",
+            "tier_unique": 2,
+        },
+        "item_enhancement_titanic": {
+            "visibleName": "Titanic",
             "tier_unique": 2,
         },
     },
@@ -784,10 +851,10 @@ enhancement_name_table = {
             "tier_unique": 1,
         },
         
-        "item_enhancement_vast": {
-            "visibleName": "Vast",
-            "tier_unique": 2,
-        },
+        # "item_enhancement_vast": {
+        #     "visibleName": "Vast",
+        #     "tier_unique": 2,
+        # },
         "item_enhancement_greedy": {
             "visibleName": "Greedy",
             "tier_unique": 2,
@@ -796,8 +863,20 @@ enhancement_name_table = {
             "visibleName": "Keen-eyed",
             "tier_unique": 2,
         },
-        "item_enhancement_vampiric": {
-            "visibleName": "Vampiric",
+        # "item_enhancement_vampiric": {
+        #     "visibleName": "Vampiric",
+        #     "tier_unique": 2,
+        # },
+        "item_enhancement_crude": {
+            "visibleName": "Crude",
+            "tier_unique": 2,
+        },
+        "item_enhancement_nimble": {
+            "visibleName": "Nimble",
+            "tier_unique": 2,
+        },
+        "item_enhancement_titanic": {
+            "visibleName": "Titanic",
             "tier_unique": 2,
         },
     },
@@ -823,8 +902,24 @@ enhancement_name_table = {
             "tier_unique": 1,
         },
         
-        "item_enhancement_vampiric": {
-            "visibleName": "Vampiric",
+        "item_enhancement_keen_eyed": {
+            "visibleName": "Keen-eyed",
+            "tier_unique": 2,
+        },
+        # "item_enhancement_vampiric": {
+        #     "visibleName": "Vampiric",
+        #     "tier_unique": 2,
+        # },
+        "item_enhancement_crude": {
+            "visibleName": "Crude",
+            "tier_unique": 2,
+        },
+        "item_enhancement_nimble": {
+            "visibleName": "Nimble",
+            "tier_unique": 2,
+        },
+        "item_enhancement_titanic": {
+            "visibleName": "Titanic",
             "tier_unique": 2,
         },
         
@@ -832,28 +927,24 @@ enhancement_name_table = {
             "visibleName": "Timeless",
             "tier_unique": 4,
         },
-        "item_enhancement_titanic": {
-            "visibleName": "Titanic",
-            "tier_unique": 4,
-        },
-        "item_enhancement_crude": {
-            "visibleName": "Crude",
-            "tier_unique": 4,
-        },
+        # "item_enhancement_titanic": {
+        #     "visibleName": "Titanic",
+        #     "tier_unique": 4,
+        # },
+        # "item_enhancement_crude": {
+        #     "visibleName": "Crude",
+        #     "tier_unique": 4,
+        # },
     },
     5: {
         "item_enhancement_timeless": {
             "visibleName": "Timeless",
             "tier_unique": 4,
         },
-        "item_enhancement_titanic": {
-            "visibleName": "Titanic",
-            "tier_unique": 4,
-        },
-        "item_enhancement_crude": {
-            "visibleName": "Crude",
-            "tier_unique": 4,
-        },
+        # "item_enhancement_titanic": {
+        #     "visibleName": "Titanic",
+        #     "tier_unique": 4,
+        # },
         
         "item_enhancement_feverish": {
             "visibleName": "Feverish",
@@ -871,12 +962,24 @@ enhancement_name_table = {
             "visibleName": "Evolved",
             "tier_unique": 5,
         },
-        "item_enhancement_boundless": {
-            "visibleName": "Boundless",
+        # "item_enhancement_boundless": {
+        #     "visibleName": "Boundless",
+        #     "tier_unique": 5,
+        # },
+        # "item_enhancement_wise": {
+        #     "visibleName": "Wise",
+        #     "tier_unique": 5,
+        # },
+        "item_enhancement_vampiric": {
+            "visibleName": "Vampiric",
             "tier_unique": 5,
         },
-        "item_enhancement_wise": {
-            "visibleName": "Wise",
+        "item_enhancement_hulking": {
+            "visibleName": "Hulking",
+            "tier_unique": 5,
+        },
+        "item_enhancement_manic": {
+            "visibleName": "Manic",
             "tier_unique": 5,
         },
     },

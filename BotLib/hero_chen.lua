@@ -157,12 +157,14 @@ local Penitence         = bot:GetAbilityByName('chen_penitence')
 local HolyPersuasion    = bot:GetAbilityByName('chen_holy_persuasion')
 local DivineFavor       = bot:GetAbilityByName('chen_divine_favor')
 local SummonConvert     = bot:GetAbilityByName('chen_summon_convert')
+local Zealot            = bot:GetAbilityByName('chen_zealot')
 local HandOfGod         = bot:GetAbilityByName('chen_hand_of_god')
 
 local PenitenceDesire, PenitenceTarget
 local HolyPersuasionDesire, HolyPersuasionTarget
 local DivineFavorDesire, DivineFavorTarget
 local SummonConvertDesire
+local ZealotDesire
 local HandOfGodDesire
 
 local bAttacking = false
@@ -205,6 +207,7 @@ function X.SkillsComplement()
     HolyPersuasion    = bot:GetAbilityByName('chen_holy_persuasion')
     DivineFavor       = bot:GetAbilityByName('chen_divine_favor')
     SummonConvert     = bot:GetAbilityByName('chen_summon_convert')
+    Zealot            = bot:GetAbilityByName('chen_zealot')
     HandOfGod         = bot:GetAbilityByName('chen_hand_of_god')
 
     bAttacking = J.IsAttacking(bot)
@@ -231,6 +234,13 @@ function X.SkillsComplement()
     if SummonConvertDesire > 0 then
         J.SetQueuePtToINT(bot, false)
         bot:ActionQueue_UseAbility(SummonConvert)
+        return
+    end
+
+    ZealotDesire = X.ConsiderZealot()
+    if ZealotDesire > 0 then
+        J.SetQueuePtToINT(bot, false)
+        bot:ActionQueue_UseAbility(Zealot)
         return
     end
 
@@ -461,20 +471,20 @@ function X.ConsiderDivineFavor()
 		end
 	end
 
-    if J.IsInTeamFight(bot, 1200) then
-        local distance = 0
-        if bot.chen.creeps and #bot.chen.creeps > 0 then
-            for _, creep in pairs(bot.chen.creeps) do
-                if J.IsValid(creep) then
-                    distance = distance + GetUnitToUnitDistance(bot, creep)
-                end
-            end
+    -- if J.IsInTeamFight(bot, 1200) then
+    --     local distance = 0
+    --     if bot.chen.creeps and #bot.chen.creeps > 0 then
+    --         for _, creep in pairs(bot.chen.creeps) do
+    --             if J.IsValid(creep) then
+    --                 distance = distance + GetUnitToUnitDistance(bot, creep)
+    --             end
+    --         end
 
-            if (distance / #bot.chen.creeps) > 1200 then
-                return BOT_ACTION_DESIRE_HIGH, bot
-            end
-        end
-    end
+    --         if (distance / #bot.chen.creeps) > 1200 then
+    --             return BOT_ACTION_DESIRE_HIGH, bot
+    --         end
+    --     end
+    -- end
 
     local hTarget = nil
     local hTargetHealth = math.huge
@@ -542,6 +552,29 @@ function X.ConsiderSummonConvert()
     if bot:GetUnitName() ~= 'npc_dota_hero_chen' then
         if not (bot:WasRecentlyDamagedByAnyHero(1.0) and botHP < 0.12) then
             return BOT_ACTION_DESIRE_HIGH
+        end
+    end
+
+    return BOT_ACTION_DESIRE_NONE
+end
+
+function X.ConsiderZealot()
+    if not J.CanCastAbility(Zealot) then
+        return BOT_ACTION_DESIRE_NONE
+    end
+
+    if J.IsInTeamFight(bot, 1200) then
+        local distance = 0
+        if bot.chen.creeps and #bot.chen.creeps > 0 then
+            for _, creep in pairs(bot.chen.creeps) do
+                if J.IsValid(creep) then
+                    distance = distance + GetUnitToUnitDistance(bot, creep)
+                end
+            end
+
+            if (distance / #bot.chen.creeps) > 1200 then
+                return BOT_ACTION_DESIRE_HIGH, bot
+            end
         end
     end
 

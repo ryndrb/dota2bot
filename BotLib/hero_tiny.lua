@@ -33,18 +33,19 @@ local HeroBuild = {
 				"item_tango",
 				"item_quelling_blade",
 				"item_double_branches",
-				"item_magic_stick",
+				"item_circlet",
+				"item_slippers",
 			
 				"item_wraith_band",
 				"item_magic_wand",
 				"item_power_treads",
 				"item_echo_sabre",
 				"item_black_king_bar",--
-				"item_aghanims_shard",
-				"item_assault",--
 				"item_harpoon",--
+				"item_assault",--
 				"item_satanic",--
 				"item_greater_crit",--
+				"item_aghanims_shard",
 				"item_moon_shard",
 				"item_ultimate_scepter_2",
 				"item_travel_boots_2",--
@@ -53,6 +54,45 @@ local HeroBuild = {
 				"item_quelling_blade", "item_assault",
 				"item_magic_wand", "item_satanic",
 				"item_wraith_band", "item_greater_crit",
+			},
+        },
+        [2] = {
+            ['talent'] = {
+				[1] = {
+					['t25'] = {10, 0},
+					['t20'] = {0, 10},
+					['t15'] = {0, 10},
+					['t10'] = {10, 0},
+				}
+            },
+            ['ability'] = {
+                [1] = {3,1,3,2,3,6,3,1,1,1,6,2,2,2,6},
+            },
+            ['buy_list'] = {
+				"item_tango",
+				"item_quelling_blade",
+				"item_double_branches",
+				"item_circlet",
+				"item_slippers",
+			
+				"item_wraith_band",
+				"item_magic_wand",
+				"item_power_treads",
+				"item_echo_sabre",
+				"item_silver_edge",--
+				"item_black_king_bar",--
+				"item_harpoon",--
+				"item_greater_crit",--
+				"item_assault",--
+				"item_aghanims_shard",
+				"item_moon_shard",
+				"item_ultimate_scepter_2",
+				"item_travel_boots_2",--
+			},
+            ['sell_list'] = {
+				"item_quelling_blade", "item_black_king_bar",
+				"item_magic_wand", "item_greater_crit",
+				"item_wraith_band", "item_assault",
 			},
         },
     },

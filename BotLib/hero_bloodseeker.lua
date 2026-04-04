@@ -250,7 +250,7 @@ function X.SkillsComplement()
 	BloodrageDesire, BloodrageTarget = X.ConsiderBloodrage()
 	if BloodrageDesire > 0 then
 		J.SetQueuePtToINT(bot, false)
-		bot:ActionQueue_UseAbilityOnEntity(Bloodrage, BloodrageTarget)
+		bot:ActionQueue_UseAbility(Bloodrage)
 		return
 	end
 
@@ -278,32 +278,32 @@ function X.ConsiderBloodrage()
 	local fMaxHealthDPS = Bloodrage:GetSpecialValueFloat('damage_pct')
 	local fHealthAfter = J.GetHealthAfter(((fMaxHealthDPS / 100) * bot:GetHealth() * nDuration))
 
-	if J.IsInTeamFight(bot, 1200) then
-		local hTarget = nil
-		local hTargetScore = 0
+	-- if J.IsInTeamFight(bot, 1200) then
+	-- 	local hTarget = nil
+	-- 	local hTargetScore = 0
 
-		for _, allyHero in pairs(nAllyHeroes) do
-			if J.IsValidHero(allyHero)
-			and J.IsInRange(bot, allyHero, nCastRange + 300)
-			and not J.IsSuspiciousIllusion(allyHero)
-			and not J.IsRetreating(allyHero)
-			and not allyHero:HasModifier('modifier_bloodseeker_bloodrage')
-			and not allyHero:HasModifier('modifier_necrolyte_reapers_scythe')
-			and not allyHero:IsDisarmed()
-			then
-				local fAllyHeroHealthAfter = J.GetHealthAfter(((fMaxHealthDPS / 100) * allyHero:GetHealth() * nDuration))
-				local allyHeroScore = allyHero:GetAttackDamage() * allyHero:GetAttackSpeed()
-				if allyHeroScore > hTargetScore and fAllyHeroHealthAfter > 0.25 then
-					hTarget = allyHero
-					hTargetScore = allyHeroScore
-				end
-			end
-		end
+	-- 	for _, allyHero in pairs(nAllyHeroes) do
+	-- 		if J.IsValidHero(allyHero)
+	-- 		and J.IsInRange(bot, allyHero, nCastRange + 300)
+	-- 		and not J.IsSuspiciousIllusion(allyHero)
+	-- 		and not J.IsRetreating(allyHero)
+	-- 		and not allyHero:HasModifier('modifier_bloodseeker_bloodrage')
+	-- 		and not allyHero:HasModifier('modifier_necrolyte_reapers_scythe')
+	-- 		and not allyHero:IsDisarmed()
+	-- 		then
+	-- 			local fAllyHeroHealthAfter = J.GetHealthAfter(((fMaxHealthDPS / 100) * allyHero:GetHealth() * nDuration))
+	-- 			local allyHeroScore = allyHero:GetAttackDamage() * allyHero:GetAttackSpeed()
+	-- 			if allyHeroScore > hTargetScore and fAllyHeroHealthAfter > 0.25 then
+	-- 				hTarget = allyHero
+	-- 				hTargetScore = allyHeroScore
+	-- 			end
+	-- 		end
+	-- 	end
 
-		if hTarget ~= nil then
-			return BOT_ACTION_DESIRE_HIGH, hTarget
-		end
-	end
+	-- 	if hTarget ~= nil then
+	-- 		return BOT_ACTION_DESIRE_HIGH, hTarget
+	-- 	end
+	-- end
 
 	if J.IsGoingOnSomeone(bot) then
 		if J.IsValidHero(botTarget)
@@ -351,30 +351,34 @@ function X.ConsiderBloodrage()
         and bAttacking
 		and #nAllyHeroes >= 3
 		then
-			local hTarget = nil
-			local hTargetScore = 0
+			-- local hTarget = nil
+			-- local hTargetScore = 0
 
-			for _, allyHero in pairs(nAllyHeroes) do
-				if J.IsValidHero(allyHero)
-				and J.IsInRange(bot, allyHero, nCastRange)
-				and J.IsAttacking(allyHero)
-				and not J.IsSuspiciousIllusion(allyHero)
-				and not J.IsRetreating(allyHero)
-				and not allyHero:HasModifier('modifier_bloodseeker_bloodrage')
-				and not allyHero:HasModifier('modifier_necrolyte_reapers_scythe')
-				and not allyHero:IsDisarmed()
-				then
-					local fAllyHeroHealthAfter = J.GetHealthAfter(((fMaxHealthDPS / 100) * allyHero:GetHealth() * nDuration))
-					local allyHeroScore = allyHero:GetAttackDamage() * allyHero:GetAttackSpeed()
-					if allyHeroScore > hTargetScore and fAllyHeroHealthAfter > 0.25 then
-						hTarget = allyHero
-						hTargetScore = allyHeroScore
-					end
-				end
-			end
+			-- for _, allyHero in pairs(nAllyHeroes) do
+			-- 	if J.IsValidHero(allyHero)
+			-- 	and J.IsInRange(bot, allyHero, nCastRange)
+			-- 	and J.IsAttacking(allyHero)
+			-- 	and not J.IsSuspiciousIllusion(allyHero)
+			-- 	and not J.IsRetreating(allyHero)
+			-- 	and not allyHero:HasModifier('modifier_bloodseeker_bloodrage')
+			-- 	and not allyHero:HasModifier('modifier_necrolyte_reapers_scythe')
+			-- 	and not allyHero:IsDisarmed()
+			-- 	then
+			-- 		local fAllyHeroHealthAfter = J.GetHealthAfter(((fMaxHealthDPS / 100) * allyHero:GetHealth() * nDuration))
+			-- 		local allyHeroScore = allyHero:GetAttackDamage() * allyHero:GetAttackSpeed()
+			-- 		if allyHeroScore > hTargetScore and fAllyHeroHealthAfter > 0.25 then
+			-- 			hTarget = allyHero
+			-- 			hTargetScore = allyHeroScore
+			-- 		end
+			-- 	end
+			-- end
 
-			if hTarget ~= nil then
-				return BOT_ACTION_DESIRE_HIGH, hTarget
+			-- if hTarget ~= nil then
+			-- 	return BOT_ACTION_DESIRE_HIGH, hTarget
+			-- end
+
+			if fHealthAfter > 0.3 then
+				return BOT_ACTION_DESIRE_HIGH
 			end
 		end
 	end

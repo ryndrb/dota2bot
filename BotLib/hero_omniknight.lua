@@ -252,10 +252,10 @@ function X.SkillsComplement()
     nAllyHeroes = bot:GetNearbyHeroes(1600, false, BOT_MODE_NONE)
     nEnemyHeroes = bot:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
 
-	GuardianAngelDesire, GuardianAngelLocation = X.ConsiderGuardianAngel()
+	GuardianAngelDesire = X.ConsiderGuardianAngel()
 	if GuardianAngelDesire > 0 then
 		J.SetQueuePtToINT(bot, false)
-		bot:ActionQueue_UseAbilityOnLocation(GuardianAngel, GuardianAngelLocation)
+		bot:ActionQueue_UseAbility(GuardianAngel)
 		return
 	end
 
@@ -676,7 +676,6 @@ function X.ConsiderHammerOfPurity()
 		if J.IsValidHero(enemyHero)
 		and J.CanBeAttacked(enemyHero)
 		and J.IsInRange(bot, enemyHero, nCastRange + 300)
-		and J.CanCastOnNonMagicImmune(enemyHero)
 		and J.CanCastOnTargetAdvanced(enemyHero)
 		and not enemyHero:HasModifier('modifier_abaddon_borrowed_time')
 		and not enemyHero:HasModifier('modifier_dazzle_shallow_grave')
@@ -695,7 +694,6 @@ function X.ConsiderHammerOfPurity()
 		if J.IsValidHero(botTarget)
 		and J.CanBeAttacked(botTarget)
 		and J.IsInRange(bot, botTarget, nCastRange + 300)
-		and J.CanCastOnNonMagicImmune(botTarget)
 		and J.CanCastOnTargetAdvanced(botTarget)
 		and not J.IsDisabled(botTarget)
 		and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
@@ -787,17 +785,17 @@ end
 
 function X.ConsiderGuardianAngel()
 	if not J.CanCastAbility(GuardianAngel) then
-		return BOT_ACTION_DESIRE_NONE, 0
+		return BOT_ACTION_DESIRE_NONE
 	end
 
 	local nCastRange = GuardianAngel:GetCastRange()
-	local nRadius = GuardianAngel:GetSpecialValueInt( 'radius' )
+	local nRadius = GuardianAngel:GetSpecialValueInt('radius')
 
 	for i = 1, 5 do
 		local allyHero = GetTeamMember(i)
 		if J.IsValidHero(allyHero)
 		and J.CanBeAttacked(allyHero)
-		and (bot:HasScepter() or J.IsInRange(bot, allyHero, nCastRange + 300))
+		and (bot:HasScepter() or J.IsInRange(bot, allyHero, nRadius))
 		and not allyHero:HasModifier('modifier_necrolyte_reapers_scythe')
 		then
 			if J.IsInTeamFight(allyHero, 1600) then
@@ -808,7 +806,7 @@ function X.ConsiderGuardianAngel()
 					for _, aAllyHero in pairs(nInRangeAlly) do
 						if J.IsValidHero(aAllyHero)
 						and J.CanBeAttacked(aAllyHero)
-						and aAllyHero:WasRecentlyDamagedByAnyHero(2.0)
+						and aAllyHero:WasRecentlyDamagedByAnyHero(4.0)
 						and not aAllyHero:HasModifier('modifier_necrolyte_reapers_scythe')
 						then
 							count = count + 1
@@ -829,7 +827,7 @@ function X.ConsiderGuardianAngel()
 				local nInRangeAlly_Retreat = allyHero:GetNearbyHeroes(nRadius, false, BOT_MODE_RETREAT)
 				local nInRangeEnemy = J.GetEnemiesNearLoc(allyHero:GetLocation(), 1200)
 				if (#nInRangeAlly_Attack >= 2 or (#nInRangeAlly_Attack >= 1 and #nInRangeAlly_Retreat >= 2)) then
-					return BOT_ACTION_DESIRE_HIGH, allyHero:GetLocation()
+					return BOT_ACTION_DESIRE_HIGH
 				end
 			end
 		end
@@ -845,7 +843,9 @@ function X.ConsiderGuardianAngel()
 		and bot:WasRecentlyDamagedByAnyHero(2.0)
 		and botHP < (#nEnemyHeroes >= 3 and 0.65 or 0.45)
 		then
-			return BOT_ACTION_DESIRE_HIGH, bot:GetLocation()
+			if botHP < 0.55 and J.GetTotalEstimatedDamageToTarget(nEnemyHeroes, bot, 5.5) > bot:GetHealth() then
+				return BOT_ACTION_DESIRE_HIGH
+			end
 		end
 	end
 

@@ -484,6 +484,7 @@ function X.ConsiderDragonTail()
 
 	local nCastRange = DragonTail:GetCastRange()
 	local nDamage = DragonTail:GetSpecialValueInt('damage')
+	local nRadius = DragonTail:GetSpecialValueInt('aoe')
 	local nSpeed = DragonTail:GetSpecialValueInt('projectile_speed')
 	local nManaCost = DragonTail:GetManaCost()
 	local fManaAfter = J.GetManaAfter(nManaCost)
@@ -533,23 +534,20 @@ function X.ConsiderDragonTail()
 	end
 
 	if J.IsInTeamFight(bot, 1200) then
-		-- fire dragon
-		if bInDragonForm and true then
-			for _, enemyHero in pairs(nEnemyHeroes) do
-				if J.IsValidHero(enemyHero)
-				and J.CanBeAttacked(enemyHero)
-				and J.IsInRange(bot, enemyHero, nCastRange + 300)
-				and J.CanCastOnNonMagicImmune(enemyHero)
-				and J.CanCastOnTargetAdvanced(enemyHero)
-				and not enemyHero:IsDisarmed()
-				and not enemyHero:HasModifier('modifier_faceless_void_chronosphere_freeze')
-				and not enemyHero:HasModifier('modifier_enigma_black_hole_pull')
-				and not enemyHero:HasModifier('modifier_necrolyte_reapers_scythe')
-				then
-					local nInRangeEnemy = J.GetEnemiesNearLoc(enemyHero:GetLocation(), 100)
-					if #nInRangeEnemy >= 2 then
-						return BOT_ACTION_DESIRE_HIGH, enemyHero
-					end
+		for _, enemyHero in pairs(nEnemyHeroes) do
+			if J.IsValidHero(enemyHero)
+			and J.CanBeAttacked(enemyHero)
+			and J.IsInRange(bot, enemyHero, nCastRange + 300)
+			and J.CanCastOnNonMagicImmune(enemyHero)
+			and J.CanCastOnTargetAdvanced(enemyHero)
+			and not enemyHero:IsDisarmed()
+			and not enemyHero:HasModifier('modifier_faceless_void_chronosphere_freeze')
+			and not enemyHero:HasModifier('modifier_enigma_black_hole_pull')
+			and not enemyHero:HasModifier('modifier_necrolyte_reapers_scythe')
+			then
+				local nInRangeEnemy = J.GetEnemiesNearLoc(enemyHero:GetLocation(), nRadius)
+				if #nInRangeEnemy >= 2 then
+					return BOT_ACTION_DESIRE_HIGH, enemyHero
 				end
 			end
 		end

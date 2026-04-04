@@ -160,11 +160,13 @@ end
 local EtherShock = bot:GetAbilityByName('shadow_shaman_ether_shock')
 local Hex = bot:GetAbilityByName('shadow_shaman_voodoo')
 local Shackles = bot:GetAbilityByName('shadow_shaman_shackles')
+local Urnaconda = bot:GetAbilityByName('shadow_shaman_urnaconda')
 local MassSerpentWard = bot:GetAbilityByName('shadow_shaman_mass_serpent_ward')
 
 local EtherShockDesire, EtherShockTarget
 local HexDesire, HexTarget
 local ShacklesDesire, ShacklesTarget
+local UrnacondaDesire, UrnacondaLocation
 local MassSerpentWardDesire, MassSerpentWardLocation
 
 local bAttacking = false
@@ -191,6 +193,13 @@ function X.SkillsComplement()
 	if HexDesire > 0 then
 		J.SetQueuePtToINT(bot, false)
 		bot:ActionQueue_UseAbilityOnEntity(Hex, HexTarget)
+		return
+	end
+
+	UrnacondaDesire, UrnacondaLocation = X.ConsiderUrnanconda()
+	if UrnacondaDesire > 0 then
+		J.SetQueuePtToINT(bot, false)
+		bot:ActionQueue_UseAbilityOnLocation(Urnaconda, UrnacondaLocation)
 		return
 	end
 
@@ -227,7 +236,7 @@ function X.ConsiderEtherShock()
 	local nDamage = EtherShock:GetSpecialValueInt('damage')
 	local nManaCost = EtherShock:GetManaCost()
 	local fManaAfter = J.GetManaAfter(nManaCost)
-	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {Hex, Shackles, MassSerpentWard})
+	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {Hex, Shackles, Urnaconda, MassSerpentWard})
 
 	for _, enemyHero in pairs(nEnemyHeroes) do
 		if J.IsValidHero(enemyHero)
@@ -360,7 +369,7 @@ function X.ConsiderHex()
 	local nCastRange = Hex:GetCastRange()
 	local nManaCost = Hex:GetManaCost()
 	local fManaAfter = J.GetManaAfter(nManaCost)
-	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {EtherShock, Shackles, MassSerpentWard})
+	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {EtherShock, Shackles, Urnaconda, MassSerpentWard})
 
 	for _, enemyHero in pairs(nEnemyHeroes) do
 		if J.IsValidHero(enemyHero)
@@ -577,6 +586,155 @@ function X.ConsiderShackles()
 	return BOT_ACTION_DESIRE_NONE, nil
 end
 
+function X.ConsiderUrnanconda()
+	if not J.CanCastAbility(Urnaconda) then
+		return BOT_ACTION_DESIRE_NONE
+	end
+
+	local nCastRange = Urnaconda:GetCastRange()
+	local nCastPoint = Urnaconda:GetCastPoint()
+	local nDamage = Urnaconda:GetSpecialValueInt('impact_damage')
+	local nSpeed = Urnaconda:GetSpecialValueInt('speed')
+	local nRadius = Urnaconda:GetSpecialValueInt('impact_radius')
+	local nManaCost = Urnaconda:GetManaCost()
+	local fManaAfter = J.GetManaAfter(nManaCost)
+	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {EtherShock, Hex, Shackles, MassSerpentWard})
+
+	for _, enemyHero in pairs(nEnemyHeroes) do
+        if  J.IsValidHero(enemyHero)
+        and J.CanBeAttacked(enemyHero)
+        and J.IsInRange(bot, enemyHero, nCastRange + 300)
+		and not J.IsInRange(bot, enemyHero, 300)
+        and J.CanCastOnNonMagicImmune(enemyHero)
+		and not J.IsChasingTarget(bot, enemyHero)
+        and not enemyHero:HasModifier('modifier_abaddon_borrowed_time')
+        and not enemyHero:HasModifier('modifier_dazzle_shallow_grave')
+        and not enemyHero:HasModifier('modifier_oracle_false_promise_timer')
+        and not enemyHero:HasModifier('modifier_templar_assassin_refraction_absorb')
+        then
+            local eta = (GetUnitToUnitDistance(bot, enemyHero) / nSpeed) + nCastPoint
+            if J.WillKillTarget(enemyHero, nDamage, DAMAGE_TYPE_MAGICAL, eta) then
+				return BOT_ACTION_DESIRE_HIGH, enemyHero:GetLocation()
+            end
+        end
+    end
+
+	if J.IsGoingOnSomeone(bot) then
+		if  J.IsValidHero(botTarget)
+		and J.CanBeAttacked(botTarget)
+		and J.IsInRange(bot, botTarget, nCastRange + 300)
+		and not J.IsChasingTarget(bot, botTarget)
+		and not J.IsSuspiciousIllusion(botTarget)
+		and not botTarget:HasModifier('modifier_abaddon_borrowed_time')
+		and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
+		then
+			if (J.IsDisabled(botTarget) and not (botTarget:HasModifier('modifier_enigma_black_hole_pull') or botTarget:HasModifier('modifier_faceless_void_chronosphere_freeze')))
+			or botTarget:GetCurrentMovementSpeed() <= 250
+			then
+				if J.GetHP(botTarget) > 0.4 then
+					if J.GetTotalEstimatedDamageToTarget(nAllyHeroes, botTarget, 8.0) > botTarget:GetHealth() then
+						return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation()
+					end
+				end
+			end
+
+			if J.IsInTeamFight(bot, 1200) then
+				return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation()
+			end
+		end
+	end
+
+	if J.IsRetreating(bot) and not J.IsRealInvisible(bot) and not J.CanCastAbilitySoon(Hex, 5.0) and not J.IsInTeamFight(bot, 1200) and J.IsRunning(bot) then
+        for _, enemyHero in pairs(nEnemyHeroes) do
+            if  J.IsValidHero(enemyHero)
+			and J.CanBeAttacked(enemyHero)
+            and J.IsInRange(bot, enemyHero, nCastRange)
+			and not J.IsInRange(bot, enemyHero, nRadius)
+			and not J.IsSuspiciousIllusion(enemyHero)
+            and not J.IsDisabled(enemyHero)
+			and J.IsChasingTarget(enemyHero, bot)
+            and bot:WasRecentlyDamagedByHero(enemyHero, 3.0)
+            then
+				return BOT_ACTION_DESIRE_HIGH, bot:GetLocation()
+            end
+        end
+	end
+
+	if J.IsPushing(bot) and #nAllyHeroes >= #nEnemyHeroes and fManaAfter > fManaThreshold1 then
+		local radius = Min(nCastRange + bot:GetAttackRange(), 1600)
+		local nEnemyTowers = bot:GetNearbyTowers(radius, true)
+		local nEnemyBarracks = bot:GetNearbyBarracks(radius, true)
+		local hEnemyAcient = GetAncient(GetOpposingTeam())
+		local nInRangeAlly = J.GetAlliesNearLoc(bot:GetLocation(), 800)
+
+		local hBuildingList = {
+			botTarget,
+			nEnemyTowers[1],
+			nEnemyBarracks[1],
+			hEnemyAcient,
+		}
+
+		for _, building in pairs(hBuildingList) do
+			if  J.IsValidBuilding(building)
+			and J.CanBeAttacked(building)
+			and J.IsInRange(bot, building, nCastRange + bot:GetAttackRange())
+			and not J.IsKeyWordUnit('DOTA_Outpost', building)
+			then
+				local sBuildingName = building:GetUnitName()
+				if #nInRangeAlly <= 3 or string.find(sBuildingName, 'barracks') or building == hEnemyAcient then
+					if (building:GetHealthRegen() == 0)
+					or (bot:GetAttackTarget() == building)
+					then
+						return BOT_ACTION_DESIRE_HIGH, J.VectorTowards(building:GetLocation(), bot:GetLocation(), nRadius)
+					end
+				end
+			end
+		end
+	end
+
+	local nEnemyCreeps = bot:GetNearbyCreeps(Min(nCastRange + 300, 1600), true)
+
+	if J.IsFarming(bot) and bAttacking and fManaAfter > fManaThreshold1 + 0.1 and #nAllyHeroes <= 1 then
+        for _, creep in pairs(nEnemyCreeps) do
+            if J.IsValid(creep) and J.CanBeAttacked(creep) then
+                local nLocationAoE = bot:FindAoELocation(true, false, creep:GetLocation(), 0, nRadius, 0, 0)
+                if (nLocationAoE.count >= 3)
+                or (nLocationAoE.count >= 2 and creep:IsAncientCreep())
+                or (nLocationAoE.count >= 1 and creep:GetHealth() >= 1000)
+                then
+                    return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc
+                end
+            end
+        end
+    end
+
+    if J.IsDoingRoshan(bot) then
+        if  J.IsRoshan(botTarget)
+        and J.CanBeAttacked(botTarget)
+        and J.IsInRange(bot, botTarget, nCastRange)
+        and J.CanCastOnNonMagicImmune(botTarget)
+        and bAttacking
+        and fManaAfter > fManaThreshold1 + 0.1
+        and #nEnemyHeroes == 0
+        then
+            return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation()
+        end
+    end
+
+    if J.IsDoingTormentor(bot) then
+        if  J.IsTormentor(botTarget)
+        and J.IsInRange(bot, botTarget, nCastRange)
+        and bAttacking
+        and fManaAfter > fManaThreshold1 + 0.1
+        and #nEnemyHeroes == 0
+        then
+            return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation()
+        end
+    end
+
+	return BOT_ACTION_DESIRE_NONE
+end
+
 function X.ConsiderMassSerpentWard()
 	if not J.CanCastAbility(MassSerpentWard) then
 		return BOT_ACTION_DESIRE_NONE, 0
@@ -609,7 +767,7 @@ function X.ConsiderMassSerpentWard()
 		end
 	end
 
-	if J.IsRetreating(bot) and not J.IsRealInvisible(bot) and not J.IsRealInvisible(bot) and not J.CanCastAbilitySoon(Hex, 5.0) and not J.IsInTeamFight(bot, 1200) then
+	if J.IsRetreating(bot) and not J.IsRealInvisible(bot) and not J.CanCastAbilitySoon(Hex, 5.0) and not J.IsInTeamFight(bot, 1200) then
         for _, enemyHero in pairs(nEnemyHeroes) do
             if  J.IsValidHero(enemyHero)
 			and J.CanBeAttacked(enemyHero)

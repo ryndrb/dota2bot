@@ -35,13 +35,13 @@ local HeroBuild = {
                 [1] = {
                     ['t25'] = {10, 0},
                     ['t20'] = {0, 10},
-                    ['t15'] = {10, 0},
+                    ['t15'] = {0, 10},
                     ['t10'] = {10, 0},
                 }
             },
             ['ability'] = {
-                [1] = {2,1,2,1,2,1,2,1,2,3,3,3,3,3,3,3,2,2,1,1,1},
-                [2] = {3,1,3,1,3,2,3,1,3,1,3,2,3,2,2,2,2,2,1,1,1},
+                [1] = {2,1,2,1,2,1,2,1,2,3,3,3,3,3,3,3,2,2,2,3,1,1,1,1},
+                [2] = {3,1,3,1,3,1,3,1,3,2,3,2,3,2,3,2,2,2,2,2,1,1,1,1},
             },
             ['buy_list'] = {
                 "item_tango",
@@ -59,11 +59,11 @@ local HeroBuild = {
                 "item_travel_boots",
                 "item_black_king_bar",--
                 "item_sheepstick",--
-                "item_ultimate_scepter",
-                "item_aghanims_shard",
+                -- "item_ultimate_scepter",
+                -- "item_aghanims_shard",
                 "item_bloodthorn",--
                 "item_octarine_core",--
-                "item_ultimate_scepter_2",
+                -- "item_ultimate_scepter_2",
                 "item_shivas_guard",--
                 "item_moon_shard",
                 "item_travel_boots_2",--
@@ -99,7 +99,7 @@ local HeroBuild = {
                 }
             },
             ['ability'] = {
-                [1] = {2,1,2,1,2,1,2,1,2,3,3,3,3,3,3,3,2,2,1,1,1},
+                [1] = {2,1,2,1,2,1,2,1,2,3,3,3,3,3,3,3,2,2,2,3,1,1,1,1},
             },
             ['buy_list'] = {
                 "item_tango",
@@ -115,12 +115,12 @@ local HeroBuild = {
                 "item_ancient_janggo",
                 "item_black_king_bar",--
                 "item_boots_of_bearing",--
-                "item_aghanims_shard",
+                -- "item_aghanims_shard",
                 "item_sheepstick",--
                 "item_octarine_core",--
                 "item_lotus_orb",--
                 "item_hurricane_pike",--
-                "item_ultimate_scepter_2",
+                -- "item_ultimate_scepter_2",
                 "item_moon_shard",
             },
             ['sell_list'] = {
@@ -140,7 +140,7 @@ local HeroBuild = {
                 }
             },
             ['ability'] = {
-                [1] = {2,1,2,1,2,1,2,1,2,3,3,3,3,3,3,3,2,2,1,1,1},
+                [1] = {2,1,2,1,2,1,2,1,2,3,3,3,3,3,3,3,2,2,2,3,1,1,1,1},
             },
             ['buy_list'] = {
                 "item_tango",
@@ -156,12 +156,12 @@ local HeroBuild = {
                 "item_mekansm",
                 "item_black_king_bar",--
                 "item_guardian_greaves",--
-                "item_aghanims_shard",
+                -- "item_aghanims_shard",
                 "item_sheepstick",--
                 "item_octarine_core",--
                 "item_lotus_orb",--
                 "item_hurricane_pike",--
-                "item_ultimate_scepter_2",
+                -- "item_ultimate_scepter_2",
                 "item_moon_shard",
             },
             ['sell_list'] = {

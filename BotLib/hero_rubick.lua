@@ -4,6 +4,7 @@ local bot = GetBot()
 local J = require( GetScriptDirectory()..'/FunLib/jmz_func' )
 local SPL = require( GetScriptDirectory()..'/FunLib/spell_list' )
 local Minion = dofile( GetScriptDirectory()..'/FunLib/aba_minion' )
+local RubickCreepSpell = dofile( GetScriptDirectory()..'/FunLib/MinionLib/minion_with_skill' )
 local sTalentList = J.Skill.GetTalentList( bot )
 local sAbilityList = J.Skill.GetAbilityList( bot )
 local sRole = J.Item.GetRoleItemsBuyList( bot )
@@ -275,6 +276,8 @@ function X.SkillsComplement()
         bot:ActionQueue_UseAbilityOnEntity(FadeBolt, FadeBoltTarget)
         return
     end
+
+    RubickCreepSpell.Think(bot, bot)
 end
 
 function X.ConsiderTelekinesis()

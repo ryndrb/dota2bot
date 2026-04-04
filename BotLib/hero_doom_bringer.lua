@@ -3,6 +3,7 @@ local bot = GetBot()
 
 local J = require( GetScriptDirectory()..'/FunLib/jmz_func' )
 local Minion = dofile( GetScriptDirectory()..'/FunLib/aba_minion' )
+local DoomCreepSpell = dofile( GetScriptDirectory()..'/FunLib/MinionLib/minion_with_skill' )
 local sTalentList = J.Skill.GetTalentList( bot )
 local sAbilityList = J.Skill.GetAbilityList( bot )
 local sRole = J.Item.GetRoleItemsBuyList( bot )
@@ -22,7 +23,7 @@ local HeroBuild = {
                 [1] = {
                     ['t25'] = {0, 10},
                     ['t20'] = {0, 10},
-                    ['t15'] = {0, 10},
+                    ['t15'] = {10, 0},
                     ['t10'] = {10, 0},
                 }
             },
@@ -260,6 +261,9 @@ function X.SkillsComplement()
     InfernalBlade = bot:GetAbilityByName('doom_bringer_infernal_blade')
     Doom          = bot:GetAbilityByName('doom_bringer_doom')
 
+    DevourAbility1 = bot:GetAbilityInSlot(3)
+    DevourAbility2 = bot:GetAbilityInSlot(4)
+
     bAttacking = J.IsAttacking(bot)
     botHP = J.GetHP(bot)
     botTarget = J.GetProperTarget(bot)
@@ -286,6 +290,10 @@ function X.SkillsComplement()
         return
     end
 
+    if DevourAbility1:GetName() ~= 'doom_bringer_empty1' or DevourAbility2:GetName() ~= 'doom_bringer_empty2' then
+        DoomCreepSpell.Think(bot, bot)
+    end
+
     DevourDesire, DevourTarget = X.ConsiderDevour()
     if DevourDesire > 0 then
         J.SetQueuePtToINT(bot, false)
@@ -300,6 +308,7 @@ function X.ConsiderDevour()
     end
 
 	local nMaxLevel = Devour:GetSpecialValueInt('creep_level')
+    local bCanTargetAncient = Devour:GetSpecialValueInt('can_target_ancient') > 0
     local nManaCost = Devour:GetManaCost()
     local fManaAfter = J.GetManaAfter(nManaCost)
     local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {ScorchedEarth, InfernalBlade, Doom})
@@ -307,8 +316,6 @@ function X.ConsiderDevour()
     if fManaAfter < fManaThreshold1 then
         return BOT_ACTION_DESIRE_NONE, nil
     end
-
-    local hTalent = bot:GetAbilityByName('special_bonus_unique_doom_2')
 
     local nEnemyCreeps = bot:GetNearbyCreeps(1200, true)
     if not J.IsRetreating(bot) then
@@ -338,6 +345,7 @@ function X.ConsiderDevour()
             and not creep:HasModifier('modifier_dominated')
             then
                 local nCreepTeam = creep:GetTeam()
+                local sCreepName = creep:GetUnitName()
 
                 if  J.IsInLaningPhase()
                 and nCreepTeam ~= bot:GetTeam()
@@ -347,13 +355,17 @@ function X.ConsiderDevour()
                     return BOT_ACTION_DESIRE_HIGH, creep
                 end
 
+                if bCanTargetAncient and sCreepName == 'npc_dota_neutral_black_dragon' then
+                    return BOT_ACTION_DESIRE_HIGH, creep
+                end
+
                 nCreepTarget = nil
                 if nCreepTeam == TEAM_NEUTRAL then
                     nCreepTarget = J.GetMostHpUnit(nEnemyCreeps)
                 end
 
                 if J.IsValid(nCreepTarget) then
-                    if string.find(bot:GetUnitName(), 'doom_bringer') and nCreepTarget:IsAncientCreep() and hTalent and hTalent:IsTrained() then
+                    if string.find(bot:GetUnitName(), 'doom_bringer') and nCreepTarget:IsAncientCreep() and bCanTargetAncient then
                         return BOT_ACTION_DESIRE_HIGH, nCreepTarget
                     end
 

@@ -543,7 +543,6 @@ function X.ConsiderCorrosiveHaze()
 		if J.IsRoshan(botTarget)
 		and J.CanBeAttacked(botTarget)
 		and J.IsInRange(bot, botTarget, nCastRange)
-		and J.CanCastOnTargetAdvanced(botTarget)
 		and not botTarget:HasModifier( 'modifier_slardar_amplify_damage' )
 		and bAttacking
 		and fManaAfter > fManaThreshold1 + 0.15

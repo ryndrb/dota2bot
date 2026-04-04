@@ -312,7 +312,6 @@ function X.ConsiderShadowStrike()
 		and J.IsInRange(bot, enemyHero, nCastRange + 300)
 		and J.CanCastOnNonMagicImmune(enemyHero)
 		and J.CanCastOnTargetAdvanced(enemyHero)
-		and not enemyHero:HasModifier('modifier_queenofpain_shadow_strike')
 		and not enemyHero:HasModifier('modifier_abaddon_borrowed_time')
         and not enemyHero:HasModifier('modifier_dazzle_shallow_grave')
 		and not enemyHero:HasModifier('modifier_necrolyte_reapers_scythe')
@@ -334,7 +333,6 @@ function X.ConsiderShadowStrike()
 		and not J.IsChasingTarget(bot, botTarget)
 		and not botTarget:HasModifier('modifier_abaddon_borrowed_time')
 		and not botTarget:HasModifier('modifier_dazzle_shallow_grave')
-		and not botTarget:HasModifier('modifier_queenofpain_shadow_strike')
         then
             return BOT_ACTION_DESIRE_HIGH, botTarget
         end
@@ -347,7 +345,6 @@ function X.ConsiderShadowStrike()
 				and J.CanCastOnNonMagicImmune(enemyHero)
 				and J.CanCastOnTargetAdvanced(enemyHero)
 				and not J.IsDisabled(enemyHero)
-				and not enemyHero:HasModifier('modifier_queenofpain_shadow_strike')
 				and not enemyHero:HasModifier('modifier_abaddon_borrowed_time')
 				then
 					return BOT_ACTION_DESIRE_HIGH, enemyHero

@@ -295,6 +295,10 @@ function U.CantBeControlled(unit)
 		or unit_name == "npc_dota_dark_willow_creature"
 		or (unit_name == "npc_dota_hero_hoodwink" and unit:HasModifier('modifier_hoodwink_sharpshooter_windup'))
 		or unit_name == "npc_dota_enraged_wildkin_tornado"
+		or unit_name == "npc_dota_tinker_turret1"
+		or unit_name == "npc_dota_tinker_turret2"
+		or unit_name == "npc_dota_tinker_turret3"
+		or unit_name == "npc_dota_tinker_turret4"
 end
 
 function U.IsMinionWithNoSkill(unit)
@@ -401,6 +405,7 @@ function U.IsMinionWithSkill(unit)
 		or unit_name == "npc_dota_neutral_ancient_frog_mage"
 		or unit_name == "npc_dota_neutral_ancient_frog"
 		or unit_name == "npc_dota_neutral_ice_shaman"
+		or unit_name == "npc_dota_chen_zealot_goodguys"
 end
 
 function U.IsFrozeSigil(unit)

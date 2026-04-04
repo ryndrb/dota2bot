@@ -523,15 +523,15 @@ function X.ConsiderBodyguard()
 
     local nEnemyLaneCreeps = bot:GetNearbyLaneCreeps(1200, true)
 
-    if J.IsGoingOnSomeone(bot)
-    or J.IsPushing(bot)
-    or J.IsDefending(bot)
+    if (J.IsGoingOnSomeone(bot) and bot:WasRecentlyDamagedByAnyHero(5.0))
+    or (J.IsPushing(bot) and #nEnemyHeroes > 0)
+    or (J.IsDefending(bot) and #nEnemyHeroes > 0)
     or (J.IsLaning(bot) and #nEnemyLaneCreeps >= 3)
     or (J.IsDoingRoshan(bot) and J.IsRoshan(botTarget) and J.IsInRange(bot, botTarget, 800) and bAttacking and J.CanBeAttacked(botTarget))
     or (J.IsDoingTormentor(bot) and J.IsTormentor(botTarget) and J.IsInRange(bot, botTarget, 800) and bAttacking and J.CanBeAttacked(botTarget))
     then
         local target = nil
-        local targetAttackDamage = 0
+        local targetHealth = math.huge
         for _, ally in pairs(nAllyHeroes) do
             if J.IsValidHero(ally)
             and bot ~= ally
@@ -542,10 +542,10 @@ function X.ConsiderBodyguard()
             and not ally:HasModifier('modifier_necrolyte_reapers_scythe')
             and not J.IsMeepoClone(ally)
             then
-                local allyAttackDamage = ally:GetAttackDamage() * ally:GetAttackSpeed()
-                if allyAttackDamage > targetAttackDamage then
-                    targetAttackDamage = allyAttackDamage
+                local allyHealth = ally:GetHealth()
+                if targetHealth > allyHealth then
                     target = ally
+                    targetHealth = allyHealth
                 end
             end
         end

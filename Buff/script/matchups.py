@@ -14,7 +14,7 @@ visible_to_internal = {
 
 def GetHeroCounters(hero_url_name):
     # past 12 months
-    url = f"https://www.dotabuff.com/heroes/{hero_url_name}/counters?date=patch_7.40"
+    url = f"https://www.dotabuff.com/heroes/{hero_url_name}/counters?date=patch_7.41"
     
     options = Options()
     options.add_argument("--headless=new")

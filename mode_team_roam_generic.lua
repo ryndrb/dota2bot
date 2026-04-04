@@ -43,6 +43,7 @@ local TormentorLocation
 
 local hTargetCreep = nil
 local bSomeoneInChronosphere = false
+local fEngagePingingTime = -math.huge
 
 function GetDesire()
 	TormentorLocation = J.GetTormentorLocation(GetTeam())
@@ -139,9 +140,83 @@ function GetDesire()
 		end
 	end
 
+	-- ping helper
+	if not J.IsNonStableHero(botName) and J.IsGoingOnSomeone(bot) and DotaTime() > fEngagePingingTime + 5.5 then
+		local botTarget = J.GetProperTarget(bot)
+		if  J.IsValidHero(botTarget)
+		and J.IsInRange(bot, botTarget, 2000)
+		and not J.IsSuspiciousIllusion(botTarget)
+		then
+			local vLocation = botTarget:GetLocation()
+			local nInRangeAlly = J.GetAlliesNearLoc(vLocation, 5000)
+
+			local bHeroNearby = false
+			for _, allyHero in pairs(nInRangeAlly) do
+				if J.IsValidHero(allyHero) and J.IsNonStableHero(allyHero:GetUnitName()) then
+					if (J.IsInLaningPhase() and J.IsInRange(bot, allyHero, 900)
+						or (not J.IsInLaningPhase() and (((GetUnitToUnitDistance(bot, allyHero)) / allyHero:GetCurrentMovementSpeed()) <= 11.0)))
+					then
+						bHeroNearby = true
+						break
+					end
+				end
+			end
+
+			if not bHeroNearby then goto gNoPingHelp end
+
+			local pinger = nil
+			local pingerScore = 100
+			nInRangeAlly = J.GetAlliesNearLoc(vLocation, 1600)
+			for _, allyHero in pairs(nInRangeAlly) do
+				if  J.IsValidHero(allyHero)
+				and J.IsGoingOnSomeone(allyHero)
+				and J.GetProperTarget(allyHero) == botTarget
+				and allyHero:IsBot()
+				then
+					local allyHeroScore = allyHero:GetPlayerID()
+					if allyHeroScore < pingerScore then
+						pinger = allyHero
+						pingerScore = allyHeroScore
+					end
+				end
+			end
+
+			if bot == pinger then
+				bot:ActionImmediate_Ping(vLocation.x, vLocation.y, false)
+				fEngagePingingTime = DotaTime()
+			end
+
+			::gNoPingHelp::
+		end
+	end
+
+	-- some 7.41 "Fix"
+	if BOT_MODE_DESIRE_ABSOLUTE < 1 then
+		local nInRangeEnemy = J.GetEnemiesNearLoc(bot:GetLocation(), 950)
+		if bot:GetActiveMode() == BOT_MODE_WISDOM_SHRINE and #nInRangeEnemy > 0 then
+			local WRLocationRadiant = Vector(-7948.152344, 	 768.207825, 0.000000)
+			local WRLocationDire 	= Vector( 8029.234375, -1125.811768, 0.000000)
+			if GetUnitToLocationDistance(bot, WRLocationRadiant) <= 900 or GetUnitToLocationDistance(bot, WRLocationDire) <= 900 then
+				targetUnit = X.WeakestUnitCanBeAttacked(true, true, bot:GetAttackRange() + 200, bot)
+				if targetUnit ~= nil then
+					return BOT_MODE_DESIRE_ABSOLUTE * 1.5
+				end
+			end
+		elseif bot:GetActiveMode() == BOT_MODE_LOTUS_POOL and #nInRangeEnemy > 0 then
+			local LotusPoolLocationRadiant  = Vector(7515.194336, -4422.882812, 128.000000)
+			local LotusPoolLocationDire 	= Vector(-7562.116699, 4218.520020, 128.000000)
+			if GetUnitToLocationDistance(bot, LotusPoolLocationRadiant) <= 700 or GetUnitToLocationDistance(bot, LotusPoolLocationDire) <= 700 then
+				targetUnit = X.WeakestUnitCanBeAttacked(true, true, bot:GetAttackRange() + 200, bot)
+				if targetUnit ~= nil then
+					return BOT_MODE_DESIRE_ABSOLUTE * 1.5
+				end
+			end
+		end
+	end
+
 	hTargetCreep = X.GetLastHitCreep()
 	if J.IsValid(hTargetCreep) and J.CanBeAttacked(hTargetCreep) then
-		return 1.5
+		return BOT_MODE_DESIRE_ABSOLUTE * 1.5
 	end
 
 	-- nDesire = X.ConsiderHarassInLaningPhase()
@@ -1471,14 +1546,14 @@ function X.IsModeSuitToHitCreep(bot)
 
 	if bot:GetLevel() <= 3
 		and botMode ~= BOT_MODE_EVASIVE_MANEUVERS
-		and ( botMode ~= BOT_MODE_RETREAT or ( botMode == BOT_MODE_RETREAT and bot:GetActiveModeDesire() < 0.78) )
+		and ( botMode ~= BOT_MODE_RETREAT or ( botMode == BOT_MODE_RETREAT and bot:GetActiveModeDesire() < BOT_MODE_DESIRE_HIGH + 0.03) )
 	then
 		return true;
 	end
 
     return  botMode ~= BOT_MODE_ATTACK
 			and botMode ~= BOT_MODE_EVASIVE_MANEUVERS
-			and ( botMode ~= BOT_MODE_RETREAT or ( botMode == BOT_MODE_RETREAT and bot:GetActiveModeDesire() < 0.68) )
+			and ( botMode ~= BOT_MODE_RETREAT or ( botMode == BOT_MODE_RETREAT and bot:GetActiveModeDesire() < BOT_MODE_DESIRE_HIGH - 0.07) )
 end
 
 

@@ -198,6 +198,7 @@ local Laser                 = bot:GetAbilityByName('tinker_laser')
 -- local HeatSeekingMissile    = bot:GetAbilityByName('tinker_heat_seeking_missile')
 local MarchOfTheMachines    = bot:GetAbilityByName('tinker_march_of_the_machines')
 local DefenseMatrix         = bot:GetAbilityByName('tinker_defense_matrix')
+local DeployTurrets         = bot:GetAbilityByName('tinker_deploy_turrets')
 local WarpFlare             = bot:GetAbilityByName('tinker_warp_grenade')
 local KeenConveyance        = bot:GetAbilityByName('tinker_keen_teleport')
 local Rearm                 = bot:GetAbilityByName('tinker_rearm')
@@ -206,6 +207,7 @@ local LaserDesire, LaserTarget
 -- local HeatSeekingMissileDesire
 local MarchOfTheMachinesDesire, MarchOfTheMachinesLocation
 local DefenseMatrixDesire, DefenseMatrixTarget
+local DeployTurretsDesire, DeployTurretsLocation
 local WarpFlareDesire, WarpFlareTarget
 local KeenConveyanceDesire, KeenConveyanceTargetLocation
 local RearmDesire
@@ -279,6 +281,13 @@ function X.SkillsComplement()
         return
     end
 
+    DeployTurretsDesire, DeployTurretsLocation = X.ConsiderDeployTurrets()
+    if DeployTurretsDesire > 0 then
+        J.SetQueuePtToINT(bot, false)
+        bot:ActionQueue_UseAbilityOnLocation(DeployTurrets, DeployTurretsLocation)
+        return
+    end
+
     LaserDesire, LaserTarget = X.ConsiderLaser()
     if LaserDesire > 0 then
         J.SetQueuePtToINT(bot, false)
@@ -334,7 +343,7 @@ function X.ConsiderLaser()
     local nRadius = Max(Laser:GetSpecialValueInt('radius_explosion'), 1)
     local nManaCost = Laser:GetManaCost()
     local fManaAfter = J.GetManaAfter(nManaCost)
-    local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {MarchOfTheMachines, DefenseMatrix, WarpFlare, KeenConveyance, Rearm})
+    local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {MarchOfTheMachines, DefenseMatrix, DeployTurrets, WarpFlare, KeenConveyance, Rearm})
 
     for _, enemyHero in pairs(nEnemyHeroes) do
         if  J.IsValidHero(enemyHero)
@@ -615,7 +624,7 @@ function X.ConsiderMarchOfTheMachines()
     local nDamage = MarchOfTheMachines:GetSpecialValueInt('damage')
     local nManaCost = MarchOfTheMachines:GetManaCost()
     local fManaAfter = J.GetManaAfter(nManaCost)
-    local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {Laser, DefenseMatrix, WarpFlare, KeenConveyance, Rearm})
+    local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {Laser, DefenseMatrix, DeployTurrets, WarpFlare, KeenConveyance, Rearm})
 
 	if J.IsGoingOnSomeone(bot) then
         if J.IsValidHero(botTarget)
@@ -793,6 +802,139 @@ function X.ConsiderDefenseMatrix()
     return BOT_ACTION_DESIRE_NONE, nil
 end
 
+function X.ConsiderDeployTurrets()
+    if not J.CanCastAbility(DeployTurrets) then
+        return BOT_ACTION_DESIRE_NONE
+    end
+
+    local nCastRange = DeployTurrets:GetCastRange()
+    local nRadius = DeployTurrets:GetSpecialValueInt('drop_aoe_radius')
+    local nManaCost = DeployTurrets:GetManaCost()
+	local fManaAfter = J.GetManaAfter(nManaCost)
+	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {Laser, MarchOfTheMachines, WarpFlare, Rearm})
+
+    if J.IsGoingOnSomeone(bot) then
+		if  J.IsValidHero(botTarget)
+		and J.CanBeAttacked(botTarget)
+		and J.IsInRange(bot, botTarget, nCastRange + 300)
+		and not J.IsChasingTarget(bot, botTarget)
+		and not J.IsSuspiciousIllusion(botTarget)
+		and not botTarget:HasModifier('modifier_abaddon_borrowed_time')
+        and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
+		then
+			if (J.IsDisabled(botTarget) and not (botTarget:HasModifier('modifier_enigma_black_hole_pull') or botTarget:HasModifier('modifier_faceless_void_chronosphere_freeze')))
+			or botTarget:GetCurrentMovementSpeed() <= 250
+			then
+				if J.GetHP(botTarget) > 0.4 then
+					if J.GetTotalEstimatedDamageToTarget(nAllyHeroes, botTarget, 5.5) > botTarget:GetHealth() then
+						return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation()
+					end
+				end
+			end
+
+			if J.IsInTeamFight(bot, 1200) then
+				return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation()
+			end
+		end
+	end
+
+	if J.IsRetreating(bot) and not J.IsRealInvisible(bot) then
+        for _, enemyHero in pairs(nEnemyHeroes) do
+            if  J.IsValidHero(enemyHero)
+			and J.CanBeAttacked(enemyHero)
+            and J.IsInRange(bot, enemyHero, nCastRange)
+			and not J.IsInRange(bot, enemyHero, nRadius + 75)
+			and not J.IsSuspiciousIllusion(enemyHero)
+            and not J.IsDisabled(enemyHero)
+			and J.IsChasingTarget(enemyHero, bot)
+            and bot:WasRecentlyDamagedByHero(enemyHero, 3.0)
+            then
+				return BOT_ACTION_DESIRE_HIGH, J.VectorTowards(enemyHero:GetLocation(), bot:GetLocation(), nRadius)
+            end
+        end
+	end
+
+    -- local nAllyLaneCreeps = bot:GetNearbyLaneCreeps(800, false)
+    -- local nEnemyCreeps = bot:GetNearbyCreeps(Min(nCastRange + 300, 1600), true)
+
+    -- if J.IsPushing(bot) and #nAllyHeroes >= #nEnemyHeroes and fManaAfter > fManaThreshold1 then
+    --     if #nAllyHeroes <= 1 then
+    --         for _, creep in pairs(nEnemyCreeps) do
+    --             if J.IsValid(creep) and J.CanBeAttacked(creep) then
+    --                 local nLocationAoE = bot:FindAoELocation(true, false, creep:GetLocation(), 0, nRadius, 0, 0)
+    --                 if (nLocationAoE.count >= 5) then
+    --                     return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc
+    --                 end
+    --             end
+    --         end
+    --     end
+
+    --     if  J.IsValidBuilding(botTarget)
+    --     and J.CanBeAttacked(botTarget)
+    --     and J.IsInRange(bot, botTarget, nCastRange + 300)
+    --     and #nAllyLaneCreeps >= 3
+    --     then
+    --         if (botTarget:GetHealthRegen() == 0)
+    --         or (bot:GetAttackTarget() == botTarget and bAttacking)
+    --         then
+    --             return BOT_ACTION_DESIRE_HIGH, J.VectorTowards(botTarget:GetLocation(), bot:GetLocation(), nRadius)
+    --         end
+    --     end
+    -- end
+
+    -- if J.IsDefending(bot) and #nAllyHeroes >= #nEnemyHeroes and fManaAfter > fManaThreshold1 then
+    --     if #nAllyHeroes <= 2 then
+    --         for _, creep in pairs(nEnemyCreeps) do
+    --             if J.IsValid(creep) and J.CanBeAttacked(creep) then
+    --                 local nLocationAoE = bot:FindAoELocation(true, false, creep:GetLocation(), 0, nRadius, 0, 0)
+    --                 if (nLocationAoE.count >= 5) then
+    --                     return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc
+    --                 end
+    --             end
+    --         end
+    --     end
+    -- end
+
+	-- if J.IsFarming(bot) and bAttacking and fManaAfter > fManaThreshold1 + 0.1 and #nAllyHeroes <= 1 then
+    --     for _, creep in pairs(nEnemyCreeps) do
+    --         if J.IsValid(creep) and J.CanBeAttacked(creep) then
+    --             local nLocationAoE = bot:FindAoELocation(true, false, creep:GetLocation(), 0, nRadius, 0, 0)
+    --             if (nLocationAoE.count >= 3)
+    --             or (nLocationAoE.count >= 2 and creep:IsAncientCreep())
+    --             or (nLocationAoE.count >= 1 and creep:GetHealth() >= 1000)
+    --             then
+    --                 return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc
+    --             end
+    --         end
+    --     end
+    -- end
+
+    -- if J.IsDoingRoshan(bot) then
+    --     if  J.IsRoshan(botTarget)
+    --     and J.CanBeAttacked(botTarget)
+    --     and J.IsInRange(bot, botTarget, nCastRange)
+    --     and bAttacking
+    --     and fManaAfter > fManaThreshold1 + 0.1
+    --     and #nEnemyHeroes == 0
+    --     then
+    --         return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation()
+    --     end
+    -- end
+
+    -- if J.IsDoingTormentor(bot) then
+    --     if  J.IsTormentor(botTarget)
+    --     and J.IsInRange(bot, botTarget, nCastRange)
+    --     and bAttacking
+    --     and fManaAfter > fManaThreshold1 + 0.1
+    --     and #nEnemyHeroes == 0
+    --     then
+    --         return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation()
+    --     end
+    -- end
+
+    return BOT_ACTION_DESIRE_NONE
+end
+
 function X.ConsiderWarpFlare()
     if not J.CanCastAbility(WarpFlare) then
         return BOT_ACTION_DESIRE_NONE, nil
@@ -837,7 +979,7 @@ function X.ConsiderKeenConveyance()
     local botMovementSpeed = bot:GetCurrentMovementSpeed()
     local nManaCost = KeenConveyance:GetManaCost()
     local fManaAfter = J.GetManaAfter(nManaCost)
-    local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {Laser, MarchOfTheMachines, DefenseMatrix, WarpFlare, Rearm})
+    local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {Laser, MarchOfTheMachines, DefenseMatrix, DeployTurrets, WarpFlare, Rearm})
 
     if not bot:IsMagicImmune() then
         if J.IsStunProjectileIncoming(bot, 800) then
@@ -920,7 +1062,7 @@ function X.ConsiderRearm()
     local nChannelTime = Rearm:GetSpecialValueFloat('AbilityChannelTime')
     local nManaCost = Rearm:GetManaCost()
     local fManaAfter = J.GetManaAfter(nManaCost)
-    local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {Laser, MarchOfTheMachines, DefenseMatrix, WarpFlare, KeenConveyance})
+    local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {Laser, MarchOfTheMachines, DefenseMatrix, DeployTurrets, WarpFlare, KeenConveyance})
     local fManaThreshold2 = J.GetManaThreshold(bot, nManaCost, {KeenConveyance})
 
     local trainedQ  = X.IsTrained(Laser)

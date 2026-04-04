@@ -316,7 +316,7 @@ function X.ConsiderIceShards()
     local nAbilityLevel = IceShards:GetLevel()
     local nManaCost = IceShards:GetManaCost()
 	local fManaAfter = J.GetManaAfter(nManaCost)
-	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {TagTeam, DrinkingBuddies, WalrusPunch})
+	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {Snowball, TagTeam, DrinkingBuddies, WalrusPunch})
 
     for _, enemyHero in pairs(nEnemyHeroes) do
         if  J.IsValidHero(enemyHero)
@@ -592,7 +592,7 @@ function X.ConsiderTagTeam()
     local nRadius = TagTeam:GetSpecialValueInt('radius')
     local nManaCost = TagTeam:GetManaCost()
 	local fManaAfter = J.GetManaAfter(nManaCost)
-	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {IceShards, Snowball, WalrusPunch})
+	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {IceShards, Snowball, DrinkingBuddies, WalrusPunch})
 
 	if J.IsInTeamFight(bot, 1200) then
 		local nInRangeEnemy = J.GetEnemiesNearLoc(bot:GetLocation(), nRadius)
@@ -659,7 +659,7 @@ function X.ConsiderDrinkingBuddies()
     local nCastRange = DrinkingBuddies:GetCastRange()
     local nManaCost = DrinkingBuddies:GetManaCost()
 	local fManaAfter = J.GetManaAfter(nManaCost)
-	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {IceShards, Snowball, WalrusPunch})
+	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {IceShards, Snowball, TagTeam, WalrusPunch})
 
     local hTarget = nil
 	local hTargetDamage = 0
@@ -774,7 +774,7 @@ function X.ConsiderWalrusPunch()
     local nDamage = (bot:GetAttackDamage() + nBonusDamage) * nCritMul
     local nManaCost = WalrusPunch:GetManaCost()
 	local fManaAfter = J.GetManaAfter(nManaCost)
-	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {IceShards, Snowball, WalrusPunch})
+	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {IceShards, Snowball, TagTeam, DrinkingBuddies})
 
 	for _, enemyHero in pairs(nEnemyHeroes) do
 		if J.IsValidHero(enemyHero)

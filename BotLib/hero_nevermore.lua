@@ -460,36 +460,37 @@ function X.ConsiderFeastOfSouls()
 		return BOT_ACTION_DESIRE_NONE
 	end
 
-	local nAttackRange = bot:GetAttackRange()
-	local nSoulCount = bot:GetModifierStackCount(bot:GetModifierByName('modifier_nevermore_necromastery'))
+	local nRadius = FeastOfSouls:GetSpecialValueInt('soul_collection_radius')
 	local nManaCost = FeastOfSouls:GetManaCost()
 	local fManaAfter = J.GetManaAfter(nManaCost)
 	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {ShadowRaze_Q, ShadowRaze_W, ShadowRaze_E, RequiemOfSouls})
-	local bFeast = false
 
-	if bMagicBuild then
-		bFeast = (nSoulCount - 5) >= 18
-	else
-		bFeast = (nSoulCount - 5) >= 13
-	end
-
-	if nSoulCount < 5 or not bFeast or fManaAfter < fManaThreshold1 then return BOT_ACTION_DESIRE_NONE end
+	local nInRangeEnemy = bot:GetNearbyHeroes(nRadius, true, BOT_MODE_NONE)
+	local nEnemyCreeps = bot:GetNearbyCreeps(nRadius, true)
 
 	if J.IsGoingOnSomeone(bot) then
 		if  J.IsValidHero(botTarget)
 		and J.CanBeAttacked(botTarget)
-        and J.IsInRange(bot, botTarget, nAttackRange + 300)
+		and J.IsInRange(bot, botTarget, bot:GetAttackRange())
         and not J.IsChasingTarget(bot, botTarget)
         and not J.IsSuspiciousIllusion(botTarget)
         and not botTarget:HasModifier('modifier_abaddon_borrowed_time')
         and not botTarget:HasModifier('modifier_dazzle_shallow_grave')
         and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
 		then
-			return BOT_ACTION_DESIRE_HIGH
+			if #nInRangeEnemy > 0 or #nEnemyCreeps >= 2 then
+				return BOT_ACTION_DESIRE_HIGH
+			end
 		end
 	end
 
-	if J.IsPushing(bot) then
+	if J.IsPushing(bot) and bAttacking and fManaAfter > fManaThreshold1 then
+		if J.IsValid(nEnemyCreeps[1]) and J.CanBeAttacked(nEnemyCreeps[1]) and #nEnemyHeroes <= 1 and #nAllyHeroes <= 2 then
+			if (#nEnemyCreeps >= 5) then
+				return BOT_ACTION_DESIRE_HIGH
+			end
+		end
+
 		if  J.IsValidBuilding(botTarget)
 		and J.CanBeAttacked(botTarget)
 		and J.GetHP(botTarget) > 0.3
@@ -499,8 +500,15 @@ function X.ConsiderFeastOfSouls()
 		end
     end
 
+	if J.IsDefending(bot) and bAttacking and fManaAfter > fManaThreshold1 then
+		if J.IsValid(nEnemyCreeps[1]) and J.CanBeAttacked(nEnemyCreeps[1]) and #nEnemyHeroes <= 1 and #nAllyHeroes <= 2 then
+			if (#nEnemyCreeps >= 5) then
+				return BOT_ACTION_DESIRE_HIGH
+			end
+		end
+	end
+
     if J.IsFarming(bot) and bAttacking then
-		local nEnemyCreeps = bot:GetNearbyCreeps(1200, true)
 		if J.IsValid(nEnemyCreeps[1]) and J.CanBeAttacked(nEnemyCreeps[1]) then
 			if (#nEnemyCreeps >= 3)
 			or (#nEnemyCreeps >= 2 and nEnemyCreeps[1]:IsAncientCreep())
@@ -513,8 +521,8 @@ function X.ConsiderFeastOfSouls()
 	if J.IsDoingRoshan(bot) or J.IsDoingTormentor(bot) then
 		if  (J.IsRoshan(botTarget) or J.IsTormentor(botTarget))
 		and J.CanBeAttacked(botTarget)
+        and J.IsInRange(bot, botTarget, bot:GetAttackRange())
 		and J.GetHP(botTarget) > 0.5
-        and J.IsInRange(bot, botTarget, nAttackRange)
         and bAttacking
 		then
 			return BOT_ACTION_DESIRE_HIGH

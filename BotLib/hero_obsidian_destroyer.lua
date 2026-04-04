@@ -178,10 +178,12 @@ end
 local ArcaneOrb             = bot:GetAbilityByName('obsidian_destroyer_arcane_orb')
 local AstralImprisonment    = bot:GetAbilityByName('obsidian_destroyer_astral_imprisonment')
 local EssenceFlux           = bot:GetAbilityByName('obsidian_destroyer_equilibrium')
+local Objurgation           = bot:GetAbilityByName('obsidian_destroyer_objurgation')
 local SanitysEclipse        = bot:GetAbilityByName('obsidian_destroyer_sanity_eclipse')
 
 local ArcaneOrbDesire, ArcaneOrbTarget
 local AstralImprisonmentDesire, AstralImprisonmentTarget
+local ObjurgationDesire
 local SanitysEclipseDesire, SanitysEclipseLocation
 
 local bAttacking = false
@@ -196,6 +198,7 @@ function X.SkillsComplement()
     ArcaneOrb             = bot:GetAbilityByName('obsidian_destroyer_arcane_orb')
     AstralImprisonment    = bot:GetAbilityByName('obsidian_destroyer_astral_imprisonment')
     EssenceFlux           = bot:GetAbilityByName('obsidian_destroyer_equilibrium')
+    Objurgation           = bot:GetAbilityByName('obsidian_destroyer_objurgation')
     SanitysEclipse        = bot:GetAbilityByName('obsidian_destroyer_sanity_eclipse')
 
     bAttacking = J.IsAttacking(bot)
@@ -203,6 +206,13 @@ function X.SkillsComplement()
     botTarget = J.GetProperTarget(bot)
     nAllyHeroes = bot:GetNearbyHeroes(1600, false, BOT_MODE_NONE)
     nEnemyHeroes = bot:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
+
+    ObjurgationDesire = X.ConsiderObjurgation()
+    if ObjurgationDesire > 0 then
+        J.SetQueuePtToINT(bot, false)
+        bot:ActionQueue_UseAbility(Objurgation)
+        return
+    end
 
     SanitysEclipseDesire, SanitysEclipseLocation = X.ConsiderSanitysEclipse()
     if SanitysEclipseDesire > 0 then
@@ -237,12 +247,10 @@ function X.ConsiderArcaneOrb()
     local bIsAutoCasted = ArcaneOrb:GetAutoCastState()
     local nManaCost = ArcaneOrb:GetManaCost()
     local fManaAfter = J.GetManaAfter(nManaCost)
-    local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {AstralImprisonment, SanitysEclipse})
+    local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {AstralImprisonment, Objurgation, SanitysEclipse})
 
 	if nAbilityLevel == 4 and not bIsAutoCasted then
-        if EssenceFlux and EssenceFlux:IsTrained() and EssenceFlux:GetLevel() >= 2 then
-            ArcaneOrb:ToggleAutoCast()
-        end
+        ArcaneOrb:ToggleAutoCast()
 	end
 
     if bIsAutoCasted then
@@ -549,6 +557,50 @@ function X.ConsiderAstralImprisonment()
     end
 
     return BOT_ACTION_DESIRE_NONE, nil
+end
+
+function X.ConsiderObjurgation()
+    if not J.CanCastAbility(Objurgation) then
+        return BOT_ACTION_DESIRE_NONE
+    end
+
+    if J.IsRetreating(bot) and not J.IsRealInvisible(bot) and bot:WasRecentlyDamagedByAnyHero(2.0) and botHP < 0.6 then
+		if (#nEnemyHeroes > #nAllyHeroes)
+		or (bot:IsRooted())
+		or (J.GetTotalEstimatedDamageToTarget(nEnemyHeroes, bot, 6.0) > bot:GetHealth())
+		then
+			return BOT_ACTION_DESIRE_HIGH
+		end
+	end
+
+	if not J.IsRealInvisible(bot) and bot:WasRecentlyDamagedByAnyHero(2.0) then
+		if (J.GetTotalEstimatedDamageToTarget(nEnemyHeroes, bot, 5.0) > bot:GetHealth()) then
+			return BOT_ACTION_DESIRE_HIGH
+		end
+	end
+
+	if J.IsDoingRoshan(bot) then
+		if J.IsRoshan(botTarget)
+        and J.CanBeAttacked(botTarget)
+		and J.IsInRange(bot, botTarget, 800)
+		and bAttacking
+		and botHP < 0.3
+		then
+			return BOT_ACTION_DESIRE_HIGH
+		end
+	end
+
+    if J.IsDoingTormentor(bot) then
+		if J.IsTormentor(botTarget)
+        and J.IsInRange(bot, botTarget, 800)
+        and bAttacking
+		and botHP < 0.35
+		then
+			return BOT_ACTION_DESIRE_HIGH
+		end
+	end
+
+    return BOT_ACTION_DESIRE_NONE
 end
 
 function X.ConsiderSanitysEclipse()

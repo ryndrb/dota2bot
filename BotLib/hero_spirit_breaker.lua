@@ -532,9 +532,7 @@ function X.ConsiderBulldoze()
 end
 
 function X.ConsiderPlanarPocket()
-    if not J.CanCastAbility(PlanarPocket)
-    or bot:HasModifier('modifier_spirit_breaker_charge_of_darkness')
-    then
+    if not J.CanCastAbility(PlanarPocket) then
         return BOT_ACTION_DESIRE_NONE, nil
     end
 

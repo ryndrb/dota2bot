@@ -925,7 +925,7 @@ function Site.IsModeSuitableToFarm( bot )
 	   and mode ~= BOT_MODE_DEFEND_TOWER_TOP
 	   and mode ~= BOT_MODE_DEFEND_TOWER_MID
 	   and mode ~= BOT_MODE_DEFEND_TOWER_BOT
-	   and mode ~= BOT_MODE_ASSEMBLE
+	--    and mode ~= BOT_MODE_ASSEMBLE
 	   and mode ~= BOT_MODE_TEAM_ROAM
 	   and mode ~= BOT_MODE_ROSHAN
 	   and mode ~= BOT_MODE_RETREAT

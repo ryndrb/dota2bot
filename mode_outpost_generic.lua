@@ -40,7 +40,7 @@ function GetDesire()
 	then
 		if bot:IsChanneling() or bot:IsUsingAbility() or bot:IsCastingAbility()
 		then
-			return BOT_MODE_DESIRE_ABSOLUTE
+			return BOT_MODE_DESIRE_ABSOLUTE * 2
 		end
 	end
 
@@ -48,19 +48,19 @@ function GetDesire()
 	then
 		if cAbility == nil then cAbility = bot:GetAbilityByName( "pugna_life_drain" ) end;
 		if cAbility:IsChanneling() then
-			return BOT_MODE_DESIRE_ABSOLUTE;
+			return BOT_MODE_DESIRE_ABSOLUTE * 2
 		end	
-	elseif botName == "npc_dota_hero_drow_ranger"
-		then
-			if cAbility == nil then cAbility = bot:GetAbilityByName( "drow_ranger_multishot" ) end;
-			if cAbility:IsInAbilityPhase() or bot:IsChanneling() then
-				return BOT_MODE_DESIRE_ABSOLUTE;
-			end	
+	-- elseif botName == "npc_dota_hero_drow_ranger"
+	-- 	then
+	-- 		if cAbility == nil then cAbility = bot:GetAbilityByName( "drow_ranger_multishot" ) end;
+	-- 		if cAbility:IsInAbilityPhase() or bot:IsChanneling() then
+	-- 			return BOT_MODE_DESIRE_ABSOLUTE * 2
+	-- 		end	
 	elseif botName == "npc_dota_hero_shadow_shaman"
 		then
 			if cAbility == nil then cAbility = bot:GetAbilityByName( "shadow_shaman_shackles" ) end;
 			if cAbility:IsInAbilityPhase() or bot:IsChanneling() then
-				return BOT_MODE_DESIRE_ABSOLUTE;
+				return BOT_MODE_DESIRE_ABSOLUTE * 2
 			end
 	elseif botName == "npc_dota_hero_clinkz"
 	then
@@ -68,7 +68,7 @@ function GetDesire()
 		if cAbility:IsTrained()
 		then
 			if cAbility:IsInAbilityPhase() or bot:IsChanneling() or bot:HasModifier('modifier_clinkz_burning_barrage') then
-				return BOT_MODE_DESIRE_ABSOLUTE
+				return BOT_MODE_DESIRE_ABSOLUTE * 2
 			end
 		end
 	elseif botName == "npc_dota_hero_tiny"
@@ -77,7 +77,7 @@ function GetDesire()
 		if cAbility:IsTrained()
 		then
 			if cAbility:IsInAbilityPhase() or bot:IsChanneling() then
-				return BOT_MODE_DESIRE_ABSOLUTE
+				return BOT_MODE_DESIRE_ABSOLUTE * 2
 			end
 		end
 	elseif botName == "npc_dota_hero_void_spirit"
@@ -89,14 +89,14 @@ function GetDesire()
 			dissimilate.duration = nPhaseDuration
 
 			if DotaTime() <= dissimilate.cast_time + dissimilate.duration then
-				return BOT_MODE_DESIRE_ABSOLUTE
+				return BOT_MODE_DESIRE_ABSOLUTE * 2
 			end
 
 			if (cAbility:IsInAbilityPhase())
 			or ((cAbility:GetCooldown() - cAbility:GetCooldownTimeRemaining()) <= dissimilate.duration)
 			then
 				dissimilate.cast_time = DotaTime()
-				return BOT_MODE_DESIRE_ABSOLUTE
+				return BOT_MODE_DESIRE_ABSOLUTE * 2
 			end
 		end
 	elseif botName == "npc_dota_hero_batrider"
@@ -106,7 +106,7 @@ function GetDesire()
 		then
 			if cAbility:IsInAbilityPhase() or bot:HasModifier("modifier_batrider_flaming_lasso_self")
 			then
-				return BOT_MODE_DESIRE_ABSOLUTE
+				return BOT_MODE_DESIRE_ABSOLUTE * 2
 			end
 		end
 	elseif botName == "npc_dota_hero_enigma"
@@ -115,14 +115,14 @@ function GetDesire()
 		if cAbility:IsTrained()
 		then
 			if cAbility:IsInAbilityPhase() or bot:IsChanneling() then
-				return BOT_MODE_DESIRE_ABSOLUTE
+				return BOT_MODE_DESIRE_ABSOLUTE * 2
 			end
 		end
 	elseif botName == "npc_dota_hero_keeper_of_the_light"
 	then
 		if cAbility == nil then cAbility = bot:GetAbilityByName("keeper_of_the_light_illuminate") end
 		if cAbility:IsChanneling() then
-			return BOT_MODE_DESIRE_ABSOLUTE
+			return BOT_MODE_DESIRE_ABSOLUTE * 2
 		end
 	elseif botName == "npc_dota_hero_meepo"
 	then
@@ -130,7 +130,7 @@ function GetDesire()
 		if cAbility:IsTrained()
 		then
 			if cAbility:IsInAbilityPhase() or bot:IsChanneling() then
-				return BOT_MODE_DESIRE_ABSOLUTE
+				return BOT_MODE_DESIRE_ABSOLUTE * 2
 			end
 		end
 	elseif botName == "npc_dota_hero_monkey_king"
@@ -139,7 +139,7 @@ function GetDesire()
 		if cAbility:IsTrained()
 		then
 			if cAbility:IsInAbilityPhase() or bot:IsChanneling() then
-				return BOT_MODE_DESIRE_ABSOLUTE
+				return BOT_MODE_DESIRE_ABSOLUTE * 2
 			end
 		end
 
@@ -149,7 +149,7 @@ function GetDesire()
 				and DotaTime() - bot.tree_dance_status.cast_time < (4.0 + bot.tree_dance_status.eta)
 				then
 					bMoveFromTreeDance = true
-					return BOT_MODE_DESIRE_ABSOLUTE
+					return BOT_MODE_DESIRE_ABSOLUTE * 2
 				end
 			end
 		end
@@ -160,7 +160,7 @@ function GetDesire()
 		then
 			if cAbility:IsInAbilityPhase() or bot:HasModifier('modifier_pangolier_gyroshell')
 			then
-				return BOT_MODE_DESIRE_ABSOLUTE
+				return BOT_MODE_DESIRE_ABSOLUTE * 2
 			end
 		end
 	elseif botName == "npc_dota_hero_phoenix"
@@ -169,7 +169,7 @@ function GetDesire()
 		if cAbility:IsTrained()
 		then
 			if bot:HasModifier('modifier_phoenix_supernova_hiding') then
-				return BOT_MODE_DESIRE_ABSOLUTE
+				return BOT_MODE_DESIRE_ABSOLUTE * 2
 			end
 		end
 
@@ -178,7 +178,7 @@ function GetDesire()
 		then
 			if bot:HasModifier('modifier_phoenix_sun_ray')
 			then
-				return BOT_MODE_DESIRE_ABSOLUTE
+				return BOT_MODE_DESIRE_ABSOLUTE * 2
 			end
 		end
 	elseif botName == "npc_dota_hero_puck"
@@ -187,7 +187,7 @@ function GetDesire()
 		if cAbility:IsTrained()
 		then
 			if cAbility:IsInAbilityPhase() or bot:HasModifier('modifier_puck_phase_shift') or cAbility:IsChanneling() then
-				return BOT_MODE_DESIRE_ABSOLUTE
+				return BOT_MODE_DESIRE_ABSOLUTE * 2
 			end
 		end
 	elseif botName == "npc_dota_hero_ringmaster"
@@ -196,7 +196,7 @@ function GetDesire()
 		if cAbility:IsTrained()
 		then
 			if cAbility:IsInAbilityPhase() or bot:HasModifier("modifier_ringmaster_tame_the_beasts") then
-				return BOT_MODE_DESIRE_ABSOLUTE
+				return BOT_MODE_DESIRE_ABSOLUTE * 2
 			end
 		end
 	elseif botName == "npc_dota_hero_snapfire"
@@ -205,7 +205,7 @@ function GetDesire()
 		if cAbility:IsTrained()
 		then
 			if cAbility:IsInAbilityPhase() or bot:HasModifier('modifier_snapfire_mortimer_kisses') then
-				return BOT_MODE_DESIRE_ABSOLUTE
+				return BOT_MODE_DESIRE_ABSOLUTE * 2
 			end
 		end
 	elseif botName == "npc_dota_hero_spirit_breaker"
@@ -214,7 +214,7 @@ function GetDesire()
 		if cAbility:IsTrained()
 		then
 			if cAbility:IsInAbilityPhase() or bot:HasModifier('modifier_spirit_breaker_charge_of_darkness') then
-				return BOT_MODE_DESIRE_ABSOLUTE
+				return BOT_MODE_DESIRE_ABSOLUTE * 2
 			end
 		end
 	elseif botName == "npc_dota_hero_windrunner"
@@ -223,7 +223,7 @@ function GetDesire()
 		if cAbility:IsTrained()
 		then
 			if cAbility:IsInAbilityPhase() or bot:IsChanneling() then
-				return BOT_MODE_DESIRE_ABSOLUTE
+				return BOT_MODE_DESIRE_ABSOLUTE * 2
 			end
 		end
 	elseif botName == "npc_dota_hero_tinker"
@@ -232,7 +232,7 @@ function GetDesire()
 		if cAbility:IsTrained()
 		then
 			if cAbility:IsInAbilityPhase() or bot:HasModifier('modifier_tinker_rearm') then
-				return BOT_MODE_DESIRE_ABSOLUTE
+				return BOT_MODE_DESIRE_ABSOLUTE * 2
 			end
 		end
 	elseif botName == "npc_dota_hero_primal_beast"
@@ -241,7 +241,7 @@ function GetDesire()
 		if cAbility:IsTrained()
 		then
 			if cAbility:IsInAbilityPhase() or bot:HasModifier('modifier_primal_beast_onslaught_windup') or bot:HasModifier('modifier_prevent_taunts') or bot:HasModifier('modifier_primal_beast_onslaught_movement_adjustable') then
-				return BOT_MODE_DESIRE_ABSOLUTE
+				return BOT_MODE_DESIRE_ABSOLUTE * 2
 			end
 		end
 
@@ -257,7 +257,7 @@ function GetDesire()
 		if cAbility:IsTrained()
 		then
 			if cAbility:IsInAbilityPhase() or bot:HasModifier('modifier_primal_beast_pulverize_self') then
-				return BOT_MODE_DESIRE_ABSOLUTE
+				return BOT_MODE_DESIRE_ABSOLUTE * 2
 			end
 		end
 	elseif botName == "npc_dota_hero_hoodwink"
@@ -266,7 +266,7 @@ function GetDesire()
 		if cAbility:IsTrained()
 		then
 			if cAbility:IsInAbilityPhase() or bot:HasModifier('modifier_hoodwink_sharpshooter_windup') then
-				return BOT_MODE_DESIRE_ABSOLUTE
+				return BOT_MODE_DESIRE_ABSOLUTE * 2
 			end
 		end
 	elseif botName == "npc_dota_hero_nevermore"
@@ -275,7 +275,7 @@ function GetDesire()
 		if cAbility:IsTrained()
 		then
 			if cAbility:IsInAbilityPhase() or bot:HasModifier('modifier_nevermore_requiem_invis_break') then
-				return BOT_MODE_DESIRE_ABSOLUTE
+				return BOT_MODE_DESIRE_ABSOLUTE * 2
 			end
 		end
 	elseif botName == "npc_dota_hero_elder_titan"
@@ -284,7 +284,7 @@ function GetDesire()
 		if cAbility:IsTrained()
 		then
 			if cAbility:IsChanneling() then
-				return BOT_MODE_DESIRE_ABSOLUTE
+				return BOT_MODE_DESIRE_ABSOLUTE * 2
 			end
 		end
 	elseif botName == "npc_dota_hero_wisp"
@@ -297,7 +297,7 @@ function GetDesire()
 				and not (J.IsRetreating(bot) and J.GetHP(bot) < 0.25)
 				and GetUnitToUnitDistance(bot, bot.wisp.tether.target) > 550
 				then
-					return BOT_MODE_DESIRE_ABSOLUTE
+					return BOT_MODE_DESIRE_ABSOLUTE * 2
 				end
 			end
 		end
@@ -323,7 +323,7 @@ function GetDesire()
 						or enemyHero:HasModifier('modifier_legion_commander_duel')
 					   	then
 							channel_target.location = enemyHero:GetLocation()
-							return BOT_MODE_DESIRE_ABSOLUTE
+							return BOT_MODE_DESIRE_ABSOLUTE * 2
 					   	end
 					end
 				end
@@ -334,7 +334,7 @@ function GetDesire()
 		cAbility = bot:GetAbilityByName('witch_doctor_death_ward')
 		if cAbility and cAbility:IsTrained() then
 			if cAbility:IsChanneling() then
-				return BOT_MODE_DESIRE_ABSOLUTE
+				return BOT_MODE_DESIRE_ABSOLUTE * 2
 			end
 		end
 	elseif bot:HasModifier('modifier_chen_hand_of_god_invuln_aura')
@@ -346,7 +346,7 @@ function GetDesire()
 				local nInRangeAlly = J.GetEnemiesNearLoc(bot:GetLocation(), nRadius)
 
 				if #nInRangeAlly >= 3 and not J.IsStunProjectileIncoming(bot, 800) then
-					return BOT_MODE_DESIRE_ABSOLUTE
+					return BOT_MODE_DESIRE_ABSOLUTE * 2
 				end
 			end
 		end

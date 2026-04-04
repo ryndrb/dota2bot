@@ -296,23 +296,26 @@ function GetDesire()
         nHealth = botHP * 0.8 + botMP * 0.2
     end
 
-    nDesire = 1 - ((nHealth + 1 - (1 - nHealth ^ 2) ^ 4) / 2)
+    -- nDesire = 1 - ((nHealth + 1 - (1 - nHealth ^ 2) ^ 4) / 2)
+    local one = GetAdjustedValueCausedPatch(1)
+    nHealth = RemapValClamped(nHealth, 0, 1, 0, one)
+    nDesire = one - ((nHealth + one - one * ((1 - (nHealth ^ 2) / one) ^ 4)) / 2)
 
     if nEnemyNearbyCount > 0 then
         if nEnemyNearbyCount - nAllyNearbyCount > 0 then
-            nDesire = nDesire + (nEnemyNearbyCount - nAllyNearbyCount) * (0.75 / 4)
+            nDesire = nDesire + (nEnemyNearbyCount - nAllyNearbyCount) * (GetAdjustedValueCausedPatch(BOT_MODE_DESIRE_HIGH) / 4)
         end
 
-        if not bWeAreStronger and nEnemyNearbyCount >= nAllyNearbyCount then nDesire = nDesire + 0.25 end
+        if not bWeAreStronger and nEnemyNearbyCount >= nAllyNearbyCount then nDesire = nDesire + GetAdjustedValueCausedPatch(0.25) end
         if nAllyNearbyCount >= nEnemyNearbyCount or bWeAreStronger then
             if bot:HasModifier('modifier_oracle_false_promise_timer') and J.GetModifierTime(bot, 'modifier_oracle_false_promise_timer') > 2.0 and J.IsUnitNearby(bot, nAllyHeroes, 1200, 'npc_dota_hero_oracle', true) then
-                nDesire = nDesire - 0.25
+                nDesire = nDesire - GetAdjustedValueCausedPatch(0.25)
             end
             if bot:HasModifier('modifier_dazzle_shallow_grave') and J.GetModifierTime(bot, 'modifier_dazzle_shallow_grave') >= 2.0 and J.IsUnitNearby(bot, nAllyHeroes, 1200, 'npc_dota_hero_dazzle', true) then
-                nDesire = nDesire - 0.2
+                nDesire = nDesire - GetAdjustedValueCausedPatch(0.2)
             end
             if bot:HasModifier('modifier_item_satanic_unholy') then
-                nDesire = nDesire - 0.3
+                nDesire = nDesire - GetAdjustedValueCausedPatch(0.3)
             end
 
             local hAbility = bot:GetAbilityByName('slark_shadow_dance')
@@ -320,13 +323,13 @@ function GetDesire()
             or (hAbility ~= nil and hAbility:IsTrained() and hAbility:GetCooldownTimeRemaining() <= 3 and bot:GetMana() >= 150)
             or (bot:HasModifier('modifier_slark_shadow_dance') and J.GetModifierTime(bot, 'modifier_slark_shadow_dance') > 1.5)
             then
-                nDesire = nDesire - 0.3
+                nDesire = nDesire - GetAdjustedValueCausedPatch(0.3)
             end
         end
     end
 
     if bot:DistanceFromFountain() > 4000 then
-        if (nEnemyNearbyCount == 0 and count == 0) and #nEnemyTowers == 0 then nDesire = nDesire - 0.25 end
+        if (nEnemyNearbyCount == 0 and count == 0) and #nEnemyTowers == 0 then nDesire = nDesire - GetAdjustedValueCausedPatch(0.25) end
     end
 
     if J.IsInLaningPhase() then
@@ -344,26 +347,26 @@ function GetDesire()
 			or bot:HasModifier('modifier_item_urn_heal')
 			or bot:HasModifier('modifier_item_spirit_vessel_heal')
             then
-                nDesire = nDesire - 0.25
+                nDesire = nDesire - GetAdjustedValueCausedPatch(0.25)
             end
         end
     end
 
     if bot:HasModifier('modifier_slark_shadow_dance_passive_regen') then
-        nDesire = nDesire - 0.25
+        nDesire = nDesire - GetAdjustedValueCausedPatch(0.25)
     end
 
     -- mulling
     -- nDesire = nDesire + X.GetUnitDesire(1200)
     -- nDesire = nDesire + X.RetreatWhenTowerTargetedDesire()
 
-    nDesire = Clamp(nDesire, 0.0, 1.0)
+    -- nDesire = Clamp(nDesire, 0.0, BOT_MODE_DESIRE_ABSOLUTE)
 
-    local alpha = 0.3
-    nDesire = fLastRetreatDesire * (1 - alpha) + nDesire * alpha
-    fLastRetreatDesire = nDesire
+    -- local alpha = GetAdjustedValueCausedPatch(0.3)
+    -- nDesire = fLastRetreatDesire * (GetAdjustedValueCausedPatch(1) - alpha) + nDesire * alpha
+    -- fLastRetreatDesire = nDesire
 
-    return Clamp(nDesire, 0.0, 1.0)
+    return Clamp(nDesire, 0.0, BOT_MODE_DESIRE_ABSOLUTE)
 end
 
 function X.GetUnitDesire(nRadius)

@@ -38,6 +38,10 @@ local Tier1NeutralItems = {
     -- --[[Sister's Shroud]]       "item_sisters_shroud",
     --[[Ash Legion Shield]]     "item_ash_legion_shield",
     --[[Weighted Dice]]         "item_weighted_dice",
+    --[[Dagger Of Ristul]]      "item_dagger_of_ristul",
+    --[[Forager's Kit]]         "item_foragers_kit",
+    --[[Possessed Mask]]        "item_possessed_mask",
+    --[[Stonefeather Satchel]]  "item_stonefeather_satchel",
 }
 
 local Tier2NeutralItems = {
@@ -61,6 +65,9 @@ local Tier2NeutralItems = {
     --[[Mana Draught]]          "item_mana_draught",
     --[[Poor Man's Shield]]     "item_poor_mans_shield",
     --[[Defiant Shell]]         "item_defiant_shell",
+    --[[Crippling Crossbow]]    "item_crippling_crossbow",
+    --[[Medallion of Courage]]  "item_medallion_of_courage",
+    --[[Seeds of Serenity]]     "item_seeds_of_serenity",
 }
 
 local Tier3NeutralItems = {
@@ -72,18 +79,21 @@ local Tier3NeutralItems = {
     -- --[[Craggy Coat]]           "item_craggy_coat",
     -- --[[Enchanted Quiver]]      "item_enchanted_quiver",
     -- --[[Elven Tunic]]           "item_elven_tunic",
-    -- --[[Cloack of Flames]]      "item_cloak_of_flames",
+    --[[Cloak of Flames]]       "item_cloak_of_flames",
     -- --[[Ceremonial Robe]]       "item_ceremonial_robe",
     --[[Psychic Headband]]      "item_psychic_headband",
     -- --[[Doubloon]]              "item_doubloon",
     -- --[[Vambrace]]              "item_vambrace",
-    --[[Whisper of the Dread]]  "item_whisper_of_the_dread",
+    -- --[[Whisper of the Dread]]  "item_whisper_of_the_dread",
     --[[Serrrated Shiv]]        "item_serrated_shiv",
     -- --[[Gale Guard]]            "item_gale_guard",
     --[[Gunpowder Gauntlet]]    "item_gunpowder_gauntlets",
     -- --[[Ninja Gear]]            "item_ninja_gear",
     --[[Jidi Pollen Bag]]       "item_jidi_pollen_bag",
     --[[Unrelenting Eye]]       "item_unrelenting_eye",
+    --[[Partisan's Brand]]      "item_partisans_brand",
+    --[[Spellslinger]]          "item_spellslinger",
+    --[[Stormcrafter]]          "item_stormcrafter",
 }
 
 local Tier4NeutralItems = {
@@ -100,7 +110,7 @@ local Tier4NeutralItems = {
     -- --[[Martyr's Plate]]        "item_martyrs_plate",
     --[[Rattlecage]]            "item_rattlecage",
     -- --[[Ogre Seal Totem]]       "item_ogre_seal_totem",
-    --[[Crippling Crossbow]]    "item_crippling_crossbow",
+    -- --[[Crippling Crossbow]]    "item_crippling_crossbow",
     -- --[[Magnifying Monocle]]    "item_magnifying_monocle",
     -- --[[Ceremonial Robe]]       "item_ceremonial_robe",
     -- --[[Pyrrhic Cloak]]         "item_pyrrhic_cloak",
@@ -110,6 +120,10 @@ local Tier4NeutralItems = {
     --[[Flayer's Bota]]         "item_flayers_bota",
     --[[Idol of Scree'Auk]]     "item_idol_of_screeauk",
     --[[Metamorphic Mandible]]  "item_metamorphic_mandible",
+    --[[Conjurer's Catalyst]]   "item_conjurers_catalyst",
+    --[[Dandelion Amulet]]      "item_dandelion_amulet",
+    --[[Enchanter's Bauble]]    "item_enchanters_bauble",
+    --[[Prophet's Pendulum]]    "item_prophets_pendulum",
 }
 
 local Tier5NeutralItems = {
@@ -134,6 +148,8 @@ local Tier5NeutralItems = {
     -- --[[Helm of the Undying]]   "item_helm_of_the_undying",
     --[[Dezun Bloodrite]]       "item_dezun_bloodrite",
     --[[Riftshadow Prism]]      "item_riftshadow_prism",
+    --[[Harmonizer]]            "item_harmonizer",
+    --[[Witchbane]]             "item_heavy_blade",
 }
 
 local hNeutralItemsList = {
@@ -153,6 +169,7 @@ local TierEnhancements = {
         "item_enhancement_mystical",
         "item_enhancement_quickened",
         "item_enhancement_tough",
+        "item_enhancement_vital",
     },
     [2] = {
         "item_enhancement_alert",
@@ -161,10 +178,13 @@ local TierEnhancements = {
         "item_enhancement_quickened",
         "item_enhancement_tough",
 
-        "item_enhancement_vast",
+        -- "item_enhancement_vast",
         "item_enhancement_greedy",
         "item_enhancement_keen_eyed",
-        "item_enhancement_vampiric",
+        -- "item_enhancement_vampiric",
+        "item_enhancement_crude",
+        "item_enhancement_nimble",
+        "item_enhancement_titanic",
     },
     [3] = {
         "item_enhancement_alert",
@@ -173,10 +193,13 @@ local TierEnhancements = {
         "item_enhancement_quickened",
         "item_enhancement_tough",
 
-        "item_enhancement_vast",
+        -- "item_enhancement_vast",
         "item_enhancement_greedy",
         "item_enhancement_keen_eyed",
-        "item_enhancement_vampiric",
+        -- "item_enhancement_vampiric",
+        "item_enhancement_crude",
+        "item_enhancement_nimble",
+        "item_enhancement_titanic",
     },
     [4] = {
         "item_enhancement_alert",
@@ -185,23 +208,29 @@ local TierEnhancements = {
         "item_enhancement_quickened",
         "item_enhancement_tough",
 
-        "item_enhancement_vampiric",
+        "item_enhancement_keen_eyed",
+        -- "item_enhancement_vampiric",
+        "item_enhancement_crude",
+        "item_enhancement_nimble",
+        "item_enhancement_titanic",
 
         "item_enhancement_timeless",
         "item_enhancement_titanic",
-        "item_enhancement_crude",
+        -- "item_enhancement_crude",
     },
     [5] = {
         "item_enhancement_timeless",
-        "item_enhancement_titanic",
-        "item_enhancement_crude",
+        -- "item_enhancement_titanic",
 
         "item_enhancement_feverish",
         "item_enhancement_fleetfooted",
         "item_enhancement_audacious",
         "item_enhancement_evolved",
-        "item_enhancement_boundless",
-        "item_enhancement_wise",
+        -- "item_enhancement_boundless",
+        -- "item_enhancement_wise",
+        "item_enhancement_vampiric",
+        "item_enhancement_hulking",
+        "item_enhancement_manic",
     }
 }
 
@@ -244,13 +273,13 @@ function NeutralItems.GiveNeutralItems(hHeroList)
             if hero.neutral_items then
                 -- range; to feel more natural
                 if bTurboMode then
-                    hero.neutral_items[1].assign_time = RandomFloat( 2.5,  4.5)
+                    hero.neutral_items[1].assign_time = RandomFloat( 0.0,  1.5)
                     hero.neutral_items[2].assign_time = RandomFloat( 7.5,  9.5)
                     hero.neutral_items[3].assign_time = RandomFloat(12.5, 14.5)
                     hero.neutral_items[4].assign_time = RandomFloat(17.5, 19.5)
                     hero.neutral_items[5].assign_time = RandomFloat(30.0, 32.0)
                 else
-                    hero.neutral_items[1].assign_time = RandomFloat( 5,  8)
+                    hero.neutral_items[1].assign_time = RandomFloat( 0,  3)
                     hero.neutral_items[2].assign_time = RandomFloat(15, 18)
                     hero.neutral_items[3].assign_time = RandomFloat(25, 28)
                     hero.neutral_items[4].assign_time = RandomFloat(35, 38)
@@ -381,7 +410,10 @@ function NeutralItems.SelectItem(hNeutralItemList)
     local items = {}
     local weights = {}
     for item, weight in pairs(hNeutralItemList) do
-        if item ~= 'item_enhancement_wise' then
+        if  item ~= 'item_enhancement_wise'
+        and item ~= 'item_dormant_curio'
+        and item ~= 'item_enchanters_bauble'
+        then
             table.insert(items,item)
             table.insert(weights,weight)
         end
@@ -408,7 +440,7 @@ function NeutralItems.SelectItem(hNeutralItemList)
 end
 
 function NeutralItems.GetCurrentTierWindow(bTurboMode, fCurrentTime)
-    local thresholds = bTurboMode and {2.5, 7.5, 12.5, 17.5, 30} or {5, 15, 25, 35, 60}
+    local thresholds = bTurboMode and {0, 7.5, 12.5, 17.5, 30} or {0, 15, 25, 35, 60}
     for i = #thresholds, 1, -1 do
         if fCurrentTime >= thresholds[i] * 60 then return i end
     end

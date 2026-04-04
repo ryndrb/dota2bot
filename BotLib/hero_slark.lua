@@ -512,7 +512,7 @@ function X.ConsiderSaltwaterShiv()
 	if J.IsGoingOnSomeone(bot) then
 		if  J.IsValidHero(botTarget)
 		and J.CanBeAttacked(botTarget)
-		and J.IsInRange(bot, botTarget, bot:GetAttackRange() + 200)
+		and J.IsInRange(bot, botTarget, bot:GetAttackRange() + 50 + 200)
 		and not J.IsSuspiciousIllusion(botTarget)
 		then
 			return BOT_ACTION_DESIRE_HIGH, botTarget

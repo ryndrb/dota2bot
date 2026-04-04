@@ -177,7 +177,7 @@ local ArenaOfBlood 	= bot:GetAbilityByName('mars_arena_of_blood')
 
 local SpearOfMarsDesire, SpearOfMarsLocation
 local GodsRebukeDesire, GodsRebukeLocation
-local BulwarkDesire
+local BulwarkDesire, BulwarkLocation
 local ArenaOfBloodDesire, ArenaOfBloodLocation
 
 local SpearToAllyDesire, SpearToAllyLocation
@@ -245,9 +245,13 @@ function X.SkillsComplement()
 		return
 	end
 
-	BulwarkDesire = X.ConsiderBulwark()
+	BulwarkDesire, BulwarkLocation, bToggle = X.ConsiderBulwark()
 	if BulwarkDesire > 0 then
-		bot:Action_UseAbility(Bulwark)
+		if bToggle then
+			bot:Action_UseAbilityOnLocation(Bulwark, BulwarkLocation)
+		else
+			bot:Action_UseAbility(Bulwark)
+		end
 		return
 	end
 end
@@ -627,11 +631,8 @@ function X.ConsiderBulwark()
 	local nInRangeAlly = J.GetAlliesNearLoc(bot:GetLocation(), 1200)
 	local nInRangeEnemy = J.GetEnemiesNearLoc(bot:GetLocation(), 1200)
 
-	if J.IsRetreating(bot)
-	and not J.IsRealInvisible(bot)
-	then
+	if J.IsRetreating(bot) and not J.IsRealInvisible(bot) then
 		if #nInRangeAlly >= 1 then
-			local numFacing = 0
 			for _, enemyHero in pairs(nInRangeEnemy) do
 				if  J.IsValidHero(enemyHero)
 				and J.CanCastOnMagicImmune(enemyHero)
@@ -640,40 +641,38 @@ function X.ConsiderBulwark()
 				and not J.IsDisabled(enemyHero)
 				and bot:WasRecentlyDamagedByHero(enemyHero, 3.0)
 				then
-					numFacing = numFacing + 1
-				end
-			end
+					if #nInRangeEnemy > #nInRangeAlly then
+						if bToggleState == false then
+							return BOT_ACTION_DESIRE_HIGH, enemyHero:GetLocation(), bToggleState
+						end
 
-			if numFacing >= 1 and #nInRangeEnemy > #nInRangeAlly then
-				if bToggleState == false then
-					return BOT_ACTION_DESIRE_HIGH
-				end
-
-				return BOT_ACTION_DESIRE_NONE
-			end
-		end
-	end
-
-	if J.IsGoingOnSomeone(bot) then
-		if J.IsValidHero(botTarget)
-		and J.CanBeAttacked(botTarget)
-		and J.IsInRange(bot, botTarget, nRange)
-		and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
-		then
-			if bot:HasScepter() then
-				if bToggleState == false then
-					if #nInRangeAlly >= #nInRangeEnemy + 1 then
-						return BOT_ACTION_DESIRE_HIGH
+						return BOT_ACTION_DESIRE_NONE
 					end
 				end
-
-				return BOT_ACTION_DESIRE_NONE
 			end
 		end
 	end
 
+	-- if J.IsGoingOnSomeone(bot) then
+	-- 	if J.IsValidHero(botTarget)
+	-- 	and J.CanBeAttacked(botTarget)
+	-- 	and J.IsInRange(bot, botTarget, nRange)
+	-- 	and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
+	-- 	then
+	-- 		if bot:HasScepter() then
+	-- 			if bToggleState == false then
+	-- 				if #nInRangeAlly >= #nInRangeEnemy + 1 then
+	-- 					return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation()
+	-- 				end
+	-- 			end
+
+	-- 			return BOT_ACTION_DESIRE_NONE
+	-- 		end
+	-- 	end
+	-- end
+
 	if bToggleState == true then
-		return BOT_ACTION_DESIRE_HIGH
+		return BOT_ACTION_DESIRE_HIGH, 0, bToggleState
 	end
 
 	return BOT_ACTION_DESIRE_NONE

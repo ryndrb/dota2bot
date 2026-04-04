@@ -51,7 +51,6 @@ local HeroBuild = {
                 }
             },
             ['ability'] = {
-                -- [1] = {1,2,1,3,1,6,1,3,3,1,6,3,2,2,2,6}, -- +1 Void
                 [1] = {1,3,1,2,1,6,1,3,3,3,6,2,2,2,6},
             },
             ['buy_list'] = {
@@ -136,11 +135,12 @@ end
 local Void              = bot:GetAbilityByName('night_stalker_void')
 local CripplingFear     = bot:GetAbilityByName('night_stalker_crippling_fear')
 local HunterInTheNight  = bot:GetAbilityByName('night_stalker_hunter_in_the_night')
+local MidnightFeast     = bot:GetAbilityByName('night_stalker_midnight_feast')
 local DarkAscension     = bot:GetAbilityByName('night_stalker_darkness')
 
 local VoidDesire, VoidTarget
 local CripplingFearDesire
-local HunterInTheNightDesire, HunterInTheNightTarget
+local MidnightFeastDesire, MidnightFeastTarget
 local DarkAscensionDesire
 
 local bAttacking = false
@@ -154,7 +154,7 @@ function X.SkillsComplement()
 
     Void              = bot:GetAbilityByName('night_stalker_void')
     CripplingFear     = bot:GetAbilityByName('night_stalker_crippling_fear')
-    HunterInTheNight  = bot:GetAbilityByName('night_stalker_hunter_in_the_night')
+    MidnightFeast     = bot:GetAbilityByName('night_stalker_midnight_feast')
     DarkAscension     = bot:GetAbilityByName('night_stalker_darkness')
 
     bAttacking = J.IsAttacking(bot)
@@ -182,19 +182,14 @@ function X.SkillsComplement()
     VoidDesire, VoidTarget = X.ConsiderVoid()
     if VoidDesire > 0 then
         J.SetQueuePtToINT(bot, false)
-        if bot:HasScepter() then
-            bot:ActionQueue_UseAbilityOnLocation(Void, VoidTarget)
-        else
-            bot:ActionQueue_UseAbilityOnEntity(Void, VoidTarget)
-        end
-
+        bot:ActionQueue_UseAbilityOnEntity(Void, VoidTarget)
         return
     end
 
-    HunterInTheNightDesire, HunterInTheNightTarget = X.ConsiderHunterInTheNight()
-    if HunterInTheNightDesire > 0 then
+    MidnightFeastDesire, MidnightFeastTarget = X.ConsiderMidnightFeast()
+    if MidnightFeastDesire > 0 then
         J.SetQueuePtToINT(bot, false)
-        bot:ActionQueue_UseAbilityOnEntity(HunterInTheNight, HunterInTheNightTarget)
+        bot:ActionQueue_UseAbilityOnEntity(MidnightFeast, MidnightFeastTarget)
         return
     end
 end
@@ -204,10 +199,9 @@ function X.ConsiderVoid()
         return BOT_ACTION_DESIRE_NONE, nil
     end
 
-    local bHasScepter = bot:HasScepter()
     local nCastRange = Void:GetCastRange()
     local fCastPoint = Void:GetCastPoint()
-    local nRadius = 300
+    local nRadius = Void:GetSpecialValueInt('cast_radius')
     local nDamage = Void:GetSpecialValueInt('damage')
     local nDuration = Void:GetSpecialValueFloat('duration_day')
     local timeOfDay = J.CheckTimeOfDay()
@@ -224,11 +218,11 @@ function X.ConsiderVoid()
         and J.CanBeAttacked(enemyHero)
         and J.IsInRange(bot, enemyHero, nCastRange)
         and J.CanCastOnNonMagicImmune(enemyHero)
-        and (bHasScepter or J.CanCastOnTargetAdvanced(enemyHero))
+        and J.CanCastOnTargetAdvanced(enemyHero)
         and not enemyHero:HasModifier('modifier_necrolyte_reapers_scythe')
         then
             if enemyHero:IsChanneling() and timeOfDay == 'night' then
-                return BOT_ACTION_DESIRE_HIGH, (bHasScepter and enemyHero:GetLocation()) or enemyHero
+                return BOT_ACTION_DESIRE_HIGH, enemyHero
             end
 
             if  J.WillKillTarget(enemyHero, nDamage, DAMAGE_TYPE_MAGICAL, fCastPoint)
@@ -237,7 +231,7 @@ function X.ConsiderVoid()
             and not enemyHero:HasModifier('modifier_oracle_false_promise_timer')
             and not enemyHero:HasModifier('modifier_templar_assassin_refraction_absorb')
             then
-                return BOT_ACTION_DESIRE_HIGH, (bHasScepter and enemyHero:GetLocation()) or enemyHero
+                return BOT_ACTION_DESIRE_HIGH, enemyHero
             end
         end
     end
@@ -250,7 +244,7 @@ function X.ConsiderVoid()
             and J.CanBeAttacked(enemyHero)
             and J.IsInRange(bot, enemyHero, nCastRange)
             and J.CanCastOnNonMagicImmune(enemyHero)
-            and (bHasScepter or J.CanCastOnTargetAdvanced(enemyHero))
+            and J.CanCastOnTargetAdvanced(enemyHero)
             and not J.IsDisabled(enemyHero)
             and not enemyHero:IsDisarmed()
             and not enemyHero:HasModifier('modifier_necrolyte_reapers_scythe')
@@ -264,7 +258,7 @@ function X.ConsiderVoid()
         end
 
         if hTarget ~= nil then
-            return BOT_ACTION_DESIRE_HIGH, (bHasScepter and hTarget:GetLocation()) or hTarget
+            return BOT_ACTION_DESIRE_HIGH, hTarget
         end
 	end
 
@@ -273,14 +267,14 @@ function X.ConsiderVoid()
         and J.CanBeAttacked(botTarget)
         and J.IsInRange(bot, botTarget, nCastRange)
         and J.CanCastOnNonMagicImmune(botTarget)
-        and (bHasScepter or J.CanCastOnTargetAdvanced(botTarget))
+        and J.CanCastOnTargetAdvanced(botTarget)
         and not J.IsDisabled(botTarget)
         and not botTarget:HasModifier('modifier_abaddon_borrowed_time')
         and not botTarget:HasModifier('modifier_dazzle_shallow_grave')
         and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
         and not botTarget:HasModifier('modifier_templar_assassin_refraction_absorb')
         then
-            return BOT_ACTION_DESIRE_HIGH, (bHasScepter and botTarget:GetLocation()) or botTarget
+            return BOT_ACTION_DESIRE_HIGH, botTarget
         end
 	end
 
@@ -290,25 +284,25 @@ function X.ConsiderVoid()
             and J.CanBeAttacked(enemyHero)
             and J.IsInRange(bot, enemyHero, nCastRange)
             and J.CanCastOnNonMagicImmune(enemyHero)
-            and (bHasScepter or J.CanCastOnTargetAdvanced(enemyHero))
+            and J.CanCastOnTargetAdvanced(enemyHero)
             and not J.IsDisabled(enemyHero)
             and not enemyHero:IsDisarmed()
             and bot:WasRecentlyDamagedByHero(enemyHero, 2.0)
             then
-                return BOT_ACTION_DESIRE_HIGH, (bHasScepter and enemyHero:GetLocation()) or enemyHero
+                return BOT_ACTION_DESIRE_HIGH, enemyHero
             end
         end
     end
 
     local nEnemyCreeps = bot:GetNearbyCreeps(Min(nCastRange + 300, 1600), true)
 
-    if bHasScepter then
+    if nRadius > 0 then
         if J.IsPushing(bot) and fManaAfter > fManaThreshold1 and fManaAfter > 0.5 and #nAllyHeroes <= 2 and bAttacking then
             for _, creep in pairs(nEnemyCreeps) do
                 if J.IsValid(creep) and J.CanBeAttacked(creep) and not J.IsRunning(creep) then
                     local nLocationAoE = bot:FindAoELocation(true, false, creep:GetLocation(), 0, nRadius, 0, 0)
                     if (nLocationAoE.count >= 4) then
-                        return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc
+                        return BOT_ACTION_DESIRE_HIGH, creep
                     end
                 end
             end
@@ -319,28 +313,22 @@ function X.ConsiderVoid()
                 if J.IsValid(creep) and J.CanBeAttacked(creep) and not J.IsRunning(creep) then
                     local nLocationAoE = bot:FindAoELocation(true, false, creep:GetLocation(), 0, nRadius, 0, 0)
                     if (nLocationAoE.count >= 4) then
-                        return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc
+                        return BOT_ACTION_DESIRE_HIGH, creep
                     end
                 end
-            end
-
-            local nLocationAoE = bot:FindAoELocation(true, true, bot:GetLocation(), nCastRange, nRadius, 0, 0)
-            local nInRangeEnemy = J.GetEnemiesNearLoc(bot:GetLocation(), 1600)
-            if #nInRangeEnemy == 0 and nLocationAoE.count >= 2 then
-                return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc
             end
         end
     end
 
     if J.IsFarming(bot) and fManaAfter > fManaThreshold1 and fManaAfter > 0.4 and bAttacking then
-        if bHasScepter then
+        if nRadius > 0 then
             for _, creep in pairs(nEnemyCreeps) do
                 if J.IsValid(creep) and J.CanBeAttacked(creep) and not J.IsRunning(creep) then
                     local nLocationAoE = bot:FindAoELocation(true, false, creep:GetLocation(), 0, nRadius, 0, 0)
                     if (nLocationAoE.count >= 3)
                     or (nLocationAoE.count >= 2 and creep:IsAncientCreep())
                     then
-                        return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc
+                        return BOT_ACTION_DESIRE_HIGH, creep
                     end
                 end
             end
@@ -357,7 +345,7 @@ function X.ConsiderVoid()
         end
     end
 
-    if J.IsLaning(bot) and J.IsInLaningPhase() and fManaAfter > fManaThreshold1 then
+    if J.IsLaning(bot) and J.IsEarlyGame() and fManaAfter > fManaThreshold1 then
 		for _, creep in pairs(nEnemyCreeps) do
 			if  J.IsValid(creep)
             and J.CanBeAttacked(creep)
@@ -365,7 +353,7 @@ function X.ConsiderVoid()
             and string.find(creep:GetUnitName(), 'ranged')
 			then
                 if J.IsUnitTargetedByTower(creep, false) or J.IsEnemyTargetUnit(creep, 1000) then
-                    return BOT_ACTION_DESIRE_HIGH, (bHasScepter and creep:GetLocation()) or creep
+                    return BOT_ACTION_DESIRE_HIGH, creep
                 end
 			end
 		end
@@ -380,7 +368,7 @@ function X.ConsiderVoid()
         and fManaAfter > fManaThreshold1
         and fManaAfter > 0.5
         then
-            return BOT_ACTION_DESIRE_HIGH, (bHasScepter and botTarget:GetLocation()) or botTarget
+            return BOT_ACTION_DESIRE_HIGH, botTarget
         end
     end
 
@@ -391,7 +379,7 @@ function X.ConsiderVoid()
         and fManaAfter > fManaThreshold1
         and fManaAfter > 0.5
         then
-            return BOT_ACTION_DESIRE_HIGH, (bHasScepter and botTarget:GetLocation()) or botTarget
+            return BOT_ACTION_DESIRE_HIGH, botTarget
         end
     end
 
@@ -403,21 +391,11 @@ function X.ConsiderCripplingFear()
         return BOT_ACTION_DESIRE_NONE
     end
 
-    local bHasScepter = bot:HasScepter()
     local nRadius = CripplingFear:GetSpecialValueInt('radius')
-    local nDebuffDuration = CripplingFear:GetSpecialValueInt('duration_day')
     local nManaCost = CripplingFear:GetManaCost()
-    local bToggled = CripplingFear:GetToggleState()
-    local timeOfDay = J.CheckTimeOfDay()
     local fManaAfter = J.GetManaAfter(nManaCost)
     local botMP = J.GetMP(bot)
 	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {Void, DarkAscension})
-
-    local fElapsedTime = CripplingFear:GetCooldown() - CripplingFear:GetCooldownTimeRemaining()
-
-    if timeOfDay == 'night' then
-        nDebuffDuration = CripplingFear:GetSpecialValueInt('duration_night')
-    end
 
     if J.IsGoingOnSomeone(bot) then
         if  J.IsValidTarget(botTarget)
@@ -427,18 +405,7 @@ function X.ConsiderCripplingFear()
         and not J.IsDisabled(botTarget)
         and not botTarget:IsSilenced()
         then
-            if bHasScepter then
-                if not bToggled and botMP > 0.25 then
-                    return BOT_ACTION_DESIRE_HIGH
-                else
-                    if bToggled and botMP < 0.25 then
-                        return BOT_ACTION_DESIRE_HIGH
-                    end
-                    return BOT_ACTION_DESIRE_NONE
-                end
-            else
-                return BOT_ACTION_DESIRE_HIGH
-            end
+            return BOT_ACTION_DESIRE_HIGH
         end
 	end
 
@@ -453,18 +420,7 @@ function X.ConsiderCripplingFear()
             and not enemyHero:IsSilenced()
             and bot:WasRecentlyDamagedByHero(enemyHero, 2.0)
             then
-                if bHasScepter then
-                    if not bToggled then
-                        return BOT_ACTION_DESIRE_HIGH
-                    else
-                        if bToggled and fElapsedTime >= nDebuffDuration then
-                            return BOT_ACTION_DESIRE_HIGH
-                        end
-                        return BOT_ACTION_DESIRE_NONE
-                    end
-                else
-                    return BOT_ACTION_DESIRE_HIGH
-                end
+                return BOT_ACTION_DESIRE_HIGH
             end
         end
     end
@@ -474,18 +430,7 @@ function X.ConsiderCripplingFear()
     if ((J.IsPushing(bot) and #nAllyHeroes <= 2) or (J.IsDefending(bot) and #nEnemyHeroes <= 1)) and bAttacking and fManaAfter > fManaThreshold1 + 0.1 then
         if J.IsValid(nEnemyCreeps[1]) and J.CanBeAttacked(nEnemyCreeps[1]) then
             if #nEnemyCreeps >= 4 then
-                if bHasScepter then
-                    if not bToggled then
-                        return BOT_ACTION_DESIRE_HIGH
-                    else
-                        if bToggled and fElapsedTime >= nDebuffDuration then
-                            return BOT_ACTION_DESIRE_HIGH
-                        end
-                        return BOT_ACTION_DESIRE_NONE
-                    end
-                else
-                    return BOT_ACTION_DESIRE_HIGH
-                end
+                return BOT_ACTION_DESIRE_HIGH
             end
         end
     end
@@ -493,18 +438,7 @@ function X.ConsiderCripplingFear()
     if J.IsFarming(bot) and bAttacking and fManaAfter > fManaThreshold1 then
         if J.IsValid(nEnemyCreeps[1]) and J.CanBeAttacked(nEnemyCreeps[1]) then
             if #nEnemyCreeps >= 4 then
-                if bHasScepter then
-                    if not bToggled then
-                        return BOT_ACTION_DESIRE_HIGH
-                    else
-                        if bToggled and fElapsedTime >= nDebuffDuration then
-                            return BOT_ACTION_DESIRE_HIGH
-                        end
-                        return BOT_ACTION_DESIRE_NONE
-                    end
-                else
-                    return BOT_ACTION_DESIRE_HIGH
-                end
+                return BOT_ACTION_DESIRE_HIGH
             end
         end
     end
@@ -518,18 +452,7 @@ function X.ConsiderCripplingFear()
         and fManaAfter > fManaThreshold1
         and botMP > 0.4
         then
-            if bHasScepter then
-                if not bToggled then
-                    return BOT_ACTION_DESIRE_HIGH
-                else
-                    if fElapsedTime >= nDebuffDuration and bToggled then
-                        return BOT_ACTION_DESIRE_HIGH
-                    end
-                    return BOT_ACTION_DESIRE_NONE
-                end
-            else
-                return BOT_ACTION_DESIRE_HIGH
-            end
+            return BOT_ACTION_DESIRE_HIGH
         end
     end
 
@@ -540,42 +463,29 @@ function X.ConsiderCripplingFear()
         and fManaAfter > fManaThreshold1
         and botMP > 0.4
         then
-            if bHasScepter then
-                if not bToggled then
-                    return BOT_ACTION_DESIRE_HIGH
-                else
-                    if fElapsedTime >= nDebuffDuration and bToggled then
-                        return BOT_ACTION_DESIRE_HIGH
-                    end
-                    return BOT_ACTION_DESIRE_NONE
-                end
-            else
-                return BOT_ACTION_DESIRE_HIGH
-            end
+            return BOT_ACTION_DESIRE_HIGH
         end
-    end
-
-    if bHasScepter and bToggled then
-        return BOT_ACTION_DESIRE_HIGH
     end
 
     return BOT_ACTION_DESIRE_NONE
 end
 
-function X.ConsiderHunterInTheNight()
-    if not J.CanCastAbility(HunterInTheNight)
+function X.ConsiderMidnightFeast()
+    if not J.CanCastAbility(MidnightFeast)
     or (J.IsRetreating(bot) and J.IsRealInvisible(bot) and #nEnemyHeroes > 0)
     then
         return BOT_ACTION_DESIRE_NONE, nil
     end
 
-    local nCastRange = HunterInTheNight:GetSpecialValueInt('shard_cast_range')
-    local timeOfDay = J.CheckTimeOfDay()
+    local nCastRange = MidnightFeast:GetCastRange()
 
-    local nEnemyCreeps = bot:GetNearbyCreeps(Min(nCastRange + 300, 1600), true)
-    if J.IsValid(nEnemyCreeps[1])
+    local nEnemyCreeps = bot:GetNearbyCreeps(650, true)
+
+    if  J.IsValid(nEnemyCreeps[1])
     and J.CanBeAttacked(nEnemyCreeps[1])
-    and (not nEnemyCreeps[1]:IsAncientCreep() or timeOfDay == 'night')
+    and J.CanCastOnTargetAdvanced(nEnemyCreeps[1])
+    and not nEnemyCreeps[1]:IsAncientCreep()
+    and not nEnemyCreeps[1]:IsDominated()
     then
         if botHP < 0.5 or (J.GetMP(bot) < 0.5 and botHP < 0.75) then
             return BOT_ACTION_DESIRE_HIGH, nEnemyCreeps[1]

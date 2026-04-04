@@ -154,9 +154,7 @@ local BallLightning 	= bot:GetAbilityByName('storm_spirit_ball_lightning')
 local StaticRemnantDesire, StaticRemnantLocation
 local ElectricVortexDesire, ElectricVortexTarget
 local OverloadDesire
-local BallLightningDesire, BallLightningLoc
-
-local bStaticSlideFacet = false
+local BallLightningDesire, BallLightningLocation
 
 local bAttacking = false
 local botTarget, botHP
@@ -178,9 +176,9 @@ function X.SkillsComplement()
     nAllyHeroes = bot:GetNearbyHeroes(1600, false, BOT_MODE_NONE)
     nEnemyHeroes = bot:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
 
-    BallLightningDesire, BallLightningLoc = X.ConsiderBallLightning()
+    BallLightningDesire, BallLightningLocation = X.ConsiderBallLightning()
     if BallLightningDesire > 0 then
-		bot:Action_UseAbilityOnLocation(BallLightning, BallLightningLoc)
+		bot:Action_UseAbilityOnLocation(BallLightning, BallLightningLocation)
 		return
 	end
 
@@ -205,19 +203,10 @@ function X.SkillsComplement()
 		end
 	end
 
-	if bStaticSlideFacet then
-		StaticRemnantDesire, StaticRemnantLocation = X.ConsiderStaticRemnant__StaticSlide()
-	else
-		StaticRemnantDesire = X.ConsiderStaticRemnant()
-	end
-
+	StaticRemnantDesire, StaticRemnantLocation = X.ConsiderStaticRemnant()
 	if StaticRemnantDesire > 0 then
 		J.SetQueuePtToINT(bot, false)
-		if bStaticSlideFacet then
-			bot:ActionQueue_UseAbilityOnLocation(StaticRemnant, StaticRemnantLocation)
-		else
-			bot:ActionQueue_UseAbility(StaticRemnant)
-		end
+		bot:ActionQueue_UseAbilityOnLocation(StaticRemnant, StaticRemnantLocation)
 		return
 	end
 
@@ -233,6 +222,7 @@ function X.ConsiderStaticRemnant()
 		return BOT_ACTION_DESIRE_NONE
 	end
 
+	local nCastRange = StaticRemnant:GetCastRange()
 	local nRadius = StaticRemnant:GetSpecialValueInt('static_remnant_radius')
 	local nLevel = StaticRemnant:GetLevel()
 	local nDamage = StaticRemnant:GetSpecialValueInt('static_remnant_damage')
@@ -248,7 +238,6 @@ function X.ConsiderStaticRemnant()
 		and J.IsInRange(bot, enemyHero, nRadius)
 		and J.CanCastOnNonMagicImmune(enemyHero)
 		and J.WillKillTarget(enemyHero, nDamage, DAMAGE_TYPE_MAGICAL, nDelay)
-		and not J.IsChasingTarget(bot, enemyHero)
 		and not enemyHero:HasModifier('modifier_abaddon_aphotic_shield')
 		and not enemyHero:HasModifier('modifier_abaddon_borrowed_time')
 		and not enemyHero:HasModifier('modifier_dazzle_shallow_grave')
@@ -256,7 +245,10 @@ function X.ConsiderStaticRemnant()
 		and not enemyHero:HasModifier('modifier_oracle_false_promise')
 		and not enemyHero:HasModifier('modifier_templar_assassin_refraction_absorb')
 		then
-			return BOT_ACTION_DESIRE_HIGH
+			local bChasingTarget = J.IsChasingTarget(bot, enemyHero)
+			if not bChasingTarget or (bChasingTarget and J.IsInRange(bot, enemyHero, nCastRange)) then
+				return BOT_ACTION_DESIRE_HIGH, enemyHero:GetLocation()
+			end
 		end
 	end
 
@@ -271,10 +263,10 @@ function X.ConsiderStaticRemnant()
 		and not botTarget:HasModifier('modifier_oracle_false_promise_timer')
 		and not botTarget:HasModifier('modifier_templar_assassin_refraction_absorb')
 		then
-			if (J.IsInRange(bot, botTarget, botAttackRange) and bAttacking)
+			if (J.IsInRange(bot, botTarget, nCastRange) and bAttacking)
 			or (J.IsInRange(bot, botTarget, nRadius))
 			then
-				return BOT_ACTION_DESIRE_HIGH
+				return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation()
 			end
 		end
 	end
@@ -284,154 +276,31 @@ function X.ConsiderStaticRemnant()
 			if J.IsValidHero(enemyHero)
 			and J.CanBeAttacked(enemyHero)
 			and J.CanCastOnNonMagicImmune(enemyHero)
+			and not J.IsDisabled(enemyHero)
+			and bot:WasRecentlyDamagedByHero(enemyHero, 3.0)
 			then
-				if (J.IsInRange(bot, enemyHero, botAttackRange) and J.IsRunning(bot))
-				or (J.IsInRange(bot, enemyHero, nRadius) and bot:IsRooted())
-				then
-					return BOT_ACTION_DESIRE_HIGH
+				if (J.IsInRange(bot, enemyHero, nCastRange) and J.IsRunning(bot)) then
+					return BOT_ACTION_DESIRE_HIGH, enemyHero:GetLocation()
+				end
+
+				if J.IsInRange(bot, enemyHero, nRadius) and bot:IsRooted() then
+					return BOT_ACTION_DESIRE_HIGH, bot:GetLocation()
 				end
 			end
 		end
 	end
 
 	if not J.IsRetreating(bot) and not J.IsRealInvisible(bot) and fManaAfter > fManaThreshold1 then
-		local nLocationAoE = bot:FindAoELocation(true, false, bot:GetLocation(), 0, nRadius, 0, nDamage)
+		local nLocationAoE = bot:FindAoELocation(true, false, bot:GetLocation(), nCastRange, nRadius, 0, nDamage)
 		if (nLocationAoE.count >= 2 and J.IsEarlyGame())
 		or (nLocationAoE.count >= 3)
 		then
-			return BOT_ACTION_DESIRE_HIGH
+			return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc
 		end
 
-		nLocationAoE = bot:FindAoELocation(true, true, bot:GetLocation(), 0, nRadius, 0, nDamage)
+		nLocationAoE = bot:FindAoELocation(true, true, bot:GetLocation(), nCastRange, nRadius, 0, nDamage)
 		if (nLocationAoE.count >= 3) then
-			return BOT_ACTION_DESIRE_HIGH
-		end
-	end
-
-	local nEnemyCreeps = bot:GetNearbyCreeps(nRadius, true)
-
-	if J.IsPushing(bot) and bAttacking and fManaAfter > fManaThreshold1 and not bot:HasModifier('modifier_storm_spirit_overload') then
-		if J.IsValid(nEnemyCreeps[1]) and J.CanBeAttacked(nEnemyCreeps[1]) then
-			if (#nEnemyCreeps >= 2)
-			or (#nEnemyCreeps >= 1 and nEnemyCreeps[1]:IsAncientCreep())
-			or (#nEnemyCreeps >= 1 and nEnemyCreeps[1]:GetHealth() >= 550)
-			then
-				return BOT_ACTION_DESIRE_HIGH
-			end
-		end
-	end
-
-	if J.IsDefending(bot) and bAttacking and fManaAfter > fManaThreshold1 then
-		if J.IsValid(nEnemyCreeps[1]) and J.CanBeAttacked(nEnemyCreeps[1]) then
-			if (#nEnemyCreeps >= 2)
-			or (#nEnemyCreeps >= 1 and nEnemyCreeps[1]:GetHealth() >= 550)
-			then
-				return BOT_ACTION_DESIRE_HIGH
-			end
-		end
-	end
-
-	if J.IsFarming(bot) and bAttacking and fManaAfter > fManaThreshold1 and not bot:HasModifier('modifier_storm_spirit_overload') then
-		if J.IsValid(nEnemyCreeps[1]) and J.CanBeAttacked(nEnemyCreeps[1]) then
-			if (#nEnemyCreeps >= 2)
-			or (#nEnemyCreeps >= 1 and nEnemyCreeps[1]:IsAncientCreep())
-			or (#nEnemyCreeps >= 1 and nEnemyCreeps[1]:GetHealth() >= 550)
-			then
-				return BOT_ACTION_DESIRE_HIGH
-			end
-		end
-	end
-
-	if J.IsDoingRoshan(bot) then
-        if  J.IsRoshan(botTarget)
-		and J.CanBeAttacked(botTarget)
-        and J.IsInRange(bot, botTarget, botAttackRange)
-        and J.CanCastOnNonMagicImmune(botTarget)
-		and not bot:HasModifier('modifier_storm_spirit_overload')
-        and bAttacking
-		and fManaAfter > fManaThreshold1
-        then
-            return BOT_ACTION_DESIRE_HIGH
-        end
-    end
-
-    if J.IsDoingTormentor(bot) then
-        if  J.IsTormentor(botTarget)
-        and J.IsInRange(bot, botTarget, nRadius)
-		and not bot:HasModifier('modifier_storm_spirit_overload')
-        and bAttacking
-		and fManaAfter > fManaThreshold1
-        then
-            return BOT_ACTION_DESIRE_HIGH
-        end
-    end
-
-	return BOT_ACTION_DESIRE_NONE, 0
-end
-
-function X.ConsiderStaticRemnant__StaticSlide()
-	if not J.CanCastAbility(StaticRemnant) then
-		return BOT_ACTION_DESIRE_NONE, 0
-	end
-
-	local nCastRange = 800
-	local nRadius = StaticRemnant:GetSpecialValueInt('static_remnant_radius')
-	local nAbilityLevel = StaticRemnant:GetLevel()
-	local nDamage = StaticRemnant:GetSpecialValueInt('static_remnant_damage')
-	local nManaCost = StaticRemnant:GetManaCost()
-	local fManaAfter = J.GetManaAfter(nManaCost)
-	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {ElectricVortex, Overload, BallLightning})
-	local nAttackRange = bot:GetAttackRange()
-
-	for _, enemyHero in pairs(nEnemyHeroes) do
-		if  J.IsValidHero(enemyHero)
-		and J.CanBeAttacked(enemyHero)
-		and J.IsInRange(bot, enemyHero, nCastRange)
-		and J.CanCastOnNonMagicImmune(enemyHero)
-		and J.CanKillTarget(enemyHero, nDamage, DAMAGE_TYPE_MAGICAL)
-		and not enemyHero:HasModifier('modifier_abaddon_aphotic_shield')
-		and not enemyHero:HasModifier('modifier_abaddon_borrowed_time')
-		and not enemyHero:HasModifier('modifier_dazzle_shallow_grave')
-		and not enemyHero:HasModifier('modifier_oracle_false_promise')
-		and not enemyHero:HasModifier('modifier_templar_assassin_refraction_absorb')
-		then
-			local bChasingTarget = J.IsChasingTarget(bot, enemyHero)
-			if not bChasingTarget or (bChasingTarget and J.IsInRange(bot, enemyHero, nAttackRange)) then
-				return BOT_ACTION_DESIRE_HIGH, enemyHero:GetLocation()
-			end
-		end
-	end
-
-	if J.IsGoingOnSomeone(bot) then
-		if  J.IsValidHero(botTarget)
-		and J.CanBeAttacked(botTarget)
-		and J.CanCastOnNonMagicImmune(botTarget)
-		and J.IsInRange(bot, botTarget, nCastRange)
-		and not J.IsSuspiciousIllusion(botTarget)
-		and not botTarget:HasModifier('modifier_abaddon_borrowed_time')
-		and not botTarget:HasModifier('modifier_dazzle_shallow_grave')
-		and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
-		and not botTarget:HasModifier('modifier_oracle_false_promise_timer')
-		and not botTarget:HasModifier('modifier_templar_assassin_refraction_absorb')
-		then
-			local bChasingTarget = J.IsChasingTarget(bot, botTarget)
-			if not bChasingTarget or (bChasingTarget and J.IsInRange(bot, botTarget, nAttackRange)) then
-				return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation()
-			end
-		end
-	end
-
-	if J.IsRetreating(bot) and not J.IsRealInvisible(bot) then
-		for _, enemyHero in pairs(nEnemyHeroes) do
-			if J.IsValidHero(enemyHero)
-			and J.CanBeAttacked(enemyHero)
-			and J.IsInRange(bot, enemyHero, nCastRange)
-			and J.CanCastOnNonMagicImmune(enemyHero)
-			and not J.IsDisabled(enemyHero)
-			and bot:WasRecentlyDamagedByHero(enemyHero, 2.0)
-			then
-				return BOT_ACTION_DESIRE_HIGH, enemyHero:GetLocation()
-			end
+			return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc
 		end
 	end
 
@@ -451,7 +320,7 @@ function X.ConsiderStaticRemnant__StaticSlide()
 		end
 	end
 
-	if J.IsDefending(bot) and bAttacking and fManaAfter > fManaThreshold1 and not bot:HasModifier('modifier_storm_spirit_overload') then
+	if J.IsDefending(bot) and bAttacking and fManaAfter > fManaThreshold1 then
 		for _, creep in pairs(nEnemyCreeps) do
 			if J.IsValid(creep) and J.CanBeAttacked(creep) then
 				local nLocationAoE = bot:FindAoELocation(true, false, creep:GetLocation(), 0, nRadius, 0, 0)
@@ -483,7 +352,8 @@ function X.ConsiderStaticRemnant__StaticSlide()
 		and J.CanBeAttacked(botTarget)
         and J.IsInRange(bot, botTarget, nCastRange)
         and J.CanCastOnNonMagicImmune(botTarget)
-		and bAttacking
+		and not bot:HasModifier('modifier_storm_spirit_overload')
+        and bAttacking
 		and fManaAfter > fManaThreshold1
         then
             return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation()
@@ -493,6 +363,7 @@ function X.ConsiderStaticRemnant__StaticSlide()
     if J.IsDoingTormentor(bot) then
         if  J.IsTormentor(botTarget)
         and J.IsInRange(bot, botTarget, nCastRange)
+		and not bot:HasModifier('modifier_storm_spirit_overload')
         and bAttacking
 		and fManaAfter > fManaThreshold1
         then
@@ -500,21 +371,7 @@ function X.ConsiderStaticRemnant__StaticSlide()
         end
     end
 
-	if not J.IsRetreating(bot) and not J.IsRealInvisible(bot) and fManaAfter > fManaThreshold1 then
-		local nLocationAoE = bot:FindAoELocation(true, false, bot:GetLocation(), nCastRange, nRadius, 0, nDamage)
-		if (nLocationAoE.count >= 2 and J.IsEarlyGame())
-		or (nLocationAoE.count >= 3)
-		then
-			return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc
-		end
-
-		nLocationAoE = bot:FindAoELocation(true, true, bot:GetLocation(), nCastRange, nRadius, 0, nDamage)
-		if (nLocationAoE.count >= 3) then
-			return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc
-		end
-	end
-
-	return BOT_ACTION_DESIRE_NONE, 0
+	return BOT_ACTION_DESIRE_NONE
 end
 
 function X.ConsiderElectricVortex()

@@ -31,6 +31,10 @@ function GetDesire()
 		return BOT_MODE_DESIRE_NONE
 	end
 
+	if bot.rune and bot.rune.location and GetUnitToLocationDistance(bot, bot.rune.location) > 1200 and #J.GetEnemiesAroundAncient(2800) > 0 then
+		return BOT_MODE_DESIRE_NONE
+	end
+
 	bBottle = bot:FindItemSlot('item_bottle') >= 0
 	botHP = J.GetHP(bot)
 	botMP = J.GetMP(bot)
@@ -46,8 +50,8 @@ function GetDesire()
         return BOT_MODE_DESIRE_ABSOLUTE
     end
 
-	-- Wisdom Rune
-	if bot:GetLevel() < 30 then
+	-- Wisdom Rune (Valve added default behaviour with the 7.41 update; will use that now)
+	if bot:GetLevel() < 30 and false then
 		nShrineOfWisdomTime = X.GetCurrentWisdomTime()
 
 		X.UpdateWisdom()
@@ -544,9 +548,8 @@ function X.IsThereAllyWithBottle(vLocation, nRadius)
 end
 
 function X.GetScaledDesire(nBase, nCurrDist, nMaxDist)
-    return nBase + math.floor(RemapValClamped(nCurrDist, nMaxDist, 800, 0, 1 - nBase) * 40) / 40
+    return nBase + math.floor(RemapValClamped(nCurrDist, nMaxDist, 800, 0, GetAdjustedValueCausedPatch(1) - nBase) * 40) / 40
 end
-
 
 local vLocation = nil
 function X.GetGoOutLocation()

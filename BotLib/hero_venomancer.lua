@@ -189,6 +189,7 @@ end
 end
 
 local VenomousGale      = bot:GetAbilityByName('venomancer_venomous_gale')
+local Snakebite         = bot:GetAbilityByName('venomancer_snakebite')
 -- local PoisonSting       = bot:GetAbilityByName('venomancer_poison_sting')
 local PlagueWard        = bot:GetAbilityByName('venomancer_plague_ward')
 -- local LatentToxicity    = bot:GetAbilityByName('venomancer_latent_poison')
@@ -196,6 +197,7 @@ local PlagueWard        = bot:GetAbilityByName('venomancer_plague_ward')
 local NoxiousPlague     = bot:GetAbilityByName('venomancer_noxious_plague')
 
 local VenomousGaleDesire, VenomousGaleLocation
+local SnakebiteDesire, SnakebiteTarget
 local PlagueWardDesire, PlagueWardLocation, bTargetAlly
 -- local LatentToxicityDesire, LatentToxicityTarget
 local NoxiousPlagueDesire, NoxiousPlagueTarget
@@ -208,6 +210,7 @@ function X.SkillsComplement()
 	if J.CanNotUseAbility(bot) then return end
 
     VenomousGale      = bot:GetAbilityByName('venomancer_venomous_gale')
+    Snakebite         = bot:GetAbilityByName('venomancer_snakebite')
     PlagueWard        = bot:GetAbilityByName('venomancer_plague_ward')
     NoxiousPlague     = bot:GetAbilityByName('venomancer_noxious_plague')
 
@@ -229,6 +232,13 @@ function X.SkillsComplement()
     --     bot:Action_UseAbilityOnEntity(LatentToxicity, LatentToxicityTarget)
     --     return
     -- end
+
+    SnakebiteDesire, SnakebiteTarget = X.ConsiderSnakebite()
+    if SnakebiteDesire > 0 then
+        J.SetQueuePtToINT(bot, false)
+        bot:ActionQueue_UseAbilityOnEntity(Snakebite, SnakebiteTarget)
+        return
+    end
 
     VenomousGaleDesire, VenomousGaleLocation = X.ConsiderVenomousGale()
     if VenomousGaleDesire > 0 then
@@ -258,7 +268,7 @@ function X.ConsiderVenomousGale()
 	local nRadius = VenomousGale:GetSpecialValueInt('radius')
     local nManaCost = VenomousGale:GetManaCost()
 	local fManaAfter = J.GetManaAfter(nManaCost)
-	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {PlagueWard, NoxiousPlague})
+	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {Snakebite, PlagueWard, NoxiousPlague})
 
 	if J.IsGoingOnSomeone(bot) then
 		if  J.IsValidHero(botTarget)
@@ -353,6 +363,84 @@ function X.ConsiderVenomousGale()
     return BOT_ACTION_DESIRE_NONE, 0
 end
 
+function X.ConsiderSnakebite()
+    if not J.CanCastAbility(Snakebite) then
+        return BOT_ACTION_DESIRE_NONE
+    end
+
+    local nCastRange = Snakebite:GetCastRange()
+    local nManaCost = Snakebite:GetManaCost()
+	local fManaAfter = J.GetManaAfter(nManaCost)
+	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {VenomousGale, PlagueWard, NoxiousPlague})
+
+    if J.IsGoingOnSomeone(bot) then
+        if  J.IsValidHero(botTarget)
+        and J.CanBeAttacked(botTarget)
+        and J.IsInRange(bot, botTarget, nCastRange + 300)
+        and J.CanCastOnNonMagicImmune(botTarget)
+        and J.CanCastOnTargetAdvanced(botTarget)
+        and not J.IsDisabled(botTarget)
+        and not botTarget:IsDisarmed()
+        and not botTarget:HasModifier('modifier_abaddon_borrowed_time')
+        and not botTarget:HasModifier('modifier_dazzle_shallow_grave')
+        and not botTarget:HasModifier('modifier_oracle_false_promise_timer')
+        and not botTarget:HasModifier('modifier_templar_assassin_refraction_absorb')
+        then
+            return BOT_ACTION_DESIRE_HIGH, botTarget
+        end
+	end
+
+	if J.IsRetreating(bot) and not J.IsRealInvisible(bot) then
+        for _, enemyHero in pairs(nEnemyHeroes) do
+            if  J.IsValidHero(enemyHero)
+            and J.CanBeAttacked(enemyHero)
+            and J.IsInRange(bot, enemyHero, nCastRange)
+            and J.CanCastOnNonMagicImmune(enemyHero)
+            and J.CanCastOnTargetAdvanced(enemyHero)
+            and not J.IsDisabled(enemyHero)
+            and not enemyHero:IsDisarmed()
+            and bot:WasRecentlyDamagedByHero(enemyHero, 2.0)
+            then
+                return BOT_ACTION_DESIRE_HIGH, enemyHero
+            end
+        end
+	end
+
+    if (J.IsPushing(bot) or J.IsDefending(bot) or J.IsFarming(bot)) and bAttacking and fManaAfter > fManaThreshold1 then
+        if  J.IsValid(botTarget)
+        and J.CanBeAttacked(botTarget)
+        and not botTarget:IsBuilding()
+        and not J.CanKillTarget(botTarget, bot:GetAttackDamage() * 3.5, DAMAGE_TYPE_PHYSICAL)
+        then
+            return BOT_ACTION_DESIRE_HIGH, botTarget
+        end
+    end
+
+    if J.IsDoingRoshan(bot) then
+        if  J.IsRoshan(botTarget)
+        and J.CanBeAttacked(botTarget)
+        and J.IsInRange(bot, botTarget, nCastRange)
+        and J.CanCastOnNonMagicImmune(botTarget)
+        and bAttacking
+        and fManaAfter > fManaThreshold1 + 0.1
+        then
+            return BOT_ACTION_DESIRE_HIGH, botTarget
+        end
+    end
+
+    if J.IsDoingTormentor(bot) then
+        if  J.IsTormentor(botTarget)
+        and J.IsInRange(bot, botTarget, nCastRange)
+        and bAttacking
+        and fManaAfter > fManaThreshold1 + 0.1
+        then
+            return BOT_ACTION_DESIRE_HIGH, botTarget
+        end
+    end
+
+    return BOT_ACTION_DESIRE_NONE
+end
+
 function X.ConsiderPlagueWard()
     if not J.CanCastAbility(PlagueWard) then
         return BOT_ACTION_DESIRE_NONE, 0, false
@@ -361,7 +449,7 @@ function X.ConsiderPlagueWard()
     local nCastRange = J.GetProperCastRange(false, bot, PlagueWard:GetCastRange())
     local nManaCost = PlagueWard:GetManaCost()
 	local fManaAfter = J.GetManaAfter(nManaCost)
-	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {VenomousGale, NoxiousPlague})
+	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {VenomousGale, Snakebite, NoxiousPlague})
 
     if fManaAfter < fManaThreshold1 then
         return BOT_ACTION_DESIRE_NONE, 0, false

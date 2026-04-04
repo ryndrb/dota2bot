@@ -218,6 +218,7 @@ local SpringEarly       = bot:GetAbilityByName('monkey_king_primal_spring_early'
 local Mischief          = bot:GetAbilityByName('monkey_king_mischief')
 local RevertForm        = bot:GetAbilityByName('monkey_king_untransform')
 local WukongsCommand    = bot:GetAbilityByName('monkey_king_wukongs_command')
+local ChangingOfTheGuard= bot:GetAbilityByName('monkey_king_transfiguration')
 
 local BoundlessStrikeDesire, BoundlessStrikeLocation
 local TreeDanceDesire, TreeDanceTarget
@@ -225,6 +226,7 @@ local PrimalSpringDesire, PrimalSpringLocation
 local SpringEarlyDesire
 local MischiefDesire
 local WukongsCommandDesire, WukongsCommandLocation
+local ChangingOfTheGuardDesire, ChangingOfTheGuardLocation
 
 local bAttacking = false
 local botTarget, botHP
@@ -246,6 +248,7 @@ function X.SkillsComplement()
     Mischief          = bot:GetAbilityByName('monkey_king_mischief')
     RevertForm        = bot:GetAbilityByName('monkey_king_untransform')
     WukongsCommand    = bot:GetAbilityByName('monkey_king_wukongs_command')
+    ChangingOfTheGuard= bot:GetAbilityByName('monkey_king_transfiguration')
 
 	bAttacking = J.IsAttacking(bot)
     botHP = J.GetHP(bot)
@@ -296,6 +299,12 @@ function X.SkillsComplement()
         bot.tree_dance_status.eta = (GetUnitToLocationDistance(bot, GetTreeLocation(TreeDanceTarget)) / nSpeed) + nCastPoint
         bot.tree_dance_status.prevTree = TreeDanceTarget
         bot:Action_UseAbilityOnTree(TreeDance, TreeDanceTarget)
+        return
+    end
+
+    ChangingOfTheGuardDesire, ChangingOfTheGuardLocation = X.ConsiderChangingOfTheGuard()
+    if ChangingOfTheGuardDesire > 0 then
+        bot:Action_UseAbilityOnLocation(ChangingOfTheGuard, ChangingOfTheGuardLocation)
         return
     end
 end
@@ -510,7 +519,9 @@ function X.ConsiderBoundlessStrike()
 end
 
 function X.ConsiderTreeDance()
-    if not J.CanCastAbility(TreeDance) then
+    if not J.CanCastAbility(TreeDance)
+    or bot:IsRooted()
+    then
         return BOT_ACTION_DESIRE_NONE, nil
     end
 
@@ -1006,6 +1017,24 @@ function X.ConsiderWukongsCommand()
 	end
 
     return BOT_ACTION_DESIRE_NONE, 0
+end
+
+function X.ConsiderChangingOfTheGuard()
+    if not J.CanCastAbility(ChangingOfTheGuard)
+    or bot:IsRooted()
+    then
+        return BOT_ACTION_DESIRE_NONE
+    end
+
+    if bot:HasModifier('modifier_monkey_king_fur_army_bonus_damage') then
+        if (J.IsStunProjectileIncoming(bot, 550) and #nEnemyHeroes > #nAllyHeroes)
+        or (J.GetAttackProjectileDamageByRange(bot, 900) > bot:GetHealth())
+        then
+            return BOT_ACTION_DESIRE_HIGH, bot:GetLocation()
+        end
+    end
+
+    return BOT_ACTION_DESIRE_NONE
 end
 
 function X.GetClosestTreeToLocation(vLocation, nCastRange)

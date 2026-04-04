@@ -59,7 +59,7 @@ function X.GetDesire(bot__)
                         then
                             local tResult = PointToLineDistance(botLocation, botTarget:GetLocation(), unitLocation)
                             if tResult ~= nil and tResult.within and tResult.distance <= 185 then
-                                return 2
+                                return BOT_MODE_DESIRE_VERYHIGH * 1.5
                             end
                         end
                     end
@@ -69,7 +69,7 @@ function X.GetDesire(bot__)
                             if J.IsValidHero(enemyHero) and J.IsInRange(bot, enemyHero, 800) and not J.IsInRange(bot, enemyHero, 400) and J.IsChasingTarget(enemyHero, bot) then
                                 local tResult = PointToLineDistance(botLocation, botTarget:GetLocation(), unitLocation)
                                 if tResult ~= nil and tResult.within and tResult.distance <= 185 then
-                                    return 2
+                                    return BOT_MODE_DESIRE_VERYHIGH * 1.5
                                 end
                             end
                         end
@@ -78,11 +78,11 @@ function X.GetDesire(bot__)
                     if bot:IsFacingLocation(unit:GetLocation(), 60) and J.IsInRange(bot, unit, 300) then
                         if J.IsGoingOnSomeone(bot) then
                             if J.IsValidHero(botTarget) and not J.IsInRange(bot, botTarget, botAttackRange) then
-                                return 2
+                                return BOT_MODE_DESIRE_VERYHIGH * 1.5
                             end
                         end
 
-                        return 1
+                        return BOT_MODE_DESIRE_ABSOLUTE
                     end
                 end
             end
@@ -93,16 +93,17 @@ function X.GetDesire(bot__)
                 or string.find(sUnitName, 'invoker_forged_spirit')
                 or string.find(sUnitName, 'venomancer_plague_ward')
                 or string.find(sUnitName, 'clinkz_skeleton_archer')
+                or string.find(sUnitName, 'tinker_turret')
                 then
                     if J.IsInRange(bot, unit, botAttackRange + 300) then
-                        return RemapValClamped(botLevel, 1, 6, 0.44, 0.55)
+                        return RemapValClamped(botLevel, 1, 6, BOT_MODE_DESIRE_MODERATE - 0.05, BOT_MODE_DESIRE_MODERATE + 0.05)
                     end
 
                     if #tEnemyHeroes == 0 then
                         if botHP > 0.6 then
-                            return 0.9
+                            return BOT_MODE_DESIRE_VERYHIGH
                         else
-                            return 0.75
+                            return BOT_MODE_DESIRE_HIGH
                         end
                     end
                 elseif string.find(sUnitName, 'shadow_shaman_ward') and not bOutnumbered
@@ -113,35 +114,35 @@ function X.GetDesire(bot__)
                     if not J.IsInTeamFight(bot, 1200) and not (J.IsRetreating(bot) and J.IsRealInvisible(bot)) then
                         if unitsAttackDamage / botHealth < 0.4
                         or J.IsInRange(bot, unit, botAttackRange) and not J.IsInRange(bot, unit, unit:GetAttackRange()) then
-                            return 0.95
+                            return BOT_MODE_DESIRE_VERYHIGH + 0.05
                         end
                     end
                 elseif string.find(sUnitName, 'pugna_nether_ward') and not bOutnumbered
                 then
                     if J.IsInRange(bot, unit, botAttackRange + 150) then
                         if J.IsGoingOnSomeone(bot) and (not X.IsHeroWithinRadius(tEnemyHeroes, 800) or not X.IsBeingAttackedByHero(bot)) then
-                            return 0.75
+                            return BOT_MODE_DESIRE_HIGH
                         else
                             if not X.IsBeingAttackedByHero(bot) then
-                                return 0.90
+                                return BOT_MODE_DESIRE_VERYHIGH
                             end
                         end
                     else
-                        return 0.5
+                        return BOT_MODE_DESIRE_MODERATE
                     end
                 elseif string.find(sUnitName, 'grimstroke_ink_creature')
                     or string.find(sUnitName, 'weaver_swarm')
                 then
                     if #tEnemyHeroes == 0 then
-                        return 0.95
+                        return BOT_MODE_DESIRE_VERYHIGH + 0.05
                     end
 
                     if J.IsGoingOnSomeone(bot) and (not X.IsHeroWithinRadius(tEnemyHeroes, 600) or not X.IsBeingAttackedByHero(bot))
                     then
-                        return 0.9
+                        return BOT_MODE_DESIRE_VERYHIGH
                     else
                         if not X.IsHeroWithinRadius(tEnemyHeroes, 600) then
-                            return 0.75
+                            return BOT_MODE_DESIRE_HIGH
                         end
                     end
                 elseif string.find(sUnitName, 'gyrocopter_homing_missile')
@@ -154,7 +155,7 @@ function X.GetDesire(bot__)
                         if not J.IsRunning(unit)
                         or not J.IsInRange(bot, unit, 250)
                         then
-                            return 0.9
+                            return BOT_MODE_DESIRE_VERYHIGH
                         end
                     end
                 elseif string.find(sUnitName, 'ignis_fatuss')
@@ -162,13 +163,14 @@ function X.GetDesire(bot__)
                 then
                     if #tAllyHeroes > #tEnemyHeroes or #tEnemyHeroes_all == 0
                     then
-                        if J.IsInRange(bot, unit, botAttackRange + 500) then return 0.9 end
-                        return 0.75
+                        if J.IsInRange(bot, unit, botAttackRange + 500) then return BOT_MODE_DESIRE_VERYHIGH end
+                        return BOT_MODE_DESIRE_HIGH
                     end
                 elseif unit:HasModifier('modifier_dominated')
                     or unit:HasModifier('modifier_chen_holy_persuasion')
                     or unit:IsDominated()
                     or string.find(sUnitName, 'visage_familiar')
+                    or string.find(sUnitName, 'chen_zealot_goodguys')
                 then
                     if not bOutnumbered and J.IsInRange(bot, unit, botAttackRange + 500) then
                         local unitAttackDamage = bot:GetActualIncomingDamage(X.GetUnitAttackDamageWithinTime(unit, 5.0), DAMAGE_TYPE_PHYSICAL) - botHealthRegen * 5.0
@@ -178,7 +180,7 @@ function X.GetDesire(bot__)
                         and not (J.IsRetreating(bot) and not J.IsRealInvisible(bot))
                         and botAttackDamage / unitHealth > 0.5 and unitAttackDamage / botHealth < 0.4
                         then
-                            return 0.9
+                            return BOT_MODE_DESIRE_VERYHIGH
                         end
                     end
                 elseif string.find(sUnitName, 'lycan_wolf')
@@ -199,7 +201,7 @@ function X.GetDesire(bot__)
                         and unitsAttackDamage / botHealth < 0.34
                         and botAttackDamage / totalUnitHealth > 0.65
                         then
-                            return 0.9
+                            return BOT_MODE_DESIRE_VERYHIGH
                         end
                     end
                 elseif string.find(sUnitName, 'observer_wards')
@@ -207,8 +209,8 @@ function X.GetDesire(bot__)
                 then
                     if not X.IsBeingAttackedByHero(bot) or #tEnemyHeroes <= 1
                     then
-                        if J.IsInRange(bot, unit, botAttackRange + 500) then return 0.95 end
-                        return 0.75
+                        if J.IsInRange(bot, unit, botAttackRange + 500) then return BOT_MODE_DESIRE_VERYHIGH + 0.05 end
+                        return BOT_MODE_DESIRE_HIGH
                     end
                 elseif string.find(sUnitName, 'phoenix_sun') and not bOutnumbered
                 then
@@ -217,8 +219,8 @@ function X.GetDesire(bot__)
                     and not J.IsRetreating(bot)
                     and botHP > 0.45
                     then
-                        if J.IsInRange(bot, unit, botAttackRange + 300) then return 0.95 end
-                        return 0.75
+                        if J.IsInRange(bot, unit, botAttackRange + 300) then return BOT_MODE_DESIRE_VERYHIGH + 0.05 end
+                        return BOT_MODE_DESIRE_HIGH
                     end
                 elseif string.find(sUnitName, 'ice_spire') and not bOutnumbered
                 then
@@ -227,15 +229,15 @@ function X.GetDesire(bot__)
                     and not J.IsRetreating(bot)
                     and not X.IsBeingAttackedByHero(bot)
                     then
-                        if J.IsInRange(bot, unit, botAttackRange + 300) then return 0.9 end
-                        return 0.75
+                        if J.IsInRange(bot, unit, botAttackRange + 300) then return BOT_MODE_DESIRE_VERYHIGH end
+                        return BOT_MODE_DESIRE_HIGH
                     end
                 elseif string.find(sUnitName, 'tombstone') and not bOutnumbered
                 then
                     if #tAllyHeroes_all >= #tEnemyHeroes_all and not J.IsRetreating(bot) and botHP > 0.45
                     then
-                        if J.IsInRange(bot, unit, botAttackRange + 300) then return 0.95 end
-                        return 0.75
+                        if J.IsInRange(bot, unit, botAttackRange + 300) then return BOT_MODE_DESIRE_VERYHIGH + 0.05 end
+                        return BOT_MODE_DESIRE_HIGH
                     end
                 elseif string.find(sUnitName, 'warlock_golem') and not bOutnumbered
                 then
@@ -253,15 +255,15 @@ function X.GetDesire(bot__)
                             if not X.IsUnitAfterUnit(unit, bot)
                             or (X.IsUnitAfterUnit(unit, bot) and canKillGolem)
                             then
-                                return 0.95
+                                return BOT_MODE_DESIRE_VERYHIGH + 0.05
                             else
-                                return 0.75
+                                return BOT_MODE_DESIRE_HIGH
                             end
                         else
                             if not X.IsUnitAfterUnit(unit, bot)
                             or (X.IsUnitAfterUnit(unit, bot) and canKillGolem)
                             then
-                                return 0.75
+                                return BOT_MODE_DESIRE_HIGH
                             end
                         end
                     end

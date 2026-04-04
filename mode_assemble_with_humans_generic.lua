@@ -181,7 +181,7 @@ function GetDesire()
 
                 if ally ~= nil and bot == ally and bot.tormentor_state == false then
                     if not bot:WasRecentlyDamagedByAnyHero(15) then
-                        return BOT_ACTION_DESIRE_VERYHIGH
+                        return BOT_MODE_DESIRE_VERYHIGH
                     end
                 end
             end
@@ -221,20 +221,20 @@ function GetDesire()
             return BOT_MODE_DESIRE_NONE
         end
 
-        local nDesire = 0.9
+        local nDesire = BOT_MODE_DESIRE_VERYHIGH
 
         if (#tAllyInTormentorLocation >= 2 or #tAllyInTormentorWaitLocation >= 2)
         or nCoreCountInLoc >= 1
         or nSuppCountInLoc >= 2
         or nHumanCountInLoc >= 1 then
-            nDesire = 0.9
+            nDesire = BOT_MODE_DESIRE_VERYHIGH
         else
-            nDesire = 0.75
+            nDesire = BOT_MODE_DESIRE_HIGH
         end
 
         local nInRangeEnemy = J.GetEnemiesNearLoc(bot:GetLocation(), 1200)
 
-        return nDesire - (#nInRangeEnemy * (0.9 / 5))
+        return nDesire - (#nInRangeEnemy * (GetAdjustedValueCausedPatch(BOT_MODE_DESIRE_VERYHIGH) / 5))
     end
 
     if bot.tormentor_state == false then
@@ -430,7 +430,7 @@ function X.IsGoodRighClickDamage()
     local totalAttackDamage = 0
     for _, damage in pairs(tTeamDamage) do totalAttackDamage = totalAttackDamage + damage end
 
-    if not J.IsDoingTormentor(bot) and J.GetFirstBotInTeam() == bot and bot.tormentor_state == true and DotaTime() - fThresholdChatTime < 30 and totalAttackDamage >= 400.0 then
+    if not J.IsDoingTormentor(bot) and J.GetFirstBotInTeam() == bot and bot.tormentor_state == true and DotaTime() - fThresholdChatTime < 30 and totalAttackDamage >= 500.0 then
         bot:ActionImmediate_Chat("Tormentor threshold met..", false)
         fThresholdChatTime = DotaTime()
     end
@@ -443,7 +443,7 @@ function X.IsGoodRighClickDamage()
     --     end
     -- end
 
-    return totalAttackDamage >= 400.0
+    return totalAttackDamage >= 500.0
 end
 
 local bHumanPinged = false

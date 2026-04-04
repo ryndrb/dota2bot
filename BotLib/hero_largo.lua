@@ -631,47 +631,6 @@ function X.ConsiderAmphibianRhapsody()
                 end
             end
         end
-
-        local nEnemyCreeps = bot:GetNearbyCreeps(nRadius, true)
-
-        if J.IsPushing(bot) and #nAllyHeroes <= 3 and botMP > 0.4 and (bAttacking or bot:WasRecentlyDamagedByCreep(5.0)) then
-            if J.IsValid(nEnemyCreeps[1]) and J.CanBeAttacked(nEnemyCreeps[1]) then
-                if #nEnemyCreeps >= 4 or (#nEnemyCreeps >= 3 and botMP > 0.65) then
-                    if not bIsToggled then
-                        return BOT_ACTION_DESIRE_HIGH
-                    else
-                        X.Strum(BullbellyBlitz, IslandElixir)
-                        return BOT_ACTION_DESIRE_NONE
-                    end
-                end
-            end
-        end
-
-        if J.IsDefending(bot) and botMP > 0.35 and (bAttacking or bot:WasRecentlyDamagedByCreep(5.0)) then
-            if J.IsValid(nEnemyCreeps[1]) and J.CanBeAttacked(nEnemyCreeps[1]) then
-                if #nEnemyCreeps >= 4 or (#nEnemyCreeps >= 3 and botMP > 0.65) then
-                    if not bIsToggled then
-                        return BOT_ACTION_DESIRE_HIGH
-                    else
-                        X.Strum(BullbellyBlitz, IslandElixir)
-                        return BOT_ACTION_DESIRE_NONE
-                    end
-                end
-            end
-        end
-
-        if J.IsFarming(bot) and botMP > 0.35 and (bAttacking or bot:WasRecentlyDamagedByCreep(5.0)) then
-            if J.IsValid(nEnemyCreeps[1]) and J.CanBeAttacked(nEnemyCreeps[1]) then
-                if #nEnemyCreeps >= 3 or (#nEnemyCreeps >= 2 and nEnemyCreeps[1]:IsAncientCreep()) then
-                    if not bIsToggled then
-                        return BOT_ACTION_DESIRE_HIGH
-                    else
-                        X.Strum(BullbellyBlitz, IslandElixir)
-                        return BOT_ACTION_DESIRE_NONE
-                    end
-                end
-            end
-        end
     end
 
     for _, allyHero in pairs(nAllyHeroes) do
@@ -728,6 +687,47 @@ function X.ConsiderAmphibianRhapsody()
                             end
 
                             return BOT_ACTION_DESIRE_NONE
+                        end
+                    end
+                end
+
+                local nEnemyCreeps = bot:GetNearbyCreeps(nRadius, true)
+
+                if J.IsPushing(bot) and #nAllyHeroes <= 3 and botMP > 0.4 and (bAttacking or bot:WasRecentlyDamagedByCreep(5.0)) then
+                    if J.IsValid(nEnemyCreeps[1]) and J.CanBeAttacked(nEnemyCreeps[1]) then
+                        if #nEnemyCreeps >= 4 or (#nEnemyCreeps >= 3 and botMP > 0.65) then
+                            if not bIsToggled then
+                                return BOT_ACTION_DESIRE_HIGH
+                            else
+                                X.Strum(BullbellyBlitz, nil)
+                                return BOT_ACTION_DESIRE_NONE
+                            end
+                        end
+                    end
+                end
+
+                if J.IsDefending(bot) and botMP > 0.35 and (bAttacking or bot:WasRecentlyDamagedByCreep(5.0)) then
+                    if J.IsValid(nEnemyCreeps[1]) and J.CanBeAttacked(nEnemyCreeps[1]) then
+                        if #nEnemyCreeps >= 4 or (#nEnemyCreeps >= 3 and botMP > 0.65) then
+                            if not bIsToggled then
+                                return BOT_ACTION_DESIRE_HIGH
+                            else
+                                X.Strum(BullbellyBlitz, nil)
+                                return BOT_ACTION_DESIRE_NONE
+                            end
+                        end
+                    end
+                end
+
+                if J.IsFarming(bot) and botMP > 0.35 and (bAttacking or bot:WasRecentlyDamagedByCreep(5.0)) then
+                    if J.IsValid(nEnemyCreeps[1]) and J.CanBeAttacked(nEnemyCreeps[1]) then
+                        if #nEnemyCreeps >= 3 or (#nEnemyCreeps >= 2 and nEnemyCreeps[1]:IsAncientCreep()) then
+                            if not bIsToggled then
+                                return BOT_ACTION_DESIRE_HIGH
+                            else
+                                X.Strum(BullbellyBlitz, nil)
+                                return BOT_ACTION_DESIRE_NONE
+                            end
                         end
                     end
                 end

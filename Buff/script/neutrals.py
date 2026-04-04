@@ -10,7 +10,7 @@ import time
 
 # more general as can't go by bracket
 def GetHeroItems(hero_url_name):
-    url = f"https://www.dotabuff.com/heroes/{hero_url_name}/items?date=patch_7.40"
+    url = f"https://www.dotabuff.com/heroes/{hero_url_name}/items?date=patch_7.41"
 
     options = Options()
     options.add_argument("--headless=new")
@@ -77,19 +77,15 @@ def GetHeroItems(hero_url_name):
             else:
                 item_key_to_tier_unique[item_key] = tier
 
-        # as above, sum accordingly
-        tier_unique_totals = {}
-        for item_key in items:
-            tier_unique = item_key_to_tier_unique[item_key]
-            if tier_unique not in tier_unique_totals:
-                tier_unique_totals[tier_unique] = 0
-                for k, v in enhancement_name_table[tier_unique].items():
-                    if v["tier_unique"] == tier_unique and k in raw_items_data["enhancement"].get(tier_unique, {}):
-                        tier_unique_totals[tier_unique] += raw_items_data["enhancement"][tier_unique][k]
+        # sum denominator (prior was a bit scuff with <2 native)
+        total = 0         
+        for k, v in enhancement_name_table[tier].items():
+            if k in raw_items_data["enhancement"].get(tier, {}):
+                total += raw_items_data["enhancement"][tier][k]
 
         for item_key, matches in items.items():
-            total = tier_unique_totals.get(item_key_to_tier_unique[item_key], 0)
-            percentage = (matches / total) * 100 if total > 0 else 0
+            downweight = max(1 - (tier - item_key_to_tier_unique[item_key]) * 0.125, 1) # favor native items
+            percentage = ((matches * downweight) / total) * 100 if total > 0 else 0
             items_data["enhancement"][tier][item_key] = percentage
             
         total = sum(items_data["enhancement"][tier].values())

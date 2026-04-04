@@ -229,11 +229,13 @@ end
 local Starstorm = bot:GetAbilityByName('mirana_starfall')
 local SacredArrow = bot:GetAbilityByName('mirana_arrow')
 local Leap = bot:GetAbilityByName('mirana_leap')
+local CelestialQuiver = bot:GetAbilityByName('mirana_celestial_quiver')
 local MoonlightShadow = bot:GetAbilityByName('mirana_invis')
 
 local StarstormDesire
 local SacredArrowDesire, SacredArrowLocation
 local LeapDesire
+local CelestialQuiverDesire, CelestialQuiverTarget
 local MoonlightShadowDesire
 
 local fLastLeapTime = 0
@@ -250,6 +252,7 @@ function X.SkillsComplement()
 	Starstorm = bot:GetAbilityByName('mirana_starfall')
 	SacredArrow = bot:GetAbilityByName('mirana_arrow')
 	Leap = bot:GetAbilityByName('mirana_leap')
+	CelestialQuiver = bot:GetAbilityByName('mirana_celestial_quiver')
 	MoonlightShadow = bot:GetAbilityByName('mirana_invis')
 
 	bAttacking = J.IsAttacking(bot)
@@ -286,8 +289,13 @@ function X.SkillsComplement()
 		bot:ActionQueue_UseAbility(MoonlightShadow)
 		return
 	end
-end
 
+	CelestialQuiverDesire, CelestialQuiverTarget = X.ConsiderCelestialQuiver()
+	if CelestialQuiverDesire > 0 then
+		bot:Action_UseAbilityOnEntity(CelestialQuiver, CelestialQuiverTarget)
+		return
+	end
+end
 
 function X.ConsiderStarstorm()
 	if not J.CanCastAbility(Starstorm) then
@@ -730,6 +738,79 @@ function X.ConsiderLeap()
 			end
         end
     end
+
+	return BOT_ACTION_DESIRE_NONE
+end
+
+function X.ConsiderCelestialQuiver()
+	if not J.CanCastAbility(CelestialQuiver)
+	or bot:IsDisarmed()
+	then
+		return BOT_ACTION_DESIRE_NONE
+	end
+
+	local nDamage = CelestialQuiver:GetSpecialValueInt('bonus_damage')
+	local bIsAutoCasted = CelestialQuiver:GetAutoCastState()
+
+	for _, enemyHero in pairs(nEnemyHeroes) do
+        if  J.IsValidHero(enemyHero)
+        and J.CanBeAttacked(enemyHero)
+        and J.IsInRange(bot, enemyHero, bot:GetAttackRange() + 150)
+        and not J.IsSuspiciousIllusion(enemyHero)
+		and not enemyHero:HasModifier('modifier_abaddon_borrowed_time')
+		and not enemyHero:HasModifier('modifier_dazzle_shallow_grave')
+		and not enemyHero:HasModifier('modifier_necrolyte_reapers_scythe')
+		and not enemyHero:HasModifier('modifier_oracle_false_promise_timer')
+		and not enemyHero:HasModifier('modifier_templar_assassin_refraction_absorb')
+        then
+            if  J.WillKillTarget(enemyHero, bot:GetAttackDamage() + nDamage, DAMAGE_TYPE_MAGICAL, bot:GetAttackSpeed())
+			and not J.WillKillTarget(enemyHero, bot:GetAttackDamage(), DAMAGE_TYPE_PHYSICAL, bot:GetAttackSpeed())
+            then
+                return BOT_ACTION_DESIRE_HIGH, enemyHero
+            end
+        end
+	end
+
+	if J.IsGoingOnSomeone(bot) then
+		if  J.IsValidHero(botTarget)
+        and J.CanBeAttacked(botTarget)
+        and J.IsInRange(bot, botTarget, bot:GetAttackRange() + 300)
+        and not J.IsSuspiciousIllusion(botTarget)
+		and not botTarget:HasModifier('modifier_abaddon_borrowed_time')
+		and not botTarget:HasModifier('modifier_dazzle_shallow_grave')
+		and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
+		and not botTarget:HasModifier('modifier_oracle_false_promise_timer')
+		and not botTarget:HasModifier('modifier_templar_assassin_refraction_absorb')
+        then
+			if not bIsAutoCasted then
+				CelestialQuiver:ToggleAutoCast()
+			end
+
+			return BOT_ACTION_DESIRE_NONE
+        end
+	end
+
+	local nEnemyCreeps = bot:GetNearbyCreeps(Min(bot:GetAttackRange() + 300, 1600), true)
+
+	if J.IsLaning(bot) and J.IsEarlyGame() then
+        for _, creep in pairs(nEnemyCreeps) do
+            if  J.IsValid(creep)
+            and J.CanBeAttacked(creep)
+            and J.IsKeyWordUnit('ranged', creep)
+            and (J.IsCore(bot) or not J.IsThereCoreInLocation(creep:GetLocation(), 550))
+			and not J.CanKillTarget(creep, bot:GetAttackDamage(), DAMAGE_TYPE_PHYSICAL)
+            then
+                local nLocationAoE = bot:FindAoELocation(true, true, creep:GetLocation(), 0, 650, 0, 0)
+                if J.WillKillTarget(creep, bot:GetAttackDamage() + nDamage, DAMAGE_TYPE_MAGICAL, bot:GetAttackSpeed()) then
+                    if nLocationAoE.count > 0 or J.IsUnitTargetedByTower(creep, false) or J.IsEnemyTargetUnit(creep, 1200) then
+                        return BOT_ACTION_DESIRE_HIGH, creep
+                    end
+                end
+            end
+        end
+	end
+
+	if bIsAutoCasted then CelestialQuiver:ToggleAutoCast() end
 
 	return BOT_ACTION_DESIRE_NONE
 end

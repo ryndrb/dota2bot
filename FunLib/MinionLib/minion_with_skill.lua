@@ -11,6 +11,8 @@ local bot
 local botHP, botTarget, bAttacking
 local minionHP, nAllyHeroes, nEnemyHeroes
 
+local bIsDoMoRu = false -- doom, morph, rubick
+
 local SPELL_TARGET_TYPE_NONE    = 0
 local SPELL_TARGET_TYPE_UNIT    = 1
 local SPELL_TARGET_TYPE_POINT   = 2
@@ -27,12 +29,41 @@ function X.Think(ownerBot, hMinionUnit)
     nAllyHeroes = hMinionUnit:GetNearbyHeroes(1600, false, BOT_MODE_NONE)
     nEnemyHeroes = hMinionUnit:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
 
+    -- in the pipeline
+    local botName = bot:GetUnitName()
+    local sMinionUnitName = hMinionUnit:GetUnitName()
+    if (botName == 'npc_dota_hero_doom_bringer' and sMinionUnitName == 'npc_dota_hero_doom_bringer')
+    or (botName == 'npc_dota_hero_morphling'    and sMinionUnitName == 'npc_dota_hero_morphling')
+    or (botName == 'npc_dota_hero_rubick'       and sMinionUnitName == 'npc_dota_hero_rubick')
+    then
+        bIsDoMoRu = true
+    else
+        bIsDoMoRu = false
+    end
+
     local nDesire, hTarget, nCastType = 0, nil, -1
 
     for i = 0, 5 do
         local hAbility = hMinionUnit:GetAbilityInSlot(i)
         if J.CanCastAbility(hAbility) then
             local sAbilityName = hAbility:GetName()
+
+            if bIsDoMoRu then
+                local nManaCost = hAbility:GetManaCost()
+                local fManaAfter = J.GetManaAfter(nManaCost)
+                local hAbilityList = {}
+                for j = 0, 5 do
+                    local ability = bot:GetAbilityInSlot(j)
+                    if ability ~= nil and ability:IsTrained() and ability:GetManaCost() > 0 then
+                        table.insert(hAbilityList, ability)
+                    end
+                end
+
+                local fManaThreshold = J.GetManaThreshold(bot, nManaCost, hAbilityList)
+                if fManaAfter < fManaThreshold then
+                    return
+                end
+            end
 
             if J.CheckBitfieldFlag(hAbility:GetBehavior(), ABILITY_BEHAVIOR_UNIT_TARGET) then
                 nDesire, hTarget = X.ConsiderUnitTarget(hMinionUnit, hAbility)
@@ -60,6 +91,8 @@ function X.Think(ownerBot, hMinionUnit)
             end
         end
     end
+
+    if bIsDoMoRu then return end
 
     -- Attack, Move
     -- TODO: Personalize for select minions.
@@ -1516,6 +1549,59 @@ X.ConsiderSpellUsage['necronomicon_archer_purge'] = function (hMinionUnit, abili
             or enemyHero:HasModifier('modifier_abaddon_aphotic_shield')
             then
                 return BOT_ACTION_DESIRE_HIGH, enemyHero, SPELL_TARGET_TYPE_UNIT
+            end
+        end
+    end
+
+    return BOT_ACTION_DESIRE_NONE
+end
+
+-- Martyrdom
+X.ConsiderSpellUsage['chen_martyrdom'] = function (hMinionUnit, ability)
+
+    local nCastRange = ability:GetCastRange()
+    local nBaseDamage = ability:GetSpecialValueInt('base_value')
+    local fCurrentHealthPct = ability:GetSpecialValueFloat('current_hp_pct')
+    local nDamage = nBaseDamage + (hMinionUnit:GetHealth() * (fCurrentHealthPct / 100))
+    local nSpeed = ability:GetSpecialValueInt('speed')
+
+    for _, enemyHero in pairs(nEnemyHeroes) do
+        if J.IsValidHero(enemyHero)
+        and J.CanBeAttacked(enemyHero)
+        and J.IsInRange(hMinionUnit, enemyHero, nCastRange + 300)
+        and J.CanCastOnNonMagicImmune(enemyHero)
+        then
+            local eta = (GetUnitToUnitDistance(hMinionUnit, enemyHero) / nSpeed)
+            if J.WillKillTarget(enemyHero, nDamage, DAMAGE_TYPE_MAGICAL, eta)
+            and not enemyHero:HasModifier('modifier_abaddon_borrowed_time')
+            and not enemyHero:HasModifier('modifier_dazzle_shallow_grave')
+            and not enemyHero:HasModifier('modifier_necrolyte_reapers_scythe')
+            and not enemyHero:HasModifier('modifier_oracle_false_promise_timer')
+            then
+                return BOT_ACTION_DESIRE_HIGH, enemyHero, SPELL_TARGET_TYPE_UNIT
+            end
+        end
+    end
+
+    for _, allyHero in pairs(nAllyHeroes) do
+        if J.IsValidHero(allyHero)
+        and J.CanBeAttacked(allyHero)
+        and J.IsInRange(hMinionUnit, allyHero, nCastRange)
+        and not allyHero:IsIllusion()
+        and not allyHero:HasModifier('modifier_abaddon_borrowed_time')
+        and not allyHero:HasModifier('modifier_necrolyte_reapers_scythe')
+        and not allyHero:HasModifier('modifier_necrolyte_reapers_scythe')
+        and J.GetHP(allyHero) < 0.5
+        then
+            if (J.IsGoingOnSomeone(allyHero) or J.IsRetreating(allyHero)) and allyHero:WasRecentlyDamagedByAnyHero(2.0) then
+                return BOT_ACTION_DESIRE_HIGH, allyHero, SPELL_TARGET_TYPE_UNIT
+            end
+
+            local projDamage = J.GetAttackProjectileDamageByRange(allyHero, 800)
+            if  (projDamage > allyHero:GetHealth())
+            and (projDamage < allyHero:GetHealth() + nDamage)
+            then
+                return BOT_ACTION_DESIRE_HIGH, allyHero, SPELL_TARGET_TYPE_UNIT
             end
         end
     end

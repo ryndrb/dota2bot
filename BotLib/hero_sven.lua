@@ -383,11 +383,14 @@ function X.ConsiderWarcry()
 	if J.IsGoingOnSomeone(bot) then
 		if J.IsValidHero(botTarget)
 		and J.IsInRange(bot, botTarget, 800)
-		and bot:WasRecentlyDamagedByAnyHero(2.0)
 		and fManaAfter > fManaThreshold1
 		and bCanBeAttacked
 		then
-			return BOT_ACTION_DESIRE_HIGH
+			if (not J.IsInRange(bot, botTarget, bot:GetAttackRange()))
+			or (bot:GetCurrentMovementSpeed() <= botTarget:GetCurrentMovementSpeed())
+			then
+				return BOT_ACTION_DESIRE_HIGH
+			end
 		end
 	end
 
@@ -439,6 +442,7 @@ function X.ConsiderWarcry()
 	for _, allyHero in pairs(nAllyHeroes) do
 		if J.IsValidHero(allyHero)
 		and J.CanBeAttacked(allyHero)
+		and J.IsInRange(bot, allyHero, nRadius)
 		and J.GetHP(allyHero) < 0.5
 		and not J.IsSuspiciousIllusion(allyHero)
 		and not allyHero:HasModifier('modifier_abaddon_borrowed_time')

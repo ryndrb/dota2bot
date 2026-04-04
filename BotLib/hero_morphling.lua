@@ -269,7 +269,7 @@ local nSTRRatio = 1
 
 local AGI_BASE = 24
 local STR_BASE = 23
-local AGI_GROWTH_RATE = 3.9
+local AGI_GROWTH_RATE = 4.2
 local STR_GROWTH_RATE = 2.6
 
 -- do similar thing as Rubick's

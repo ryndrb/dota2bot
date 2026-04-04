@@ -83,25 +83,87 @@ local HeroBuild = {
     ['pos_4'] = {
         [1] = {
             ['talent'] = {
-                [1] = {},
+				[1] = {
+					['t25'] = {0, 10},
+					['t20'] = {10, 0},
+					['t15'] = {0, 10},
+					['t10'] = {0, 10},
+				}
             },
             ['ability'] = {
-                [1] = {},
+                [1] = {2,1,2,1,2,6,2,1,1,3,6,3,3,3,6},
             },
-            ['buy_list'] = {},
-            ['sell_list'] = {},
+            ['buy_list'] = {
+				"item_tango",
+				"item_double_branches",
+				"item_blood_grenade",
+				"item_magic_stick",
+				"item_circlet",
+			
+				"item_tranquil_boots",
+				"item_magic_wand",
+                "item_rod_of_atos",
+                "item_ancient_janggo",
+                "item_orchid",
+				"item_boots_of_bearing",--
+                "item_sheepstick",--
+                "item_gungir",--
+				"item_aghanims_shard",
+                "item_black_king_bar",--
+				"item_ultimate_scepter",
+                "item_bloodthorn",--
+                "item_moon_shard",
+                "item_greater_crit",--
+                "item_ultimate_scepter_2",
+			},
+            ['sell_list'] = {
+				"item_circlet", "item_black_king_bar",
+				"item_magic_wand", "item_ultimate_scepter",
+                "item_magic_wand", "item_ultimate_scepter_2",
+			},
         },
     },
     ['pos_5'] = {
         [1] = {
             ['talent'] = {
-                [1] = {},
+				[1] = {
+					['t25'] = {0, 10},
+					['t20'] = {10, 0},
+					['t15'] = {0, 10},
+					['t10'] = {0, 10},
+				}
             },
             ['ability'] = {
-                [1] = {},
+                [1] = {2,1,2,1,2,6,2,1,1,3,6,3,3,3,6},
             },
-            ['buy_list'] = {},
-            ['sell_list'] = {},
+            ['buy_list'] = {
+				"item_tango",
+				"item_double_branches",
+				"item_blood_grenade",
+				"item_magic_stick",
+				"item_circlet",
+			
+				"item_arcane_boots",
+				"item_magic_wand",
+                "item_rod_of_atos",
+                "item_mekansm",
+                "item_orchid",
+				"item_guardian_greaves",--
+                "item_sheepstick",--
+                "item_gungir",--
+				"item_aghanims_shard",
+                "item_black_king_bar",--
+				"item_ultimate_scepter",
+                "item_bloodthorn",--
+                "item_moon_shard",
+                "item_greater_crit",--
+                "item_ultimate_scepter_2",
+			},
+            ['sell_list'] = {
+				"item_circlet", "item_black_king_bar",
+				"item_magic_wand", "item_ultimate_scepter",
+                "item_magic_wand", "item_ultimate_scepter_2",
+			},
         },
     },
 }
@@ -135,6 +197,7 @@ local Gunslinger    = bot:GetAbilityByName('muerta_gunslinger')
 local PartingShot   = bot:GetAbilityByName('muerta_parting_shot')
 local Ofrenda       = bot:GetAbilityByName('muerta_ofrenda')
 local OfrendaDestroy = bot:GetAbilityByName('muerta_ofrenda_destroy')
+local SpectralSlug  = bot:GetAbilityByName('muerta_spectral_slug')
 local PierceTheVeil = bot:GetAbilityByName('muerta_pierce_the_veil')
 
 local DeadshotDesire, DeadshotTarget
@@ -143,6 +206,7 @@ local GunslingerDesire
 local PartingShotDesire, PartingShotTarget
 local OfrendaDesire, OfrendaLocation
 local OfrendaDestroyDesire
+local SpectralSlugDesire, SpectralSlugTarget
 local PierceTheVeilDesire
 
 local bAttacking = false
@@ -188,6 +252,14 @@ function X.SkillsComplement()
         return
     end
 
+    SpectralSlugDesire, SpectralSlugTarget = X.ConsiderSpectralSlug()
+    if SpectralSlugDesire > 0
+    then
+        J.SetQueuePtToINT(bot, false)
+        bot:ActionQueue_UseAbilityOnEntity(SpectralSlug, SpectralSlugTarget)
+        return
+    end
+
     DeadshotDesire, DeadshotTarget = X.ConsiderDeadshot()
     if DeadshotDesire > 0
     then
@@ -218,7 +290,7 @@ function X.ConsiderDeadshot()
     local nSpeed = Deadshot:GetSpecialValueInt('speed')
     local nManaCost = Deadshot:GetManaCost()
 	local fManaAfter = J.GetManaAfter(nManaCost)
-	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {TheCalling, PierceTheVeil})
+	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {TheCalling, SpectralSlug, PierceTheVeil})
 
     for _, enemyHero in pairs(nEnemyHeroes) do
 		if  J.IsValidHero(enemyHero)
@@ -410,7 +482,7 @@ function X.ConsiderTheCalling()
     local nRadius = TheCalling:GetSpecialValueInt('hit_radius')
     local nManaCost = TheCalling:GetManaCost()
 	local fManaAfter = J.GetManaAfter(nManaCost)
-	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {Deadshot, PierceTheVeil})
+	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {Deadshot, SpectralSlug, PierceTheVeil})
 
     for _, enemyHero in pairs(nEnemyHeroes) do
 		if  J.IsValidHero(enemyHero)
@@ -581,6 +653,72 @@ function X.ConsiderPartingShot()
     end
 
     return BOT_ACTION_DESIRE_NONE, nil
+end
+
+function X.ConsiderSpectralSlug()
+    if not J.CanCastAbility(SpectralSlug) then
+        return BOT_ACTION_DESIRE_NONE
+    end
+
+    local nCastRange = SpectralSlug:GetCastRange()
+    local nCastPoint = SpectralSlug:GetCastPoint()
+    local nDamage = SpectralSlug:GetSpecialValueInt('damage')
+    local nSpeed = SpectralSlug:GetSpecialValueInt('projectile_speed')
+
+    for _, enemyHero in pairs(nEnemyHeroes) do
+		if  J.IsValidHero(enemyHero)
+        and J.CanBeAttacked(enemyHero)
+        and J.IsInRange(bot, enemyHero, nCastRange + 300)
+		and J.CanCastOnNonMagicImmune(enemyHero)
+		and J.CanCastOnTargetAdvanced(enemyHero)
+        and not enemyHero:HasModifier('modifier_abaddon_borrowed_time')
+        and not enemyHero:HasModifier('modifier_dazzle_shallow_grave')
+        and not enemyHero:HasModifier('modifier_necrolyte_reapers_scythe')
+        and not enemyHero:HasModifier('modifier_oracle_false_promise_timer')
+		then
+            local eta = (GetUnitToUnitDistance(bot, enemyHero) / nSpeed) + nCastPoint
+            if J.WillKillTarget(enemyHero, nDamage, DAMAGE_TYPE_MAGICAL, eta) then
+                return BOT_ACTION_DESIRE_HIGH, enemyHero
+            end
+
+            if enemyHero:HasModifier('modifier_abaddon_borrowed_time') then
+                return BOT_ACTION_DESIRE_HIGH, enemyHero
+            end
+
+            local nAllyHeroesAttackingTarget = J.GetHeroesTargetingUnit(nAllyHeroes, enemyHero)
+			if J.IsGoingOnSomeone(bot) then
+				if  not enemyHero:HasModifier('modifier_dazzle_shallow_grave')
+				and not enemyHero:HasModifier('modifier_oracle_false_promise_timer')
+				and J.GetHP(enemyHero) < 0.5
+				and #nAllyHeroesAttackingTarget <= 1
+				then
+					return BOT_ACTION_DESIRE_HIGH, enemyHero
+				end
+			end
+		end
+    end
+
+    if J.IsRetreating(bot) and not J.IsRealInvisible(bot) then
+		for _, enemyHero in pairs(nEnemyHeroes) do
+			if J.IsValidHero(enemyHero)
+			and J.CanBeAttacked(enemyHero)
+			and J.IsInRange(bot, enemyHero, nCastRange)
+			and J.CanCastOnNonMagicImmune(enemyHero)
+			and J.CanCastOnTargetAdvanced(enemyHero)
+            and bot:WasRecentlyDamagedByHero(enemyHero, 3.0)
+			and not J.IsDisabled(enemyHero)
+			and not enemyHero:IsDisarmed()
+            and not enemyHero:HasModifier('modifier_muerta_spectral_slug_ethereal')
+			then
+                local nAllyHeroesAttackingTarget = J.GetHeroesTargetingUnit(nAllyHeroes, enemyHero)
+                if #nAllyHeroesAttackingTarget == 0 then
+                    return BOT_ACTION_DESIRE_HIGH, enemyHero
+                end
+			end
+		end
+	end
+
+    return BOT_ACTION_DESIRE_NONE
 end
 
 function X.ConsiderPierceTheVeil()

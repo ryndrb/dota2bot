@@ -722,7 +722,7 @@ function X.ConsiderKineticFence()
     nDuration = KineticFence:GetSpecialValueInt('duration') + nCastPoint * 2
 
     if J.IsInTeamFight(bot, 1200) then
-        local nLocationAoE = bot:FindAoELocation(true, true, bot:GetLocation(), nCastRange, nRadius, nCastPoint + nDelay, 0)
+        local nLocationAoE = bot:FindAoELocation(true, true, bot:GetLocation(), nCastRange, nRadius, 0, 0)
         local nInRangeEnemy = J.GetEnemiesNearLoc(nLocationAoE.targetloc, nRadius)
 		if #nInRangeEnemy >= 2 then
 			return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc
@@ -738,22 +738,14 @@ function X.ConsiderKineticFence()
         and not botTarget:HasModifier('modifier_faceless_void_chronosphere_freeze')
         and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
 		then
-            local nLocationAoE = bot:FindAoELocation(true, true, botTarget:GetLocation(), 0, nRadius, nCastPoint, 0)
-            local botTargetLocation = J.GetCorrectLoc(botTarget, nDelay)
+            if botTarget:HasModifier('modifier_disruptor_static_storm') then
+                return BOT_ACTION_DESIRE_HIGH, botTarget:GetLocation()
+            end
 
-            if #nEnemyHeroes <= 1 then
-                if J.IsChasingTarget(bot, botTarget) then
-                    if nLocationAoE.count >= 2 then
-                        return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc
-                    else
-                        return BOT_ACTION_DESIRE_HIGH, botTargetLocation
-                    end
-                end
-            else
-                if nLocationAoE.count >= 2 then
-                    return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc
-                else
-                    return BOT_ACTION_DESIRE_HIGH, botTargetLocation
+            if J.IsChasingTarget(bot, botTarget) then
+                local vLocation = J.VectorAway(botTarget:GetLocation(), bot:GetLocation(), nRadius)
+                if GetUnitToLocationDistance(bot, vLocation) <= nCastRange then
+                    return BOT_ACTION_DESIRE_HIGH, vLocation
                 end
             end
 		end

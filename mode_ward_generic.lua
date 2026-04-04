@@ -139,7 +139,7 @@ function X.IsSuitableToWard()
 	local botActiveMode = bot:GetActiveMode()
     local botActiveModeDesire = bot:GetActiveModeDesire()
 
-	if (J.IsRetreating(bot) and botActiveModeDesire > 0.75)
+	if (J.IsRetreating(bot) and botActiveModeDesire > BOT_MODE_DESIRE_HIGH)
 	or (botActiveMode == BOT_MODE_RUNE and DotaTime() > 0)
 	or (botActiveMode == BOT_MODE_DEFEND_ALLY)
 	or (nEnemyHeroes ~= nil and #nEnemyHeroes >= 1 and X.IsIBecameTheTarget(nEnemyHeroes))

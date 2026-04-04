@@ -35,7 +35,7 @@ local HeroBuild = {
                     ['t25'] = {10, 0},
                     ['t20'] = {0, 10},
                     ['t15'] = {0, 10},
-                    ['t10'] = {10, 0},
+                    ['t10'] = {0, 10},
                 }
             },
             ['ability'] = {
@@ -44,30 +44,32 @@ local HeroBuild = {
             ['buy_list'] = {
                 "item_tango",
                 "item_double_branches",
-                "item_faerie_fire",
+                "item_double_gauntlets",
                 "item_quelling_blade",
             
                 "item_bottle",
                 "item_magic_wand",
-                "item_phase_boots",
+                "item_boots",
                 "item_soul_ring",
+                "item_phase_boots",
                 "item_blade_mail",
-                "item_radiance",--
+                "item_blink",
                 "item_black_king_bar",--
+                "item_kaya_and_sange",--
                 "item_aghanims_shard",
-                "item_shivas_guard",--
-                "item_overwhelming_blink",--
                 "item_heart",--
+                "item_shivas_guard",--
                 "item_ultimate_scepter_2",
+                "item_overwhelming_blink",--
                 "item_moon_shard",
                 "item_travel_boots_2",--
             },
             ['sell_list'] = {
-                "item_quelling_blade", "item_radiance",
+                "item_quelling_blade", "item_blink",
                 "item_magic_wand", "item_black_king_bar",
-                "item_soul_ring", "item_shivas_guard",
-                "item_bottle", "item_overwhelming_blink",
-                "item_blade_mail", "item_heart",
+                "item_soul_ring", "item_kaya_and_sange",
+                "item_bottle", "item_heart",
+                "item_blade_mail", "item_shivas_guard",
             },
         },
     },
@@ -87,28 +89,31 @@ local HeroBuild = {
             ['buy_list'] = {
                 "item_tango",
                 "item_double_branches",
+                "item_double_gauntlets",
                 "item_quelling_blade",
-                "item_magic_stick",
             
-                "item_bracer",
+                "item_magic_wand",
+                "item_boots",
+                "item_soul_ring",
                 "item_phase_boots",
                 "item_magic_wand",
                 "item_blade_mail",
-                "item_radiance",--
+                "item_blink",
                 "item_crimson_guard",--
                 "item_black_king_bar",--
-                "item_shivas_guard",--
                 "item_aghanims_shard",
-                "item_overwhelming_blink",--
+                "item_wind_waker",--
+                "item_shivas_guard",--
                 "item_ultimate_scepter_2",
+                "item_overwhelming_blink",--
                 "item_moon_shard",
                 "item_travel_boots_2",--
             },
             ['sell_list'] = {
                 "item_quelling_blade", "item_crimson_guard",
-                "item_magic_wand", "item_crimson_guard",
-                "item_bracer", "item_shivas_guard",
-                "item_blade_mail", "item_overwhelming_blink",
+                "item_magic_wand", "item_black_king_bar",
+                "item_soul_ring", "item_wind_waker",
+                "item_blade_mail", "item_shivas_guard",
             },
         },
     },
