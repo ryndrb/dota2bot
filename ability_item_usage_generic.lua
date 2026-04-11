@@ -378,7 +378,7 @@ local function BuybackUsageComplement()
 
 	if bot:GetLevel() <= 15
 		or bot:HasModifier( 'modifier_arc_warden_tempest_double' )
-		or J.IsMeepoClone(bot)
+		or not J.IsRealBot(bot)
 		or not J.Role.ShouldBuyBack()
 		or bot:IsIllusion()
 	then
@@ -3401,6 +3401,8 @@ X.ConsiderItemDesire["item_moon_shard"] = function( hItem )
 		return BOT_ACTION_DESIRE_NONE
 	end
 
+	if string.find(botName, 'meepo') then return BOT_ACTION_DESIRE_NONE end -- with 7.41+, crashes the game
+
 	if not bot:HasModifier('modifier_item_moon_shard_consumed') then
 		if  fConsumeMoonshardTime == nil then
 			fConsumeMoonshardTime = DotaTime()
@@ -4578,12 +4580,12 @@ X.ConsiderItemDesire["item_tango"] = function( hItem )
 
 	if nCharges > 0 and DotaTime() > 0 and sItemName == 'item_tango' then
 		if J.IsInLaningPhase() and (#nEnemyHeroes == 0 or J.IsLaning(bot)) then
-			for _, allyHero in pairs(nAllyHeroes) do
+			for i = 1, 5 do
+				local allyHero = GetTeamMember(i)
 				if J.IsValidHero(allyHero)
 				and allyHero ~= bot
 				and J.IsInRange(bot, allyHero, nCastRange + 500)
 				and not J.IsSuspiciousIllusion(allyHero)
-				and not J.IsMeepoClone(allyHero)
 				and not allyHero:HasModifier('modifier_doom_bringer_doom_aura_enemy')
 				and not allyHero:HasModifier('modifier_necrolyte_reapers_scythe')
 				and not allyHero:HasModifier('modifier_ice_blast')

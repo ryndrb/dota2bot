@@ -119,13 +119,13 @@ function GetDesire()
         end
     end
 
-    if bAlive and J.IsMeepoClone(bot) then
+    if bAlive and botName == 'npc_dota_hero_meepo' and not J.IsRealBot(bot) then
         if bRoshanAlive then
             for _, ally in pairs(nInRangeAlly_roshan) do
                 if ally ~= bot
                 and J.IsValidHero(ally)
-				and not J.IsMeepoClone(ally)
                 and ally:GetUnitName() == 'npc_dota_hero_meepo'
+				and J.IsRealBot(ally)
                 and J.IsDoingRoshan(ally)
                 then
                     local hTarget = ally:GetAttackTarget()

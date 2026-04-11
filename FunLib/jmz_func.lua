@@ -5920,4 +5920,14 @@ function J.IsLocationWithinLane(vLocation, nRadius, nLane)
 	return false
 end
 
+function J.IsRealBot(bot)
+	for i = 1, 5 do
+		local member = GetTeamMember(i)
+		if member and bot == member then
+			return true
+		end
+	end
+	return false
+end
+
 return J

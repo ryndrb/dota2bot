@@ -49,7 +49,7 @@ local HeroBuild = {
                 "item_bloodthorn",--
                 "item_ultimate_scepter_2",
                 "item_swift_blink",--
-                "item_moon_shard",
+                -- "item_moon_shard", -- with 7.41+, crashes the game
             },
             ['sell_list'] = {
                 "item_quelling_blade", "item_ultimate_scepter",
@@ -91,7 +91,7 @@ local HeroBuild = {
                 "item_bloodthorn",--
                 "item_ultimate_scepter_2",
                 "item_swift_blink",--
-                "item_moon_shard",
+                -- "item_moon_shard", -- with 7.41+, crashes the game
             },
             ['sell_list'] = {
                 "item_quelling_blade", "item_ultimate_scepter",
@@ -678,7 +678,7 @@ function X.ConsiderMegaMeepo()
         local count = 0
         for _, meepo in pairs(Meepos) do
             if  J.IsValid(meepo)
-            and J.IsMeepoClone(meepo)
+            -- and J.IsMeepoClone(meepo)
             and J.IsInRange(bot, meepo, nRadius)
             and not meepo:HasModifier('modifier_meepo_petrify')
             then
