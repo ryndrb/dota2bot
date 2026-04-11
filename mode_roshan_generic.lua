@@ -65,6 +65,54 @@ function GetDesire()
     return BOT_MODE_DESIRE_NONE
 end
 
-function IsEnoughAllies()
-    return J.HasEnoughDPSForRoshan(J.GetAlliesNearLoc(J.GetCurrentRoshanLocation(), 1600))
+local function IsStrongEnough(nUnitList, hRoshan)
+    local damage = 0
+    for _, hero in pairs(nUnitList) do
+        if J.IsValidHero(hero) then
+            damage = damage + hero:GetEstimatedDamageToTarget(true, hRoshan, 30, DAMAGE_TYPE_PHYSICAL)
+        end
+    end
+
+    return damage > hRoshan:GetHealth() + 300
+end
+
+local vMid = (J.GetTeamFountain() + J.GetEnemyFountain()) / 2
+local fNextMovementTime = -math.huge
+function Think()
+    if J.CanNotUseAction(bot) then return end
+
+    local vLocation = J.GetCurrentRoshanLocation()
+    local nNeutralCreeps = bot:GetNearbyNeutralCreeps(800)
+
+    for _, creep in pairs(nNeutralCreeps) do
+        if J.IsValid(creep) and J.IsRoshan(creep) then
+            if creep:GetAttackTarget() == bot and creep:GetAttackDamage() * 4 > bot:GetHealth() then
+                bot:Action_MoveToLocation(vMid)
+                return
+            end
+
+            if J.CanBeAttacked(creep) then
+                local nInRangeAlly = J.GetAlliesNearLoc(vLocation, 1400)
+                if IsStrongEnough(nInRangeAlly, creep)
+                or #nInRangeAlly >= 4
+                then
+                    if GetUnitToLocationDistance(bot, vLocation) <= 175 then
+                        bot:Action_AttackUnit(creep, true)
+                        return
+                    end
+                else
+                    if creep:GetAttackTarget() == bot then
+                        bot:Action_MoveToLocation(vMid)
+                        return
+                    end
+                end
+            end
+        end
+    end
+
+    if DotaTime() >= fNextMovementTime then
+        bot:Action_MoveToLocation(vLocation + RandomVector(50))
+        fNextMovementTime = DotaTime() + RandomFloat(1, 3)
+        return
+    end
 end

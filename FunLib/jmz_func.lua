@@ -4626,7 +4626,11 @@ end
 
 function J.GetCurrentRoshanLocation()
 	local timeOfDay = J.CheckTimeOfDay()
-	return timeOfDay == 'day' and roshanDireLoc or roshanRadiantLoc
+	if DotaTime() < 15 * 60 or timeOfDay == 'day' then
+		return roshanDireLoc
+	end
+
+	return roshanRadiantLoc
 end
 
 function J.GetTormentorLocation(team)

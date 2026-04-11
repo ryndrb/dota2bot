@@ -1215,7 +1215,6 @@ function HoodwinkSharpshooter()
 			local hTargetHealth = math.huge
 			for _, enemy in pairs(GetUnitList(UNIT_LIST_ENEMY_HEROES)) do
 				if J.IsValidHero(enemy)
-				and J.CanBeAttacked(enemy)
 				and J.IsInRange(bot, enemy, nArrowRange * 0.8)
 				and J.CanCastOnNonMagicImmune(enemy)
 				and not enemy:HasModifier('modifier_abaddon_borrowed_time')
@@ -1247,7 +1246,6 @@ function HoodwinkSharpshooter()
 				then
 					local memberTarget = member:GetAttackTarget()
 					if J.IsValidHero(memberTarget)
-					and J.CanBeAttacked(memberTarget)
 					and J.IsInRange(bot, memberTarget, nArrowRange)
 					and J.CanCastOnNonMagicImmune(memberTarget)
 					and not memberTarget:HasModifier('modifier_abaddon_borrowed_time')

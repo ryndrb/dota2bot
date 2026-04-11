@@ -20,6 +20,9 @@ function GetDesire()
 	if currentTime < 0
 	or not bot:IsAlive()
 	or J.IsGoingToRune(bot)
+	or botActiveMode == BOT_MODE_WATCHER
+	or botActiveMode == BOT_MODE_WISDOM_SHRINE
+	or botActiveMode == BOT_MODE_LOTUS_POOL
 	then
 		return BOT_ACTION_DESIRE_NONE
 	end
@@ -35,7 +38,7 @@ function GetDesire()
 		bot.isInLanePhase = true
 
 		if (bCore and ((#nInRangeEnemy == 0 or bot:HasModifier('modifier_tower_aura_bonus')) and not bot:WasRecentlyDamagedByAnyHero(5.0)) and not J.IsRetreating(bot)) then
-			return BOT_MODE_DESIRE_VERYHIGH + 0.04
+			return BOT_MODE_DESIRE_VERYHIGH - 0.01
 		end
 
 		return BOT_MODE_DESIRE_MODERATE - 0.05

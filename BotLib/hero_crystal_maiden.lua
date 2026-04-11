@@ -51,7 +51,7 @@ local HeroBuild = {
 			
 				"item_bottle",
 				"item_magic_wand",
-				"item_arcane_boots",
+				"item_power_treads",
 				"item_null_talisman",
 				"item_kaya",
 				"item_black_king_bar",--
@@ -69,47 +69,6 @@ local HeroBuild = {
 				"item_magic_wand", "item_ultimate_scepter",
 				"item_null_talisman", "item_octarine_core",
 				"item_bottle", "item_sheepstick",
-			},
-        },
-        [2] = {
-            ['talent'] = {
-				[1] = {
-					['t25'] = {10, 0},
-					['t20'] = {0, 10},
-					['t15'] = {10, 0},
-					['t10'] = {0, 10},
-				}
-            },
-            ['ability'] = {
-                [1] = {1,2,3,2,2,6,2,1,1,1,6,3,3,3,6},
-            },
-            ['buy_list'] = {
-				"item_tango",
-				"item_double_branches",
-				"item_faerie_fire",
-				"item_circlet",
-				"item_mantle",
-			
-				"item_magic_wand",
-				"item_tranquil_boots",
-				"item_null_talisman",
-				"item_maelstrom",
-				"item_dragon_lance",
-				"item_black_king_bar",--
-				"item_hurricane_pike",--
-				"item_aghanims_shard",
-				"item_ultimate_scepter",
-				"item_mjollnir",--
-				"item_devastator",--
-				"item_orchid",
-				"item_ultimate_scepter_2",
-				"item_bloodthorn",--
-				"item_moon_shard",
-				"item_travel_boots_2",--
-			},
-            ['sell_list'] = {
-				"item_magic_wand", "item_ultimate_scepter",
-				"item_null_talisman", "item_devastator",
 			},
         },
     },

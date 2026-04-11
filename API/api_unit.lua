@@ -90,7 +90,6 @@ function CDOTA_Bot_Script:ActionImmediate_SellItem(hItem)
         if self:DistanceFromSecretShop() <= 500 then
             self.secret_shop_succesful = false
         end
-        print('Trace: ', debug.traceback())
         return
     else
         if self:DistanceFromSecretShop() <= 500 then

@@ -42,6 +42,7 @@ function GetDesire()
 	botActiveMode = bot:GetActiveMode()
 	botActiveModeDesire = bot:GetActiveModeDesire()
 	botAssignedLane = bot:GetAssignedLane()
+	local botVisionRangeCurrent = bot:GetCurrentVisionRange()
 	nAllyHeroes = bot:GetNearbyHeroes(1600, false, BOT_MODE_NONE)
 	nEnemyHeroes = bot:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
 	local hAncient = GetAncient(GetTeam())
@@ -114,48 +115,46 @@ function GetDesire()
 			rune.status = GetRuneStatus(rune.location)
 
 			local vRuneLocation = GetRuneSpawnLocation(rune.location)
+			local fTimeToReach = rune.distance / bot:GetCurrentMovementSpeed()
 
 			if rune.location == RUNE_BOUNTY_1 or rune.location == RUNE_BOUNTY_2 then
-				if rune.status == RUNE_STATUS_AVAILABLE and (X.IsTeamMustSaveRune(rune.location) or not J.IsInLaningPhase() or GetUnitToLocationDistance(bot, vRuneLocation) <= 500) then
+				if rune.status == RUNE_STATUS_AVAILABLE then
 					if X.IsEnemyPickRune(rune.location) then return BOT_MODE_DESIRE_NONE end
 
-					if bBottle or (botPos >= 4 and not X.IsThereAllyWithBottle(vRuneLocation, 1600)) then
-						return X.GetScaledDesire(BOT_MODE_DESIRE_HIGH, rune.distance, 3500)
-					else
-						return X.GetScaledDesire(BOT_MODE_DESIRE_MODERATE, rune.distance, 3500)
+					if rune.distance < botVisionRangeCurrent * 1.25 and #nEnemyHeroes == 0 then
+						return BOT_MODE_DESIRE_ABSOLUTE * 2
 					end
-				elseif  rune.status == RUNE_STATUS_UNKNOWN
-					and rune.distance <= nProximityRadius * 1.5
-					and DotaTime() > 3 * 60 + 50
-					and ((minute % 4 == 0) or (minute % 4 == 3) and second > 45)
-				then
-					return X.GetScaledDesire(BOT_MODE_DESIRE_MODERATE, rune.distance, nProximityRadius)
-				elseif  rune.status == RUNE_STATUS_MISSING
-					and rune.distance <= nProximityRadius * 1.5
-					and DotaTime() > 3 * 60 + 50
-					and ((minute % 4 == 3) or second > 52)
-				then
-					return X.GetScaledDesire(BOT_MODE_DESIRE_MODERATE, rune.distance, nProximityRadius * 2.5)
+
+					if fTimeToReach <= 8.1 then
+						return BOT_MODE_DESIRE_VERYHIGH
+					end
+				elseif rune.status == RUNE_STATUS_UNKNOWN then
+					if rune.distance < 1600 then
+						return BOT_MODE_DESIRE_VERYHIGH
+					end
 				end
 			else
 				if rune.status == RUNE_STATUS_AVAILABLE then
 					if X.IsEnemyPickRune(rune.location) then return BOT_MODE_DESIRE_NONE end
 
+					if rune.distance < botVisionRangeCurrent * 1.5 and #nEnemyHeroes == 0 then
+						return BOT_MODE_DESIRE_ABSOLUTE * 2
+					end
+
 					if bBottle or (not J.IsEarlyGame() and botPos <= 3) then
-						return X.GetScaledDesire(BOT_MODE_DESIRE_HIGH, rune.distance, nProximityRadius * 2.5)
+						if fTimeToReach <= 9.1 then
+							return BOT_MODE_DESIRE_VERYHIGH
+						end
 					else
-						return X.GetScaledDesire(BOT_MODE_DESIRE_MODERATE, rune.distance, nProximityRadius * 2.5)
+						if botVisionRangeCurrent * 1.5 then
+							return BOT_MODE_DESIRE_VERYHIGH
+						end
 					end
 				elseif rune.status == RUNE_STATUS_UNKNOWN and DotaTime() > 113 then
-					if bBottle or (not J.IsEarlyGame() and botPos <= 3) then
-						return X.GetScaledDesire(BOT_MODE_DESIRE_HIGH, rune.distance, nProximityRadius * 2.5)
-					else
-						return X.GetScaledDesire(BOT_MODE_DESIRE_MODERATE, rune.distance, nProximityRadius)
+					local distThres = (DotaTime() < 6 * 60) and 1600 or 2800
+					if rune.distance < distThres then
+						return BOT_MODE_DESIRE_VERYHIGH
 					end
-				elseif rune.status == RUNE_STATUS_MISSING and DotaTime() > 60 and (minute % 2 == 1 and second > 53) then
-					return X.GetScaledDesire(BOT_MODE_DESIRE_MODERATE, rune.distance, nProximityRadius)
-				elseif rune.status == RUNE_STATUS_UNKNOWN and X.IsTeamMustSaveRune(rune.location) and DotaTime() > 113 and rune.distance <= nProximityRadius * 2 then
-					return X.GetScaledDesire(BOT_MODE_DESIRE_MODERATE, rune.distance, nProximityRadius * 2)
 				end
 			end
 		end
@@ -413,7 +412,7 @@ function X.GetBestRune()
 	for _, rune in pairs(nRuneList) do
 		local vRuneLocation = GetRuneSpawnLocation(rune)
 
-		if  X.IsTheClosestAlly(bot, vRuneLocation)
+		if  X.IsTheClosestAlly(bot, rune)
         and not X.IsPingedByHumanPlayer(vRuneLocation, math.huge)
 		and not X.IsMissing(rune)
         then
@@ -449,7 +448,7 @@ function X.IsTherePosition(nPos, nRuneLoc, nRadius)
 end
 
 -- When using Danger Ping ('X' in map)
-local pingTimeDelta = 30
+local pingTimeDelta = 15
 function X.IsPingedByHumanPlayer(vLocation, nRadius)
     for i = 1, 5 do
         local member = GetTeamMember(i)
@@ -515,14 +514,27 @@ function X.IsEnemyPickRune(nRune)
 	return false
 end
 
-function X.IsTheClosestAlly(hUnit, vLocation)
+function X.IsTheClosestAlly(hUnit, nRune)
+	local vLocation = GetRuneSpawnLocation(nRune)
+
 	local targetAlly = hUnit
 	local targetAllyDistance = GetUnitToLocationDistance(hUnit, vLocation)
 	for i = 1, 5 do
 		local member = GetTeamMember(i)
 		if J.IsValidHero(member) then
 			local memberDistance = GetUnitToLocationDistance(member, vLocation)
-			if memberDistance < targetAllyDistance then
+
+			if nRune == RUNE_BOUNTY_1 or nRune == RUNE_BOUNTY_2 then
+				if J.IsCore(member) then
+					memberDistance = memberDistance * 1.5
+				end
+			else
+				if J.IsCore(member) then
+					memberDistance = memberDistance * 0.7
+				end
+			end
+
+			if memberDistance + 350 < targetAllyDistance then
 				targetAlly = member
 				targetAllyDistance = memberDistance
 			end

@@ -29,7 +29,7 @@ HeroBuild = {
                     ['t25'] = {0, 10},
                     ['t20'] = {10, 0},
                     ['t15'] = {0, 10},
-                    ['t10'] = {10, 0},
+                    ['t10'] = {0, 10},
                 }
             },
             ['ability'] = {
@@ -75,26 +75,28 @@ HeroBuild = {
             },
             ['buy_list'] = {
                 "item_tango",
-                "item_branches",
-                "item_gloves",
+                "item_double_branches",
+                "item_magic_stick",
+                "item_circlet",
             
                 "item_magic_wand",
                 "item_power_treads",
-                "item_lifesteal",
-                "item_mjollnir",--
+                "item_vladmir",
+                "item_manta",--
                 "item_butterfly",--
                 "item_black_king_bar",--
                 "item_aghanims_shard",
-                "item_greater_crit",--
+                "item_hydras_breath",--
+                "item_skadi",--
                 "item_satanic",--
-                "item_orchid",
                 "item_moon_shard",
-                "item_bloodthorn",--
                 "item_ultimate_scepter_2",
             },
             ['sell_list'] = {
-                "item_magic_wand", "item_greater_crit",
-                "item_power_treads", "item_bloodthorn",
+                "item_circlet", "item_black_king_bar",
+                "item_magic_wand", "item_hydras_breath",
+                "item_power_treads", "item_skadi",
+                "item_vladmir", "item_satanic",
             },
         },
     },
@@ -105,7 +107,7 @@ HeroBuild = {
                     ['t25'] = {0, 10},
                     ['t20'] = {10, 0},
                     ['t15'] = {0, 10},
-                    ['t10'] = {10, 0},
+                    ['t10'] = {0, 10},
                 }
             },
             ['ability'] = {
@@ -158,24 +160,25 @@ HeroBuild = {
                 "item_circlet",
             
                 "item_bottle",
-                "item_power_treads",
                 "item_magic_wand",
-                "item_maelstrom",
-                "item_dragon_lance",
+                "item_power_treads",
+                "item_vladmir",
+                "item_manta",--
                 "item_butterfly",--
                 "item_black_king_bar",--
                 "item_aghanims_shard",
-                "item_revenants_brooch",--
-                "item_mjollnir",--
-                "item_bloodthorn",--
+                "item_hydras_breath",--
+                "item_skadi",--
+                "item_satanic",--
                 "item_moon_shard",
                 "item_ultimate_scepter_2",
             },
             ['sell_list'] = {
                 "item_circlet", "item_butterfly",
                 "item_magic_wand", "item_black_king_bar",
-                "item_bottle", "item_revenants_brooch",
-                "item_power_treads", "item_bloodthorn",
+                "item_bottle", "item_hydras_breath",
+                "item_power_treads", "item_skadi",
+                "item_vladmir", "item_satanic",
             },
         },
     },
@@ -217,7 +220,7 @@ HeroBuild = {
     },
 }
 
-sSelectedBuild = HeroBuild[sRole][1]
+sSelectedBuild = HeroBuild[sRole][RandomInt(1, #HeroBuild[sRole])]
 
 nTalentBuildList = J.Skill.GetTalentBuild(J.Skill.GetRandomBuild(sSelectedBuild.talent))
 nAbilityBuildList = J.Skill.GetRandomBuild(sSelectedBuild.ability)

@@ -273,10 +273,10 @@ function ItemPurchaseThink()
 
 	if bot.bInitialize == nil then bot.bInitialize = false end
 	if not bot.bInitialize then
-		if bot:GetUnitName() == 'npc_dota_hero_morphling' then
-			BotBuild = dofile( GetScriptDirectory() .. "/BotLib/" .. string.gsub( bot:GetUnitName(), "npc_dota_", "" ) )
-			BotBuild.SetItemBuild()
-		end
+		-- if bot:GetUnitName() == 'npc_dota_hero_morphling' then
+		-- 	BotBuild = dofile( GetScriptDirectory() .. "/BotLib/" .. string.gsub( bot:GetUnitName(), "npc_dota_", "" ) )
+		-- 	BotBuild.SetItemBuild()
+		-- end
 
 		if BotBuild == nil then return end
 

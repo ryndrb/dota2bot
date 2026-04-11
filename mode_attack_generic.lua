@@ -404,7 +404,7 @@ function Think()
 
     if botTarget.unit == nil then botTarget.unit = X.GetWeakestNearbyHero(true, botAttackRange + 800) end
 
-    if J.IsValidHero(botTarget.unit) and J.IsInRange(bot, botTarget.unit, 1200) then
+    if J.IsValidHero(botTarget.unit) then
         local dist = GetUnitToUnitDistance(bot, botTarget.unit)
         local bIsMuerta = botName == 'npc_dota_hero_muerta'
         local bEtherealForm = J.IsInEtherealForm(botTarget.unit)

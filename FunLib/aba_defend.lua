@@ -168,20 +168,36 @@ function Defend.DefendThink(bot, nLane)
 	if furthestBuilding == nil then return end
 
 	local hAncient = GetAncient(GetTeam())
-	local nInRangeAlly = J.GetAlliesNearLoc(furthestBuilding:GetLocation(), 1500)
+	local nInRangeAlly = J.GetAlliesNearLoc(bot:GetLocation(), 1500)
 	local nInRangeEnemy = J.GetEnemiesNearLoc(furthestBuilding:GetLocation(), 1500)
 
-	if J.IsValidHero(nInRangeEnemy[1]) then
+	if #nInRangeEnemy > 0 then
 		if (#nInRangeAlly >= #nInRangeEnemy)
 		or (furthestBuilding == hAncient and J.CanBeAttacked(hAncient) and J.GetHP(hAncient) < 0.5) -- just go
 		then
-			bot:Action_AttackUnit(nInRangeEnemy[1], true)
-			return
+			local target = nil
+			local targetScore = 0
+			for _, enemyHero in pairs(nInRangeEnemy) do
+				if J.IsValidHero(enemyHero) then
+					local enemyHeroScore = GetUnitToLocationDistance(enemyHero, J.GetTeamFountain())
+					if enemyHeroScore > targetScore then
+						target = enemyHero
+						targetScore = enemyHeroScore
+					end
+				end
+			end
+
+			if target then
+				bot:Action_AttackUnit(target, false)
+				return
+			end
 		end
 	end
 
 	local nFurthestEnemyAttackRange = 0
-	if J.IsValidHero(nInRangeEnemy[1]) then
+	nInRangeEnemy = J.GetEnemiesNearLoc(furthestBuilding:GetLocation(), 2200)
+	if #nInRangeEnemy > 0 then
+		local target = furthestBuilding
 		for _, enemyHero in pairs(nInRangeEnemy) do
 			if J.IsValidHero(enemyHero) and not enemyHero:HasModifier('modifier_teleporting') then
 				local enemyHeroAttackRange = enemyHero:GetAttackRange()
@@ -197,14 +213,21 @@ function Defend.DefendThink(bot, nLane)
 				if enemyHeroAttackRange > nFurthestEnemyAttackRange then
 					nFurthestEnemyAttackRange = enemyHeroAttackRange
 				end
+
+				local enemyHeroDistance = GetUnitToLocationDistance(enemyHero, J.GetTeamFountain())
+				if enemyHeroDistance < GetUnitToLocationDistance(furthestBuilding, J.GetTeamFountain()) then
+					target = enemyHero
+				end
 			end
 		end
 
-		local vLocation = J.VectorTowards(furthestBuilding:GetLocation(), J.GetTeamFountain(), nFurthestEnemyAttackRange + 100)
-		if DotaTime() >= fNextMovementTime then
-			bot:Action_MoveToLocation(vLocation + RandomVector(100))
-			fNextMovementTime = DotaTime() + RandomFloat(0.3, 0.9)
-			return
+		if nFurthestEnemyAttackRange > 0 and target then
+			local vLocation = J.VectorTowards(target:GetLocation(), J.GetTeamFountain(), nFurthestEnemyAttackRange + 150)
+			if DotaTime() >= fNextMovementTime then
+				bot:Action_MoveToLocation(vLocation + RandomVector(100))
+				fNextMovementTime = DotaTime() + RandomFloat(0.3, 0.9)
+				return
+			end
 		end
 	end
 
