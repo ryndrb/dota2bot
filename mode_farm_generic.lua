@@ -364,15 +364,45 @@ function Think()
 								end
 							end
 
-							local vLocation = J.VectorTowards(farmLocation, ( J.GetTeamFountain() + J.GetEnemyFountain() ) / 2, 1200)
-
-							if GetUnitToLocationDistance(bot, vLocation) + 200 < J.GetDistance(farmLocation, vLocation) then
-								bot:Action_MoveToLocation(vLocation)
-								return
-							else
-								bot:Action_MoveToLocation(J.VectorAway(bot:GetLocation(), farmLocation, 1200))
-								return
+							local nearbyCamps = {}
+							for _, camp in pairs(GetNeutralSpawners()) do
+								if camp and J.GetDistance(camp.location, farmLocation) <= 2000 then
+									table.insert(nearbyCamps, camp)
+								end
 							end
+
+							local vLocation = nil
+							local step = 30
+
+							for angle = 0, 360 - step, step do
+								local rad = math.rad(angle)
+								local dir = Vector(math.cos(rad), math.sin(rad), 0)
+								local candidate = farmLocation + dir * 1200
+
+								if not IsLocationPassable(candidate) then goto gSkipCandidate end
+
+								local bValid = true
+								for _, camp in pairs(nearbyCamps) do
+									if J.GetDistance(camp.location, farmLocation) > 50 then
+										if J.GetDistance(candidate, camp.location) < 600 then
+											bValid = false
+											break
+										end
+									end
+								end
+
+								if bValid then
+									vLocation = candidate
+									break
+								end
+
+								::gSkipCandidate::
+							end
+
+							if vLocation == nil then vLocation = J.VectorAway(bot:GetLocation(), farmLocation, 1200) end
+
+							bot:Action_MoveToLocation(vLocation)
+							return
 						else
 							bShouldCreepAggroToStack.check = false
 						end

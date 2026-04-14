@@ -152,7 +152,11 @@ function GetDesire()
 
 			local bHeroNearby = false
 			for _, allyHero in pairs(nInRangeAlly) do
-				if J.IsValidHero(allyHero) and J.IsNonStableHero(allyHero:GetUnitName()) then
+				if J.IsValidHero(allyHero)
+				and J.IsNonStableHero(allyHero:GetUnitName())
+				and not allyHero:HasModifier('modifier_necrolyte_reapers_scythe')
+				and not allyHero:HasModifier('modifier_teleporting')
+				then
 					if (J.IsInLaningPhase() and J.IsInRange(bot, allyHero, 900)
 						or (not J.IsInLaningPhase() and (((GetUnitToUnitDistance(bot, allyHero)) / allyHero:GetCurrentMovementSpeed()) <= 11.0)))
 					then
@@ -285,7 +289,7 @@ function GetDesire()
 			then
 				targetUnit = botTarget
 				bot:SetTarget(botTarget)
-				return targetDesire
+				return Clamp(targetDesire, 0, BOT_MODE_DESIRE_VERYHIGH + 0.04)
 			end
 		end
 
@@ -296,7 +300,7 @@ function GetDesire()
 			then
 				targetUnit = botTarget
 				bot:SetTarget(botTarget)
-				return targetDesire
+				return Clamp(targetDesire, 0, BOT_MODE_DESIRE_VERYHIGH + 0.04)
 			end
 		end
 
@@ -305,7 +309,7 @@ function GetDesire()
 			if towerTime ~= 0 and X.IsValid(towerCreep)
 				and DotaTime() < towerTime + towerCreepTime
 			then
-				return BOT_MODE_DESIRE_ABSOLUTE *0.9;
+				return BOT_MODE_DESIRE_VERYHIGH;
 			else
 				towerTime = 0;
 				towerCreepMode = false;
@@ -319,7 +323,7 @@ function GetDesire()
 					towerCreepMode = true;
 				end
 				bot:SetTarget(towerCreep);
-				return BOT_MODE_DESIRE_ABSOLUTE *0.9;
+				return BOT_MODE_DESIRE_VERYHIGH;
 			end
 		end
 	end

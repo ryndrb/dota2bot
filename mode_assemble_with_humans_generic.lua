@@ -251,7 +251,7 @@ local bTormentorAlive = false
 function Think()
     if J.CanNotUseAction(bot) then return end
 
-    if bot.tormentor_state == true and GetUnitToLocationDistance(bot, TormentorLocation) > 800 and GetUnitToLocationDistance(bot, TormentorLocation) < 1800 then
+    if bot.tormentor_state == true and GetUnitToLocationDistance(bot, TormentorLocation) > 800 and GetUnitToLocationDistance(bot, TormentorLocation) < 2200 then
         local nLaneCreeps = bot:GetNearbyLaneCreeps(Min(1600, bot:GetAttackRange() + 300), true)
         if J.IsValid(nLaneCreeps[1])
         and J.CanBeAttacked(nLaneCreeps[1])
@@ -261,7 +261,7 @@ function Think()
         end
     end
 
-    if bot.tormentor_state == true and not X.IsEnoughAllies(vWaitingLocation, 1600) then
+    if bot.tormentor_state == true and not X.IsEnoughAllies(vWaitingLocation, 2200) then
         if X.GetClosestBot() == bot and DotaTime() > fStillAlive + 15.0 then
             if GetUnitToLocationDistance(bot, TormentorLocation) <= 350 then
                 local nNeutralCreeps = bot:GetNearbyNeutralCreeps(900)

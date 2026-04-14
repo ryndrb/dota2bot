@@ -50,7 +50,7 @@ function GetDesire()
 					if (nItemToCheckSlot >= 0 or nItemToCheckSlot_lastComponent >= 0) and nItemToSellSlot >= 0
 					then
 						itemSlotFromSellList = {nItemToSellSlot, i}
-						return RemapValClamped(GetUnitToLocationDistance(bot, preferedShop), 6000, 0, 0.75, 0.95 );
+						return RemapValClamped(GetUnitToLocationDistance(bot, preferedShop), 6000, 0, BOT_MODE_DESIRE_HIGH, BOT_MODE_DESIRE_VERYHIGH - 0.01);
 					end
 				end
 			end
@@ -61,14 +61,14 @@ function GetDesire()
 					local bootsSlot = bot:FindItemSlot( Item['tEarlyBoots'][i] )
 					if bootsSlot >= 0 then
 						itemSlot = bootsSlot
-						return RemapValClamped(  GetUnitToLocationDistance(bot, preferedShop), 6000, 0, 0.75, 0.95)
+						return RemapValClamped(  GetUnitToLocationDistance(bot, preferedShop), 6000, 0, BOT_MODE_DESIRE_HIGH, BOT_MODE_DESIRE_VERYHIGH - 0.01)
 					end
 				end
 			end
 
 			if Item.HasItem(bot, 'item_mask_of_madness') and Item.HasItem(bot, 'item_satanic') then
 				itemSlot = bot:FindItemSlot('item_mask_of_madness')
-				return RemapValClamped(GetUnitToLocationDistance(bot, preferedShop), 6000, 0, 0.75, 0.95)
+				return RemapValClamped(GetUnitToLocationDistance(bot, preferedShop), 6000, 0, BOT_MODE_DESIRE_HIGH, BOT_MODE_DESIRE_VERYHIGH - 0.01)
 			end
 		end
 
@@ -78,7 +78,7 @@ function GetDesire()
 				if slot >= 6 and slot <= 8 then
 					if preferedShop ~= nil then
 						itemSlot = slot
-						return RemapValClamped(GetUnitToLocationDistance(bot, preferedShop), 6000, 0, 0.75, 0.90)
+						return RemapValClamped(GetUnitToLocationDistance(bot, preferedShop), 6000, 0, BOT_MODE_DESIRE_HIGH, BOT_MODE_DESIRE_VERYHIGH)
 					end	
 				end
 			end
@@ -88,7 +88,7 @@ function GetDesire()
 			local smokeSlot = bot:FindItemSlot('item_smoke_of_deceit')
 			if smokeSlot >= 6 and smokeSlot <= 8 then
 				itemSlot = smokeSlot
-				return RemapValClamped(GetUnitToLocationDistance(bot, preferedShop), 6000, 0, 0.75, 0.90)
+				return RemapValClamped(GetUnitToLocationDistance(bot, preferedShop), 6000, 0, BOT_MODE_DESIRE_HIGH, BOT_MODE_DESIRE_VERYHIGH)
 			end
 		end
 	end
@@ -98,7 +98,7 @@ function GetDesire()
 			hasItemToSell, itemSlot = X.HaveItemToSell();
 			if hasItemToSell then
 				if  preferedShop ~= nil then
-					return RemapValClamped(  GetUnitToLocationDistance(bot, preferedShop), 6000, 0, 0.75, 0.95 );
+					return RemapValClamped(  GetUnitToLocationDistance(bot, preferedShop), 6000, 0, BOT_MODE_DESIRE_HIGH, BOT_MODE_DESIRE_VERYHIGH - 0.01);
 				end	
 			end
 		end
@@ -110,10 +110,10 @@ function GetDesire()
 	
 	if bot.SecretShop and cState ~= COURIER_STATE_MOVING  then
 		if  preferedShop ~= nil and cState == COURIER_STATE_DEAD then
-			return RemapValClamped(  GetUnitToLocationDistance(bot, preferedShop), 6000, 0, 0.7, 0.85 );
+			return RemapValClamped(  GetUnitToLocationDistance(bot, preferedShop), 6000, 0, BOT_MODE_DESIRE_HIGH - 0.05, BOT_MODE_DESIRE_VERYHIGH - 0.05);
 		else
 			if preferedShop ~= nil and GetUnitToLocationDistance(bot, preferedShop) <= 3200 then
-				return RemapValClamped(  GetUnitToLocationDistance(bot, preferedShop), 3200, 0, 0.7, 0.85 );
+				return RemapValClamped(  GetUnitToLocationDistance(bot, preferedShop), 3200, 0, BOT_MODE_DESIRE_HIGH - 0.05, BOT_MODE_DESIRE_VERYHIGH - 0.05);
 			end
 		end
 	end

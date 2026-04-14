@@ -226,8 +226,9 @@ function Defend.DefendThink(bot, nLane)
 			if DotaTime() >= fNextMovementTime then
 				bot:Action_MoveToLocation(vLocation + RandomVector(100))
 				fNextMovementTime = DotaTime() + RandomFloat(0.3, 0.9)
-				return
 			end
+
+			return
 		end
 	end
 

@@ -5436,17 +5436,49 @@ end
 -- Vital Toadstool
 X.ConsiderItemDesire["item_foragers_health"] = function( hItem )
 
-	if  botHP < 0.8
-	and #nEnemyHeroes == 0
-	and not bot:WasRecentlyDamagedByAnyHero(4.0)
-	and not bot:HasModifier('modifier_filler_heal')
-	and not bot:HasModifier('modifier_elixer_healing')
-	and not bot:HasModifier('modifier_flask_healing')
-	and not bot:HasModifier('modifier_juggernaut_healing_ward_heal')
-	and not bot:HasModifier('modifier_doom_bringer_doom_aura_enemy')
-	and not bot:HasModifier('modifier_ice_blast')
-	then
-		return BOT_ACTION_DESIRE_HIGH, nil, ITEM_TARGET_TYPE_NONE
+	local nCastRange = hItem:GetCastRange()
+
+	local hNeedHealAlly = nil
+	local hNeedHealAllyHP = 99999
+	for _, allyHero in pairs(nAllyHeroes) do
+		if J.IsValidHero(allyHero)
+		and J.CanBeAttacked(allyHero)
+		and J.IsInRange(bot, allyHero, nCastRange + 150)
+		and allyHero:DistanceFromFountain() > 3200
+		and not allyHero:IsIllusion()
+		and not allyHero:WasRecentlyDamagedByAnyHero(5.0)
+		and not allyHero:HasModifier('modifier_alchemist_chemical_rage')
+		and not allyHero:HasModifier('modifier_arc_warden_tempest_double')
+		and not allyHero:HasModifier('modifier_doom_bringer_doom_aura_enemy')
+		and not allyHero:HasModifier('modifier_enchantress_natures_attendants')
+		and not allyHero:HasModifier('modifier_juggernaut_healing_ward_heal')
+		and not allyHero:HasModifier('modifier_legion_commander_press_the_attack')
+		and not allyHero:HasModifier('modifier_naga_siren_song_of_the_siren_healing')
+		and not allyHero:HasModifier('modifier_necrolyte_reapers_scythe')
+		and not allyHero:HasModifier('modifier_oracle_false_promise_timer')
+		and not allyHero:HasModifier('modifier_pugna_life_drain')
+		and not allyHero:HasModifier('modifier_ice_blast')
+		and not allyHero:HasModifier('modifier_item_urn_damage')
+		and not allyHero:HasModifier('modifier_item_spirit_vessel_damage')
+		and not allyHero:HasModifier('modifier_item_aeon_disk_buff')
+		and not allyHero:HasModifier('modifier_item_bloodstone_active')
+		and not allyHero:HasModifier('modifier_item_satanic_unholy')
+		and not allyHero:HasModifier('modifier_flask_healing')
+		and not allyHero:HasModifier('modifier_fountain_aura_buff')
+		and not allyHero:HasModifier('modifier_rune_regen')
+		and not allyHero:HasModifier('modifier_flask_healing')
+		and #nEnemyHeroes == 0
+		then
+			local allyHeroHP = J.GetHP(allyHero)
+			if allyHeroHP < hNeedHealAllyHP and allyHeroHP < 0.8 then
+				hNeedHealAlly = allyHero
+				hNeedHealAllyHP = allyHeroHP
+			end
+		end
+	end
+
+	if hNeedHealAlly then
+		return BOT_ACTION_DESIRE_HIGH, hNeedHealAlly, ITEM_TARGET_TYPE_UNIT
 	end
 
 	return BOT_ACTION_DESIRE_NONE

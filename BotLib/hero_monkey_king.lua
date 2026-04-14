@@ -115,19 +115,17 @@ local HeroBuild = {
                 "item_tango",
                 "item_double_branches",
                 "item_quelling_blade",
-                "item_orb_of_frost",
+                "item_blight_stone",
             
                 "item_bottle",
                 "item_magic_wand",
-                "item_orb_of_corrosion",
                 "item_power_treads",
-                "item_maelstrom",
+                "item_echo_sabre",
+                "item_desolator",--
                 "item_black_king_bar",--
-                "item_lesser_crit",
-                "item_mjollnir",--
-                "item_greater_crit",--
+                "item_harpoon",--
                 "item_basher",
-                "item_refresher",--
+                "item_greater_crit",--
                 "item_abyssal_blade",--
                 "item_moon_shard",
                 "item_ultimate_scepter_2",
@@ -136,11 +134,9 @@ local HeroBuild = {
             },
             ['sell_list'] = {
                 "item_quelling_blade", "item_black_king_bar",
-                "item_magic_wand", "item_lesser_crit",
-                "item_magic_wand", "item_greater_crit",
-                "item_bottle", "item_basher",
-                "item_bottle", "item_abyssal_blade",
-                "item_orb_of_corrosion", "item_refresher",
+                "item_magic_wand", "item_basher",
+                "item_magic_wand", "item_abyssal_blade",
+                "item_bottle", "item_greater_crit",
             },
         },
     },

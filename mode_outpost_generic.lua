@@ -509,10 +509,12 @@ function Think()
 						and not enemyHero:HasModifier('modifier_faceless_void_chronosphere_freeze')
 						and not enemyHero:HasModifier('modifier_necrolyte_reapers_scythe')
 						then
-							local enemyHeroHealth = enemyHero:GetHealth()
-							if enemyHeroHealth < hTargetHealth then
-								hTarget = enemyHero
-								hTargetHealth = enemyHeroHealth
+							if J.CanBeAttacked(enemyHero) or #nEnemyHeroes <= 1 then
+								local enemyHeroHealth = enemyHero:GetHealth()
+								if enemyHeroHealth < hTargetHealth then
+									hTarget = enemyHero
+									hTargetHealth = enemyHeroHealth
+								end
 							end
 						end
 					end
@@ -567,7 +569,7 @@ function Think()
 					for _, enemy in pairs(GetUnitList(UNIT_LIST_ENEMY_HEROES)) do
 						if J.IsValidHero(enemy)
 						and J.IsInRange(bot, enemy, 1600)
-						and J.CanBeAttacked(enemy)
+						and not J.IsSuspiciousIllusion(enemy)
 						and not J.IsEnemyBlackHoleInLocation(enemy:GetLocation())
 						and not J.IsEnemyChronosphereInLocation(enemy:GetLocation())
 						and not enemy:HasModifier('modifier_necrolyte_reapers_scythe')
@@ -610,7 +612,6 @@ function Think()
 		elseif bot.onslaught_status[1] == 'farm' then
 			local nCreeps = bot:GetNearbyCreeps(800, true)
 			if J.IsValid(nCreeps[1])
-			and not J.IsRunning(nCreeps[1])
 			and J.CanBeAttacked(nCreeps[1])
 			then
 				local nLocationAoE = bot:FindAoELocation(true, false, nCreeps[1]:GetLocation(), 0, 200, 0, 0)
@@ -651,9 +652,7 @@ function Think()
 			local hTargetHealth = 0
 			for _, enemyHero in pairs(GetUnitList(UNIT_LIST_ENEMY_HEROES)) do
 				if J.IsValidHero(enemyHero)
-				and J.CanBeAttacked(enemyHero)
 				and J.IsInRange(bot, enemyHero, 2200)
-				and J.CanBeAttacked(enemyHero)
 				and J.CanCastOnNonMagicImmune(enemyHero)
 				and GetUnitToLocationDistance(enemyHero, J.GetTeamFountain()) > 1200
 				and not enemyHero:HasModifier('modifier_faceless_void_chronosphere_freeze')
@@ -1138,7 +1137,6 @@ function PrimalBeastTrample()
 					for _, enemyHero in pairs(tEnemyHeroes) do
 						if J.IsValidHero(enemyHero)
 						and J.IsInRange(bot, enemyHero, 2200)
-						and J.CanBeAttacked(enemyHero)
 						and J.CanCastOnNonMagicImmune(enemyHero)
 						and not enemyHero:HasModifier('modifier_faceless_void_chronosphere_freeze')
 						and not enemyHero:HasModifier('modifier_necrolyte_reapers_scythe')
