@@ -247,7 +247,7 @@ function X.SkillsComplement()
 
 	BulwarkDesire, BulwarkLocation, bToggle = X.ConsiderBulwark()
 	if BulwarkDesire > 0 then
-		if bToggle then
+		if not bToggle then
 			bot:Action_UseAbilityOnLocation(Bulwark, BulwarkLocation)
 		else
 			bot:Action_UseAbility(Bulwark)
