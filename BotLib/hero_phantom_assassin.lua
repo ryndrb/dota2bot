@@ -469,7 +469,7 @@ function X.ConsiderPhantomStrike()
 		if  J.IsValid(botTarget)
 		and J.CanBeAttacked(botTarget)
 		and not botTarget:IsBuilding()
-		and not J.IsEnemyHeroAroundLocation(botTarget:GetLocation(), 550)
+		and not J.IsEnemyHeroAroundLocation(botTarget:GetLocation(), 550, 4.0)
 		then
 			if (#nEnemyCreeps >= 3)
 			or (not J.IsInRange(bot, botTarget, nCastRange / 2))

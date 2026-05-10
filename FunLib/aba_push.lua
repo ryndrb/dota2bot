@@ -2,7 +2,6 @@ local Push = {}
 local J = require( GetScriptDirectory()..'/FunLib/jmz_func')
 
 local pingTimeDelta = 5
-local tUrgentDefend = {false, nil}
 
 function Push.GetPushDesire(bot, lane)
     local nMaxDesire = BOT_MODE_DESIRE_HIGH
@@ -21,8 +20,8 @@ function Push.GetPushDesire(bot, lane)
         if member ~= nil and member:GetLevel() < 6 then return BOT_MODE_DESIRE_NONE end
     end
 
-    local nInRangeAlly = J.GetAlliesNearLoc(bot:GetLocation(), 1600)
-    local nInRangeEnemy = J.GetEnemiesNearLoc(bot:GetLocation(), 1600)
+    local nInRangeAlly = J.GetAlliesNearLoc(bot:GetLocation(), 1200)
+    local nInRangeEnemy = J.GetEnemiesNearLoc(bot:GetLocation(), 1200)
 
     local nInRangeAlly_core = {}
     for _, ally in pairs(nInRangeAlly) do
@@ -38,8 +37,8 @@ function Push.GetPushDesire(bot, lane)
         end
     end
 
-    if #nInRangeAlly < #nInRangeEnemy and #nInRangeAlly_core < #nInRangeEnemy_core
-    or #nInRangeAlly <= 1 and #nInRangeEnemy > 0
+    if (#nInRangeAlly  < #nInRangeEnemy and #nInRangeAlly_core < #nInRangeEnemy_core)
+    or (#nInRangeAlly >= #nInRangeEnemy and bot:WasRecentlyDamagedByAnyHero(5.0))
     then
         return BOT_MODE_DESIRE_NONE
     end
@@ -49,6 +48,14 @@ function Push.GetPushDesire(bot, lane)
 		local isPinged, pingedLane = J.IsPingCloseToValidTower(GetOpposingTeam(), humanPing, 700, 5.0)
 		if isPinged and lane == pingedLane and GameTime() < humanPing.time + pingTimeDelta then
 			return BOT_MODE_DESIRE_VERYHIGH
+		end
+	end
+
+	-- finish camps
+	if J.IsFarming(bot) and (J.IsCore(bot) or bot:GetNetWorth() >= 15500) then
+		local nNeutralCreeps = bot:GetNearbyNeutralCreeps(Min(bot:GetAttackRange() + 200, 1600))
+		if #nNeutralCreeps > 0 then
+			return BOT_MODE_DESIRE_NONE
 		end
 	end
 
@@ -68,20 +75,6 @@ function Push.GetPushDesire(bot, lane)
     local hAncient = GetAncient(GetTeam())
     local nPushDesire = RemapValClamped(GetPushLaneDesire(lane), 0, 1, 0, nMaxDesire)
 
-    if J.IsValidBuilding(hAncient) then
-        if Push.IsHealthyInsideFountain(bot) then
-            local nEnemiesAroundAncient = J.GetEnemiesNearLoc(hAncient:GetLocation(), 1000)
-            if aAliveCount >= #nEnemiesAroundAncient and aAliveCoreCount>= eAliveCoreCount then
-                tUrgentDefend = {true, J.GetEnemyFountain()}
-                return BOT_MODE_DESIRE_VERYHIGH
-            else
-                tUrgentDefend = {false, nil}
-            end
-        else
-            tUrgentDefend = {false, nil}
-        end
-    end
-
     -- -- mulling
     -- local vEnemyLaneFrontLocation = GetLaneFrontLocation(GetOpposingTeam(), lane, 0)
     -- if Push.ShouldWaitForImportantItemsSpells(vEnemyLaneFrontLocation)
@@ -93,9 +86,7 @@ function Push.GetPushDesire(bot, lane)
     -- end
 
     local nEnemyTowers = bot:GetNearbyTowers(1600, true)
-    if nEnemyTowers == nil then
-        nEnemyTowers = bot:GetNearbyBarracks(1600, true)
-    end
+    if nEnemyTowers == nil then nEnemyTowers = bot:GetNearbyBarracks(1600, true) end
 
     if J.IsValidBuilding(nEnemyTowers[1])
     and not string.find(nEnemyTowers[1]:GetUnitName(), 'tower1')
@@ -109,6 +100,38 @@ function Push.GetPushDesire(bot, lane)
         end
     end
 
+    local furthestBuildingEnemy = J.GetFurthestBuildingAlongLane(GetOpposingTeam(), lane)
+    local vLaneFrontLocation_Enemy = GetLaneFrontLocation(GetOpposingTeam(), lane, 0)
+
+    -- farm pushed in lanes
+    if  J.GetDistance(vLaneFrontLocation_Enemy, J.GetTeamFountain()) < 5500
+    and GetUnitToLocationDistance(bot, vLaneFrontLocation_Enemy) < 4200
+    and not J.IsEnemyHeroAroundLocation(vLaneFrontLocation_Enemy, 1600, 5.0)
+    then
+        local nLocationAoE = bot:FindAoELocation(false, false, furthestBuildingEnemy:GetLocation(), 0, 1200, 0, 0)
+        if nLocationAoE.count >= 3
+        or bot:GetEstimatedDamageToTarget(true, bot, 5.0, DAMAGE_TYPE_PHYSICAL) >= 450.0
+        then
+            return BOT_MODE_DESIRE_VERYHIGH
+        end
+    end
+
+    -- if safe, push tierX tower
+    if J.IsValidBuilding(furthestBuildingEnemy) then
+        if  J.CanBeAttacked(furthestBuildingEnemy)
+        and J.IsInRange(bot, furthestBuildingEnemy, 1200)
+        and not J.IsRetreating(bot)
+        and (J.IsTier1(furthestBuildingEnemy, GetOpposingTeam()) or J.IsTier2(furthestBuildingEnemy, GetOpposingTeam()))
+        then
+            if not J.IsFarming(bot) or J.GetHP(furthestBuildingEnemy) < 0.2 then
+                local nLocationAoE = bot:FindAoELocation(false, false, furthestBuildingEnemy:GetLocation(), 0, 800, 0, 0)
+                if nLocationAoE.count >= 3 and not bot:WasRecentlyDamagedByTower(3.0) and not J.IsEnemyHeroAroundLocation(furthestBuildingEnemy:GetLocation(), 1400, 5.0) then
+                    return nMaxDesire
+                end
+            end
+        end
+    end
+
     -- General Push
     if Push.WhichLaneToPush(bot, lane) == lane then
         if eAliveCount == 0
@@ -117,19 +140,33 @@ function Push.GetPushDesire(bot, lane)
         or (GetUnitToUnitDistance(bot, GetAncient(GetOpposingTeam())) < 3500 and #nInRangeAlly >= #nInRangeEnemy)
         then
             if not J.IsEarlyGame() then
+                local teamNetworth, enemyNetworth = J.GetInventoryNetworth()
                 if J.DoesTeamHaveAegis() and aAliveCount >= 4 then
-                    nPushDesire = nPushDesire + GetAdjustedValueCausedPatch(0.25)
+                    local factor = (J.IsLateGame() or (teamNetworth - enemyNetworth > 11000)) and BOT_MODE_DESIRE_HIGH or BOT_MODE_DESIRE_LOW
+                    nPushDesire = nPushDesire + factor
                 end
 
                 if aAliveCount >= eAliveCount and J.GetAverageLevel(GetTeam()) >= 12 then
-                    local teamNetworth, enemyNetworth = J.GetInventoryNetworth()
-                    nPushDesire = nPushDesire + RemapValClamped(teamNetworth - enemyNetworth, 5000, (J.IsModeTurbo() and 15000) or 10000, 0.0, GetAdjustedValueCausedPatch(0.5))
+                    nPushDesire = nPushDesire + RemapValClamped(teamNetworth - enemyNetworth, 5000, 10000, 0.0, BOT_MODE_DESIRE_MODERATE)
                 end
+
+                local pushingLane = { [LANE_TOP] = BOT_MODE_PUSH_TOWER_TOP, [LANE_MID] = BOT_MODE_PUSH_TOWER_MID, [LANE_BOT] = BOT_MODE_PUSH_TOWER_BOT }
+                local countPushingAlliesNearby = #J.GetSpecialModeAllies(bot, 900, pushingLane[lane])
+                local factor = J.IsLateGame() and BOT_MODE_DESIRE_MODERATE or BOT_MODE_DESIRE_LOW
+                nPushDesire = nPushDesire + countPushingAlliesNearby * (factor / 5)
             end
 
             return Clamp(nPushDesire, 0, nMaxDesire)
         end
     end
+
+    local _, closestLane = J.GetClosestTeamLane(bot)
+	if closestLane == lane then
+        local laneDistThres = { [LANE_TOP] = 12000, [LANE_MID] = 8500, [LANE_BOT] = 12000 }
+        if J.GetDistance(vLaneFrontLocation_Enemy, J.GetTeamFountain()) < laneDistThres[lane] and not J.IsEnemyHeroAroundLocation(vLaneFrontLocation_Enemy, 1400, 3.0) then
+            return BOT_MODE_DESIRE_LOW
+        end
+	end
 
     return BOT_MODE_DESIRE_NONE
 end
@@ -220,6 +257,10 @@ function Push.WhichLaneToPush(bot, lane)
     midLaneScore = midLaneScore * RemapValClamped(midLaneTier, 1, 3, 0.25, 1)
     botLaneScore = botLaneScore * RemapValClamped(botLaneTier, 1, 3, 0.25, 1)
 
+    topLaneScore = topLaneScore * (Max(0.1, 1 - GetPushLaneDesire(LANE_TOP)))
+    midLaneScore = midLaneScore * (Max(0.1, 1 - GetPushLaneDesire(LANE_MID)))
+    botLaneScore = botLaneScore * (Max(0.1, 1 - GetPushLaneDesire(LANE_BOT)))
+
     if  topLaneScore < midLaneScore
     and topLaneScore < botLaneScore
     then
@@ -246,46 +287,75 @@ function Push.PushThink(bot, lane)
     if J.CanNotUseAction(bot) then return end
 
     local botAttackRange = bot:GetAttackRange()
-    local fDeltaFromFront = (Min(J.GetHP(bot), 0.7) * 1000 - 700) + RemapValClamped(botAttackRange, 300, 700, 0, -600)
     local nEnemyTowers = bot:GetNearbyTowers(1600, true)
     local nAllyCreeps = bot:GetNearbyLaneCreeps(1200, false)
     local hEnemyAncient = GetAncient(GetOpposingTeam())
     local bHasPierceTheVeil = bot:HasModifier('modifier_muerta_pierce_the_veil_buff')
 
-    local nAllyHeroes = J.GetAlliesNearLoc(bot:GetLocation(), 1600)
-    local nEnemyHeroes = J.GetEnemiesNearLoc(bot:GetLocation(), 1600)
-    if #nAllyHeroes < #nEnemyHeroes or Push.IsBuildingGlyphedBackdoor() then
-        local nEnemyHeroLongestAttackRange = 0
-        for _, enemyHero in pairs(nEnemyHeroes) do
-            if J.IsValidHero(enemyHero)
-            and not J.IsSuspiciousIllusion(enemyHero)
-            then
-                local enemyHeroAttackRange = enemyHero:GetAttackRange()
-                if enemyHeroAttackRange > nEnemyHeroLongestAttackRange then
-                    nEnemyHeroLongestAttackRange = enemyHeroAttackRange
-                end
+    local vLaneFrontLocation = GetLaneFrontLocation(GetTeam(), lane, 0)
+
+    local nAllyHeroes = J.GetAlliesNearLoc(vLaneFrontLocation, 1600)
+    local nEnemyHeroes = J.GetEnemiesNearLoc(vLaneFrontLocation, 1600)
+
+    if #nAllyHeroes < #nEnemyHeroes then
+        local nFurthestEnemyAttackRange = 0
+		local vTargetLocation = vLaneFrontLocation
+		for _, enemyHero in pairs(nEnemyHeroes) do
+			if J.IsValidHero(enemyHero) and not enemyHero:HasModifier('modifier_teleporting') then
+                local sEnemyHeroName = enemyHero:GetUnitName()
+				local enemyHeroAttackRange = enemyHero:GetAttackRange()
+				if J.HasItem(enemyHero, 'item_blink')
+				or J.HasItem(enemyHero, 'item_overwhelming_blink')
+				or J.HasItem(enemyHero, 'item_swift_blink')
+				or J.HasItem(enemyHero, 'item_arcane_blink')
+				or J.HasItem(enemyHero, 'item_fallen_sky')
+                or sEnemyHeroName == 'npc_dota_hero_antimage'
+                or sEnemyHeroName == 'npc_dota_hero_queenofpain'
+				then
+					enemyHeroAttackRange = Max(enemyHeroAttackRange, 1200)
+				end
+
+				if enemyHeroAttackRange > nFurthestEnemyAttackRange then
+					nFurthestEnemyAttackRange = enemyHeroAttackRange
+				end
+
+				local enemyHeroDistance = GetUnitToLocationDistance(enemyHero, J.GetTeamFountain())
+				if enemyHeroDistance < J.GetDistance(vLaneFrontLocation, J.GetTeamFountain()) then
+					vTargetLocation = enemyHero:GetLocation()
+				end
+			end
+		end
+
+        if nFurthestEnemyAttackRange > 0 then
+			local vLocation = J.VectorAway(vTargetLocation, vLaneFrontLocation, nFurthestEnemyAttackRange + J.GetDistance(vTargetLocation, vLaneFrontLocation))
+            local dist = GetUnitToLocationDistance(bot, vLocation)
+            if dist < 350 then
+                bot:Action_AttackMove(vLocation + RandomVector(100))
+                return
             end
+
+			if DotaTime() >= fNextMovementTime then
+                bot:Action_MoveToLocation(vLocation + RandomVector(100))
+				fNextMovementTime = DotaTime() + RandomFloat(0.3, 0.9)
+			end
+
+			return
+		end
+    end
+
+    local targetLoc = GetLaneFrontLocation(GetTeam(), lane, 0)
+
+    local nUnitList = GetUnitList(UNIT_LIST_ENEMY_BUILDINGS)
+    local bBuildingGlyphedBackdoor = Push.IsBuildingGlyphedBackdoor(nUnitList)
+
+    if bBuildingGlyphedBackdoor then
+        local building = J.GetFurthestBuildingAlongLane(GetOpposingTeam(), lane)
+        if building and building:IsTower() then
+            targetLoc = Push.GetAdjustedHoldPosition(bot, building)
         end
-
-        fDeltaFromFront = -1000 - nEnemyHeroLongestAttackRange
     end
 
-    local targetLoc = GetLaneFrontLocation(GetTeam(), lane, fDeltaFromFront)
-
-    if Push.IsHealthyInsideFountain(bot) and tUrgentDefend[1] == true then
-        targetLoc = tUrgentDefend[2]
-    end
-
-    if J.IsValidBuilding(nEnemyTowers[1]) and (nEnemyTowers[1]:GetAttackTarget() == bot or (bot:WasRecentlyDamagedByTower(#nAllyCreeps <= 2 and 4.0 or 2.0))) then
-        local nDamage = nEnemyTowers[1]:GetAttackDamage() * nEnemyTowers[1]:GetAttackSpeed() * 5.0 - bot:GetHealthRegen() * 5.0
-        if (bot:GetActualIncomingDamage(nDamage, DAMAGE_TYPE_PHYSICAL) / bot:GetHealth() > 0.4)
-        -- or (#nAllyCreeps <= 2 and J.GetHP(nEnemyTowers[1]) > 0.3)
-        then
-            local vLocation = GetLaneFrontLocation(GetTeam(), lane, -1200)
-            bot:Action_MoveToLocation(vLocation)
-            return
-        end
-    end
+    if Push.DropTowerAggro(bot) then return end
 
     nAllyHeroes = J.GetAlliesNearLoc(hEnemyAncient:GetLocation(), 1600)
     if  GetUnitToUnitDistance(bot, hEnemyAncient) < 1600
@@ -301,10 +371,11 @@ function Push.PushThink(bot, lane)
     end
 
     local nRange = math.min(700 + botAttackRange, 1600)
+    if bBuildingGlyphedBackdoor then nRange = Min(botAttackRange, 1600) end
 
     local nInRangeAlly = J.GetAlliesNearLoc(hEnemyAncient:GetLocation(), 3200)
     local nCreeps = bot:GetNearbyLaneCreeps(nRange, true)
-    if (bot:GetAttackDamage() * bot:GetAttackSpeed() * 5.0 >= 2800)
+    if ((bot:GetAttackDamage() / bot:GetSecondsPerAttack()) * 5.0 >= 2800)
     then
         nCreeps = bot:GetNearbyCreeps(nRange, true)
     end
@@ -410,6 +481,85 @@ function Push.PushThink(bot, lane)
     end
 end
 
+function Push.DropTowerAggro(hUnit)
+	if J.IsValid(hUnit) then
+        if J.CanNotUseAction(hUnit) or hUnit:IsDisarmed() then return false end
+
+        local nUnitList = GetUnitList(UNIT_LIST_ENEMY_BUILDINGS)
+        for _, buliding in pairs(nUnitList) do
+            if  J.IsValidBuilding(buliding)
+            and buliding:IsTower()
+            and buliding:GetAttackTarget() == hUnit
+            and not buliding:HasModifier('modifier_fountain_glyph')
+            then
+                local nAllyCreeps = hUnit:GetNearbyLaneCreeps(700, false)
+                for _, creep in pairs(nAllyCreeps) do
+                    if J.IsValid(creep) and GetUnitToUnitDistance(creep, buliding) < 700 then
+                        hUnit:Action_AttackUnit(creep, false)
+                        return true
+                    end
+                end
+
+                if (hUnit:GetActualIncomingDamage(buliding:GetAttackDamage() * 5, DAMAGE_TYPE_PHYSICAL) / hUnit:GetHealth()) > 0.3 then
+                    hUnit:Action_MoveToLocation(J.GetTeamFountain())
+                    return true
+                end
+            end
+        end
+	end
+
+    return false
+end
+
+local function IsInTowerRange(vLoc)
+    for _, b in pairs(GetUnitList(UNIT_LIST_ENEMY_BUILDINGS)) do
+        if b and b:IsTower() and GetUnitToLocationDistance(b, vLoc) < 900 then
+            return true
+        end
+    end
+    return false
+end
+function Push.GetAdjustedHoldPosition(bot, building)
+
+    local vBuildingLocation = building:GetLocation()
+    local targetLoc = J.VectorTowards(vBuildingLocation, bot:GetLocation(), 1200)
+
+    -- highground relevant
+    if IsInTowerRange(targetLoc) then
+        local nBaseAngle = math.atan(targetLoc.y - vBuildingLocation.y, targetLoc.x - vBuildingLocation.x)
+        local cwResult, ccwResult = nil, nil
+
+        for step = 1, 18 do
+            if not cwResult then
+                local angle = nBaseAngle + step * (math.pi / 18)
+                local candidate = vBuildingLocation + Vector(math.cos(angle) * 1200, math.sin(angle) * 1200, 0)
+                if not IsInTowerRange(candidate) then cwResult = candidate end
+            end
+
+            if not ccwResult then
+                local angle = nBaseAngle - step * (math.pi / 18)
+                local candidate = vBuildingLocation + Vector(math.cos(angle) * 1200, math.sin(angle) * 1200, 0)
+                if not IsInTowerRange(candidate) then ccwResult = candidate end
+            end
+
+            if cwResult and ccwResult then break end
+        end
+
+        if cwResult and ccwResult then
+            -- pick whichever was found at a smaller angular step (closer to original)
+            -- if both were found at the same step, just pick ccw as tiebreak
+            targetLoc = GetUnitToLocationDistance(bot, cwResult) < GetUnitToLocationDistance(bot, ccwResult)
+                        and cwResult or ccwResult
+        elseif cwResult then
+            targetLoc = cwResult
+        elseif ccwResult then
+            targetLoc = ccwResult
+        end
+    end
+
+    return targetLoc
+end
+
 function TryClearingOtherLaneHighGround(bot, vLocation)
     local unitList = GetUnitList(UNIT_LIST_ENEMY_BUILDINGS)
     local function IsValid(building)
@@ -483,7 +633,7 @@ function Push.IsInDangerWithinTower(hUnit, fThreshold, fDuration)
         if J.IsValid(enemy)
         and J.IsInRange(hUnit, enemy, 1600)
         and (enemy:GetAttackTarget() == hUnit or J.IsChasingTarget(enemy, hUnit)) then
-            totalDamage = totalDamage + hUnit:GetActualIncomingDamage(enemy:GetAttackDamage() * enemy:GetAttackSpeed() * fDuration, DAMAGE_TYPE_PHYSICAL)
+            totalDamage = totalDamage + hUnit:GetActualIncomingDamage((enemy:GetAttackDamage() / enemy:GetSecondsPerAttack()) * fDuration, DAMAGE_TYPE_PHYSICAL)
         end
     end
 
@@ -516,15 +666,8 @@ function Push.GetSpecialUnitsNearby(bot, hUnitList, nRadius)
     return hCreepList
 end
 
-function Push.IsHealthyInsideFountain(hUnit)
-    return hUnit:HasModifier('modifier_fountain_aura_buff')
-        and J.GetHP(hUnit) > 0.90
-        and J.GetMP(hUnit) > 0.85
-end
-
-function Push.IsBuildingGlyphedBackdoor()
-    local unitList = GetUnitList(UNIT_LIST_ENEMY_BUILDINGS)
-    for _, building in pairs(unitList) do
+function Push.IsBuildingGlyphedBackdoor(nUnitList)
+    for _, building in pairs(nUnitList) do
         if J.IsValidBuilding(building)
         and (building:HasModifier('modifier_fountain_glyph')
             or building:HasModifier('modifier_backdoor_protection')

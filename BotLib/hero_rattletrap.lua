@@ -74,8 +74,8 @@ local HeroBuild = {
                 "item_boots",
                 "item_magic_wand",
                 "item_tranquil_boots",
-                "item_force_staff",--
-                "item_blade_mail",--
+                "item_force_staff",
+                "item_blade_mail",
                 "item_ancient_janggo",
                 "item_solar_crest",--
                 "item_boots_of_bearing",--
@@ -83,10 +83,14 @@ local HeroBuild = {
                 "item_shivas_guard",--
                 "item_heavens_halberd",--
                 "item_ultimate_scepter_2",
+                "item_wind_waker",--
+                "item_heart",--
                 "item_moon_shard",
             },
             ['sell_list'] = {
                 "item_magic_wand", "item_heavens_halberd",
+                "item_force_staff", "item_wind_waker",
+                "item_blade_mail", "item_heart",
             },
         },
     },
@@ -112,8 +116,8 @@ local HeroBuild = {
                 "item_boots",
                 "item_magic_wand",
                 "item_arcane_boots",
-                "item_force_staff",--
-                "item_blade_mail",--
+                "item_force_staff",
+                "item_blade_mail",
                 "item_mekansm",
                 "item_solar_crest",--
                 "item_guardian_greaves",--
@@ -121,10 +125,14 @@ local HeroBuild = {
                 "item_shivas_guard",--
                 "item_heavens_halberd",--
                 "item_ultimate_scepter_2",
+                "item_wind_waker",--
+                "item_heart",--
                 "item_moon_shard",
             },
             ['sell_list'] = {
                 "item_magic_wand", "item_heavens_halberd",
+                "item_force_staff", "item_wind_waker",
+                "item_blade_mail", "item_heart",
             },
         },
     },

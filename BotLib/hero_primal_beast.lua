@@ -80,7 +80,7 @@ local HeroBuild = {
                     ['t25'] = {10, 0},
                     ['t20'] = {0, 10},
                     ['t15'] = {0, 10},
-                    ['t10'] = {10, 0},
+                    ['t10'] = {0, 10},
                 }
             },
             ['ability'] = {
@@ -202,7 +202,6 @@ function X.SkillsComplement()
     if J.CanNotUseAbility(bot)
     or bot:HasModifier('modifier_prevent_taunts')
     or bot:HasModifier('modifier_primal_beast_onslaught_movement_adjustable')
-    or bot:HasModifier('modifier_primal_beast_trample')
     or bot:HasModifier('modifier_primal_beast_pulverize_self')
     then
         return
@@ -268,6 +267,7 @@ function X.ConsiderOnslaught()
     if not J.CanCastAbility(Onslaught)
     or bot:IsRooted()
     or bot:HasModifier('modifier_bloodseeker_rupture')
+    or bot:HasModifier('modifier_primal_beast_trample')
     then
         return BOT_ACTION_DESIRE_NONE, 0
     end

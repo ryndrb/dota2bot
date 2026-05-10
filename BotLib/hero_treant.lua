@@ -64,9 +64,9 @@ local HeroBuild = {
                 "item_soul_ring",
                 "item_phase_boots",
                 "item_blade_mail",
-                "item_crimson_guard",--
                 "item_blink",
                 "item_black_king_bar",--
+                "item_assault",--
                 "item_ultimate_scepter",
                 "item_aghanims_shard",
                 "item_heart",--
@@ -77,8 +77,8 @@ local HeroBuild = {
                 "item_travel_boots_2",--
             },
             ['sell_list'] = {
-                "item_quelling_blade", "item_blink",
-                "item_magic_wand", "item_black_king_bar",
+                "item_quelling_blade", "item_black_king_bar",
+                "item_magic_wand", "item_assault",
                 "item_soul_ring", "item_ultimate_scepter",
                 "item_blade_mail", "item_nullifier",
             },
@@ -452,7 +452,7 @@ function X.ConsiderLivingArmor()
             and not allyHero:HasModifier('modifier_fountain_aura')
             and J.GetHP(allyHero) < 0.8
             then
-                local allyHeroScore = (allyHero:GetAttackDamage() * allyHero:GetAttackSpeed()) * (1 / Min(1, allyHero:GetArmor()))
+                local allyHeroScore = (allyHero:GetAttackDamage() / allyHero:GetSecondsPerAttack()) * (1 / Min(1, allyHero:GetArmor()))
                 if allyHeroScore > hTargetScore then
                     hTarget = allyHero
                     hTargetScore = allyHeroScore
@@ -523,7 +523,7 @@ function X.ConsiderEyesInTheForest()
         and not botTarget:HasModifier('modifier_treant_eyes_in_the_forest')
         then
             local nTrees = bot:GetNearbyTrees(nCastRange + 300)
-            if nTrees then
+            if nTrees and nTrees[1] then
                 local vTreeLocation = GetTreeLocation(nTrees[1])
                 if EyesInTheForestCast and EyesInTheForestCast.location ~= nil then
                     if ((J.GetDistance(vTreeLocation, EyesInTheForestCast.location) > (nRadius + nRadius / 2)) and (DotaTime() > EyesInTheForestCast.time + nDuration / 2)) then

@@ -20,7 +20,7 @@ local HeroBuild = {
         [1] = {
             ['talent'] = {
                 [1] = {
-                    ['t25'] = {10, 0},
+                    ['t25'] = {0, 10},
                     ['t20'] = {10, 0},
                     ['t15'] = {0, 10},
                     ['t10'] = {0, 10},
@@ -63,7 +63,7 @@ local HeroBuild = {
         [1] = {
             ['talent'] = {
                 [1] = {
-                    ['t25'] = {10, 0},
+                    ['t25'] = {0, 10},
                     ['t20'] = {10, 0},
                     ['t15'] = {0, 10},
                     ['t10'] = {0, 10},
@@ -556,7 +556,7 @@ function X.ConsiderWolfBite()
             and allyHero:GetUnitName() ~= 'npc_dota_hero_templar_assassin'
             and allyHero:GetAttackRange() <= 300
             then
-                local allyHeroScore = allyHero:GetAttackDamage() * allyHero:GetAttackSpeed() * Max(0.5, J.GetHP(allyHero))
+                local allyHeroScore = (allyHero:GetAttackDamage() / allyHero:GetSecondsPerAttack()) * Max(0.5, J.GetHP(allyHero))
                 if allyHeroScore > hTargetScore then
                     hTarget = allyHero
                     hTargetScore = allyHeroScore

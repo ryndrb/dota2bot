@@ -32,12 +32,6 @@ local HeroBuild = {
         [1] = {
             ['talent'] = {
 				[1] = {
-					['t25'] = {10, 0},
-					['t20'] = {0, 10},
-					['t15'] = {0, 10},
-					['t10'] = {0, 10},
-				},
-				[2] = {
 					['t25'] = {0, 10},
 					['t20'] = {0, 10},
 					['t15'] = {0, 10},
@@ -90,7 +84,7 @@ local HeroBuild = {
 					['t25'] = {0, 10},
 					['t20'] = {0, 10},
 					['t15'] = {0, 10},
-					['t10'] = {0, 10},
+					['t10'] = {10, 0},
 				}
             },
             ['ability'] = {
@@ -129,7 +123,7 @@ local HeroBuild = {
             ['talent'] = {
 				[1] = {
 					['t25'] = {10, 0},
-					['t20'] = {10, 0},
+					['t20'] = {0, 10},
 					['t15'] = {0, 10},
 					['t10'] = {10, 0},
 				}
@@ -167,7 +161,7 @@ local HeroBuild = {
             ['talent'] = {
 				[1] = {
 					['t25'] = {10, 0},
-					['t20'] = {10, 0},
+					['t20'] = {0, 10},
 					['t15'] = {0, 10},
 					['t10'] = {10, 0},
 				}
@@ -705,7 +699,7 @@ function X.ConsiderBloodlust()
 		and not allyHero:HasModifier('modifier_fountain_aura_buff')
 		and allyHero:GetAttackDamage() > 0
 		then
-			local allyHeroDamage = allyHero:GetAttackDamage() * allyHero:GetAttackSpeed()
+			local allyHeroDamage = allyHero:GetAttackDamage() / allyHero:GetSecondsPerAttack()
 			if allyHeroDamage > hAllyTargetDamage then
 				hAllyTarget = allyHero
 				hAllyTargetDamage = allyHeroDamage
@@ -815,7 +809,7 @@ function X.ConsiderBloodlust()
 			and allyHero:GetAttackDamage() > 0
 			then
 				if J.IsPushing(allyHero) or J.IsDefending(allyHero) or J.IsFarming(allyHero) then
-					local allyDamage = allyHero:GetAttackDamage() * allyHero:GetAttackSpeed()
+					local allyDamage = allyHero:GetAttackDamage() / allyHero:GetSecondsPerAttack()
 					if allyDamage > hAllyTargetDamage then
 						hAllyTarget = allyHero
 						hAllyTargetDamage = allyDamage

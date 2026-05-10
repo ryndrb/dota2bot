@@ -12,7 +12,7 @@ then
 
 local RI = require(GetScriptDirectory()..'/FunLib/util_role_item')
 
-local sUtility = {"item_heavens_halberd", "item_pipe"}
+local sUtility = {"item_nullifier", "item_heavens_halberd"}
 local sUtilityItem = RI.GetBestUtilityItem(sUtility)
 
 local HeroBuild = {
@@ -20,7 +20,7 @@ local HeroBuild = {
         [1] = {
             ['talent'] = {
                 [1] = {
-					['t25'] = {0, 10},
+					['t25'] = {10, 0},
 					['t20'] = {0, 10},
 					['t15'] = {10, 0},
 					['t10'] = {0, 10},
@@ -63,7 +63,7 @@ local HeroBuild = {
         [1] = {
             ['talent'] = {
 				[1] = {
-					['t25'] = {0, 10},
+					['t25'] = {10, 0},
 					['t20'] = {0, 10},
 					['t15'] = {0, 10},
 					['t10'] = {0, 10},
@@ -106,7 +106,7 @@ local HeroBuild = {
         [1] = {
             ['talent'] = {
 				[1] = {
-					['t25'] = {0, 10},
+					['t25'] = {10, 0},
 					['t20'] = {0, 10},
 					['t15'] = {0, 10},
 					['t10'] = {0, 10},
@@ -127,22 +127,22 @@ local HeroBuild = {
 				"item_phase_boots",
 				"item_maelstrom",
 				"item_rod_of_atos",
-				sUtilityItem,--
 				"item_mjollnir",--
 				"item_black_king_bar",--
 				"item_aghanims_shard",
 				"item_assault",--
+				sUtilityItem,--
 				"item_abyssal_blade",--
 				"item_ultimate_scepter_2",
 				"item_moon_shard",
-				"item_sheepstick",--
+				"item_swift_blink",--
 			},
             ['sell_list'] = {
-				"item_quelling_blade", sUtilityItem,
-				"item_wraith_band", "item_black_king_bar",
-				"item_magic_wand", "item_assault",
+				"item_quelling_blade", "item_black_king_bar",
+				"item_wraith_band", "item_assault",
+				"item_magic_wand", sUtilityItem,
 				"item_rod_of_atos", "item_abyssal_blade",
-				"item_phase_boots", "item_sheepstick",
+				"item_phase_boots", "item_swift_blink",
 			},
         },
     },
@@ -292,7 +292,7 @@ function X.ConsiderBloodrage()
 	-- 		and not allyHero:IsDisarmed()
 	-- 		then
 	-- 			local fAllyHeroHealthAfter = J.GetHealthAfter(((fMaxHealthDPS / 100) * allyHero:GetHealth() * nDuration))
-	-- 			local allyHeroScore = allyHero:GetAttackDamage() * allyHero:GetAttackSpeed()
+	-- 			local allyHeroScore = allyHero:GetAttackDamage() / allyHero:GetSecondsPerAttack()
 	-- 			if allyHeroScore > hTargetScore and fAllyHeroHealthAfter > 0.25 then
 	-- 				hTarget = allyHero
 	-- 				hTargetScore = allyHeroScore
@@ -365,7 +365,7 @@ function X.ConsiderBloodrage()
 			-- 	and not allyHero:IsDisarmed()
 			-- 	then
 			-- 		local fAllyHeroHealthAfter = J.GetHealthAfter(((fMaxHealthDPS / 100) * allyHero:GetHealth() * nDuration))
-			-- 		local allyHeroScore = allyHero:GetAttackDamage() * allyHero:GetAttackSpeed()
+			-- 		local allyHeroScore = allyHero:GetAttackDamage() / allyHero:GetSecondsPerAttack()
 			-- 		if allyHeroScore > hTargetScore and fAllyHeroHealthAfter > 0.25 then
 			-- 			hTarget = allyHero
 			-- 			hTargetScore = allyHeroScore
@@ -731,7 +731,7 @@ function X.ConsiderRupture()
 			and not enemyHero:HasModifier('modifier_item_blade_mail_reflect')
 			then
 				local enemyHeroScore = (enemyHero:GetEstimatedDamageToTarget(false, bot, 5.0, DAMAGE_TYPE_ALL)) * 0.65
-									 + (enemyHero:GetAttackDamage() * enemyHero:GetAttackSpeed() * 5.0) * 0.35
+									 + ((enemyHero:GetAttackDamage() / enemyHero:GetSecondsPerAttack()) * 5.0) * 0.35
 				if enemyHeroScore > hTargetScore then
 					hTarget = enemyHero
 					hTargetScore = enemyHeroScore

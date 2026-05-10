@@ -18,7 +18,7 @@ local hTargetSpot = nil
 local fLastWardPlantTime = -math.huge
 
 function GetDesire()
-    if not X.IsSuitableToWard() then
+    if not X.IsSuitableToWard() or J.IsMeepoClone(bot) then
         return BOT_MODE_DESIRE_NONE
     end
 

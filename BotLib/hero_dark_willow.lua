@@ -59,7 +59,7 @@ local HeroBuild = {
                     ['t25'] = {0, 10},
                     ['t20'] = {10, 0},
                     ['t15'] = {10, 0},
-                    ['t10'] = {10, 0},
+                    ['t10'] = {0, 10},
                 }
             },
             ['ability'] = {
@@ -74,20 +74,19 @@ local HeroBuild = {
             
                 "item_tranquil_boots",
                 "item_magic_wand",
-                "item_urn_of_shadows",
                 "item_cyclone",
-                "item_spirit_vessel",--
                 "item_glimmer_cape",--
                 "item_boots_of_bearing",--
                 "item_aghanims_shard",
                 "item_octarine_core",--
                 "item_sheepstick",--
                 "item_wind_waker",--
+                "item_lotus_orb",
                 "item_ultimate_scepter_2",
                 "item_moon_shard",
             },
             ['sell_list'] = {
-                "item_magic_wand", "item_sheepstick",
+                "item_magic_wand", "item_lotus_orb",
             },
         },
     },
@@ -98,7 +97,7 @@ local HeroBuild = {
                     ['t25'] = {0, 10},
                     ['t20'] = {10, 0},
                     ['t15'] = {10, 0},
-                    ['t10'] = {10, 0},
+                    ['t10'] = {0, 10},
                 }
             },
             ['ability'] = {
@@ -113,20 +112,19 @@ local HeroBuild = {
             
                 "item_arcane_boots",
                 "item_magic_wand",
-                "item_urn_of_shadows",
                 "item_cyclone",
-                "item_spirit_vessel",--
                 "item_glimmer_cape",--
                 "item_guardian_greaves",--
                 "item_aghanims_shard",
                 "item_octarine_core",--
                 "item_sheepstick",--
                 "item_wind_waker",--
+                "item_lotus_orb",
                 "item_ultimate_scepter_2",
                 "item_moon_shard",
             },
             ['sell_list'] = {
-                "item_magic_wand", "item_sheepstick",
+                "item_magic_wand", "item_lotus_orb",
             },
         },
     },

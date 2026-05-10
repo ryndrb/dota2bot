@@ -33,10 +33,10 @@ local HeroBuild = {
         [1] = {
             ['talent'] = {
 				[1] = {
-					['t25'] = {10, 0},
+					['t25'] = {0, 10},
 					['t20'] = {10, 0},
 					['t15'] = {0, 10},
-					['t10'] = {10, 0},
+					['t10'] = {0, 10},
 				}
             },
             ['ability'] = {
@@ -85,7 +85,7 @@ local HeroBuild = {
         [1] = {
             ['talent'] = {
 				[1] = {
-					['t25'] = {10, 0},
+					['t25'] = {0, 10},
 					['t20'] = {10, 0},
 					['t15'] = {10, 0},
 					['t10'] = {0, 10},
@@ -126,7 +126,7 @@ local HeroBuild = {
         [1] = {
             ['talent'] = {
 				[1] = {
-					['t25'] = {10, 0},
+					['t25'] = {0, 10},
 					['t20'] = {10, 0},
 					['t15'] = {10, 0},
 					['t10'] = {0, 10},
@@ -582,7 +582,7 @@ function X.ConsiderLiquidFire()
 			and J.IsInRange(bot, enemy, nCastRange + 300)
 			and not enemy:IsDisarmed()
 			then
-				local enemyDamage = enemy:GetAttackDamage() * enemy:GetAttackSpeed()
+				local enemyDamage = enemy:GetAttackDamage() / enemy:GetSecondsPerAttack()
 				if enemyDamage > hTargetDamage then
 					hTarget = enemy
 					hTargetDamage = enemyDamage

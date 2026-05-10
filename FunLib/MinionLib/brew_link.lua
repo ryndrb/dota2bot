@@ -235,7 +235,7 @@ X.ConsiderBrewLinkSpell['brewmaster_storm_cyclone'] = function (hMinionUnit, abi
                 return BOT_ACTION_DESIRE_HIGH, enemyHero, SPELL_TARGET_TYPE_UNIT
             end
 
-            local enemyHeroDamage = enemyHero:GetAttackDamage() * enemyHero:GetAttackSpeed()
+            local enemyHeroDamage = enemyHero:GetAttackDamage() / enemyHero:GetSecondsPerAttack()
             if enemyHeroDamage > targetDamage then
                 target = enemyHero
                 targetDamage = enemyHeroDamage

@@ -23,7 +23,7 @@ local HeroBuild = {
                     ['t25'] = {10, 0},
                     ['t20'] = {10, 0},
                     ['t15'] = {0, 10},
-                    ['t10'] = {0, 10},
+                    ['t10'] = {10, 0},
                 }
             },
             ['ability'] = {
@@ -65,7 +65,7 @@ local HeroBuild = {
                     ['t25'] = {10, 0},
                     ['t20'] = {10, 0},
                     ['t15'] = {0, 10},
-                    ['t10'] = {0, 10},
+                    ['t10'] = {10, 0},
                 }
             },
             ['ability'] = {
@@ -109,7 +109,7 @@ local HeroBuild = {
                     ['t25'] = {10, 0},
                     ['t20'] = {10, 0},
                     ['t15'] = {0, 10},
-                    ['t10'] = {0, 10},
+                    ['t10'] = {10, 0},
                 }
             },
             ['ability'] = {
@@ -150,9 +150,9 @@ local HeroBuild = {
         [1] = {
             ['talent'] = {
                 [1] = {
-                    ['t25'] = {0, 10},
-                    ['t20'] = {0, 10},
-                    ['t15'] = {10, 0},
+                    ['t25'] = {10, 0},
+                    ['t20'] = {10, 0},
+                    ['t15'] = {0, 10},
                     ['t10'] = {10, 0},
                 }
             },
@@ -192,9 +192,9 @@ local HeroBuild = {
         [1] = {
             ['talent'] = {
                 [1] = {
-                    ['t25'] = {0, 10},
-                    ['t20'] = {0, 10},
-                    ['t15'] = {10, 0},
+                    ['t25'] = {10, 0},
+                    ['t20'] = {10, 0},
+                    ['t15'] = {0, 10},
                     ['t10'] = {10, 0},
                 }
             },
@@ -370,6 +370,7 @@ function X.ConsiderSprout()
             and J.CanCastOnTargetAdvanced(enemyHero)
             and not J.IsSuspiciousIllusion(enemyHero)
             and not J.IsDisabled(enemyHero)
+            and not enemyHero:HasModifier('modifier_broodmother_spin_web')
             and not enemyHero:HasModifier('modifier_hoodwink_scurry_active')
             and not enemyHero:HasModifier('modifier_necrolyte_reapers_scythe')
             and not enemyHero:HasModifier('modifier_item_spider_legs_active')
@@ -393,6 +394,7 @@ function X.ConsiderSprout()
         and J.IsInRange(bot, botTarget, nCastRange)
         and J.CanCastOnTargetAdvanced(botTarget)
         and not J.IsDisabled(botTarget)
+        and not botTarget:HasModifier('modifier_broodmother_spin_web')
         and not botTarget:HasModifier('modifier_hoodwink_scurry_active')
         and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
         and not botTarget:HasModifier('modifier_item_spider_legs_active')
@@ -410,6 +412,7 @@ function X.ConsiderSprout()
             and J.CanCastOnTargetAdvanced(enemyHero)
             and not J.IsSuspiciousIllusion(enemyHero)
             and not J.IsDisabled(enemyHero)
+            and not enemyHero:HasModifier('modifier_broodmother_spin_web')
             and not enemyHero:HasModifier('modifier_hoodwink_scurry_active')
             and not enemyHero:HasModifier('modifier_item_spider_legs_active')
             and bot:WasRecentlyDamagedByHero(enemyHero, 2.0)

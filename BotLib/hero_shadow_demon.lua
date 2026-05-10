@@ -58,7 +58,7 @@ local HeroBuild = {
             ['talent'] = {
                 [1] = {
                     ['t25'] = {10, 0},
-                    ['t20'] = {0, 10},
+                    ['t20'] = {10, 0},
                     ['t15'] = {10, 0},
                     ['t10'] = {10, 0},
                 }
@@ -98,7 +98,7 @@ local HeroBuild = {
             ['talent'] = {
                 [1] = {
                     ['t25'] = {10, 0},
-                    ['t20'] = {0, 10},
+                    ['t20'] = {10, 0},
                     ['t15'] = {10, 0},
                     ['t10'] = {10, 0},
                 }
@@ -276,7 +276,7 @@ function X.ConsiderDisruption()
             and not enemyHero:HasModifier('modifier_shadow_demon_purge_slow')
             then
                 local enemyHeroPower = enemyHero:GetEstimatedDamageToTarget(false, bot, 5.0, DAMAGE_TYPE_ALL)
-                enemyHeroPower = enemyHeroPower + enemyHero:GetAttackDamage() * enemyHero:GetAttackSpeed() * 5.0 * 0.5
+                enemyHeroPower = enemyHeroPower + (enemyHero:GetAttackDamage() / enemyHero:GetSecondsPerAttack()) * 5.0 * 0.5
                 if enemyHeroPower > hTargetPower then
                     hTarget = enemyHero
                     hTargetPower = enemyHeroPower
@@ -816,7 +816,7 @@ function X.ConsiderDemonicPurge()
             and not enemyHero:HasModifier('modifier_shadow_demon_purge_slow')
             then
                 local enemyHeroPower = enemyHero:GetEstimatedDamageToTarget(false, bot, 5.0, DAMAGE_TYPE_ALL)
-                enemyHeroPower = enemyHeroPower + enemyHero:GetAttackDamage() * enemyHero:GetAttackSpeed() * 5.0 * 0.5
+                enemyHeroPower = enemyHeroPower + (enemyHero:GetAttackDamage() / enemyHero:GetSecondsPerAttack()) * 5.0 * 0.5
                 if enemyHeroPower > hTargetPower then
                     hTarget = enemyHero
                     hTargetPower = enemyHeroPower

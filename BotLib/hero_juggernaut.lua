@@ -321,30 +321,6 @@ function X.ConsiderBladeFury()
 		end
 	end
 
-	if J.IsDoingRoshan(bot) then
-		if J.IsRoshan(botTarget)
-		and J.CanBeAttacked(botTarget)
-		and J.IsInRange(bot, botTarget, nRadius)
-		and J.CanCastOnNonMagicImmune(botTarget)
-		and bAttacking
-		and fManaAfter > fManaThreshold1
-		and #nEnemyHeroes == 0
-		then
-			return BOT_ACTION_DESIRE_HIGH
-		end
-	end
-
-	if J.IsDoingTormentor(bot) then
-		if J.IsTormentor(botTarget)
-		and J.IsInRange(bot, botTarget, nRadius)
-		and bAttacking
-		and fManaAfter > fManaThreshold1
-		and #nEnemyHeroes == 0
-		then
-			return BOT_ACTION_DESIRE_HIGH
-		end
-	end
-
 	return BOT_ACTION_DESIRE_NONE
 end
 

@@ -115,25 +115,85 @@ local HeroBuild = {
     ['pos_4'] = {
         [1] = {
             ['talent'] = {
-                [1] = {},
+                [1] = {
+                    ['t25'] = {0, 10},
+                    ['t20'] = {0, 10},
+                    ['t15'] = {10, 0},
+                    ['t10'] = {0, 10},
+                }
             },
             ['ability'] = {
-                [1] = {},
+                [1] = {2,3,2,1,2,6,2,1,1,1,3,6,3,3,6},
             },
-            ['buy_list'] = {},
-            ['sell_list'] = {},
+            ['buy_list'] = {
+                "item_tango",
+                "item_double_branches",
+                "item_blood_grenade",
+				"item_circlet",
+				"item_slippers",
+            
+                "item_magic_wand",
+				"item_wraith_band",
+                "item_tranquil_boots",
+				"item_diffusal_blade",
+                "item_ancient_janggo",
+				"item_rod_of_atos",
+                "item_aghanims_shard",
+                "item_boots_of_bearing",--
+				"item_octarine_core",--
+				"item_sphere",--
+				"item_gungir",--
+				"item_heavens_halberd",--
+				"item_disperser",--
+                "item_ultimate_scepter_2",
+                "item_moon_shard",
+            },
+            ['sell_list'] = {
+                "item_wraith_band", "item_sphere",
+				"item_magic_wand", "item_heavens_halberd",
+            },
         },
     },
     ['pos_5'] = {
         [1] = {
             ['talent'] = {
-                [1] = {},
+                [1] = {
+                    ['t25'] = {0, 10},
+                    ['t20'] = {0, 10},
+                    ['t15'] = {10, 0},
+                    ['t10'] = {0, 10},
+                }
             },
             ['ability'] = {
-                [1] = {},
+                [1] = {2,3,2,1,2,6,2,1,1,1,3,6,3,3,6},
             },
-            ['buy_list'] = {},
-            ['sell_list'] = {},
+            ['buy_list'] = {
+                "item_tango",
+                "item_double_branches",
+                "item_blood_grenade",
+				"item_circlet",
+				"item_slippers",
+            
+                "item_magic_wand",
+				"item_wraith_band",
+                "item_arcane_boots",
+				"item_diffusal_blade",
+                "item_mekansm",
+				"item_rod_of_atos",
+                "item_aghanims_shard",
+                "item_guardian_greaves",--
+				"item_octarine_core",--
+				"item_sphere",--
+				"item_gungir",--
+				"item_heavens_halberd",--
+				"item_disperser",--
+                "item_ultimate_scepter_2",
+                "item_moon_shard",
+            },
+            ['sell_list'] = {
+                "item_wraith_band", "item_sphere",
+				"item_magic_wand", "item_heavens_halberd",
+            },
         },
     },
 }

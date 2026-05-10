@@ -901,7 +901,7 @@ function X.ConsiderAlacrity()
         -- and not J.IsWithoutTarget(allyHero)
         and not allyHero:HasModifier('modifier_invoker_alacrity')
 		then
-            local allyHeroDamage = allyHero:GetAttackDamage() * allyHero:GetAttackSpeed()
+            local allyHeroDamage = allyHero:GetAttackDamage() / allyHero:GetSecondsPerAttack()
             if allyHeroDamage > nAlacrityTargetDamage then
                 hAlacrityTarget = allyHero
                 nAlacrityTargetDamage = allyHeroDamage

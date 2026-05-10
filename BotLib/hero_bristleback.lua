@@ -20,13 +20,7 @@ local HeroBuild = {
         [1] = {
             ['talent'] = {
 				[1] = {
-					['t25'] = {0, 10},
-					['t20'] = {10, 0},
-					['t15'] = {10, 0},
-					['t10'] = {10, 0},
-				},
-				[2] = {
-					['t25'] = {0, 10},
+					['t25'] = {10, 0},
 					['t20'] = {10, 0},
 					['t15'] = {10, 0},
 					['t10'] = {0, 10},
@@ -68,13 +62,7 @@ local HeroBuild = {
         [1] = {
             ['talent'] = {
 				[1] = {
-					['t25'] = {0, 10},
-					['t20'] = {10, 0},
-					['t15'] = {10, 0},
-					['t10'] = {10, 0},
-				},
-				[2] = {
-					['t25'] = {0, 10},
+					['t25'] = {10, 0},
 					['t20'] = {10, 0},
 					['t15'] = {10, 0},
 					['t10'] = {0, 10},
@@ -117,7 +105,7 @@ local HeroBuild = {
         [1] = {
             ['talent'] = {
 				[1] = {
-					['t25'] = {0, 10},
+					['t25'] = {10, 0},
 					['t20'] = {10, 0},
 					['t15'] = {10, 0},
 					['t10'] = {0, 10},
@@ -150,6 +138,45 @@ local HeroBuild = {
 				"item_magic_wand", sUtilityItem,
 				"item_bracer", "item_assault",
 				"item_blade_mail", "item_travel_boots_2",
+			},
+        },
+        [2] = {
+            ['talent'] = {
+				[1] = {
+					['t25'] = {10, 0},
+					['t20'] = {10, 0},
+					['t15'] = {10, 0},
+					['t10'] = {0, 10},
+				}
+            },
+            ['ability'] = {
+				[1] = {2,1,2,3,2,6,2,3,3,3,6,1,1,1,6},
+            },
+            ['buy_list'] = {
+				"item_tango",
+				"item_double_branches",
+				"item_quelling_blade",
+			
+				"item_magic_wand",
+				"item_bracer",
+				"item_arcane_boots",
+				"item_consecrated_wraps",
+				"item_crimson_guard",--
+				"item_black_king_bar",--
+				"item_aghanims_shard",
+				sUtilityItem,--
+				"item_assault",--
+				"item_ultimate_scepter_2",
+				"item_wind_waker",--
+				"item_moon_shard",
+				"item_travel_boots_2",--
+			},
+            ['sell_list'] = {
+				"item_quelling_blade", "item_black_king_bar",
+				"item_bracer", sUtilityItem,
+				"item_magic_wand", "item_assault",
+				"item_arcane_boots", "item_wind_waker",
+				"item_consecrated_wraps", "item_travel_boots_2",
 			},
         },
     },

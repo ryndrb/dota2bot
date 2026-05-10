@@ -22,7 +22,46 @@ local HeroBuild = {
                 [1] = {
                     ['t25'] = {10, 0},
                     ['t20'] = {10, 0},
-                    ['t15'] = {0, 10},
+                    ['t15'] = {10, 0},
+                    ['t10'] = {10, 0},
+                }
+            },
+            ['ability'] = {
+                [1] = {2,3,1,3,3,6,3,2,2,2,1,6,1,1,6},
+            },
+            ['buy_list'] = {
+                "item_tango",
+                "item_double_branches",
+                "item_quelling_blade",
+                "item_double_gauntlets",
+            
+                "item_magic_wand",
+                "item_phase_boots",
+                "item_radiance",--
+                "item_sange_and_yasha",--
+                "item_basher",
+                "item_bloodthorn",--
+                "item_abyssal_blade",--
+                "item_skadi",--
+                "item_moon_shard",
+                "item_travel_boots_2",--
+                "item_aghanims_shard",
+                "item_ultimate_scepter_2",
+            },
+            ['sell_list'] = {
+                "item_gauntlets", "item_sange_and_yasha",
+                "item_gauntlets", "item_basher",
+                "item_gauntlets", "item_abyssal_blade",
+                "item_quelling_blade", "item_bloodthorn",
+                "item_magic_wand", "item_skadi",
+            },
+        },
+        [2] = {
+            ['talent'] = {
+                [1] = {
+                    ['t25'] = {10, 0},
+                    ['t20'] = {10, 0},
+                    ['t15'] = {10, 0},
                     ['t10'] = {10, 0},
                 }
             },
@@ -38,24 +77,24 @@ local HeroBuild = {
                 "item_magic_wand",
                 "item_phase_boots",
                 "item_armlet",
-                "item_radiance",--
+                "item_desolator",--
                 "item_sange_and_yasha",--
-                "item_aghanims_shard",
                 "item_basher",
                 "item_bloodthorn",--
                 "item_abyssal_blade",--
-                "item_skadi",--
+                "item_assault",--
                 "item_moon_shard",
-                "item_ultimate_scepter_2",
                 "item_travel_boots_2",--
+                "item_aghanims_shard",
+                "item_ultimate_scepter_2",
             },
             ['sell_list'] = {
-                "item_gauntlets", "item_radiance",
+                "item_gauntlets", "item_desolator",
                 "item_gauntlets", "item_sange_and_yasha",
                 "item_quelling_blade", "item_basher",
                 "item_quelling_blade", "item_abyssal_blade",
                 "item_magic_wand", "item_bloodthorn",
-                "item_armlet", "item_skadi"
+                "item_armlet", "item_assault"
             },
         },
     },

@@ -119,9 +119,9 @@ local HeroBuild = {
         [1] = {
             ['talent'] = {
 				[1] = {
-					['t25'] = {0, 10},
+					['t25'] = {10, 0},
 					['t20'] = {0, 10},
-					['t15'] = {0, 10},
+					['t15'] = {10, 0},
 					['t10'] = {0, 10},
 				}
             },
@@ -158,9 +158,9 @@ local HeroBuild = {
         [1] = {
             ['talent'] = {
 				[1] = {
-					['t25'] = {0, 10},
+					['t25'] = {10, 0},
 					['t20'] = {0, 10},
-					['t15'] = {0, 10},
+					['t15'] = {10, 0},
 					['t10'] = {0, 10},
 				}
             },
@@ -310,7 +310,7 @@ function X.ConsiderGraveChill()
             and not enemyHero:HasModifier('modifier_necrolyte_reapers_scythe')
             and not enemyHero:HasModifier('modifier_teleporting')
             then
-                local enemyHeroDamage = enemyHero:GetAttackDamage() * enemyHero:GetAttackSpeed()
+                local enemyHeroDamage = enemyHero:GetAttackDamage() / enemyHero:GetSecondsPerAttack()
                 if enemyHeroDamage > hTargetDamage then
                     hTarget = enemyHero
                     hTargetDamage = enemyHeroDamage

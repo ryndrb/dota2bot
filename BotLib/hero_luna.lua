@@ -23,7 +23,7 @@ local HeroBuild = {
 					['t25'] = {10, 0},
 					['t20'] = {0, 10},
 					['t15'] = {10, 0},
-					['t10'] = {10, 0},
+					['t10'] = {0, 10},
 				}
             },
             ['ability'] = {
@@ -428,6 +428,7 @@ function X.ConsiderEclipse()
 		for _, enemyHero in pairs(nEnemyHeroes) do
 			if  J.IsValidHero(enemyHero)
 			and J.CanBeAttacked(enemyHero)
+			and J.IsInRange(bot, enemyHero, nRadius)
 			and J.CanCastOnNonMagicImmune(enemyHero)
 			and not J.IsChasingTarget(bot, enemyHero)
 			and not enemyHero:HasModifier('modifier_abaddon_borrowed_time')
@@ -435,10 +436,15 @@ function X.ConsiderEclipse()
 			and not enemyHero:HasModifier('modifier_necrolyte_reapers_scythe')
 			and not enemyHero:HasModifier('modifier_oracle_false_promise_timer')
 			and not enemyHero:HasModifier('modifier_templar_assassin_refraction_absorb')
-			and not botTarget:HasModifier('modifier_troll_warlord_battle_trance')
-			and not botTarget:HasModifier('modifier_ursa_enrage')
+			and not enemyHero:HasModifier('modifier_troll_warlord_battle_trance')
+			and not enemyHero:HasModifier('modifier_ursa_enrage')
 			then
-				count = count + 1
+				if (J.IsDisabled(enemyHero))
+				or (enemyHero:GetCurrentMovementSpeed() <= 240)
+				or (J.IsInRange(bot, enemyHero, nRadius / 2))
+				then
+					count = count + 1
+				end
 			end
 		end
 
@@ -466,13 +472,18 @@ function X.ConsiderEclipse()
 		and not botTarget:HasModifier('modifier_item_blade_mail_reflect')
 		and not J.CanKillTarget(botTarget, bot:GetAttackDamage() * 4, DAMAGE_TYPE_PHYSICAL)
 		then
-			local nInRangeAlly = J.GetAlliesNearLoc(bot:GetLocation(), 1200)
-			local nInRangeEnemy = J.GetEnemiesNearLoc(bot:GetLocation(), 1200)
-			local nInRangeEnemy_ = bot:GetNearbyHeroes(nRadius, true, BOT_MODE_NONE)
-			local nLocationAoE = bot:FindAoELocation(true, false, bot:GetLocation(), 0, nRadius, 0, 0)
+			if (J.IsDisabled(botTarget))
+			or (botTarget:GetCurrentMovementSpeed() <= 240)
+			or (J.IsInRange(bot, botTarget, nRadius / 2))
+			then
+				local nInRangeAlly = J.GetAlliesNearLoc(bot:GetLocation(), 1200)
+				local nInRangeEnemy = J.GetEnemiesNearLoc(bot:GetLocation(), 1200)
+				local nInRangeEnemy_ = bot:GetNearbyHeroes(nRadius, true, BOT_MODE_NONE)
+				local nLocationAoE = bot:FindAoELocation(true, false, bot:GetLocation(), 0, nRadius, 0, 0)
 
-			if not (#nInRangeAlly >= #nInRangeEnemy + 2) and nLocationAoE.count <= 2 and #nInRangeEnemy_ <= 3 then
-				return BOT_ACTION_DESIRE_HIGH
+				if not (#nInRangeAlly >= #nInRangeEnemy + 2) and nLocationAoE.count <= 2 and #nInRangeEnemy_ <= 3 then
+					return BOT_ACTION_DESIRE_HIGH
+				end
 			end
 		end
 	end

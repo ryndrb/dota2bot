@@ -245,19 +245,19 @@ function GetDesire()
 			end
 		end
 
-		cAbility = bot:GetAbilityByName("primal_beast_trample")
-		if cAbility:IsTrained()
-		then
-			if cAbility:IsInAbilityPhase() or bot:HasModifier('modifier_primal_beast_trample') then
-				return 6.66
-			end
-		end
-
 		cAbility = bot:GetAbilityByName("primal_beast_pulverize")
 		if cAbility:IsTrained()
 		then
 			if cAbility:IsInAbilityPhase() or bot:HasModifier('modifier_primal_beast_pulverize_self') then
 				return BOT_MODE_DESIRE_ABSOLUTE * 2
+			end
+		end
+
+		cAbility = bot:GetAbilityByName("primal_beast_trample")
+		if cAbility:IsTrained()
+		then
+			if cAbility:IsInAbilityPhase() or bot:HasModifier('modifier_primal_beast_trample') then
+				return 6.66
 			end
 		end
 	elseif botName == "npc_dota_hero_hoodwink"

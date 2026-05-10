@@ -21,7 +21,7 @@ local HeroBuild = {
             ['talent'] = {
 				[1] = {
 					['t25'] = {10, 0},
-					['t20'] = {10, 0},
+					['t20'] = {0, 10},
 					['t15'] = {10, 0},
 					['t10'] = {0, 10},
 				}
@@ -46,6 +46,47 @@ local HeroBuild = {
 				"item_aghanims_shard",
 				"item_greater_crit",--
 				"item_hurricane_pike",--
+				"item_satanic",--
+				"item_moon_shard",
+				"item_butterfly",--
+				"item_ultimate_scepter_2",
+			},
+            ['sell_list'] = {
+				"item_quelling_blade", "item_black_king_bar",
+				"item_wraith_band", "item_greater_crit",
+				"item_magic_wand", "item_satanic",
+				"item_power_treads", "item_butterfly",
+			},
+        },
+        [2] = {
+            ['talent'] = {
+				[1] = {
+					['t25'] = {10, 0},
+					['t20'] = {0, 10},
+					['t15'] = {10, 0},
+					['t10'] = {0, 10},
+				}
+            },
+            ['ability'] = {
+				[1] = {2,3,1,1,1,6,1,3,3,3,6,2,2,2,6},
+            },
+            ['buy_list'] = {
+				"item_tango",
+				"item_double_branches",
+				"item_circlet",
+				"item_slippers",
+				"item_quelling_blade",
+
+				"item_magic_wand",
+				"item_power_treads",
+				"item_wraith_band",
+				"item_maelstrom",
+				"item_specialists_array",
+				"item_black_king_bar",--
+				"item_mjollnir",--
+				"item_aghanims_shard",
+				"item_hydras_breath",--
+				"item_greater_crit",--
 				"item_satanic",--
 				"item_moon_shard",
 				"item_butterfly",--
@@ -97,6 +138,50 @@ local HeroBuild = {
 			},
             ['sell_list'] = {
 				"item_quelling_blade", "item_dragon_lance",
+				"item_wraith_band", "item_black_king_bar",
+				"item_magic_wand", "item_greater_crit",
+				"item_bottle", "item_satanic",
+				"item_power_treads", "item_butterfly",
+			},
+        },
+        [2] = {
+            ['talent'] = {
+				[1] = {
+					['t25'] = {10, 0},
+					['t20'] = {0, 10},
+					['t15'] = {10, 0},
+					['t10'] = {0, 10},
+				}
+            },
+            ['ability'] = {
+				[1] = {2,3,1,1,1,6,1,3,3,3,6,2,2,2,6},
+            },
+            ['buy_list'] = {
+				"item_tango",
+				"item_double_branches",
+				"item_circlet",
+				"item_slippers",
+				"item_quelling_blade",
+
+				"item_bottle",
+				"item_magic_wand",
+				"item_power_treads",
+				"item_wraith_band",
+				"item_maelstrom",
+				"item_specialists_array",
+				"item_black_king_bar",--
+				"item_mjollnir",--
+				"item_aghanims_shard",
+				"item_hydras_breath",--
+				"item_greater_crit",--
+				"item_satanic",--
+				"item_moon_shard",
+				"item_butterfly",--
+				"item_ultimate_scepter_2",
+			},
+            ['sell_list'] = {
+				"item_quelling_blade", "item_specialists_array",
+				"item_quelling_blade", "item_hydras_breath",
 				"item_wraith_band", "item_black_king_bar",
 				"item_magic_wand", "item_greater_crit",
 				"item_bottle", "item_satanic",
@@ -763,8 +848,8 @@ function X.ConsiderCelestialQuiver()
 		and not enemyHero:HasModifier('modifier_oracle_false_promise_timer')
 		and not enemyHero:HasModifier('modifier_templar_assassin_refraction_absorb')
         then
-            if  J.WillKillTarget(enemyHero, bot:GetAttackDamage() + nDamage, DAMAGE_TYPE_MAGICAL, bot:GetAttackSpeed())
-			and not J.WillKillTarget(enemyHero, bot:GetAttackDamage(), DAMAGE_TYPE_PHYSICAL, bot:GetAttackSpeed())
+            if  J.WillKillTarget(enemyHero, bot:GetAttackDamage() + nDamage, DAMAGE_TYPE_MAGICAL, bot:GetSecondsPerAttack())
+			and not J.WillKillTarget(enemyHero, bot:GetAttackDamage(), DAMAGE_TYPE_PHYSICAL, bot:GetSecondsPerAttack())
             then
                 return BOT_ACTION_DESIRE_HIGH, enemyHero
             end
@@ -801,7 +886,7 @@ function X.ConsiderCelestialQuiver()
 			and not J.CanKillTarget(creep, bot:GetAttackDamage(), DAMAGE_TYPE_PHYSICAL)
             then
                 local nLocationAoE = bot:FindAoELocation(true, true, creep:GetLocation(), 0, 650, 0, 0)
-                if J.WillKillTarget(creep, bot:GetAttackDamage() + nDamage, DAMAGE_TYPE_MAGICAL, bot:GetAttackSpeed()) then
+                if J.WillKillTarget(creep, bot:GetAttackDamage() + nDamage, DAMAGE_TYPE_MAGICAL, bot:GetSecondsPerAttack()) then
                     if nLocationAoE.count > 0 or J.IsUnitTargetedByTower(creep, false) or J.IsEnemyTargetUnit(creep, 1200) then
                         return BOT_ACTION_DESIRE_HIGH, creep
                     end

@@ -48,6 +48,7 @@ local function AbilityLevelUpComplement()
 	if (bot:GetLevel() >= 30 and bot:GetUnitName() == "npc_dota_hero_bloodseeker")
 	or (bot:HasModifier('modifier_dazzle_nothl_projection_soul_debuff'))
 	or (bot:HasModifier('modifier_life_stealer_infest'))
+	or (J.IsMeepoClone(bot))
 	then
 		return
 	end
@@ -785,7 +786,7 @@ function X.IsEnemyHeroAroundSecretShop()
 
 	local vCenterLocation = ( vTeamSecretShop + GetAncient( GetTeam() ):GetLocation() ) * 0.5
 
-	if J.IsEnemyHeroAroundLocation( vCenterLocation, 2000 )
+	if J.IsEnemyHeroAroundLocation( vCenterLocation, 2000, 3.0 )
 	then
 		return true
 	end
@@ -826,6 +827,7 @@ local function ItemUsageComplement()
 	or bot:HasModifier('modifier_life_stealer_infest')
 	or (bot:HasModifier('modifier_nyx_assassin_vendetta') and J.IsRealInvisible(bot))
 	or X.WillBreakInvisible(bot)
+	or J.IsMeepoClone(bot) -- ~same frame/tick problems
 	then
 		return
 	end
@@ -1135,7 +1137,7 @@ X.ConsiderItemDesire["item_black_king_bar"] = function( hItem )
 		and bAttacking
 		then
 			local fModifierTime = J.GetModifierTime(botTarget, 'modifier_item_blade_mail_reflect')
-			if (bot:GetAttackDamage() * bot:GetAttackSpeed() * (fModifierTime - 1)) > bot:GetHealth() then
+			if ((bot:GetAttackDamage() / bot:GetSecondsPerAttack()) * (fModifierTime - 1)) > bot:GetHealth() then
 				return BOT_ACTION_DESIRE_HIGH, nil, ITEM_TARGET_TYPE_NONE
 			end
 		end
@@ -2705,7 +2707,7 @@ X.ConsiderItemDesire["item_heavens_halberd"] = function( hItem )
 			and not J.IsDisabled(enemyHero)
 			and not enemyHero:IsDisarmed()
 			then
-				local enemyHeroDamage = enemyHero:GetAttackDamage() * enemyHero:GetAttackSpeed()
+				local enemyHeroDamage = enemyHero:GetAttackDamage() / enemyHero:GetSecondsPerAttack()
 				if enemyHeroDamage > hTargetDamage then
 					hTarget = enemyHero
 					hTargetDamage = hTargetDamage
@@ -4657,6 +4659,7 @@ X.ConsiderItemDesire["item_tpscroll"] = function( hItem )
 	or (bot:HasModifier('modifier_oracle_false_promise_timer') and J.GetModifierTime(bot, "modifier_oracle_false_promise_timer" ) <= 3.2)
 	or (J.GetModifierTime(bot, 'modifier_jakiro_macropyre_burn') >= 1.4)
 	or (J.IsRoshanAlive() and GetUnitToLocationDistance(bot, vLocationRoshan) <= 1600)
+	or (GameTime() - GetRoshanKillTime() <= 3.0)
 	then
 		return BOT_ACTION_DESIRE_NONE
 	end
@@ -4716,21 +4719,44 @@ X.ConsiderItemDesire["item_tpscroll"] = function( hItem )
 	end
 
 	-- might get killed by units attacking me
-	local unitListAttacking = {}
+	local attackingDamage = 0
 	local unitList = GetUnitList(UNIT_LIST_ALL)
     for _, unit in pairs(unitList) do
-        if J.IsValid(unit) and GetTeam() ~= unit:GetTeam() and J.IsInRange(bot, unit, 1600) then
-			if unit:GetAttackTarget() == bot
-			or J.IsChasingTarget(unit, bot)
-			or (unit:IsHero() and bot:WasRecentlyDamagedByHero(unit, 3.0))
-			then
-				table.insert(unitListAttacking, unit)
+        if J.IsValid(unit) and GetTeam() ~= unit:GetTeam() then
+			local fTimeToReach = math.floor((GetUnitToUnitDistance(unit, bot) - unit:GetAttackRange()) / unit:GetCurrentMovementSpeed())
+			if J.IsInRange(bot, unit, 1600) then
+				if unit:GetAttackTarget() == bot
+				or J.IsChasingTarget(unit, bot)
+				or (unit:IsHero() and bot:WasRecentlyDamagedByHero(unit, 3.0))
+				then
+					if unit:IsHero() and not J.IsSuspiciousIllusion(unit) then
+						attackingDamage = attackingDamage + unit:GetEstimatedDamageToTarget(true, bot, 5.0 + fTimeToReach, DAMAGE_TYPE_ALL)
+					else
+						attackingDamage = attackingDamage + bot:GetActualIncomingDamage((unit:GetAttackDamage() / unit:GetSecondsPerAttack()) * (5 + fTimeToReach), DAMAGE_TYPE_PHYSICAL)
+					end
+				end
+			end
+
+			-- will get bashed
+			local sUnitName = unit:GetUnitName()
+			fTimeToReach = fTimeToReach + unit:GetSecondsPerAttack()
+
+			if J.IsValidHero(unit) and not J.IsSuspiciousIllusion(unit) and fTimeToReach < 4.5 then
+				local unitLevel = unit:GetLevel()
+				if J.HasItem(unit, 'item_basher')
+				or J.HasItem(unit, 'item_abyssal_blade')
+				or (sUnitName == 'npc_dota_hero_faceless_void' and unitLevel >= 3)
+				or (sUnitName == 'npc_dota_hero_faceless_void' and unitLevel >= 2)
+				or (sUnitName == 'npc_dota_hero_spirit_breaker' and unitLevel >= 1)
+				or (sUnitName == 'npc_dota_hero_troll_warlord' and unitLevel >= 4)
+				then
+					return BOT_ACTION_DESIRE_NONE
+				end
 			end
 		end
     end
 
-	local unitListAttackDamage = J.GetUnitListTotalAttackDamage(unitListAttacking, 5.0)
-	if J.WillKillTarget(bot, unitListAttackDamage, DAMAGE_TYPE_PHYSICAL, 5.0) then
+	if attackingDamage > bot:GetHealth() then
 		return BOT_ACTION_DESIRE_NONE
 	end
 
@@ -4744,7 +4770,7 @@ X.ConsiderItemDesire["item_tpscroll"] = function( hItem )
 	local Salve = J.IsItemAvailable('item_flask')
 
 	if J.IsRetreating(bot)
-	and botActiveModeDesire > BOT_MODE_DESIRE_MODERATE
+	and botActiveModeDesire >= BOT_MODE_DESIRE_HIGH
 	and botActiveModeDesire <= BOT_MODE_DESIRE_ABSOLUTE
 	and bot:GetLevel() >= 3
 	and not bot:HasModifier('modifier_arc_warden_tempest_double')
@@ -4767,7 +4793,7 @@ X.ConsiderItemDesire["item_tpscroll"] = function( hItem )
 		end
 
 		local nInRangeAlly_Attacking = J.GetSpecialModeAllies(bot, 1200, BOT_MODE_ATTACK)
-		if botHP < (0.15 + 0.24 * nEnemyCount)
+		if botHP < (0.15 + 0.15 * nEnemyCount)
 		and #nInRangeAlly_Attacking == 0
 		and bot:WasRecentlyDamagedByAnyHero(5.0)
 		and nEnemyCount <= (botHP < 0.4 and 2 or 3)
@@ -4949,7 +4975,10 @@ X.ConsiderItemDesire["item_tpscroll"] = function( hItem )
 		and not J.IsSuspiciousIllusion(botTarget)
 		then
 			vLocation = J.GetNearbyLocationToTp(botTarget:GetLocation())
-			if vLocation and GetUnitToLocationDistance(bot, vLocation) > nMinTPDistance - 800 then
+			if  vLocation
+			and GetUnitToLocationDistance(bot, vLocation) > nMinTPDistance - 800
+			and GetUnitToLocationDistance(botTarget, vLocation) < 800
+			then
 				return BOT_ACTION_DESIRE_HIGH, vLocation, ITEM_TARGET_TYPE_POINT
 			end
 		end
@@ -5770,7 +5799,7 @@ X.ConsiderItemDesire["item_metamorphic_mandible"] = function( hItem )
 					or enemyHero:IsFacingLocation(bot:GetLocation(), 15)
 					or bot:WasRecentlyDamagedByHero(enemyHero, 3.0)
 					then
-						enemyDamage = enemyDamage + (enemyHero:GetAttackDamage() * enemyHero:GetAttackSpeed() * nDuration)
+						enemyDamage = enemyDamage + ((enemyHero:GetAttackDamage() / enemyHero:GetSecondsPerAttack()) * nDuration)
 					end
 				end
 			end
@@ -7613,6 +7642,60 @@ function X.IsItemCarrierVisible(hHeroList, nRadius, sItemName)
 	return false
 end
 
+local function DropTowerAggro(hUnit)
+	if J.IsValid(hUnit) then
+		if J.CanNotUseAction(hUnit) or hUnit:IsDisarmed() then return false end
+
+        local nUnitList = GetUnitList(UNIT_LIST_ENEMY_BUILDINGS)
+        for _, buliding in pairs(nUnitList) do
+            if  J.IsValidBuilding(buliding)
+            and buliding:IsTower()
+            and buliding:GetAttackTarget() == hUnit
+            and not buliding:HasModifier('modifier_fountain_glyph')
+            then
+                local nAllyCreeps = hUnit:GetNearbyLaneCreeps(700, false)
+                for _, creep in pairs(nAllyCreeps) do
+                    if J.IsValid(creep) and GetUnitToUnitDistance(creep, buliding) < 700 then
+                        hUnit:Action_AttackUnit(creep, false)
+                        return true
+                    end
+                end
+            end
+        end
+	end
+
+    return false
+end
+
+-- help (?) reduce supports stealing last hits (not planning to override laning Think())
+local function ShouldDropTarget(hUnit)
+	if J.IsEarlyGame() and not J.IsCore(hUnit) then
+		if hUnit:IsDisarmed() then return false end
+
+		local botTarget = J.GetProperTarget(hUnit)
+		if J.IsValid(botTarget) and botTarget:IsCreep() then
+			local nInRangeAlly = J.GetAlliesNearLoc(botTarget:GetLocation(), 1200)
+			for _, allyHero in ipairs(nInRangeAlly) do
+				if  J.IsValidHero(allyHero)
+				and hUnit ~= allyHero
+				and J.IsCore(allyHero)
+				and J.GetProperTarget(allyHero) == botTarget
+				then
+					if J.IsInRange(allyHero, botTarget, allyHero:GetAttackRange() + 350) then
+						if GetBot() == hUnit then
+							hUnit:SetTarget(nil)
+							hUnit:Action_MoveToLocation(J.GetTeamFountain())
+						end
+						return true
+					end
+				end
+			end
+		end
+	end
+
+	return false
+end
+
 local function UseGlyph()
 
 	if GetGlyphCooldown( ) > 0
@@ -7711,7 +7794,8 @@ function ItemUsageThink()
 end
 
 function AbilityUsageThink()
-
+	if DropTowerAggro(bot) then return end -- general
+	if ShouldDropTarget(bot) then return end
 end
 
 local fLastTime = 0

@@ -21,7 +21,7 @@ local HeroBuild = {
             ['talent'] = {
                 [1] = {
                     ['t25'] = {0, 10},
-                    ['t20'] = {0, 10},
+                    ['t20'] = {10, 0},
                     ['t15'] = {10, 0},
                     ['t10'] = {10, 0},
                 }
@@ -57,13 +57,53 @@ local HeroBuild = {
                 "item_falcon_blade", "item_greater_crit",
 			},
         },
+        [2] = {
+            ['talent'] = {
+                [1] = {
+                    ['t25'] = {0, 10},
+                    ['t20'] = {10, 0},
+                    ['t15'] = {10, 0},
+                    ['t10'] = {10, 0},
+                }
+            },
+            ['ability'] = {
+                [1] = {1,3,1,2,3,6,3,3,1,1,6,2,2,2,6},
+            },
+            ['buy_list'] = {
+				"item_tango",
+				"item_double_branches",
+                "item_magic_stick",
+                "item_slippers",
+			
+				"item_power_treads",
+				"item_wraith_band",
+				"item_magic_wand",
+                "item_falcon_blade",
+				"item_specialists_array",
+                "item_manta",--
+				"item_black_king_bar",--
+				"item_ultimate_scepter",
+				"item_hydras_breath",--
+				"item_aghanims_shard",
+				"item_greater_crit",--
+				"item_satanic",--
+				"item_ultimate_scepter_2",
+				"item_moon_shard",
+				"item_travel_boots_2",--
+			},
+            ['sell_list'] = {
+				"item_wraith_band", "item_black_king_bar",
+				"item_magic_wand", "item_ultimate_scepter",
+                "item_falcon_blade", "item_greater_crit",
+			},
+        },
     },
     ['pos_2'] = {
         [1] = {
             ['talent'] = {
                 [1] = {
                     ['t25'] = {0, 10},
-                    ['t20'] = {0, 10},
+                    ['t20'] = {10, 0},
                     ['t15'] = {10, 0},
                     ['t10'] = {10, 0},
                 }
@@ -96,6 +136,46 @@ local HeroBuild = {
             ['sell_list'] = {
 				"item_magic_wand", "item_black_king_bar",
 				"item_wraith_band", "item_ultimate_scepter",
+                "item_falcon_blade", "item_greater_crit",
+			},
+        },
+        [2] = {
+            ['talent'] = {
+                [1] = {
+                    ['t25'] = {0, 10},
+                    ['t20'] = {10, 0},
+                    ['t15'] = {10, 0},
+                    ['t10'] = {10, 0},
+                }
+            },
+            ['ability'] = {
+                [1] = {1,3,1,2,3,6,3,3,1,1,6,2,2,2,6},
+            },
+            ['buy_list'] = {
+				"item_tango",
+				"item_double_branches",
+                "item_magic_stick",
+                "item_slippers",
+			
+				"item_power_treads",
+				"item_wraith_band",
+				"item_magic_wand",
+                "item_falcon_blade",
+				"item_specialists_array",
+                "item_manta",--
+				"item_black_king_bar",--
+				"item_ultimate_scepter",
+				"item_hydras_breath",--
+				"item_aghanims_shard",
+				"item_greater_crit",--
+				"item_satanic",--
+				"item_ultimate_scepter_2",
+				"item_moon_shard",
+				"item_travel_boots_2",--
+			},
+            ['sell_list'] = {
+				"item_wraith_band", "item_black_king_bar",
+				"item_magic_wand", "item_ultimate_scepter",
                 "item_falcon_blade", "item_greater_crit",
 			},
         },

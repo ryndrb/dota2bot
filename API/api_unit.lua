@@ -325,6 +325,14 @@ end
 -- float GetActualIncomingDamage( nDamage, nDamageType )
 
 -- Gets the incoming damage value after reductions depending on damage type.
+local o_GetActualIncomingDamage = CDOTA_Bot_Script.GetActualIncomingDamage
+function CDOTA_Bot_Script:GetActualIncomingDamage(nDamage, nDamageType)
+    if not self then return 0 end
+
+    if nDamageType == DAMAGE_TYPE_PURE then nDamageType = DAMAGE_TYPE_MAGICAL end -- pure always (?) gives 0
+    return o_GetActualIncomingDamage(self, nDamage, nDamageType)
+end
+
 -- float GetAttackCombatProficiency( hTarget )
 
 -- Gets the damage multiplier when attacking the specified target.
@@ -668,6 +676,14 @@ end
 -- float GetEstimatedDamageToTarget( bCurrentlyAvailable, hTarget, fDuration, nDamageTypes )
 
 -- Gets an estimate of the amount of damage that this unit can do to the specified unit. If bCurrentlyAvailable is true, it takes into account mana and cooldown status.
+local o_GetEstimatedDamageToTarget = CDOTA_Bot_Script.GetEstimatedDamageToTarget
+function CDOTA_Bot_Script:GetEstimatedDamageToTarget( bCurrentlyAvailable, hTarget, fDuration, nDamageTypes )
+    if not self then return 0 end
+
+    if nDamageTypes == DAMAGE_TYPE_PURE then nDamageTypes = DAMAGE_TYPE_MAGICAL end -- pure always (?) gives 0
+    return o_GetEstimatedDamageToTarget(self, bCurrentlyAvailable, hTarget, fDuration, nDamageTypes)
+end
+
 -- float GetStunDuration( bCurrentlyAvailable )
 
 -- Gets an estimate of the duration of a stun that a unit can cast. If bCurrentlyAvailable is true, it takes into account mana and cooldown status.

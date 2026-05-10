@@ -24,7 +24,7 @@ local HeroBuild = {
 					['t25'] = {10, 0},
 					['t20'] = {10, 0},
 					['t15'] = {10, 0},
-					['t10'] = {0, 10},
+					['t10'] = {10, 0},
 				}
             },
             ['ability'] = {
@@ -41,19 +41,19 @@ local HeroBuild = {
 				"item_bracer",
 				"item_phase_boots",
 				"item_radiance",--
-				"item_aghanims_shard",
 				"item_black_king_bar",--
-				"item_satanic",--
+				"item_aghanims_shard",
 				"item_bloodthorn",--
+				"item_satanic",--
 				"item_greater_crit",--
-				"item_moon_shard",
 				"item_ultimate_scepter_2",
+				"item_moon_shard",
 				"item_travel_boots_2",--
 			},
             ['sell_list'] = {
-				"item_quelling_blade", "item_satanic",
-				"item_magic_wand", "item_bloodthorn",
-				"item_bracer", "item_greater_crit",
+				"item_quelling_blade", "item_bloodthorn",
+				"item_bracer", "item_satanic",
+				"item_magic_wand", "item_greater_crit",
 			},
         },
     },
@@ -62,9 +62,9 @@ local HeroBuild = {
             ['talent'] = {
 				[1] = {
 					['t25'] = {0, 10},
-					['t20'] = {0, 10},
-					['t15'] = {0, 10},
-					['t10'] = {0, 10},
+					['t20'] = {10, 0},
+					['t15'] = {10, 0},
+					['t10'] = {10, 0},
 				}
             },
             ['ability'] = {
@@ -107,7 +107,7 @@ local HeroBuild = {
 					['t25'] = {10, 0},
 					['t20'] = {10, 0},
 					['t15'] = {10, 0},
-					['t10'] = {0, 10},
+					['t10'] = {10, 0},
 				}
             },
             ['ability'] = {
@@ -125,22 +125,20 @@ local HeroBuild = {
 				"item_bracer",
 				"item_phase_boots",
 				"item_radiance",--
-				"item_blade_mail",
-				"item_aghanims_shard",
 				"item_black_king_bar",--
-				"item_satanic",--
+				"item_aghanims_shard",
 				"item_bloodthorn",--
+				"item_satanic",--
 				"item_greater_crit",--
-				"item_moon_shard",
 				"item_ultimate_scepter_2",
+				"item_moon_shard",
 				"item_travel_boots_2",--
 			},
             ['sell_list'] = {
-				"item_quelling_blade", "item_satanic",
-				"item_magic_wand", "item_black_king_bar",
-				"item_bottle", "item_satanic",
+				"item_quelling_blade", "item_black_king_bar",
 				"item_bracer", "item_bloodthorn",
-				"item_blade_mail", "item_greater_crit",
+				"item_magic_wand", "item_satanic",
+				"item_bottle", "item_greater_crit",
 			},
         },
     },
@@ -149,8 +147,8 @@ local HeroBuild = {
             ['talent'] = {
 				[1] = {
 					['t25'] = {0, 10},
-					['t20'] = {0, 10},
-					['t15'] = {0, 10},
+					['t20'] = {10, 0},
+					['t15'] = {10, 0},
 					['t10'] = {0, 10},
 				}
             },
@@ -176,15 +174,100 @@ local HeroBuild = {
 				"item_shivas_guard",--
 				"item_ultimate_scepter_2",
 				"item_octarine_core",--
-				"item_moon_shard",
 				"item_travel_boots_2",--
+				"item_moon_shard",
 			},
             ['sell_list'] = {
 				"item_quelling_blade", "item_crimson_guard",
-				"item_magic_wand", "item_ultimate_scepter",
+				"item_bracer", "item_ultimate_scepter",
 				"item_bracer", sUtilityItem,
-				"item_bracer", "item_black_king_bar",
+				"item_magic_wand", "item_black_king_bar",
 				"item_blade_mail", "item_octarine_core",
+			},
+        },
+        [2] = {
+            ['talent'] = {
+				[1] = {
+					['t25'] = {0, 10},
+					['t20'] = {10, 0},
+					['t15'] = {10, 0},
+					['t10'] = {0, 10},
+				}
+            },
+            ['ability'] = {
+                [1] = {2,1,2,3,2,6,2,3,3,3,6,1,1,1,6},
+            },
+            ['buy_list'] = {
+				"item_tango",
+				"item_double_branches",
+				"item_quelling_blade",
+				"item_double_gauntlets",
+			
+				"item_magic_wand",
+				"item_boots",
+				"item_double_bracer",
+				"item_phase_boots",
+				"item_blade_mail",
+				"item_crimson_guard",--
+				"item_aghanims_shard",
+				"item_ultimate_scepter",
+				sUtilityItem,--
+				"item_black_king_bar",--
+				"item_shivas_guard",--
+				"item_ultimate_scepter_2",
+				"item_heart",--
+				"item_travel_boots_2",--
+				"item_moon_shard",
+			},
+            ['sell_list'] = {
+				"item_quelling_blade", "item_crimson_guard",
+				"item_bracer", "item_ultimate_scepter",
+				"item_bracer", sUtilityItem,
+				"item_magic_wand", "item_black_king_bar",
+				"item_blade_mail", "item_heart",
+			},
+        },
+        [3] = {
+            ['talent'] = {
+				[1] = {
+					['t25'] = {0, 10},
+					['t20'] = {10, 0},
+					['t15'] = {10, 0},
+					['t10'] = {0, 10},
+				}
+            },
+            ['ability'] = {
+                [1] = {2,1,2,3,2,6,2,3,3,3,6,1,1,1,6},
+            },
+            ['buy_list'] = {
+				"item_tango",
+				"item_double_branches",
+				"item_quelling_blade",
+				"item_circlet",
+				"item_gauntlets",
+			
+				"item_magic_wand",
+				"item_bracer",
+				"item_phase_boots",
+				"item_blade_mail",
+				"item_consecrated_wraps",
+				"item_ultimate_scepter",
+				"item_crimson_guard",--
+				"item_aghanims_shard",
+				sUtilityItem,--
+				"item_black_king_bar",--
+				"item_ultimate_scepter_2",
+				"item_shivas_guard",--
+				"item_heart",--
+				"item_travel_boots_2",--
+				"item_moon_shard",
+			},
+            ['sell_list'] = {
+				"item_quelling_blade", "item_ultimate_scepter",
+				"item_bracer", "item_crimson_guard",
+				"item_magic_wand", sUtilityItem,
+				"item_consecrated_wraps", "item_heart",
+				"item_blade_mail", "item_travel_boots_2",
 			},
         },
     },

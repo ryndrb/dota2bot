@@ -371,7 +371,7 @@ function X.ConsiderLaser()
             and J.CanCastOnTargetAdvanced(enemyHero)
             and not enemyHero:HasModifier('modifier_necrolyte_reapers_scythe')
             then
-                local enemyHeroDamage = enemyHero:GetAttackDamage() * enemyHero:GetAttackSpeed()
+                local enemyHeroDamage = enemyHero:GetAttackDamage() / enemyHero:GetSecondsPerAttack()
                 if enemyHeroDamage > hTargetDamage then
                     hTarget = enemyHero
                     hTargetDamage = enemyHeroDamage

@@ -22,7 +22,7 @@ local HeroBuild = {
                 [1] = {
                     ['t25'] = {10, 0},
                     ['t20'] = {0, 10},
-                    ['t15'] = {0, 10},
+                    ['t15'] = {10, 0},
                     ['t10'] = {10, 0},
                 }
             },
@@ -60,7 +60,7 @@ local HeroBuild = {
             ['talent'] = {
                 [1] = {
                     ['t25'] = {10, 0},
-                    ['t20'] = {10, 0},
+                    ['t20'] = {0, 10},
                     ['t15'] = {10, 0},
                     ['t10'] = {0, 10},
                 }
@@ -652,7 +652,7 @@ function X.ConsiderBattleTrance()
         then
             local nInRangeAlly = J.GetAlliesNearLoc(bot:GetLocation(), 1200)
             local nInRangeEnemy = J.GetEnemiesNearLoc(bot:GetLocation(), 1200)
-            local totalAttackDamge = nEnemyHeroes[1]:GetActualIncomingDamage(bot:GetAttackDamage() * (bot:GetAttackSpeed() + nBonusAS / 100) * fDuration, DAMAGE_TYPE_PHYSICAL)
+            local totalAttackDamge = nEnemyHeroes[1]:GetActualIncomingDamage((bot:GetAttackDamage() / (1.7 / (bot:GetAttackSpeed() + nBonusAS / 100))) * fDuration, DAMAGE_TYPE_PHYSICAL)
 
             if (totalAttackDamge >= (nEnemyHeroes[1]:GetHealth() + nEnemyHeroes[1]:GetHealthRegen() * fDuration) and not (#nInRangeAlly >= #nInRangeEnemy + 2))
             or (#nInRangeEnemy >= #nInRangeAlly + 2 and J.IsInTeamFight(bot, 1200) and botHP < 0.65)

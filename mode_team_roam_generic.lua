@@ -34,14 +34,13 @@ local PickedItem = nil
 
 local ShouldAttackSpecialUnit = false
 
-local shouldHarass = false
-local harassTarget = nil
+local harass 	= { should = false, target = nil }
+local lastHit 	= { should = false, target = nil }
 
 local ShouldHelpWhenCoreIsTargeted = false
 
 local TormentorLocation
 
-local hTargetCreep = nil
 local bSomeoneInChronosphere = false
 local fEngagePingingTime = -math.huge
 
@@ -218,16 +217,15 @@ function GetDesire()
 		end
 	end
 
-	hTargetCreep = X.GetLastHitCreep()
-	if J.IsValid(hTargetCreep) and J.CanBeAttacked(hTargetCreep) then
-		return BOT_MODE_DESIRE_ABSOLUTE * 1.5
+	lastHit.should, lastHit.target = X.ShouldLastHit()
+	if lastHit.should and J.IsValid(lastHit.target) then
+		return BOT_MODE_DESIRE_VERYHIGH + 0.04
 	end
 
-	-- nDesire = X.ConsiderHarassInLaningPhase()
-	-- if nDesire > 0
-	-- then
-	-- 	return nDesire
-	-- end
+	harass.should, harass.target = X.ShouldHarass()
+	if harass.should and J.IsValidHero(harass.target) then
+		return BOT_MODE_DESIRE_VERYHIGH + 0.04
+	end
 
 	if not bot:IsAlive() or bot:GetCurrentActionType() == BOT_ACTION_TYPE_DELAY then
 		return BOT_MODE_DESIRE_NONE
@@ -343,23 +341,43 @@ function OnEnd()
 	PickedItem = nil
 	towerTime = 0
 	towerCreepMode = false
-	harassTarget = nil
 	bSomeoneInChronosphere = false
+	harass.should = false
+	harass.target = nil
+	lastHit.should = false
+	lastHit.target = nil
 end
 
 
 function Think()
 	if J.CanNotUseAction(bot) then return end
 
-	if  shouldHarass
-	and harassTarget ~= nil
-	then
-		bot:Action_AttackUnit(harassTarget, true)
+	if lastHit.should and J.IsValid(lastHit.target) then
+		if J.AfterAttackAnim(bot) then return end
+
+		-- if math.floor(DotaTime()) % 3 == 0 then
+		-- 	bot:ActionImmediate_Chat('[ CS ] ' .. ' ## ' .. botName , true)
+		-- end
+		bot:Action_AttackUnit(lastHit.target, true)
 		return
 	end
 
-	if hTargetCreep ~= nil then
-		bot:Action_AttackUnit(hTargetCreep, true)
+	if harass.should and J.IsValidHero(harass.target) then
+		if J.AfterAttackAnim(bot) then return end
+
+		local bIsMuerta = botName == 'npc_dota_hero_muerta'
+        local bEtherealForm = J.IsInEtherealForm(harass.target)
+        local bAttackImmune = harass.target:IsAttackImmune() and (not bEtherealForm or not bIsMuerta)
+
+        if bAttackImmune then
+            bot:Action_MoveToLocation(J.VectorTowards(harass.target:GetLocation(), bot:GetLocation(), bot:GetAttackRange() / 2))
+            return
+        end
+
+		-- if math.floor(DotaTime()) % 3 == 0 then
+		-- 	bot:ActionImmediate_Chat('[ HARASS ] ' .. ' ## ' .. harass.target:GetUnitName() .. ' ## ' .. botName , true)
+		-- end
+		bot:Action_AttackUnit(harass.target, true)
 		return
 	end
 
@@ -1275,7 +1293,7 @@ function X.WeakestUnitCanBeAttacked(bHero, bEnemy, nRadius, bot)
 		and not u:HasModifier('modifier_item_blade_mail_reflect')
 		and not u:HasModifier('modifier_item_aeon_disk_buff')
 		then
-			local uScore = u:GetActualIncomingDamage(bot:GetAttackDamage() * bot:GetAttackSpeed() * 5.0, DAMAGE_TYPE_PHYSICAL) / (u:GetHealth() + u:GetHealthRegen() * 5.0)
+			local uScore = u:GetActualIncomingDamage((bot:GetAttackDamage() / bot:GetSecondsPerAttack()) * 5.0, DAMAGE_TYPE_PHYSICAL) / (u:GetHealth() + u:GetHealthRegen() * 5.0)
 			if uScore > weakestScore then
 				weakest = u;
 				weakestScore = uScore;
@@ -1921,78 +1939,154 @@ function X.HasHumanAlly( bot )
 		
 end
 
--- support harass; cores can just fall to generic attack mode
-function X.ConsiderHarassInLaningPhase()
-	if J.IsInLaningPhase()
-	and not J.IsCore(bot)
-	and not bot:WasRecentlyDamagedByAnyHero(2.5)
+function X.ShouldHarass()
+	if  bot:GetActiveMode() ~= BOT_MODE_ATTACK
+	and not J.IsRetreating(bot)
+	and not bot:IsDisarmed()
+	and not bot:IsSilenced()
 	then
-		local nModeDesire = bot:GetActiveModeDesire()
-		local nInRangeAlly = bot:GetNearbyHeroes(700, false, BOT_MODE_NONE)
-		local nInRangeEnemy = bot:GetNearbyHeroes(700, true, BOT_MODE_NONE)
-		local nEnemyLaneCreeps = bot:GetNearbyLaneCreeps(700, true)
-		local nAttackRange = bot:GetAttackRange()
+		local bCore = J.IsCore(bot)
+		local bLaningPhase = J.IsInLaningPhase()
+		local botAttackRange = bot:GetAttackRange()
+		local botAttackDamage = bot:GetAttackDamage()
+		local botHP = J.GetHP(bot)
 
-		-- Harass
-		local canLastHitCount = 0
-
-		for _, creep in pairs(nEnemyLaneCreeps)
-		do
-			if  J.IsValid(creep)
-			and J.CanBeAttacked(creep)
-			and J.GetHP(creep) <= 0.5
-			then
-				canLastHitCount = canLastHitCount + 1
-			end
+		-- will likely lose significant health, don't harass
+		if (J.GetModifierCount(bot, 'modifier_huskar_burning_spear_debuff') >= 3)
+		or (J.GetModifierCount(bot, 'modifier_viper_poison_attack_slow') >= 3)
+		or (bot:HasModifier('modifier_alchemist_acid_spray') and botHP < 0.65)
+		or (bot:HasModifier('modifier_doom_bringer_doom_aura_enemy'))
+		or (bot:HasModifier('modifier_earth_spirit_magnetize'))
+		or (bot:HasModifier('modifier_lycan_summon_wolves_crit_maim'))
+		or (bot:HasModifier('modifier_shredder_chakram_debuff'))
+		or (bot:HasModifier('modifier_abyssal_underlord_firestorm_burn'))
+		or (bot:HasModifier('modifier_medusa_stone_gaze_slow'))
+		or (bot:HasModifier('modifier_razor_plasma_field_slow'))
+		or (bot:HasModifier('modifier_crystal_maiden_freezing_field_slow'))
+		or (bot:HasModifier('modifier_disruptor_static_storm'))
+		or (bot:HasModifier('modifier_jakiro_macropyre_burn'))
+		or (bot:HasModifier('modifier_lich_chainfrost_slow'))
+		or (bot:HasModifier('modifier_pugna_life_drain'))
+		or (bot:HasModifier('modifier_queenofpain_shadow_strike'))
+		or (bot:HasModifier('modifier_warlock_upheaval'))
+		or (bot:HasModifier('modifier_maledict'))
+		or (bot:HasModifier('modifier_arc_warden_flux'))
+		or (bot:HasModifier('modifier_enigma_midnight_pulse_damage'))
+		or (bot:HasModifier('modifier_sandking_sand_storm_slow'))
+		or (bot:HasModifier('modifier_snapfire_magma_burn_slow'))
+		or (bot:HasModifier('modifier_techies_sticky_bomb_slow'))
+		or (bot:HasModifier('modifier_techies_land_mine_burn'))
+		or bot:GetCurrentMovementSpeed() <= 250
+		then
+			return false, nil
 		end
 
-		if  J.GetHP(bot) > 0.61
-		-- and ((J.IsCore(bot) and canLastHitCount <= 1)
-		-- 	or (not J.IsCore(bot)))
-		then
-			-- MK Range
-			if nAttackRange < 300
-			then
-				nAttackRange = 300
-			end
+		local countNearbyAlly, countNearbyEnemy = 0, 0
+		local nInRangeAlly = J.GetAlliesNearLoc(bot:GetLocation(), 900)
+		local nInRangeEnemy = J.GetEnemiesNearLoc(bot:GetLocation(), 1200)
 
-			nInRangeEnemy = bot:GetNearbyHeroes(nAttackRange, true, BOT_MODE_NONE)
-			if  J.IsValidHero(nInRangeEnemy[1])
-			and J.CanBeAttacked(nInRangeEnemy[1])
-			and not J.IsSuspiciousIllusion(nInRangeEnemy[1])
-			and not J.IsRetreating(bot)
-			and nInRangeAlly ~= nil and nInRangeEnemy ~= nil
-			and #nInRangeAlly >= #nInRangeEnemy
-			and nInRangeEnemy[1]:GetLevel() < 6
-			then
-				local nInRangeTower = bot:GetNearbyTowers(1600, true)
+		for _, ally in pairs(nInRangeAlly) do
+			if J.IsValidHero(ally) then countNearbyAlly = countNearbyAlly + ((J.IsCore(ally) and 1) or 0.5) end
+		end
 
-				if  nInRangeTower ~= nil
-				and (#nInRangeTower == 0
-					or (J.IsValidBuilding(nInRangeTower[1])
-						and GetUnitToUnitDistance(bot, nInRangeTower[1]) > 888
-						and GetUnitToUnitDistance(nInRangeEnemy[1], nInRangeTower[1]) > 888))
-				and not bot:WasRecentlyDamagedByTower(3.5)
-				then
-					shouldHarass = true
-					harassTarget = nInRangeEnemy[1]
+		for _, enemy in pairs(nInRangeEnemy) do
+			if J.IsValidHero(enemy) then countNearbyEnemy = countNearbyEnemy + ((J.IsCore(enemy) and 1) or 0.5) end
+		end
 
-					if (J.IsHumanPlayer(nInRangeEnemy[1]) or J.IsCore(nInRangeEnemy[1]))
-					then
-						return 0.666
-					else
-						return 0.555
+		if countNearbyAlly < countNearbyEnemy then return false, nil end
+
+		if J.IsRealInvisible(bot) and countNearbyEnemy >= countNearbyAlly + 1 then return false, nil end
+
+		-- can they kill me
+		if J.GetTotalEstimatedDamageToTarget(nInRangeEnemy, bot, 5.0) + 200 > bot:GetHealth() then
+			return false, nil
+		end
+
+		if bLaningPhase then
+			-- if there's a dying creep nearby, don't harass
+			if bCore then
+				local nEnemyLaneCreeps = bot:GetNearbyLaneCreeps(Min(botAttackRange + 300, 1600), true)
+				for _, creep in pairs(nEnemyLaneCreeps) do
+					if J.IsValid(creep) and J.CanBeAttacked(creep) and not J.IsRoshan(creep) and not J.IsTormentor(creep) then
+						if creep:GetHealth() < (botAttackDamage + botAttackDamage / 2) then
+							return false, nil
+						end
 					end
-				else
-					shouldHarass = false
+				end
+			else
+				local nAllyLaneCreeps = bot:GetNearbyLaneCreeps(Min(botAttackRange + 75, 1600), false)
+				for _, creep in pairs(nAllyLaneCreeps) do
+					if J.IsValid(creep) and J.CanBeAttacked(creep) and not J.IsRoshan(creep) and not J.IsTormentor(creep) then
+						if creep:GetHealth() < botAttackDamage then
+							return false, nil
+						end
+					end
 				end
 			end
 		end
+
+		-- too many creeps, will likely lose significant health
+		local nEnemyCreeps = bot:GetNearbyCreeps(600, true)
+        if  #nEnemyCreeps >= 3
+		and bLaningPhase
+		and bot:WasRecentlyDamagedByCreep(3.0)
+		and not J.HasItem(bot, 'item_vanguard')
+		and not J.HasItem(bot, 'item_crimson_guard')
+		then
+            return false, nil
+        end
+
+		local nEnemyTowers = bot:GetNearbyTowers(1100, true)
+		if #nEnemyTowers > 0 and #nInRangeAlly < 4 then return false, nil end
+
+		local botMovementSpeedCurrent = bot:GetCurrentMovementSpeed()
+
+		local target = nil
+		local targetScore = 0
+		nInRangeEnemy = J.GetEnemiesNearLoc(bot:GetLocation(), 1600)
+		for _, enemyHero in pairs(nInRangeEnemy) do
+			if  J.IsValidHero(enemyHero)
+			and J.CanBeAttacked(enemyHero)
+			and not (J.GetHP(enemyHero) - J.GetHP(bot) >= 0.3)
+			and not enemyHero:HasModifier('modifier_item_blade_mail_reflect')
+			then
+				local enemyHeroMovementSpeedCurrent = enemyHero:GetCurrentMovementSpeed()
+				local enemyHeroScore = enemyHero:GetActualIncomingDamage(botAttackDamage, DAMAGE_TYPE_PHYSICAL) / enemyHero:GetHealth()
+
+				if J.IsInRange(bot, enemyHero, botAttackRange) then
+					if enemyHeroScore > targetScore then
+						target = enemyHero
+						targetScore = enemyHeroScore
+					end
+				elseif J.IsInRange(bot, enemyHero, botAttackRange + 150) then
+					if botMovementSpeedCurrent > enemyHeroMovementSpeedCurrent
+					or J.IsDisabled(enemyHero)
+					then
+						if enemyHeroScore > targetScore then
+							target = enemyHero
+							targetScore = enemyHeroScore
+						end
+					end
+				elseif J.IsInRange(bot, enemyHero, botAttackRange + 500) then
+					if botMovementSpeedCurrent > enemyHeroMovementSpeedCurrent + 50
+					or (J.IsDisabled(enemyHero) and #nInRangeAlly >= 3 and #nInRangeAlly >= #nInRangeEnemy)
+					or #nInRangeAlly >= 4
+					then
+						if enemyHeroScore > targetScore then
+							target = enemyHero
+							targetScore = enemyHeroScore
+						end
+					end
+				end
+			end
+		end
+
+		if target then
+			return true, target
+		end
 	end
 
-	shouldHarass = false
-
-	return BOT_ACTION_DESIRE_NONE
+	return false, nil
 end
 
 function TryPickupDroppedNeutralItemTokens()
@@ -2237,35 +2331,80 @@ function X.ConsiderHelpWhenCoreIsTargeted()
 end
 
 -- some help with last hits
-function X.GetLastHitCreep()
+function X.ShouldLastHit()
 	if J.IsRetreating(bot)
-	or (not J.IsCore(bot) and J.IsThereCoreNearby(800))
-	or J.IsInTeamFight(bot, 1200)
+	or J.IsGoingOnSomeone(bot, 1200)
 	then
-		return nil
+		return false, nil
 	end
 
-	local nEnemyTowers = bot:GetNearbyTowers(1600, true)
+	local botAttackDamage = bot:GetAttackDamage()
+	local botAttackRange = bot:GetAttackRange()
+
+	if bot:GetItemSlotType(bot:FindItemSlot('item_quelling_blade')) == ITEM_SLOT_TYPE_MAIN then
+		if bot:GetAttackRange() > 310 or bot:GetUnitName() == 'npc_dota_hero_templar_assassin' then
+			botAttackDamage = botAttackDamage + 4
+		else
+			botAttackDamage = botAttackDamage + 8
+		end
+	end
+
+	if botName == 'npc_dota_hero_jakiro' then
+		botAttackDamage = botAttackDamage * 2
+	end
+
+	local botTarget = J.GetProperTarget(bot)
+	if J.IsValid(botTarget) and botTarget:IsCreep() and bot:GetActiveMode() ~= BOT_MODE_TEAM_ROAM then
+		if botTarget:GetHealth() <= botAttackDamage then
+			return false, nil
+		end
+	end
+
 	local nEnemyCreeps = bot:GetNearbyCreeps(1600, true)
-	for _, creep in pairs(nEnemyCreeps) do
-		if J.IsValid(creep)
+	local nEnemyTowers = bot:GetNearbyTowers(1600, true)
+
+	local hTarget = nil
+	local hTargetScore = 0
+	for _, creep in ipairs(nEnemyCreeps) do
+		if  J.IsValid(creep)
 		and J.CanBeAttacked(creep)
-		and J.IsInRange(bot, creep, bot:GetAttackRange() + 300)
+		and (J.IsCore(bot) or not J.IsThereCoreInLocation(creep:GetLocation(), 800))
 		and not J.IsRoshan(creep)
 		and not J.IsTormentor(creep)
 		then
 			local nDelay = J.GetAttackProDelayTime(bot, creep)
-			if J.WillKillTarget(creep, bot:GetAttackDamage()-1, DAMAGE_TYPE_PHYSICAL, nDelay)
-			and (#nEnemyTowers == 0 or (J.IsValidBuilding(nEnemyTowers[1]) and not J.IsInRange(creep, nEnemyTowers[1], 650)))
-			then
-				local nInRangeAlly = J.GetAlliesNearLoc(creep:GetLocation(), 1000)
-				local nInRangeEnemy = J.GetEnemiesNearLoc(creep:GetLocation(), 1000)
-				if #nInRangeAlly >= #nInRangeEnemy then
-					return creep
+			if J.WillKillTarget(creep, botAttackDamage - 3, DAMAGE_TYPE_PHYSICAL, nDelay) then
+				local sCreepName = creep:GetUnitName()
+				local creepScore = creep:GetActualIncomingDamage(botAttackDamage, DAMAGE_TYPE_PHYSICAL) / creep:GetHealth()
+				if string.find(sCreepName, 'ranged') then
+					creepScore = creepScore * 2
+				elseif string.find(sCreepName, 'flagbearer') then
+					creepScore = creepScore * 1
+				else
+					creepScore = creepScore * 0.5
+				end
+
+				local bInAttackRange = J.IsInRange(bot, creep, botAttackRange)
+
+				if creepScore > hTargetScore then
+					local nInRangeAlly = J.GetAlliesNearLoc(creep:GetLocation(), 900)
+					local nInRangeEnemy = J.GetEnemiesNearLoc(creep:GetLocation(), 900)
+					if (bInAttackRange)
+					or (J.IsInRange(bot, creep, botAttackRange + 300) and #nInRangeAlly >= #nInRangeEnemy)
+					then
+						local bCanTarget = #nEnemyTowers == 0
+										or not J.IsValidBuilding(nEnemyTowers[1])
+										or GetUnitToUnitDistance(creep, nEnemyTowers[1]) > 700
+
+						if bCanTarget then
+							hTarget = creep
+							hTargetScore = creepScore
+						end
+					end
 				end
 			end
 		end
 	end
 
-	return nil
+	return hTarget ~= nil, hTarget
 end

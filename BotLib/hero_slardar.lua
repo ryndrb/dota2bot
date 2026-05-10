@@ -22,7 +22,7 @@ local HeroBuild = {
 				[1] = {
 					['t25'] = {10, 0},
 					['t20'] = {0, 10},
-					['t15'] = {0, 10},
+					['t15'] = {10, 0},
 					['t10'] = {0, 10},
 				}
             },
@@ -63,7 +63,7 @@ local HeroBuild = {
             ['talent'] = {
 				[1] = {
 					['t25'] = {10, 0},
-					['t20'] = {10, 0},
+					['t20'] = {0, 10},
 					['t15'] = {10, 0},
 					['t10'] = {0, 10},
 				}
@@ -109,7 +109,7 @@ local HeroBuild = {
 				[1] = {
 					['t25'] = {10, 0},
 					['t20'] = {0, 10},
-					['t15'] = {0, 10},
+					['t15'] = {10, 0},
 					['t10'] = {0, 10},
 				}
             },
@@ -127,12 +127,12 @@ local HeroBuild = {
 				"item_bracer",
 				"item_power_treads",
 				"item_blink",
-				"item_crimson_guard",--
+				"item_ultimate_scepter",
 				"item_black_king_bar",--
 				"item_aghanims_shard",
-				"item_ultimate_scepter",
-				sUtilityItem,--
 				"item_assault",--
+				sUtilityItem,--
+				"item_bloodthorn",--
 				"item_ultimate_scepter_2",
 				"item_overwhelming_blink",--
 				"item_moon_shard",
@@ -140,9 +140,8 @@ local HeroBuild = {
 			},
             ['sell_list'] = {
 				"item_quelling_blade", "item_black_king_bar",
-				"item_magic_wand", "item_ultimate_scepter",
-				"item_magic_wand", "item_ultimate_scepter",
-				"item_bracer", sUtilityItem,
+				"item_bracer", "item_assault",
+				"item_magic_wand", sUtilityItem,
 			},
         },
     },

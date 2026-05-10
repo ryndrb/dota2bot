@@ -30,8 +30,8 @@ local nEnemyAverageLevel = 1
 
 local RB = Vector(-7184.360840, -6689.084961, 392.750000)
 local DB = Vector(6996.191895, 6414.104004, 392.000000)
-local roshanRadiantLoc  = Vector(2787.287354, -2752.223877, 13.998048)
-local roshanDireLoc = Vector(-2909.122559, 2185.981689, 13.998047)
+local roshanRadiantLoc  = Vector(2811.071045, -2707.017822, 7.299805)
+local roshanDireLoc = Vector(-3090.515381, 2263.222900, 7.299805)
 local RadiantTormentorLoc = Vector(7753.750488, -6217.413086, 0.000000)
 local DireTormentorLoc = Vector(-7678.044434, 6337.246094, 0.000000)
 local fKeepManaPercent = 0.39
@@ -1090,11 +1090,20 @@ function J.IsInTeamFight( bot, nRadius )
 
 	if nRadius == nil or nRadius > 1600 then nRadius = 1600 end
 
-	local attackModeAllyList = J.GetSpecialModeAllies(bot, nRadius, BOT_MODE_ATTACK)
+	local countNearbyAllyEngaging = 0
+	for i = 1, 5 do
+		local member = GetTeamMember(i)
+		if J.IsValidHero(member) and J.IsGoingOnSomeone(member) and J.IsInRange(bot, member, nRadius) then
+			local memberTarget = J.GetProperTarget(member)
+			if J.IsValidHero(memberTarget) and J.IsInRange(member, memberTarget, 1600) then
+				countNearbyAllyEngaging = countNearbyAllyEngaging + 1
+			end
+		end
+	end
+
 	local nInRangeEnemy = J.GetEnemiesNearLoc(bot:GetLocation(), nRadius)
 
-	return #attackModeAllyList >= 2 and #nInRangeEnemy >= 2 -- and bot:GetActiveMode() ~= BOT_MODE_RETREAT
-
+	return countNearbyAllyEngaging >= 2 and #nInRangeEnemy >= 2 -- and bot:GetActiveMode() ~= BOT_MODE_RETREAT
 end
 
 
@@ -1120,8 +1129,11 @@ function J.IsGoingOnSomeone( bot )
 	return mode == BOT_MODE_ROAM
 		or mode == BOT_MODE_GANK
 		or mode == BOT_MODE_DEFEND_ALLY
-		or (mode == BOT_MODE_TEAM_ROAM and J.IsValidHero(botTarget))
 		or mode == BOT_MODE_ATTACK
+		or (mode == BOT_MODE_OUTPOST and J.IsValidHero(botTarget))
+		or (mode == BOT_MODE_TEAM_ROAM and J.IsValidHero(botTarget))
+		or (J.IsPushing(bot) and J.IsValidHero(botTarget))
+		or (J.IsDefending(bot) and J.IsValidHero(botTarget))
 end
 
 
@@ -2161,6 +2173,7 @@ function J.SetQueueToInvisible( bot )
 	if bot:IsAlive()
 		and not bot:IsInvisible()
 		and not bot:HasModifier( "modifier_item_dustofappearance" )
+		and not J.IsMeepoClone(bot)
 	then
 		local enemyTowerList = bot:GetNearbyTowers( 888, true )
 
@@ -2200,7 +2213,7 @@ end
 function J.SetQueueSwitchPtToINT( bot )
 
 	local pt = J.IsItemAvailable( "item_power_treads" )
-	if pt ~= nil and pt:IsFullyCastable()
+	if pt ~= nil and pt:IsFullyCastable() and not J.IsMeepoClone(bot)
 	then
 		if pt:GetPowerTreadsStat() == ATTRIBUTE_INTELLECT
 		then
@@ -2221,7 +2234,7 @@ function J.SetQueueUseSoulRing( bot )
 
 	local sr = J.IsItemAvailable( "item_soul_ring" )
 
-	if sr ~= nil and sr:IsFullyCastable()
+	if sr ~= nil and sr:IsFullyCastable() and not J.IsMeepoClone(bot)
 	then
 		local nEnemyCount = J.GetEnemyCount( bot, 1600 )
 		local botHP = J.GetHP( bot )
@@ -2826,11 +2839,11 @@ function J.CanBeAttacked( unit )
 			and not unit:HasModifier("modifier_eul_cyclone")
 			and not unit:HasModifier("modifier_brewmaster_storm_cyclone")
 			and not unit:HasModifier("modifier_wind_waker")
-			and (unit:GetTeam() == GetTeam() 
-					or not unit:HasModifier("modifier_crystal_maiden_frostbite") )
-			and (unit:GetTeam() ~= GetTeam() 
-			     or ( unit:GetUnitName() ~= "npc_dota_wraith_king_skeleton_warrior" 
-					  and unit:GetHealth()/unit:GetMaxHealth() < 0.5 ) )
+			-- and (unit:GetTeam() == GetTeam() 
+			-- 		or not unit:HasModifier("modifier_crystal_maiden_frostbite") )
+			-- and (unit:GetTeam() ~= GetTeam() 
+			--      or ( unit:GetUnitName() ~= "npc_dota_wraith_king_skeleton_warrior" 
+			-- 		  and unit:GetHealth()/unit:GetMaxHealth() < 0.5 ) )
 end
 
 
@@ -3059,7 +3072,7 @@ function J.GetNearbyLocationToTp( nLoc )
 		if watchTower ~= nil
 			and watchTower:GetTeam() == nTeam
 			and GetUnitToLocationDistance( watchTower, nLoc ) < minDist - 1300
-			and ( not J.IsEnemyHeroAroundLocation( watchTower:GetLocation(), 600 )
+			and ( not J.IsEnemyHeroAroundLocation( watchTower:GetLocation(), 600, 3.0 )
 					or J.IsAllyHeroAroundLocation( watchTower:GetLocation(), 600 ) )
 		then
 			 targetTower = watchTower
@@ -3200,7 +3213,7 @@ function J.IsAllyHeroAroundLocation( vLoc, nRadius )
 end
 
 
-function J.IsEnemyHeroAroundLocation( vLoc, nRadius )
+function J.IsEnemyHeroAroundLocation( vLoc, nRadius, fTime )
 
 	for i, id in pairs( GetTeamPlayers( GetOpposingTeam() ) )
 	do
@@ -3210,13 +3223,24 @@ function J.IsEnemyHeroAroundLocation( vLoc, nRadius )
 				local dInfo = info[1]
 				if dInfo ~= nil
 					and J.GetLocationToLocationDistance( vLoc, dInfo.location ) <= nRadius
-					and dInfo.time_since_seen < 2.0
+					and dInfo.time_since_seen < fTime
 				then
 					return true
 				end
 			end
 		end
 	end
+
+	local hTeleports = GetIncomingTeleports()
+    for _, tp in pairs(hTeleports) do
+        if tp ~= nil then
+			for _, id in pairs(GetTeamPlayers(GetOpposingTeam())) do
+				if IsHeroAlive(id) and id == tp.playerid and J.GetDistance(tp.location, vLoc) <= nRadius then
+					return true
+				end
+			end
+        end
+    end
 
 	return false
 
@@ -3610,10 +3634,10 @@ local function GetUnitAttackDamage(unit, fInterval, bIllusion)
 				nAttackDamage = nAttackDamage * 0.33
 			end
 
-			return nAttackDamage * unit:GetAttackSpeed() * fInterval
+			return (nAttackDamage / unit:GetSecondsPerAttack()) * fInterval
 		else
 			if not bIllusion then
-				return nAttackDamage * unit:GetAttackSpeed() * fInterval
+				return (nAttackDamage / unit:GetSecondsPerAttack()) * fInterval
 			end
 		end
 	end
@@ -3628,7 +3652,6 @@ function J.WeAreStronger(bot, nRadius)
 	local ourPower = 0
 	local ourPowerRaw = 0
 	local enemyPower = 0
-	local botHealthRegen =  bot:GetHealthRegen() * 2.0
 
 	for _, unit in pairs(GetUnitList(UNIT_LIST_ALL)) do
 		if J.IsValidHero(unit)
@@ -3642,6 +3665,7 @@ function J.WeAreStronger(bot, nRadius)
 		and unit:GetTeam() ~= TEAM_NONE
 		then
 			local sUnitName = unit:GetUnitName()
+			local attackDamage = (unit:GetAttackDamage() / unit:GetSecondsPerAttack()) * 5
 
 			if GetTeam() == unit:GetTeam() then
 				if not unit:HasModifier('modifier_arc_warden_tempest_double')
@@ -3649,8 +3673,8 @@ function J.WeAreStronger(bot, nRadius)
 				then
 					local nDamage = GetUnitAttackDamage(unit, 5.0, true)
 					if nDamage then
-						ourPower = ourPower + (math.log(1 + unit:GetOffensivePower())) * ((math.sqrt(Max(0, nDamage))))
-						ourPowerRaw = ourPowerRaw + (math.log(1 + unit:GetRawOffensivePower())) * (math.sqrt(Max(0, nDamage)))
+						ourPower 	= ourPower    + (math.log(1 + Min(unit:GetOffensivePower(), 10000)))    * (math.sqrt(Max(0, nDamage)))
+						ourPowerRaw = ourPowerRaw + (math.log(1 + Min(unit:GetRawOffensivePower(), 10000))) * (math.sqrt(Max(0, nDamage)))
 					end
 				else
 					if not J.IsMeepoClone(unit)
@@ -3659,8 +3683,8 @@ function J.WeAreStronger(bot, nRadius)
 					then
 						table.insert(tAllyHeroes, unit)
 					end
-					ourPower = ourPower + (math.log(1 + unit:GetOffensivePower())) * (math.sqrt(unit:GetAttackDamage() * unit:GetAttackSpeed() * 5))
-					ourPowerRaw = ourPowerRaw + (math.log(1 + unit:GetRawOffensivePower())) * (math.sqrt(Max(0, unit:GetAttackDamage() * unit:GetAttackSpeed() * 5)))
+					ourPower 	= ourPower    + (math.log(1 + Min(unit:GetOffensivePower(), 10000)))    * (math.sqrt(Max(0, attackDamage)))
+					ourPowerRaw = ourPowerRaw + (math.log(1 + Min(unit:GetRawOffensivePower(), 10000))) * (math.sqrt(Max(0, attackDamage)))
 				end
 			else
 				if not unit:HasModifier('modifier_arc_warden_tempest_double')
@@ -3677,7 +3701,7 @@ function J.WeAreStronger(bot, nRadius)
 					then
 						table.insert(tEnemyHeroes, unit)
 					end
-					enemyPower = enemyPower + (math.log(1 + unit:GetRawOffensivePower())) * (math.sqrt(Max(0, unit:GetAttackDamage() * unit:GetAttackSpeed() * 5)))
+					enemyPower = enemyPower + (math.log(1 + Min(unit:GetRawOffensivePower(), 10000))) * (math.sqrt(Max(0, attackDamage)))
 				end
 			end
 		end
@@ -3686,11 +3710,11 @@ function J.WeAreStronger(bot, nRadius)
 	local nAllyTowers = bot:GetNearbyTowers(600, false)
 	if J.IsValidBuilding(nAllyTowers[1]) then
 		if nAllyTowers[1]:HasModifier('modifier_fountain_glyph') then
-			local power = #nAllyTowers * (math.sqrt(Max(0, nAllyTowers[1]:GetAttackDamage() * nAllyTowers[1]:GetAttackSpeed() * 5.0 * 2)))
+			local power = #nAllyTowers * (math.sqrt(Max(0, (nAllyTowers[1]:GetAttackDamage() / nAllyTowers[1]:GetSecondsPerAttack()) * 5.0 * 2)))
 			ourPower = ourPower + power
 			ourPowerRaw = ourPowerRaw + power
 		else
-			local power = #nAllyTowers * (math.sqrt(Max(0, nAllyTowers[1]:GetAttackDamage() * nAllyTowers[1]:GetAttackSpeed() * 5.0)))
+			local power = #nAllyTowers * (math.sqrt(Max(0, (nAllyTowers[1]:GetAttackDamage() / nAllyTowers[1]:GetSecondsPerAttack()) * 5.0)))
 			ourPower = ourPower + power
 			ourPowerRaw = ourPowerRaw + power
 		end
@@ -4533,32 +4557,16 @@ function J.GetMeepos()
 	return Meepos
 end
 
+-- for team only
 function J.IsMeepoClone(hero)
-	if  J.IsValidHero(hero)
-	and hero:GetUnitName() == 'npc_dota_hero_meepo'
-	then
-		for i = 0, 5
-		do
-			local hItem = hero:GetItemInSlot(i)
+	if hero:GetUnitName() ~= 'npc_dota_hero_meepo' then return false end
 
-			if  hItem ~= nil
-			and not (hItem:GetName() == 'item_boots'
-					or hItem:GetName() == 'item_tranquil_boots'
-					or hItem:GetName() == 'item_arcane_boots'
-					or hItem:GetName() == 'item_power_treads'
-					or hItem:GetName() == 'item_phase_boots'
-					or hItem:GetName() == 'item_travel_boots'
-					or hItem:GetName() == 'item_boots_of_bearing'
-					or hItem:GetName() == 'item_guardian_greaves'
-					or hItem:GetName() == 'item_travel_boots_2'
-				)  
-			then
-				return false
-			end
-		end
+	for i = 1, 5 do
+		local member = GetTeamMember(i)
+		if member and member == hero then return false end
+	end
 
-		return true
-    end
+	return true
 end
 
 function J.DoesSomeoneHaveModifier(nUnitList, modifierName)
@@ -4762,7 +4770,8 @@ function J.GetTotalEstimatedDamageToTarget(tUnitList, hTarget, fDuration)
 					bCurrentlyAvailable = false
 				end
 
-				dmg = dmg + unit:GetEstimatedDamageToTarget(bCurrentlyAvailable, hTarget, fDuration, DAMAGE_TYPE_ALL)
+				local eta = (GetUnitToUnitDistance(unit, hTarget) - unit:GetAttackRange()) / unit:GetCurrentMovementSpeed()
+				dmg = dmg + unit:GetEstimatedDamageToTarget(bCurrentlyAvailable, hTarget, fDuration - eta, DAMAGE_TYPE_ALL)
 			end
 		end
 	end
@@ -4960,7 +4969,7 @@ function J.GetHighestRightClickDamageHero(tHeroUnits)
 		and not J.IsMeepoClone(hero)
 		and not J.IsSuspiciousIllusion(hero)
 		then
-			local currDMG = hero:GetAttackDamage() * hero:GetAttackSpeed()
+			local currDMG = hero:GetAttackDamage() / hero:GetSecondsPerAttack()
 			if dmg < currDMG
 			then
 				dmg = currDMG
@@ -5421,6 +5430,25 @@ function J.GetClosestTeamLane(unit)
 	return v_mid_lane, LANE_MID
 end
 
+function J.GetClosestLane(bot, nTeam, fDeltaFromFront)
+	local distFromTop = GetUnitToLocationDistance(bot, GetLaneFrontLocation(nTeam, LANE_TOP, fDeltaFromFront))
+	local distFromMid = GetUnitToLocationDistance(bot, GetLaneFrontLocation(nTeam, LANE_MID, fDeltaFromFront))
+	local distFromBot = GetUnitToLocationDistance(bot, GetLaneFrontLocation(nTeam, LANE_BOT, fDeltaFromFront))
+
+	if distFromTop < distFromMid and distFromTop < distFromBot
+	then
+		return LANE_TOP
+	elseif distFromMid < distFromTop and distFromMid < distFromBot
+	then
+		return LANE_MID
+	elseif distFromBot < distFromTop and distFromBot < distFromMid
+	then
+		return LANE_BOT
+	end
+
+	return LANE_MID
+end
+
 function J.GetFirstBotInTeam()
 	for i = 1, 5
 	do
@@ -5747,7 +5775,7 @@ function J.GetUnitListTotalAttackDamage(tUnits, fTimeInterval)
                 end
             end
 
-            dmg = dmg + nAttackDamage * unit:GetAttackSpeed() * fTimeInterval
+            dmg = dmg + (nAttackDamage / unit:GetSecondsPerAttack()) * fTimeInterval
 		end
 	end
 
@@ -5927,6 +5955,18 @@ function J.IsRealBot(bot)
 			return true
 		end
 	end
+	return false
+end
+
+function J.AfterAttackAnim(bot)
+	local botAnimActivity = bot:GetAnimActivity()
+	if botAnimActivity == ACTIVITY_ATTACK
+	or botAnimActivity == ACTIVITY_ATTACK2
+	or botAnimActivity == ACTIVITY_ATTACK_EVENT
+	then
+		return true
+	end
+
 	return false
 end
 

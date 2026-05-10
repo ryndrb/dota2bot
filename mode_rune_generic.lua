@@ -282,7 +282,7 @@ function Think()
 		local vRuneLocation = GetRuneSpawnLocation(rune.location)
 
 		if rune.status == RUNE_STATUS_AVAILABLE then
-			if Bottle and J.CanCastAbility(Bottle) and rune.distance < 1200 then
+			if Bottle and J.CanCastAbility(Bottle) and rune.distance < 1200 and not J.IsMeepoClone(bot) then
 				local nCharges = Bottle:GetCurrentCharges()
 				if nCharges > 0 and (botHP ~= 1 or botMP ~= 1) then
 					bot:Action_UseAbility(Bottle)

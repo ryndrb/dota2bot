@@ -22,8 +22,8 @@ local HeroBuild = {
 				[1] = {
 					['t25'] = {0, 10},
 					['t20'] = {10, 0},
-					['t15'] = {0, 10},
-					['t10'] = {10, 0},
+					['t15'] = {10, 0},
+					['t10'] = {0, 10},
 				}
             },
             ['ability'] = {
@@ -47,13 +47,15 @@ local HeroBuild = {
 				"item_satanic",--
 				"item_swift_blink",--
 				"item_moon_shard",
-				"item_ultimate_scepter_2",
 				"item_bloodthorn",--
+				"item_ultimate_scepter_2",
 			},
             ['sell_list'] = {
-				"item_quelling_blade", "item_echo_sabre",
+				"item_gauntlets", "item_echo_sabre",
+				"item_gauntlets", "item_harpoon",
 				"item_gauntlets", "item_blink",
-				"item_gauntlets", "item_black_king_bar",
+				"item_gauntlets", "item_swift_blink",
+				"item_quelling_blade", "item_black_king_bar",
 				"item_magic_wand", "item_greater_crit",
 				"item_mask_of_madness", "item_satanic",
 				"item_power_treads", "item_bloodthorn",

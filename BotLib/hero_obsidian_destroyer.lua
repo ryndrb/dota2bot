@@ -21,13 +21,13 @@ local HeroBuild = {
             ['talent'] = {
                 [1] = {
                     ['t25'] = {0, 10},
-                    ['t20'] = {10, 0},
+                    ['t20'] = {0, 10},
                     ['t15'] = {10, 0},
                     ['t10'] = {10, 0},
                 },
                 [2] = {
                     ['t25'] = {10, 0},
-                    ['t20'] = {10, 0},
+                    ['t20'] = {0, 10},
                     ['t15'] = {10, 0},
                     ['t10'] = {10, 0},
                 },
@@ -62,19 +62,65 @@ local HeroBuild = {
                 "item_null_talisman", "item_shivas_guard",
             },
         },
+        [2] = {
+            ['talent'] = {
+                [1] = {
+                    ['t25'] = {0, 10},
+                    ['t20'] = {0, 10},
+                    ['t15'] = {10, 0},
+                    ['t10'] = {10, 0},
+                },
+                [2] = {
+                    ['t25'] = {10, 0},
+                    ['t20'] = {0, 10},
+                    ['t15'] = {10, 0},
+                    ['t10'] = {10, 0},
+                },
+            },
+            ['ability'] = {
+                [1] = {2,1,3,2,2,6,2,1,1,1,6,3,3,3,6},
+            },
+            ['buy_list'] = {
+                "item_tango",
+                "item_double_branches",
+                "item_faerie_fire",
+                "item_double_mantle",
+            
+                "item_magic_wand",
+                "item_double_null_talisman",
+                "item_power_treads",
+                "item_witch_blade",
+                "item_force_staff",
+                "item_hurricane_pike",--
+                "item_black_king_bar",--
+                "item_aghanims_shard",
+                "item_devastator",--
+                "item_bloodthorn",--
+                "item_sheepstick",--
+                "item_moon_shard",
+                "item_butterfly",--
+                "item_ultimate_scepter_2",
+            },
+            ['sell_list'] = {
+                "item_magic_wand", "item_black_king_bar",
+                "item_null_talisman", "item_bloodthorn",
+                "item_null_talisman", "item_sheepstick",
+                "item_power_treads", "item_butterfly",
+            },
+        },
     },
     ['pos_2'] = {
         [1] = {
             ['talent'] = {
                 [1] = {
                     ['t25'] = {0, 10},
-                    ['t20'] = {10, 0},
+                    ['t20'] = {0, 10},
                     ['t15'] = {10, 0},
                     ['t10'] = {10, 0},
                 },
                 [2] = {
                     ['t25'] = {10, 0},
-                    ['t20'] = {10, 0},
+                    ['t20'] = {0, 10},
                     ['t15'] = {10, 0},
                     ['t10'] = {10, 0},
                 },
@@ -107,6 +153,52 @@ local HeroBuild = {
                 "item_magic_wand", "item_black_king_bar",
                 "item_null_talisman", "item_sheepstick",
                 "item_null_talisman", "item_shivas_guard",
+            },
+        },
+        [2] = {
+            ['talent'] = {
+                [1] = {
+                    ['t25'] = {0, 10},
+                    ['t20'] = {0, 10},
+                    ['t15'] = {10, 0},
+                    ['t10'] = {10, 0},
+                },
+                [2] = {
+                    ['t25'] = {10, 0},
+                    ['t20'] = {0, 10},
+                    ['t15'] = {10, 0},
+                    ['t10'] = {10, 0},
+                },
+            },
+            ['ability'] = {
+                [1] = {2,1,3,2,2,6,2,1,1,1,6,3,3,3,6},
+            },
+            ['buy_list'] = {
+                "item_tango",
+                "item_double_branches",
+                "item_faerie_fire",
+                "item_double_mantle",
+            
+                "item_magic_wand",
+                "item_double_null_talisman",
+                "item_power_treads",
+                "item_witch_blade",
+                "item_force_staff",
+                "item_hurricane_pike",--
+                "item_black_king_bar",--
+                "item_aghanims_shard",
+                "item_devastator",--
+                "item_bloodthorn",--
+                "item_sheepstick",--
+                "item_moon_shard",
+                "item_butterfly",--
+                "item_ultimate_scepter_2",
+            },
+            ['sell_list'] = {
+                "item_magic_wand", "item_black_king_bar",
+                "item_null_talisman", "item_bloodthorn",
+                "item_null_talisman", "item_sheepstick",
+                "item_power_treads", "item_butterfly",
             },
         },
     },

@@ -32,7 +32,7 @@ local HeroBuild = {
         [1] = {
             ['talent'] = {
                 [1] = {
-                    ['t25'] = {10, 0},
+                    ['t25'] = {0, 10},
                     ['t20'] = {0, 10},
                     ['t15'] = {0, 10},
                     ['t10'] = {10, 0},
@@ -651,18 +651,29 @@ function X.ConsiderChakraMagic()
 
     local nCastRange = J.GetProperCastRange(false, bot, ChakraMagic:GetCastRange())
     local nManaRestore = ChakraMagic:GetSpecialValueInt('mana_restore')
+    local bCanDispel = ChakraMagic:GetSpecialValueInt('strong_dispel') > 0
 
 	if (bot:GetMaxMana() - bot:GetMana()) > nManaRestore * 1.2 then
 		return BOT_ACTION_DESIRE_HIGH, bot
 	else
 		for _, allyHero in pairs(nAllyHeroes) do
 			if J.IsValidHero(allyHero)
-            and bot ~= allyHero
-            and J.IsInRange(bot, allyHero, nCastRange)
             and not allyHero:IsIllusion()
-            and ((allyHero:GetMaxMana() - allyHero:GetMana()) > nManaRestore * 1.3)
             then
-				return BOT_ACTION_DESIRE_HIGH, allyHero
+                if bCanDispel
+                and J.IsInRange(bot, allyHero, nCastRange + 350)
+                and J.IsDisabled(allyHero)
+                and not allyHero:HasModifier('modifier_teleporting')
+                then
+                    return BOT_ACTION_DESIRE_HIGH, allyHero
+                end
+
+                if  bot ~= allyHero
+                and J.IsInRange(bot, allyHero, nCastRange)
+                and ((allyHero:GetMaxMana() - allyHero:GetMana()) > nManaRestore * 1.3)
+                then
+                    return BOT_ACTION_DESIRE_HIGH, allyHero
+                end
 			end
 		end
 	end

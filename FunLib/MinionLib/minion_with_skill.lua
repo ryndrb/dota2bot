@@ -1263,7 +1263,7 @@ X.ConsiderSpellUsage['big_thunder_lizard_frenzy'] = function (hMinionUnit, abili
         and not allyHero:HasModifier('modifier_teleporting')
         then
             if J.IsGoingOnSomeone(allyHero) then
-                local allyHeroDamage = allyHero:GetAttackDamage() * allyHero:GetAttackSpeed()
+                local allyHeroDamage = allyHero:GetAttackDamage() / allyHero:GetSecondsPerAttack()
                 if allyHeroDamage > targetDamage then
                     target = allyHero
                     targetDamage = allyHeroDamage

@@ -419,10 +419,7 @@ function X.SkillsComplement()
 
             if MorphedHeroName == 'npc_dota_hero_obsidian_destroyer' then
                 local hAbility1 = bot:GetAbilityInSlot(0)
-                local hAbility3 = bot:GetAbilityInSlot(2)
-                if  (hAbility1 and hAbility1:IsTrained() and hAbility1:GetLevel() >= 3)
-                and (hAbility3 and hAbility3:IsTrained() and hAbility1:GetLevel() >= 3)
-                then
+                if (hAbility1 and hAbility1:IsTrained() and hAbility1:GetLevel() >= 4) then
                     if J.IsGoingOnSomeone(bot) then
                         bShouldReplicateToMorph = false
                     end
@@ -1110,7 +1107,6 @@ function X.ConsiderMorph()
             and not string.find(enemyHero:GetUnitName(), 'invoker')
             then
                 local enemyHeroScore = enemyHero:GetEstimatedDamageToTarget(false, bot, 5.0, DAMAGE_TYPE_MAGICAL)
-                                     + enemyHero:GetEstimatedDamageToTarget(false, bot, 5.0, DAMAGE_TYPE_PURE)
                 if enemyHeroScore > targetScore then
                     target = enemyHero
                     targetScore = enemyHeroScore

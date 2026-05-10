@@ -80,7 +80,7 @@ local HeroBuild = {
                     ['t25'] = {10, 0},
                     ['t20'] = {10, 0},
                     ['t15'] = {0, 10},
-                    ['t10'] = {10, 0},
+                    ['t10'] = {0, 10},
                 },
             },
             ['ability'] = {
@@ -94,7 +94,7 @@ local HeroBuild = {
             
                 "item_boots",
                 "item_magic_wand",
-                "item_double_bracer",
+                "item_vanguard",
                 "item_phase_boots",
                 "item_blade_mail",
                 "item_crimson_guard",--
@@ -110,10 +110,8 @@ local HeroBuild = {
                 "item_travel_boots_2",--
             },
             ['sell_list'] = {
-                "item_ring_of_protection", "item_crimson_guard",
-                "item_magic_wand", "item_ultimate_scepter",
-                "item_bracer", "item_blink",
-                "item_bracer", "item_shivas_guard",
+                "item_ring_of_protection", "item_blink",
+                "item_magic_wand", "item_shivas_guard",
                 "item_blade_mail", "item_sphere",
             },
         },
@@ -124,7 +122,7 @@ local HeroBuild = {
                 [1] = {
                     ['t25'] = {10, 0},
                     ['t20'] = {10, 0},
-                    ['t15'] = {10, 0},
+                    ['t15'] = {0, 10},
                     ['t10'] = {0, 10},
                 }
             },
@@ -164,7 +162,7 @@ local HeroBuild = {
                 [1] = {
                     ['t25'] = {10, 0},
                     ['t20'] = {10, 0},
-                    ['t15'] = {10, 0},
+                    ['t15'] = {0, 10},
                     ['t10'] = {0, 10},
                 }
             },

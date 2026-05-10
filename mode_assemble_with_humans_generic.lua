@@ -234,7 +234,7 @@ function GetDesire()
 
         local nInRangeEnemy = J.GetEnemiesNearLoc(bot:GetLocation(), 1200)
 
-        return nDesire - (#nInRangeEnemy * (GetAdjustedValueCausedPatch(BOT_MODE_DESIRE_VERYHIGH) / 5))
+        return nDesire - (#nInRangeEnemy * (GetAdjustedValueCausedPatch(0.9) / 5))
     end
 
     if bot.tormentor_state == false then
@@ -410,7 +410,7 @@ function X.IsGoodRighClickDamage()
         and not J.DoesUnitHaveTemporaryBuff(member)
         then
             local memberPosition = J.GetPosition(member)
-            local attackDamage = member:GetAttackDamage() * member:GetAttackSpeed()
+            local attackDamage = member:GetAttackDamage() / member:GetSecondsPerAttack()
             if memberPosition == 1 then
                 attackDamage = attackDamage * 0.50
             elseif memberPosition == 2 then
@@ -427,10 +427,12 @@ function X.IsGoodRighClickDamage()
 		end
 	end
 
+    local fRatio = 1.69 -- from using GetAttackSpeed prior
+
     local totalAttackDamage = 0
     for _, damage in pairs(tTeamDamage) do totalAttackDamage = totalAttackDamage + damage end
 
-    if not J.IsDoingTormentor(bot) and J.GetFirstBotInTeam() == bot and bot.tormentor_state == true and DotaTime() - fThresholdChatTime < 30 and totalAttackDamage >= 500.0 then
+    if not J.IsDoingTormentor(bot) and J.GetFirstBotInTeam() == bot and bot.tormentor_state == true and DotaTime() - fThresholdChatTime < 30 and totalAttackDamage >= 500.0 / fRatio then
         bot:ActionImmediate_Chat("Tormentor threshold met..", false)
         fThresholdChatTime = DotaTime()
     end
@@ -443,7 +445,7 @@ function X.IsGoodRighClickDamage()
     --     end
     -- end
 
-    return totalAttackDamage >= 500.0
+    return totalAttackDamage >= (500.0 / fRatio)
 end
 
 local bHumanPinged = false

@@ -20,7 +20,7 @@ local HeroBuild = {
         [1] = {
             ['talent'] = {
 				[1] = {
-					['t25'] = {0, 10},
+					['t25'] = {10, 0},
 					['t20'] = {10, 0},
 					['t15'] = {10, 0},
 					['t10'] = {0, 10},
@@ -513,7 +513,7 @@ function X.ConsiderDuel()
 						end
 					end
 
-					local totalDamage = enemyHero:GetActualIncomingDamage(bot:GetAttackDamage() * bot:GetAttackSpeed() * (fDuration - 1), DAMAGE_TYPE_PHYSICAL)
+					local totalDamage = enemyHero:GetActualIncomingDamage((bot:GetAttackDamage() / bot:GetSecondsPerAttack()) * (fDuration - 1), DAMAGE_TYPE_PHYSICAL)
 					local allyDamage = X.GetAllyToTargetDamage(enemyHero, (fDuration - 1), DAMAGE_TYPE_PHYSICAL)
 					totalDamage = totalDamage * 1.2 + allyDamage * 0.8 - 100
 
@@ -544,7 +544,7 @@ function X.ConsiderDuel()
 		and not botTarget:HasModifier('modifier_ursa_enrage')
 		and not botTarget:HasModifier('modifier_item_aeon_disk_buff')
 		then
-			local totalDamage = botTarget:GetActualIncomingDamage(bot:GetAttackDamage() * bot:GetAttackSpeed() * (fDuration - 1), DAMAGE_TYPE_PHYSICAL)
+			local totalDamage = botTarget:GetActualIncomingDamage((bot:GetAttackDamage() / bot:GetSecondsPerAttack()) * (fDuration - 1), DAMAGE_TYPE_PHYSICAL)
 			local allyDamage = X.GetAllyToTargetDamage(botTarget, (fDuration - 1), DAMAGE_TYPE_ALL)
 			totalDamage = totalDamage * 1.2 + allyDamage * 0.8 - 100
 
@@ -566,7 +566,7 @@ function X.GetAllyToTargetDamage(hTarget, fDuration, nDamageType)
 		and J.IsInRange(member, hTarget, member:GetAttackRange() + 200)
 		and member:GetAttackTarget() == hTarget
 		then
-			nTotalDamage = nTotalDamage + hTarget:GetActualIncomingDamage(member:GetAttackDamage() * member:GetAttackSpeed() * fDuration, DAMAGE_TYPE_PHYSICAL)
+			nTotalDamage = nTotalDamage + hTarget:GetActualIncomingDamage((member:GetAttackDamage() / member:GetSecondsPerAttack()) * fDuration, DAMAGE_TYPE_PHYSICAL)
 		end
 	end
 

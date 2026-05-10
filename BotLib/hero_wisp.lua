@@ -59,7 +59,7 @@ local HeroBuild = {
                     ['t25'] = {10, 0},
                     ['t20'] = {0, 10},
                     ['t15'] = {0, 10},
-                    ['t10'] = {10, 0},
+                    ['t10'] = {0, 10},
                 }
             },
             ['ability'] = {
@@ -95,7 +95,7 @@ local HeroBuild = {
                     ['t25'] = {10, 0},
                     ['t20'] = {0, 10},
                     ['t15'] = {0, 10},
-                    ['t10'] = {10, 0},
+                    ['t10'] = {0, 10},
                 }
             },
             ['ability'] = {
@@ -313,7 +313,7 @@ function X.ConsiderTether()
             end
 
             local bCore = J.IsCore(ally)
-            local allyScore = ally:GetAttackDamage() * ally:GetAttackSpeed()
+            local allyScore = ally:GetAttackDamage() / ally:GetSecondsPerAttack()
 
             if (J.IsLaning(ally) and bCore and bot:GetAssignedLane() == ally:GetAssignedLane())
             or (J.IsGoingOnSomeone(ally))

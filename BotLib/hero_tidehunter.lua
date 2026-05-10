@@ -47,7 +47,7 @@ local HeroBuild = {
 					['t25'] = {10, 0},
 					['t20'] = {0, 10},
 					['t15'] = {0, 10},
-					['t10'] = {0, 10},
+					['t10'] = {10, 0},
 				}
             },
             ['ability'] = {
@@ -79,6 +79,49 @@ local HeroBuild = {
 				"item_quelling_blade", "item_blink",
 				"item_magic_wand", "item_shivas_guard",
 				"item_soul_ring", "item_octarine_core",
+				"item_vladmir", "item_overwhelming_blink",
+			},
+        },
+        [2] = {
+            ['talent'] = {
+				[1] = {
+					['t25'] = {10, 0},
+					['t20'] = {0, 10},
+					['t15'] = {0, 10},
+					['t10'] = {10, 0},
+				}
+            },
+            ['ability'] = {
+                [1] = {3,1,2,3,3,6,3,2,2,2,6,1,1,1,6},
+            },
+            ['buy_list'] = {
+				"item_tango",
+				"item_double_branches",
+				"item_quelling_blade",
+				"item_double_gauntlets",
+		
+				"item_magic_wand",
+				"item_boots",
+				"item_soul_ring",
+				"item_phase_boots",
+				"item_vladmir",
+				"item_consecrated_wraps",
+				"item_blink",
+				"item_pipe",--
+				"item_aghanims_shard",
+				"item_shivas_guard",--
+				"item_octarine_core",--
+				"item_ultimate_scepter_2",
+				"item_sheepstick",--
+				"item_overwhelming_blink",--
+				"item_travel_boots_2",--
+				"item_moon_shard",
+			},
+            ['sell_list'] = {
+				"item_quelling_blade", "item_blink",
+				"item_magic_wand", "item_pipe",
+				"item_soul_ring", "item_shivas_guard",
+				"item_consecrated_wraps", "item_octarine_core",
 				"item_vladmir", "item_overwhelming_blink",
 			},
         },

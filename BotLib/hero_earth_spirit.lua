@@ -35,7 +35,7 @@ local HeroBuild = {
 					['t25'] = {0, 10},
 					['t20'] = {0, 10},
 					['t15'] = {10, 0},
-					['t10'] = {10, 0},
+					['t10'] = {0, 10},
 				},
             },
             ['ability'] = {
@@ -82,7 +82,7 @@ local HeroBuild = {
 					['t25'] = {0, 10},
 					['t20'] = {0, 10},
 					['t15'] = {10, 0},
-					['t10'] = {10, 0},
+					['t10'] = {0, 10},
 				},
             },
             ['ability'] = {
@@ -116,6 +116,47 @@ local HeroBuild = {
 				"item_blade_mail", "item_travel_boots_2",
 			},
         },
+        [2] = {
+            ['talent'] = {
+				[1] = {
+					['t25'] = {0, 10},
+					['t20'] = {0, 10},
+					['t15'] = {10, 0},
+					['t10'] = {0, 10},
+				},
+            },
+            ['ability'] = {
+                [1] = {1,2,1,2,1,6,1,2,2,3,6,3,3,3,6},
+            },
+            ['buy_list'] = {
+                "item_tango",
+                "item_double_branches",
+                "item_quelling_blade",
+                "item_double_gauntlets",
+			
+				"item_magic_wand",
+				"item_boots",
+				"item_soul_ring",
+				"item_blade_mail",
+				"item_consecrated_wraps",
+				"item_black_king_bar",--
+				"item_crimson_guard",--
+				sUtilityItem,--
+				"item_shivas_guard",--
+				"item_ultimate_scepter_2",
+				"item_heart",--
+				"item_aghanims_shard",
+				"item_travel_boots_2",--
+				"item_moon_shard",
+			},
+            ['sell_list'] = {
+				"item_quelling_blade", "item_black_king_bar",
+				"item_magic_wand", "item_crimson_guard",
+				"item_soul_ring", sUtilityItem,
+				"item_consecrated_wraps", "item_heart",
+				"item_blade_mail", "item_travel_boots_2",
+			},
+        },
     },
     ['pos_4'] = {
         [1] = {
@@ -124,7 +165,7 @@ local HeroBuild = {
 					['t25'] = {0, 10},
 					['t20'] = {0, 10},
 					['t15'] = {10, 0},
-					['t10'] = {10, 0},
+					['t10'] = {0, 10},
 				},
             },
             ['ability'] = {
@@ -140,8 +181,8 @@ local HeroBuild = {
 				"item_boots",
 				"item_magic_wand",
 				"item_urn_of_shadows",
-				"item_force_staff",--
-				"item_spirit_vessel",--
+				"item_force_staff",
+				"item_spirit_vessel",
 				"item_ancient_janggo",
 				"item_black_king_bar",--
 				"item_boots_of_bearing",--
@@ -149,10 +190,14 @@ local HeroBuild = {
 				"item_lotus_orb",--
 				"item_ultimate_scepter_2",
 				"item_aghanims_shard",
+				"item_wind_waker",--
+				"item_heart",--
 				"item_moon_shard",
 			},
             ['sell_list'] = {
 				"item_magic_wand", "item_lotus_orb",
+				"item_spirit_vessel", "item_wind_waker",
+				"item_force_staff", "item_heart",
 			},
         },
     },
@@ -163,7 +208,7 @@ local HeroBuild = {
 					['t25'] = {0, 10},
 					['t20'] = {0, 10},
 					['t15'] = {10, 0},
-					['t10'] = {10, 0},
+					['t10'] = {0, 10},
 				},
             },
             ['ability'] = {
@@ -179,8 +224,8 @@ local HeroBuild = {
 				"item_boots",
 				"item_magic_wand",
 				"item_urn_of_shadows",
-				"item_force_staff",--
-				"item_spirit_vessel",--
+				"item_force_staff",
+				"item_spirit_vessel",
 				"item_mekansm",
 				"item_black_king_bar",--
 				"item_guardian_greaves",--
@@ -188,10 +233,14 @@ local HeroBuild = {
 				"item_lotus_orb",--
 				"item_ultimate_scepter_2",
 				"item_aghanims_shard",
+				"item_wind_waker",--
+				"item_heart",--
 				"item_moon_shard",
 			},
             ['sell_list'] = {
 				"item_magic_wand", "item_lotus_orb",
+				"item_spirit_vessel", "item_wind_waker",
+				"item_force_staff", "item_heart",
 			},
         },
     },

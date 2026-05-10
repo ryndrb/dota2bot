@@ -131,7 +131,7 @@ local HeroBuild = {
 				"item_aghanims_shard",
 				"item_bloodthorn",--
 				"item_angels_demise",--
-				"item_shivas_guard",--
+				"item_assault",--
 				"item_ultimate_scepter_2",
 				"item_moon_shard",
 				"item_travel_boots_2",--
@@ -745,7 +745,7 @@ function X.ConsiderTrack()
         and J.CanCastOnTargetAdvanced(enemyHero)
         and not enemyHero:HasModifier('modifier_bounty_hunter_track')
 		then
-			local enemyHeroScore = enemyHero:GetActualIncomingDamage(10000, DAMAGE_TYPE_ALL) / enemyHero:GetHealth()
+			local enemyHeroScore = enemyHero:GetActualIncomingDamage(10000, DAMAGE_TYPE_PHYSICAL) / enemyHero:GetHealth()
 			if enemyHeroScore > hTargetScore then
 				hTarget = enemyHero
 				hTargetScore = enemyHeroScore

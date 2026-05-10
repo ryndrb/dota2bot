@@ -97,21 +97,24 @@ local HeroBuild = {
 				"item_orb_of_corrosion",
 				"item_power_treads",
 				"item_diffusal_blade",
-				"item_crimson_guard",--
+				"item_vanguard",
 				"item_nullifier",--
+				"item_crimson_guard",--
+				"item_basher",
+				"item_disperser",--
 				"item_abyssal_blade",--
 				"item_aghanims_shard",
-				"item_disperser",--
 				"item_heart",--
+				"item_butterfly",--
 				"item_moon_shard",
-				"item_assault",--
 				"item_ultimate_scepter_2",
 			},
             ['sell_list'] = {
 				"item_quelling_blade", "item_nullifier",
+				"item_magic_wand", "item_basher",
 				"item_magic_wand", "item_abyssal_blade",
 				"item_orb_of_corrosion", "item_heart",
-				"item_power_treads", "item_assault",
+				"item_power_treads", "item_butterfly",
 			},
         },
     },

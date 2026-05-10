@@ -12,7 +12,7 @@ then
 
 local RI = require(GetScriptDirectory()..'/FunLib/util_role_item')
 
-local sUtility = {"item_pipe", "item_heavens_halberd", "item_lotus_orb"}
+local sUtility = {"item_lotus_orb", "item_nullifier"}
 local sUtilityItem = RI.GetBestUtilityItem(sUtility)
 
 local HeroBuild = {
@@ -100,7 +100,7 @@ local HeroBuild = {
         [1] = {
             ['talent'] = {
 				[1] = {
-					['t25'] = {10, 0},
+					['t25'] = {0, 10},
 					['t20'] = {0, 10},
 					['t15'] = {10, 0},
 					['t10'] = {10, 0},
@@ -121,12 +121,12 @@ local HeroBuild = {
 				"item_blink",
 				"item_echo_sabre",
 				"item_black_king_bar",--
-				"item_aghanims_shard",
 				"item_octarine_core",--
 				"item_harpoon",--
 				"item_assault",--
 				"item_ultimate_scepter_2",
 				"item_overwhelming_blink",--
+				"item_aghanims_shard",
 				"item_moon_shard",
 				"item_travel_boots_2",--
 			},
@@ -157,24 +157,24 @@ local HeroBuild = {
 				"item_double_gauntlets",
 			
 				"item_magic_wand",
-				"item_double_bracer",
+				"item_boots",
+				"item_soul_ring",
 				"item_power_treads",
 				"item_blink",
-				"item_crimson_guard",--
 				"item_black_king_bar",--
-				"item_aghanims_shard",
 				"item_assault",--
+				sUtilityItem,
 				"item_octarine_core",--
-				"item_overwhelming_blink",--
 				"item_ultimate_scepter_2",
+				"item_overwhelming_blink",--
+				"item_aghanims_shard",
 				"item_moon_shard",
 				"item_travel_boots_2",--
 			},
             ['sell_list'] = {
-				"item_quelling_blade", "item_crimson_guard",
-				"item_magic_wand", "item_black_king_bar",
-				"item_bracer", "item_assault",
-				"item_bracer", "item_octarine_core",
+				"item_quelling_blade", "item_assault",
+				"item_magic_wand", sUtilityItem,
+				"item_soul_ring", "item_octarine_core",
 			},
         },
     },
@@ -222,7 +222,7 @@ local HeroBuild = {
         [1] = {
             ['talent'] = {
 				[1] = {
-					['t25'] = {10, 0},
+					['t25'] = {0, 10},
 					['t20'] = {10, 0},
 					['t15'] = {10, 0},
 					['t10'] = {0, 10},

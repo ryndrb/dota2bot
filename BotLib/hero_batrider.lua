@@ -32,8 +32,8 @@ local HeroBuild = {
         [1] = {
             ['talent'] = {
                 [1] = {
-					['t25'] = {0, 10},
-					['t20'] = {10, 0},
+					['t25'] = {10, 0},
+					['t20'] = {0, 10},
 					['t15'] = {0, 10},
 					['t10'] = {0, 10},
 				},
@@ -70,8 +70,8 @@ local HeroBuild = {
         [1] = {
             ['talent'] = {
                 [1] = {
-					['t25'] = {0, 10},
-					['t20'] = {10, 0},
+					['t25'] = {10, 0},
+					['t20'] = {0, 10},
 					['t15'] = {0, 10},
 					['t10'] = {0, 10},
 				},
@@ -110,12 +110,12 @@ local HeroBuild = {
     ['pos_4'] = {
         [1] = {
             ['talent'] = {
-				[1] = {
-					['t25'] = {0, 10},
-					['t20'] = {10, 0},
+                [1] = {
+					['t25'] = {10, 0},
+					['t20'] = {0, 10},
 					['t15'] = {0, 10},
 					['t10'] = {0, 10},
-				}
+				},
             },
             ['ability'] = {
                 [1] = {2,3,3,1,3,6,3,1,1,1,6,2,2,2,6},
@@ -151,12 +151,12 @@ local HeroBuild = {
     ['pos_5'] = {
         [1] = {
             ['talent'] = {
-				[1] = {
-					['t25'] = {0, 10},
-					['t20'] = {10, 0},
+                [1] = {
+					['t25'] = {10, 0},
+					['t20'] = {0, 10},
 					['t15'] = {0, 10},
 					['t10'] = {0, 10},
-				}
+				},
             },
             ['ability'] = {
                 [1] = {2,3,3,1,3,6,3,1,1,1,6,2,2,2,6},
@@ -673,7 +673,7 @@ function X.ConsiderFlamingLasso()
             and not enemyHero:HasModifier('modifier_ice_blast')
             and enemyHero:GetHealth() >= 500
             then
-                local enemyHeroDamage = enemyHero:GetAttackDamage() * enemyHero:GetAttackSpeed()
+                local enemyHeroDamage = enemyHero:GetAttackDamage() / enemyHero:GetSecondsPerAttack()
                 if enemyHeroDamage > hTargetDamage then
                     hTarget = enemyHero
                     hTargetDamage = enemyHeroDamage
@@ -724,7 +724,7 @@ function X.ConsiderBlinkLasso()
                 and not enemyHero:HasModifier('modifier_ice_blast')
                 and enemyHero:GetHealth() >= 500
                 then
-                    local enemyHeroDamage = enemyHero:GetAttackDamage() * enemyHero:GetAttackSpeed()
+                    local enemyHeroDamage = enemyHero:GetAttackDamage() / enemyHero:GetSecondsPerAttack()
                     local nInRangeAlly = J.GetAlliesNearLoc(enemyHero:GetLocation(), 1200)
                     local nInRangeEnemy = J.GetEnemiesNearLoc(enemyHero:GetLocation(), 1200)
 

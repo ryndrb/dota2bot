@@ -34,8 +34,8 @@ local HeroBuild = {
             ['talent'] = {
                 [1] = {
 					['t25'] = {0, 10},
-					['t20'] = {0, 10},
-					['t15'] = {10, 0},
+					['t20'] = {10, 0},
+					['t15'] = {0, 10},
 					['t10'] = {10, 0},
 				},
             },
@@ -79,14 +79,8 @@ local HeroBuild = {
             ['talent'] = {
                 [1] = {
 					['t25'] = {0, 10},
-					['t20'] = {0, 10},
-					['t15'] = {10, 0},
-					['t10'] = {0, 10},
-				},
-                [2] = {
-					['t25'] = {0, 10},
-					['t20'] = {0, 10},
-					['t15'] = {10, 0},
+					['t20'] = {10, 0},
+					['t15'] = {0, 10},
 					['t10'] = {10, 0},
 				},
             },
@@ -119,6 +113,48 @@ local HeroBuild = {
 				"item_magic_wand", "item_black_king_bar",
 				"item_bracer", sUtilityItem,
 				"item_blade_mail", "item_octarine_core",
+			},
+        },
+        [2] = {
+            ['talent'] = {
+                [1] = {
+					['t25'] = {0, 10},
+					['t20'] = {10, 0},
+					['t15'] = {0, 10},
+					['t10'] = {10, 0},
+				},
+            },
+            ['ability'] = {
+                [1] = {2,3,3,1,3,6,3,1,1,1,6,2,2,2,6},
+            },
+            ['buy_list'] = {
+				"item_tango",
+				"item_double_branches",
+				"item_magic_stick",
+				"item_quelling_blade",
+	
+				"item_bracer",
+				"item_phase_boots",
+				"item_magic_wand",
+				"item_blade_mail",
+				"item_blink",
+				"item_consecrated_wraps",
+                "item_crimson_guard",--
+				"item_black_king_bar",--
+				"item_aghanims_shard",
+				sUtilityItem,--
+				"item_overwhelming_blink",--
+				"item_heart",--
+				"item_ultimate_scepter_2",
+				"item_travel_boots_2",--
+				"item_moon_shard",
+			},
+            ['sell_list'] = {
+				"item_quelling_blade", "item_consecrated_wraps",
+				"item_bracer", "item_crimson_guard",
+				"item_magic_wand", "item_black_king_bar",
+				"item_consecrated_wraps", "item_heart",
+				"item_blade_mail", "item_travel_boots_2",
 			},
         },
     },

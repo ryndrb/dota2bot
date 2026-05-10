@@ -572,7 +572,7 @@ function X.ConsiderInkSwell()
                         return BOT_ACTION_DESIRE_HIGH, allyHero
                     end
 
-                    local damage = allyHero:GetActualIncomingDamage(10000, DAMAGE_TYPE_ALL)
+                    local damage = allyHero:GetActualIncomingDamage(10000, DAMAGE_TYPE_PHYSICAL)
                     if damage < hTargetScore then
                         hTarget = allyHero
                         hTargetScore = damage
@@ -701,7 +701,7 @@ function X.ConsiderDarkPortrait()
             and not J.IsDisabled(enemy)
             and not enemy:HasModifier('modifier_necrolyte_reapers_scythe')
             then
-                local enemyAttackDamage = enemy:GetAttackDamage() * enemy:GetAttackSpeed()
+                local enemyAttackDamage = enemy:GetAttackDamage() / enemy:GetSecondsPerAttack()
                 if hTargetAttackDamge < enemyAttackDamage then
                     hTarget = enemy
                     hTargetAttackDamge = enemyAttackDamage

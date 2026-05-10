@@ -46,7 +46,7 @@ local HeroBuild = {
                 [1] = {
 					['t25'] = {0, 10},
 					['t20'] = {0, 10},
-					['t15'] = {0, 10},
+					['t15'] = {10, 0},
 					['t10'] = {10, 0},
 				},
             },
@@ -70,15 +70,15 @@ local HeroBuild = {
 				"item_shivas_guard",--
 				"item_octarine_core",--
 				"item_ultimate_scepter_2",
-				"item_moon_shard",
-				"item_harpoon",--
                 "item_gungir",--
+				"item_crellas_crozier",--
+				"item_moon_shard",
 			},
             ['sell_list'] = {
 				"item_quelling_blade", "item_ultimate_scepter",
 				"item_magic_wand", sUtilityItem,
 				"item_soul_ring", "item_shivas_guard",
-                "item_arcane_boots", "item_gungir",
+                "item_arcane_boots", "item_crellas_crozier",
 			},
         },
     },

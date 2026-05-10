@@ -89,7 +89,7 @@ local HeroBuild = {
             ['talent'] = {
 				[1] = {
 					['t25'] = {10, 0},
-					['t20'] = {0, 10},
+					['t20'] = {10, 0},
 					['t15'] = {10, 0},
 					['t10'] = {0, 10},
 				}
@@ -128,7 +128,7 @@ local HeroBuild = {
             ['talent'] = {
 				[1] = {
 					['t25'] = {10, 0},
-					['t20'] = {0, 10},
+					['t20'] = {10, 0},
 					['t15'] = {10, 0},
 					['t10'] = {0, 10},
 				}
@@ -483,7 +483,7 @@ function X.ConsiderFrostbite()
 			and not enemyHero:IsDisarmed()
 			then
 				local enemyScore = (enemyHero:GetEstimatedDamageToTarget(false, bot, 3.0, DAMAGE_TYPE_ALL)) * 0.35
-								 + (enemyHero:GetAttackDamage() * enemyHero:GetAttackSpeed() * nDuration) * 0.65
+								 + ((enemyHero:GetAttackDamage() / enemyHero:GetSecondsPerAttack()) * nDuration) * 0.65
 				if enemyScore > hTargetScore then
 					hTarget = enemyHero
 					hTargetScore = enemyScore

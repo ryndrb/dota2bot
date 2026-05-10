@@ -46,8 +46,8 @@ local HeroBuild = {
                 [1] = {
                     ['t25'] = {10, 0},
                     ['t20'] = {10, 0},
-                    ['t15'] = {0, 10},
-                    ['t10'] = {10, 0},
+                    ['t15'] = {10, 0},
+                    ['t10'] = {0, 10},
                 }
             },
             ['ability'] = {
@@ -249,7 +249,7 @@ function X.ConsiderVoid()
             and not enemyHero:IsDisarmed()
             and not enemyHero:HasModifier('modifier_necrolyte_reapers_scythe')
             then
-                local enemyHeroDamage = enemyHero:GetAttackDamage() * enemyHero:GetAttackSpeed()
+                local enemyHeroDamage = enemyHero:GetAttackDamage() / enemyHero:GetSecondsPerAttack()
                 if enemyHeroDamage > hTargetDamage then
                     hTarget = enemyHero
                     hTargetDamage = enemyHeroDamage

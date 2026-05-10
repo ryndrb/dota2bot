@@ -34,7 +34,7 @@ local HeroBuild = {
 				[1] = {
 					['t25'] = {10, 0},
 					['t20'] = {10, 0},
-					['t15'] = {10, 0},
+					['t15'] = {0, 10},
 					['t10'] = {0, 10},
 				}
             },
@@ -54,9 +54,9 @@ local HeroBuild = {
 				"item_null_talisman",
 				"item_witch_blade",
 				"item_kaya",
-				"item_aghanims_shard",
 				"item_black_king_bar",--
 				"item_kaya_and_sange",--
+				"item_aghanims_shard",
 				"item_ultimate_scepter",
 				"item_devastator",--
 				"item_shivas_guard",--
@@ -66,8 +66,8 @@ local HeroBuild = {
 				"item_travel_boots_2",--
 			},
             ['sell_list'] = {
-				"item_magic_wand", "item_black_king_bar",
-				"item_null_talisman", "item_ultimate_scepter",
+				"item_null_talisman", "item_black_king_bar",
+				"item_magic_wand", "item_ultimate_scepter",
 				"item_bottle", "item_shivas_guard",
 			},
         },
@@ -78,7 +78,7 @@ local HeroBuild = {
 				[1] = {
 					['t25'] = {10, 0},
 					['t20'] = {10, 0},
-					['t15'] = {10, 0},
+					['t15'] = {0, 10},
 					['t10'] = {0, 10},
 				}
             },
@@ -120,7 +120,7 @@ local HeroBuild = {
 				[1] = {
 					['t25'] = {10, 0},
 					['t20'] = {10, 0},
-					['t15'] = {10, 0},
+					['t15'] = {0, 10},
 					['t10'] = {0, 10},
 				}
             },
@@ -161,7 +161,7 @@ local HeroBuild = {
 				[1] = {
 					['t25'] = {10, 0},
 					['t20'] = {10, 0},
-					['t15'] = {10, 0},
+					['t15'] = {0, 10},
 					['t10'] = {0, 10},
 				}
             },

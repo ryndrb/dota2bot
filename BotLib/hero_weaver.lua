@@ -102,6 +102,49 @@ local HeroBuild = {
                 "item_power_treads", "item_butterfly",
             },
         },
+        [3] = {
+            ['talent'] = {
+                [1] = {
+                    ['t25'] = {10, 0},
+                    ['t20'] = {0, 10},
+                    ['t15'] = {10, 0},
+                    ['t10'] = {10, 0},
+                }
+            },
+            ['ability'] = {
+                [1] = {2,3,1,2,2,6,2,3,3,3,6,1,1,1,6},
+            },
+            ['buy_list'] = {
+                "item_tango",
+                "item_double_branches",
+                "item_quelling_blade",
+                "item_circlet",
+                "item_slippers",
+            
+                "item_magic_wand",
+                "item_power_treads",
+                "item_wraith_band",
+                "item_falcon_blade",
+                "item_desolator",--
+                "item_dragon_lance",
+                "item_black_king_bar",--
+                "item_hydras_breath",--
+                "item_aghanims_shard",
+                "item_greater_crit",--
+                "item_satanic",--
+                "item_moon_shard",
+                "item_ultimate_scepter_2",
+                "item_butterfly",--
+            },
+            ['sell_list'] = {
+                "item_quelling_blade", "item_dragon_lance",
+                "item_quelling_blade", "item_hydras_breath",
+                "item_wraith_band", "item_black_king_bar",
+                "item_magic_wand", "item_greater_crit",
+                "item_falcon_blade", "item_satanic",
+                "item_power_treads", "item_butterfly",
+            },
+        },
     },
     ['pos_2'] = {
         [1] = {
@@ -266,12 +309,10 @@ function X.SkillsComplement()
 
     TimeLapseDesire, Target = X.ConsiderTimeLapse()
     if TimeLapseDesire > 0 then
-        if Target == 'self' then
-            bot:Action_UseAbility(TimeLapse)
+        if bot:HasScepter() then
+            bot:Action_UseAbilityOnEntity(TimeLapse, Target)
         else
-            if bot:HasScepter() and string.find(bot:GetUnitName(), 'weaver') then
-                bot:Action_UseAbilityOnEntity(TimeLapse, Target)
-            end
+            bot:Action_UseAbility(TimeLapse)
         end
 
         return
@@ -514,7 +555,7 @@ function X.ConsiderTimeLapse()
     then
         local prevHealth = bot.history[nLapseTime].health
         if prevHealth and (prevHealth / bot:GetMaxHealth()) - botHP >= 0.5 then
-            return BOT_ACTION_DESIRE_HIGH, 'self'
+            return BOT_ACTION_DESIRE_HIGH, bot
         end
 	end
 
@@ -524,12 +565,12 @@ function X.ConsiderTimeLapse()
             and J.CanCastAbilitySoon(Shukuchi, 2)
             and J.IsChasingTarget(nEnemyHeroes[1], bot)
             then
-                return BOT_ACTION_DESIRE_HIGH, 'self'
+                return BOT_ACTION_DESIRE_HIGH, bot
             end
         end
 
         if botHP < 0.4 and bot:WasRecentlyDamagedByAnyHero(2.5) then
-            return BOT_ACTION_DESIRE_HIGH, 'self'
+            return BOT_ACTION_DESIRE_HIGH, bot
         end
 
         if  bot.history
@@ -547,7 +588,7 @@ function X.ConsiderTimeLapse()
                 local nInRangeAlly = J.GetAlliesNearLoc(vPrevLocation, 800)
                 local nInRangeEnemy = J.GetEnemiesNearLoc(vPrevLocation, 800)
                 if dist > 600 and #nInRangeAlly >= #nInRangeEnemy then
-                    return BOT_ACTION_DESIRE_HIGH, 'self'
+                    return BOT_ACTION_DESIRE_HIGH, bot
                 end
             end
         end

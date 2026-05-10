@@ -105,21 +105,22 @@ local HeroBuild = {
 			
 				"item_tranquil_boots",
 				"item_magic_wand",
-				"item_aether_lens",
-				"item_ancient_janggo",
 				"item_force_staff",
-				"item_octarine_core",--
-				"item_aghanims_shard",
-				"item_boots_of_bearing",--
+				"item_ancient_janggo",
 				"item_ultimate_scepter",
+				"item_octarine_core",--
+				"item_boots_of_bearing",--
+				"item_aghanims_shard",
 				"item_sheepstick",--
 				"item_black_king_bar",--
+				"item_cyclone",
 				"item_ultimate_scepter_2",
+				"item_wind_waker",
 				"item_moon_shard",
 				"item_hurricane_pike",--
 			},
             ['sell_list'] = {
-				"item_magic_wand", "item_ultimate_scepter",
+				"item_magic_wand", "item_black_king_bar",
 			},
         },
     },
@@ -145,21 +146,22 @@ local HeroBuild = {
 			
 				"item_arcane_boots",
 				"item_magic_wand",
-				"item_aether_lens",
-				"item_mekansm",
 				"item_force_staff",
-				"item_octarine_core",--
-				"item_aghanims_shard",
-				"item_guardian_greaves",--
+				"item_mekansm",
 				"item_ultimate_scepter",
+				"item_octarine_core",--
+				"item_guardian_greaves",--
+				"item_aghanims_shard",
 				"item_sheepstick",--
 				"item_black_king_bar",--
+				"item_cyclone",
 				"item_ultimate_scepter_2",
+				"item_wind_waker",
 				"item_moon_shard",
 				"item_hurricane_pike",--
 			},
             ['sell_list'] = {
-				"item_magic_wand", "item_ultimate_scepter",
+				"item_magic_wand", "item_black_king_bar",
 			},
         },
     },

@@ -32,8 +32,8 @@ local HeroBuild = {
         [1] = {
             ['talent'] = {
                 [1] = {
-                    ['t25'] = {0, 10},
-                    ['t20'] = {0, 10},
+                    ['t25'] = {10, 0},
+                    ['t20'] = {10, 0},
                     ['t15'] = {10, 0},
                     ['t10'] = {10, 0},
                 }
@@ -56,9 +56,9 @@ local HeroBuild = {
                 "item_witch_blade",
                 "item_manta",--
                 "item_hurricane_pike",--
-                "item_ultimate_scepter",
                 "item_devastator",--
                 "item_black_king_bar",--
+                "item_aghanims_shard",
                 "item_skadi",--
                 "item_ultimate_scepter_2",
                 "item_moon_shard",
@@ -66,8 +66,49 @@ local HeroBuild = {
             },
             ['sell_list'] = {
                 "item_magic_wand", "item_manta",
-                "item_bracer", "item_ultimate_scepter",
-                "item_bottle", "item_black_king_bar",
+                "item_bracer", "item_black_king_bar",
+                "item_bottle", "item_skadi",
+            },
+        },
+        [2] = {
+            ['talent'] = {
+                [1] = {
+                    ['t25'] = {10, 0},
+                    ['t20'] = {10, 0},
+                    ['t15'] = {10, 0},
+                    ['t10'] = {10, 0},
+                }
+            },
+            ['ability'] = {
+                [1] = {2,1,2,3,3,6,3,3,2,2,6,1,1,1,6},
+            },
+            ['buy_list'] = {
+                "item_tango",
+                "item_double_branches",
+                "item_circlet",
+                "item_gauntlets",
+                "item_faerie_fire",
+            
+                "item_bottle",
+                "item_magic_wand",
+                "item_bracer",
+                "item_power_treads",
+                "item_specialists_array",
+                "item_witch_blade",
+                "item_manta",--
+                "item_devastator",--
+                "item_black_king_bar",--
+                "item_aghanims_shard",
+                "item_hydras_breath",--
+                "item_skadi",--
+                "item_ultimate_scepter_2",
+                "item_moon_shard",
+                "item_travel_boots_2",--
+            },
+            ['sell_list'] = {
+                "item_bracer", "item_manta",
+                "item_magic_wand", "item_black_king_bar",
+                "item_bottle", "item_skadi",
             },
         },
     },
@@ -87,10 +128,10 @@ local HeroBuild = {
         [1] = {
             ['talent'] = {
                 [1] = {
-                    ['t25'] = {0, 10},
-                    ['t20'] = {0, 10},
+                    ['t25'] = {10, 0},
+                    ['t20'] = {10, 0},
                     ['t15'] = {10, 0},
-                    ['t10'] = {0, 10},
+                    ['t10'] = {10, 0},
                 }
             },
             ['ability'] = {
@@ -127,10 +168,10 @@ local HeroBuild = {
         [1] = {
             ['talent'] = {
                 [1] = {
-                    ['t25'] = {0, 10},
-                    ['t20'] = {0, 10},
+                    ['t25'] = {10, 0},
+                    ['t20'] = {10, 0},
                     ['t15'] = {10, 0},
-                    ['t10'] = {0, 10},
+                    ['t10'] = {10, 0},
                 }
             },
             ['ability'] = {
@@ -447,6 +488,7 @@ function X.ConsiderPlagueWard()
     end
 
     local nCastRange = J.GetProperCastRange(false, bot, PlagueWard:GetCastRange())
+    local nDuration = PlagueWard:GetSpecialValueInt('duration')
     local nManaCost = PlagueWard:GetManaCost()
 	local fManaAfter = J.GetManaAfter(nManaCost)
 	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {VenomousGale, Snakebite, NoxiousPlague})
@@ -603,7 +645,9 @@ function X.ConsiderPlagueWard()
                     if bCanTargetAlly and not bot:HasModifier('modifier_venomancer_ward_counter') then
                         return BOT_ACTION_DESIRE_HIGH, bot, true
                     else
-                        return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc, false
+                        if X.IsSafeFromCamps(nDuration, nLocationAoE.targetloc) then
+                            return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc, false
+                        end
                     end
                 end
             end
@@ -764,5 +808,17 @@ end
 
 --     return BOT_ACTION_DESIRE_NONE, nil
 -- end
+
+function X.IsSafeFromCamps(nDuration, vLocation)
+    local nNeutralCreeps = bot:GetNearbyNeutralCreeps(800)
+    if J.IsValid(nNeutralCreeps[1]) and bot.farm and bot.farm.location then
+        local sec = math.floor(DotaTime()) % 60
+        if J.GetDistance(vLocation, bot.farm.location) <= 700 and sec > (60 - nDuration) then
+            return false
+        end
+    end
+
+    return true
+end
 
 return X

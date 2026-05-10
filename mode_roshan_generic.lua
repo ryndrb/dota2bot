@@ -2,7 +2,7 @@ local bot = GetBot()
 
 local J = require( GetScriptDirectory()..'/FunLib/jmz_func' )
 
-local bEnoughDPS = false
+local bTeamRoshanHard = false
 local bRoshanAlive = false
 local bRoshanTime = false
 local fRoshanAliveTime = 0
@@ -12,6 +12,11 @@ function GetDesire()
     local aliveEnemy = J.GetNumOfAliveHeroes(true)
     local hasSameOrMoreHero = aliveAlly >= aliveEnemy
     local botTarget = J.GetProperTarget(bot)
+
+    -- linger
+    if GameTime() - GetRoshanKillTime() <= 3.0 and not J.DoesTeamHaveAegis() and not bot:WasRecentlyDamagedByAnyHero(3.0) then
+        return BOT_MODE_DESIRE_VERYHIGH + 0.04
+    end
 
     local nAllyHeroes_Alive = {}
     for i = 1, 5 do
@@ -31,15 +36,12 @@ function GetDesire()
     else
         fRoshanAliveTime = 0
         bRoshanTime = false
+        bTeamRoshanHard = false
     end
 
-    if J.HasEnoughDPSForRoshan(nAllyHeroes_Alive) then
-        bEnoughDPS = true
-    end
-
-    if bRoshanAlive and bEnoughDPS then
+    if bRoshanAlive then
         local vRoshanLocation = J.GetCurrentRoshanLocation()
-        local mul = RemapValClamped(DotaTime(), fRoshanAliveTime, fRoshanAliveTime + (2.5 * 60), 1, 2)
+        local mul = (not J.IsEarlyGame() and RemapValClamped(DotaTime(), fRoshanAliveTime, fRoshanAliveTime + (2.5 * 60), 1, 2)) or 1
         local nRoshanDesire = RemapValClamped(GetRoshanDesire() * mul, 0, 1, 0, BOT_MODE_DESIRE_ABSOLUTE)
 
         local human, humanPing = J.GetHumanPing()
@@ -55,11 +57,11 @@ function GetDesire()
         end
 
         local nInRangeAlly = J.GetAlliesNearLoc(vRoshanLocation, 1000)
-        if #nInRangeAlly >= 4 then
-            nRoshanDesire = 0.9
+        if #nInRangeAlly >= 4 and bTeamRoshanHard then
+            nRoshanDesire = BOT_MODE_DESIRE_VERYHIGH + 0.04
         end
 
-        return Clamp(nRoshanDesire, 0, BOT_MODE_DESIRE_VERYHIGH)
+        return Clamp(nRoshanDesire, 0, BOT_MODE_DESIRE_VERYHIGH + 0.04)
     end
 
     return BOT_MODE_DESIRE_NONE
@@ -95,8 +97,10 @@ function Think()
                 local nInRangeAlly = J.GetAlliesNearLoc(vLocation, 1400)
                 if IsStrongEnough(nInRangeAlly, creep)
                 or #nInRangeAlly >= 4
+                or #nInRangeAlly >= J.GetNumOfAliveHeroes(false)
                 then
-                    if GetUnitToLocationDistance(bot, vLocation) <= 175 then
+                    if GetUnitToLocationDistance(bot, vLocation) <= 290 then
+                        bTeamRoshanHard = true
                         bot:Action_AttackUnit(creep, true)
                         return
                     end
@@ -111,7 +115,7 @@ function Think()
     end
 
     if DotaTime() >= fNextMovementTime then
-        bot:Action_MoveToLocation(vLocation + RandomVector(50))
+        bot:Action_MoveToLocation(J.VectorTowards(vLocation, vMid, 175) + RandomVector(50))
         fNextMovementTime = DotaTime() + RandomFloat(1, 3)
         return
     end

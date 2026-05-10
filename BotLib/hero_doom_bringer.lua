@@ -22,9 +22,9 @@ local HeroBuild = {
             ['talent'] = {
                 [1] = {
                     ['t25'] = {0, 10},
-                    ['t20'] = {0, 10},
+                    ['t20'] = {10, 0},
                     ['t15'] = {10, 0},
-                    ['t10'] = {10, 0},
+                    ['t10'] = {0, 10},
                 }
             },
             ['ability'] = {
@@ -62,9 +62,9 @@ local HeroBuild = {
             ['talent'] = {
                 [1] = {
                     ['t25'] = {0, 10},
-                    ['t20'] = {0, 10},
-                    ['t15'] = {0, 10},
-                    ['t10'] = {10, 0},
+                    ['t20'] = {10, 0},
+                    ['t15'] = {10, 0},
+                    ['t10'] = {0, 10},
                 }
             },
             ['ability'] = {
@@ -108,8 +108,8 @@ local HeroBuild = {
                 [1] = {
                     ['t25'] = {0, 10},
                     ['t20'] = {10, 0},
-                    ['t15'] = {0, 10},
-                    ['t10'] = {10, 0},
+                    ['t15'] = {10, 0},
+                    ['t10'] = {0, 10},
                 }
             },
             ['ability'] = {
@@ -147,8 +147,8 @@ local HeroBuild = {
                 [1] = {
                     ['t25'] = {0, 10},
                     ['t20'] = {0, 10},
-                    ['t15'] = {0, 10},
-                    ['t10'] = {10, 0},
+                    ['t15'] = {10, 0},
+                    ['t10'] = {0, 10},
                 }
             },
             ['ability'] = {
@@ -639,7 +639,7 @@ function X.ConsiderDoom()
             if J.IsEarlyGame() and not J.IsInTeamFight(bot, 1200) then
                 if not (#nInRangeAlly >= #nInRangeEnemy + 2) and J.IsAttacking(hTarget) then
                     local nDamage = hTarget:GetActualIncomingDamage(nDamageDPS * nDuration, DAMAGE_TYPE_MAGICAL)
-                                  + hTarget:GetActualIncomingDamage(bot:GetAttackDamage() * bot:GetAttackSpeed() * (nDuration / 2), DAMAGE_TYPE_PHYSICAL)
+                                  + hTarget:GetActualIncomingDamage((bot:GetAttackDamage() / bot:GetSecondsPerAttack()) * (nDuration / 2), DAMAGE_TYPE_PHYSICAL)
                     if nDamage > (hTarget:GetHealth() + hTarget:GetHealthRegen() * nDuration) then
                         return BOT_ACTION_DESIRE_HIGH, hTarget
                     end

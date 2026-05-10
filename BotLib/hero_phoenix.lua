@@ -451,7 +451,7 @@ function X.ConsiderFireSpirits()
             and not enemy:HasModifier('modifier_necrolyte_reapers_scythe')
             and not enemy:HasModifier('modifier_phoenix_fire_spirit_burn')
             then
-                local enemyAttackDamage = enemy:GetAttackDamage() * enemy:GetAttackSpeed()
+                local enemyAttackDamage = enemy:GetAttackDamage() / enemy:GetSecondsPerAttack()
                 if enemyAttackDamage > targetAttackDamage then
                     target = enemy
                     targetAttackDamage = enemyAttackDamage
@@ -594,7 +594,7 @@ function X.ConsiderFireSpiritsLaunch()
             and not enemy:HasModifier('modifier_necrolyte_reapers_scythe')
             and not enemy:HasModifier('modifier_phoenix_fire_spirit_burn')
             then
-                local enemyAttackDamage = enemy:GetAttackDamage() * enemy:GetAttackSpeed()
+                local enemyAttackDamage = enemy:GetAttackDamage() / enemy:GetSecondsPerAttack()
                 if enemyAttackDamage > targetAttackDamage then
                     target = enemy
                     targetAttackDamage = enemyAttackDamage

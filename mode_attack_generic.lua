@@ -270,6 +270,8 @@ function GetDesire()
                 end
             end
 
+            fFightingDesire = fFightingDesire + #J.GetSpecialModeAllies(bot, 1200, BOT_MODE_ATTACK) * (1/9)
+
             local nDesire = RemapValClamped(fFightingDesire * fSelfPreservationDesire, 0, 1, BOT_MODE_DESIRE_NONE, BOT_MODE_DESIRE_VERYHIGH + 0.05)
             if nDesire > BOT_MODE_DESIRE_VERYHIGH then
                 bot:SetTarget(botTarget.unit)
@@ -454,7 +456,7 @@ function IsRecklesslyDivingTower()
                 if J.IsValidHero(allyHero) and J.IsGoingOnSomeone(allyHero) and not J.IsSuspiciousIllusion(allyHero) then
                     local allyHeroTarget = J.GetProperTarget(allyHero)
                     if allyHeroTarget == botTarget.unit then
-                        ourDamage = ourDamage + allyHero:GetAttackDamage() * allyHero:GetAttackSpeed() * (Max(1, 3 - (GetUnitToUnitDistance(allyHero, botTarget.unit) / allyHero:GetCurrentMovementSpeed())))
+                        ourDamage = ourDamage + (allyHero:GetAttackDamage() / allyHero:GetSecondsPerAttack()) * (Max(1, 3 - (GetUnitToUnitDistance(allyHero, botTarget.unit) / allyHero:GetCurrentMovementSpeed())))
                     end
                 end
             end
@@ -471,7 +473,7 @@ end
 function IsThereDyingCreepNearby()
     local nEnemyLaneCreeps = bot:GetNearbyLaneCreeps(Min(botAttackRange + 300, 1600), true)
     for _, creep in pairs(nEnemyLaneCreeps) do
-        if J.IsValidHero(creep) and J.CanBeAttacked(creep) then
+        if J.IsValid(creep) and J.CanBeAttacked(creep) then
             if creep:GetHealth() < (botAttackDamage + botAttackDamage / 2) then
                 return true
             end
@@ -494,7 +496,7 @@ function X.GetWeakestNearbyHero(bEnemy, nRadius)
 		and not hero:HasModifier('modifier_skeleton_king_reincarnation_scepter_active')
         and not hero:HasModifier('modifier_item_helm_of_the_undying_active')
 		then
-			local heroScore = hero:GetActualIncomingDamage(bot:GetAttackDamage() * bot:GetAttackSpeed() * 3.0, DAMAGE_TYPE_PHYSICAL) / (hero:GetHealth() + hero:GetHealthRegen() * 3.0)
+			local heroScore = hero:GetActualIncomingDamage((bot:GetAttackDamage() / bot:GetSecondsPerAttack()) * 3.0, DAMAGE_TYPE_PHYSICAL) / (hero:GetHealth() + hero:GetHealthRegen() * 3.0)
 			if heroScore > weakestHeroScore then
 				weakestHero = hero
 				weakestHeroScore = heroScore

@@ -32,7 +32,7 @@ local HeroBuild = {
         [1] = {
             ['talent'] = {
                 [1] = {
-                    ['t25'] = {0, 10},
+                    ['t25'] = {10, 0},
                     ['t20'] = {10, 0},
                     ['t15'] = {10, 0},
                     ['t10'] = {10, 0},
@@ -72,7 +72,7 @@ local HeroBuild = {
             ['talent'] = {
                 [1] = {
                     ['t25'] = {10, 0},
-                    ['t20'] = {0, 10},
+                    ['t20'] = {10, 0},
                     ['t15'] = {10, 0},
                     ['t10'] = {10, 0},
                 }
@@ -112,7 +112,7 @@ local HeroBuild = {
         [1] = {
             ['talent'] = {
                 [1] = {
-                    ['t25'] = {10, 0},
+                    ['t25'] = {0, 10},
                     ['t20'] = {0, 10},
                     ['t15'] = {10, 0},
                     ['t10'] = {10, 0},
@@ -151,7 +151,7 @@ local HeroBuild = {
         [1] = {
             ['talent'] = {
                 [1] = {
-                    ['t25'] = {10, 0},
+                    ['t25'] = {0, 10},
                     ['t20'] = {0, 10},
                     ['t15'] = {10, 0},
                     ['t10'] = {10, 0},
@@ -652,6 +652,7 @@ end
 function X.ConsiderDrinkingBuddies()
     if bCannotUseAbility
     or not J.CanCastAbility(DrinkingBuddies)
+    or bot:IsRooted()
     then
         return BOT_ACTION_DESIRE_NONE, nil
     end
@@ -702,7 +703,7 @@ function X.ConsiderDrinkingBuddies()
                 and not J.IsRetreating(allyHero)
                 and not allyHero:HasModifier('modifier_necrolyte_reapers_scythe')
                 then
-                    local nDamage = allyHero:GetAttackDamage() * allyHero:GetAttackSpeed()
+                    local nDamage = allyHero:GetAttackDamage() / allyHero:GetSecondsPerAttack()
                     if nDamage > hTargetDamage then
                         hTarget = allyHero
                         hTargetDamage = nDamage

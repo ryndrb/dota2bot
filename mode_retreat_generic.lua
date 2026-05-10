@@ -148,7 +148,7 @@ function GetDesire()
         return BOT_MODE_DESIRE_ABSOLUTE
     end
 
-    if (bot:HasModifier('modifier_doom_bringer_doom_aura_enemy') and (#nEnemyHeroes > 0 or #nEnemyHeroes > #nAllyHeroes + 1))
+    if (bot:HasModifier('modifier_doom_bringer_doom_aura_enemy') and (#nEnemyHeroes > 0 or #nEnemyHeroes > #nAllyHeroes + 1) and botName ~= 'npc_dota_hero_medusa')
     or (bot:HasModifier('modifier_razor_static_link_debuff') and J.IsUnitNearby(bot ,nEnemyHeroes, 700, 'npc_dota_hero_razor', true) and #nEnemyHeroes >= #nAllyHeroes)
     or (bot:HasModifier('modifier_ursa_fury_swipes_damage_increase') and not bTeamFight and J.IsUnitNearby(bot, nEnemyHeroes, 700, 'npc_dota_hero_ursa', true))
     or (bot:HasModifier('modifier_ice_blast') and not bTeamFight and #nEnemyHeroes > #nAllyHeroes)
@@ -243,7 +243,7 @@ function GetDesire()
                     nEnemyNearbyCount = nEnemyNearbyCount + 1
                 end
                 if string.find(sUnitName, 'tower') then
-                    local towerDamage = bot:GetActualIncomingDamage(unit:GetAttackDamage() * unit:GetAttackSpeed() * 5.0, DAMAGE_TYPE_PHYSICAL) - botHealthRegen * 5.0
+                    local towerDamage = bot:GetActualIncomingDamage((unit:GetAttackDamage() / unit:GetSecondsPerAttack()) * 5.0, DAMAGE_TYPE_PHYSICAL) - botHealthRegen * 5.0
                     if towerDamage / botHealth >= 0.5 then
                         nEnemyNearbyCount = nEnemyNearbyCount + 1
                     end
@@ -303,7 +303,7 @@ function GetDesire()
 
     if nEnemyNearbyCount > 0 then
         if nEnemyNearbyCount - nAllyNearbyCount > 0 then
-            nDesire = nDesire + (nEnemyNearbyCount - nAllyNearbyCount) * (GetAdjustedValueCausedPatch(BOT_MODE_DESIRE_HIGH) / 4)
+            nDesire = nDesire + (nEnemyNearbyCount - nAllyNearbyCount) * (GetAdjustedValueCausedPatch(0.75) / 3)
         end
 
         if not bWeAreStronger and nEnemyNearbyCount >= nAllyNearbyCount then nDesire = nDesire + GetAdjustedValueCausedPatch(0.25) end
@@ -324,6 +324,23 @@ function GetDesire()
             or (bot:HasModifier('modifier_slark_shadow_dance') and J.GetModifierTime(bot, 'modifier_slark_shadow_dance') > 1.5)
             then
                 nDesire = nDesire - GetAdjustedValueCausedPatch(0.3)
+            end
+        end
+
+        if J.IsMeepoClone(bot) then
+            local meepoPrime = nil
+            for i = 1, 5 do
+                local member = GetTeamMember(i)
+                if member and member:GetUnitName() == 'npc_dota_hero_meepo' and bot ~= member then
+                    meepoPrime = member
+                    break
+                end
+            end
+
+            if meepoPrime then
+                if GetUnitToUnitDistance(bot, meepoPrime) > 1200 or J.IsRetreating(meepoPrime) then
+                    nDesire = nDesire + GetAdjustedValueCausedPatch(0.25)
+                end
             end
         end
     end
@@ -378,7 +395,7 @@ function X.GetUnitDesire(nRadius)
         then
             local sUnitName = unit:GetUnitName()
             -- local unitHealth = unit:GetHealth()
-            -- local botDamage = bot:GetAttackDamage() * bot:GetAttackSpeed() * 5.0
+            -- local botDamage = (bot:GetAttackDamage() / bot:GetSecondsPerAttack()) * 5.0
             local unitDamage = 0
             local bIsTargetingThisBot = J.IsChasingTarget(unit, bot) or unit:GetAttackTarget() == bot
 
@@ -466,6 +483,8 @@ end
 
 -- from mode_farm_generic
 function X.ShouldRun()
+    if bot:IsChanneling() then return 0 end
+
     if ((bot:GetCurrentMovementSpeed() > 330 and bot:DistanceFromFountain() < 10000) or bot:DistanceFromFountain() < 5000) and not bot:WasRecentlyDamagedByAnyHero(5.0) then
         if botName == 'npc_dota_hero_medusa' then
             local eta = bot:DistanceFromFountain() / bot:GetCurrentMovementSpeed()
@@ -535,6 +554,15 @@ function X.ShouldRun()
 			return 2
 		end
 	end
+
+    if botActiveMode == BOT_MODE_WATCHER or botActiveMode == BOT_MODE_WISDOM_SHRINE then
+        if nDistanceFromEnemyFountain < 10000 then
+            local tower = (GetTeam() == TEAM_RADIANT and GetTower(TEAM_DIRE, TOWER_BOT_1)) or GetTower(TEAM_RADIANT, TOWER_TOP_1)
+            if tower and tower:IsAlive() and (#nEnemyHeroes > #nAllyHeroes or #nAllyHeroes < 3) then
+                return 2.5
+            end
+        end
+    end
 
 	return 0
 end

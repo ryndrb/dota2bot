@@ -22,7 +22,7 @@ local HeroBuild = {
                 [1] = {
                     ['t25'] = {10, 0},
                     ['t20'] = {10, 0},
-                    ['t15'] = {0, 10},
+                    ['t15'] = {10, 0},
                     ['t10'] = {10, 0},
                 }
             },
@@ -33,28 +33,29 @@ local HeroBuild = {
                 "item_tango",
                 "item_double_branches",
                 "item_faerie_fire",
-                "item_double_circlet",
+                "item_circlet",
+                "item_gauntlets",
             
                 "item_magic_wand",
-                "item_double_null_talisman",
+                "item_bracer",
                 "item_power_treads",
                 "item_maelstrom",
+                "item_specialists_array",
                 "item_black_king_bar",--
                 "item_lesser_crit",
                 "item_mjollnir",--
+                "item_hydras_breath",--
                 "item_greater_crit",--
                 "item_aghanims_shard",
                 "item_satanic",--
-                "item_bloodthorn",--
                 "item_ultimate_scepter_2",
                 "item_moon_shard",
                 "item_travel_boots_2",--
             },
             ['sell_list'] = {
-                "item_magic_wand", "item_lesser_crit",
-                "item_magic_wand", "item_greater_crit",
-                "item_null_talisman", "item_satanic",
-                "item_null_talisman", "item_bloodthorn",
+                "item_bracer", "item_lesser_crit",
+                "item_bracer", "item_greater_crit",
+                "item_magic_wand", "item_satanic",
             },
         },
     },
@@ -64,7 +65,7 @@ local HeroBuild = {
                 [1] = {
                     ['t25'] = {10, 0},
                     ['t20'] = {10, 0},
-                    ['t15'] = {0, 10},
+                    ['t15'] = {10, 0},
                     ['t10'] = {10, 0},
                 }
             },
@@ -75,29 +76,31 @@ local HeroBuild = {
                 "item_tango",
                 "item_double_branches",
                 "item_faerie_fire",
-                "item_double_circlet",
+                "item_circlet",
+                "item_gauntlets",
             
                 "item_bottle",
                 "item_magic_wand",
-                "item_double_null_talisman",
+                "item_bracer",
                 "item_power_treads",
                 "item_maelstrom",
+                "item_specialists_array",
                 "item_black_king_bar",--
                 "item_lesser_crit",
                 "item_mjollnir",--
+                "item_hydras_breath",--
                 "item_greater_crit",--
                 "item_aghanims_shard",
                 "item_satanic",--
-                "item_bloodthorn",--
                 "item_ultimate_scepter_2",
                 "item_moon_shard",
                 "item_travel_boots_2",--
             },
             ['sell_list'] = {
-                "item_magic_wand", "item_black_king_bar",
-                "item_null_talisman", "item_satanic",
-                "item_null_talisman", "item_bloodthorn",
-                "item_bottle", "item_bloodthorn",
+                "item_bracer", "item_black_king_bar",
+                "item_magic_wand", "item_lesser_crit",
+                "item_magic_wand", "item_greater_crit",
+                "item_bottle", "item_satanic",
             },
         },
     },
@@ -107,7 +110,7 @@ local HeroBuild = {
                 [1] = {
                     ['t25'] = {10, 0},
                     ['t20'] = {10, 0},
-                    ['t15'] = {0, 10},
+                    ['t15'] = {10, 0},
                     ['t10'] = {10, 0},
                 }
             },
@@ -354,7 +357,7 @@ function X.ConsiderShackleShot()
             and not J.IsDisabled(enemy)
             and not enemy:HasModifier('modifier_necrolyte_reapers_scythe')
             then
-                local enemyAttackDamge = enemy:GetAttackDamage() * enemy:GetAttackSpeed()
+                local enemyAttackDamge = enemy:GetAttackDamage() / enemy:GetSecondsPerAttack()
                 local target = X.GetShackleTarget(bot, enemy, nRadius, nAngle)
 
                 if enemyAttackDamge > hTargetDamage and target then

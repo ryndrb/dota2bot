@@ -14,6 +14,28 @@ function X.GetDesire(bot__)
         return 0
     end
 
+	local attackingDamage = 0
+	local unitList = GetUnitList(UNIT_LIST_ALL)
+    for _, unit in pairs(unitList) do
+        if J.IsValid(unit) and GetTeam() ~= unit:GetTeam() and J.IsInRange(bot, unit, 1600) then
+			if unit:GetAttackTarget() == bot
+			or J.IsChasingTarget(unit, bot)
+			or (unit:IsHero() and bot:WasRecentlyDamagedByHero(unit, 3.0))
+			then
+				local fTimeToReach = (GetUnitToUnitDistance(unit, bot) - unit:GetAttackRange()) / unit:GetCurrentMovementSpeed()
+				if unit:IsHero() and not J.IsSuspiciousIllusion(unit) then
+					attackingDamage = attackingDamage + unit:GetEstimatedDamageToTarget(true, bot, 5.0 + fTimeToReach, DAMAGE_TYPE_ALL)
+				else
+					attackingDamage = attackingDamage + bot:GetActualIncomingDamage((unit:GetAttackDamage() / unit:GetSecondsPerAttack()) * (5 + fTimeToReach), DAMAGE_TYPE_PHYSICAL)
+				end
+			end
+		end
+    end
+
+	if attackingDamage / bot:GetHealth() >= 0.5 then
+		return BOT_MODE_DESIRE_NONE
+	end
+
     local botHealth = bot:GetHealth()
     local botHP = J.GetHP(bot)
     local botLocation = bot:GetLocation()
@@ -31,7 +53,6 @@ function X.GetDesire(bot__)
     local tEnemyHeroes_all = bot:GetNearbyHeroes(1600, true, BOT_MODE_NONE)
     local bOutnumbered = #tEnemyHeroes > #tAllyHeroes
 
-    local unitList = GetUnitList(UNIT_LIST_ALL)
     for _, unit in pairs(unitList)
 	do
 		if J.IsValid(unit)
@@ -289,7 +310,7 @@ function X.IsUnitAfterUnit(hUnit1, hUnit2)
 end
 
 function X.GetUnitAttackDamageWithinTime(hUnit, fTimeInterval)
-    return hUnit:GetAttackDamage() * hUnit:GetAttackSpeed() * fTimeInterval
+    return (hUnit:GetAttackDamage() / hUnit:GetSecondsPerAttack()) * fTimeInterval
 end
 
 function X.GetTotalUnitHealth(tUnits)

@@ -55,6 +55,43 @@ local HeroBuild = {
 				"item_power_treads", "item_skadi",
 			},
         },
+        [2] = {
+            ['talent'] = {
+				[1] = {
+					['t25'] = {10, 0},
+					['t20'] = {10, 0},
+					['t15'] = {0, 10},
+					['t10'] = {10, 0},
+				}
+            },
+            ['ability'] = {
+                [1] = {2,1,2,1,2,6,2,3,1,1,6,3,3,3,6},
+            },
+            ['buy_list'] = {
+				"item_tango",
+				"item_double_branches",
+				"item_magic_stick",
+				"item_quelling_blade",
+			
+				"item_power_treads",
+				"item_magic_wand",
+				"item_maelstrom",
+				"item_black_king_bar",--
+				"item_aghanims_shard",
+				"item_satanic",--
+				"item_mjollnir",--
+				"item_butterfly",--
+				"item_refresher",--
+				"item_ultimate_scepter_2",
+				"item_moon_shard",
+				"item_skadi",--
+			},
+            ['sell_list'] = {
+				"item_quelling_blade", "item_butterfly",
+				"item_magic_wand", "item_refresher",
+				"item_power_treads", "item_skadi",
+			},
+        },
     },
     ['pos_2'] = {
         [1] = {
@@ -63,7 +100,7 @@ local HeroBuild = {
 					['t25'] = {10, 0},
 					['t20'] = {10, 0},
 					['t15'] = {0, 10},
-					['t10'] = {0, 10},
+					['t10'] = {10, 0},
 				}
             },
             ['ability'] = {
@@ -94,6 +131,45 @@ local HeroBuild = {
 				"item_magic_wand", "item_satanic",
 				"item_bottle", "item_assault",
 				"item_falcon_blade", "item_refresher",
+				"item_power_treads", "item_butterfly",
+			},
+        },
+        [2] = {
+            ['talent'] = {
+				[1] = {
+					['t25'] = {10, 0},
+					['t20'] = {10, 0},
+					['t15'] = {0, 10},
+					['t10'] = {10, 0},
+				}
+            },
+            ['ability'] = {
+                [1] = {2,1,2,1,2,6,2,3,1,1,6,3,3,3,6},
+            },
+            ['buy_list'] = {
+				"item_tango",
+				"item_double_branches",
+				"item_magic_stick",
+				"item_quelling_blade",
+			
+				"item_bottle",
+				"item_power_treads",
+				"item_magic_wand",
+				"item_maelstrom",
+				"item_black_king_bar",--
+				"item_aghanims_shard",
+				"item_satanic",--
+				"item_mjollnir",--
+				"item_assault",--
+				"item_refresher",--
+				"item_ultimate_scepter_2",
+				"item_moon_shard",
+				"item_butterfly",--
+			},
+            ['sell_list'] = {
+				"item_quelling_blade", "item_satanic",
+				"item_magic_wand", "item_assault",
+				"item_bottle", "item_refresher",
 				"item_power_treads", "item_butterfly",
 			},
         },
@@ -435,7 +511,7 @@ function X.ConsiderStaticLink()
 			and J.CanCastOnTargetAdvanced(enemyHero)
 			and not enemyHero:HasModifier('modifier_razor_static_link_debuff')
 			then
-				local enemyHeroScore = enemyHero:GetAttackDamage() * enemyHero:GetAttackSpeed()
+				local enemyHeroScore = enemyHero:GetAttackDamage() / enemyHero:GetSecondsPerAttack()
 				if enemyHeroScore > hTargetScore then
 					hTarget = enemyHero
 					hTargetScore = enemyHeroScore

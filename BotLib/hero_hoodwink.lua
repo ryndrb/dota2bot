@@ -581,7 +581,7 @@ function X.ConsiderBushwhack()
                     local nDamage_Acorn = AcornShot:GetSpecialValueInt('acorn_shot_damage') + (bot:GetAttackDamage() * (nBaseDamagePct / 100))
                     local totalDamage = enemyHero:GetActualIncomingDamage(nDamage, DAMAGE_TYPE_MAGICAL)
                     totalDamage = totalDamage + enemyHero:GetActualIncomingDamage(nDamage_Acorn * 2, DAMAGE_TYPE_PHYSICAL)
-                    if J.WillKillTarget(enemyHero, totalDamage, DAMAGE_TYPE_ALL, nDelay) then
+                    if totalDamage > enemyHero:GetHealth() then
                         return BOT_ACTION_DESIRE_HIGH, vLocation, true
                     end
                 end

@@ -21,16 +21,10 @@ local HeroBuild = {
             ['talent'] = {
                 [1] = {
                     ['t25'] = {0, 10},
-                    ['t20'] = {10, 0},
-                    ['t15'] = {10, 0},
-                    ['t10'] = {0, 10},
-                },
-                [2] = {
-                    ['t25'] = {0, 10},
                     ['t20'] = {0, 10},
-                    ['t15'] = {0, 10},
-                    ['t10'] = {0, 10},
-                },
+                    ['t15'] = {10, 0},
+                    ['t10'] = {10, 0},
+                }
             },
             ['ability'] = {
                 -- [1] = {1,3,1,2,1,6,1,2,1,2,6,2,3,3,3,6}, -- +1 Q
@@ -72,7 +66,7 @@ local HeroBuild = {
                     ['t25'] = {0, 10},
                     ['t20'] = {0, 10},
                     ['t15'] = {10, 0},
-                    ['t10'] = {0, 10},
+                    ['t10'] = {10, 0},
                 }
             },
             ['ability'] = {
@@ -114,10 +108,10 @@ local HeroBuild = {
         [1] = {
             ['talent'] = {
                 [1] = {
-                    ['t25'] = {10, 0},
+                    ['t25'] = {0, 10},
                     ['t20'] = {0, 10},
                     ['t15'] = {10, 0},
-                    ['t10'] = {0, 10},
+                    ['t10'] = {10, 0},
                 }
             },
             ['ability'] = {
@@ -440,7 +434,7 @@ function X.ConsiderEmpower()
         and not allyHero:HasModifier('modifier_necrolyte_reapers_scythe')
         and not allyHero:HasModifier('modifier_skeleton_king_reincarnation_scepter_active')
 		then
-            local allyHeroDamage = allyHero:GetAttackDamage() * allyHero:GetAttackSpeed()
+            local allyHeroDamage = allyHero:GetAttackDamage() / allyHero:GetSecondsPerAttack()
 
             if J.IsCore(allyHero) and not J.IsWithoutTarget(allyHero) then
                 if allyHeroDamage > hTargetAllyDamage then
@@ -450,7 +444,7 @@ function X.ConsiderEmpower()
             end
 
             if J.IsFarming(allyHero) and fManaAfter > fManaThreshold1 then
-                if J.IsCore(allyHero) or (allyHeroDamage > (bot:GetAttackDamage() * bot:GetAttackSpeed())) then
+                if J.IsCore(allyHero) or (allyHeroDamage > (bot:GetAttackDamage() / bot:GetSecondsPerAttack())) then
                     return BOT_ACTION_DESIRE_HIGH, allyHero
                 end
             end

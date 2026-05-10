@@ -70,6 +70,47 @@ local HeroBuild = {
                 "item_bottle", "item_greater_crit",
             },
         },
+        [2] = {
+            ['talent'] = {
+                [1] = {
+                    ['t25'] = {0, 10},
+                    ['t20'] = {0, 10},
+                    ['t15'] = {0, 10},
+                    ['t10'] = {0, 10},
+                }
+            },
+            ['ability'] = {
+                [1] = {1,2,1,3,3,6,3,3,1,1,6,2,2,2,6},
+            },
+            ['buy_list'] = {
+                "item_double_branches",
+                "item_tango",
+                "item_circlet",
+                "item_gauntlets",
+                "item_faerie_fire",
+            
+                "item_bottle",
+                "item_magic_wand",
+                "item_bracer",
+                "item_power_treads",
+                "item_maelstrom",
+                "item_specialists_array",
+                "item_mjollnir",--
+                "item_black_king_bar",--
+                "item_hydras_breath",--
+                "item_aghanims_shard",
+                "item_greater_crit",--
+                "item_skadi",--
+                "item_moon_shard",
+                "item_ultimate_scepter_2",
+                "item_travel_boots_2",--
+            },
+            ['sell_list'] = {
+                "item_bracer", "item_black_king_bar",
+                "item_magic_wand", "item_greater_crit",
+                "item_bottle", "item_skadi",
+            },
+        },
     },
     ['pos_3'] = {
         [1] = {
