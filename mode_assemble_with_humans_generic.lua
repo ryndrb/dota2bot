@@ -35,6 +35,10 @@ function GetDesire()
     local nAveCoreLevel = 0
     local nAveSuppLevel = 0
 
+    if bot:HasModifier('modifier_miniboss_alleviation_active') then
+        bot.tormentor_state = false
+    end
+
     -- update vars
     local tAliveAllies = {}
     for i = 1, 5 do
@@ -143,7 +147,9 @@ function GetDesire()
     end
 
     if #J.GetEnemiesNearLoc(GetAncient(GetTeam()):GetLocation(), 2000) >= 2
-    or (GetTower(GetTeam(), TOWER_TOP_3) == nil or GetTower(GetTeam(), TOWER_MID_3) == nil or GetTower(GetTeam(), TOWER_BOT_3) == nil) -- stop when any these towers fall
+    or ((  not J.IsValidBuilding(GetTower(GetTeam(), TOWER_TOP_3))
+        or not J.IsValidBuilding(GetTower(GetTeam(), TOWER_MID_3))
+        or not J.IsValidBuilding(GetTower(GetTeam(), TOWER_BOT_3))) and #tAllyInTormentorLocation < 4) -- stop when any these towers fall
     then
         return BOT_MODE_DESIRE_NONE
     end

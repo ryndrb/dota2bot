@@ -13,6 +13,7 @@ local bLineupReserve = false
 
 require(GetScriptDirectory()..'/API/api_global')
 
+local synergy = require( GetScriptDirectory()..'/FunLib/aba_synergy' )
 local matchups = require( GetScriptDirectory()..'/Buff/script/matchups_data' )
 local U    = require( GetScriptDirectory()..'/FunLib/lua_util' )
 local N    = require( GetScriptDirectory()..'/FunLib/bot_names' )
@@ -45,8 +46,8 @@ local sHeroList = {										-- pos    1,   2,   3,   4,   5
 	{name = 'npc_dota_hero_dark_willow', 				role = {  0,   0,   0, 100,  80},	quality = 0.8 },
 	{name = 'npc_dota_hero_dawnbreaker', 				role = { 85,  85, 100, 100,  90},	quality = 1.3 },
 	{name = 'npc_dota_hero_dazzle', 					role = {  0,  95,   0, 100, 100},	quality = 1.3 },
-	{name = 'npc_dota_hero_disruptor', 					role = {  0,   0,   0, 100, 100},	quality = 1.3 },
 	{name = 'npc_dota_hero_death_prophet', 				role = {  0, 100, 100, 100, 100},	quality = 1.4 },
+	{name = 'npc_dota_hero_disruptor', 					role = {  0,   0,   0, 100, 100},	quality = 1.3 },
 	{name = 'npc_dota_hero_doom_bringer', 				role = { 90,  95, 100,   0,   0},	quality = 1.3 },
 	{name = 'npc_dota_hero_dragon_knight', 				role = {100, 100,  90,   0,   0},	quality = 1.3 },
 	{name = 'npc_dota_hero_drow_ranger', 				role = {100,  80,   0,   0,   0},	quality = 1.3 },
@@ -126,8 +127,8 @@ local sHeroList = {										-- pos    1,   2,   3,   4,   5
 	{name = 'npc_dota_hero_storm_spirit', 				role = {  0, 100,   0,   0,   0},	quality = 1.2 },
 	{name = 'npc_dota_hero_sven', 						role = {100,   0,   0,   0,   0},	quality = 1.3 },
 	{name = 'npc_dota_hero_techies', 					role = {  0,  85,   0, 100,  95},	quality = 1.3 },
-	{name = 'npc_dota_hero_terrorblade', 				role = {100,   0,   0,   0,   0},	quality = 1.4 },
 	{name = 'npc_dota_hero_templar_assassin', 			role = {100, 100,   0,   0,   0},	quality = 1.3 },
+	{name = 'npc_dota_hero_terrorblade', 				role = {100,   0,   0,   0,   0},	quality = 1.4 },
 	{name = 'npc_dota_hero_tidehunter', 				role = {  0,   0, 100,   0,   0},	quality = 1.3 },
 	{name = 'npc_dota_hero_tinker', 					role = {  0,  90,   0,  95, 100},	quality = 0.9 },
 	{name = 'npc_dota_hero_tiny', 						role = {100, 100,  90, 100,  95},	quality = 1.3 },
@@ -259,7 +260,15 @@ function X.IsHumanNotReady( nTeam )
 	return true
 end
 
-function X.GetNotRepeatHero( nTable )
+function X.GetNotRepeatHero( nTable, bExcludeWeak )
+
+	if bExcludeWeak then
+		for i = #nTable, 1, -1 do
+			if sWeakHeroes[nTable[i]] == true then
+				table.remove(nTable, i)
+			end
+		end
+	end
 
 	local sHero = nTable[1]
 	local maxCount = #nTable
@@ -417,7 +426,7 @@ function Think()
 
 			if IsPlayerBot(botID) and GetSelectedHeroName(botID) == '' then
 				if (#nOwnTeam == 0 and #nEnmTeam == 0) then
-					sSelectHero = X.GetNotRepeatHero(tSelectPoolList[poolID])
+					sSelectHero = X.GetNotRepeatHero(tSelectPoolList[poolID], true)
 				else
 					local hSelectionTable = {}
 					local topHeroes = {}
@@ -433,15 +442,21 @@ function Think()
 								end
 							end
 
-							-- TODO: bot relevant synergies (ie. Jugg/Magnus, FV/Jakiro, etc) to keep trimming scuff lineups
+							-- trim scuff lineups
+
+							-- try
+							local tagNudge = X.GetRoleTagsNudge(nOwnTeam, sName, pos)
+							score = score + tagNudge
+
+							-- amplifier
+							local synergyMult = X.GetSynergyMult(nOwnTeam, sName, pos)
+							score = score + math.abs(score) * (synergyMult - 1)
 
 							for _, hero in pairs(sHeroList) do
 								if hero.name == sName then
-									score = score * (hero.role[pos] / 100)
-
 									-- favor (usually) good performing bots
 									local quality = hero.quality or 1.0
-									score = score  > 0 and score * quality or (score + math.abs(score) * quality)
+									score = score + math.abs(score) * (quality - 1)
 
 									-- reduce chances of multiple weak heroes getting picked
 									if sWeakHeroes[hero.name] == true then
@@ -452,6 +467,9 @@ function Think()
 											score = score * (1 - Min(count.total / 2, 1))
 										end
 									end
+
+									if score > 0 then score = score * (hero.role[pos] / 100) end
+									break
 								end
 							end
 
@@ -470,7 +488,7 @@ function Think()
 					end
 					print('=====')
 
-					sSelectHero = X.GetNotRepeatHero(tSelectPoolList[poolID])
+					sSelectHero = X.GetNotRepeatHero(tSelectPoolList[poolID], true)
 
 					-- 'fuzz'
 					if #topHeroes >= 1 then
@@ -548,6 +566,95 @@ function X.CountWeakHeroesSelected()
 	count.total = count.team + count.opponent
 
 	return count
+end
+
+function X.GetSynergyMult(nOwnTeam, sName, pos)
+	local synergyMult = 1
+	for m = 1, #nOwnTeam do
+		local syn = synergy['synergy']
+		if syn and syn[sName] then
+			local sTeammate = nOwnTeam[m]
+			local teammate = syn[sName][sTeammate]
+			if teammate then
+				local synergyBlock = pos <= 3 and teammate.oCore or teammate.oSupp
+				if synergyBlock then
+					local function teammatePos(name)
+						for j, id in pairs(GetTeamPlayers(GetTeam())) do
+							local hName = GetSelectedHeroName(id)
+							if hName ~= nil and hName == name then
+								return ({ [1] = 2, [2] = 3, [3] = 1, [4] = 5, [5] = 4 })[j]
+							end
+						end
+						return nil
+					end
+
+					local isCoreTeammate = teammatePos(sTeammate) <= 3
+					synergyMult = isCoreTeammate and synergyBlock.iCore or synergyBlock.iSupp
+				end
+			end
+		end
+	end
+
+	return synergyMult
+end
+
+function X.GetRoleTagsNudge(nOwnTeam, sName, pos)
+	-- local function GetTeamRoleProfile(team)
+	-- 	local profile = {
+	-- 		carry = 0, disabler = 0, durable = 0, escape = 0,
+	-- 		initiator = 0, jungler = 0, nuker = 0, support = 0, pusher = 0
+	-- 	}
+	-- 	for _, heroName in ipairs(team) do
+	-- 		if Role['hero_roles'][heroName] then
+	-- 			for role, val in pairs(Role['hero_roles'][heroName]) do
+	-- 				profile[role] = profile[role] + val
+	-- 			end
+	-- 		end
+	-- 	end
+	-- 	return profile
+	-- end
+
+	local compNudge = 0
+
+	if Role['hero_roles'] and Role['hero_roles'][sName] then
+		local scale = 0.75
+		local hRoles = Role['hero_roles'][sName]
+		-- local teamRoles = GetTeamRoleProfile(nOwnTeam)
+
+		-- mult: how much this role matters
+		local roleImportance = {
+			['carry']     = { mult = 1.0 },
+			['disabler']  = { mult = 1.4 },
+			['durable']   = { mult = 1.3 },
+			['escape']    = { mult = 0.5 },
+			['initiator'] = { mult = 1.0 },
+			['jungler']   = { mult = 0.3 },
+			['nuker']     = { mult = 1.1 },
+			['support']   = { mult = 0.8 },
+			['pusher']    = { mult = 0.8 },
+		}
+
+		-- pos-to-role relevance: which roles matter when picking for this pos
+		local posRoleRelevance = {
+			[1] = { carry = 1.2, disabler = 0.5, durable = 0.5, escape = 0.5, initiator = 0.6, jungler = 0.4, nuker = 0.8, support = 0.2, pusher = 0.8 },
+			[2] = { carry = 0.7, disabler = 0.6, durable = 0.3, escape = 0.6, initiator = 0.8, jungler = 0.2, nuker = 1.0, support = 0.3, pusher = 0.5 },
+			[3] = { carry = 0.4, disabler = 0.8, durable = 1.0, escape = 0.5, initiator = 0.9, jungler = 0.2, nuker = 0.5, support = 0.5, pusher = 0.4 },
+			[4] = { carry = 0.2, disabler = 1.3, durable = 0.3, escape = 0.4, initiator = 0.6, jungler = 0.1, nuker = 0.6, support = 1.3, pusher = 0.3 },
+			[5] = { carry = 0.2, disabler = 1.3, durable = 0.3, escape = 0.4, initiator = 0.5, jungler = 0.1, nuker = 0.6, support = 1.3, pusher = 0.3 },
+		}
+
+        for role, cfg in pairs(roleImportance) do
+            local heroVal = hRoles[role] or 0
+            local posRel  = (posRoleRelevance[pos] and posRoleRelevance[pos][role]) or 0.0
+			compNudge = compNudge + heroVal * scale * cfg.mult * posRel
+        end
+
+		local tagSum = 0
+		for _, v in pairs(Role['hero_roles'][sName]) do tagSum = tagSum + v end
+		compNudge = compNudge^2 / Max(tagSum, 1)
+	end
+
+	return compNudge
 end
 
 function GetBotNames()

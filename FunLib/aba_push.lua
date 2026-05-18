@@ -261,6 +261,26 @@ function Push.WhichLaneToPush(bot, lane)
     midLaneScore = midLaneScore * (Max(0.1, 1 - GetPushLaneDesire(LANE_MID)))
     botLaneScore = botLaneScore * (Max(0.1, 1 - GetPushLaneDesire(LANE_BOT)))
 
+    -- less highground (likely) throws/feeds
+    local aAliveCount = J.GetNumOfAliveHeroes(false)
+    local eAliveCount = J.GetNumOfAliveHeroes(true)
+    local currLaneTier = Push.GetLaneBuildingTier(lane)
+    if currLaneTier >= 3 and eAliveCount > aAliveCount then
+        local function bIsOtherTier12Alive()
+            for _, l in ipairs({ LANE_TOP, LANE_MID, LANE_BOT }) do
+                if l ~= lane and Push.GetLaneBuildingTier(l) < 3 then
+                    return true
+                end
+            end
+            return false
+        end
+        if bIsOtherTier12Alive() then
+            if lane == LANE_TOP then topLaneScore = topLaneScore * 5 end
+            if lane == LANE_MID then midLaneScore = midLaneScore * 5 end
+            if lane == LANE_BOT then botLaneScore = botLaneScore * 5 end
+        end
+    end
+
     if  topLaneScore < midLaneScore
     and topLaneScore < botLaneScore
     then

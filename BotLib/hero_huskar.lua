@@ -669,6 +669,7 @@ function X.ConsiderLifeBreak()
 		and J.IsInRange(bot, botTarget, nCastRange)
 		and J.GetHP(botTarget) > 0.6
 		and not botTarget:IsHero()
+		and not botTarget:IsBuilding()
 		and not J.IsRoshan(botTarget)
 		and not J.IsTormentor(botTarget)
 		then

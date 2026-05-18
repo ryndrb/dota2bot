@@ -56,6 +56,10 @@ function GetDesire()
             end
         end
 
+        if J.GetAverageLevel(false) < 12 then
+            return BOT_MODE_DESIRE_NONE
+        end
+
         local nInRangeAlly = J.GetAlliesNearLoc(vRoshanLocation, 1000)
         if #nInRangeAlly >= 4 and bTeamRoshanHard then
             nRoshanDesire = BOT_MODE_DESIRE_VERYHIGH + 0.04

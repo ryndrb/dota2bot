@@ -420,6 +420,10 @@ function X.GetBestRune()
 			or (J.IsCore(bot) or not J.IsThereCoreNearby(1200))
 			then
 				local dist = GetUnitToLocationDistance(bot, vRuneLocation)
+				if (rune == RUNE_BOUNTY_1 or rune == RUNE_BOUNTY_2) then
+					dist = dist + 500
+				end
+
 				if dist < targetRuneDistance then
 					targetRune = rune
 					targetRuneDistance = dist

@@ -164,12 +164,21 @@ function GetDesire()
         end
     end
 
+    if botName == 'npc_dota_hero_obsidian_destroyer' then
+        local hAbility1 = bot:GetAbilityByName('obsidian_destroyer_arcane_orb')
+        local hAbility2 = bot:GetAbilityByName('obsidian_destroyer_equilibrium')
+        if hAbility1 and hAbility1:IsTrained() and hAbility1:GetLevel() >= 4 and hAbility2 then
+            botMP = 1
+        end
+    end
+
     if --[[(botHP <= 0.3) or]] ((botHP <= 0.6 or botMP < 0.4 ) and bot:DistanceFromFountain() <= 4000 and not bTeamFight) then
-        return BOT_MODE_DESIRE_VERYHIGH
+        return BOT_MODE_DESIRE_VERYHIGH + 0.04
     end
 
     if bot:HasModifier('modifier_fountain_aura_buff') then
-        if botHP <= 0.9 or (botMP <= 0.8 and botName ~= 'npc_dota_hero_huskar') then
+        local fountainBuffHealth, fountainBuffMana = 0.05 * 3, 0.06 * 3
+        if botHP + fountainBuffHealth <= 0.9 or (botMP + fountainBuffMana <= 0.8 and botName ~= 'npc_dota_hero_huskar') then
             return BOT_MODE_DESIRE_ABSOLUTE
         end
 
@@ -179,18 +188,11 @@ function GetDesire()
         end
     end
 
-    if J.IsInLaningPhase() or (J.IsEarlyGame() and botHP < 0.35) then
-        local nEnemyCreeps = bot:GetNearbyCreeps(600, true)
-        if J.IsGoingOnSomeone(bot) and #nEnemyCreeps >= 4 and bot:WasRecentlyDamagedByCreep(3.0) then
-            return BOT_MODE_DESIRE_VERYHIGH
-        end
-    end
-
     -- should directly run
 	if bot:IsAlive() and not bot:HasModifier('modifier_fountain_aura_buff') then
         -- print(fShouldRunTime, fCurrentRunTime, botName)
 		if fCurrentRunTime ~= 0 and DotaTime() < fCurrentRunTime + fShouldRunTime then
-			return BOT_MODE_DESIRE_ABSOLUTE * 1.1
+			return BOT_MODE_DESIRE_ABSOLUTE * 2
 		else
 			fCurrentRunTime = 0
 		end
@@ -201,7 +203,7 @@ function GetDesire()
 				fCurrentRunTime = DotaTime()
 			end
 
-			return BOT_MODE_DESIRE_ABSOLUTE * 1.1
+			return BOT_MODE_DESIRE_ABSOLUTE * 2
 		end
 	end
 
@@ -211,6 +213,10 @@ function GetDesire()
     local nCompletItemDesire = X.ConsiderCompleteItem()
     if nCompletItemDesire > 0 then
         return nCompletItemDesire
+    end
+
+    if bot:HasModifier('modifier_oracle_false_promise_timer') then
+        botHP = 1
     end
 
     -- fall
@@ -502,6 +508,17 @@ function X.ShouldRun()
 	if J.GetModifierTime(bot, 'modifier_medusa_stone_gaze_facing') > 3.33 then
 		return 3.33
 	end
+
+    if J.IsInLaningPhase() or (J.IsEarlyGame() and botHP < 0.35)then
+        local nEnemyCreeps = bot:GetNearbyCreeps(600, true)
+        if J.IsGoingOnSomeone(bot) and J.IsValidHero(botTarget) and #nEnemyCreeps >= 4 and bot:WasRecentlyDamagedByCreep(3.0) then
+            local eta = (GetUnitToUnitDistance(bot, botTarget) - bot:GetAttackRange()) / bot:GetCurrentMovementSpeed()
+            local nInRangeAlly = J.GetAlliesNearLoc(botLocation, 900)
+            if J.GetTotalEstimatedDamageToTarget(nInRangeAlly, botTarget, 2.5 - eta) < botTarget:GetHealth() then
+                return 2.5
+            end
+        end
+    end
 
     for _, enemyHero in pairs(nEnemyHeroes) do
         if J.IsValidHero(enemyHero)

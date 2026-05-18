@@ -34,6 +34,8 @@ local PickedItem = nil
 
 local ShouldAttackSpecialUnit = false
 
+local tidehunterFish = nil -- 'item_tidehunter_fish'
+
 local harass 	= { should = false, target = nil }
 local lastHit 	= { should = false, target = nil }
 
@@ -217,6 +219,33 @@ function GetDesire()
 		end
 	end
 
+	-- tidehunter fish; enemy heroes cannot attack it
+	tidehunterFish = X.GetTidehunterFish()
+	if tidehunterFish ~= nil and not (J.IsRetreating(bot) and bot:WasRecentlyDamagedByAnyHero(4.0)) then
+		if botName == 'npc_dota_hero_tidehunter' then
+			local nInRangeAlly = J.GetEnemiesNearLoc(bot:GetLocation(), 1200)
+			local nInRangeEnemy = J.GetEnemiesNearLoc(bot:GetLocation(), 1200)
+			if #nInRangeAlly >= #nInRangeEnemy then
+				local desire = (bot:GetActiveMode() ~= BOT_MODE_ITEM and BOT_MODE_DESIRE_VERYHIGH + 0.04) or bot:GetActiveModeDesire() + 0.1
+				if GetUnitToLocationDistance(bot, tidehunterFish.location) < 1600 then
+					return desire
+				end
+
+				for i = 1, 5 do
+					local member = GetTeamMember(i)
+					if  J.IsValidHero(member) and bot ~= member
+					and GetUnitToLocationDistance(member, tidehunterFish.location) <= 1200
+					and GetUnitToLocationDistance(bot, tidehunterFish.location) <= 3200
+					then
+						if member:GetActiveMode() == BOT_MODE_ITEM then
+							return desire
+						end
+					end
+				end
+			end
+		end
+	end
+
 	lastHit.should, lastHit.target = X.ShouldLastHit()
 	if lastHit.should and J.IsValid(lastHit.target) then
 		return BOT_MODE_DESIRE_VERYHIGH + 0.04
@@ -287,7 +316,7 @@ function GetDesire()
 			then
 				targetUnit = botTarget
 				bot:SetTarget(botTarget)
-				return Clamp(targetDesire, 0, BOT_MODE_DESIRE_VERYHIGH + 0.04)
+				return targetDesire
 			end
 		end
 
@@ -298,7 +327,7 @@ function GetDesire()
 			then
 				targetUnit = botTarget
 				bot:SetTarget(botTarget)
-				return Clamp(targetDesire, 0, BOT_MODE_DESIRE_VERYHIGH + 0.04)
+				return targetDesire
 			end
 		end
 
@@ -342,6 +371,7 @@ function OnEnd()
 	towerTime = 0
 	towerCreepMode = false
 	bSomeoneInChronosphere = false
+	tidehunterFish = nil
 	harass.should = false
 	harass.target = nil
 	lastHit.should = false
@@ -360,6 +390,13 @@ function Think()
 		-- end
 		bot:Action_AttackUnit(lastHit.target, true)
 		return
+	end
+
+	if tidehunterFish ~= nil then
+		if botName == 'npc_dota_hero_tidehunter' then
+			bot:Action_PickUpItem(tidehunterFish.item)
+			return
+		end
 	end
 
 	if harass.should and J.IsValidHero(harass.target) then
@@ -524,7 +561,7 @@ function X.SupportFindTarget()
 	then
 	    nTarget = X.WeakestUnitCanBeAttacked(true, true, nAttackRange + 50, bot)
 		if J.IsValidHero(nTarget) then
-		    return nTarget,BOT_MODE_DESIRE_ABSOLUTE * 1.09; 
+		    return nTarget,BOT_MODE_DESIRE_ABSOLUTE * 1.5 
 		end			    
 	end
 		
@@ -846,7 +883,7 @@ function X.CarryFindTarget()
 	then
 	    nTarget = X.WeakestUnitCanBeAttacked(true, true, nAttackRange + 50, bot)
 		if J.IsValidHero(nTarget) then
-		    return nTarget,BOT_MODE_DESIRE_ABSOLUTE * 1.09; 
+		    return nTarget,BOT_MODE_DESIRE_ABSOLUTE * 1.5; 
 		end			    
 	end
 		
@@ -1573,7 +1610,7 @@ function X.IsModeSuitToHitCreep(bot)
 		return true;
 	end
 
-    return  botMode ~= BOT_MODE_ATTACK
+    return  not J.IsGoingOnSomeone(bot)
 			and botMode ~= BOT_MODE_EVASIVE_MANEUVERS
 			and ( botMode ~= BOT_MODE_RETREAT or ( botMode == BOT_MODE_RETREAT and bot:GetActiveModeDesire() < BOT_MODE_DESIRE_HIGH - 0.07) )
 end
@@ -1941,6 +1978,7 @@ end
 
 function X.ShouldHarass()
 	if  bot:GetActiveMode() ~= BOT_MODE_ATTACK
+	and J.IsInLaningPhase()
 	and not J.IsRetreating(bot)
 	and not bot:IsDisarmed()
 	and not bot:IsSilenced()
@@ -2407,4 +2445,16 @@ function X.ShouldLastHit()
 	end
 
 	return hTarget ~= nil, hTarget
+end
+
+function X.GetTidehunterFish()
+	local droppedItemList = GetDroppedItemList()
+	for _, drop in ipairs(droppedItemList) do
+		if drop then
+			if drop.item and drop.item:GetName() == 'item_tidehunter_fish' then
+				return drop
+			end
+		end
+	end
+	return nil
 end

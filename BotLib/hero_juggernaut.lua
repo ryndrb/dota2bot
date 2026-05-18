@@ -467,8 +467,10 @@ function X.ConsiderOmnislash()
 		if J.IsValidHero(botTarget)
 		and J.CanBeAttacked(botTarget)
 		and J.IsInRange(bot, botTarget, nCastRange * 2)
+		and not J.IsInEtherealForm(botTarget)
 		and not botTarget:HasModifier('modifier_abaddon_borrowed_time')
 		and not botTarget:HasModifier('modifier_dazzle_shallow_grave')
+		and not botTarget:HasModifier('modifier_omninight_guardian_angel')
 		and not botTarget:HasModifier('modifier_item_blade_mail_reflect')
 		then
 			if botTarget:GetUnitName() ~= 'npc_dota_hero_medusa'

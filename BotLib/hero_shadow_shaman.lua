@@ -679,6 +679,7 @@ function X.ConsiderUrnanconda()
 			and J.CanBeAttacked(building)
 			and J.IsInRange(bot, building, nCastRange + bot:GetAttackRange())
 			and not J.IsKeyWordUnit('DOTA_Outpost', building)
+			and not J.IsKeyWordUnit('fillers', building)
 			then
 				local sBuildingName = building:GetUnitName()
 				if #nInRangeAlly <= 3 or string.find(sBuildingName, 'barracks') or building == hEnemyAcient then
@@ -808,6 +809,7 @@ function X.ConsiderMassSerpentWard()
 			and J.CanBeAttacked(building)
 			and J.IsInRange(bot, building, nCastRange + bot:GetAttackRange())
 			and not J.IsKeyWordUnit('DOTA_Outpost', building)
+			and not J.IsKeyWordUnit('fillers', building)
 			then
 				local sBuildingName = building:GetUnitName()
 				if #nInRangeAlly <= 3 or string.find(sBuildingName, 'barracks') or building == hEnemyAcient then
