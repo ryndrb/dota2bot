@@ -916,7 +916,7 @@ function X.ConsiderDetonateMAD()
     local nUnitList_Enemies = GetUnitList(UNIT_LIST_ENEMIES)
 
     for _, unit in pairs(nUnitList_Allies) do
-        if J.IsValid(unit) and unit:GetUnitName() 'npc_dota_techies_innate_mine' then
+        if J.IsValid(unit) and unit:GetUnitName() == 'npc_dota_techies_innate_mine' then
             for _, enemyHero in pairs(nUnitList_Enemies) do
                 if  J.IsValidHero(enemyHero)
                 and J.CanBeAttacked(enemyHero)
