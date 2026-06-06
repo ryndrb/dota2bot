@@ -1055,9 +1055,13 @@ function Item.IsItemInHero( sItemName )
 
 	if sItemName == 'item_ultimate_scepter_2' then return ( bot:HasScepter() and bot:FindItemSlot('item_ultimate_scepter') < 0 ) end
 
+	if bot.theCourier then
+		if bot.theCourier:FindItemSlot(sItemName) >= 0 then return true end
+	end
+
 	local nItemSolt = bot:FindItemSlot( sItemName )
 
-	return nItemSolt >= 0 and ( nItemSolt <= 8 or Item.IsTopItem( sItemName ) )
+	return nItemSolt >= 0 and ( nItemSolt <= 14 or Item.IsTopItem( sItemName ) )
 
 end
 
@@ -1071,7 +1075,7 @@ function Item.GetBasicItems( sItemList )
 	do
 		local bRepeatedItem = Item.IsItemInHero( v )
 		if bRepeatedItem == false
-			or v == bot.sLastRepeatItem
+			-- or v == bot.sLastRepeatItem
 		then
 			if Item[v] ~= nil	
 			then		

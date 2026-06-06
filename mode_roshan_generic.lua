@@ -14,7 +14,7 @@ function GetDesire()
     local botTarget = J.GetProperTarget(bot)
 
     -- linger
-    if GameTime() - GetRoshanKillTime() <= 3.0 and not J.DoesTeamHaveAegis() and not bot:WasRecentlyDamagedByAnyHero(3.0) then
+    if GameTime() - GetRoshanKillTime() <= 3.0 and not J.DoesTeamHaveAegis() and not bot:WasRecentlyDamagedByAnyHero(3.0) and GetUnitToLocationDistance(bot, J.GetCurrentRoshanLocation()) < 1600 then
         return BOT_MODE_DESIRE_VERYHIGH + 0.04
     end
 
@@ -64,6 +64,10 @@ function GetDesire()
         if #nInRangeAlly >= 4 and bTeamRoshanHard then
             nRoshanDesire = BOT_MODE_DESIRE_VERYHIGH + 0.04
         end
+
+        local aAliveCoreCount = J.GetAliveCoreCount(false)
+        local eAliveCoreCount = J.GetAliveCoreCount(true)
+        if not hasSameOrMoreHero and eAliveCoreCount > aAliveCoreCount and #nInRangeAlly < 4 then nRoshanDesire = 0 end
 
         return Clamp(nRoshanDesire, 0, BOT_MODE_DESIRE_VERYHIGH + 0.04)
     end

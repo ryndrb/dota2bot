@@ -371,7 +371,7 @@ function Push.PushThink(bot, lane)
     if bBuildingGlyphedBackdoor then
         local building = J.GetFurthestBuildingAlongLane(GetOpposingTeam(), lane)
         if building and building:IsTower() then
-            targetLoc = Push.GetAdjustedHoldPosition(bot, building)
+            targetLoc = Push.GetAdjustedHoldPosition(bot, building, vLaneFrontLocation)
         end
     end
 
@@ -501,6 +501,7 @@ function Push.PushThink(bot, lane)
     end
 end
 
+local fAggroTime = -9999
 function Push.DropTowerAggro(hUnit)
 	if J.IsValid(hUnit) then
         if J.CanNotUseAction(hUnit) or hUnit:IsDisarmed() then return false end
@@ -514,8 +515,9 @@ function Push.DropTowerAggro(hUnit)
             then
                 local nAllyCreeps = hUnit:GetNearbyLaneCreeps(700, false)
                 for _, creep in pairs(nAllyCreeps) do
-                    if J.IsValid(creep) and GetUnitToUnitDistance(creep, buliding) < 700 then
+                    if J.IsValid(creep) and GetUnitToUnitDistance(creep, buliding) < 700 and DotaTime() > fAggroTime then
                         hUnit:Action_AttackUnit(creep, false)
+                        fAggroTime = DotaTime() + 3.0
                         return true
                     end
                 end
@@ -539,10 +541,10 @@ local function IsInTowerRange(vLoc)
     end
     return false
 end
-function Push.GetAdjustedHoldPosition(bot, building)
+function Push.GetAdjustedHoldPosition(bot, building, vLaneFront)
 
     local vBuildingLocation = building:GetLocation()
-    local targetLoc = J.VectorTowards(vBuildingLocation, bot:GetLocation(), 1200)
+    local targetLoc = J.VectorTowards(vBuildingLocation, (bot:GetLocation() + vLaneFront) / 2, 1200)
 
     -- highground relevant
     if IsInTowerRange(targetLoc) then

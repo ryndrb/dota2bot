@@ -889,6 +889,19 @@ function X.SetUseItem(hItem, hItemTarget, nCastType)
 					bot:Action_UseAbilityOnLocation(hAbility, hItemTarget)
 					return
 				end
+			elseif string.find(sItemName, 'blink')
+				or sItemName == 'item_minotaur_horn'
+			then
+				local bkb = bot:GetItemInSlot(bot:FindItemSlot('item_black_king_bar'))
+				if J.CanCastAbility(bkb) and J.IsGoingOnSomeone(bot) then
+					local vTeamFightLocation = J.GetTeamFightLocation(bot)
+					if vTeamFightLocation and J.GetDistance(hItemTarget, vTeamFightLocation) <= 800 then
+						bot:ActionQueue_UseAbility(bkb)
+						bot:ActionQueue_Delay(0.1)
+						bot:ActionQueue_UseAbilityOnLocation(hItem, hItemTarget)
+						return
+					end
+				end
 			end
 		end
 
@@ -1221,14 +1234,14 @@ X.ConsiderItemDesire["item_blink"] = function( hItem )
 		and not botTarget:HasModifier('modifier_faceless_void_chronosphere_freeze')
 		and not botTarget:HasModifier('modifier_enigma_black_hole_pull')
 		then
-			local nInRangeAlly = J.GetAlliesNearLoc(botLocation, 1200)
+			local nInRangeAlly = J.GetAlliesNearLoc(botLocation, 800)
 			local nNearbyEnemyHeroCount = 0
 			for _, id in pairs(GetTeamPlayers(GetOpposingTeam())) do
 				if IsHeroAlive(id) then
 					local info = GetHeroLastSeenInfo(id)
 					if info ~= nil then
 						local dInfo = info[1]
-						if dInfo ~= nil and dInfo.time_since_seen < 3.0 and GetUnitToLocationDistance(bot, dInfo.location) <= 1200 then
+						if dInfo ~= nil and dInfo.time_since_seen < 3.0 and GetUnitToLocationDistance(botTarget, dInfo.location) <= 1200 then
 							nNearbyEnemyHeroCount = nNearbyEnemyHeroCount + 1
 						end
 					end
@@ -7642,8 +7655,9 @@ function X.IsItemCarrierVisible(hHeroList, nRadius, sItemName)
 	return false
 end
 
+local fAggroTime = -9999
 local function DropTowerAggro(hUnit)
-	if J.IsValid(hUnit) then
+	if J.IsValid(hUnit) and DotaTime() > fAggroTime then
 		if J.CanNotUseAction(hUnit) or hUnit:IsDisarmed() then return false end
 
         local nUnitList = GetUnitList(UNIT_LIST_ENEMY_BUILDINGS)
@@ -7657,6 +7671,7 @@ local function DropTowerAggro(hUnit)
                 for _, creep in pairs(nAllyCreeps) do
                     if J.IsValid(creep) and GetUnitToUnitDistance(creep, buliding) < 700 then
                         hUnit:Action_AttackUnit(creep, false)
+						fAggroTime = DotaTime() + 3.0
                         return true
                     end
                 end
@@ -7689,6 +7704,50 @@ local function ShouldDropTarget(hUnit)
 						return true
 					end
 				end
+			end
+		end
+	end
+
+	return false
+end
+
+local function DisruptTeleport(hUnit)
+	if not J.IsValidHero(hUnit) then return false end
+
+	if J.GetModifierTime(bot, 'modifier_teleporting') < 0.5
+	or J.GetModifierTime(bot, 'modifier_teleporting') > 2.0
+	then
+		return false
+	end
+
+	local hTeleports = GetIncomingTeleports()
+    for _, tp in pairs(hTeleports) do
+        if tp ~= nil and tp.playerid == bot:GetPlayerID() and J.GetDistance(tp.location, J.GetTeamFountain()) > 4400 then
+			local countNearbyAlly = #J.GetAlliesNearLoc(tp.location, 800)
+			local countNearbyEnemy = #J.GetEnemiesNearLoc(tp.location, 800)
+
+			for _, tpa in pairs(hTeleports) do
+				if tpa then
+					for _, id in pairs(GetTeamPlayers(GetTeam())) do
+						if IsHeroAlive(id) and id == tpa.playerid and J.GetDistance(tp.location, tpa.location) <= 800 then
+							countNearbyAlly = countNearbyAlly + 1
+						end
+					end
+				end
+			end
+			for _, tpe in pairs(hTeleports) do
+				if tpe then
+					for _, id in pairs(GetTeamPlayers(GetOpposingTeam())) do
+						if IsHeroAlive(id) and id == tpe.playerid and J.GetDistance(tp.location, tpe.location) <= 800 then
+							countNearbyEnemy = countNearbyEnemy + 1
+						end
+					end
+				end
+			end
+
+			if countNearbyEnemy > countNearbyAlly then
+				bot:Action_ClearActions(false)
+				return true
 			end
 		end
 	end
@@ -7788,14 +7847,18 @@ end
 function ItemUsageThink()
 	if bot.farm and bot.farm.state == 2 then return end
 
-	ItemUsageComplement()
-
-	BotBuild.SkillsComplement()
+	local t = GameTime() % 1.0
+    if t < 0.5 then
+        ItemUsageComplement()
+	else
+		BotBuild.SkillsComplement()
+    end
 end
 
 function AbilityUsageThink()
 	if DropTowerAggro(bot) then return end -- general
 	if ShouldDropTarget(bot) then return end
+	if DisruptTeleport(bot) then return end
 end
 
 local fLastTime = 0

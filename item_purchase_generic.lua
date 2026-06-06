@@ -867,10 +867,87 @@ function ItemPurchaseThink()
 		if Item.IsItemInHero( bot.currentItemToBuy )
 			or bot.currentItemToBuy == "item_aghanims_shard"
 		then
-			bot.currentItemToBuy = nil
-			bot.itemToBuy[#bot.itemToBuy] = nil
+			if bot.currentItemToBuy == bot.itemToBuy[#bot.itemToBuy] then
+				bot.currentItemToBuy = nil
+				bot.itemToBuy[#bot.itemToBuy] = nil
+			end
 		else
 			lastInvCheck = currentTime
+		end
+
+		-- fix broken item progression (?); seems to fix, though might have missed some edge cases
+		if bot.currentItemToBuyFromRecipe ~= nil and bot.currentItemToBuy == bot.currentItemToBuyFromRecipe then
+			if Item.IsItemInHero(bot.currentItemToBuyFromRecipe) then
+				bot.currentItemToBuy = nil
+				bot.currentItemToBuyFromRecipe = nil
+			else
+				lastInvCheck = currentTime + 1
+			end
+		end
+
+		if #bot.currListItemToBuy == 0 then
+			local recipe = nil
+			local recipeCost = 99999
+			for i = 0, 8 do
+				local hItem = bot:GetItemInSlot(i)
+				if hItem and string.find(hItem:GetName(), '_recipe') then
+					local nItemCost = GetItemCost(hItem:GetName())
+					if nItemCost < recipeCost then
+						recipe = hItem
+						recipeCost = nItemCost
+					end
+				end
+			end
+
+			if recipe then
+				local sItemRecipe = recipe:GetName()
+				local sItemName = string.gsub(sItemRecipe, '_recipe', '')
+				if bot.currentItemToBuy ~= sItemName then
+					bot.currentItemToBuyFromRecipe = sItemName
+					bot.currentItemToBuy = sItemName
+					local tempTable = Item.GetBasicItems( { bot.currentItemToBuy } )
+					for i = #tempTable, 1, -1 do
+						bot.currListItemToBuy[#tempTable-i+1] = tempTable[i]
+					end
+				end
+			end
+		end
+
+		if bot.currentItemToBuy ~= nil and #bot.currListItemToBuy == 0 then
+			local function HaveItem(sItemName)
+				local __courier = bot.theCourier
+
+				if not string.find(botName, 'lone_druid') then
+					if bot:FindItemSlot(sItemName) >= 0 then return true end
+
+					if __courier then
+						if __courier:FindItemSlot(sItemName) >= 0 then return true end
+					end
+				end
+
+				local LoneDruid = J.CheckLoneDruid()
+				if LoneDruid.hero == bot then
+					if J.IsValid(LoneDruid.bear) then
+						if LoneDruid.bear:FindItemSlot(sItemName) >= 0 then return true end
+					end
+
+					if LoneDruid.hero == bot then
+						if LoneDruid.hero:FindItemSlot(sItemName) >= 0 then return true end
+						if __courier then
+							if __courier:FindItemSlot(sItemName) >= 0 then return true end
+						end
+					end
+				end
+
+				return false
+			end
+
+			if not HaveItem(bot.currentItemToBuy) then
+				local tempTable = Item.GetBasicItems( { bot.currentItemToBuy } )
+				for i = #tempTable, 1, -1 do
+					bot.currListItemToBuy[#tempTable-i+1] = tempTable[i]
+				end
+			end
 		end
 	elseif #bot.currListItemToBuy > 0
 	then

@@ -159,6 +159,11 @@ function GetDesire()
 			local sItemName = hItem:GetName()
 			if  sItemName ~= 'item_hand_of_midas'
 			and sItemName ~= 'item_soul_booster'
+			and sItemName ~= 'item_relic'
+			and sItemName ~= 'item_maelstrom'
+			and sItemName ~= 'item_bfury'
+			and sItemName ~= 'item_radiance'
+			and sItemName ~= 'item_specialists_array'
 			then
 				bHasRealiItem = true
 				break

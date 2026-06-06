@@ -104,7 +104,7 @@ local HeroBuild = {
                 "item_magic_wand",
                 "item_tranquil_boots",
                 "item_cyclone",
-                "item_spirit_vessel",--
+                "item_spirit_vessel",
                 "item_glimmer_cape",--
                 "item_boots_of_bearing",--
                 "item_aghanims_shard",
@@ -117,6 +117,7 @@ local HeroBuild = {
             },
             ['sell_list'] = {
                 "item_magic_wand", "item_refresher",
+                "item_spirit_vessel", "item_wind_waker",
             },
         },
     },
@@ -142,7 +143,7 @@ local HeroBuild = {
                 "item_magic_wand",
                 "item_arcane_boots",
                 "item_cyclone",
-                "item_spirit_vessel",--
+                "item_spirit_vessel",
                 "item_glimmer_cape",--
                 "item_guardian_greaves",--
                 "item_aghanims_shard",
@@ -155,6 +156,7 @@ local HeroBuild = {
             },
             ['sell_list'] = {
                 "item_magic_wand", "item_refresher",
+                "item_spirit_vessel", "item_wind_waker",
             },
         },
     },
