@@ -889,10 +889,8 @@ function X.SetUseItem(hItem, hItemTarget, nCastType)
 					bot:Action_UseAbilityOnLocation(hAbility, hItemTarget)
 					return
 				end
-			elseif string.find(sItemName, 'blink')
-				or sItemName == 'item_minotaur_horn'
-			then
-				local bkb = bot:GetItemInSlot(bot:FindItemSlot('item_black_king_bar'))
+			elseif string.find(sItemName, 'blink') then
+				local bkb = bot:GetItemInSlot(bot:FindItemSlot('item_black_king_bar')) or bot:GetItemInSlot(bot:FindItemSlot('item_minotaur_horn'))
 				if J.CanCastAbility(bkb) and J.IsGoingOnSomeone(bot) then
 					local vTeamFightLocation = J.GetTeamFightLocation(bot)
 					if vTeamFightLocation and J.GetDistance(hItemTarget, vTeamFightLocation) <= 800 then
