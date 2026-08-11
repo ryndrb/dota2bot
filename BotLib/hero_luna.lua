@@ -54,6 +54,7 @@ local HeroBuild = {
 				"item_circlet", "item_dragon_lance",
 				"item_circlet", "item_butterfly",
 				"item_magic_wand", "item_black_king_bar",
+				"item_power_treads", "item_greater_crit",
 			},
         },
     },
