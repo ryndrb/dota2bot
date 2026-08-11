@@ -385,12 +385,12 @@ function X.ConsiderViscousNasalGoo()
 end
 
 function X.ConsiderQuillSpray()
-	if not J.CanCastAbility(QuillSpray) then
-		return BOT_ACTION_DESIRE_NONE
+	if QuillSpray and QuillSpray:GetAutoCastState() == true then
+		QuillSpray:ToggleAutoCast()
 	end
 
-	if QuillSpray:GetAutoCastState() == true then
-		QuillSpray:ToggleAutoCast()
+	if not J.CanCastAbility(QuillSpray) then
+		return BOT_ACTION_DESIRE_NONE
 	end
 
 	local nRadius = QuillSpray:GetSpecialValueInt('radius')
