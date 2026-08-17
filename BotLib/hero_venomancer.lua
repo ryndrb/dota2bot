@@ -709,7 +709,7 @@ function X.ConsiderNoxiousPlague()
             then
                 local nInRangeAlly = J.GetAlliesNearLoc(enemyHero:GetLocation(), 800)
                 local nInRangeEnemy = J.GetEnemiesNearLoc(enemyHero:GetLocation(), 800)
-                if not (#nInRangeAlly >= #nInRangeEnemy + 1) then
+                if not (#nInRangeAlly >= #nInRangeEnemy + 1) and #nInRangeEnemy >= 2 then
                     local enemyHeroDamage = enemyHero:GetEstimatedDamageToTarget(false, bot, 5.0, DAMAGE_TYPE_ALL)
                     if enemyHeroDamage > hTargetScore then
                         hTarget = enemyHero

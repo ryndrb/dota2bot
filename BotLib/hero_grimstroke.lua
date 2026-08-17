@@ -75,18 +75,21 @@ local HeroBuild = {
                 "item_tranquil_boots",
                 "item_magic_wand",
                 "item_aether_lens",
-                "item_aghanims_shard",
                 "item_glimmer_cape",--
+                "item_ancient_janggo",
                 "item_ultimate_scepter",
+                "item_ghost",
                 "item_boots_of_bearing",--
+                "item_aghanims_shard",
                 "item_sheepstick",--
-                "item_aeon_disk",--
-                "item_ultimate_scepter_2",
                 "item_octarine_core",--
+                "item_ultimate_scepter_2",
+                "item_crellas_crozier",--
                 "item_moon_shard",
             },
             ['sell_list'] = {
-                "item_magic_wand", "item_aeon_disk",
+                "item_magic_wand", "item_ghost",
+				"item_magic_wand", "item_crellas_crozier",
             },
         },
     },
@@ -113,18 +116,21 @@ local HeroBuild = {
                 "item_arcane_boots",
                 "item_magic_wand",
                 "item_aether_lens",
-                "item_aghanims_shard",
                 "item_glimmer_cape",--
+                "item_mekansm",
                 "item_ultimate_scepter",
+                "item_ghost",
                 "item_guardian_greaves",--
+                "item_aghanims_shard",
                 "item_sheepstick",--
-                "item_aeon_disk",--
-                "item_ultimate_scepter_2",
                 "item_octarine_core",--
+                "item_ultimate_scepter_2",
+                "item_crellas_crozier",--
                 "item_moon_shard",
             },
             ['sell_list'] = {
-                "item_magic_wand", "item_aeon_disk",
+                "item_magic_wand", "item_ghost",
+				"item_magic_wand", "item_crellas_crozier",
             },
         },
     },

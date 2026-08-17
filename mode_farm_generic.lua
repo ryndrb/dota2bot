@@ -25,6 +25,18 @@ local bShouldCreepAggroToStack = { check = false, attack = false }
 local allyBuilds = {}
 
 function GetDesire()
+	local desire = GetDesireRaw()
+	local activeMode = bot:GetActiveMode()
+	local activeModeDesire = bot:GetActiveModeDesire()
+	if  activeMode ~= BOT_MODE_FARM
+    and desire == activeModeDesire
+	then
+		desire = desire - 0.05
+	end
+	return desire
+end
+
+function GetDesireRaw()
 	X.InitFarm()
 
     if J.GetFirstBotInTeam() == bot then
@@ -117,7 +129,7 @@ function GetDesire()
 		or botActiveMode == BOT_MODE_WARD
 		or botActiveMode == BOT_MODE_RETREAT
 		or botActiveMode == BOT_MODE_OUTPOST) and botActiveModeDesire > 0)
-	or (#nInRangeAlly_tormentor >= 2 and bot.tormentor_state == true)
+	or (#nInRangeAlly_tormentor >= 2 and _G.tormentor.alive)
     or (#nInRangeAlly_roshan >= 2 and bRoshanAlive and bNotClone)
     or (J.DoesTeamHaveAegis() and not J.IsEarlyGame() and nAliveAllyCount >= 4)
 	or (bot:WasRecentlyDamagedByAnyHero(3.0) and bot:GetAttackTarget() == nil)
@@ -309,7 +321,9 @@ function Think()
 			and not J.IsRoshan(creep)
 			and not J.IsTormentor(creep)
 			then
-				if J.Site.HasArmorReduction(creep) then
+				if J.Site.HasArmorReduction(creep)
+				or J.CanKillTarget(creep, bot:GetAttackDamage()-1, DAMAGE_TYPE_PHYSICAL)
+				then
 					farmTarget = creep
 					break
 				end
@@ -350,6 +364,9 @@ function Think()
 				return
 			else
 				bot.farm.state = FARM_STATE__FARM
+				if bot:GetAnimActivity() == ACTIVITY_ATTACK then
+					return
+				end
 				bot:Action_AttackUnit(farmTarget, false)
 				return
 			end
@@ -379,7 +396,9 @@ function Think()
 				and not J.IsRoshan(creep)
 				and not J.IsTormentor(creep)
 				then
-					if J.Site.HasArmorReduction(creep) then
+					if J.Site.HasArmorReduction(creep)
+					or J.CanKillTarget(creep, bot:GetAttackDamage()-1, DAMAGE_TYPE_PHYSICAL)
+					then
 						farmTarget = creep
 						break
 					end
@@ -446,24 +465,10 @@ function Think()
 								local dir = Vector(math.cos(rad), math.sin(rad), 0)
 								local candidate = farmLocation + dir * 1200
 
-								if not IsLocationPassable(candidate) then goto gSkipCandidate end
-
-								local bValid = true
-								for _, camp in pairs(nearbyCamps) do
-									if J.GetDistance(camp.location, farmLocation) > 50 then
-										if J.GetDistance(candidate, camp.location) < 600 then
-											bValid = false
-											break
-										end
-									end
-								end
-
-								if bValid then
+								if IsLocationPassable(candidate) and not X.IsInsideACamp(candidate) then
 									vLocation = candidate
 									break
 								end
-
-								::gSkipCandidate::
 							end
 
 							if vLocation == nil then vLocation = J.VectorAway(bot:GetLocation(), farmLocation, 1400) end
@@ -494,6 +499,10 @@ function Think()
 						bot:Action_MoveToLocation(farmTarget:GetLocation())
 						return
 					end
+				end
+
+				if bot:GetAnimActivity() == ACTIVITY_ATTACK then
+					return
 				end
 
 				bot:SetTarget(farmTarget)
@@ -743,4 +752,18 @@ function X.IsLocCanBeSeen(vLocation)
 	end
 
 	return IsRadiusVisible(vLocation, 10)
+end
+
+function X.IsInsideACamp(vLocation)
+	local camps = GetNeutralSpawners()
+	for _, camp in pairs(camps) do
+		if camp then
+			if  vLocation.x >= camp.min.x and vLocation.x <= camp.max.x
+			and vLocation.y >= camp.min.y and vLocation.y <= camp.max.y
+			then
+				return true
+			end
+		end
+	end
+	return false
 end

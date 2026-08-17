@@ -77,6 +77,22 @@ S.ConsiderAbilityUsage['visage_summon_familiars'] = function(bot, hAbility)
     return false
 end
 
+-- for picking up bounty runes; 7.41+
+function S.TryPickUpNearbyBounty(bot)
+    local bountyRuneSpawners = Entities:FindAllByClassnameWithin('dota_item_rune_spawner_bounty', bot:GetAbsOrigin(), 150)
+    for _, spawner in pairs(bountyRuneSpawners) do
+        if spawner and (bot:GetAbsOrigin() - spawner:GetAbsOrigin()):Length2D() < 150 then
+            local bountyRunes = Entities:FindAllByClassnameWithin('dota_item_rune', bot:GetAbsOrigin(), 150)
+            for _, rune in pairs(bountyRunes) do
+                if rune and (rune:GetAbsOrigin() - spawner:GetAbsOrigin()):Length2D() < 150 then
+                    bot:PickupRune(rune)
+                    print('[Buff]' .. bot:GetUnitName() .. ' picked bounty rune using Buff.. ')
+                end
+            end
+        end
+    end
+end
+
 function S.GetAbilityHandle(bot, sAbilityName)
     local botAbilityCount = bot:GetAbilityCount()
     for i = 0, botAbilityCount - 1 do

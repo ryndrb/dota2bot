@@ -19,6 +19,18 @@ local fLastRetreatDesire = 0
 local hTeamAncient, hEnemyAncient
 
 function GetDesire()
+	local desire = GetDesireRaw()
+	local activeMode = bot:GetActiveMode()
+	local activeModeDesire = bot:GetActiveModeDesire()
+	if  activeMode ~= BOT_MODE_RETREAT
+    and desire == activeModeDesire
+	then
+		desire = desire - 0.05
+	end
+	return desire
+end
+
+function GetDesireRaw()
     botActiveMode = bot:GetActiveMode()
 
     if not bot:IsAlive()
@@ -206,6 +218,10 @@ function GetDesire()
 			return BOT_MODE_DESIRE_ABSOLUTE * 2
 		end
 	end
+
+    if (J.IsInTeamFight(bot, 1600) and J.IsGoingOnSomeone(bot) and bot:GetActiveModeDesire() >= BOT_MODE_DESIRE_VERYHIGH) then
+        return BOT_MODE_DESIRE_NONE
+    end
 
     local nDesire = 0
 

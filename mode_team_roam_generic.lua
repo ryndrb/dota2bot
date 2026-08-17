@@ -47,6 +47,18 @@ local bSomeoneInChronosphere = false
 local fEngagePingingTime = -math.huge
 
 function GetDesire()
+	local desire = GetDesireRaw()
+	local activeMode = bot:GetActiveMode()
+	local activeModeDesire = bot:GetActiveModeDesire()
+	if  activeMode ~= BOT_MODE_TEAM_ROAM
+    and desire == activeModeDesire
+	then
+		desire = desire - 0.05
+	end
+	return desire
+end
+
+function GetDesireRaw()
 	TormentorLocation = J.GetTormentorLocation(GetTeam())
 
 	local LoneDruid = J.CheckLoneDruid()

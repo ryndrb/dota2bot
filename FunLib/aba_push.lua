@@ -4,11 +4,27 @@ local J = require( GetScriptDirectory()..'/FunLib/jmz_func')
 local pingTimeDelta = 5
 
 function Push.GetPushDesire(bot, lane)
-    local nMaxDesire = BOT_MODE_DESIRE_HIGH
+    local desire = Push.GetPushDesireRaw(bot, lane)
+    local activeMode = bot:GetActiveMode()
+    local activeModeDesire = bot:GetActiveModeDesire()
+    local currMode = { [LANE_TOP] = BOT_MODE_PUSH_TOWER_TOP, [LANE_MID] = BOT_MODE_PUSH_TOWER_MID, [LANE_BOT] = BOT_MODE_PUSH_TOWER_BOT }
+    if  activeMode ~= currMode[lane]
+    and desire == activeModeDesire
+    then
+        if J.IsPushing(bot) or J.IsDefending(bot) then
+            desire = desire - 0.05
+        end
+    end
+	return desire
+end
+
+function Push.GetPushDesireRaw(bot, lane)
+    local nMaxDesire = BOT_MODE_DESIRE_VERYHIGH
     local botActiveMode = bot:GetActiveMode()
     local bMyLane = bot:GetAssignedLane() == lane
 
 	if (not bMyLane and J.IsCore(bot) and J.IsInLaningPhase())
+    or (not bMyLane and DotaTime() < 6 * 60 + 10)
     or ((#J.GetAlliesNearLoc(J.GetTormentorLocation(GetTeam()), 1600) >= 3) or #J.GetAlliesNearLoc(J.GetTormentorWaitingLocation(GetTeam()), 2500) >= 3)
     or (J.IsGoingToRune(bot))
 	then
@@ -371,7 +387,13 @@ function Push.PushThink(bot, lane)
     if bBuildingGlyphedBackdoor then
         local building = J.GetFurthestBuildingAlongLane(GetOpposingTeam(), lane)
         if building and building:IsTower() then
-            targetLoc = Push.GetAdjustedHoldPosition(bot, building, vLaneFrontLocation)
+            local amountAlongLane = GetAmountAlongLane(lane, building:GetLocation())
+            local locationAlongLane = GetLocationAlongLane(lane, math.max(0, amountAlongLane.amount - 0.07))
+            local locationTowards = J.VectorTowards(building:GetLocation(), locationAlongLane, 1200)
+            if building == GetTower(TEAM_DIRE, TOWER_TOP_2) then
+                locationTowards = Vector(locationTowards.x, locationTowards.y + 350, locationTowards.z)
+            end
+            targetLoc = Push.GetAdjustedHoldPosition(bot, building, locationTowards)
         end
     end
 
@@ -541,10 +563,10 @@ local function IsInTowerRange(vLoc)
     end
     return false
 end
-function Push.GetAdjustedHoldPosition(bot, building, vLaneFront)
+function Push.GetAdjustedHoldPosition(bot, building, vTargetLocation)
 
     local vBuildingLocation = building:GetLocation()
-    local targetLoc = J.VectorTowards(vBuildingLocation, (bot:GetLocation() + vLaneFront) / 2, 1200)
+    local targetLoc = vTargetLocation
 
     -- highground relevant
     if IsInTowerRange(targetLoc) then

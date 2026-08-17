@@ -19,13 +19,46 @@ local HeroBuild = {
     ['pos_1'] = {
         [1] = {
             ['talent'] = {
-                [1] = {},
+				[1] = {
+					['t25'] = {0, 10},
+					['t20'] = {0, 10},
+					['t15'] = {0, 10},
+					['t10'] = {10, 0},
+				}
             },
             ['ability'] = {
-                [1] = {},
+				[1] = {3,1,3,1,1,7,1,3,2,3,7,2,2,2,7},
             },
-            ['buy_list'] = {},
-            ['sell_list'] = {},
+            ['buy_list'] = {
+				"item_tango",
+				"item_double_branches",
+				"item_quelling_blade",
+				"item_circlet",
+				"item_gauntlets",
+
+				"item_magic_wand",
+				"item_bracer",
+				"item_boots",
+				"item_hand_of_midas",
+				'item_power_treads',
+				"item_orchid",
+				"item_black_king_bar",--
+				"item_assault",--
+				"item_bloodthorn",--
+				"item_heart",--
+				"item_aghanims_shard",
+				"item_satanic",--
+				"item_ultimate_scepter_2",
+				"item_moon_shard",
+				"item_swift_blink",--
+			},
+            ['sell_list'] = {
+				"item_quelling_blade", "item_black_king_bar",
+				"item_bracer", "item_assault",
+				"item_magic_wand", "item_heart",
+				"item_hand_of_midas", "item_satanic",
+				"item_power_treads", "item_swift_blink",
+			},
         },
     },
     ['pos_2'] = {

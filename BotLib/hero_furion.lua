@@ -633,7 +633,7 @@ function X.ConsiderTeleportation()
         local vTormentorLocation = J.GetTormentorLocation()
         local nInRangeAlly = J.GetAlliesNearLoc(vTormentorLocation, 800)
 
-        if ((GetUnitToLocationDistance(bot, vTormentorLocation) / bot:GetCurrentMovementSpeed()) > (nChannelTime + 1)) and (#nInRangeAlly >= 1 or bot.tormentor_state == false) then
+        if ((GetUnitToLocationDistance(bot, vTormentorLocation) / bot:GetCurrentMovementSpeed()) > (nChannelTime + 1)) and (#nInRangeAlly >= 1 or not _G.tormentor.alive) then
             return BOT_ACTION_DESIRE_HIGH, vTormentorLocation
         end
     end

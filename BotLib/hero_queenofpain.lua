@@ -95,22 +95,25 @@ local HeroBuild = {
 				"item_magic_wand",
 				"item_power_treads",
 				"item_null_talisman",
-				"item_blade_mail",
-				"item_pipe",--
-				"item_rod_of_atos",
+				"item_urn_of_shadows",
+				"item_kaya",
+				"item_spirit_vessel",
 				"item_black_king_bar",--
+				"item_rod_of_atos",
+				"item_kaya_and_sange",--
+				"item_ultimate_scepter",
 				"item_aghanims_shard",
 				"item_shivas_guard",--
 				"item_gungir",--
 				"item_ultimate_scepter_2",
 				"item_sheepstick",--
-				"item_travel_boots_2",--
 				"item_moon_shard",
+				"item_travel_boots_2",--
 			},
             ['sell_list'] = {
-				"item_magic_wand", "item_black_king_bar",
-				"item_null_talisman", "item_shivas_guard",
-				"item_blade_mail", "item_sheepstick",
+				"item_null_talisman", "item_rod_of_atos",
+				"item_magic_wand", "item_ultimate_scepter",
+				"item_spirit_vessel", "item_travel_boots_2",
 			},
         },
     },
@@ -136,22 +139,23 @@ local HeroBuild = {
 			
 				"item_tranquil_boots",
 				"item_magic_wand",
-				"item_blade_mail",
+				"item_urn_of_shadows",
 				"item_ancient_janggo",
-				"item_force_staff",
+				"item_spirit_vessel",
+				"item_solar_crest",--
 				"item_black_king_bar",--
 				"item_boots_of_bearing",--
+				"item_ultimate_scepter",
 				"item_aghanims_shard",
 				"item_shivas_guard",--
 				"item_octarine_core",--
 				"item_ultimate_scepter_2",
 				"item_sheepstick",--
 				"item_moon_shard",
-				"item_hurricane_pike",--
 			},
             ['sell_list'] = {
-				"item_magic_wand", "item_octarine_core",
-				"item_blade_mail", "item_sheepstick",
+				"item_magic_wand", "item_shivas_guard",
+				"item_spirit_vessel", "item_sheepstick",
 			},
         },
     },
@@ -177,22 +181,23 @@ local HeroBuild = {
 			
 				"item_arcane_boots",
 				"item_magic_wand",
-				"item_blade_mail",
+				"item_urn_of_shadows",
 				"item_mekansm",
-				"item_force_staff",
-				"item_guardian_greaves",--
+				"item_spirit_vessel",
+				"item_solar_crest",--
 				"item_black_king_bar",--
+				"item_guardian_greaves",--
+				"item_ultimate_scepter",
 				"item_aghanims_shard",
 				"item_shivas_guard",--
 				"item_octarine_core",--
 				"item_ultimate_scepter_2",
 				"item_sheepstick",--
 				"item_moon_shard",
-				"item_hurricane_pike",--
 			},
             ['sell_list'] = {
-				"item_magic_wand", "item_octarine_core",
-				"item_blade_mail", "item_sheepstick",
+				"item_magic_wand", "item_shivas_guard",
+				"item_spirit_vessel", "item_sheepstick",
 			},
         },
     },

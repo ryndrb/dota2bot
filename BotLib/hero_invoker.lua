@@ -1225,7 +1225,9 @@ function X.ConsiderSunstrike()
             and not enemyHero:HasModifier('modifier_oracle_false_promise_timer')
             and not enemyHero:HasModifier('modifier_item_aeon_disk_buff')
 			then
-                if J.WillKillTarget(enemyHero, nDamage, DAMAGE_TYPE_PURE, nDelay) then
+                local nLocationAoE = bot:FindAoELocation(true, true, enemyHero:GetLocation(), 0, nRadius, 0, 0)
+                local damage = nLocationAoE.count > 0 and nDamage / nLocationAoE.count or nDamage
+                if J.WillKillTarget(enemyHero, damage, DAMAGE_TYPE_PURE, nDelay) then
                     for i = 0, enemyHero:NumModifiers() do
                         local sModifierName = enemyHero:GetModifierName(i)
                         if sModifierName then
@@ -1271,7 +1273,9 @@ function X.ConsiderSunstrike()
             and not enemyHero:HasModifier('modifier_oracle_false_promise_timer')
             and not enemyHero:HasModifier('modifier_item_aeon_disk_buff')
 			then
-                if J.WillKillTarget(enemyHero, nDamage, DAMAGE_TYPE_PURE, nDelay) then
+                local nLocationAoE = bot:FindAoELocation(true, true, enemyHero:GetLocation(), 0, nRadius, 0, 0)
+                local damage = nLocationAoE.count > 0 and nDamage / nLocationAoE.count or nDamage
+                if J.WillKillTarget(enemyHero, damage, DAMAGE_TYPE_PURE, nDelay) then
                     for i = 0, enemyHero:NumModifiers() do
                         local sModifierName = enemyHero:GetModifierName(i)
                         if sModifierName then

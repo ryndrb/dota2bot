@@ -9,6 +9,18 @@ if bot.isInLanePhase == nil then bot.isInLanePhase = false end
 local botAssignedLane, botAttackRange, botLocation
 
 function GetDesire()
+	local desire = GetDesireRaw()
+	local activeMode = bot:GetActiveMode()
+	local activeModeDesire = bot:GetActiveModeDesire()
+	if  activeMode ~= BOT_MODE_LANING
+    and desire == activeModeDesire
+	then
+		desire = desire - 0.05
+	end
+	return desire
+end
+
+function GetDesireRaw()
 
 	local currentTime = DotaTime()
 	local botActiveMode = bot:GetActiveMode()

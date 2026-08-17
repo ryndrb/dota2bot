@@ -412,6 +412,10 @@ function Think()
         local bEtherealForm = J.IsInEtherealForm(botTarget.unit)
         local bAttackImmune = botTarget.unit:IsAttackImmune() and (not bEtherealForm or not bIsMuerta)
 
+        if bot:GetAnimActivity() == ACTIVITY_ATTACK then
+            return
+        end
+
         if bAttackImmune then
             bot:Action_MoveToLocation(J.VectorTowards(botTarget.unit:GetLocation(), botLocation, botAttackRange / 2))
             return

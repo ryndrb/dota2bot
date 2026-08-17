@@ -30,6 +30,18 @@ local LoneDruid = {}
 local channel_target = { unit = nil, location = 0, tree = -1 }
 
 function GetDesire()
+	local desire = GetDesireRaw()
+	local activeMode = bot:GetActiveMode()
+	local activeModeDesire = bot:GetActiveModeDesire()
+	if  activeMode ~= BOT_MODE_OUTPOST
+    and desire == activeModeDesire
+	then
+		desire = desire + 0.05
+	end
+	return desire
+end
+
+function GetDesireRaw()
 	LoneDruid = J.CheckLoneDruid()
 
 	------------------------------

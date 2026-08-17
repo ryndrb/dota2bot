@@ -526,7 +526,7 @@ function X.ConsiderRot()
     end
 
     if J.IsGoingOnSomeone(bot) then
-        local nInRangeEnemy = bot:GetNearbyHeroes(nRadius + 100, true, BOT_MODE_NONE)
+        local nInRangeEnemy = bot:GetNearbyHeroes(Min(nRadius + 100, 1600), true, BOT_MODE_NONE)
         if #nInRangeEnemy >= 1 then
             if botHP > 0.1 or bFleshHeaped then
                 if not bToggled then
@@ -539,7 +539,8 @@ function X.ConsiderRot()
     end
 
     if J.IsRetreating(bot) and not J.IsRealInvisible(bot) then
-        if bot:WasRecentlyDamagedByAnyHero(2.0) then
+        local nInRangeEnemy = J.GetEnemiesNearLoc(bot:GetLocation(), nRadius + 50)
+        if #nInRangeEnemy > 0 then
             if botHP > 0.15 or bFleshHeaped then
                 if not bToggled then
                     return BOT_ACTION_DESIRE_HIGH
@@ -550,7 +551,7 @@ function X.ConsiderRot()
         end
     end
 
-    local nEnemyCreeps = bot:GetNearbyCreeps(nRadius * 2, true)
+    local nEnemyCreeps = bot:GetNearbyCreeps(Min(nRadius + 50, 1600), true)
 
     if J.IsPushing(bot) or J.IsDefending(bot) or J.IsFarming(bot) then
         if J.IsValid(nEnemyCreeps[1])

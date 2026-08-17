@@ -59,7 +59,7 @@ local HeroBuild = {
 					['t25'] = {10, 0},
 					['t20'] = {10, 0},
 					['t15'] = {0, 10},
-					['t10'] = {0, 10},
+					['t10'] = {10, 0},
 				}
             },
             ['ability'] = {
@@ -79,17 +79,18 @@ local HeroBuild = {
 				"item_ancient_janggo",
 				"item_aghanims_shard",
 				"item_aether_lens",
+				"item_ghost",
 				"item_boots_of_bearing",--
-				"item_aeon_disk",--
 				"item_ultimate_scepter",
-				"item_cyclone",
-				"item_ultimate_scepter_2",
-				"item_arcane_blink",--
 				"item_wind_waker",--
+				"item_ultimate_scepter_2",
+				"item_crellas_crozier",--
+				"item_arcane_blink",--
 				"item_moon_shard",
 			},
             ['sell_list'] = {
-				"item_magic_wand", "item_ultimate_scepter",
+				"item_magic_wand", "item_ghost",
+				"item_magic_wand", "item_crellas_crozier",
 			},
         },
     },
@@ -100,7 +101,7 @@ local HeroBuild = {
 					['t25'] = {10, 0},
 					['t20'] = {10, 0},
 					['t15'] = {0, 10},
-					['t10'] = {0, 10},
+					['t10'] = {10, 0},
 				}
             },
             ['ability'] = {
@@ -120,17 +121,18 @@ local HeroBuild = {
 				"item_mekansm",
 				"item_aghanims_shard",
 				"item_aether_lens",
+				"item_ghost",
 				"item_guardian_greaves",--
-				"item_aeon_disk",--
 				"item_ultimate_scepter",
-				"item_cyclone",
-				"item_ultimate_scepter_2",
-				"item_arcane_blink",--
 				"item_wind_waker",--
+				"item_ultimate_scepter_2",
+				"item_crellas_crozier",--
+				"item_arcane_blink",--
 				"item_moon_shard",
 			},
             ['sell_list'] = {
-				"item_magic_wand", "item_ultimate_scepter",
+				"item_magic_wand", "item_ghost",
+				"item_magic_wand", "item_crellas_crozier",
 			},
         },
     },

@@ -4102,6 +4102,12 @@ X.ConsiderItemDesire["item_satanic"] = function( hItem )
 		end
 	end
 
+	if J.IsValid(botTarget) and not J.IsValidBuilding(botTarget) and #nEnemyHeroes == 0 and not bot:WasRecentlyDamagedByAnyHero(5.0) then
+		if botHP < 0.5 and bAttacking then
+			return BOT_ACTION_DESIRE_HIGH, nil, ITEM_TARGET_TYPE_NONE
+		end
+	end
+
 	return BOT_ACTION_DESIRE_NONE
 end
 
@@ -7698,8 +7704,8 @@ local function ShouldDropTarget(hUnit)
 						if GetBot() == hUnit then
 							hUnit:SetTarget(nil)
 							hUnit:Action_MoveToLocation(J.GetTeamFountain())
+							return true
 						end
-						return true
 					end
 				end
 			end

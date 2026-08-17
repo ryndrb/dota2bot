@@ -530,6 +530,7 @@ function X.ConsiderNightmare()
 	end
 
 	local nCastRange = Nightmare:GetCastRange()
+	local nCastPoint = Nightmare:GetCastPoint()
 	local nManaCost = Nightmare:GetManaCost()
 	local fManaAfter = J.GetManaAfter(nManaCost)
 	local fManaThreshold1 = J.GetManaThreshold(bot, nManaCost, {Enfeeble, BrainSap, FiendsGrip})
@@ -544,6 +545,18 @@ function X.ConsiderNightmare()
 		then
 			if enemyHero:IsChanneling() then
 				return BOT_ACTION_DESIRE_HIGH, enemyHero
+			end
+		end
+	end
+
+	for _, allyHero in pairs(nAllyHeroes) do
+		if  J.IsValidHero(allyHero)
+		and J.CanBeAttacked(allyHero)
+		and not J.IsSuspiciousIllusion(allyHero)
+		then
+			local eta = (GetUnitToUnitDistance(bot, allyHero) / bot:GetCurrentMovementSpeed()) + nCastPoint
+			if J.GetModifierTime(allyHero, 'modifier_necrolyte_reapers_scythe') > eta then
+				return BOT_ACTION_DESIRE_HIGH, allyHero
 			end
 		end
 	end

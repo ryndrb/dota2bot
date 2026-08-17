@@ -23,6 +23,20 @@ local hTowerTable = {
 }
 
 function Defend.GetDefendDesire(bot, lane)
+	local desire = Defend.GetDefendDesireRaw(bot, lane)
+	local activeMode = bot:GetActiveMode()
+	local activeModeDesire = bot:GetActiveModeDesire()
+	local currMode = { [LANE_TOP] = BOT_MODE_DEFEND_TOWER_TOP, [LANE_MID] = BOT_MODE_DEFEND_TOWER_MID, [LANE_BOT] = BOT_MODE_DEFEND_TOWER_BOT }
+	if  activeMode ~= currMode[lane]
+    and desire == activeModeDesire
+	and J.IsDefending(bot)
+	then
+		desire = desire - 0.05
+	end
+	return desire
+end
+
+function Defend.GetDefendDesireRaw(bot, lane)
 	local hTeamAncient = GetAncient(GetTeam())
 	local nUnitCount__Total, nUnitCount__Hero, nUnit__Creep = Defend.GetEnemiesAroundLocation(hTeamAncient:GetLocation(), 1800)
 	local botPosition = J.GetPosition(bot)
@@ -48,6 +62,7 @@ function Defend.GetDefendDesire(bot, lane)
 		or botPosition == 3 and botLevel < 7
 		or botPosition == 4 and botLevel < 4
 		or botPosition == 5 and botLevel < 5
+		or DotaTime() < 6 * 60 + 10
 		then
 			return BOT_MODE_DESIRE_NONE
 		end
@@ -134,7 +149,7 @@ function Defend.GetDefendDesire(bot, lane)
 
 	local fMultiplier = 0
 	if J.IsValidBuilding(hTier1Tower) then
-		if (J.GetHP(hTier1Tower) < 0.25 and nUnitCount__Hero > 0)
+		if (J.GetHP(hTier1Tower) < 0.25 and nUnitCount__Hero >= 1)
 		or (not bCanGetThereFast)
 		then
 			fMultiplier = 0
@@ -144,7 +159,7 @@ function Defend.GetDefendDesire(bot, lane)
 			end
 		end
 	elseif J.IsValidBuilding(hTier2Tower) then
-		if (J.GetHP(hTier2Tower) < 0.25 and nUnitCount__Hero > 0)
+		if (J.GetHP(hTier2Tower) < 0.25 and nUnitCount__Hero >= 1)
 		or (not bCanGetThereFast)
 		then
 			fMultiplier = 0

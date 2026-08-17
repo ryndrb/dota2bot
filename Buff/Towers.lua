@@ -5,10 +5,21 @@ end
 
 -- some stuff for now
 
-function T.HandleTowerBuff(nTeam)
+function T.HandleTowerBuff(nTeam, bFlag)
     local hBuildings = Entities:FindAllByClassname("npc_dota_tower")
     local hBarracks = Entities:FindAllByClassname("npc_dota_barracks")
     local hAncients = Entities:FindAllByClassname("npc_dota_fort")
+
+    if not bFlag then
+        -- this is for the bounty rune pickup using the vscript; 'flag'
+        for _, ancient in pairs(hAncients) do
+            if ancient ~= nil and ancient:IsAlive() then
+                ancient:SetBaseHealthRegen(13)
+            end
+        end
+
+        return
+    end
 
     for _, b in pairs(hBarracks) do table.insert(hBuildings, b) end
     for _, a in pairs(hAncients) do table.insert(hBuildings, a) end

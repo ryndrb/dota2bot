@@ -8,6 +8,18 @@ local bRoshanTime = false
 local fRoshanAliveTime = 0
 
 function GetDesire()
+	local desire = GetDesireRaw()
+	local activeMode = bot:GetActiveMode()
+	local activeModeDesire = bot:GetActiveModeDesire()
+	if  activeMode ~= BOT_MODE_ROSHAN
+    and desire == activeModeDesire
+	then
+		desire = desire + 0.05
+	end
+	return desire
+end
+
+function GetDesireRaw()
     local aliveAlly = J.GetNumOfAliveHeroes(false)
     local aliveEnemy = J.GetNumOfAliveHeroes(true)
     local hasSameOrMoreHero = aliveAlly >= aliveEnemy

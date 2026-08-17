@@ -319,7 +319,7 @@ function X.ConsiderTether()
             or (J.IsGoingOnSomeone(ally))
             or (J.IsPushing(ally))
             or (J.IsDoingRoshan(ally))
-            or (J.IsDoingTormentor(ally) and bot.tormentor_state == true)
+            or (J.IsDoingTormentor(ally) and _G.tormentor.alive)
             then
                 if allyScore > targetScore and bot:GetActiveMode() == ally:GetActiveMode() then
                     targetScore = allyScore

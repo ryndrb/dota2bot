@@ -510,7 +510,7 @@ Item['item_dagon_4']	= GetItemComponents( 'item_dagon_4' )[1]
 
 Item['item_dagon_5']	= GetItemComponents( 'item_dagon_5' )[1]
 
-Item['item_desolator']	= GetItemComponents( 'item_desolator' )[1]
+Item['item_desolator']	= {"item_blight_stone", "item_mithril_hammer", "item_mithril_hammer"}
 
 Item['item_diffusal_blade']	= GetItemComponents( 'item_diffusal_blade' )[1]
 

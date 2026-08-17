@@ -20,6 +20,18 @@ local itemSlotFromSellList = {nil, -1}
 local sell_time = -90
 
 function GetDesire()
+	local desire = GetDesireRaw()
+	local activeMode = bot:GetActiveMode()
+	local activeModeDesire = bot:GetActiveModeDesire()
+	if  activeMode ~= BOT_MODE_SECRET_SHOP
+    and desire == activeModeDesire
+	then
+		desire = desire - 0.05
+	end
+	return desire
+end
+
+function GetDesireRaw()
 	preferedShop = X.GetPreferedSecretShop()
 
 	if not bot:IsAlive() or J.IsModeTurbo() or not X.IsSuitableToBuy() then

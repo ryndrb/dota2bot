@@ -170,6 +170,10 @@ function Buff:Init()
             if hero and S.AbilityUsageHeroList[hero:GetUnitName()] then
                 S.AbilityUsageThink(hero)
             end
+
+            if hero and hero:IsAlive() then
+                S.TryPickUpNearbyBounty(hero)
+            end
         end
 
         if GameRules:GetDOTATime(false, false) > 0 then
@@ -203,12 +207,8 @@ function Buff:Init()
             end
 
             -- Towers
-            if bBuffFlags.towers.radiant then
-                T.HandleTowerBuff(DOTA_TEAM_GOODGUYS)
-            end
-            if bBuffFlags.towers.dire then
-                T.HandleTowerBuff(DOTA_TEAM_BADGUYS)
-            end
+            T.HandleTowerBuff(DOTA_TEAM_GOODGUYS, bBuffFlags.towers.radiant)
+            T.HandleTowerBuff(DOTA_TEAM_BADGUYS, bBuffFlags.towers.dire)
 
             hHeroList = {}
             -- Neutral Items

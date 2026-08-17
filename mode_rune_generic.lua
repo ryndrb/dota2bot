@@ -18,13 +18,25 @@ local nRuneList = {
 local botHP, botMP, botPos, botActiveMode, botActiveModeDesire, botAssignedLane
 local nAllyHeroes, nEnemyHeroes
 
-local WRLocationRadiant = Vector(-7948.152344, 	 768.207825, 0.000000)
-local WRLocationDire 	= Vector( 8029.234375, -1125.811768, 0.000000)
+local WRLocationRadiant = Vector(-8082.532227,   753.486938, 0.000000)
+local WRLocationDire 	= Vector( 8176.761719, -1160.568237, 0.000000)
 
 local nShrineOfWisdomTime = 0
 local nShrineOfWisdomTeam = TEAM_RADIANT
 
 function GetDesire()
+	local desire = GetDesireRaw()
+	local activeMode = bot:GetActiveMode()
+	local activeModeDesire = bot:GetActiveModeDesire()
+	if  activeMode ~= BOT_MODE_RUNE
+    and desire == activeModeDesire
+	then
+		desire = desire - 0.05
+	end
+	return desire
+end
+
+function GetDesireRaw()
 	X.InitRune()
 
 	if (DotaTime() > 2 * 60 and DotaTime() < 6 * 60 and GetUnitToLocationDistance(bot, GetRuneSpawnLocation(RUNE_POWERUP_2)) < 80) then
@@ -33,6 +45,14 @@ function GetDesire()
 
 	if bot.rune and bot.rune.location and GetUnitToLocationDistance(bot, bot.rune.location) > 1200 and #J.GetEnemiesAroundAncient(2800) > 0 then
 		return BOT_MODE_DESIRE_NONE
+	end
+
+	if DotaTime() > 10 then
+		-- 7.41+ (?); bots can't pick up bounties most of the time...
+		-- if > 12, Buff is in used
+		if GetAncient(GetTeam()):GetHealthRegen() <= 12 then
+			nRuneList = { RUNE_POWERUP_1, RUNE_POWERUP_2 }
+		end
 	end
 
 	bBottle = bot:FindItemSlot('item_bottle') >= 0
@@ -193,7 +213,7 @@ function Think()
 		local wisdom = bot.rune.wisdom[nShrineOfWisdomTime]
 
 		if wisdom then
-			local vLocation = wisdom.spot[nShrineOfWisdomTeam].location
+			local vLocation = wisdom.spot[nShrineOfWisdomTeam].location + RandomVector(200)
 			local nInRangeEnemy = J.GetEnemiesNearLoc(vLocation, 1600)
 
 			if wisdom.spot[nShrineOfWisdomTeam].status == false then
@@ -227,6 +247,17 @@ function Think()
 			end
 
 			if DotaTime() < wisdom.time + 3.5 then
+				local botLocation, botAttackRange = bot:GetLocation(), bot:GetAttackRange()
+				local nLocationAoE_Heroes = bot:FindAoELocation(true, true, botLocation, 0, botAttackRange, 0, 0)
+				local nLocationAoE_Creeps = bot:FindAoELocation(true, false, botLocation, 0, botAttackRange, 0, 0)
+				if nLocationAoE_Heroes.count > 0 or nLocationAoE_Creeps.count > 0 then
+					if bot:GetAnimActivity() ~= ACTIVITY_IDLE then
+						return
+					end
+					bot:Action_AttackMove(vLocation)
+					return
+				end
+
 				bot:Action_ClearActions(false)
 				return
 			end
@@ -238,8 +269,10 @@ function Think()
 			return
 		end
 
+		local vLocation = nil
+
 		if DotaTime() < -10 then
-			local vLocation = X.GetGoOutLocation()
+			vLocation = X.GetGoOutLocation()
 			if GetUnitToLocationDistance(bot, vLocation) > 300 then
 				bot:Action_MoveToLocation(vLocation)
 				return
@@ -255,21 +288,14 @@ function Think()
 		end
 
         if GetTeam() == TEAM_RADIANT then
-			if botAssignedLane == LANE_BOT then
-				bot:Action_MoveToLocation(GetRuneSpawnLocation(RUNE_BOUNTY_2) + RandomVector(50))
-				return
-            else
-                bot:Action_MoveToLocation(GetRuneSpawnLocation(RUNE_POWERUP_1) + RandomVector(50))
-				return
-			end
+			vLocation = botAssignedLane == LANE_BOT and GetRuneSpawnLocation(RUNE_BOUNTY_2) or GetRuneSpawnLocation(RUNE_POWERUP_1)
 		else
-			if botAssignedLane == LANE_TOP then
-				bot:Action_MoveToLocation(GetRuneSpawnLocation(RUNE_BOUNTY_1) + RandomVector(50))
-				return
-            else
-                bot:Action_MoveToLocation(GetRuneSpawnLocation(RUNE_POWERUP_2) + RandomVector(50))
-				return
-			end
+			vLocation = botAssignedLane == LANE_TOP and GetRuneSpawnLocation(RUNE_BOUNTY_1) or GetRuneSpawnLocation(RUNE_POWERUP_2)
+		end
+
+		if vLocation then
+			bot:Action_MoveToLocation(vLocation + RandomVector(50))
+			return
 		end
 	end
 
@@ -291,24 +317,6 @@ function Think()
 			end
 
 			if rune.distance > 50 then
-				for _, enemyHero in pairs(nInRangeEnemy) do
-					if  J.IsValidHero(enemyHero)
-					and (1.5 * bot:GetEstimatedDamageToTarget(false, bot, 5.0, DAMAGE_TYPE_ALL) > enemyHero:GetEstimatedDamageToTarget(true, bot, 5.0, DAMAGE_TYPE_ALL))
-					and botHP > 0.3
-					then
-						bot:Action_AttackUnit(enemyHero, true)
-						return
-					end
-				end
-
-				if  J.IsValid(nEnemyCreeps[1])
-				and J.CanBeAttacked(nEnemyCreeps[1])
-				and J.CanKillTarget(nEnemyCreeps[1], bot:GetAttackDamage(), DAMAGE_TYPE_PHYSICAL)
-				then
-					bot:Action_AttackUnit(nEnemyCreeps[1], true)
-					return
-				end
-
 				bot.rune.location = vRuneLocation
 				bot:Action_MoveToLocation(vRuneLocation)
 				return
@@ -317,24 +325,6 @@ function Think()
 				return
 			end
 		else
-			for _, enemyHero in pairs(nInRangeEnemy) do
-				if  J.IsValidHero(enemyHero)
-				and (1.6 * bot:GetEstimatedDamageToTarget(false, bot, 5.0, DAMAGE_TYPE_ALL) > enemyHero:GetEstimatedDamageToTarget(true, bot, 5.0, DAMAGE_TYPE_ALL))
-				and botHP > 0.3
-				then
-					bot:Action_AttackUnit(enemyHero, true)
-					return
-				end
-			end
-
-			if  J.IsValid(nEnemyCreeps[1])
-			and J.CanBeAttacked(nEnemyCreeps[1])
-			and J.CanKillTarget(nEnemyCreeps[1], bot:GetAttackDamage(), DAMAGE_TYPE_PHYSICAL)
-			then
-				bot:Action_AttackUnit(nEnemyCreeps[1], true)
-				return
-			end
-
 			bot.rune.location = vRuneLocation
 			bot:Action_MoveToLocation(vRuneLocation)
 			return
@@ -674,8 +664,6 @@ function X.GetWisdomAlly(vLocation)
 end
 
 function X.GetWisdomDesire(vLocation)
-	local nDesire = 0
-	local botLevel = bot:GetLevel()
 	local distance = GetUnitToLocationDistance(bot, vLocation)
 
 	if (J.IsDefending(bot) and distance > 1600)
@@ -684,17 +672,7 @@ function X.GetWisdomDesire(vLocation)
 		return 0
 	end
 
-	if botLevel < 12 then
-		nDesire = RemapValClamped(distance, 7200, 4800, 0.75, 0.9)
-	elseif botLevel < 18 then
-		nDesire = RemapValClamped(distance, 7200, 4800, 0.50, 0.9)
-	elseif botLevel < 25 then
-		nDesire = RemapValClamped(distance, 6400, 3200, 0.25, 0.9)
-	elseif botLevel < 30 then
-		nDesire = RemapValClamped(distance, 6400, 3200, 0.25, 0.9)
-	end
-
-	return nDesire
+	return distance <= 4800 and BOT_MODE_DESIRE_VERYHIGH or BOT_MODE_DESIRE_NONE
 end
 
 function X.GetShrineOfWisdomTeam()
