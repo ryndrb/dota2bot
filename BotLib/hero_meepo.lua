@@ -545,7 +545,7 @@ function X.ConsiderPoof()
             and not J.IsDisabled(enemyHero)
             and not enemyHero:IsDisarmed()
             and enemyHero:GetAttackTarget() == bot
-            and J.GetTotalEstimatedDamageToTarget(nEnemyHeroes, bot, 3.0) < enemyHero:GetHealth()
+            and J.GetTotalEstimatedDamageToTarget(nEnemyHeroes, bot, 3.0) < bot:GetHealth()
             then
                 local meepoTarget = nil
                 local meepoTargetDistance = 0
