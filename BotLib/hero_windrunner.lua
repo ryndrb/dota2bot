@@ -548,7 +548,7 @@ function X.ConsiderPowershot()
                     end
 
                     local nLocationAoE = bot:FindAoELocation(true, false, creep:GetLocation(), 0, nRadius, 0, nDamage)
-                    if nLocationAoE.count >= 2 and (#nEnemyHeroes or nLocationAoE.count >= 3) then
+                    if nLocationAoE.count >= 2 and (#nEnemyHeroes > 0 or nLocationAoE.count >= 3) then
                         return BOT_ACTION_DESIRE_HIGH, nLocationAoE.targetloc
                     end
                 end

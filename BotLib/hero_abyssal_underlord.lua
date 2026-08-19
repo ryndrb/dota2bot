@@ -397,7 +397,7 @@ function X.ConsiderPitOfMalice()
                     return BOT_ACTION_DESIRE_HIGH, vLocation
                 end
             elseif enemyHero:IsChanneling() and fManaAfter > fManaThreshold2 then
-                if J.GetTotalEstimatedDamageToTarget(nAllyHeroes, bot, 5.0) > botTarget:GetHealth() then
+                if J.GetTotalEstimatedDamageToTarget(nAllyHeroes, enemyHero, 5.0) > enemyHero:GetHealth() then
                     return BOT_ACTION_DESIRE_HIGH, vLocation
                 end
             end
