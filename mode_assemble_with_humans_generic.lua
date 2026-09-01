@@ -25,6 +25,8 @@ function GetDesire()
 	local activeMode = bot:GetActiveMode()
 	local activeModeDesire = bot:GetActiveModeDesire()
 	if  activeMode ~= BOT_MODE_ASSEMBLE_WITH_HUMANS
+    and activeModeDesire > 0
+    and desire > 0
     and desire == activeModeDesire
 	then
 		desire = desire + 0.05
@@ -57,7 +59,13 @@ function GetDesireRaw()
         end
 
         local nInRangeEnemy = J.GetEnemiesNearLoc(bot:GetLocation(), 1600)
-        if J.GetHP(bot) < 0.75 and #nInRangeEnemy == 0 then
+        if  J.GetHP(bot) < 0.75
+        and #nInRangeEnemy == 0
+        and bot:GetUnitName() ~= 'npc_dota_hero_medusa'
+        and bot:GetUnitName() ~= 'npc_dota_hero_huskar'
+        and not bot:HasModifier('modifier_doom_bringer_doom_aura_enemy')
+        and not bot:HasModifier('modifier_ice_blast')
+        then
             return BOT_MODE_DESIRE_VERYHIGH
         end
     end

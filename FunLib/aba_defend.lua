@@ -28,6 +28,8 @@ function Defend.GetDefendDesire(bot, lane)
 	local activeModeDesire = bot:GetActiveModeDesire()
 	local currMode = { [LANE_TOP] = BOT_MODE_DEFEND_TOWER_TOP, [LANE_MID] = BOT_MODE_DEFEND_TOWER_MID, [LANE_BOT] = BOT_MODE_DEFEND_TOWER_BOT }
 	if  activeMode ~= currMode[lane]
+	and activeModeDesire > 0
+    and desire > 0
     and desire == activeModeDesire
 	and J.IsDefending(bot)
 	then

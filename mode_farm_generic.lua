@@ -29,6 +29,8 @@ function GetDesire()
 	local activeMode = bot:GetActiveMode()
 	local activeModeDesire = bot:GetActiveModeDesire()
 	if  activeMode ~= BOT_MODE_FARM
+	and activeModeDesire > 0
+    and desire > 0
     and desire == activeModeDesire
 	then
 		desire = desire - 0.05

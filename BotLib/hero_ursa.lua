@@ -72,8 +72,8 @@ local HeroBuild = {
         [1] = {
             ['talent'] = {
 				[1] = {
-					['t25'] = {0, 10},
-					['t20'] = {0, 10},
+					['t25'] = {10, 0},
+					['t20'] = {10, 0},
 					['t15'] = {0, 10},
 					['t10'] = {0, 10},
 				}
@@ -92,18 +92,20 @@ local HeroBuild = {
 				"item_magic_wand",
 				"item_bfury",--
 				"item_blink",
-				"item_crimson_guard",--
 				"item_black_king_bar",--
+				"item_assault",--
 				"item_basher",
 				"item_aghanims_shard",
 				"item_abyssal_blade",--
-				"item_overwhelming_blink",--
 				"item_ultimate_scepter_2",
+				"item_disperser",--
 				"item_moon_shard",
-				"item_travel_boots_2",--
+				"item_swift_blink",--
 			},
             ['sell_list'] = {
 				"item_magic_wand", "item_basher",
+				"item_magic_wand", "item_abyssal_blade",
+				"item_phase_boots", "item_disperser",
 			},
         },
     },

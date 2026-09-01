@@ -22,6 +22,8 @@ function GetDesire()
 	local activeMode = bot:GetActiveMode()
 	local activeModeDesire = bot:GetActiveModeDesire()
 	if  activeMode ~= BOT_MODE_WARD
+	and activeModeDesire > 0
+    and desire > 0
     and desire == activeModeDesire
 	then
 		desire = desire - 0.05
@@ -33,9 +35,6 @@ function GetDesireRaw()
     if not X.IsSuitableToWard() or J.IsMeepoClone(bot) then
         return BOT_MODE_DESIRE_NONE
     end
-
-	local nInRangeAlly = J.GetAlliesNearLoc(bot:GetLocation(), 1200)
-	local nInRangeEnemy = J.GetEnemiesNearLoc(bot:GetLocation(), 1200)
 
     for i = 0, 5 do
         local hItem = bot:GetItemInSlot(i)
@@ -52,7 +51,10 @@ function GetDesireRaw()
     if J.CanCastAbility(ObserverWard) then
         local hAvailabeObserverWardSpots = W.GetAvailabeObserverWardSpots(bot)
         hTargetSpot = W.GetClosestObserverWardSpot(bot, hAvailabeObserverWardSpots)
-		if hTargetSpot and (not X.IsEnemyCloserToWardLocation(hTargetSpot.location) or J.IsRealInvisible(bot)) then
+		if  hTargetSpot
+		and not X.DoesEnemyInLocationHaveDetection(hTargetSpot.location, 1650)
+		and (not X.IsEnemyCloserToWardLocation(hTargetSpot.location) or J.IsRealInvisible(bot))
+		then
 			if DotaTime() < 0 and DotaTime() > (J.IsModeTurbo() and -45 or -60) then
 				return BOT_MODE_DESIRE_ABSOLUTE
 			end
@@ -80,7 +82,10 @@ function GetDesireRaw()
     if J.CanCastAbility(SentryWard) then
         local hPossibleSentryWardSpots = W.GetPossibleSentryWardSpots(bot)
         hTargetSpot = W.GetClosestSentryWardSpot(bot, hPossibleSentryWardSpots)
-		if hTargetSpot and (not X.IsEnemyCloserToWardLocation(hTargetSpot.location) or J.IsRealInvisible(bot)) then
+		if  hTargetSpot
+		and not X.DoesEnemyInLocationHaveDetection(hTargetSpot.location, 1650)
+		and (not X.IsEnemyCloserToWardLocation(hTargetSpot.location) or J.IsRealInvisible(bot))
+		then
 			if DotaTime() > fLastWardPlantTime + 1.0 then
 				if GetUnitToLocationDistance(bot, hTargetSpot.location) <= 3200 then
 					return BOT_MODE_DESIRE_VERYHIGH
@@ -179,21 +184,42 @@ function X.IsIBecameTheTarget(unitList)
 end
 
 function X.IsEnemyCloserToWardLocation(vLocation)
+	local nInRangeAlly = J.GetAlliesNearLoc(vLocation, 1200)
+	local nInRangeEnemy = J.GetEnemiesNearLoc(vLocation, 1200)
 	for _, id in pairs(GetTeamPlayers(GetOpposingTeam())) do
 		if IsHeroAlive(id) then
 			local info = GetHeroLastSeenInfo(id)
 			if info ~= nil then
 				local dInfo = info[1]
 				if  dInfo ~= nil
-				and dInfo.time_since_seen < 3.0
+				and dInfo.time_since_seen < 7.0
 				and J.GetDistance(dInfo.location, vLocation) < GetUnitToLocationDistance(bot, vLocation)
 				then
-					local nAllyHeroes = J.GetAlliesNearLoc(vLocation, 1200)
-					local nEnemyHeroes = J.GetEnemiesNearLoc(vLocation, 1200)
-					if #nEnemyHeroes > #nAllyHeroes then
+					if #nInRangeEnemy > #nInRangeAlly then
 						return true
 					end
 				end
+			end
+		end
+	end
+
+	return false
+end
+
+function X.DoesEnemyInLocationHaveDetection(vLocation, nRadius)
+	local nInRangeEnemy = J.GetEnemiesNearLoc(vLocation, nRadius)
+	for _, enemyHero in pairs(nInRangeEnemy) do
+		if J.IsValidHero(enemyHero) then
+			local sEnemyHeroName = enemyHero:GetUnitName()
+			if sEnemyHeroName == 'npc_dota_hero_zuus' then
+				return true
+			end
+
+			if J.HasItem(enemyHero, 'item_gem')
+			or J.HasItem(enemyHero, 'item_ward_sentry')
+			or J.HasItem(enemyHero, 'item_ward_dispenser')
+			then
+				return true
 			end
 		end
 	end

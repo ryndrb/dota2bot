@@ -8,13 +8,24 @@ function Push.GetPushDesire(bot, lane)
     local activeMode = bot:GetActiveMode()
     local activeModeDesire = bot:GetActiveModeDesire()
     local currMode = { [LANE_TOP] = BOT_MODE_PUSH_TOWER_TOP, [LANE_MID] = BOT_MODE_PUSH_TOWER_MID, [LANE_BOT] = BOT_MODE_PUSH_TOWER_BOT }
-    if  activeMode ~= currMode[lane]
+    if  activeModeDesire > 0
+    and desire > 0
     and desire == activeModeDesire
     then
-        if J.IsPushing(bot) or J.IsDefending(bot) then
+        if activeMode ~= currMode[lane] or J.IsDefending(bot) then
             desire = desire - 0.05
         end
     end
+
+    if bot.DefendLaneDesire then
+        if bot.DefendLaneDesire[LANE_TOP] >= BOT_MODE_DESIRE_VERYHIGH
+        or bot.DefendLaneDesire[LANE_MID] >= BOT_MODE_DESIRE_VERYHIGH
+        or bot.DefendLaneDesire[LANE_BOT] >= BOT_MODE_DESIRE_VERYHIGH
+        then
+            desire = desire - 0.05
+        end
+    end
+
 	return desire
 end
 
@@ -402,6 +413,7 @@ function Push.PushThink(bot, lane)
     nAllyHeroes = J.GetAlliesNearLoc(hEnemyAncient:GetLocation(), 1600)
     if  GetUnitToUnitDistance(bot, hEnemyAncient) < 1600
     and J.CanBeAttacked(hEnemyAncient)
+    and not hEnemyAncient:HasModifier('modifier_backdoor_protection_active')
     and not bHasPierceTheVeil
     and (  #Push.GetAllyHeroesAttackingUnit(hEnemyAncient) >= 3
         or #Push.GetAllyCreepsAttackingUnit(hEnemyAncient) >= 4
@@ -459,13 +471,13 @@ function Push.PushThink(bot, lane)
     local nBarracks = bot:GetNearbyBarracks(nRange, true)
     if J.IsValidBuilding(nBarracks[1]) and J.CanBeAttacked(nBarracks[1]) and not bHasPierceTheVeil then
         for _, barrack in pairs(nBarracks) do
-            if J.IsValid(barrack) and string.find(barrack:GetUnitName(), 'range') then
+            if J.IsValid(barrack) and string.find(barrack:GetUnitName(), 'range') and not barrack:HasModifier('modifier_backdoor_protection_active') then
                 bot:Action_AttackUnit(barrack, true)
                 return
             end
         end
         for _, barrack in pairs(nBarracks) do
-            if J.IsValid(barrack) and string.find(barrack:GetUnitName(), 'melee') then
+            if J.IsValid(barrack) and string.find(barrack:GetUnitName(), 'melee') and not barrack:HasModifier('modifier_backdoor_protection_active') then
                 bot:Action_AttackUnit(barrack, true)
                 return
             end
@@ -476,7 +488,7 @@ function Push.PushThink(bot, lane)
         local hTowerTarget = nil
         local hTowerTargetDistance = math.huge
         for _, tower in pairs(nEnemyTowers) do
-            if J.IsValidBuilding(tower) and J.CanBeAttacked(tower) then
+            if J.IsValidBuilding(tower) and J.CanBeAttacked(tower) and not tower:HasModifier('modifier_backdoor_protection_active') then
                 local towerDistance = GetUnitToLocationDistance(tower, targetLoc)
                 if towerDistance < hTowerTargetDistance then
                     hTowerTarget = tower
@@ -496,7 +508,7 @@ function Push.PushThink(bot, lane)
         local hTowerFillerTarget = nil
         local hTowerFillerTargetDistance = math.huge
         for _, filler in pairs(nEnemyFillers) do
-            if J.CanBeAttacked(filler) then
+            if J.CanBeAttacked(filler) and not filler:HasModifier('modifier_backdoor_protection_active') then
                 local fillerTowerDistance = GetUnitToLocationDistance(filler, targetLoc)
                 if fillerTowerDistance < hTowerFillerTargetDistance then
                     hTowerFillerTarget = filler

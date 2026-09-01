@@ -7750,7 +7750,7 @@ local function DisruptTeleport(hUnit)
 			end
 
 			if countNearbyEnemy > countNearbyAlly then
-				bot:Action_ClearActions(false)
+				bot:Action_ClearActions(true)
 				return true
 			end
 		end

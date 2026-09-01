@@ -29,6 +29,8 @@ function GetDesire()
 	local activeMode = bot:GetActiveMode()
 	local activeModeDesire = bot:GetActiveModeDesire()
 	if  activeMode ~= BOT_MODE_RUNE
+	and activeModeDesire > 0
+    and desire > 0
     and desire == activeModeDesire
 	then
 		desire = desire - 0.05
@@ -38,6 +40,9 @@ end
 
 function GetDesireRaw()
 	X.InitRune()
+
+	minute = math.floor(DotaTime() / 60)
+	second = DotaTime() % 60
 
 	if (DotaTime() > 2 * 60 and DotaTime() < 6 * 60 and GetUnitToLocationDistance(bot, GetRuneSpawnLocation(RUNE_POWERUP_2)) < 80) then
 		return BOT_MODE_DESIRE_NONE
@@ -114,7 +119,7 @@ function GetDesireRaw()
 		end
 	end
 
-	if (DotaTime() > -10 and bot:GetCurrentActionType() == BOT_ACTION_TYPE_IDLE) then
+	if (DotaTime() > -10 and bot:GetCurrentActionType() == BOT_ACTION_TYPE_IDLE and X.IsNearAvailableRune(bot, 350)) then
 		return BOT_MODE_DESIRE_NONE
 	end
 
@@ -172,6 +177,11 @@ function GetDesireRaw()
 					end
 				elseif rune.status == RUNE_STATUS_UNKNOWN and DotaTime() > 113 then
 					local distThres = (DotaTime() < 6 * 60) and 1600 or 2800
+					if rune.distance < distThres then
+						return BOT_MODE_DESIRE_VERYHIGH
+					end
+				elseif rune.status == RUNE_STATUS_MISSING and X.IsTeamMustSaveRune(rune.location) and DotaTime() > 60 and (minute % 2 == 1 and second > 50) then
+					local distThres = 2000
 					if rune.distance < distThres then
 						return BOT_MODE_DESIRE_VERYHIGH
 					end
@@ -300,11 +310,7 @@ function Think()
 	end
 
 	if bot.rune and bot.rune.normal then
-		local botAttackRange = Min(bot:GetAttackRange() + 150, 1200)
-		local nInRangeEnemy = J.GetEnemiesNearLoc(bot:GetLocation(), botAttackRange)
-		local nEnemyCreeps = bot:GetNearbyCreeps(botAttackRange, true)
 		local rune = bot.rune.normal
-
 		local vRuneLocation = GetRuneSpawnLocation(rune.location)
 
 		if rune.status == RUNE_STATUS_AVAILABLE then
@@ -326,8 +332,11 @@ function Think()
 			end
 		else
 			bot.rune.location = vRuneLocation
-			bot:Action_MoveToLocation(vRuneLocation)
-			return
+			if DotaTime() >= fNextMovementTime then
+				bot:Action_MoveToLocation(J.GetRandomLocationWithinDist(vRuneLocation, 80, 200))
+				fNextMovementTime = DotaTime() + RandomFloat(1, 3)
+				return
+			end
 		end
 	end
 end
@@ -584,16 +593,22 @@ end
 
 function X.IsTeamMustSaveRune(nRune)
 	if GetTeam() == TEAM_DIRE then
-		return nRune == RUNE_BOUNTY_1
-			or nRune == RUNE_POWERUP_2
+		return nRune == RUNE_POWERUP_2
 			or (DotaTime() > 1 * 60 + 45 and nRune == RUNE_POWERUP_1)
-			or (DotaTime() > 10 * 60 + 45 and nRune == RUNE_BOUNTY_2)
 	else
-		return nRune == RUNE_BOUNTY_2
-			or nRune == RUNE_POWERUP_1
+		return nRune == RUNE_POWERUP_1
 			or (DotaTime() > 1 * 60 + 45 and nRune == RUNE_POWERUP_2)
-			or (DotaTime() > 10 * 60 + 45 and nRune == RUNE_BOUNTY_1)
 	end
+end
+
+function X.IsNearAvailableRune(hUnit, nRadius)
+	for _, rune in pairs(nRuneList) do
+		if GetRuneStatus(rune) == RUNE_STATUS_AVAILABLE and GetUnitToLocationDistance(hUnit, GetRuneSpawnLocation(rune)) <= nRadius then
+			return true
+		end
+	end
+
+	return false
 end
 
 -- Wisdom
