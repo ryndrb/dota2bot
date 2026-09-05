@@ -270,7 +270,7 @@ if bot.IsMorphling == nil then bot.IsMorphling = true end
 local nAGIRatio = 1
 local nSTRRatio = 1
 
-local AGI_BASE = 24
+local AGI_BASE = 33
 local STR_BASE = 23
 local AGI_GROWTH_RATE = 4.2
 local STR_GROWTH_RATE = 2.6
@@ -1213,7 +1213,7 @@ function X.SetRatios()
             if string.find(sItemName, 'item_power_treads') then
                 local bonusStats = hItem:GetSpecialValueInt('bonus_stat')
                 local treadsState = hItem:GetPowerTreadsStat()
-                if treadsState == ATTRIBUTE_AGILITY then
+                if treadsState == ATTRIBUTE_INTELLECT then -- since bugged
                     nAddedAGI = nAddedAGI + bonusStats
                 elseif treadsState == ATTRIBUTE_STRENGTH then
                     nAddedSTR = nAddedSTR + bonusStats
@@ -1229,6 +1229,11 @@ function X.SetRatios()
                 end
             end
 
+            if sItemName == 'item_hydras_breath' then
+                nAddedAGI = nAddedAGI + hItem:GetSpecialValueInt('agility')
+                nAddedSTR = nAddedSTR + hItem:GetSpecialValueInt('strength')
+            end
+
             local allStats = hItem:GetSpecialValueInt('bonus_all_stats')
 
 			nAddedAGI = nAddedAGI + hItem:GetSpecialValueInt('bonus_agility') + allStats
@@ -1237,26 +1242,10 @@ function X.SetRatios()
     end
 
     -- Stats
-    count = 0
-    if bot:GetLevel() >= 26 then count = 7
-    elseif bot:GetLevel() >= 24 then count = 6
-    elseif bot:GetLevel() >= 23 then count = 5
-    elseif bot:GetLevel() >= 22 then count = 4
-    elseif bot:GetLevel() >= 21 then count = 3
-    elseif bot:GetLevel() >= 19 then count = 2
-    elseif bot:GetLevel() >= 17 then count = 1
-    end
-
-    -- morphling's primary in flow is str
-    -- but accumulation's x3 applies to agility...
-    -- nAddedAGI = nAddedAGI + count * 3 + count * 2 -- from innate
-    -- nAddedSTR = nAddedSTR + count * 2 -- from innate
-    if primaryAttribute == ATTRIBUTE_AGILITY then
-        nAddedAGI = nAddedAGI + count * 3 + count * 2 -- from innate
-        nAddedSTR = nAddedSTR + count * 2 -- from innate
-    elseif primaryAttribute == ATTRIBUTE_STRENGTH then
-        nAddedAGI = nAddedAGI + count * 2 -- from innate
-        nAddedSTR = nAddedSTR + count * 3 + count * 2 -- from innate
+    local AttributeBonus = bot:GetAbilityByName('special_bonus_attributes')
+    if AttributeBonus then
+        nAddedAGI = nAddedAGI + AttributeBonus:GetLevel()*2
+        nAddedSTR = nAddedSTR + AttributeBonus:GetLevel()*2
     end
 
     -- Stats Talents
