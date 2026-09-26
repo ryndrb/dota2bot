@@ -2,7 +2,7 @@ local X = {}
 local bot = GetBot()
 
 local J = require( GetScriptDirectory()..'/FunLib/jmz_func' )
-local SPL = require( GetScriptDirectory()..'/FunLib/spell_list' )
+local SPL = require( GetScriptDirectory()..'/FunLib/aba_spell_list' )
 local Minion = dofile( GetScriptDirectory()..'/FunLib/aba_minion' )
 local RubickCreepSpell = dofile( GetScriptDirectory()..'/FunLib/MinionLib/minion_with_skill' )
 local sTalentList = J.Skill.GetTalentList( bot )
@@ -212,7 +212,6 @@ local nAllyHeroes, nEnemyHeroes
 
 local telekinesis = { target = nil, is_channel = false, is_engage = false, is_retreat = false, is_save = false }
 
-local heroAbilityUsage = {}
 local function HandleStolenSpell(stolenSpell)
     if stolenSpell == nil then return end
 
@@ -220,13 +219,14 @@ local function HandleStolenSpell(stolenSpell)
     local stolenSpellHeroName = SPL.GetSpellHeroName(stolenSpellName)
 
     if stolenSpellHeroName == nil then return end
+    if stolenSpellHeroName == bot:GetUnitName() then return end
 
-    if not heroAbilityUsage[stolenSpellHeroName]
+    if not bot.AbilityUsage[stolenSpellHeroName]
     then
-        heroAbilityUsage[stolenSpellHeroName] = dofile(GetScriptDirectory()..'/BotLib/'..string.gsub(stolenSpellHeroName, 'npc_dota_', ''))
+        bot.AbilityUsage[stolenSpellHeroName] = require(GetScriptDirectory()..'/BotLib/'..string.gsub(stolenSpellHeroName, 'npc_dota_', ''))
     end
 
-    local heroSpells = heroAbilityUsage[stolenSpellHeroName]
+    local heroSpells = bot.AbilityUsage[stolenSpellHeroName]
     if heroSpells and heroSpells.SkillsComplement
     then
         heroSpells.SkillsComplement()
@@ -631,8 +631,8 @@ function X.ConsiderSpellSteal()
             or enemyHero:IsChanneling()
             then
                 local fRand = RandomFloat(0, 1)
-                local fWeightSpell1 = SPL.GetSpellReplaceWeight(StolenSpell1)
-                local fWeightSpell2 = SPL.GetSpellReplaceWeight(StolenSpell2)
+                local fWeightSpell1 = SPL.GetSpellReplaceWeight(StolenSpell1:GetName())
+                local fWeightSpell2 = SPL.GetSpellReplaceWeight(StolenSpell2:GetName())
 
                 if bot:HasScepter() then
                     if  fWeightSpell1 >= fRand

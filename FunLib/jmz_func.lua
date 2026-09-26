@@ -1124,16 +1124,15 @@ end
 
 function J.IsGoingOnSomeone( bot )
 	local mode = bot:GetActiveMode()
+	local modeDesire = bot:GetActiveModeDesire()
 	local botTarget = J.GetProperTarget(bot)
 
 	return mode == BOT_MODE_ROAM
 		or mode == BOT_MODE_GANK
 		or mode == BOT_MODE_DEFEND_ALLY
 		or mode == BOT_MODE_ATTACK
-		or (mode == BOT_MODE_OUTPOST and J.IsValidHero(botTarget))
+		or (mode == BOT_MODE_OUTPOST and J.IsValidHero(botTarget) and modeDesire >= BOT_MODE_DESIRE_ABSOLUTE)
 		or (mode == BOT_MODE_TEAM_ROAM and J.IsValidHero(botTarget))
-		or (J.IsPushing(bot) and J.IsValidHero(botTarget))
-		or (J.IsDefending(bot) and J.IsValidHero(botTarget))
 end
 
 
@@ -5357,6 +5356,22 @@ function J.GetManaThreshold(bot, nManaCost, hAbilityList)
 		end
 	end
 
+	-- for added spells
+	local sHeroNameStripped = string.gsub(bot:GetUnitName(), 'npc_dota_hero_', '')
+	for i = 0, 35 do
+		local hAbility = bot:GetAbilityInSlot(i)
+		if  hAbility
+		and not string.find(hAbility:GetName(), sHeroNameStripped)
+		and not J.IsGenericAbility(hAbility:GetName())
+		and not hAbility:IsHidden()
+		and hAbility:IsActivated()
+		then
+			if J.CanCastAbilitySoon(hAbility, nManaCost / botManaRegen) then
+				fManaThreshold = fManaThreshold + (hAbility:GetManaCost()) / botMaxMana
+			end
+		end
+	end
+
 	return fManaThreshold
 end
 
@@ -5968,6 +5983,25 @@ function J.AfterAttackAnim(bot)
 	end
 
 	return false
+end
+
+local IGNORED_PREFIXES = {'generic_hidden',
+						  'special_bonus',
+						  'ability_capture',
+						  'abyssal_underlord_portal_warp',
+						  'twin_gate_portal_warp',
+						  'ability_lamp_use',
+						  'plus_high_five',
+						  'plus_guild_banner',
+						  'seasonal_dark_carnival_balloon',
+						  'seasonal_dark_carnival_firework',
+						  'seasonal_dark_carnival_pie',}
+
+function J.IsGenericAbility(sAbilityName)
+    for _, prefix in ipairs(IGNORED_PREFIXES) do
+		if string.find(sAbilityName, prefix) then return true end
+    end
+    return false
 end
 
 return J

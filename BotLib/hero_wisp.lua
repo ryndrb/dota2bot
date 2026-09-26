@@ -540,13 +540,16 @@ end
 
 function X.ConsiderOvercharge()
     if not J.CanCastAbility(Overcharge)
-    or not bot:HasModifier('modifier_wisp_tether')
-    or bot.wisp.tether.target == nil
+    -- or not bot:HasModifier('modifier_wisp_tether')
+    -- or bot.wisp.tether.target == nil
     then
         return BOT_ACTION_DESIRE_NONE
     end
 
     local tetheredAlly = bot.wisp.tether.target
+    if bot:GetUnitName() ~= 'npc_dota_hero_wisp' then
+        tetheredAlly = bot
+    end
 
     if tetheredAlly then
         if J.IsValidHero(tetheredAlly)

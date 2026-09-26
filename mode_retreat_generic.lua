@@ -25,9 +25,9 @@ function GetDesire()
 	if  activeMode ~= BOT_MODE_RETREAT
     and activeModeDesire > 0
     and desire > 0
-    and desire == activeModeDesire
+    and math.abs(desire - activeModeDesire) < 0.000001
 	then
-		desire = desire - 0.05
+        desire = desire + 0.05
 	end
 	return desire
 end

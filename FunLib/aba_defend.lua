@@ -30,7 +30,7 @@ function Defend.GetDefendDesire(bot, lane)
 	if  activeMode ~= currMode[lane]
 	and activeModeDesire > 0
     and desire > 0
-    and desire == activeModeDesire
+    and math.abs(desire - activeModeDesire) < 0.000001
 	and J.IsDefending(bot)
 	then
 		desire = desire - 0.05

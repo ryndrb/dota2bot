@@ -10,9 +10,9 @@ function Push.GetPushDesire(bot, lane)
     local currMode = { [LANE_TOP] = BOT_MODE_PUSH_TOWER_TOP, [LANE_MID] = BOT_MODE_PUSH_TOWER_MID, [LANE_BOT] = BOT_MODE_PUSH_TOWER_BOT }
     if  activeModeDesire > 0
     and desire > 0
-    and desire == activeModeDesire
+    and math.abs(desire - activeModeDesire) < 0.000001
     then
-        if activeMode ~= currMode[lane] or J.IsDefending(bot) then
+        if (activeMode ~= currMode[lane] and J.IsPushing(bot)) or J.IsDefending(bot) then
             desire = desire - 0.05
         end
     end

@@ -39,7 +39,7 @@ local tidehunterFish = nil -- 'item_tidehunter_fish'
 local harass 	= { should = false, target = nil }
 local lastHit 	= { should = false, target = nil }
 
-local ShouldHelpWhenCoreIsTargeted = false
+local bShouldHelpWhenAllyIsTargeted = false
 
 local TormentorLocation
 
@@ -53,7 +53,7 @@ function GetDesire()
 	if  activeMode ~= BOT_MODE_TEAM_ROAM
 	and activeModeDesire > 0
     and desire > 0
-    and desire == activeModeDesire
+    and math.abs(desire - activeModeDesire) < 0.000001
 	then
 		desire = desire - 0.05
 	end
@@ -132,13 +132,6 @@ function GetDesireRaw()
 			end
 		end
 	end
-
-	-- -- Consider help nearby core that's being targeted; defend_ally not reliable
-	-- targetUnit, ShouldHelpWhenCoreIsTargeted = X.ConsiderHelpWhenCoreIsTargeted()
-	-- if ShouldHelpWhenCoreIsTargeted and J.IsValid(targetUnit) then
-	-- 	bot:SetTarget(targetUnit)
-	-- 	return RemapValClamped(GetUnitToUnitDistance(bot, targetUnit), 800, 3500, 0.80, 0.95)
-	-- end
 
 	local nEnemyHeroes = J.GetEnemiesNearLoc(bot:GetLocation(), 1600)
 	for _, enemy in ipairs(nEnemyHeroes) do
@@ -260,14 +253,21 @@ function GetDesireRaw()
 		end
 	end
 
+	-- Consider help nearby ally that's being targeted; defend_ally not reliable
+	bShouldHelpWhenAllyIsTargeted, targetUnit = X.ConsiderHelpingWhenAllyIsTargeted()
+	if bShouldHelpWhenAllyIsTargeted and J.IsValidHero(targetUnit) then
+		bot:SetTarget(targetUnit)
+		return BOT_MODE_DESIRE_VERYHIGH + 0.01
+	end
+
 	lastHit.should, lastHit.target = X.ShouldLastHit()
 	if lastHit.should and J.IsValid(lastHit.target) then
-		return BOT_MODE_DESIRE_VERYHIGH + 0.04
+		return BOT_MODE_DESIRE_ABSOLUTE * 2
 	end
 
 	harass.should, harass.target = X.ShouldHarass()
 	if harass.should and J.IsValidHero(harass.target) then
-		return BOT_MODE_DESIRE_VERYHIGH + 0.04
+		return BOT_MODE_DESIRE_ABSOLUTE * 1.5
 	end
 
 	if not bot:IsAlive() or bot:GetCurrentActionType() == BOT_ACTION_TYPE_DELAY then
@@ -390,6 +390,7 @@ function OnEnd()
 	harass.target = nil
 	lastHit.should = false
 	lastHit.target = nil
+	bot.special_unit_target = nil
 end
 
 
@@ -493,6 +494,7 @@ function Think()
 	if  (IsHeroCore or IsSupport)
 	and targetUnit ~= nil and not targetUnit:IsNull() and targetUnit:CanBeSeen() and targetUnit:IsAlive()
 	then
+		if J.AfterAttackAnim(bot) then return end
 		bot:Action_AttackUnit(targetUnit, true)
 		return
 	end
@@ -2350,36 +2352,117 @@ function X.FindLeastExpensiveItemSlot()
 	return idx
 end
 
-function X.ConsiderHelpWhenCoreIsTargeted()
-	local nRadius = 3500
-	local nModeDesire = bot:GetActiveModeDesire()
-	local nClosestCore = J.GetClosestCore(bot, nRadius)
+function X.ConsiderHelpingWhenAllyIsTargeted()
+	local botActiveMode = bot:GetActiveMode()
 
-	if  nClosestCore ~= nil
-	and J.GetHP(nClosestCore) > 0.2
-	and (not J.IsCore(bot) or (J.IsCore(bot) and (not J.IsInLaningPhase() or J.IsInRange(bot, nClosestCore, 1600))))
-	and not J.IsGoingOnSomeone(bot)
-	and not (J.IsRetreating(bot) and nModeDesire > 0.8)
+	if botActiveMode == BOT_MODE_ATTACK
+	or botActiveMode == BOT_MODE_ROAM
+	or botActiveMode == BOT_MODE_GANK
+	or botActiveMode == BOT_MODE_DEFEND_ALLY
+	or J.IsInTeamFight(bot, 1600)
+	or J.IsRetreating(bot)
 	then
-		local nInRangeAlly = J.GetAlliesNearLoc(nClosestCore:GetLocation(), 1200)
-		local nInRangeEnemy = J.GetEnemiesNearLoc(nClosestCore:GetLocation(), 1600)
+		return false
+	end
 
-		for _, enemyHero in pairs(nInRangeEnemy)
-		do
-			if  J.IsValidHero(enemyHero)
-			and GetUnitToUnitDistance(enemyHero, nClosestCore) <= 1600
-			and (#nInRangeAlly + 1 >= #nInRangeEnemy)
-			then
-				if (enemyHero:GetAttackTarget() == nClosestCore or J.IsChasingTarget(enemyHero, nClosestCore))
-				or nClosestCore:WasRecentlyDamagedByHero(enemyHero, 2.5)
-				then
-					return enemyHero, true
+	local bIsCore = J.IsCore(bot)
+
+	if (bIsCore and J.IsInLaningPhase()) or (not bIsCore and bot:GetLevel() < 4) then
+		return false
+	end
+
+	local nRadius = 3500
+
+	local hAlly = nil
+	local hAllyDistance = 99999
+	for i = 1, 5 do
+		local member = GetTeamMember(i)
+		if  J.IsValidHero(member)
+		and J.IsInRange(bot, member, nRadius)
+		and not member:HasModifier('modifier_teleporting')
+		and not member:HasModifier('modifier_skeleton_king_reincarnation_scepter_active')
+		and bot ~= member
+		and (not bIsCore or (bIsCore and (J.IsLateGame() or J.IsInRange(bot, member, 1600))))
+		then
+			local memberDistance = GetUnitToUnitDistance(bot, member)
+			local nInRangeAlly = J.GetAlliesNearLoc(member:GetLocation(), 1200)
+			local nInRangeEnemy = J.GetEnemiesNearLoc(member:GetLocation(), 1600)
+			if #nInRangeAlly >= #nInRangeEnemy then
+				if memberDistance < hAllyDistance then
+					local memberPos = J.GetPosition(member)
+					if memberPos == 1 then
+						memberDistance = memberDistance * 0.50
+					elseif memberPos == 2 then
+						memberDistance = memberDistance * 0.65
+					elseif memberPos == 3 then
+						memberDistance = memberDistance * 0.75
+					end
+
+					hAlly = member
+					hAllyDistance = memberDistance
 				end
 			end
 		end
 	end
 
-	return nil, false
+	if hAlly == nil then return false end
+
+	local fEta = (GetUnitToUnitDistance(bot, hAlly) - bot:GetAttackRange()) / bot:GetCurrentMovementSpeed()
+
+	local botHealthRegen = bot:GetHealthRegen()
+    local botHP = Clamp(J.GetHP(bot) + (botHealthRegen*fEta / bot:GetMaxHealth()) , 0, 1)
+    local botMP = Clamp(J.GetMP(bot) + (bot:GetManaRegen()*fEta / bot:GetMaxMana()) , 0, 1)
+    local nHealth = 0
+
+    if botName == 'npc_dota_hero_medusa' then
+        local unitHealth = bot:GetHealth() - (bot:GetMana() * 0.98 * (2 + 0.1 * bot:GetLevel()))
+        local unitMaxHealth = bot:GetMaxHealth() - (bot:GetMaxMana() * 0.98 * (2 + 0.1 * bot:GetLevel()))
+        nHealth = (unitHealth / unitMaxHealth) * 0.2 + botMP * 0.8
+    elseif botName == 'npc_dota_hero_huskar' then
+		if not bot:HasModifier('modifier_item_spirit_vessel_damage') then
+			local hAbility = bot:GetAbilityByName('huskar_berserkers_blood')
+			if hAbility and hAbility:IsTrained() and hAbility:GetLevel() >= 3 then
+				if botHP > 0.2 and botHealthRegen > 30 then botHP = 1 end
+				local nInRangeEnemy = J.GetEnemiesNearLoc(bot:GetLocation(), 1200)
+				if botHP < 0.3 and (#nInRangeEnemy == 0 and J.HasItem(bot, 'item_armlet')) then botHP = 1 end
+			end
+		end
+        nHealth = botHP
+    else
+        nHealth = botHP * 0.8 + botMP * 0.2
+    end
+
+	if nHealth < 0.4 then
+		return false
+	end
+
+	local nInRangeAlly = J.GetAlliesNearLoc(hAlly:GetLocation(), 1200)
+	local nInRangeEnemy = J.GetEnemiesNearLoc(hAlly:GetLocation(), 1200)
+
+	if #nInRangeEnemy > #nInRangeAlly + 1 then return false end
+
+	if J.GetTotalEstimatedDamageToTarget(nInRangeEnemy, hAlly, fEta - 1) > hAlly:GetHealth() then
+		return false
+	end
+
+	for _, enemyHero in pairs(nInRangeEnemy) do
+		if  J.IsValidHero(enemyHero)
+		and J.CanBeAttacked(enemyHero)
+		and J.IsInRange(enemyHero, hAlly, 1200)
+		and GetUnitToLocationDistance(enemyHero, J.GetEnemyFountain()) > 4200
+		and (not enemyHero:HasModifier('modifier_tower_aura_bonus') or J.IsLateGame())
+		then
+			if enemyHero:GetAttackTarget() == hAlly
+			or hAlly:WasRecentlyDamagedByHero(enemyHero, 5.0)
+			or J.IsChasingTarget(enemyHero, hAlly)
+			or (J.IsGoingOnSomeone(hAlly) and hAlly:GetAttackTarget() == enemyHero)
+			then
+				return true, enemyHero
+			end
+		end
+	end
+
+	return false
 end
 
 -- some help with last hits

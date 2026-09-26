@@ -4,14 +4,8 @@ then
 end
 
 function Helper.IsCore(hero, team)
-    if hero == team[1]
-    or hero == team[2]
-    or hero == team[3]
-    then
-        return true
-    end
-
-    return false
+    local position = Helper.GetPosition(hero, team)
+    return position >= 1 and position <= 3
 end
 
 function Helper.GetPosition(hero, team)

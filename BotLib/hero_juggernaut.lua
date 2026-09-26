@@ -436,9 +436,9 @@ function X.ConsiderSwiftSlash()
 		and J.IsInRange(bot, botTarget, nCastRange * 1.5)
 		and not botTarget:HasModifier('modifier_abaddon_borrowed_time')
 		and not botTarget:HasModifier('modifier_dazzle_shallow_grave')
+		and not botTarget:HasModifier('modifier_omninight_guardian_angel')
+		and not botTarget:HasModifier('modifier_winter_wyvern_cold_embrace')
 		and not botTarget:HasModifier('modifier_item_blade_mail_reflect')
-		and not botTarget:HasModifier('modifier_abaddon_borrowed_time')
-		and not botTarget:HasModifier('modifier_abaddon_borrowed_time')
 		then
 			local nLocationAoE_creeps = bot:FindAoELocation(true, false, botTarget:GetLocation(), 0, nRadius, 0, 0)
 			if nLocationAoE_creeps.count == 0 then
@@ -471,6 +471,7 @@ function X.ConsiderOmnislash()
 		and not botTarget:HasModifier('modifier_abaddon_borrowed_time')
 		and not botTarget:HasModifier('modifier_dazzle_shallow_grave')
 		and not botTarget:HasModifier('modifier_omninight_guardian_angel')
+		and not botTarget:HasModifier('modifier_winter_wyvern_cold_embrace')
 		and not botTarget:HasModifier('modifier_item_blade_mail_reflect')
 		then
 			if botTarget:GetUnitName() ~= 'npc_dota_hero_medusa'

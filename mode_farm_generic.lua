@@ -31,7 +31,7 @@ function GetDesire()
 	if  activeMode ~= BOT_MODE_FARM
 	and activeModeDesire > 0
     and desire > 0
-    and desire == activeModeDesire
+    and math.abs(desire - activeModeDesire) < 0.000001
 	then
 		desire = desire - 0.05
 	end
@@ -245,7 +245,7 @@ function GetDesireRaw()
 					preferedCamp = nil
 					return BOT_MODE_DESIRE_VERYLOW
 				elseif bot.farm.state == FARM_STATE__FARM then
-					return BOT_MODE_DESIRE_VERYHIGH + 0.04
+					return BOT_MODE_DESIRE_VERYHIGH
 				elseif bot.farm.state == FARM_STATE__STACK then
 					return BOT_MODE_DESIRE_VERYHIGH + 0.04
 				else

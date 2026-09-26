@@ -26,7 +26,7 @@ function GetDesire()
 	if  activeMode ~= BOT_MODE_SECRET_SHOP
 	and activeModeDesire > 0
     and desire > 0
-    and desire == activeModeDesire
+    and math.abs(desire - activeModeDesire) < 0.000001
 	then
 		desire = desire - 0.05
 	end

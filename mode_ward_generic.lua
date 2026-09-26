@@ -24,7 +24,7 @@ function GetDesire()
 	if  activeMode ~= BOT_MODE_WARD
 	and activeModeDesire > 0
     and desire > 0
-    and desire == activeModeDesire
+    and math.abs(desire - activeModeDesire) < 0.000001
 	then
 		desire = desire - 0.05
 	end
@@ -32,7 +32,7 @@ function GetDesire()
 end
 
 function GetDesireRaw()
-    if not X.IsSuitableToWard() or J.IsMeepoClone(bot) then
+    if not X.IsSuitableToWard() or J.IsMeepoClone(bot) or J.IsGoingToRune(bot) then
         return BOT_MODE_DESIRE_NONE
     end
 

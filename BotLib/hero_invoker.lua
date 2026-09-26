@@ -1700,7 +1700,7 @@ function X.ConsiderDeafeningBlast()
 end
 
 function ConsiderFirstSpell()
-    if bot:GetLevel() == 1
+    if bot:GetLevel() == 1 and bot:GetUnitName() == 'npc_dota_hero_invoker'
     then
         if Quas:IsTrained()
             and not IsAbilityActive(ColdSnap)

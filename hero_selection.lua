@@ -650,7 +650,7 @@ function X.GetRoleTagsNudge(nOwnTeam, sName, pos)
         end
 
 		local tagSum = 0
-		for _, v in pairs(Role['hero_roles'][sName]) do tagSum = tagSum + v end
+		for _, v in pairs(Role['hero_roles'][sName]) do if type(v) == 'number' then tagSum = tagSum + v end end
 		compNudge = compNudge^2 / Max(tagSum, 1)
 	end
 

@@ -4672,6 +4672,7 @@ X.ConsiderItemDesire["item_tpscroll"] = function( hItem )
 	or (bot:HasModifier('modifier_viper_nethertoxin'))
 	or (bot:HasModifier('modifier_item_helm_of_the_undying_active'))
 	or (bot:HasModifier('modifier_spirit_breaker_charge_of_darkness'))
+	or (bot:HasModifier('modifier_morphling_morph_agi'))
 	or (bot:HasModifier('modifier_arc_warden_tempest_double') and bot:GetRemainingLifespan() < 3.3)
 	or (bot:HasModifier('modifier_oracle_false_promise_timer') and J.GetModifierTime(bot, "modifier_oracle_false_promise_timer" ) <= 3.2)
 	or (J.GetModifierTime(bot, 'modifier_jakiro_macropyre_burn') >= 1.4)
@@ -7848,14 +7849,51 @@ function X.UpdateBotHistory()
 	bot.history = history
 end
 
+local SPL = require(GetScriptDirectory()..'/FunLib/aba_spell_list')
+
+local sHeroNameStripped = string.gsub(bot:GetUnitName(), 'npc_dota_hero_', '')
+
+local function HandleNonNativeAbility(hAbility)
+    if hAbility == nil then return end
+
+    local sAbilityName = hAbility:GetName()
+    local sAbilityNameHero = SPL.GetSpellHeroName(sAbilityName)
+
+    if sAbilityNameHero == nil then return end
+	if sAbilityNameHero == bot:GetUnitName() then return end
+
+    if not bot.AbilityUsage[sAbilityNameHero] then
+        bot.AbilityUsage[sAbilityNameHero] = require(GetScriptDirectory()..'/BotLib/'..string.gsub(sAbilityNameHero, 'npc_dota_', ''))
+    end
+
+    local abilityUsage = bot.AbilityUsage[sAbilityNameHero]
+    if abilityUsage and abilityUsage.SkillsComplement then abilityUsage.SkillsComplement() end
+end
+
 function ItemUsageThink()
 	if bot.farm and bot.farm.state == 2 then return end
+	if bot.AbilityUsage == nil then bot.AbilityUsage = {} end
 
 	local t = GameTime() % 1.0
     if t < 0.5 then
         ItemUsageComplement()
 	else
 		BotBuild.SkillsComplement()
+
+		-- for added spells
+		if not bot:IsAlive() then return end
+
+		for i = 35, 1, -1 do
+			local hAbility = bot:GetAbilityInSlot(i)
+			if hAbility then
+				local sAbilityName = hAbility:GetName()
+				if not string.find(sAbilityName, sHeroNameStripped) and not J.IsGenericAbility(sAbilityName) then
+					if J.CanCastAbility(hAbility) then
+						HandleNonNativeAbility(hAbility)
+					end
+				end
+			end
+		end
     end
 end
 

@@ -36,7 +36,7 @@ function GetDesire()
 	if  activeMode ~= BOT_MODE_OUTPOST
 	and activeModeDesire > 0
     and desire > 0
-    and desire == activeModeDesire
+    and math.abs(desire - activeModeDesire) < 0.000001
 	then
 		desire = desire + 0.05
 	end
@@ -49,322 +49,8 @@ function GetDesireRaw()
 	------------------------------
 	-- Hero Channel/Kill/CC abilities
 	------------------------------
-
-	if botName == "npc_dota_hero_rubick"
-	then
-		if bot:IsChanneling() or bot:IsUsingAbility() or bot:IsCastingAbility()
-		then
-			return BOT_MODE_DESIRE_ABSOLUTE * 2
-		end
-	end
-
-	if botName == "npc_dota_hero_pugna" 
-	then
-		if cAbility == nil then cAbility = bot:GetAbilityByName( "pugna_life_drain" ) end;
-		if cAbility:IsChanneling() then
-			return BOT_MODE_DESIRE_ABSOLUTE * 2
-		end	
-	-- elseif botName == "npc_dota_hero_drow_ranger"
-	-- 	then
-	-- 		if cAbility == nil then cAbility = bot:GetAbilityByName( "drow_ranger_multishot" ) end;
-	-- 		if cAbility:IsInAbilityPhase() or bot:IsChanneling() then
-	-- 			return BOT_MODE_DESIRE_ABSOLUTE * 2
-	-- 		end	
-	elseif botName == "npc_dota_hero_shadow_shaman"
-		then
-			if cAbility == nil then cAbility = bot:GetAbilityByName( "shadow_shaman_shackles" ) end;
-			if cAbility:IsInAbilityPhase() or bot:IsChanneling() then
-				return BOT_MODE_DESIRE_ABSOLUTE * 2
-			end
-	elseif botName == "npc_dota_hero_clinkz"
-	then
-		if cAbility == nil then cAbility = bot:GetAbilityByName("clinkz_burning_barrage") end
-		if cAbility:IsTrained()
-		then
-			if cAbility:IsInAbilityPhase() or bot:IsChanneling() or bot:HasModifier('modifier_clinkz_burning_barrage') then
-				return BOT_MODE_DESIRE_ABSOLUTE * 2
-			end
-		end
-	elseif botName == "npc_dota_hero_tiny"
-	then
-		if cAbility == nil then cAbility = bot:GetAbilityByName("tiny_tree_channel") end
-		if cAbility:IsTrained()
-		then
-			if cAbility:IsInAbilityPhase() or bot:IsChanneling() then
-				return BOT_MODE_DESIRE_ABSOLUTE * 2
-			end
-		end
-	elseif botName == "npc_dota_hero_void_spirit"
-	then
-		if cAbility == nil then cAbility = bot:GetAbilityByName("void_spirit_dissimilate") end
-		if cAbility:IsTrained()
-		then
-			local nPhaseDuration = cAbility:GetSpecialValueFloat('phase_duration') + 0.05
-			dissimilate.duration = nPhaseDuration
-
-			if DotaTime() <= dissimilate.cast_time + dissimilate.duration then
-				return BOT_MODE_DESIRE_ABSOLUTE * 2
-			end
-
-			if (cAbility:IsInAbilityPhase())
-			or ((cAbility:GetCooldown() - cAbility:GetCooldownTimeRemaining()) <= dissimilate.duration)
-			then
-				dissimilate.cast_time = DotaTime()
-				return BOT_MODE_DESIRE_ABSOLUTE * 2
-			end
-		end
-	elseif botName == "npc_dota_hero_batrider"
-	then
-		if cAbility == nil then cAbility = bot:GetAbilityByName("batrider_flaming_lasso") end
-		if cAbility:IsTrained()
-		then
-			if cAbility:IsInAbilityPhase() or bot:HasModifier("modifier_batrider_flaming_lasso_self")
-			then
-				return BOT_MODE_DESIRE_ABSOLUTE * 2
-			end
-		end
-	elseif botName == "npc_dota_hero_enigma"
-	then
-		if cAbility == nil then cAbility = bot:GetAbilityByName("enigma_black_hole") end
-		if cAbility:IsTrained()
-		then
-			if cAbility:IsInAbilityPhase() or bot:IsChanneling() then
-				return BOT_MODE_DESIRE_ABSOLUTE * 2
-			end
-		end
-	elseif botName == "npc_dota_hero_keeper_of_the_light"
-	then
-		if cAbility == nil then cAbility = bot:GetAbilityByName("keeper_of_the_light_illuminate") end
-		if cAbility:IsChanneling() then
-			return BOT_MODE_DESIRE_ABSOLUTE * 2
-		end
-	elseif botName == "npc_dota_hero_meepo"
-	then
-		if cAbility == nil then cAbility = bot:GetAbilityByName("meepo_poof") end
-		if cAbility:IsTrained()
-		then
-			if cAbility:IsInAbilityPhase() or bot:IsChanneling() then
-				return BOT_MODE_DESIRE_ABSOLUTE * 2
-			end
-		end
-	elseif botName == "npc_dota_hero_monkey_king"
-	then
-		if cAbility == nil then cAbility = bot:GetAbilityByName("monkey_king_primal_spring") end
-		if cAbility:IsTrained()
-		then
-			if cAbility:IsInAbilityPhase() or bot:IsChanneling() then
-				return BOT_MODE_DESIRE_ABSOLUTE * 2
-			end
-		end
-
-		if not bot:IsChanneling() then
-			if bot.tree_dance_status then
-				if  DotaTime() - bot.tree_dance_status.cast_time > (3.0 + bot.tree_dance_status.eta)
-				and DotaTime() - bot.tree_dance_status.cast_time < (4.0 + bot.tree_dance_status.eta)
-				then
-					bMoveFromTreeDance = true
-					return BOT_MODE_DESIRE_ABSOLUTE * 2
-				end
-			end
-		end
-	elseif botName == "npc_dota_hero_pangolier"
-	then
-		if cAbility == nil then cAbility = bot:GetAbilityByName("pangolier_gyroshell") end
-		if cAbility:IsTrained()
-		then
-			if cAbility:IsInAbilityPhase() or bot:HasModifier('modifier_pangolier_gyroshell')
-			then
-				return BOT_MODE_DESIRE_ABSOLUTE * 2
-			end
-		end
-	elseif botName == "npc_dota_hero_phoenix"
-	then
-		cAbility = bot:GetAbilityByName("phoenix_supernova")
-		if cAbility:IsTrained()
-		then
-			if bot:HasModifier('modifier_phoenix_supernova_hiding') then
-				return BOT_MODE_DESIRE_ABSOLUTE * 2
-			end
-		end
-
-		cAbility = bot:GetAbilityByName("phoenix_sun_ray")
-		if cAbility:IsTrained()
-		then
-			if bot:HasModifier('modifier_phoenix_sun_ray')
-			then
-				return BOT_MODE_DESIRE_ABSOLUTE * 2
-			end
-		end
-	elseif botName == "npc_dota_hero_puck"
-	then
-		if cAbility == nil then cAbility = bot:GetAbilityByName("puck_phase_shift") end
-		if cAbility:IsTrained()
-		then
-			if cAbility:IsInAbilityPhase() or bot:HasModifier('modifier_puck_phase_shift') or cAbility:IsChanneling() then
-				return BOT_MODE_DESIRE_ABSOLUTE * 2
-			end
-		end
-	elseif botName == "npc_dota_hero_ringmaster"
-	then
-		if cAbility == nil then cAbility = bot:GetAbilityByName("ringmaster_tame_the_beasts") end
-		if cAbility:IsTrained()
-		then
-			if cAbility:IsInAbilityPhase() or bot:HasModifier("modifier_ringmaster_tame_the_beasts") then
-				return BOT_MODE_DESIRE_ABSOLUTE * 2
-			end
-		end
-	elseif botName == "npc_dota_hero_snapfire"
-	then
-		if cAbility == nil then cAbility = bot:GetAbilityByName("snapfire_mortimer_kisses") end
-		if cAbility:IsTrained()
-		then
-			if cAbility:IsInAbilityPhase() or bot:HasModifier('modifier_snapfire_mortimer_kisses') then
-				return BOT_MODE_DESIRE_ABSOLUTE * 2
-			end
-		end
-	elseif botName == "npc_dota_hero_spirit_breaker"
-	then
-		if cAbility == nil then cAbility = bot:GetAbilityByName("spirit_breaker_charge_of_darkness") end
-		if cAbility:IsTrained()
-		then
-			if cAbility:IsInAbilityPhase() or bot:HasModifier('modifier_spirit_breaker_charge_of_darkness') then
-				return BOT_MODE_DESIRE_ABSOLUTE * 2
-			end
-		end
-	elseif botName == "npc_dota_hero_windrunner"
-	then
-		if cAbility == nil then cAbility = bot:GetAbilityByName("windrunner_powershot") end
-		if cAbility:IsTrained()
-		then
-			if cAbility:IsInAbilityPhase() or bot:IsChanneling() then
-				return BOT_MODE_DESIRE_ABSOLUTE * 2
-			end
-		end
-	elseif botName == "npc_dota_hero_tinker"
-	then
-		if cAbility == nil then cAbility = bot:GetAbilityByName("tinker_rearm") end
-		if cAbility:IsTrained()
-		then
-			if cAbility:IsInAbilityPhase() or bot:HasModifier('modifier_tinker_rearm') then
-				return BOT_MODE_DESIRE_ABSOLUTE * 2
-			end
-		end
-	elseif botName == "npc_dota_hero_primal_beast"
-	then
-		cAbility = bot:GetAbilityByName("primal_beast_onslaught")
-		if cAbility:IsTrained()
-		then
-			if cAbility:IsInAbilityPhase() or bot:HasModifier('modifier_primal_beast_onslaught_windup') or bot:HasModifier('modifier_prevent_taunts') or bot:HasModifier('modifier_primal_beast_onslaught_movement_adjustable') then
-				return BOT_MODE_DESIRE_ABSOLUTE * 2
-			end
-		end
-
-		cAbility = bot:GetAbilityByName("primal_beast_pulverize")
-		if cAbility:IsTrained()
-		then
-			if cAbility:IsInAbilityPhase() or bot:HasModifier('modifier_primal_beast_pulverize_self') then
-				return BOT_MODE_DESIRE_ABSOLUTE * 2
-			end
-		end
-
-		cAbility = bot:GetAbilityByName("primal_beast_trample")
-		if cAbility:IsTrained()
-		then
-			if cAbility:IsInAbilityPhase() or bot:HasModifier('modifier_primal_beast_trample') then
-				return 6.66
-			end
-		end
-	elseif botName == "npc_dota_hero_hoodwink"
-	then
-		if cAbility == nil then cAbility = bot:GetAbilityByName("hoodwink_sharpshooter") end
-		if cAbility:IsTrained()
-		then
-			if cAbility:IsInAbilityPhase() or bot:HasModifier('modifier_hoodwink_sharpshooter_windup') then
-				return BOT_MODE_DESIRE_ABSOLUTE * 2
-			end
-		end
-	elseif botName == "npc_dota_hero_nevermore"
-	then
-		if cAbility == nil then cAbility = bot:GetAbilityByName("nevermore_requiem") end
-		if cAbility:IsTrained()
-		then
-			if cAbility:IsInAbilityPhase() or bot:HasModifier('modifier_nevermore_requiem_invis_break') then
-				return BOT_MODE_DESIRE_ABSOLUTE * 2
-			end
-		end
-	elseif botName == "npc_dota_hero_elder_titan"
-	then
-		if cAbility == nil then cAbility = bot:GetAbilityByName("elder_titan_echo_stomp") end
-		if cAbility:IsTrained()
-		then
-			if cAbility:IsChanneling() then
-				return BOT_MODE_DESIRE_ABSOLUTE * 2
-			end
-		end
-	elseif botName == "npc_dota_hero_wisp"
-	then
-		if cAbility == nil then cAbility = bot:GetAbilityByName("wisp_tether") end
-		if cAbility:IsTrained()
-		then
-			if bot:HasModifier('modifier_wisp_tether') and bot.wisp and bot.wisp.tether.target then
-				if J.IsValidHero(bot.wisp.tether.target)
-				and not (J.IsRetreating(bot) and J.GetHP(bot) < 0.25)
-				and GetUnitToUnitDistance(bot, bot.wisp.tether.target) > 550
-				then
-					return BOT_MODE_DESIRE_ABSOLUTE * 2
-				end
-			end
-		end
-	elseif bot:HasModifier('modifier_dark_willow_bedlam')
-	then
-		cAbility = bot:GetAbilityByName("dark_willow_bedlam")
-		if cAbility and cAbility:IsTrained() then
-			local nRadius = cAbility:GetSpecialValueInt('attack_radius')
-			local nInRangeAlly = J.GetAlliesNearLoc(bot:GetLocation(), 1200)
-			local nInRangeEnemy = J.GetEnemiesNearLoc(bot:GetLocation(), 1200)
-
-			if #nInRangeAlly >= #nInRangeEnemy or J.IsInTeamFight(bot, 1200) then
-				for _, enemyHero in pairs(nInRangeEnemy) do
-					if J.IsValidHero(enemyHero)
-					and J.IsInRange(bot, enemyHero, bot:GetAttackRange() + nRadius)
-					and not enemyHero:HasModifier('modifier_abaddon_borrowed_time')
-					and not enemyHero:HasModifier('modifier_dazzle_shallow_grave')
-					and not enemyHero:HasModifier('modifier_oracle_false_promise_timer')
-					and not enemyHero:HasModifier('modifier_item_blade_mail_reflect')
-					then
-						if J.GetHP(enemyHero) < 0.5
-						or J.IsDisabled(enemyHero)
-						or enemyHero:HasModifier('modifier_legion_commander_duel')
-					   	then
-							channel_target.location = enemyHero:GetLocation()
-							return BOT_MODE_DESIRE_ABSOLUTE * 2
-					   	end
-					end
-				end
-			end
-		end
-	elseif bot:GetAbilityByName('witch_doctor_death_ward')
-	then
-		cAbility = bot:GetAbilityByName('witch_doctor_death_ward')
-		if cAbility and cAbility:IsTrained() then
-			if cAbility:IsChanneling() then
-				return BOT_MODE_DESIRE_ABSOLUTE * 2
-			end
-		end
-	elseif bot:HasModifier('modifier_chen_hand_of_god_invuln_aura')
-	then
-		if J.IsInTeamFight(bot, 1200) then
-			cAbility = bot:GetAbilityByName('chen_hand_of_god')
-			if cAbility and cAbility:IsTrained() then
-				local nRadius = cAbility:GetSpecialValueInt('debuff_immune_radius')
-				local nInRangeAlly = J.GetEnemiesNearLoc(bot:GetLocation(), nRadius)
-
-				if #nInRangeAlly >= 3 and not J.IsStunProjectileIncoming(bot, 800) then
-					return BOT_MODE_DESIRE_ABSOLUTE * 2
-				end
-			end
-		end
-	end
+	local nModifierChannelingDesire = CheckBotModifierChanneling()
+	if nModifierChannelingDesire > 0 then return nModifierChannelingDesire end
 
 	ShouldHuskarMoveOutsideFountain = ConsiderHuskarMoveOutsideFountain()
 	if ShouldHuskarMoveOutsideFountain
@@ -935,6 +621,272 @@ function Think()
 			end
 		end
 	end
+end
+
+function CheckBotModifierChanneling()
+	local hAbility = nil
+
+	hAbility = bot:GetAbilityByName('pugna_life_drain')
+	if hAbility and hAbility:IsTrained() then
+		if hAbility:IsChanneling() then
+			return BOT_MODE_DESIRE_ABSOLUTE * 2
+		end
+	end
+
+	hAbility = bot:GetAbilityByName('shadow_shaman_shackles')
+	if hAbility and hAbility:IsTrained() then
+		if hAbility:IsInAbilityPhase() or bot:IsChanneling() then
+			return BOT_MODE_DESIRE_ABSOLUTE * 2
+		end
+	end
+
+	hAbility = bot:GetAbilityByName('clinkz_burning_barrage')
+	if hAbility and hAbility:IsTrained() then
+		if hAbility:IsInAbilityPhase() or bot:IsChanneling() or bot:HasModifier('modifier_clinkz_burning_barrage') then
+			return BOT_MODE_DESIRE_ABSOLUTE * 2
+		end
+	end
+
+	hAbility = bot:GetAbilityByName('tiny_tree_channel')
+	if hAbility and hAbility:IsTrained() then
+		if hAbility:IsInAbilityPhase() or bot:IsChanneling() then
+			return BOT_MODE_DESIRE_ABSOLUTE * 2
+		end
+	end
+
+	hAbility = bot:GetAbilityByName('void_spirit_dissimilate')
+	if hAbility and hAbility:IsTrained() then
+		local nPhaseDuration = hAbility:GetSpecialValueFloat('phase_duration') + 0.05
+		dissimilate.duration = nPhaseDuration
+
+		if DotaTime() <= dissimilate.cast_time + dissimilate.duration then
+			return BOT_MODE_DESIRE_ABSOLUTE * 2
+		end
+
+		if (hAbility:IsInAbilityPhase())
+		or ((hAbility:GetCooldown() - hAbility:GetCooldownTimeRemaining()) <= dissimilate.duration)
+		then
+			dissimilate.cast_time = DotaTime()
+			return BOT_MODE_DESIRE_ABSOLUTE * 2
+		end
+	end
+
+	hAbility = bot:GetAbilityByName('batrider_flaming_lasso')
+	if hAbility and hAbility:IsTrained() then
+		if hAbility:IsInAbilityPhase() or bot:HasModifier('modifier_batrider_flaming_lasso_self')
+		then
+			return BOT_MODE_DESIRE_ABSOLUTE * 2
+		end
+	end
+
+	hAbility = bot:GetAbilityByName('enigma_black_hole')
+	if hAbility and hAbility:IsTrained() then
+		if hAbility:IsInAbilityPhase() or bot:IsChanneling() then
+			return BOT_MODE_DESIRE_ABSOLUTE * 2
+		end
+	end
+
+	hAbility = bot:GetAbilityByName('keeper_of_the_light_illuminate')
+	if hAbility and hAbility:IsTrained() then
+		if hAbility:IsChanneling() then
+			return BOT_MODE_DESIRE_ABSOLUTE * 2
+		end
+	end
+
+	hAbility = bot:GetAbilityByName('meepo_poof')
+	if hAbility and hAbility:IsTrained() then
+		if hAbility:IsInAbilityPhase() or bot:IsChanneling() then
+			return BOT_MODE_DESIRE_ABSOLUTE * 2
+		end
+	end
+
+	hAbility = bot:GetAbilityByName('monkey_king_primal_spring')
+	if hAbility and hAbility:IsTrained() then
+		if hAbility:IsInAbilityPhase() or bot:IsChanneling() then
+			return BOT_MODE_DESIRE_ABSOLUTE * 2
+		end
+	end
+
+	hAbility = bot:GetAbilityByName('monkey_king_tree_dance')
+	if hAbility and hAbility:IsTrained() then
+		if not bot:IsChanneling() then
+			if bot.tree_dance_status then
+				if  DotaTime() - bot.tree_dance_status.cast_time > (3.0 + bot.tree_dance_status.eta)
+				and DotaTime() - bot.tree_dance_status.cast_time < (4.0 + bot.tree_dance_status.eta)
+				then
+					bMoveFromTreeDance = true
+					return BOT_MODE_DESIRE_ABSOLUTE * 2
+				end
+			end
+		end
+	end
+
+	hAbility = bot:GetAbilityByName('pangolier_gyroshell')
+	if hAbility and hAbility:IsTrained() then
+		if hAbility:IsInAbilityPhase() or bot:HasModifier('modifier_pangolier_gyroshell') then
+			return BOT_MODE_DESIRE_ABSOLUTE * 2
+		end
+	end
+
+	hAbility = bot:GetAbilityByName('phoenix_supernova')
+	if hAbility and hAbility:IsTrained() then
+		if bot:HasModifier('modifier_phoenix_supernova_hiding') then
+			return BOT_MODE_DESIRE_ABSOLUTE * 2
+		end
+	end
+
+	hAbility = bot:GetAbilityByName('phoenix_sun_ray')
+	if hAbility and hAbility:IsTrained() then
+		if bot:HasModifier('modifier_phoenix_sun_ray') then
+			return BOT_MODE_DESIRE_ABSOLUTE * 2
+		end
+	end
+
+	hAbility = bot:GetAbilityByName('puck_phase_shift')
+	if hAbility and hAbility:IsTrained() then
+		if hAbility:IsInAbilityPhase() or bot:HasModifier('modifier_puck_phase_shift') or hAbility:IsChanneling() then
+			return BOT_MODE_DESIRE_ABSOLUTE * 2
+		end
+	end
+
+	hAbility = bot:GetAbilityByName('ringmaster_tame_the_beasts')
+	if hAbility and hAbility:IsTrained() then
+		if hAbility:IsInAbilityPhase() or bot:HasModifier('modifier_ringmaster_tame_the_beasts') then
+			return BOT_MODE_DESIRE_ABSOLUTE * 2
+		end
+	end
+
+	hAbility = bot:GetAbilityByName('snapfire_mortimer_kisses')
+	if hAbility and hAbility:IsTrained() then
+		if hAbility:IsInAbilityPhase() or bot:HasModifier('modifier_snapfire_mortimer_kisses') then
+			return BOT_MODE_DESIRE_ABSOLUTE * 2
+		end
+	end
+
+	hAbility = bot:GetAbilityByName('spirit_breaker_charge_of_darkness')
+	if hAbility and hAbility:IsTrained() then
+		if hAbility:IsInAbilityPhase() or bot:HasModifier('modifier_spirit_breaker_charge_of_darkness') then
+			return BOT_MODE_DESIRE_ABSOLUTE * 2
+		end
+	end
+
+	hAbility = bot:GetAbilityByName('windrunner_powershot')
+	if hAbility and hAbility:IsTrained() then
+		if hAbility:IsInAbilityPhase() or bot:IsChanneling() then
+			return BOT_MODE_DESIRE_ABSOLUTE * 2
+		end
+	end
+
+	hAbility = bot:GetAbilityByName('tinker_rearm')
+	if hAbility and hAbility:IsTrained() then
+		if hAbility:IsInAbilityPhase() or bot:HasModifier('modifier_tinker_rearm') then
+			return BOT_MODE_DESIRE_ABSOLUTE * 2
+		end
+	end
+
+	hAbility = bot:GetAbilityByName('primal_beast_onslaught')
+	if hAbility and hAbility:IsTrained() then
+		if hAbility:IsInAbilityPhase() or bot:HasModifier('modifier_primal_beast_onslaught_windup') or bot:HasModifier('modifier_prevent_taunts') or bot:HasModifier('modifier_primal_beast_onslaught_movement_adjustable') then
+			return BOT_MODE_DESIRE_ABSOLUTE * 2
+		end
+	end
+
+	hAbility = bot:GetAbilityByName('primal_beast_pulverize')
+	if hAbility and hAbility:IsTrained() then
+		if hAbility:IsInAbilityPhase() or bot:HasModifier('modifier_primal_beast_pulverize_self') then
+			return BOT_MODE_DESIRE_ABSOLUTE * 2
+		end
+	end
+
+	hAbility = bot:GetAbilityByName('primal_beast_trample')
+	if hAbility and hAbility:IsTrained() then
+		if hAbility:IsInAbilityPhase() or bot:HasModifier('modifier_primal_beast_trample') then
+			return 6.66
+		end
+	end
+
+	hAbility = bot:GetAbilityByName('hoodwink_sharpshooter')
+	if hAbility and hAbility:IsTrained() then
+		if hAbility:IsInAbilityPhase() or bot:HasModifier('modifier_hoodwink_sharpshooter_windup') then
+			return BOT_MODE_DESIRE_ABSOLUTE * 2
+		end
+	end
+
+	hAbility = bot:GetAbilityByName('nevermore_requiem')
+	if hAbility and hAbility:IsTrained() then
+		if hAbility:IsInAbilityPhase() then
+			return BOT_MODE_DESIRE_ABSOLUTE * 2
+		end
+	end
+
+	hAbility = bot:GetAbilityByName('elder_titan_echo_stomp')
+	if hAbility and hAbility:IsTrained() then
+		if hAbility:IsChanneling() then
+			return BOT_MODE_DESIRE_ABSOLUTE * 2
+		end
+	end
+
+	hAbility = bot:GetAbilityByName('wisp_tether')
+	if hAbility and hAbility:IsTrained() then
+		if bot:HasModifier('modifier_wisp_tether') and bot.wisp and bot.wisp.tether.target then
+			if J.IsValidHero(bot.wisp.tether.target)
+			and not (J.IsRetreating(bot) and J.GetHP(bot) < 0.25)
+			and GetUnitToUnitDistance(bot, bot.wisp.tether.target) > 550
+			then
+				return BOT_MODE_DESIRE_ABSOLUTE * 2
+			end
+		end
+	end
+
+	hAbility = bot:GetAbilityByName('dark_willow_bedlam')
+	if hAbility and hAbility:IsTrained() then
+		local nRadius = hAbility:GetSpecialValueInt('attack_radius')
+		local nInRangeAlly = J.GetAlliesNearLoc(bot:GetLocation(), 1200)
+		local nInRangeEnemy = J.GetEnemiesNearLoc(bot:GetLocation(), 1200)
+
+		if #nInRangeAlly >= #nInRangeEnemy or J.IsInTeamFight(bot, 1200) then
+			for _, enemyHero in pairs(nInRangeEnemy) do
+				if J.IsValidHero(enemyHero)
+				and J.IsInRange(bot, enemyHero, bot:GetAttackRange() + nRadius)
+				and not enemyHero:HasModifier('modifier_abaddon_borrowed_time')
+				and not enemyHero:HasModifier('modifier_dazzle_shallow_grave')
+				and not enemyHero:HasModifier('modifier_oracle_false_promise_timer')
+				and not enemyHero:HasModifier('modifier_item_blade_mail_reflect')
+				then
+					if J.GetHP(enemyHero) < 0.5
+					or J.IsDisabled(enemyHero)
+					or enemyHero:HasModifier('modifier_legion_commander_duel')
+					   then
+						channel_target.location = enemyHero:GetLocation()
+						return BOT_MODE_DESIRE_ABSOLUTE * 2
+					   end
+				end
+			end
+		end
+	end
+
+	hAbility = bot:GetAbilityByName('witch_doctor_death_ward')
+	if hAbility and hAbility:IsTrained() then
+		if hAbility:IsChanneling() then
+			return BOT_MODE_DESIRE_ABSOLUTE * 2
+		end
+	end
+
+	if bot:HasModifier('modifier_chen_hand_of_god_invuln_aura') then
+		if J.IsInTeamFight(bot, 1200) then
+			hAbility = bot:GetAbilityByName('chen_hand_of_god')
+			if hAbility and hAbility:IsTrained() then
+				local nRadius = hAbility:GetSpecialValueInt('debuff_immune_radius')
+				local nInRangeAlly = J.GetEnemiesNearLoc(bot:GetLocation(), nRadius)
+
+				if #nInRangeAlly >= 3 and not J.IsStunProjectileIncoming(bot, 800) then
+					return BOT_MODE_DESIRE_ABSOLUTE * 2
+				end
+			end
+		end
+	end
+
+	return BOT_MODE_DESIRE_NONE
 end
 
 function GetClosestOutpost()

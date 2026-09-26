@@ -6,7 +6,7 @@ local Minion = dofile( GetScriptDirectory()..'/FunLib/aba_minion' )
 local sTalentList = J.Skill.GetTalentList( bot )
 local sAbilityList = J.Skill.GetAbilityList( bot )
 local sRole = J.Item.GetRoleItemsBuyList( bot )
-local SPL = require( GetScriptDirectory()..'/FunLib/spell_list' )
+local SPL = require( GetScriptDirectory()..'/FunLib/aba_spell_list' )
 
 local sSelectedBuild = {}
 local HeroBuild = {}
@@ -276,20 +276,20 @@ local AGI_GROWTH_RATE = 4.2
 local STR_GROWTH_RATE = 2.6
 
 -- do similar thing as Rubick's
-local heroAbilityUsage = {}
 local function HandleSpell(spell)
     if spell == nil then return end
 
     local heroName = SPL.GetSpellHeroName(spell:GetName())
 
     if heroName == nil then return end
+    if heroName == bot:GetUnitName() then return end
 
-    if not heroAbilityUsage[heroName]
+    if not bot.AbilityUsage[heroName]
     then
-        heroAbilityUsage[heroName] = dofile(GetScriptDirectory()..'/BotLib/'..string.gsub(heroName, 'npc_dota_', ''))
+        bot.AbilityUsage[heroName] = require(GetScriptDirectory()..'/BotLib/'..string.gsub(heroName, 'npc_dota_', ''))
     end
 
-    local heroSpells = heroAbilityUsage[heroName]
+    local heroSpells = bot.AbilityUsage[heroName]
     if heroSpells and heroSpells.SkillsComplement
     then
         heroSpells.SkillsComplement()
@@ -297,7 +297,7 @@ local function HandleSpell(spell)
 end
 
 local nMorphTime = {0, math.huge}
-local nAverageCooldownTime = math.pi
+local nAverageCooldownTime = 3
 
 function X.SkillsComplement()
     bot = GetBot()
@@ -327,6 +327,7 @@ function X.SkillsComplement()
                 if J.IsGoingOnSomeone(bot)
                 and J.IsValidHero(botTarget)
                 and J.IsInRange(bot, botTarget, 900)
+                and J.GetMP(bot) > 0.3
                 then
                     if (IsGoodToMorphBack(MorphedHeroName, true))
                     or (botHP > 0.8)
@@ -357,7 +358,7 @@ function X.SkillsComplement()
         if DotaTime() < nMorphTime[1] + 3 + (0.25 + 0.1) then
             if bot.IsMorphling == false and J.CanCastAbility(MorphReplicate) then
                 -- just average it out
-                if nAverageCooldownTime == math.pi then
+                if nAverageCooldownTime == 3 then
                     local bCanCastAnAbility = false
                     local count = 0
                     local weightedCooldownSum = 0
@@ -395,7 +396,7 @@ function X.SkillsComplement()
                     end
 
                     if count > 0 then
-                        nAverageCooldownTime = Max(weightedCooldownSum / totalWeight, math.pi)
+                        nAverageCooldownTime = Max(weightedCooldownSum / totalWeight, 3)
                     end
                 end
 
@@ -435,13 +436,13 @@ function X.SkillsComplement()
             end
         end
     else
-        nAverageCooldownTime = math.pi
+        nAverageCooldownTime = 3
         nMorphTime = {0, math.huge}
         MorphedHeroName = ''
     end
 
-    if bot.IsMorphling then
-        X.SetRatios()
+    if bot.IsMorphling or not bot:HasModifier('modifier_morphling_replicate_manager') then
+        if bot.IsMorphling then X.SetRatios() end
 
         AtttributeShiftDesire, Type = X.ConsiderAtttributeShift()
         if AtttributeShiftDesire > 0 then
@@ -1129,6 +1130,7 @@ function X.ConsiderMorph()
         and not botTarget:HasModifier('modifier_dazzle_shallow_grave')
         and not botTarget:HasModifier('modifier_necrolyte_reapers_scythe')
         and not botTarget:HasModifier('modifier_oracle_false_promise_timer')
+        and J.GetMP(bot) > 0.35
         then
             local fDuration = 6.0
             local estimatedDamage = J.GetTotalEstimatedDamageToTarget(nAllyHeroes, botTarget, fDuration)

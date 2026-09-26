@@ -11,6 +11,9 @@ local X = {}
 -- ["disabler"] has a guaranteed disable for one or more of their spells.
 -- ["initiator"] good at starting a teamfight.
 -- ["jungler"] can farm effectively from neutral creeps inside the jungle early in the game.
+-- ["healer"] is capable of providing healing
+-- ["rightclicker"] 0/1
+-- ["caster"] 0/1
 
 X["hero_roles"] = {
 	["npc_dota_hero_abaddon"] = {
@@ -22,7 +25,15 @@ X["hero_roles"] = {
 		['jungler'] = 0,
 		['nuker'] = 0,
 		['support'] = 2,
-		['pusher'] = 0
+		['pusher'] = 0,
+		['healer'] = 1,
+		['clicker'] = {
+			[1] = { r = 1, c = 0},
+			[2] = { r = 1, c = 0},
+			[3] = { r = 1, c = 0},
+			[4] = { r = 1, c = 1},
+			[5] = { r = 1, c = 1},
+		},
 	},
 
 	["npc_dota_hero_abyssal_underlord"] = {
@@ -34,7 +45,15 @@ X["hero_roles"] = {
 		['jungler'] = 0,
 		['nuker'] = 0,
 		['support'] = 0,
-		['pusher'] = 0
+		['pusher'] = 0,
+		['healer'] = 0,
+		['clicker'] = {
+			[1] = { r = 0, c = 0},
+			[2] = { r = 0, c = 0},
+			[3] = { r = 1, c = 1},
+			[4] = { r = 1, c = 1},
+			[5] = { r = 1, c = 1},
+		},
 	},
 
 	["npc_dota_hero_alchemist"] = {
@@ -46,7 +65,15 @@ X["hero_roles"] = {
 		['jungler'] = 0,
 		['nuker'] = 0,
 		['support'] = 0,
-		['pusher'] = 0
+		['pusher'] = 0,
+		['healer'] = 0,
+		['clicker'] = {
+			[1] = { r = 1, c = 0},
+			[2] = { r = 1, c = 0},
+			[3] = { r = 1, c = 0},
+			[4] = { r = 0, c = 0},
+			[5] = { r = 0, c = 0},
+		},
 	},
 
 	["npc_dota_hero_ancient_apparition"] = {
@@ -58,7 +85,15 @@ X["hero_roles"] = {
 		['jungler'] = 0,
 		['nuker'] = 1,
 		['support'] = 3,
-		['pusher'] = 0
+		['pusher'] = 0,
+		['healer'] = 0,
+		['clicker'] = {
+			[1] = { r = 0, c = 0},
+			[2] = { r = 0, c = 0},
+			[3] = { r = 0, c = 0},
+			[4] = { r = 0, c = 1},
+			[5] = { r = 0, c = 1},
+		},
 	},
 
 	["npc_dota_hero_antimage"] = {
@@ -70,7 +105,15 @@ X["hero_roles"] = {
 		['jungler'] = 0,
 		['nuker'] = 0,
 		['support'] = 0,
-		['pusher'] = 1
+		['pusher'] = 1,
+		['healer'] = 0,
+		['clicker'] = {
+			[1] = { r = 1, c = 0},
+			[2] = { r = 0, c = 0},
+			[3] = { r = 1, c = 0},
+			[4] = { r = 0, c = 0},
+			[5] = { r = 0, c = 0},
+		},
 	},
 
 	["npc_dota_hero_arc_warden"] = {
@@ -82,7 +125,15 @@ X["hero_roles"] = {
 		['jungler'] = 0,
 		['nuker'] = 1,
 		['support'] = 0,
-		['pusher'] = 3
+		['pusher'] = 3,
+		['healer'] = 0,
+		['clicker'] = {
+			[1] = { r = 1, c = 0},
+			[2] = { r = 1, c = 1},
+			[3] = { r = 0, c = 0},
+			[4] = { r = 0, c = 0},
+			[5] = { r = 0, c = 0},
+		},
 	},
 
 	["npc_dota_hero_axe"] = {
@@ -94,7 +145,15 @@ X["hero_roles"] = {
 		['jungler'] = 2,
 		['nuker'] = 1,
 		['support'] = 0,
-		['pusher'] = 0
+		['pusher'] = 0,
+		['healer'] = 0,
+		['clicker'] = {
+			[1] = { r = 0, c = 0},
+			[2] = { r = 0, c = 1},
+			[3] = { r = 0, c = 1},
+			[4] = { r = 0, c = 0},
+			[5] = { r = 0, c = 0},
+		},
 	},
 
 	["npc_dota_hero_bane"] = {
@@ -106,7 +165,15 @@ X["hero_roles"] = {
 		['jungler'] = 0,
 		['nuker'] = 1,
 		['support'] = 3,
-		['pusher'] = 0
+		['pusher'] = 0,
+		['healer'] = 0,
+		['clicker'] = {
+			[1] = { r = 0, c = 0},
+			[2] = { r = 0, c = 1},
+			[3] = { r = 0, c = 0},
+			[4] = { r = 0, c = 1},
+			[5] = { r = 0, c = 1},
+		},
 	},
 
 	["npc_dota_hero_batrider"] = {
@@ -118,7 +185,15 @@ X["hero_roles"] = {
 		['jungler'] = 2,
 		['nuker'] = 0,
 		['support'] = 2,
-		['pusher'] = 0
+		['pusher'] = 0,
+		['healer'] = 0,
+		['clicker'] = {
+			[1] = { r = 0, c = 0},
+			[2] = { r = 1, c = 1},
+			[3] = { r = 0, c = 1},
+			[4] = { r = 0, c = 1},
+			[5] = { r = 0, c = 1},
+		},
 	},
 
 	["npc_dota_hero_beastmaster"] = {
@@ -130,7 +205,15 @@ X["hero_roles"] = {
 		['jungler'] = 0,
 		['nuker'] = 1,
 		['support'] = 0,
-		['pusher'] = 3
+		['pusher'] = 3,
+		['healer'] = 0,
+		['clicker'] = {
+			[1] = { r = 1, c = 0},
+			[2] = { r = 1, c = 0},
+			[3] = { r = 1, c = 0},
+			[4] = { r = 0, c = 0},
+			[5] = { r = 0, c = 0},
+		},
 	},
 
 	["npc_dota_hero_bloodseeker"] = {
@@ -142,7 +225,15 @@ X["hero_roles"] = {
 		['jungler'] = 1,
 		['nuker'] = 0,
 		['support'] = 0,
-		['pusher'] = 0
+		['pusher'] = 0,
+		['healer'] = 0,
+		['clicker'] = {
+			[1] = { r = 1, c = 0},
+			[2] = { r = 1, c = 0},
+			[3] = { r = 1, c = 0},
+			[4] = { r = 0, c = 0},
+			[5] = { r = 0, c = 0},
+		},
 	},
 
 	["npc_dota_hero_bounty_hunter"] = {
@@ -154,7 +245,15 @@ X["hero_roles"] = {
 		['jungler'] = 0,
 		['nuker'] = 2,
 		['support'] = 2,
-		['pusher'] = 0
+		['pusher'] = 0,
+		['healer'] = 0,
+		['clicker'] = {
+			[1] = { r = 1, c = 0},
+			[2] = { r = 1, c = 0},
+			[3] = { r = 1, c = 0},
+			[4] = { r = 1, c = 1},
+			[5] = { r = 1, c = 1},
+		},
 	},
 
 	["npc_dota_hero_brewmaster"] = {
@@ -166,7 +265,15 @@ X["hero_roles"] = {
 		['jungler'] = 0,
 		['nuker'] = 0,
 		['support'] = 0,
-		['pusher'] = 0
+		['pusher'] = 0,
+		['healer'] = 0,
+		['clicker'] = {
+			[1] = { r = 0, c = 0},
+			[2] = { r = 0, c = 0},
+			[3] = { r = 1, c = 0},
+			[4] = { r = 0, c = 0},
+			[5] = { r = 0, c = 0},
+		},
 	},
 
 	["npc_dota_hero_bristleback"] = {
@@ -178,7 +285,15 @@ X["hero_roles"] = {
 		['jungler'] = 0,
 		['nuker'] = 2,
 		['support'] = 0,
-		['pusher'] = 2
+		['pusher'] = 2,
+		['healer'] = 0,
+		['clicker'] = {
+			[1] = { r = 1, c = 0},
+			[2] = { r = 1, c = 0},
+			[3] = { r = 1, c = 0},
+			[4] = { r = 0, c = 0},
+			[5] = { r = 0, c = 0},
+		},
 	},
 
 	["npc_dota_hero_broodmother"] = {
@@ -190,7 +305,15 @@ X["hero_roles"] = {
 		['jungler'] = 0,
 		['nuker'] = 1,
 		['support'] = 0,
-		['pusher'] = 3
+		['pusher'] = 3,
+		['healer'] = 0,
+		['clicker'] = {
+			[1] = { r = 1, c = 0},
+			[2] = { r = 1, c = 0},
+			[3] = { r = 1, c = 0},
+			[4] = { r = 0, c = 0},
+			[5] = { r = 0, c = 0},
+		},
 	},
 
 	["npc_dota_hero_centaur"] = {
@@ -202,7 +325,15 @@ X["hero_roles"] = {
 		['jungler'] = 0,
 		['nuker'] = 1,
 		['support'] = 0,
-		['pusher'] = 0
+		['pusher'] = 0,
+		['healer'] = 0,
+		['clicker'] = {
+			[1] = { r = 0, c = 0},
+			[2] = { r = 1, c = 1},
+			[3] = { r = 1, c = 1},
+			[4] = { r = 0, c = 0},
+			[5] = { r = 0, c = 0},
+		},
 	},
 
 	["npc_dota_hero_chaos_knight"] = {
@@ -214,7 +345,15 @@ X["hero_roles"] = {
 		['jungler'] = 1,
 		['nuker'] = 2,
 		['support'] = 0,
-		['pusher'] = 2
+		['pusher'] = 2,
+		['healer'] = 0,
+		['clicker'] = {
+			[1] = { r = 1, c = 0},
+			[2] = { r = 0, c = 0},
+			[3] = { r = 1, c = 0},
+			[4] = { r = 0, c = 0},
+			[5] = { r = 0, c = 0},
+		},
 	},
 
 	["npc_dota_hero_chen"] = {
@@ -226,7 +365,15 @@ X["hero_roles"] = {
 		['jungler'] = 3,
 		['nuker'] = 0,
 		['support'] = 2,
-		['pusher'] = 2
+		['pusher'] = 2,
+		['healer'] = 3,
+		['clicker'] = {
+			[1] = { r = 0, c = 0},
+			[2] = { r = 0, c = 0},
+			[3] = { r = 0, c = 0},
+			[4] = { r = 0, c = 1},
+			[5] = { r = 0, c = 1},
+		},
 	},
 
 	["npc_dota_hero_clinkz"] = {
@@ -238,7 +385,15 @@ X["hero_roles"] = {
 		['jungler'] = 0,
 		['nuker'] = 1,
 		['support'] = 1,
-		['pusher'] = 2
+		['pusher'] = 2,
+		['healer'] = 0,
+		['clicker'] = {
+			[1] = { r = 1, c = 0},
+			[2] = { r = 1, c = 0},
+			[3] = { r = 0, c = 0},
+			[4] = { r = 1, c = 1},
+			[5] = { r = 1, c = 1},
+		},
 	},
 
 	["npc_dota_hero_crystal_maiden"] = {
@@ -250,7 +405,15 @@ X["hero_roles"] = {
 		['jungler'] = 1,
 		['nuker'] = 3,
 		['support'] = 3,
-		['pusher'] = 0
+		['pusher'] = 0,
+		['healer'] = 0,
+		['clicker'] = {
+			[1] = { r = 0, c = 0},
+			[2] = { r = 0, c = 1},
+			[3] = { r = 0, c = 0},
+			[4] = { r = 0, c = 1},
+			[5] = { r = 0, c = 1},
+		},
 	},
 
 	["npc_dota_hero_dark_seer"] = {
@@ -262,7 +425,15 @@ X["hero_roles"] = {
 		['jungler'] = 1,
 		['nuker'] = 0,
 		['support'] = 0,
-		['pusher'] = 2
+		['pusher'] = 2,
+		['healer'] = 0,
+		['clicker'] = {
+			[1] = { r = 0, c = 0},
+			[2] = { r = 0, c = 0},
+			[3] = { r = 1, c = 1},
+			[4] = { r = 0, c = 0},
+			[5] = { r = 0, c = 0},
+		},
 	},
 
 	["npc_dota_hero_dark_willow"] = {
@@ -274,7 +445,15 @@ X["hero_roles"] = {
 		['jungler'] = 0,
 		['nuker'] = 1,
 		['support'] = 3,
-		['pusher'] = 0
+		['pusher'] = 0,
+		['healer'] = 0,
+		['clicker'] = {
+			[1] = { r = 0, c = 0},
+			[2] = { r = 0, c = 0},
+			[3] = { r = 0, c = 0},
+			[4] = { r = 0, c = 1},
+			[5] = { r = 0, c = 1},
+		},
 	},
 
 	["npc_dota_hero_dawnbreaker"] = {
@@ -286,7 +465,15 @@ X["hero_roles"] = {
 		['jungler'] = 0,
 		['nuker'] = 1,
 		['support'] = 2,
-		['pusher'] = 0
+		['pusher'] = 0,
+		['healer'] = 1,
+		['clicker'] = {
+			[1] = { r = 1, c = 0},
+			[2] = { r = 1, c = 0},
+			[3] = { r = 1, c = 0},
+			[4] = { r = 1, c = 1},
+			[5] = { r = 1, c = 1},
+		},
 	},
 
 	["npc_dota_hero_dazzle"] = {
@@ -298,7 +485,15 @@ X["hero_roles"] = {
 		['jungler'] = 0,
 		['nuker'] = 0,
 		['support'] = 3,
-		['pusher'] = 0
+		['pusher'] = 0,
+		['healer'] = 3,
+		['clicker'] = {
+			[1] = { r = 0, c = 0},
+			[2] = { r = 0, c = 1},
+			[3] = { r = 0, c = 0},
+			[4] = { r = 0, c = 1},
+			[5] = { r = 0, c = 1},
+		},
 	},
 
 	["npc_dota_hero_death_prophet"] = {
@@ -310,7 +505,15 @@ X["hero_roles"] = {
 		['jungler'] = 0,
 		['nuker'] = 0,
 		['support'] = 2,
-		['pusher'] = 3
+		['pusher'] = 3,
+		['healer'] = 0,
+		['clicker'] = {
+			[1] = { r = 0, c = 0},
+			[2] = { r = 0, c = 1},
+			[3] = { r = 0, c = 1},
+			[4] = { r = 0, c = 1},
+			[5] = { r = 0, c = 1},
+		},
 	},
 
 	["npc_dota_hero_disruptor"] = {
@@ -322,7 +525,15 @@ X["hero_roles"] = {
 		['jungler'] = 0,
 		['nuker'] = 0,
 		['support'] = 3,
-		['pusher'] = 0
+		['pusher'] = 0,
+		['healer'] = 0,
+		['clicker'] = {
+			[1] = { r = 0, c = 0},
+			[2] = { r = 0, c = 0},
+			[3] = { r = 0, c = 0},
+			[4] = { r = 0, c = 1},
+			[5] = { r = 0, c = 1},
+		},
 	},
 
 	["npc_dota_hero_doom_bringer"] = {
@@ -334,7 +545,15 @@ X["hero_roles"] = {
 		['jungler'] = 0,
 		['nuker'] = 0,
 		['support'] = 0,
-		['pusher'] = 0
+		['pusher'] = 0,
+		['healer'] = 0,
+		['clicker'] = {
+			[1] = { r = 1, c = 0},
+			[2] = { r = 1, c = 0},
+			[3] = { r = 1, c = 0},
+			[4] = { r = 0, c = 0},
+			[5] = { r = 0, c = 0},
+		},
 	},
 
 	["npc_dota_hero_dragon_knight"] = {
@@ -346,7 +565,15 @@ X["hero_roles"] = {
 		['jungler'] = 0,
 		['nuker'] = 0,
 		['support'] = 0,
-		['pusher'] = 3
+		['pusher'] = 3,
+		['healer'] = 0,
+		['clicker'] = {
+			[1] = { r = 1, c = 0},
+			[2] = { r = 1, c = 0},
+			[3] = { r = 1, c = 0},
+			[4] = { r = 0, c = 0},
+			[5] = { r = 0, c = 0},
+		},
 	},
 
 	["npc_dota_hero_drow_ranger"] = {
@@ -358,7 +585,15 @@ X["hero_roles"] = {
 		['jungler'] = 0,
 		['nuker'] = 0,
 		['support'] = 0,
-		['pusher'] = 2
+		['pusher'] = 2,
+		['healer'] = 0,
+		['clicker'] = {
+			[1] = { r = 1, c = 0},
+			[2] = { r = 1, c = 0},
+			[3] = { r = 0, c = 0},
+			[4] = { r = 0, c = 0},
+			[5] = { r = 0, c = 0},
+		},
 	},
 
 	["npc_dota_hero_earth_spirit"] = {
@@ -370,7 +605,15 @@ X["hero_roles"] = {
 		['jungler'] = 0,
 		['nuker'] = 0,
 		['support'] = 1,
-		['pusher'] = 0
+		['pusher'] = 0,
+		['healer'] = 0,
+		['clicker'] = {
+			[1] = { r = 0, c = 0},
+			[2] = { r = 0, c = 1},
+			[3] = { r = 0, c = 1},
+			[4] = { r = 0, c = 1},
+			[5] = { r = 0, c = 1},
+		},
 	},
 
 	["npc_dota_hero_earthshaker"] = {
@@ -382,7 +625,15 @@ X["hero_roles"] = {
 		['jungler'] = 0,
 		['nuker'] = 2,
 		['support'] = 2,
-		['pusher'] = 0
+		['pusher'] = 0,
+		['healer'] = 0,
+		['clicker'] = {
+			[1] = { r = 0, c = 0},
+			[2] = { r = 0, c = 1},
+			[3] = { r = 0, c = 1},
+			[4] = { r = 0, c = 1},
+			[5] = { r = 0, c = 1},
+		},
 	},
 
 	["npc_dota_hero_elder_titan"] = {
@@ -394,7 +645,15 @@ X["hero_roles"] = {
 		['jungler'] = 0,
 		['nuker'] = 1,
 		['support'] = 1,
-		['pusher'] = 0
+		['pusher'] = 0,
+		['healer'] = 0,
+		['clicker'] = {
+			[1] = { r = 0, c = 0},
+			[2] = { r = 0, c = 0},
+			[3] = { r = 1, c = 1},
+			[4] = { r = 1, c = 1},
+			[5] = { r = 1, c = 1},
+		},
 	},
 
 	["npc_dota_hero_ember_spirit"] = {
@@ -406,7 +665,15 @@ X["hero_roles"] = {
 		['jungler'] = 0,
 		['nuker'] = 1,
 		['support'] = 0,
-		['pusher'] = 0
+		['pusher'] = 0,
+		['healer'] = 0,
+		['clicker'] = {
+			[1] = { r = 1, c = 0},
+			[2] = { r = 1, c = 0},
+			[3] = { r = 0, c = 0},
+			[4] = { r = 0, c = 0},
+			[5] = { r = 0, c = 0},
+		},
 	},
 
 	["npc_dota_hero_enchantress"] = {
@@ -418,7 +685,15 @@ X["hero_roles"] = {
 		['jungler'] = 3,
 		['nuker'] = 0,
 		['support'] = 2,
-		['pusher'] = 1
+		['pusher'] = 1,
+		['healer'] = 1,
+		['clicker'] = {
+			[1] = { r = 0, c = 0},
+			[2] = { r = 1, c = 0},
+			[3] = { r = 1, c = 0},
+			[4] = { r = 1, c = 1},
+			[5] = { r = 1, c = 1},
+		},
 	},
 
 	["npc_dota_hero_enigma"] = {
@@ -430,7 +705,15 @@ X["hero_roles"] = {
 		['jungler'] = 3,
 		['nuker'] = 0,
 		['support'] = 1,
-		['pusher'] = 1
+		['pusher'] = 1,
+		['healer'] = 0,
+		['clicker'] = {
+			[1] = { r = 0, c = 0},
+			[2] = { r = 0, c = 0},
+			[3] = { r = 0, c = 1},
+			[4] = { r = 0, c = 1},
+			[5] = { r = 0, c = 1},
+		},
 	},
 
 	["npc_dota_hero_faceless_void"] = {
@@ -442,7 +725,15 @@ X["hero_roles"] = {
 		['jungler'] = 0,
 		['nuker'] = 0,
 		['support'] = 0,
-		['pusher'] = 0
+		['pusher'] = 0,
+		['healer'] = 0,
+		['clicker'] = {
+			[1] = { r = 1, c = 0},
+			[2] = { r = 0, c = 0},
+			[3] = { r = 0, c = 0},
+			[4] = { r = 0, c = 0},
+			[5] = { r = 0, c = 0},
+		},
 	},
 
 	["npc_dota_hero_furion"] = {
@@ -454,7 +745,15 @@ X["hero_roles"] = {
 		['jungler'] = 3,
 		['nuker'] = 1,
 		['support'] = 2,
-		['pusher'] = 3
+		['pusher'] = 3,
+		['healer'] = 0,
+		['clicker'] = {
+			[1] = { r = 1, c = 0},
+			[2] = { r = 1, c = 0},
+			[3] = { r = 1, c = 0},
+			[4] = { r = 1, c = 1},
+			[5] = { r = 1, c = 1},
+		},
 	},
 
 	["npc_dota_hero_grimstroke"] = {
@@ -466,7 +765,15 @@ X["hero_roles"] = {
 		['jungler'] = 0,
 		['nuker'] = 0,
 		['support'] = 3,
-		['pusher'] = 0
+		['pusher'] = 0,
+		['healer'] = 0,
+		['clicker'] = {
+			[1] = { r = 0, c = 0},
+			[2] = { r = 0, c = 0},
+			[3] = { r = 0, c = 0},
+			[4] = { r = 0, c = 1},
+			[5] = { r = 0, c = 1},
+		},
 	},
 
 	["npc_dota_hero_gyrocopter"] = {
@@ -478,7 +785,15 @@ X["hero_roles"] = {
 		['jungler'] = 0,
 		['nuker'] = 0,
 		['support'] = 0,
-		['pusher'] = 0
+		['pusher'] = 0,
+		['healer'] = 0,
+		['clicker'] = {
+			[1] = { r = 1, c = 0},
+			[2] = { r = 1, c = 0},
+			[3] = { r = 0, c = 0},
+			[4] = { r = 1, c = 1},
+			[5] = { r = 1, c = 1},
+		},
 	},
 
 	["npc_dota_hero_hoodwink"] = {
@@ -490,7 +805,15 @@ X["hero_roles"] = {
 		['jungler'] = 0,
 		['nuker'] = 2,
 		['support'] = 2,
-		['pusher'] = 0
+		['pusher'] = 0,
+		['healer'] = 0,
+		['clicker'] = {
+			[1] = { r = 0, c = 0},
+			[2] = { r = 0, c = 0},
+			[3] = { r = 0, c = 0},
+			[4] = { r = 0, c = 1},
+			[5] = { r = 0, c = 1},
+		},
 	},
 
 	["npc_dota_hero_huskar"] = {
@@ -502,7 +825,15 @@ X["hero_roles"] = {
 		['jungler'] = 0,
 		['nuker'] = 1,
 		['support'] = 0,
-		['pusher'] = 1
+		['pusher'] = 1,
+		['healer'] = 0,
+		['clicker'] = {
+			[1] = { r = 1, c = 0},
+			[2] = { r = 1, c = 0},
+			[3] = { r = 1, c = 0},
+			[4] = { r = 0, c = 0},
+			[5] = { r = 0, c = 0},
+		},
 	},
 
 	["npc_dota_hero_invoker"] = {
@@ -514,7 +845,15 @@ X["hero_roles"] = {
 		['jungler'] = 0,
 		['nuker'] = 3,
 		['support'] = 1,
-		['pusher'] = 1
+		['pusher'] = 1,
+		['healer'] = 0,
+		['clicker'] = {
+			[1] = { r = 0, c = 0},
+			[2] = { r = 0, c = 1},
+			[3] = { r = 0, c = 0},
+			[4] = { r = 0, c = 1},
+			[5] = { r = 0, c = 1},
+		},
 	},
 
 	["npc_dota_hero_jakiro"] = {
@@ -526,7 +865,15 @@ X["hero_roles"] = {
 		['jungler'] = 0,
 		['nuker'] = 2,
 		['support'] = 3,
-		['pusher'] = 1
+		['pusher'] = 1,
+		['healer'] = 0,
+		['clicker'] = {
+			[1] = { r = 0, c = 0},
+			[2] = { r = 1, c = 1},
+			[3] = { r = 0, c = 0},
+			[4] = { r = 0, c = 1},
+			[5] = { r = 0, c = 1},
+		},
 	},
 
 	["npc_dota_hero_juggernaut"] = {
@@ -538,7 +885,15 @@ X["hero_roles"] = {
 		['jungler'] = 0,
 		['nuker'] = 0,
 		['support'] = 0,
-		['pusher'] = 3
+		['pusher'] = 3,
+		['healer'] = 1,
+		['clicker'] = {
+			[1] = { r = 1, c = 0},
+			[2] = { r = 0, c = 0},
+			[3] = { r = 0, c = 0},
+			[4] = { r = 0, c = 0},
+			[5] = { r = 0, c = 0},
+		},
 	},
 
 	["npc_dota_hero_keeper_of_the_light"] = {
@@ -550,7 +905,15 @@ X["hero_roles"] = {
 		['jungler'] = 1,
 		['nuker'] = 2,
 		['support'] = 3,
-		['pusher'] = 0
+		['pusher'] = 0,
+		['healer'] = 1,
+		['clicker'] = {
+			[1] = { r = 0, c = 0},
+			[2] = { r = 0, c = 1},
+			[3] = { r = 0, c = 0},
+			[4] = { r = 0, c = 1},
+			[5] = { r = 0, c = 1},
+		},
 	},
 
 	["npc_dota_hero_kez"] = {
@@ -562,7 +925,15 @@ X["hero_roles"] = {
 		['jungler'] = 0,
 		['nuker'] = 0,
 		['support'] = 0,
-		['pusher'] = 1
+		['pusher'] = 1,
+		['healer'] = 0,
+		['clicker'] = {
+			[1] = { r = 1, c = 0},
+			[2] = { r = 1, c = 0},
+			[3] = { r = 0, c = 0},
+			[4] = { r = 0, c = 0},
+			[5] = { r = 0, c = 0},
+		},
 	},
 
 	["npc_dota_hero_kunkka"] = {
@@ -574,7 +945,15 @@ X["hero_roles"] = {
 		['jungler'] = 0,
 		['nuker'] = 1,
 		['support'] = 0,
-		['pusher'] = 0
+		['pusher'] = 0,
+		['healer'] = 0,
+		['clicker'] = {
+			[1] = { r = 1, c = 0},
+			[2] = { r = 1, c = 1},
+			[3] = { r = 1, c = 1},
+			[4] = { r = 0, c = 0},
+			[5] = { r = 0, c = 0},
+		},
 	},
 
 	["npc_dota_hero_largo"] = {
@@ -586,7 +965,15 @@ X["hero_roles"] = {
 		['jungler'] = 0,
 		['nuker'] = 1,
 		['support'] = 2,
-		['pusher'] = 0
+		['pusher'] = 0,
+		['healer'] = 2,
+		['clicker'] = {
+			[1] = { r = 0, c = 0},
+			[2] = { r = 0, c = 0},
+			[3] = { r = 0, c = 0},
+			[4] = { r = 0, c = 1},
+			[5] = { r = 0, c = 1},
+		},
 	},
 
 	["npc_dota_hero_legion_commander"] = {
@@ -598,7 +985,15 @@ X["hero_roles"] = {
 		['jungler'] = 0,
 		['nuker'] = 1,
 		['support'] = 0,
-		['pusher'] = 0
+		['pusher'] = 0,
+		['healer'] = 1,
+		['clicker'] = {
+			[1] = { r = 1, c = 0},
+			[2] = { r = 1, c = 0},
+			[3] = { r = 1, c = 0},
+			[4] = { r = 0, c = 0},
+			[5] = { r = 0, c = 0},
+		},
 	},
 
 	["npc_dota_hero_leshrac"] = {
@@ -610,7 +1005,15 @@ X["hero_roles"] = {
 		['jungler'] = 0,
 		['nuker'] = 3,
 		['support'] = 1,
-		['pusher'] = 1
+		['pusher'] = 1,
+		['healer'] = 0,
+		['clicker'] = {
+			[1] = { r = 0, c = 0},
+			[2] = { r = 0, c = 1},
+			[3] = { r = 0, c = 0},
+			[4] = { r = 0, c = 0},
+			[5] = { r = 0, c = 0},
+		},
 	},
 
 	["npc_dota_hero_lich"] = {
@@ -622,7 +1025,15 @@ X["hero_roles"] = {
 		['jungler'] = 0,
 		['nuker'] = 2,
 		['support'] = 3,
-		['pusher'] = 0
+		['pusher'] = 0,
+		['healer'] = 0,
+		['clicker'] = {
+			[1] = { r = 0, c = 0},
+			[2] = { r = 0, c = 0},
+			[3] = { r = 0, c = 0},
+			[4] = { r = 0, c = 1},
+			[5] = { r = 0, c = 1},
+		},
 	},
 
 	["npc_dota_hero_life_stealer"] = {
@@ -634,7 +1045,15 @@ X["hero_roles"] = {
 		['jungler'] = 1,
 		['nuker'] = 0,
 		['support'] = 0,
-		['pusher'] = 0
+		['pusher'] = 0,
+		['healer'] = 0,
+		['clicker'] = {
+			[1] = { r = 1, c = 0},
+			[2] = { r = 0, c = 0},
+			[3] = { r = 0, c = 0},
+			[4] = { r = 0, c = 0},
+			[5] = { r = 0, c = 0},
+		},
 	},
 
 	["npc_dota_hero_lina"] = {
@@ -646,7 +1065,15 @@ X["hero_roles"] = {
 		['jungler'] = 0,
 		['nuker'] = 3,
 		['support'] = 2,
-		['pusher'] = 1
+		['pusher'] = 1,
+		['healer'] = 0,
+		['clicker'] = {
+			[1] = { r = 1, c = 0},
+			[2] = { r = 1, c = 1},
+			[3] = { r = 0, c = 0},
+			[4] = { r = 1, c = 1},
+			[5] = { r = 1, c = 1},
+		},
 	},
 
 	["npc_dota_hero_lion"] = {
@@ -658,7 +1085,15 @@ X["hero_roles"] = {
 		['jungler'] = 0,
 		['nuker'] = 2,
 		['support'] = 3,
-		['pusher'] = 0
+		['pusher'] = 0,
+		['healer'] = 0,
+		['clicker'] = {
+			[1] = { r = 0, c = 0},
+			[2] = { r = 0, c = 0},
+			[3] = { r = 0, c = 0},
+			[4] = { r = 0, c = 1},
+			[5] = { r = 0, c = 1},
+		},
 	},
 
 	["npc_dota_hero_lone_druid"] = {
@@ -670,7 +1105,15 @@ X["hero_roles"] = {
 		['jungler'] = 1,
 		['nuker'] = 0,
 		['support'] = 0,
-		['pusher'] = 3
+		['pusher'] = 3,
+		['healer'] = 0,
+		['clicker'] = {
+			[1] = { r = 1, c = 0},
+			[2] = { r = 1, c = 0},
+			[3] = { r = 0, c = 0},
+			[4] = { r = 0, c = 0},
+			[5] = { r = 0, c = 0},
+		},
 	},
 
 	["npc_dota_hero_luna"] = {
@@ -682,7 +1125,15 @@ X["hero_roles"] = {
 		['jungler'] = 2,
 		['nuker'] = 2,
 		['support'] = 0,
-		['pusher'] = 3
+		['pusher'] = 3,
+		['healer'] = 0,
+		['clicker'] = {
+			[1] = { r = 1, c = 0},
+			[2] = { r = 0, c = 0},
+			[3] = { r = 0, c = 0},
+			[4] = { r = 0, c = 0},
+			[5] = { r = 0, c = 0},
+		},
 	},
 
 	["npc_dota_hero_lycan"] = {
@@ -694,7 +1145,15 @@ X["hero_roles"] = {
 		['jungler'] = 3,
 		['nuker'] = 0,
 		['support'] = 0,
-		['pusher'] = 3
+		['pusher'] = 3,
+		['healer'] = 0,
+		['clicker'] = {
+			[1] = { r = 1, c = 0},
+			[2] = { r = 1, c = 0},
+			[3] = { r = 1, c = 0},
+			[4] = { r = 0, c = 0},
+			[5] = { r = 0, c = 0},
+		},
 	},
 
 	["npc_dota_hero_magnataur"] = {
@@ -706,7 +1165,15 @@ X["hero_roles"] = {
 		['jungler'] = 0,
 		['nuker'] = 1,
 		['support'] = 0,
-		['pusher'] = 0
+		['pusher'] = 0,
+		['healer'] = 0,
+		['clicker'] = {
+			[1] = { r = 1, c = 0},
+			[2] = { r = 1, c = 0},
+			[3] = { r = 1, c = 0},
+			[4] = { r = 0, c = 0},
+			[5] = { r = 0, c = 0},
+		},
 	},
 
 	["npc_dota_hero_marci"] = {
@@ -718,7 +1185,15 @@ X["hero_roles"] = {
 		['jungler'] = 0,
 		['nuker'] = 2,
 		['support'] = 1,
-		['pusher'] = 0
+		['pusher'] = 0,
+		['healer'] = 0,
+		['clicker'] = {
+			[1] = { r = 1, c = 0},
+			[2] = { r = 1, c = 0},
+			[3] = { r = 0, c = 0},
+			[4] = { r = 0, c = 0},
+			[5] = { r = 0, c = 0},
+		},
 	},
 
 	["npc_dota_hero_mars"] = {
@@ -730,7 +1205,15 @@ X["hero_roles"] = {
 		['jungler'] = 0,
 		['nuker'] = 1,
 		['support'] = 0,
-		['pusher'] = 0
+		['pusher'] = 0,
+		['healer'] = 0,
+		['clicker'] = {
+			[1] = { r = 0, c = 0},
+			[2] = { r = 1, c = 0},
+			[3] = { r = 1, c = 1},
+			[4] = { r = 0, c = 0},
+			[5] = { r = 0, c = 0},
+		},
 	},
 
 	["npc_dota_hero_medusa"] = {
@@ -742,7 +1225,15 @@ X["hero_roles"] = {
 		['jungler'] = 1,
 		['nuker'] = 0,
 		['support'] = 0,
-		['pusher'] = 2
+		['pusher'] = 2,
+		['healer'] = 0,
+		['clicker'] = {
+			[1] = { r = 1, c = 0},
+			[2] = { r = 1, c = 0},
+			[3] = { r = 0, c = 0},
+			[4] = { r = 0, c = 0},
+			[5] = { r = 0, c = 0},
+		},
 	},
 
 	["npc_dota_hero_meepo"] = {
@@ -754,7 +1245,15 @@ X["hero_roles"] = {
 		['jungler'] = 0,
 		['nuker'] = 2,
 		['support'] = 0,
-		['pusher'] = 1
+		['pusher'] = 1,
+		['healer'] = 0,
+		['clicker'] = {
+			[1] = { r = 1, c = 0},
+			[2] = { r = 1, c = 0},
+			[3] = { r = 0, c = 0},
+			[4] = { r = 0, c = 0},
+			[5] = { r = 0, c = 0},
+		},
 	},
 
 	["npc_dota_hero_mirana"] = {
@@ -766,7 +1265,15 @@ X["hero_roles"] = {
 		['jungler'] = 0,
 		['nuker'] = 1,
 		['support'] = 2,
-		['pusher'] = 0
+		['pusher'] = 0,
+		['healer'] = 0,
+		['clicker'] = {
+			[1] = { r = 1, c = 0},
+			[2] = { r = 1, c = 0},
+			[3] = { r = 0, c = 0},
+			[4] = { r = 1, c = 1},
+			[5] = { r = 1, c = 1},
+		},
 	},
 
 	["npc_dota_hero_monkey_king"] = {
@@ -778,7 +1285,15 @@ X["hero_roles"] = {
 		['jungler'] = 0,
 		['nuker'] = 0,
 		['support'] = 0,
-		['pusher'] = 1
+		['pusher'] = 1,
+		['healer'] = 0,
+		['clicker'] = {
+			[1] = { r = 1, c = 0},
+			[2] = { r = 1, c = 0},
+			[3] = { r = 0, c = 0},
+			[4] = { r = 0, c = 0},
+			[5] = { r = 0, c = 0},
+		},
 	},
 
 	["npc_dota_hero_morphling"] = {
@@ -790,7 +1305,15 @@ X["hero_roles"] = {
 		['jungler'] = 0,
 		['nuker'] = 1,
 		['support'] = 0,
-		['pusher'] = 1
+		['pusher'] = 1,
+		['healer'] = 0,
+		['clicker'] = {
+			[1] = { r = 1, c = 0},
+			[2] = { r = 1, c = 0},
+			[3] = { r = 0, c = 0},
+			[4] = { r = 0, c = 0},
+			[5] = { r = 0, c = 0},
+		},
 	},
 
 	["npc_dota_hero_muerta"] = {
@@ -802,7 +1325,15 @@ X["hero_roles"] = {
 		['jungler'] = 0,
 		['nuker'] = 0,
 		['support'] = 1,
-		['pusher'] = 3
+		['pusher'] = 3,
+		['healer'] = 0,
+		['clicker'] = {
+			[1] = { r = 1, c = 0},
+			[2] = { r = 0, c = 0},
+			[3] = { r = 0, c = 0},
+			[4] = { r = 1, c = 1},
+			[5] = { r = 1, c = 1},
+		},
 	},
 
 	["npc_dota_hero_naga_siren"] = {
@@ -814,7 +1345,15 @@ X["hero_roles"] = {
 		['jungler'] = 0,
 		['nuker'] = 0,
 		['support'] = 1,
-		['pusher'] = 3
+		['pusher'] = 3,
+		['healer'] = 0,
+		['clicker'] = {
+			[1] = { r = 1, c = 0},
+			[2] = { r = 0, c = 0},
+			[3] = { r = 1, c = 0},
+			[4] = { r = 0, c = 0},
+			[5] = { r = 0, c = 0},
+		},
 	},
 
 	["npc_dota_hero_necrolyte"] = {
@@ -826,7 +1365,15 @@ X["hero_roles"] = {
 		['jungler'] = 0,
 		['nuker'] = 1,
 		['support'] = 2,
-		['pusher'] = 0
+		['pusher'] = 0,
+		['healer'] = 1,
+		['clicker'] = {
+			[1] = { r = 0, c = 1},
+			[2] = { r = 0, c = 1},
+			[3] = { r = 0, c = 1},
+			[4] = { r = 0, c = 1},
+			[5] = { r = 0, c = 1},
+		},
 	},
 
 	["npc_dota_hero_nevermore"] = {
@@ -838,7 +1385,15 @@ X["hero_roles"] = {
 		['jungler'] = 0,
 		['nuker'] = 3,
 		['support'] = 0,
-		['pusher'] = 3
+		['pusher'] = 3,
+		['healer'] = 0,
+		['clicker'] = {
+			[1] = { r = 1, c = 0},
+			[2] = { r = 1, c = 0},
+			[3] = { r = 0, c = 0},
+			[4] = { r = 0, c = 0},
+			[5] = { r = 0, c = 0},
+		},
 	},
 
 	["npc_dota_hero_night_stalker"] = {
@@ -850,7 +1405,15 @@ X["hero_roles"] = {
 		['jungler'] = 0,
 		['nuker'] = 0,
 		['support'] = 0,
-		['pusher'] = 0
+		['pusher'] = 0,
+		['healer'] = 0,
+		['clicker'] = {
+			[1] = { r = 0, c = 0},
+			[2] = { r = 0, c = 0},
+			[3] = { r = 1, c = 0},
+			[4] = { r = 0, c = 0},
+			[5] = { r = 0, c = 0},
+		},
 	},
 
 	["npc_dota_hero_nyx_assassin"] = {
@@ -862,7 +1425,15 @@ X["hero_roles"] = {
 		['jungler'] = 0,
 		['nuker'] = 2,
 		['support'] = 1,
-		['pusher'] = 0
+		['pusher'] = 0,
+		['healer'] = 0,
+		['clicker'] = {
+			[1] = { r = 0, c = 0},
+			[2] = { r = 0, c = 0},
+			[3] = { r = 0, c = 0},
+			[4] = { r = 0, c = 1},
+			[5] = { r = 0, c = 1},
+		},
 	},
 
 	["npc_dota_hero_obsidian_destroyer"] = {
@@ -874,7 +1445,15 @@ X["hero_roles"] = {
 		['jungler'] = 0,
 		['nuker'] = 3,
 		['support'] = 0,
-		['pusher'] = 0
+		['pusher'] = 0,
+		['healer'] = 0,
+		['clicker'] = {
+			[1] = { r = 1, c = 0},
+			[2] = { r = 1, c = 0},
+			[3] = { r = 0, c = 0},
+			[4] = { r = 0, c = 0},
+			[5] = { r = 0, c = 0},
+		},
 	},
 
 	["npc_dota_hero_ogre_magi"] = {
@@ -886,7 +1465,15 @@ X["hero_roles"] = {
 		['jungler'] = 0,
 		['nuker'] = 2,
 		['support'] = 3,
-		['pusher'] = 0
+		['pusher'] = 0,
+		['healer'] = 0,
+		['clicker'] = {
+			[1] = { r = 1, c = 0},
+			[2] = { r = 1, c = 1},
+			[3] = { r = 1, c = 1},
+			[4] = { r = 1, c = 1},
+			[5] = { r = 1, c = 1},
+		},
 	},
 
 	["npc_dota_hero_omniknight"] = {
@@ -898,7 +1485,15 @@ X["hero_roles"] = {
 		['jungler'] = 0,
 		['nuker'] = 1,
 		['support'] = 3,
-		['pusher'] = 0
+		['pusher'] = 0,
+		['healer'] = 3,
+		['clicker'] = {
+			[1] = { r = 0, c = 0},
+			[2] = { r = 1, c = 1},
+			[3] = { r = 0, c = 1},
+			[4] = { r = 0, c = 1},
+			[5] = { r = 0, c = 1},
+		},
 	},
 
 	["npc_dota_hero_oracle"] = {
@@ -910,7 +1505,15 @@ X["hero_roles"] = {
 		['jungler'] = 0,
 		['nuker'] = 1,
 		['support'] = 3,
-		['pusher'] = 0
+		['pusher'] = 0,
+		['healer'] = 3,
+		['clicker'] = {
+			[1] = { r = 0, c = 0},
+			[2] = { r = 0, c = 0},
+			[3] = { r = 0, c = 0},
+			[4] = { r = 0, c = 1},
+			[5] = { r = 0, c = 1},
+		},
 	},
 
 	["npc_dota_hero_pangolier"] = {
@@ -922,7 +1525,15 @@ X["hero_roles"] = {
 		['jungler'] = 0,
 		['nuker'] = 0,
 		['support'] = 0,
-		['pusher'] = 0
+		['pusher'] = 0,
+		['healer'] = 0,
+		['clicker'] = {
+			[1] = { r = 0, c = 0},
+			[2] = { r = 1, c = 0},
+			[3] = { r = 1, c = 0},
+			[4] = { r = 0, c = 0},
+			[5] = { r = 0, c = 0},
+		},
 	},
 
 	["npc_dota_hero_phantom_assassin"] = {
@@ -934,7 +1545,15 @@ X["hero_roles"] = {
 		['jungler'] = 0,
 		['nuker'] = 1,
 		['support'] = 0,
-		['pusher'] = 0
+		['pusher'] = 0,
+		['healer'] = 0,
+		['clicker'] = {
+			[1] = { r = 1, c = 0},
+			[2] = { r = 0, c = 0},
+			[3] = { r = 0, c = 0},
+			[4] = { r = 0, c = 0},
+			[5] = { r = 0, c = 0},
+		},
 	},
 
 	["npc_dota_hero_phantom_lancer"] = {
@@ -946,7 +1565,15 @@ X["hero_roles"] = {
 		['jungler'] = 0,
 		['nuker'] = 0,
 		['support'] = 0,
-		['pusher'] = 2
+		['pusher'] = 2,
+		['healer'] = 0,
+		['clicker'] = {
+			[1] = { r = 1, c = 0},
+			[2] = { r = 0, c = 0},
+			[3] = { r = 0, c = 0},
+			[4] = { r = 0, c = 0},
+			[5] = { r = 0, c = 0},
+		},
 	},
 
 	["npc_dota_hero_phoenix"] = {
@@ -958,7 +1585,15 @@ X["hero_roles"] = {
 		['jungler'] = 0,
 		['nuker'] = 2,
 		['support'] = 3,
-		['pusher'] = 0
+		['pusher'] = 0,
+		['healer'] = 1,
+		['clicker'] = {
+			[1] = { r = 0, c = 0},
+			[2] = { r = 0, c = 1},
+			[3] = { r = 0, c = 0},
+			[4] = { r = 0, c = 1},
+			[5] = { r = 0, c = 1},
+		},
 	},
 
 	["npc_dota_hero_primal_beast"] = {
@@ -970,7 +1605,15 @@ X["hero_roles"] = {
 		['jungler'] = 0,
 		['nuker'] = 1,
 		['support'] = 0,
-		['pusher'] = 0
+		['pusher'] = 0,
+		['healer'] = 0,
+		['clicker'] = {
+			[1] = { r = 0, c = 0},
+			[2] = { r = 0, c = 1},
+			[3] = { r = 0, c = 1},
+			[4] = { r = 0, c = 0},
+			[5] = { r = 0, c = 0},
+		},
 	},
 
 	["npc_dota_hero_puck"] = {
@@ -982,7 +1625,15 @@ X["hero_roles"] = {
 		['jungler'] = 0,
 		['nuker'] = 2,
 		['support'] = 0,
-		['pusher'] = 0
+		['pusher'] = 0,
+		['healer'] = 0,
+		['clicker'] = {
+			[1] = { r = 0, c = 0},
+			[2] = { r = 0, c = 1},
+			[3] = { r = 0, c = 0},
+			[4] = { r = 0, c = 0},
+			[5] = { r = 0, c = 0},
+		},
 	},
 
 	["npc_dota_hero_pudge"] = {
@@ -994,7 +1645,15 @@ X["hero_roles"] = {
 		['jungler'] = 0,
 		['nuker'] = 1,
 		['support'] = 0,
-		['pusher'] = 0
+		['pusher'] = 0,
+		['healer'] = 0,
+		['clicker'] = {
+			[1] = { r = 0, c = 0},
+			[2] = { r = 0, c = 1},
+			[3] = { r = 0, c = 1},
+			[4] = { r = 0, c = 1},
+			[5] = { r = 0, c = 1},
+		},
 	},
 
 	["npc_dota_hero_pugna"] = {
@@ -1006,7 +1665,15 @@ X["hero_roles"] = {
 		['jungler'] = 0,
 		['nuker'] = 1,
 		['support'] = 3,
-		['pusher'] = 2
+		['pusher'] = 2,
+		['healer'] = 3,
+		['clicker'] = {
+			[1] = { r = 0, c = 0},
+			[2] = { r = 0, c = 1},
+			[3] = { r = 0, c = 0},
+			[4] = { r = 0, c = 1},
+			[5] = { r = 0, c = 1},
+		},
 	},
 
 	["npc_dota_hero_queenofpain"] = {
@@ -1018,7 +1685,15 @@ X["hero_roles"] = {
 		['jungler'] = 0,
 		['nuker'] = 3,
 		['support'] = 1,
-		['pusher'] = 0
+		['pusher'] = 0,
+		['healer'] = 0,
+		['clicker'] = {
+			[1] = { r = 0, c = 0},
+			[2] = { r = 0, c = 1},
+			[3] = { r = 0, c = 1},
+			[4] = { r = 0, c = 1},
+			[5] = { r = 0, c = 1},
+		},
 	},
 
 	["npc_dota_hero_rattletrap"] = {
@@ -1030,7 +1705,15 @@ X["hero_roles"] = {
 		['jungler'] = 0,
 		['nuker'] = 0,
 		['support'] = 3,
-		['pusher'] = 0
+		['pusher'] = 0,
+		['healer'] = 0,
+		['clicker'] = {
+			[1] = { r = 0, c = 0},
+			[2] = { r = 0, c = 0},
+			[3] = { r = 0, c = 0},
+			[4] = { r = 0, c = 1},
+			[5] = { r = 0, c = 1},
+		},
 	},
 
 	["npc_dota_hero_razor"] = {
@@ -1042,7 +1725,15 @@ X["hero_roles"] = {
 		['jungler'] = 0,
 		['nuker'] = 0,
 		['support'] = 0,
-		['pusher'] = 0
+		['pusher'] = 0,
+		['healer'] = 0,
+		['clicker'] = {
+			[1] = { r = 1, c = 0},
+			[2] = { r = 1, c = 0},
+			[3] = { r = 1, c = 0},
+			[4] = { r = 0, c = 0},
+			[5] = { r = 0, c = 0},
+		},
 	},
 
 	["npc_dota_hero_riki"] = {
@@ -1054,7 +1745,15 @@ X["hero_roles"] = {
 		['jungler'] = 0,
 		['nuker'] = 0,
 		['support'] = 0,
-		['pusher'] = 0
+		['pusher'] = 0,
+		['healer'] = 0,
+		['clicker'] = {
+			[1] = { r = 1, c = 0},
+			[2] = { r = 1, c = 0},
+			[3] = { r = 0, c = 0},
+			[4] = { r = 1, c = 1},
+			[5] = { r = 1, c = 1},
+		},
 	},
 
 	["npc_dota_hero_ringmaster"] = {
@@ -1066,7 +1765,15 @@ X["hero_roles"] = {
 		['jungler'] = 0,
 		['nuker'] = 0,
 		['support'] = 3,
-		['pusher'] = 0
+		['pusher'] = 0,
+		['healer'] = 0,
+		['clicker'] = {
+			[1] = { r = 0, c = 0},
+			[2] = { r = 0, c = 0},
+			[3] = { r = 0, c = 0},
+			[4] = { r = 0, c = 1},
+			[5] = { r = 0, c = 1},
+		},
 	},
 
 	["npc_dota_hero_rubick"] = {
@@ -1078,7 +1785,15 @@ X["hero_roles"] = {
 		['jungler'] = 0,
 		['nuker'] = 1,
 		['support'] = 2,
-		['pusher'] = 0
+		['pusher'] = 0,
+		['healer'] = 0,
+		['clicker'] = {
+			[1] = { r = 0, c = 0},
+			[2] = { r = 0, c = 0},
+			[3] = { r = 0, c = 0},
+			[4] = { r = 0, c = 1},
+			[5] = { r = 0, c = 1},
+		},
 	},
 
 	["npc_dota_hero_sand_king"] = {
@@ -1090,7 +1805,15 @@ X["hero_roles"] = {
 		['jungler'] = 1,
 		['nuker'] = 2,
 		['support'] = 1,
-		['pusher'] = 0
+		['pusher'] = 0,
+		['healer'] = 0,
+		['clicker'] = {
+			[1] = { r = 0, c = 0},
+			[2] = { r = 0, c = 1},
+			[3] = { r = 0, c = 1},
+			[4] = { r = 0, c = 1},
+			[5] = { r = 0, c = 1},
+		},
 	},
 
 	["npc_dota_hero_shadow_demon"] = {
@@ -1102,7 +1825,15 @@ X["hero_roles"] = {
 		['jungler'] = 0,
 		['nuker'] = 1,
 		['support'] = 3,
-		['pusher'] = 0
+		['pusher'] = 0,
+		['healer'] = 0,
+		['clicker'] = {
+			[1] = { r = 0, c = 0},
+			[2] = { r = 0, c = 0},
+			[3] = { r = 0, c = 0},
+			[4] = { r = 0, c = 1},
+			[5] = { r = 0, c = 1},
+		},
 	},
 
 	["npc_dota_hero_shadow_shaman"] = {
@@ -1114,7 +1845,15 @@ X["hero_roles"] = {
 		['jungler'] = 0,
 		['nuker'] = 0,
 		['support'] = 3,
-		['pusher'] = 2
+		['pusher'] = 2,
+		['healer'] = 0,
+		['clicker'] = {
+			[1] = { r = 0, c = 0},
+			[2] = { r = 0, c = 0},
+			[3] = { r = 0, c = 0},
+			[4] = { r = 0, c = 1},
+			[5] = { r = 0, c = 1},
+		},
 	},
 
 	["npc_dota_hero_shredder"] = {
@@ -1126,7 +1865,15 @@ X["hero_roles"] = {
 		['jungler'] = 0,
 		['nuker'] = 3,
 		['support'] = 0,
-		['pusher'] = 0
+		['pusher'] = 0,
+		['healer'] = 0,
+		['clicker'] = {
+			[1] = { r = 0, c = 0},
+			[2] = { r = 0, c = 1},
+			[3] = { r = 0, c = 1},
+			[4] = { r = 0, c = 0},
+			[5] = { r = 0, c = 0},
+		},
 	},
 
 	["npc_dota_hero_silencer"] = {
@@ -1138,7 +1885,15 @@ X["hero_roles"] = {
 		['jungler'] = 0,
 		['nuker'] = 0,
 		['support'] = 3,
-		['pusher'] = 0
+		['pusher'] = 0,
+		['healer'] = 0,
+		['clicker'] = {
+			[1] = { r = 1, c = 0},
+			[2] = { r = 1, c = 0},
+			[3] = { r = 0, c = 0},
+			[4] = { r = 1, c = 1},
+			[5] = { r = 1, c = 1},
+		},
 	},
 
 	["npc_dota_hero_skeleton_king"] = {
@@ -1150,7 +1905,15 @@ X["hero_roles"] = {
 		['jungler'] = 0,
 		['nuker'] = 1,
 		['support'] = 0,
-		['pusher'] = 2
+		['pusher'] = 2,
+		['healer'] = 0,
+		['clicker'] = {
+			[1] = { r = 1, c = 0},
+			[2] = { r = 0, c = 0},
+			[3] = { r = 1, c = 0},
+			[4] = { r = 0, c = 0},
+			[5] = { r = 0, c = 0},
+		},
 	},
 
 	["npc_dota_hero_skywrath_mage"] = {
@@ -1162,7 +1925,15 @@ X["hero_roles"] = {
 		['jungler'] = 0,
 		['nuker'] = 3,
 		['support'] = 3,
-		['pusher'] = 0
+		['pusher'] = 0,
+		['healer'] = 0,
+		['clicker'] = {
+			[1] = { r = 0, c = 0},
+			[2] = { r = 0, c = 1},
+			[3] = { r = 0, c = 0},
+			[4] = { r = 0, c = 1},
+			[5] = { r = 0, c = 1},
+		},
 	},
 
 	["npc_dota_hero_slardar"] = {
@@ -1174,7 +1945,15 @@ X["hero_roles"] = {
 		['jungler'] = 0,
 		['nuker'] = 1,
 		['support'] = 0,
-		['pusher'] = 0
+		['pusher'] = 0,
+		['healer'] = 0,
+		['clicker'] = {
+			[1] = { r = 1, c = 0},
+			[2] = { r = 1, c = 0},
+			[3] = { r = 1, c = 0},
+			[4] = { r = 1, c = 1},
+			[5] = { r = 1, c = 1},
+		},
 	},
 
 	["npc_dota_hero_slark"] = {
@@ -1186,7 +1965,15 @@ X["hero_roles"] = {
 		['jungler'] = 0,
 		['nuker'] = 0,
 		['support'] = 0,
-		['pusher'] = 0
+		['pusher'] = 0,
+		['healer'] = 0,
+		['clicker'] = {
+			[1] = { r = 1, c = 0},
+			[2] = { r = 0, c = 0},
+			[3] = { r = 1, c = 0},
+			[4] = { r = 0, c = 0},
+			[5] = { r = 0, c = 0},
+		},
 	},
 
 	["npc_dota_hero_snapfire"] = {
@@ -1198,7 +1985,15 @@ X["hero_roles"] = {
 		['jungler'] = 0,
 		['nuker'] = 2,
 		['support'] = 3,
-		['pusher'] = 0
+		['pusher'] = 0,
+		['healer'] = 0,
+		['clicker'] = {
+			[1] = { r = 0, c = 0},
+			[2] = { r = 1, c = 0},
+			[3] = { r = 0, c = 0},
+			[4] = { r = 1, c = 1},
+			[5] = { r = 1, c = 1},
+		},
 	},
 
 	["npc_dota_hero_sniper"] = {
@@ -1210,7 +2005,15 @@ X["hero_roles"] = {
 		['jungler'] = 0,
 		['nuker'] = 1,
 		['support'] = 0,
-		['pusher'] = 2
+		['pusher'] = 2,
+		['healer'] = 0,
+		['clicker'] = {
+			[1] = { r = 1, c = 0},
+			[2] = { r = 1, c = 0},
+			[3] = { r = 0, c = 0},
+			[4] = { r = 0, c = 0},
+			[5] = { r = 0, c = 0},
+		},
 	},
 
 	["npc_dota_hero_spectre"] = {
@@ -1222,7 +2025,15 @@ X["hero_roles"] = {
 		['jungler'] = 0,
 		['nuker'] = 0,
 		['support'] = 0,
-		['pusher'] = 0
+		['pusher'] = 0,
+		['healer'] = 0,
+		['clicker'] = {
+			[1] = { r = 1, c = 0},
+			[2] = { r = 0, c = 0},
+			[3] = { r = 0, c = 0},
+			[4] = { r = 0, c = 0},
+			[5] = { r = 0, c = 0},
+		},
 	},
 
 	["npc_dota_hero_spirit_breaker"] = {
@@ -1234,7 +2045,15 @@ X["hero_roles"] = {
 		['jungler'] = 0,
 		['nuker'] = 0,
 		['support'] = 0,
-		['pusher'] = 0
+		['pusher'] = 0,
+		['healer'] = 0,
+		['clicker'] = {
+			[1] = { r = 0, c = 0},
+			[2] = { r = 1, c = 0},
+			[3] = { r = 1, c = 1},
+			[4] = { r = 1, c = 1},
+			[5] = { r = 1, c = 1},
+		},
 	},
 
 	["npc_dota_hero_storm_spirit"] = {
@@ -1246,7 +2065,15 @@ X["hero_roles"] = {
 		['jungler'] = 0,
 		['nuker'] = 2,
 		['support'] = 0,
-		['pusher'] = 0
+		['pusher'] = 0,
+		['healer'] = 0,
+		['clicker'] = {
+			[1] = { r = 0, c = 0},
+			[2] = { r = 1, c = 1},
+			[3] = { r = 0, c = 0},
+			[4] = { r = 0, c = 0},
+			[5] = { r = 0, c = 0},
+		},
 	},
 
 	["npc_dota_hero_sven"] = {
@@ -1258,7 +2085,15 @@ X["hero_roles"] = {
 		['jungler'] = 0,
 		['nuker'] = 3,
 		['support'] = 0,
-		['pusher'] = 3
+		['pusher'] = 3,
+		['healer'] = 0,
+		['clicker'] = {
+			[1] = { r = 1, c = 0},
+			[2] = { r = 0, c = 0},
+			[3] = { r = 0, c = 0},
+			[4] = { r = 0, c = 0},
+			[5] = { r = 0, c = 0},
+		},
 	},
 
 	["npc_dota_hero_techies"] = {
@@ -1270,7 +2105,15 @@ X["hero_roles"] = {
 		['jungler'] = 0,
 		['nuker'] = 3,
 		['support'] = 2,
-		['pusher'] = 0
+		['pusher'] = 0,
+		['healer'] = 0,
+		['clicker'] = {
+			[1] = { r = 0, c = 0},
+			[2] = { r = 0, c = 1},
+			[3] = { r = 0, c = 0},
+			[4] = { r = 0, c = 1},
+			[5] = { r = 0, c = 1},
+		},
 	},
 
 	["npc_dota_hero_templar_assassin"] = {
@@ -1282,7 +2125,15 @@ X["hero_roles"] = {
 		['jungler'] = 0,
 		['nuker'] = 0,
 		['support'] = 0,
-		['pusher'] = 3
+		['pusher'] = 3,
+		['healer'] = 0,
+		['clicker'] = {
+			[1] = { r = 1, c = 0},
+			[2] = { r = 1, c = 0},
+			[3] = { r = 0, c = 0},
+			[4] = { r = 0, c = 0},
+			[5] = { r = 0, c = 0},
+		},
 	},
 
 	["npc_dota_hero_terrorblade"] = {
@@ -1294,7 +2145,15 @@ X["hero_roles"] = {
 		['jungler'] = 0,
 		['nuker'] = 1,
 		['support'] = 0,
-		['pusher'] = 3
+		['pusher'] = 3,
+		['healer'] = 0,
+		['clicker'] = {
+			[1] = { r = 1, c = 0},
+			[2] = { r = 0, c = 0},
+			[3] = { r = 0, c = 0},
+			[4] = { r = 0, c = 0},
+			[5] = { r = 0, c = 0},
+		},
 	},
 
 	["npc_dota_hero_tidehunter"] = {
@@ -1306,7 +2165,15 @@ X["hero_roles"] = {
 		['jungler'] = 0,
 		['nuker'] = 1,
 		['support'] = 0,
-		['pusher'] = 0
+		['pusher'] = 0,
+		['healer'] = 0,
+		['clicker'] = {
+			[1] = { r = 0, c = 0},
+			[2] = { r = 0, c = 0},
+			[3] = { r = 1, c = 1},
+			[4] = { r = 0, c = 0},
+			[5] = { r = 0, c = 0},
+		},
 	},
 
 	["npc_dota_hero_tinker"] = {
@@ -1318,7 +2185,15 @@ X["hero_roles"] = {
 		['jungler'] = 0,
 		['nuker'] = 1,
 		['support'] = 2,
-		['pusher'] = 1
+		['pusher'] = 1,
+		['healer'] = 1,
+		['clicker'] = {
+			[1] = { r = 0, c = 0},
+			[2] = { r = 0, c = 1},
+			[3] = { r = 0, c = 0},
+			[4] = { r = 0, c = 1},
+			[5] = { r = 0, c = 1},
+		},
 	},
 
 	["npc_dota_hero_tiny"] = {
@@ -1330,7 +2205,15 @@ X["hero_roles"] = {
 		['jungler'] = 0,
 		['nuker'] = 2,
 		['support'] = 2,
-		['pusher'] = 2
+		['pusher'] = 2,
+		['healer'] = 0,
+		['clicker'] = {
+			[1] = { r = 1, c = 0},
+			[2] = { r = 1, c = 1},
+			[3] = { r = 1, c = 1},
+			[4] = { r = 1, c = 1},
+			[5] = { r = 1, c = 1},
+		},
 	},
 
 	["npc_dota_hero_treant"] = {
@@ -1342,7 +2225,15 @@ X["hero_roles"] = {
 		['jungler'] = 0,
 		['nuker'] = 0,
 		['support'] = 3,
-		['pusher'] = 0
+		['pusher'] = 0,
+		['healer'] = 1,
+		['clicker'] = {
+			[1] = { r = 0, c = 0},
+			[2] = { r = 0, c = 0},
+			[3] = { r = 1, c = 1},
+			[4] = { r = 1, c = 1},
+			[5] = { r = 1, c = 1},
+		},
 	},
 
 	["npc_dota_hero_troll_warlord"] = {
@@ -1354,7 +2245,15 @@ X["hero_roles"] = {
 		['jungler'] = 0,
 		['nuker'] = 0,
 		['support'] = 0,
-		['pusher'] = 3
+		['pusher'] = 3,
+		['healer'] = 0,
+		['clicker'] = {
+			[1] = { r = 1, c = 0},
+			[2] = { r = 0, c = 0},
+			[3] = { r = 0, c = 0},
+			[4] = { r = 0, c = 0},
+			[5] = { r = 0, c = 0},
+		},
 	},
 
 	["npc_dota_hero_tusk"] = {
@@ -1366,7 +2265,15 @@ X["hero_roles"] = {
 		['jungler'] = 0,
 		['nuker'] = 1,
 		['support'] = 0,
-		['pusher'] = 0
+		['pusher'] = 0,
+		['healer'] = 0,
+		['clicker'] = {
+			[1] = { r = 0, c = 0},
+			[2] = { r = 1, c = 0},
+			[3] = { r = 1, c = 1},
+			[4] = { r = 1, c = 1},
+			[5] = { r = 1, c = 1},
+		},
 	},
 
 	["npc_dota_hero_undying"] = {
@@ -1378,7 +2285,15 @@ X["hero_roles"] = {
 		['jungler'] = 0,
 		['nuker'] = 0,
 		['support'] = 2,
-		['pusher'] = 0
+		['pusher'] = 0,
+		['healer'] = 2,
+		['clicker'] = {
+			[1] = { r = 0, c = 0},
+			[2] = { r = 0, c = 0},
+			[3] = { r = 1, c = 1},
+			[4] = { r = 1, c = 1},
+			[5] = { r = 1, c = 1},
+		},
 	},
 
 	["npc_dota_hero_ursa"] = {
@@ -1390,7 +2305,15 @@ X["hero_roles"] = {
 		['jungler'] = 1,
 		['nuker'] = 1,
 		['support'] = 0,
-		['pusher'] = 0
+		['pusher'] = 0,
+		['healer'] = 0,
+		['clicker'] = {
+			[1] = { r = 1, c = 0},
+			[2] = { r = 0, c = 0},
+			[3] = { r = 1, c = 0},
+			[4] = { r = 0, c = 0},
+			[5] = { r = 0, c = 0},
+		},
 	},
 
 	["npc_dota_hero_vengefulspirit"] = {
@@ -1402,7 +2325,15 @@ X["hero_roles"] = {
 		['jungler'] = 0,
 		['nuker'] = 0,
 		['support'] = 3,
-		['pusher'] = 0
+		['pusher'] = 0,
+		['healer'] = 0,
+		['clicker'] = {
+			[1] = { r = 1, c = 0},
+			[2] = { r = 1, c = 0},
+			[3] = { r = 0, c = 0},
+			[4] = { r = 1, c = 1},
+			[5] = { r = 1, c = 1},
+		},
 	},
 
 	["npc_dota_hero_venomancer"] = {
@@ -1414,7 +2345,15 @@ X["hero_roles"] = {
 		['jungler'] = 0,
 		['nuker'] = 2,
 		['support'] = 3,
-		['pusher'] = 2
+		['pusher'] = 2,
+		['healer'] = 0,
+		['clicker'] = {
+			[1] = { r = 0, c = 0},
+			[2] = { r = 1, c = 1},
+			[3] = { r = 0, c = 0},
+			[4] = { r = 1, c = 1},
+			[5] = { r = 1, c = 1},
+		},
 	},
 
 	["npc_dota_hero_viper"] = {
@@ -1426,7 +2365,15 @@ X["hero_roles"] = {
 		['jungler'] = 0,
 		['nuker'] = 0,
 		['support'] = 0,
-		['pusher'] = 1
+		['pusher'] = 1,
+		['healer'] = 0,
+		['clicker'] = {
+			[1] = { r = 0, c = 0},
+			[2] = { r = 1, c = 0},
+			[3] = { r = 1, c = 0},
+			[4] = { r = 0, c = 0},
+			[5] = { r = 0, c = 0},
+		},
 	},
 
 	["npc_dota_hero_visage"] = {
@@ -1438,7 +2385,15 @@ X["hero_roles"] = {
 		['jungler'] = 0,
 		['nuker'] = 1,
 		['support'] = 1,
-		['pusher'] = 1
+		['pusher'] = 1,
+		['healer'] = 0,
+		['clicker'] = {
+			[1] = { r = 0, c = 0},
+			[2] = { r = 0, c = 1},
+			[3] = { r = 0, c = 1},
+			[4] = { r = 0, c = 1},
+			[5] = { r = 0, c = 1},
+		},
 	},
 
 	["npc_dota_hero_void_spirit"] = {
@@ -1450,7 +2405,15 @@ X["hero_roles"] = {
 		['jungler'] = 0,
 		['nuker'] = 1,
 		['support'] = 0,
-		['pusher'] = 0
+		['pusher'] = 0,
+		['healer'] = 0,
+		['clicker'] = {
+			[1] = { r = 0, c = 0},
+			[2] = { r = 1, c = 1},
+			[3] = { r = 0, c = 0},
+			[4] = { r = 0, c = 0},
+			[5] = { r = 0, c = 0},
+		},
 	},
 
 	["npc_dota_hero_warlock"] = {
@@ -1462,7 +2425,15 @@ X["hero_roles"] = {
 		['jungler'] = 0,
 		['nuker'] = 0,
 		['support'] = 3,
-		['pusher'] = 0
+		['pusher'] = 0,
+		['healer'] = 2,
+		['clicker'] = {
+			[1] = { r = 0, c = 0},
+			[2] = { r = 0, c = 0},
+			[3] = { r = 0, c = 0},
+			[4] = { r = 0, c = 1},
+			[5] = { r = 0, c = 1},
+		},
 	},
 
 	["npc_dota_hero_weaver"] = {
@@ -1474,7 +2445,15 @@ X["hero_roles"] = {
 		['jungler'] = 0,
 		['nuker'] = 0,
 		['support'] = 1,
-		['pusher'] = 0
+		['pusher'] = 0,
+		['healer'] = 0,
+		['clicker'] = {
+			[1] = { r = 1, c = 0},
+			[2] = { r = 0, c = 0},
+			[3] = { r = 0, c = 0},
+			[4] = { r = 1, c = 1},
+			[5] = { r = 1, c = 1},
+		},
 	},
 
 	["npc_dota_hero_windrunner"] = {
@@ -1486,7 +2465,15 @@ X["hero_roles"] = {
 		['jungler'] = 0,
 		['nuker'] = 0,
 		['support'] = 1,
-		['pusher'] = 0
+		['pusher'] = 0,
+		['healer'] = 0,
+		['clicker'] = {
+			[1] = { r = 1, c = 0},
+			[2] = { r = 1, c = 0},
+			[3] = { r = 1, c = 0},
+			[4] = { r = 1, c = 1},
+			[5] = { r = 1, c = 1},
+		},
 	},
 
 	["npc_dota_hero_winter_wyvern"] = {
@@ -1498,7 +2485,15 @@ X["hero_roles"] = {
 		['jungler'] = 0,
 		['nuker'] = 0,
 		['support'] = 3,
-		['pusher'] = 0
+		['pusher'] = 0,
+		['healer'] = 1,
+		['clicker'] = {
+			[1] = { r = 0, c = 0},
+			[2] = { r = 1, c = 1},
+			[3] = { r = 0, c = 0},
+			[4] = { r = 0, c = 1},
+			[5] = { r = 0, c = 1},
+		},
 	},
 
 	["npc_dota_hero_wisp"] = {
@@ -1510,7 +2505,15 @@ X["hero_roles"] = {
 		['jungler'] = 0,
 		['nuker'] = 0,
 		['support'] = 3,
-		['pusher'] = 0
+		['pusher'] = 0,
+		['healer'] = 2,
+		['clicker'] = {
+			[1] = { r = 0, c = 0},
+			[2] = { r = 0, c = 0},
+			[3] = { r = 0, c = 0},
+			[4] = { r = 0, c = 1},
+			[5] = { r = 0, c = 1},
+		},
 	},
 
 	["npc_dota_hero_witch_doctor"] = {
@@ -1522,7 +2525,15 @@ X["hero_roles"] = {
 		['jungler'] = 0,
 		['nuker'] = 3,
 		['support'] = 3,
-		['pusher'] = 0
+		['pusher'] = 0,
+		['healer'] = 1,
+		['clicker'] = {
+			[1] = { r = 0, c = 0},
+			[2] = { r = 0, c = 0},
+			[3] = { r = 0, c = 0},
+			[4] = { r = 0, c = 1},
+			[5] = { r = 0, c = 1},
+		},
 	},
 
 	["npc_dota_hero_zuus"] = {
@@ -1534,7 +2545,15 @@ X["hero_roles"] = {
 		['jungler'] = 0,
 		['nuker'] = 3,
 		['support'] = 2,
-		['pusher'] = 0
+		['pusher'] = 0,
+		['healer'] = 0,
+		['clicker'] = {
+			[1] = { r = 0, c = 0},
+			[2] = { r = 0, c = 1},
+			[3] = { r = 0, c = 0},
+			[4] = { r = 0, c = 1},
+			[5] = { r = 0, c = 1},
+		},
 	},
 }
 
